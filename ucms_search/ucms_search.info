@@ -1,0 +1,5 @@
+name = "UCMS - SolR"
+description = "Integration with SolR for back and front search"
+core = 7.x
+package = UCMS
+php = 5.5

@@ -1,0 +1,6 @@
+name = "UCMS - Layout"
+description = "Custom per page layout configuration"
+core = 7.x
+package = UCMS
+php = 5.5
+dependencies[] = ucms_site

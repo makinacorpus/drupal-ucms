@@ -1,0 +1,6 @@
+name = "UCMS - Contribution"
+description = "Uses SolR for content search - provide Drag'n'Drop"
+core = 7.x
+package = UCMS
+php = 5.5
+dependencies[] = ucms_search

@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * Public index name.
+ */
+const UCMS_SEARCH_INDEX_PUBLIC = 'node_public';
+
+/**
+ * Backoffice index name.
+ */
+const UCMS_SEARCH_INDEX_BACK = 'node_backoffice';
+
+/**
+ * Default search per page limit.
+ */
+const UCMS_SEARCH_LIMIT = 100;
+
+/**
+ * Default number of items index each cron run.
+ */
+const UCMS_SEARCH_CRON_INDEX_LIMIT = 1000;
+
+/**
+ * Hopefully, you did run composer install.
+ */
+require_once __DIR__ . '/vendor/autoload.php';
+
+/**
+ * Create query.
+ *
+ * @return \Ucms\Search\Query
+ */
+function ucms_search_query_create() {
+  return new \Ucms\Search\Query();
+}
+
+/**
+ * Get elastic search client.
+ *
+ * @return \Elasticsearch\Client
+ */
+function ucms_search_client_get() {
+  $instance = &drupal_static(__FUNCTION__);
+  if (!$instance) {
+    $instance = \Elasticsearch\ClientBuilder::create()
+      ->setHosts(
+        variable_get('ucms_search_elastic_hosts', ['localhost:9200'])
+      )
+      ->build()
+    ;
+  }
+  return $instance;
+}
+
+/**
+ * Proceed to a full search
+ *
+ * @param string $index
+ * @param string|\Ucms\Search\Query $query
+ * @param string|\Ucms\Search\Query $filterQuery
+ * @param int $limit
+ * @param int $page
+ *
+ * @return \Ucms\Search\Response
+ */
+function ucms_search_do_search($index, $query, $filterQuery = null, $limit = UCMS_SEARCH_LIMIT, $page = 1, $fields = [], $facets = []) {
+
+  $isQueryEmpty = true;
+
+  if (null === $query) { // Match all.
+    $bodyQuery = ['match_all' => []];
+  } else {
+    if (is_array($query)) {
+      $bodyQuery = $query;
+    } else {
+      $bodyQuery = ['query_string' => ['query' => (string)$query]];
+    }
+    $isQueryEmpty = false;
+  }
+
+  if (null !== $filterQuery) {
+    if (is_array($filterQuery)) {
+      $filterBody = $filterQuery;
+    } else {
+      $filterBody = ['query_string' => ['query' => (string)$filterQuery]];
+    }
+  }
+
+  if ($filterBody) {
+
+    $filterBody = [
+      'fquery' => [
+        'query'   => $filterBody,
+        '_cache'  => true,
+      ],
+    ];
+
+    if ($isQueryEmpty) {
+      $body = [
+        'query' => [
+          'constant_score' => [
+            'filter' => $filterBody,
+          ],
+        ],
+      ];
+    } else {
+      $body = [
+        'query' => [
+          'filtered' => [
+           'query'  => $bodyQuery,
+           'filter' => $filterBody,
+          ],
+        ],
+      ];
+    }
+  } else {
+    $body = [
+      'query' => $bodyQuery,
+    ];
+  }
+
+  if (!empty($fields)) {
+    $body['fields'] = $fields;
+  }
+
+  $rawResponse = ucms_search_client_get()
+    ->search([
+      'index' => $index,
+      'type'  => 'node',
+      'body'  => $body,
+      'from'  => max([0, $page - 1]) * $limit,
+      'size'  => $limit,
+    ])
+  ;
+
+  return new \Ucms\Search\Response($rawResponse);
+}
+
+/**
+ * Clear an index.
+ *
+ * @param string $index
+ */
+function ucms_search_index_clear($index, $doReindex = false) {
+  require_once __DIR__ . '/ucms_search.index.inc';
+  _ucms_search_index_delete($index);
+  _ucms_search_index_create($index);
+  _ucms_search_index_reindex($index);
+}
+
+/**
+ * Implements hook_ucms_search_index_reindex().
+ */
+function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $query) {
+  switch ($index) {
+
+    case UCMS_SEARCH_INDEX_PUBLIC:
+      $query->condition('n.status', 1);
+      break;
+  }
+}
+
+/**
+ * Mark all content for reindexing in an index.
+ *
+ * @param string $index
+ */
+function ucms_search_index_reindex($index) {
+  require_once __DIR__ . '/ucms_search.index.inc';
+  _ucms_search_index_reindex($index);
+}
+
+/**
+ * Index a single node
+ *
+ * @param string $index
+ * @param stdClass $node
+ */
+function ucms_search_node_index($index, $node) {
+  require_once __DIR__ . '/ucms_search.index.inc';
+  _ucms_search_node_index($index, $node);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function ucms_search_cron() {
+
+  $res = db_select('ucms_search_status', 's')
+    ->fields('s', ['nid', 'index_key'])
+    ->condition('s.needs_reindex', 1)
+    ->range(0, variable_get('ucms_search_cron_index_limit', UCMS_SEARCH_CRON_INDEX_LIMIT))
+    ->execute()
+  ;
+
+  $map = [];
+
+  foreach ($res as $item) {
+    $map[$item->nid][] = $item->index_key;
+  }
+
+  // Preload all nodes for performance.
+  node_load_multiple(array_keys($map));
+
+  foreach ($map as $nid => $indices) {
+    foreach ($indices as $index) {
+      ucms_search_node_index($index, node_load($nid));
+    }
+  }
+}

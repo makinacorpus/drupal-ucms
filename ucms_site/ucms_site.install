@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_site_schema() {
+  $schema = array();
+
+  $schema['ucms_site'] = array(
+    'description' => 'Site instances',
+    'fields' => array(
+      'id' => array(
+        'description' => "Site identifier", 
+        'type'        => 'serial', 
+        'unsigned'    => true, 
+        'not null'    => true,
+      ),
+      'title_admin' => array(
+        'description' => 'Administrative title', 
+        'type'        => 'varchar', 
+        'length'      => 255,
+        'not null'    => true, 
+        'default'     => '',
+      ),
+      'title' => array(
+        'description' => 'Displayed title', 
+        'type'        => 'varchar', 
+        'length'      => 255,
+        'not null'    => true, 
+        'default'     => '',
+      ),
+      'status' => array(
+        'description' => "Site workflow status",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ),
+      'theme' => array(
+        'description' => "Theme to use",
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => false,
+        'default'     => null,
+      ),
+      'http_host' => array(
+        'description' => "Site domain name",
+        'type'        => 'varchar',
+        'length'      => 1024,
+        'not null'    => false,
+        'default'     => null,
+      ),
+      'uid' => array(
+        'description' => "Account owner",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ),
+    ),
+    'foreign keys' => array(
+      'site_id' => array(
+        'table'   => 'ucms_site', 
+        'columns' => array('site_id' => 'id'),
+      ),
+      'uid' => array(
+        'table'   => 'users', 
+        'columns' => array('uid' => 'uid'),
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}

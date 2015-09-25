@@ -1,0 +1,39 @@
+<?php
+/**
+ * @file
+ * UCMS - Site context and management.
+ */
+
+/**
+ * Implements hook_boot().
+ */
+function ucms_site_boot() {
+  // hook_boot() is the perfect place to set any context long before anything
+  // else get initialized (except locale).
+  if (!empty($_SERVER['HTTP_HOST'])) {
+    $site = db_query("SELECT * FROM {ucms_site} WHERE http_host = :host LIMIT 1 OFFSET 0", [':host' => $_SERVER['HTTP_HOST']])->fetch();
+    if ($site) {
+      $instance = &drupal_static('ucms_site_get', null);
+      $instance = $site;
+    } else {
+      watchdog(__FUNCTION__, "Non existing site: @site", ['@site' => $_SERVER['HTTP_HOST']], WATCHDOG_ERROR);
+    }
+  }
+  // @todo Else attempt to find another contextual information (GET parameter?)
+  // in order to determine preview mode or not.
+}
+
+/**
+ * Gets current site context.
+ *
+ * @return stdClass
+ *   If nothing being returned, this means we are on master backoffice site.
+ */
+function ucms_site_get() {
+  return drupal_static(__FUNCTION__, null);
+}
+
+// @todo Implement node_access stuff.
+// @todo Implement node target table for node_access.
+// @todo Implement hook_custom_theme for setting the site theme
+// @todo Implement variables overloading for site: name, home

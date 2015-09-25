@@ -1,0 +1,111 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_layout_schema() {
+  $schema = array();
+
+  $schema['ucms_layout'] = array(
+    'description' => 'Layout instances',
+    'fields' => array(
+      'id' => array(
+        'description' => "Layout identifier", 
+        'type'        => 'serial', 
+        'unsigned'    => true, 
+        'not null'    => true,
+      ),
+      'title_admin' => array(
+        'description' => 'Administrative title', 
+        'type'        => 'varchar', 
+        'length'      => 255,
+        'not null'    => true, 
+        'default'     => '',
+      ),
+      'title' => array(
+        'description' => 'Displayed title', 
+        'type'        => 'varchar', 
+        'length'      => 255,
+        'not null'    => true, 
+        'default'     => '',
+      ),
+      'site_id' => array(
+        'description' => 'Site identifier',
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ),
+      'uid' => array(
+        'description' => "Account owner",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ),
+    ),
+    'foreign keys' => array(
+      'site_id' => array(
+        'table'   => 'ucms_site', 
+        'columns' => array('site_id' => 'id'),
+      ),
+      'uid' => array(
+        'table'   => 'users', 
+        'columns' => array('uid' => 'uid'),
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  $schema['ucms_layout_data'] = array(
+    'description' => 'Layout instances data',
+    'fields' => array(
+      'layout_id' => array(
+        'description' => "Layout identifier", 
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ),
+      'region' => array(
+        'description' => 'Region', 
+        'type'        => 'varchar',
+        'length'      => 64,
+        'not null'    => true,
+      ),
+      'nid' => array(
+        'description' => 'Node identifier',
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ),
+      'weight' => array(
+        'description' => "Weight in region",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ),
+      'view_mode' => array(
+        'description' => "Node view mode",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 'teaser',
+      ),
+    ),
+    'foreign keys' => array(
+      'layout_id' => array(
+        'table'   => 'ucms_layout', 
+        'columns' => array('layout_id' => 'id'),
+      ),
+      'nid' => array(
+        'table'   => 'node', 
+        'columns' => array('nid' => 'nid'),
+      ),
+    ),
+    'indexes' => array(
+      'ucms_layout_sort_idx' => array('layout_id', 'region', 'weight'),
+    ),
+  );
+
+  return $schema;
+}

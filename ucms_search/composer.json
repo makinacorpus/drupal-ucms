@@ -1,0 +1,21 @@
+{
+	"name" : "makinacorpus/ucms-search",
+	"type" : "library",
+	"description" : "UCMS elastic search connector.",
+	"homepage" : "http://github.com/makinacorpus/ucms-search",
+	"license" : "GPL-2",
+	"authors" : [{
+			"name" : "Pierre Rineau",
+			"email" : "pierre.rineau@makina-corpus.com"
+		}
+	],
+	"autoload" : {
+		"psr-0" : {
+			"Ucms\\Search\\" : "src"
+		}
+	},
+	"minimum-stability" : "dev",
+	"require" : {
+		"elasticsearch/elasticsearch" : "~2.0"
+	}
+}

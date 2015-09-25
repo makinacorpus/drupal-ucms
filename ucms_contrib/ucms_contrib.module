@@ -1,0 +1,388 @@
+<?php
+/**
+ * @file
+ * UCMS - Back office and various contribution improvements.
+ */
+
+/**
+ * View mode for content display.
+ */
+const UCMS_VIEW_MODE_CONTENTADMIN = 'contentadmin';
+
+/**
+ * View mode for cart display.
+ */
+const UCMS_VIEW_MODE_FAVORITE = 'favorite';
+
+/**
+ * Image style for search.
+ */
+const UCMS_STYLE_CONTENTADMIN = 'contentadmin';
+
+/**
+ * Image style for favorite.
+ */
+const UCMS_STYLE_FAVORITE = 'favorite';
+
+/**
+ * All content.
+ */
+const UCMS_CONTENT_TYPE_ALL = 'all';
+
+/**
+ * All editorial content.
+ */
+const UCMS_CONTENT_TYPE_EDITORIAL = 'content';
+
+/**
+ * All media content.
+ */
+const UCMS_CONTENT_TYPE_MEDIA = 'media';
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_contrib_menu() {
+  $items = [];
+
+  // Main administration pages.
+  $items['admin/contribute'] = [
+    'title'             => "Content",
+    'page callback'     => 'ucms_contrib_admin_content_page',
+    'page arguments'    => [],
+    'access arguments'  => ['access content overview'],
+    'file'              => 'ucms_contrib.pages.inc',
+  ];
+
+  // Cart operations.
+  $items['admin/cart/%node/add/nojs'] = [
+    'title'             => "Content",
+    'page callback'     => 'ucms_contrib_ajax_favorite_add',
+    'page arguments'    => [2],
+    'access arguments'  => ['use favorites'],
+    'file'              => 'ucms_contrib.ajax.inc',
+  ];
+  $items['admin/cart/%node/remove/nojs'] = [
+    'title'             => "Content",
+    'page callback'     => 'ucms_contrib_ajax_favorite_remove',
+    'page arguments'    => [2],
+    'access arguments'  => ['use favorites'],
+    'file'              => 'ucms_contrib.ajax.inc',
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_contrib_permission() {
+  return [
+    'use favorites' => [
+      'title' => "Access the favorites feature",
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ucms_contrib_theme() {
+  return [
+    'ucms_contrib_cart' => [
+      'variables' => ['account' => null, 'items' => []],
+      'template'  => 'ucms-contrib-cart',
+    ],
+    'ucms_contrib_content_page' => [
+      'variables' => [
+        'favorites' => null,
+        'account'   => null,
+        'items'     => [],
+        'filters'   => [],
+        'search'    => null,
+        'pager'     => null,
+      ],
+      'template'  => 'ucms-contrib-content-page',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function ucms_contrib_block_info() {
+  return [
+    'cart' => [
+      'info'  => "[Contrib] Cart",
+      'cache' => DRUPAL_NO_CACHE,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function ucms_contrib_block_view($delta = '') {
+  switch ($delta) {
+
+    case 'cart':
+      if (user_access('use favorites')) {
+        return ucms_contrib_favorite_render();
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function ucms_contrib_entity_info_alter(&$entity_info) {
+  $entity_info['node']['view modes'][UCMS_VIEW_MODE_CONTENTADMIN] = [
+    'label' => t('Content admin display'),
+    'custom settings' => false,
+  ];
+  $entity_info['node']['view modes'][UCMS_VIEW_MODE_FAVORITE] = [
+    'label' => t('Favorite in cart'),
+    'custom settings' => false,
+  ];
+}
+
+/**
+ * Implements hook_image_default_styles().
+ */
+function ucms_contrib_image_default_styles() {
+  return [
+    UCMS_STYLE_CONTENTADMIN => [
+      'effects' => [[
+        'name' => 'image_scale_and_crop',
+        'data' => [
+          'width'   => 285, // grid3
+          'height'  => 285,
+          'upscale' => 1,
+        ],
+        'weight' => 0,
+      ]],
+    ],
+    UCMS_STYLE_FAVORITE => [
+      'effects' => [[
+        'name' => 'image_scale_and_crop',
+        'data' => [
+          'width'   => 42, // small
+          'height'  => 42,
+          'upscale' => 1,
+        ],
+        'weight' => 0,
+      ]],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_form().
+ */
+function ucms_contrib_forms($form_id, $args) {
+  // This implementation allows to use the same form more than once on the
+  // same page, see drupal_get_form() related calls. This is ugly but this
+  // is the right way to do it.
+  if (0 === strpos($form_id, 'ucms_contrib_favorite_add_form')) {
+    require_once __DIR__ . '/ucms_contrib.pages.inc';
+    return [$form_id => ['callback' => 'ucms_contrib_favorite_add_form']];
+  } else if (0 === strpos($form_id, 'ucms_contrib_favorite_remove_form')) {
+    require_once __DIR__ . '/ucms_contrib.pages.inc';
+    return [$form_id => ['callback' => 'ucms_contrib_favorite_remove_form']];
+  }
+}
+
+/**
+ * From the given realm give node types
+ *
+ * @param string|string[] $types
+ *
+ * @return string[]
+ */
+function ucms_contrib_type_to_list($types = []) {
+
+  if (UCMS_CONTENT_TYPE_ALL === $types) {
+    return array_keys(node_type_get_types());
+  }
+
+  $ret = [];
+
+  if (!is_array($types)) {
+    $types = [$types];
+  }
+
+  foreach ($types as $type) {
+    switch ($type) {
+
+      case UCMS_CONTENT_TYPE_EDITORIAL:
+        $ret[] = 'article';
+        $ret[] = 'news';
+        $ret[] = 'post';
+        break;
+
+      case UCMS_CONTENT_TYPE_MEDIA:
+        // Nothing here.
+        break;
+    }
+  }
+
+  // @todo Provied fast alteration mecanism for other modules to add.
+
+  return $ret;
+}
+
+/**
+ * Implements hook_node_view_alter().
+ *
+ * Removes links from nodes when in build modes used for back office.
+ */
+function ucms_contrib_node_view_alter(&$build) {
+  switch ($build['#view_mode']) {
+
+    case UCMS_VIEW_MODE_CONTENTADMIN:
+    case UCMS_VIEW_MODE_FAVORITE:
+      $build['links']['#access'] = false;
+      break;
+  }
+}
+
+/**
+ * Implements hook_preprocess_node().
+ *
+ * Removes submitted information and adds necessary stuff for JS.
+ */
+function ucms_contrib_preprocess_node(&$variables) {
+  switch ($variables['view_mode']) {
+
+    case UCMS_VIEW_MODE_CONTENTADMIN:
+    case UCMS_VIEW_MODE_FAVORITE:
+      $variables['submitted'] = null;
+      break;
+  }
+}
+
+/**
+ * Add content to favorites.
+ *
+ * @param int $nid
+ * @param int|stdClass $account
+ *
+ * @return boolean
+ */
+function ucms_contrib_favorite_add($nid, $account = null) {
+
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  if (is_object($account)) {
+    $account = $account->uid;
+  }
+
+  $exists = (bool)db_query("SELECT 1 FROM {ucms_contrib_cart} WHERE nid = :nid AND uid = :uid", [
+    ':nid' => $nid,
+    ':uid' => $account,
+  ])->fetchField();
+
+  if ($exists) {
+    return false;
+  }
+
+  db_merge('ucms_contrib_cart')
+    ->key([
+      'nid' => $nid,
+      'uid' => $account,
+    ])
+    ->execute()
+  ;
+
+  return true;
+}
+
+/**
+ * Remove content from favorites.
+ *
+ * @param int $nid
+ * @param int|stdClass $account
+ */
+function ucms_contrib_favorite_remove($nid, $account = null) {
+
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  if (is_object($account)) {
+    $account = $account->uid;
+  }
+
+  db_delete('ucms_contrib_cart')
+    ->condition('nid', $nid)
+    ->condition('uid', $account)
+    ->execute()
+  ;
+}
+
+/**
+ * List favorite content.
+ *
+ * @param int|stdClass $account
+ *
+ * @return int[]
+ *   Ordered list of node identifiers.
+ */
+function ucms_contrib_favorite_list($account = null) {
+
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  if (is_object($account)) {
+    $account = $account->uid;
+  }
+
+  $q = db_select('ucms_contrib_cart', 'c');
+  $q->fields('c', ['nid']);
+  $q->join('node', 'n', "n.nid = c.nid");
+
+  return $q
+    ->extend('PagerDefault')
+    ->limit(12)
+    ->addTag('node_access')
+    ->execute()
+    ->fetchCol()
+  ;
+}
+
+/**
+ * Render one's favorite cart.
+ *
+ * @param int|stdClass $account
+ *
+ * @return []
+ *   drupal_render() friendly structure.
+ */
+function ucms_contrib_favorite_render($account = null) {
+
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  if (is_object($account)) {
+    $account = $account->uid;
+  }
+
+  $ret = [
+    '#theme'    => 'ucms_contrib_cart',
+    '#account'  => $account,
+    '#items'    => [],
+  ];
+
+  $nidList = ucms_contrib_favorite_list($account);
+
+  if ($nidList) {
+    $view = node_view_multiple(node_load_multiple($nidList), UCMS_VIEW_MODE_FAVORITE);
+    foreach (element_children($view['nodes']) as $nid) {
+      $ret['#items'][$nid] = $view['nodes'][$nid];
+      $ret['#items'][$nid]['remove'] = drupal_get_form('ucms_contrib_favorite_remove_form_' . $nid, $nid);
+    }
+  }
+
+  return $ret;
+}
