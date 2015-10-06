@@ -93,12 +93,7 @@ class Response
     }
 
     /**
-     * Get all term aggregations results
-     *
-     * @return array
-     *   First dimension keys are the aggregation name provided to the
-     *   Search::addTermAggregation() method, values are maps of result
-     *   counts keyed by the field value
+     * Parse aggregation results and update the current facet instances states 
      */
     protected function parseAggregations()
     {
@@ -107,10 +102,9 @@ class Response
         }
 
         foreach ($this->search->getAggregations() as $name => $facet) {
+            if ($facet instanceof TermFacet) {
 
-            $choices = [];
-
-            if ('terms' === $facet->getType()) {
+                $choices = [];
 
                 if (!isset($this->rawResponse['aggregations'][$name])) {
                     throw new \RuntimeException(sprintf("Aggregation '%s' is missing from response", $name));
@@ -119,9 +113,9 @@ class Response
                 foreach ($this->rawResponse['aggregations'][$name]['buckets'] as $bucket) {
                     $choices[$bucket['key']] = $bucket['doc_count'];
                 }
-            }
 
-            $facet->setChoices($choices);
+                $facet->setChoices($choices);
+            }
         }
     }
 }

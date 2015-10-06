@@ -42,7 +42,7 @@ class Search
     protected $fields = [];
 
     /**
-     * @var \Ucms\Search\Facet[]
+     * @var \Ucms\Search\AbstractFacet[]
      */
     protected $aggregations = [];
 
@@ -189,7 +189,7 @@ class Search
      * @param string $field
      *   Field name if different from the name
      *
-     * @return \Ucms\Search\Facet
+     * @return \Ucms\Search\TermFacet
      */
     public function createTermAggregation($name, $values = null, $operator = Query::OP_OR, $field = null)
     {
@@ -197,7 +197,7 @@ class Search
             $field = $name;
         }
 
-        $facet = (new Facet($field, 'terms', $operator))
+        $facet = (new TermFacet($field, $operator))
           ->setSelectedValue($values)
         ;
 
@@ -244,7 +244,7 @@ class Search
     /**
      * Get aggregations
      *
-     * @return \Ucms\Search\Facet[]
+     * @return \Ucms\Search\AbstractFacet[]
      */
     public function getAggregations()
     {
