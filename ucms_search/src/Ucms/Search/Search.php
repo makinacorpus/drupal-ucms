@@ -42,7 +42,7 @@ class Search
     protected $fields = [];
 
     /**
-     * @var array $aggregations
+     * @var \Ucms\Search\Facet[]
      */
     protected $aggregations = [];
 
@@ -177,7 +177,7 @@ class Search
     /**
      * Add facet aggregation
      *
-     * @param string $field
+     * @param string $name
      * @param mixed[] $currentValues
      *   Current values for filtering if any
      * @param boolean $filter
@@ -189,18 +189,21 @@ class Search
      * @param string $field
      *   Field name if different from the name
      *
-     * @return \Ucms\Search\Search
+     * @return \Ucms\Search\Facet
      */
-    public function addTermAggregation($name, $values = null, $operator = Query::OP_OR, $field = null)
+    public function createTermAggregation($name, $values = null, $operator = Query::OP_OR, $field = null)
     {
-        $this->aggregations[$name] = [
-            'type'      => 'terms',
-            'field'     => empty($field) ? $name : $field,
-            'values'    => $values,
-            'operator'  => $operator,
-        ];
+        if (!$field) {
+            $field = $name;
+        }
 
-        return $this;
+        $facet = (new Facet($field, 'terms', $operator))
+          ->setSelectedValue($values)
+        ;
+
+        $this->aggregations[$name] = $facet;
+
+        return $facet;
     }
 
     /**
@@ -213,22 +216,24 @@ class Search
     {
         $ret = [];
 
-        foreach ($this->aggregations as $name => $data) {
-            if ($data['values']) {
+        foreach ($this->aggregations as $name => $facet) {
+            $values = $facet->getSelectedValues();
+
+            if ($values) {
                 $this
                     ->getFilterQuery()
                     ->matchTermCollection(
-                        $data['field'],
-                        $data['values'],
+                        $facet->getField(),
+                        $values,
                         null,
-                        $data['operator']
+                        $facet->getOperator()
                     )
                 ;
             }
 
             $ret[$name] = [
                 'terms' => [
-                    'field' => $data['field'],
+                    'field' => $facet->getField(),
                 ],
             ];
         }
@@ -239,8 +244,7 @@ class Search
     /**
      * Get aggregations
      *
-     * @return array
-     *   Aggregation data
+     * @return \Ucms\Search\Facet[]
      */
     public function getAggregations()
     {

@@ -57,15 +57,10 @@ function ucms_search_client_get() {
  *
  * @param string $index
  *
- * @return \Ucms\Search\SearchContext
+ * @return \Ucms\Search\Search
  */
-function ucms_search_context_create($index) {
-  return (new \Ucms\Search\SearchContext(
-    (new \Ucms\Search\Search(
-      ucms_search_client_get()
-    ))
-    ->setIndex($index)
-  ));
+function ucms_search_create($index) {
+  return (new \Ucms\Search\Search(ucms_search_client_get()))->setIndex($index);
 }
 
 /**

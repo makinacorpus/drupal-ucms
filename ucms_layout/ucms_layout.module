@@ -2,6 +2,21 @@
 /**
  * @file
  * UCMS - Layout management module.
+ *
+ * For the sake of consistency, layouts cannot be nodes, otherwise layouts
+ * could be embeded into layouts, which would make a serious and non human
+ * comprehensible layout-ception. Problem with this model is that we need
+ * to implement by ourselves the access API for layouts, but this is the
+ * only custom access API that will be implemented at all.
+ *
+ * @todo
+ *   - better AJAX/REST requests handling
+ *   - more detailed data structure (options, status)
+ *   - alteration for access checks
+ *   - preview mode (display unauthorized or unpublished content)
+ *   - non AJAX edit forms for accessibility
+ *   - regions filtering (per-theme global configuration) and checks
+ *   - unit testing (sorry should have done that earlier).
  */
 
 /**

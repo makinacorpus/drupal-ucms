@@ -16,7 +16,7 @@ function ucms_site_boot() {
       $instance = &drupal_static('ucms_site_get', null);
       $instance = $site;
     } else {
-      watchdog(__FUNCTION__, "Non existing site: @site", ['@site' => $_SERVER['HTTP_HOST']], WATCHDOG_ERROR);
+      //watchdog(__FUNCTION__, "Non existing site: @site", ['@site' => $_SERVER['HTTP_HOST']], WATCHDOG_ERROR);
     }
   }
   // @todo Else attempt to find another contextual information (GET parameter?)

@@ -116,14 +116,12 @@ function ucms_contrib_admin_content_page($types = null) {
     $ret['#favorites'] = ucms_contrib_favorite_render();
   }
 
-  // @todo Remove me later
-  $types = [UCMS_CONTENT_TYPE_EDITORIAL, UCMS_CONTENT_TYPE_MEDIA];
-
-  $_GET['type'] = 'pouet';
-
-  $search = ucms_search_context_create(UCMS_SEARCH_INDEX_BACK)
-    ->registerFacet('type', node_type_get_names())
-    ->prepareSearch($_GET)
+  $search = ucms_search_create(UCMS_SEARCH_INDEX_BACK);
+  $typeFacet = $search
+    ->createTermAggregation('type', null)
+    ->setChoicesMap(
+      node_type_get_names()
+    )
   ;
 
   if ($types !== null) {

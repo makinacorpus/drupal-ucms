@@ -31,6 +31,7 @@ class Response
         $this->search = $search;
         $this->rawResponse = $rawResponse;
         $this->isSuccessful = !empty($rawResponse['_shards']) && count($rawResponse['_shards']['successful']);
+        $this->parseAggregations();
     }
 
     /**
@@ -99,23 +100,28 @@ class Response
      *   Search::addTermAggregation() method, values are maps of result
      *   counts keyed by the field value
      */
-    public function getTermAggregations()
+    protected function parseAggregations()
     {
-        $ret = [];
+        if (!$this->isSuccessful()) {
+            return;
+        }
 
-        foreach ($this->search->getAggregations() as $name => $data) {
-            if ('terms' === $data['type']) {
+        foreach ($this->search->getAggregations() as $name => $facet) {
+
+            $choices = [];
+
+            if ('terms' === $facet->getType()) {
 
                 if (!isset($this->rawResponse['aggregations'][$name])) {
                     throw new \RuntimeException(sprintf("Aggregation '%s' is missing from response", $name));
                 }
 
                 foreach ($this->rawResponse['aggregations'][$name]['buckets'] as $bucket) {
-                    $ret[$name][$bucket['key']] = $bucket['doc_count'];
+                    $choices[$bucket['key']] = $bucket['doc_count'];
                 }
             }
-        }
 
-        return $ret;
+            $facet->setChoices($choices);
+        }
     }
 }

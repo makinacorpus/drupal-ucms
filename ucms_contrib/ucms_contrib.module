@@ -1,7 +1,10 @@
 <?php
 /**
  * @file
- * UCMS - Back office and various contribution improvements.
+ * UCMS  - Contribution.
+ *
+ * This module provides a full UI based upon drag'n'drop for editing content
+ * and manipulating layouts.
  */
 
 /**
@@ -49,9 +52,21 @@ function ucms_contrib_menu() {
   $items['admin/contribute'] = [
     'title'             => "Content",
     'page callback'     => 'ucms_contrib_admin_content_page',
-    'page arguments'    => [],
+    'page arguments'    => [UCMS_CONTENT_TYPE_EDITORIAL],
     'access arguments'  => ['access content overview'],
     'file'              => 'ucms_contrib.pages.inc',
+  ];
+  $items['admin/contribute/text'] = [
+    'title'             => "Content",
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+  ];
+  $items['admin/contribute/media'] = [
+    'title'             => "Media",
+    'page callback'     => 'ucms_contrib_admin_content_page',
+    'page arguments'    => [UCMS_CONTENT_TYPE_MEDIA],
+    'access arguments'  => ['access content overview'],
+    'file'              => 'ucms_contrib.pages.inc',
+    'type'              => MENU_LOCAL_TASK,
   ];
 
   // Cart operations.
@@ -222,7 +237,7 @@ function ucms_contrib_type_to_list($types = []) {
         break;
 
       case UCMS_CONTENT_TYPE_MEDIA:
-        // Nothing here.
+        $ret[] = 'image';
         break;
     }
   }

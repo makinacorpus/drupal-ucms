@@ -17,6 +17,15 @@ function ucms_layout_ajax_region_item_add($layout) {
 
   $query = $_POST;
 
+  // CSRF protection.
+  if (empty($query['token'])) {
+    return MENU_ACCESS_DENIED; // No CSRF token.
+  }
+  if (!drupal_valid_token($query['token'])) {
+    return MENU_ACCESS_DENIED; // Invalid CSRF token.
+  }
+
+  // Input validation.
   if (!$layout instanceof \Ucms\Layout\Layout) {
     return MENU_NOT_FOUND;
   }
@@ -76,6 +85,15 @@ function ucms_layout_ajax_region_item_remove($layout) {
 
   $query = $_POST;
 
+  // CSRF protection.
+  if (empty($query['token'])) {
+    return MENU_ACCESS_DENIED; // No CSRF token.
+  }
+  if (!drupal_valid_token($query['token'])) {
+    return MENU_ACCESS_DENIED; // Invalid CSRF token.
+  }
+
+  // Input validation.
   if (!$layout instanceof \Ucms\Layout\Layout) {
     return MENU_NOT_FOUND;
   }
