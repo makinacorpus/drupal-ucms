@@ -4,8 +4,8 @@
   </div>
   <div id="ucms-contrib-results">
     <?php echo render($search); ?>
-    <?php foreach ($items as $item): ?>
-      <div class="ucms-contrib-result">
+    <?php foreach ($items as $nid => $item): ?>
+      <div class="ucms-contrib-result" data-nid="<?php echo $nid; ?>">
         <?php echo render($item); ?>
       </div>
     <?php endforeach; ?>

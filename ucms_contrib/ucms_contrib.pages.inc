@@ -92,12 +92,6 @@ function ucms_contrib_admin_content_search_form_submit($form, &$form_state) {
  */
 function ucms_contrib_admin_content_page($types = null) {
 
-  /*
-   * FIXME Testing, REMOVE ME !
-  ucms_search_index_reindex(UCMS_SEARCH_INDEX_PUBLIC);
-  ucms_search_index_reindex(UCMS_SEARCH_INDEX_BACK);
-   */
-
   $limit  = 16;
   $page   = isset($_GET['page']) ? ($_GET['page'] + 1) : 1;
 
@@ -125,10 +119,8 @@ function ucms_contrib_admin_content_page($types = null) {
   // Build facets
   $typeFacet = $ret['#facets']['type'] = $search
     ->createTermAggregation('type', null)
+    ->setChoicesMap(node_type_get_names())
     ->setTitle(t("Content type"))
-    ->setChoicesMap(
-      node_type_get_names()
-    )
   ;
   // @todo This should be a generic API, somewhere
   if (!empty($_GET[$typeFacet->getField()])) {
@@ -141,7 +133,6 @@ function ucms_contrib_admin_content_page($types = null) {
 
   $ownerFacet = $ret['#facets']['owner'] = $search
     ->createTermAggregation('owner', null)
-    ->setTitle(t("Owner"))
     ->setChoicesCallback(function ($values) {
       if (is_array($values)) {
         if ($accounts = user_load_multiple($values)) {
@@ -154,6 +145,7 @@ function ucms_contrib_admin_content_page($types = null) {
         }
       }
     })
+    ->setTitle(t("Owner"))
   ;
   // @todo This should be a generic API, somewhere
   if (!empty($_GET[$ownerFacet->getField()])) {
