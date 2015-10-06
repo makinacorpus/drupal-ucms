@@ -97,18 +97,12 @@ function ucms_contrib_admin_content_page($types = null) {
 
   $ret = [
     '#theme'    => 'ucms_contrib_content_page',
-    '#attached' => [
-      'css' => [
-        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css',
-      ],
-      'js' => [
-        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js',
-      ],
-    ],
     '#items'    => [],
     '#facets'   => [],
     '#search'   => drupal_get_form('ucms_contrib_admin_content_search_form'),
   ];
+
+  _ucms_contrib_render_attach($ret);
 
   if (user_access('use favorites')) {
     $ret['#favorites'] = ucms_contrib_favorite_render();

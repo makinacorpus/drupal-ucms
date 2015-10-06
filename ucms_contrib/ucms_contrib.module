@@ -105,7 +105,7 @@ function ucms_contrib_permission() {
 function ucms_contrib_theme() {
   return [
     'ucms_contrib_cart' => [
-      'variables' => ['account' => null, 'items' => []],
+      'variables' => ['account' => null, 'items' => [], 'actions' => null],
       'template'  => 'ucms-contrib-cart',
     ],
     'ucms_contrib_content_page' => [
@@ -123,29 +123,22 @@ function ucms_contrib_theme() {
 }
 
 /**
- * Implements hook_block_info().
+ * Implements hook_page_build().
  */
-function ucms_contrib_block_info() {
-  return [
-    'cart' => [
-      'info'  => "[Contrib] Cart",
-      'cache' => DRUPAL_NO_CACHE,
-    ],
-  ];
+function ucms_contrib_page_build(&$page) {
+  if (!path_is_admin(current_path()) && user_access('use favorites')) {
+    // @todo Maybe later, render this using AJAX?
+    $page['page_top']['ucms_cart'] = ucms_contrib_favorite_render();
+    _ucms_contrib_render_attach($page['page_top']['ucms_cart']);
+  }
 }
 
 /**
- * Implements hook_block_view().
+ * Append CSS and JS to #attached on selected element.
  */
-function ucms_contrib_block_view($delta = '') {
-  switch ($delta) {
-
-    case 'cart':
-      if (user_access('use favorites')) {
-        return ['content' => ucms_contrib_favorite_render()];
-      }
-      break;
-  }
+function _ucms_contrib_render_attach(&$build) {
+  $build['#attached']['css'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css';
+  $build['#attached']['js'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js';
 }
 
 /**
@@ -398,6 +391,29 @@ function ucms_contrib_favorite_render($account = null) {
       $ret['#items'][$nid]['remove'] = drupal_get_form('ucms_contrib_favorite_remove_form_' . $nid, $nid);
     }
   }
+
+  $actions = [];
+  if (user_access('access content overview')) {
+    $actions = [
+      l(t("Content admin"), 'admin/contribute'),
+    ];
+  }
+  if (($layout = ucms_layout_context_get()) && ucms_layout_access('update', $layout)) {
+    if (empty($_GET['edit'])) {
+      $actions[] = l(t("Edit page"), current_path(), [
+        'query' => ['edit' => 1] + drupal_get_query_parameters(),
+      ]);
+    } else {
+      $actions[] = l(t("Back to page"), current_path(), [
+        'query' => drupal_get_query_parameters(null, ['edit', 'q']),
+      ]);
+    }
+  }
+
+  $ret['#actions'] = [
+    '#theme' => 'item_list__ucms_cart_actions',
+    '#items' => $actions,
+  ];
 
   return $ret;
 }

@@ -117,7 +117,7 @@ function ucms_layout_permission() {
  *
  * @param string $op
  *   May be 'view', 'update' or 'delete'.
- * @param int| $id
+ * @param int|\Ucms\Layout\Layout $id
  *   Layout object or identifier.
  * @param stdClass $acount
  *   The account to check.
@@ -127,8 +127,9 @@ function ucms_layout_permission() {
 function ucms_layout_access($op, $layout, $account = null) {
 
   if (!$account) {
-    $account = $GLOBALS['user']->uid;
+    $account = $GLOBALS['user'];
   }
+
   if (!$layout instanceof \Ucms\Layout\Layout) {
     $layout = ucms_layout_load($layout);
     if (!$layout) { // Is not a layout.
@@ -264,6 +265,10 @@ function ucms_layout_block_view($delta = '') {
       return node_access('view', $node);
     });
 
+    if (empty($map) && empty($_GET['edit'])) {
+      return;
+    }
+
     /* @var $item \Ucms\Layout\Item */
     foreach ($region as $item) {
       $nid = $item->getNodeId();
@@ -276,6 +281,8 @@ function ucms_layout_block_view($delta = '') {
         ];
       }
     }
+  } else if (empty($_GET['edit'])) {
+    return;
   }
 
   return ['content' => [
