@@ -157,13 +157,46 @@ function theme_ucms_search_facet($variables) {
 
   // @todo Improve this
   if ($facet instanceof \Ucms\Search\TermFacet) {
-    $links = [];
-    $field = $facet->getField();
-    foreach ($facet->getFormattedChoices() as $value => $string) {
-      $links[$value] = l($string, current_path(), [
-        'query' => drupal_get_query_parameters([$field => $value]),
-      ]);
+
+    $links    = [];
+    $field    = $facet->getField();
+    $values   = $facet->getSelectedValues();
+    $choices  = $facet->getFormattedChoices();
+
+    if (empty($choices)) {
+      // There is no choice for this field.
+      $links['_empty'] = t("No values");
+
+    } else if (1 === count($choices)) {
+      // There is only one choice, and it might or might not be selected.
+      foreach ($choices as $value => $string) {
+        if (in_array($value, $values)) {
+          $links[$value] = l('- ' . $string, current_path(), [
+            'query' => drupal_get_query_parameters(null, [$field, 'q']),
+            'html'  => true,
+          ]);
+        } else {
+          $links[$value] = $string;
+        }
+      }
+
+    } else {
+      // There is more than once choice, some might be selected.
+      foreach ($choices as $value => $string) {
+        if (in_array($value, $values)) {
+          $links[$value] = l('- ' . $string, current_path(), [
+            'query' => drupal_get_query_parameters(null, [$field, 'q']),
+            'html'  => true,
+          ]);
+        } else {
+          $links[$value] = l($string, current_path(), [
+            'query' => [$field => $value] + drupal_get_query_parameters(),
+            'html'  => true,
+          ]);
+        }
+      }
     }
-    return theme('item_list__ucms_search_facet_terms', ['items' => $links]);
+
+    return theme('item_list__ucms_search_facet_terms', ['title' => $facet->getTitle(), 'items' => $links]);
   }
 }

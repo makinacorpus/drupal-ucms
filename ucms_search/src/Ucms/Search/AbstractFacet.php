@@ -121,6 +121,10 @@ abstract class AbstractFacet
      */
     public function setSelectedValues($selectedValues = [])
     {
+        if (null === $selectedValues) {
+            $selectedValues = [];
+        }
+
         $this->selectedValues = $selectedValues;
 
         return $this;

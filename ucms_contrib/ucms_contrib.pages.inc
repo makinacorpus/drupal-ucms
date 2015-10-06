@@ -74,10 +74,13 @@ function ucms_contrib_admin_content_search_form_submit($form, &$form_state) {
     $query = ['s' => $form_state['values']['query']];
     $form_state['redirect'] = [
       current_path(),
-      ['query' => drupal_get_query_parameters($query)],
+      ['query' => $query + drupal_get_query_parameters()],
     ];
   } else {
-    $form_state['redirect'] = current_path();
+    $form_state['redirect'] = [
+      current_path(),
+      ['query' => drupal_get_query_parameters(null, ['q', 's'])],
+    ];
   }
 }
 
@@ -122,16 +125,42 @@ function ucms_contrib_admin_content_page($types = null) {
   // Build facets
   $typeFacet = $ret['#facets']['type'] = $search
     ->createTermAggregation('type', null)
+    ->setTitle(t("Content type"))
     ->setChoicesMap(
       node_type_get_names()
     )
   ;
-
+  // @todo This should be a generic API, somewhere
   if (!empty($_GET[$typeFacet->getField()])) {
     if (is_array($_GET[$typeFacet->getField()])) {
       $typeFacet->setSelectedValues($_GET[$typeFacet->getField()]);
     } else {
       $typeFacet->setSelectedValues([$_GET[$typeFacet->getField()]]);
+    }
+  }
+
+  $ownerFacet = $ret['#facets']['owner'] = $search
+    ->createTermAggregation('owner', null)
+    ->setTitle(t("Owner"))
+    ->setChoicesCallback(function ($values) {
+      if (is_array($values)) {
+        if ($accounts = user_load_multiple($values)) {
+          array_walk($accounts, 'format_username');
+          return $accounts;
+        }
+      } else {
+        if ($account = user_load($values)) {
+          return format_username($account);
+        }
+      }
+    })
+  ;
+  // @todo This should be a generic API, somewhere
+  if (!empty($_GET[$ownerFacet->getField()])) {
+    if (is_array($_GET[$ownerFacet->getField()])) {
+      $ownerFacet->setSelectedValues($_GET[$ownerFacet->getField()]);
+    } else {
+      $ownerFacet->setSelectedValues([$_GET[$ownerFacet->getField()]]);
     }
   }
 
