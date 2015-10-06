@@ -18,7 +18,7 @@ const UCMS_SEARCH_LIMIT = 100;
 /**
  * Default number of items index each cron run.
  */
-const UCMS_SEARCH_CRON_INDEX_LIMIT = 1000;
+const UCMS_SEARCH_CRON_INDEX_LIMIT = 500;
 
 /**
  * Hopefully, you did run composer install.
@@ -53,87 +53,19 @@ function ucms_search_client_get() {
 }
 
 /**
- * Proceed to a full search
+ * Create new search
  *
  * @param string $index
- * @param string|\Ucms\Search\Query $query
- * @param string|\Ucms\Search\Query $filterQuery
- * @param int $limit
- * @param int $page
  *
- * @return \Ucms\Search\Response
+ * @return \Ucms\Search\SearchContext
  */
-function ucms_search_do_search($index, $query, $filterQuery = null, $limit = UCMS_SEARCH_LIMIT, $page = 1, $fields = [], $facets = []) {
-
-  $isQueryEmpty = true;
-
-  if (null === $query) { // Match all.
-    $bodyQuery = ['match_all' => []];
-  } else {
-    if (is_array($query)) {
-      $bodyQuery = $query;
-    } else {
-      $bodyQuery = ['query_string' => ['query' => (string)$query]];
-    }
-    $isQueryEmpty = false;
-  }
-
-  if (null !== $filterQuery) {
-    if (is_array($filterQuery)) {
-      $filterBody = $filterQuery;
-    } else {
-      $filterBody = ['query_string' => ['query' => (string)$filterQuery]];
-    }
-  }
-
-  if ($filterBody) {
-
-    $filterBody = [
-      'fquery' => [
-        'query'   => $filterBody,
-        '_cache'  => true,
-      ],
-    ];
-
-    if ($isQueryEmpty) {
-      $body = [
-        'query' => [
-          'constant_score' => [
-            'filter' => $filterBody,
-          ],
-        ],
-      ];
-    } else {
-      $body = [
-        'query' => [
-          'filtered' => [
-           'query'  => $bodyQuery,
-           'filter' => $filterBody,
-          ],
-        ],
-      ];
-    }
-  } else {
-    $body = [
-      'query' => $bodyQuery,
-    ];
-  }
-
-  if (!empty($fields)) {
-    $body['fields'] = $fields;
-  }
-
-  $rawResponse = ucms_search_client_get()
-    ->search([
-      'index' => $index,
-      'type'  => 'node',
-      'body'  => $body,
-      'from'  => max([0, $page - 1]) * $limit,
-      'size'  => $limit,
-    ])
-  ;
-
-  return new \Ucms\Search\Response($rawResponse);
+function ucms_search_context_create($index) {
+  return (new \Ucms\Search\SearchContext(
+    (new \Ucms\Search\Search(
+      ucms_search_client_get()
+    ))
+    ->setIndex($index)
+  ));
 }
 
 /**
@@ -145,7 +77,9 @@ function ucms_search_index_clear($index, $doReindex = false) {
   require_once __DIR__ . '/ucms_search.index.inc';
   _ucms_search_index_delete($index);
   _ucms_search_index_create($index);
-  _ucms_search_index_reindex($index);
+  if ($doReindex) {
+    _ucms_search_index_reindex($index);
+  }
 }
 
 /**

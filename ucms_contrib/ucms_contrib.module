@@ -127,7 +127,7 @@ function ucms_contrib_block_view($delta = '') {
 
     case 'cart':
       if (user_access('use favorites')) {
-        return ucms_contrib_favorite_render();
+        return ['content' => ucms_contrib_favorite_render()];
       }
       break;
   }

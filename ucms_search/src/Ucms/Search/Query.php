@@ -221,7 +221,7 @@ class Query extends CollectionQuery
     }
 
     /**
-     * Match term collection (AND by default)
+     * Match term collection (OR by default)
      *
      * @param string $field
      * @param string[]|\Ucms\Search\TermQuery[] $terms
@@ -230,7 +230,7 @@ class Query extends CollectionQuery
      *
      * @return \Ucms\Search\Query
      */
-    public function matchTermCollection($field = null, $terms, $boost = null, $operator = self::OP_AND)
+    public function matchTermCollection($field = null, $terms, $boost = null, $operator = self::OP_OR)
     {
         if (!is_array($terms)) {
             $terms = [$terms];

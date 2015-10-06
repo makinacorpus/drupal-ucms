@@ -1,7 +1,7 @@
 {
-	"name" : "ucms/ucms-search",
+	"name" : "ucms/ucms-layout",
 	"type" : "library",
-	"description" : "UCMS elastic search connector.",
+	"description" : "UCMS layout manager.",
 	"homepage" : "http://github.com/makinacorpus/ucms",
 	"license" : "GPL-2",
 	"authors" : [{
@@ -11,11 +11,8 @@
 	],
 	"autoload" : {
 		"psr-0" : {
-			"Ucms\\Search\\" : "src"
+			"Ucms\\Layout\\" : "src"
 		}
 	},
-	"minimum-stability" : "dev",
-	"require" : {
-		"elasticsearch/elasticsearch" : "~2.0"
-	}
+	"minimum-stability" : "dev"
 }

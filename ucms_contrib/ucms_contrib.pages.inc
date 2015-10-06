@@ -97,36 +97,55 @@ function ucms_contrib_admin_content_page($types = null) {
 
   $limit  = 16;
   $page   = isset($_GET['page']) ? ($_GET['page'] + 1) : 1;
-  $filter = null;
-  $query  = ucms_search_query_create();
 
   $ret = [
-    '#theme'  => 'ucms_contrib_content_page',
-    '#items'  => [],
-    '#search' => drupal_get_form('ucms_contrib_admin_content_search_form'),
+    '#theme'    => 'ucms_contrib_content_page',
+    '#attached' => [
+      'css' => [
+        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css',
+      ],
+      'js' => [
+        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js',
+      ],
+    ],
+    '#items'    => [],
+    '#search'   => drupal_get_form('ucms_contrib_admin_content_search_form'),
   ];
 
   if (user_access('use favorites')) {
     $ret['#favorites'] = ucms_contrib_favorite_render();
   }
 
-  if (!empty($_GET['s'])) {
-    $query->matchTerm('combined', $_GET['s'], null, 0.8);
-  }
-
   // @todo Remove me later
   $types = [UCMS_CONTENT_TYPE_EDITORIAL, UCMS_CONTENT_TYPE_MEDIA];
 
+  $_GET['type'] = 'pouet';
+
+  $search = ucms_search_context_create(UCMS_SEARCH_INDEX_BACK)
+    ->registerFacet('type', node_type_get_names())
+    ->prepareSearch($_GET)
+  ;
+
   if ($types !== null) {
-    $filter = ucms_search_query_create();
-    $filter->matchTermCollection('type', ucms_contrib_type_to_list($types), null, \Ucms\Search\Query::OP_OR);
+    $search
+      ->getFilterQuery()
+      ->matchTermCollection('type', ucms_contrib_type_to_list($types))
+    ;
   }
 
-  if (!count($query)) {
-    $response = ucms_search_do_search(UCMS_SEARCH_INDEX_BACK, null, $filter, $limit, $page, ['_id']);
-  } else {
-    $response = ucms_search_do_search(UCMS_SEARCH_INDEX_BACK, $query, $filter, $limit, $page, ['_id']);
+  if (!empty($_GET['s'])) {
+    $search
+      ->getQuery()
+      ->matchTerm('combined', $_GET['s'], null, 0.8)
+    ;
   }
+
+  $response = $search
+    ->setLimit($limit)
+    ->setPage($page)
+    ->addField('_id')
+    ->doSearch()
+  ;
 
   pager_default_initialize($response->getTotal(), $limit);
 

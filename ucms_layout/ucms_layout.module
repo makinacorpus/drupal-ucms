@@ -1,1 +1,292 @@
 <?php
+/**
+ * @file
+ * UCMS - Layout management module.
+ */
+
+/**
+ * Hopefully, you did run composer install.
+ */
+require_once __DIR__ . '/vendor/autoload.php';
+
+/**
+ * Because we do need this.
+ */
+require_once __DIR__ . '/ucms_layout.crud.inc';
+
+/**
+ * FIXME: FOR TESTING, REMOVE ME THEN.
+ */
+function ucms_layout_init() {
+  return;
+  $layout = ucms_layout_load(1);
+  foreach (array('content', 'sidebar_first', 'sidebar_second') as $name) {
+    for ($i = 0; $i < rand(3, 10); ++$i) {
+      $item = new \Ucms\Layout\Item(rand(100, 5000));
+      switch (rand(0, 2)) {
+        case 0:
+          $layout->getRegion($name)->append($item);
+          break;
+        case 1:
+          $layout->getRegion($name)->prepend($item);
+          break;
+        case 2:
+          $layout->getRegion($name)->addAt($item, rand(0, 10));
+          break;
+      }
+    }
+  }
+  ucms_layout_save($layout);
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_layout_menu() {
+  $items = [];
+
+  $items['layout/%ucms_layout'] = [
+    'title callback'    => 'ucms_layout_title',
+    'title arguments'   => [1],
+    'page callback'     => 'ucms_layout_blank',
+    'page arguments'    => [1],
+    'access arguments'  => ['access content'],
+  ];
+
+  $items['admin/ucms/layout/%ucms_layout/add'] = [
+    'page callback'     => 'ucms_layout_ajax_region_item_add',
+    'page arguments'    => [3],
+    'access callback'   => 'ucms_layout_access',
+    'access arguments'  => ['update', 3],
+    'file'              => 'ucms_layout.ajax.inc',
+    'type'              => MENU_CALLBACK,
+  ];
+
+  $items['admin/ucms/layout/%ucms_layout/remove'] = [
+    'page callback'     => 'ucms_layout_ajax_region_item_remove',
+    'page arguments'    => [3],
+    'access callback'   => 'ucms_layout_access',
+    'access arguments'  => ['update', 3],
+    'file'              => 'ucms_layout.ajax.inc',
+    'type'              => MENU_CALLBACK,
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_layout_permission() {
+  return [
+    'create layout' => [
+      'title' => t("Create a layout"),
+    ],
+    'update own layout' => [
+      'title' => t("Update own layout"),
+    ],
+    'delete own layout' => [
+      'title' => t("Delete own layout"),
+    ],
+    'update any layout' => [
+      'title' => t("Update any layout"),
+    ],
+    'delete any layout' => [
+      'title' => t("Delete any layout"),
+    ],
+  ];
+}
+
+/**
+ * Layout access.
+ *
+ * @param string $op
+ *   May be 'view', 'update' or 'delete'.
+ * @param int| $id
+ *   Layout object or identifier.
+ * @param stdClass $acount
+ *   The account to check.
+ *
+ * @return boolean
+ */
+function ucms_layout_access($op, $layout, $account = null) {
+
+  if (!$account) {
+    $account = $GLOBALS['user']->uid;
+  }
+  if (!$layout instanceof \Ucms\Layout\Layout) {
+    $layout = ucms_layout_load($layout);
+    if (!$layout) { // Is not a layout.
+      return false;
+    }
+  }
+
+  switch ($op) {
+
+    case 'view':
+      return user_access('access content', $account);
+
+    case 'update':
+      if (user_access('update any layout', $account)) {
+        return true;
+      }
+      if (user_access('update own layout') && $account->uid == $layout->getId()) {
+        return true;
+      }
+      return false;;
+
+    case 'delete':
+      if (user_access('delete any layout', $account)) {
+        return true;
+      }
+      if (user_access('delete own layout') && $account->uid == $layout->getId()) {
+        return true;
+      }
+      return false;;
+
+    default:
+      return false;
+  }
+}
+
+/**
+ * Get current contextual layout.
+ *
+ * @return \Ucms\Layout\Layout
+ */
+function ucms_layout_context_get($set = false) {
+  $instance = &drupal_static(__FUNCTION__);
+  if (false !== $set) {
+    if (null === $set) {
+      $instance = null;
+    }
+    if ($set instanceof \Ucms\Layout\Layout) {
+      $instance = $set;
+    }
+  }
+  return $instance;
+}
+
+/**
+ * Menu title callback.
+ */
+function ucms_layout_title($layout) {
+  if ($layout instanceof \Ucms\Layout\Layout) {
+    return $layout->getTitle();
+  }
+  return t("Layout");
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ucms_layout_theme() {
+  return [
+    'ucms_layout_item' => [
+      'variables' => ['nid' => null, 'node' => null, 'view_mode' => 'teaser'],
+      'template'  => 'ucms-layout-item',
+    ],
+    'ucms_layout_region' => [
+      'variables' => ['items' => [], 'name' => 'content'],
+      'template'  => 'ucms-layout-region',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function ucms_layout_block_info() {
+  $ret = [];
+  foreach (system_list('theme') as $theme => $info) {
+    if ($info->status) {
+      foreach (system_region_list($theme) as $region => $title) {
+        $ret[$theme . ':' . $region] = [
+          'info' => "[Layout] " . $title . ' - ' . $info->info['name'],
+        ];
+      }
+    }
+  }
+  return $ret;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function ucms_layout_block_view($delta = '') {
+  global $theme;
+
+  if (!strpos($delta, ':')) {
+    return; // Invalid delta.
+  }
+
+  $layout = ucms_layout_context_get();
+  if (!$layout instanceof \Ucms\Layout\Layout) {
+    return; // No layout on page.
+  }
+
+  list($btheme, $region) = explode(':', $delta, 2);
+  if (!$btheme) {
+    return; // No theme set.
+  }
+  if (!$region) {
+    return; // No region set.
+  }
+  if ($btheme !== $theme) {
+    return; // Wrong theme.
+  }
+
+  $items  = [];
+  $region = $layout->getRegion($region);
+
+  // Preload all nodes for performance.
+  $nodeIdList = $region->getAllNodeIds();
+
+  if ($nodeIdList) {
+    $map = node_load_multiple($nodeIdList);
+
+    $map = array_filter($map, function ($node) {
+      return node_access('view', $node);
+    });
+
+    /* @var $item \Ucms\Layout\Item */
+    foreach ($region as $item) {
+      $nid = $item->getNodeId();
+      if (isset($map[$nid])) {
+        $items[] = [
+          '#theme'      => 'ucms_layout_item',
+          '#nid'        => $item->getNodeId(),
+          '#node'       => $map[$nid],
+          '#view_mode'  => $item->getViewMode(),
+        ];
+      }
+    }
+  }
+
+  return ['content' => [
+    '#theme'  => 'ucms_layout_region',
+    '#name'   => $region->getName(),
+    '#items'  => $items,
+  ]];
+}
+
+/**
+ * Blank page.
+ */
+function ucms_layout_blank($layout) {
+  if ($layout instanceof \Ucms\Layout\Layout) {
+    ucms_layout_context_get($layout);
+  }
+  return [];
+}
+
+/**
+ * Implements template_preprocess_HOOK().
+ */
+function template_preprocess_ucms_layout_item(&$variables) {
+  if (isset($variables['node'])) {
+    $variables['content'] = node_view($variables['node'], $variables['view_mode']);
+  } else {
+    $variables['content'] = [];
+  }
+}

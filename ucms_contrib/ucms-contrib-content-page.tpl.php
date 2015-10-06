@@ -1,13 +1,17 @@
 <div class="container">
-  <div class="col-md-3">
+  <div id="ucms-contrib-facets">
     <?php echo render($filters); ?>
   </div>
-  <div class="col-md-6">
+  <div id="ucms-contrib-results">
     <?php echo render($search); ?>
-    <?php echo render($items); ?>
+    <?php foreach ($items as $item): ?>
+      <div class="ucms-contrib-result">
+        <?php echo render($item); ?>
+      </div>
+    <?php endforeach; ?>
     <?php echo render($pager); ?>
   </div>
-  <div class="col-md-6">
+  <div id="ucms-contrib-cart">
     <?php echo render($favorites); ?>
   </div>
 </div>

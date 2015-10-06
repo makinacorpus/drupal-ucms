@@ -5,14 +5,9 @@ namespace Ucms\Search;
 class Response
 {
     /**
-     * @var int
+     * @var \Ucms\Search\Search
      */
-    protected $limit;
-
-    /**
-     * @var int
-     */
-    protected $page;
+    protected $search;
 
     /**
      * @var array
@@ -27,14 +22,14 @@ class Response
     /**
      * Default constructor
      *
+     * @param \Ucms\Search\Search $search
      * @param array $rawResponse
      *   \Elasticsearch\Client::search() method return
      */
-    public function __construct($rawResponse, $limit = UCMS_SEARCH_LIMIT, $page = 1)
+    public function __construct(Search $search, $rawResponse)
     {
+        $this->search = $search;
         $this->rawResponse = $rawResponse;
-        $this->limit = $limit;
-        $this->page = $page;
         $this->isSuccessful = !empty($rawResponse['_shards']) && count($rawResponse['_shards']['successful']);
     }
 
@@ -55,7 +50,7 @@ class Response
      */
     public function getLimit()
     {
-        return $this->limit;
+        return $this->search->getLimit();
     }
 
     /**
@@ -65,7 +60,7 @@ class Response
      */
     public function getPage()
     {
-        return $this->page;
+        return $this->search->getPage();
     }
 
     /**
@@ -90,6 +85,34 @@ class Response
         if ($this->isSuccessful) {
             foreach ($this->rawResponse['hits']['hits'] as $document) {
                 $ret[] = $document['_id'];
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Get all term aggregations results
+     *
+     * @return array
+     *   First dimension keys are the aggregation name provided to the
+     *   Search::addTermAggregation() method, values are maps of result
+     *   counts keyed by the field value
+     */
+    public function getTermAggregations()
+    {
+        $ret = [];
+
+        foreach ($this->search->getAggregations() as $name => $data) {
+            if ('terms' === $data['type']) {
+
+                if (!isset($this->rawResponse['aggregations'][$name])) {
+                    throw new \RuntimeException(sprintf("Aggregation '%s' is missing from response", $name));
+                }
+
+                foreach ($this->rawResponse['aggregations'][$name]['buckets'] as $bucket) {
+                    $ret[$name][$bucket['key']] = $bucket['doc_count'];
+                }
             }
         }
 
