@@ -26,6 +26,17 @@ const UCMS_SEARCH_CRON_INDEX_LIMIT = 500;
 require_once __DIR__ . '/vendor/autoload.php';
 
 /**
+ * Implements hook_theme().
+ */
+function ucms_search_theme() {
+  return [
+    'ucms_search_facet' => [
+      'variables' => ['facet' => null],
+    ],
+  ];
+}
+
+/**
  * Create query.
  *
  * @return \Ucms\Search\Query
@@ -135,5 +146,24 @@ function ucms_search_cron() {
     foreach ($indices as $index) {
       ucms_search_node_index($index, node_load($nid));
     }
+  }
+}
+
+/**
+ * Renders a search facet.
+ */
+function theme_ucms_search_facet($variables) {
+  $facet = $variables['facet'];
+
+  // @todo Improve this
+  if ($facet instanceof \Ucms\Search\TermFacet) {
+    $links = [];
+    $field = $facet->getField();
+    foreach ($facet->getFormattedChoices() as $value => $string) {
+      $links[$value] = l($string, current_path(), [
+        'query' => drupal_get_query_parameters([$field => $value]),
+      ]);
+    }
+    return theme('item_list__ucms_search_facet_terms', ['items' => $links]);
   }
 }

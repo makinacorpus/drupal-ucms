@@ -109,6 +109,7 @@ function ucms_contrib_admin_content_page($types = null) {
       ],
     ],
     '#items'    => [],
+    '#facets'   => [],
     '#search'   => drupal_get_form('ucms_contrib_admin_content_search_form'),
   ];
 
@@ -117,12 +118,22 @@ function ucms_contrib_admin_content_page($types = null) {
   }
 
   $search = ucms_search_create(UCMS_SEARCH_INDEX_BACK);
-  $typeFacet = $search
+
+  // Build facets
+  $typeFacet = $ret['#facets']['type'] = $search
     ->createTermAggregation('type', null)
     ->setChoicesMap(
       node_type_get_names()
     )
   ;
+
+  if (!empty($_GET[$typeFacet->getField()])) {
+    if (is_array($_GET[$typeFacet->getField()])) {
+      $typeFacet->setSelectedValues($_GET[$typeFacet->getField()]);
+    } else {
+      $typeFacet->setSelectedValues([$_GET[$typeFacet->getField()]]);
+    }
+  }
 
   if ($types !== null) {
     $search

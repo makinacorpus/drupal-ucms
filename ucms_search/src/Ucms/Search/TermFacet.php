@@ -23,6 +23,11 @@ class TermFacet extends AbstractFacet
     private $choicesMap = [];
 
     /**
+     * @var callable
+     */
+    private $choicesCallback;
+
+    /**
      * Default constructor
      *
      * @param string $field
@@ -84,6 +89,31 @@ class TermFacet extends AbstractFacet
     }
 
     /**
+     * Set choices callback
+     *
+     * Works the same way as the choices map, but instead of giving a fixed
+     * value map, the given callback should take a value as first parameter
+     * and return the human readable value if found, null if not found.
+     *
+     * IMPORTANT: the callback MUST be able to get a parameter as parameter
+     * case in which it should return a keyed array with values as keys and
+     * values as titles, allowing to proceed to bulk operations for obvious
+     * performance reasons.
+     *
+     * Please note that fixed map has always the priority over the callable.
+     *
+     * @param callable $choicesCallback
+     *
+     * @return \Ucms\Search\TermFacet
+     */
+    public function setChoicesCallback(callable $choicesCallback)
+    {
+        $this->choicesCallback = $choicesCallback;
+
+        return $this;
+    }
+
+    /**
      * Set choices
      *
      * This in an internal function that may only be called after query has
@@ -112,11 +142,25 @@ class TermFacet extends AbstractFacet
         $ret = [];
 
         foreach ($this->choices as $value => $count) {
+            $title = null;
+
             if (isset($this->choicesMap[$value])) {
-                $ret[$value] = $this->choicesMap[$value] . " (". $count .")";
+                $title = $this->choicesMap[$value];
             } else {
-                $ret[$value] = $value . " (". $count .")";
+                // @todo Later optimisation allowing to run a multiple process
+                // callback (for exemple user_load_multiple())... for
+                // performances.
+                if (is_callable($this->choicesCallback)) {
+                    $title = call_user_func($this->choicesCallback, $value);
+                }
             }
+
+            // Default fallback on indexed value
+            if (!$title) {
+                $title = $value;
+            }
+
+            $ret[$value] = $title . " (". $count .")";
         }
 
         return $ret;

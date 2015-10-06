@@ -55,7 +55,7 @@ class Search
     {
         $this->client = $client;
         $this->query = new Query();
-        $this->filterQuery = new Query();
+        $this->filterQuery = (new Query())->setOperator(Query::OP_AND);
     }
 
     /**
@@ -198,7 +198,7 @@ class Search
         }
 
         $facet = (new TermFacet($field, $operator))
-          ->setSelectedValue($values)
+          ->setSelectedValues($values)
         ;
 
         $this->aggregations[$name] = $facet;
@@ -262,6 +262,10 @@ class Search
 
         $isQueryEmpty = !count($this->query);
 
+        // This must be set before filter since filter query will be altered by
+        // the applied aggregations
+        $aggs = $this->applyAggregations();
+
         if (count($this->filterQuery)) {
             if ($isQueryEmpty) {
                 $body = [
@@ -321,7 +325,6 @@ class Search
             }
         }
 
-        $aggs = $this->applyAggregations();
         if ($aggs) {
             $body['aggs'] = $aggs;
         }

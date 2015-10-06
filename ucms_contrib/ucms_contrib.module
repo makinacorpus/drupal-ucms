@@ -113,7 +113,7 @@ function ucms_contrib_theme() {
         'favorites' => null,
         'account'   => null,
         'items'     => [],
-        'filters'   => [],
+        'facets'    => [],
         'search'    => null,
         'pager'     => null,
       ],
@@ -400,4 +400,16 @@ function ucms_contrib_favorite_render($account = null) {
   }
 
   return $ret;
+}
+
+/**
+ * Implements template_preprocess_HOOK().
+ */
+function template_preprocess_ucms_contrib_content_page(&$variables) {
+  foreach ($variables['facets'] as $delta => $facet) {
+    $variables['facets'][$delta] = [
+      '#theme' => 'ucms_search_facet',
+      '#facet' => $facet,
+    ];
+  }
 }

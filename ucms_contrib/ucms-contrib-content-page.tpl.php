@@ -1,6 +1,6 @@
 <div class="container">
   <div id="ucms-contrib-facets">
-    <?php echo render($filters); ?>
+    <?php echo render($facets); ?>
   </div>
   <div id="ucms-contrib-results">
     <?php echo render($search); ?>

@@ -119,7 +119,7 @@ abstract class AbstractFacet
      *
      * @return \Ucms\Search\AbstractFacet
      */
-    public function setSelectedValue($selectedValues = [])
+    public function setSelectedValues($selectedValues = [])
     {
         $this->selectedValues = $selectedValues;
 
@@ -130,7 +130,7 @@ abstract class AbstractFacet
      * Get currently user-selected facet values for query
      *
      * Before query is sent, this will return programmatically set values
-     * using the setSelectedValue() method, after query has been done, it
+     * using the setSelectedValues() method, after query has been done, it
      * will return the selected values returned in the aggregation bucket
      *
      * @return \Ucms\Search\string[]
