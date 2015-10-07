@@ -22,6 +22,7 @@
   background: #333;
   z-index: 2;
   padding: 0;
+  width: 100%;
 }
 
 #ucms-cart .item-list ul {
@@ -124,7 +125,7 @@
   position: static !important;
 }
 
-[data-region].drop-highlighted-hover {
+.drop-highlighted-hover {
   box-shadow: inset 0 0 0 10px #19e200;
 }
 

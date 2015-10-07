@@ -171,9 +171,7 @@ class Layout
     public function getAllRegions()
     {
         foreach ($this->regions as $name => $region) {
-            if (count($region)) {
-                yield $name => $region;
-            }
+            yield $name => $region;
         }
     }
 
