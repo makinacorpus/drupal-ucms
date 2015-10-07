@@ -78,7 +78,7 @@ function ucms_layout_menu() {
     'page arguments'    => ['ucms_layout_admin_layout_edit_form', 1],
     'access callback'   => 'ucms_layout_access',
     'access arguments'  => ['update', 1],
-    'file'              => 'ucms_layout.admin.inc',
+    'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['layout/%ucms_layout/delete'] = [
@@ -88,7 +88,7 @@ function ucms_layout_menu() {
     'page arguments'    => ['ucms_layout_admin_layout_delete_form', 1],
     'access callback'   => 'ucms_layout_access',
     'access arguments'  => ['delete', 1],
-    'file'              => 'ucms_layout.admin.inc',
+    'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -97,7 +97,7 @@ function ucms_layout_menu() {
     'title'             => "Pages",
     'page callback'     => 'ucms_layout_admin_index',
     'access arguments'  => ['access content overview'],
-    'file'              => 'ucms_layout.admin.inc',
+    'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_NORMAL_ITEM,
   ];
   $items['admin/layout/add'] = [
@@ -105,8 +105,27 @@ function ucms_layout_menu() {
     'page callback'     => 'drupal_get_form',
     'page arguments'    => ['ucms_layout_admin_layout_add_form', 1],
     'access arguments'  => ['create layout'],
-    'file'              => 'ucms_layout.admin.inc',
+    'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_LOCAL_ACTION,
+  ];
+
+  // Structure related configuration for administrator.
+  $items['admin/structure/layout'] = [
+    'title'             => "Layout management",
+    'description'       => "Manage usable regions layouts and site wide configuration.",
+    'page callback'     => 'ucms_layout_admin_structure',
+    'access arguments'  => ['access content overview'],
+    'file'              => 'ucms_layout.admin.inc',
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+  $items['admin/structure/layout/%ucms_layout_theme'] = [
+    'title callback'    => 'ucms_layout_theme_title',
+    'title arguments'   => [3],
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_layout_admin_structure_theme_form', 3],
+    'access arguments'  => ['access content overview'],
+    'file'              => 'ucms_layout.admin.inc',
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   // AJAX endpoints.
@@ -128,6 +147,57 @@ function ucms_layout_menu() {
   ];
 
   return $items;
+}
+
+/**
+ * Menu helper: ensures a theme exist
+ *
+ * @param string $theme
+ *   Theme name.
+ *
+ * @return string
+ *   Theme name if exists and enabled, false otherwise.
+ */
+function ucms_layout_theme_load($theme) {
+  $themes = system_list('theme');
+
+  return (isset($themes[$theme]) && $themes[$theme]->status) ? $theme : false;
+}
+
+/**
+ * Menu helper.
+ *
+ * @param string $theme
+ *   Theme name.
+ *
+ * @return string
+ *   The theme edit page title.
+ */
+function ucms_layout_theme_title($theme) {
+  $themes = system_list('theme');
+
+  if (isset($themes[$theme])) {
+    return t("Edit @theme theme regions", ['@theme' => $themes[$theme]->info['name']]);
+  }
+
+  return t("Edit theme regions");
+}
+
+/**
+ * Get enabled regions for the given theme.
+ *
+ * @param string $theme
+ *   Theme name.
+ *
+ * @return string[]
+ *   Keys are region names, values region names.
+ */
+function ucms_layout_theme_region_list($theme) {
+  $regions = variable_get('ucms_layout_regions_' . $theme);
+  if (null === $regions) {
+    $regions = array_keys(system_region_list($theme));
+  }
+  return drupal_map_assoc($regions);
 }
 
 /**
