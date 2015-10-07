@@ -77,12 +77,11 @@ function ucms_search_query_create() {
 function ucms_search_client_get() {
   $instance = &drupal_static(__FUNCTION__);
   if (!$instance) {
-    $instance = \Elasticsearch\ClientBuilder::create()
-      ->setHosts(
-        variable_get('ucms_search_elastic_hosts', ['localhost:9200'])
-      )
-      ->build()
-    ;
+    $hosts = variable_get('ucms_search_elastic_hosts', ['localhost:9200']);
+    if (!is_array($hosts)) {
+      $hosts = [$hosts];
+    }
+    $instance = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build();
   }
   return $instance;
 }
