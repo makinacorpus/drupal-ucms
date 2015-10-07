@@ -260,20 +260,27 @@ function ucms_layout_theme() {
 }
 
 /**
- * Implements hook_block_info().
+ * Implements hook_block_list_alter().
  */
-function ucms_layout_block_info() {
-  $ret = [];
-  foreach (system_list('theme') as $theme => $info) {
-    if ($info->status) {
-      foreach (system_region_list($theme) as $region => $title) {
-        $ret[$theme . ':' . $region] = [
-          'info' => "[Layout] " . $title . ' - ' . $info->info['name'],
-        ];
-      }
-    }
+function ucms_layout_block_list_alter(&$blocks) {
+  global $theme_key;
+
+  foreach (system_region_list($theme_key) as $region => $title) {
+    $next_key = max(array_keys($blocks)) + 1;
+    $blocks[$next_key] = (object) [
+      'bid' => $next_key,
+      'cache' => 0,
+      'custom' => 0,
+      'delta' => $theme_key . ':' . $region,
+      'module' => 'ucms_layout',
+      'pages' => '',
+      'region' => $region,
+      'status' => 1,
+      'title' => '',
+      'visibility' => 0,
+      'weight' => 0,
+    ];
   }
-  return $ret;
 }
 
 /**
@@ -335,12 +342,43 @@ function ucms_layout_block_view($delta = '') {
     return;
   }
 
-  return ['content' => [
-    '#theme'  => 'ucms_layout_region',
-    '#name'   => $region->getName(),
-    '#items'  => $items,
-  ]];
+  if (empty($items)) {
+    // Trick block.module so that it's not "empty"
+    $items = ['#markup' => ''];
+  }
+
+  return ['content' => $items];
 }
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function ucms_layout_preprocess_block(&$vars) {
+  // Add attributes and classes to block
+  $block = $vars['block'];
+  if ($block->module == 'ucms_layout') {
+    $vars['attributes_array']['data-region'] = $block->region;
+    $vars['classes_array'][] = 'ucms-layout-empty-block';
+  }
+}
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function ucms_layout_preprocess_region(&$vars) {
+  // Lookup for all blocks, if these are only ucms empty block, add class
+  $empty = TRUE;
+  foreach (element_children($vars['elements']) as $delta) {
+    $block = $vars['elements'][$delta];
+    if (!isset($block['#block']) || $block['#block']->module != 'ucms_layout' || empty($block['#type'])) {
+      $empty = FALSE;
+    }
+  }
+  if ($empty) {
+    $vars['classes_array'][] = 'ucms-layout-empty-region';
+  }
+}
+
 
 /**
  * Blank page.
