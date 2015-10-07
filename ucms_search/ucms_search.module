@@ -3,12 +3,12 @@
 /**
  * Public index name.
  */
-const UCMS_SEARCH_INDEX_PUBLIC = 'node_public';
+define('UCMS_SEARCH_INDEX_PUBLIC', variable_get('ucms_search_elastic_index_front', 'node_public'));
 
 /**
  * Backoffice index name.
  */
-const UCMS_SEARCH_INDEX_BACK = 'node_backoffice';
+define('UCMS_SEARCH_INDEX_BACK', variable_get('ucms_search_elastic_index_back', 'node_backoffice'));
 
 /**
  * Default search per page limit.
