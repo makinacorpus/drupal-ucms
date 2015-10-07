@@ -137,6 +137,8 @@ function ucms_contrib_page_build(&$page) {
  * Append CSS and JS to #attached on selected element.
  */
 function _ucms_contrib_render_attach(&$build) {
+  $build['#attached']['library'][] = array('system', 'ui.droppable');
+  $build['#attached']['library'][] = array('system', 'ui.draggable');
   $build['#attached']['css'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css';
   $build['#attached']['js'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js';
 }
