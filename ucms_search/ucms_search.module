@@ -18,12 +18,36 @@ const UCMS_SEARCH_LIMIT = 100;
 /**
  * Default number of items index each cron run.
  */
-const UCMS_SEARCH_CRON_INDEX_LIMIT = 500;
+const UCMS_SEARCH_CRON_INDEX_LIMIT = 250;
 
 /**
  * Hopefully, you did run composer install.
  */
 require_once __DIR__ . '/vendor/autoload.php';
+
+/**
+ * Index operations.
+ */
+require_once __DIR__ . '/ucms_search.index.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_search_menu() {
+  $items = [];
+
+  $items['admin/config/search/indices'] = [
+    'title'             => "Search indices",
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_search_admin_index_form'],
+    'access arguments'  => ['administer nodes'],
+    'description'       => "Manage search indices.",
+    'file'              => 'ucms_search.admin.inc',
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+
+  return $items;
+}
 
 /**
  * Implements hook_theme().
@@ -75,20 +99,6 @@ function ucms_search_create($index) {
 }
 
 /**
- * Clear an index.
- *
- * @param string $index
- */
-function ucms_search_index_clear($index, $doReindex = false) {
-  require_once __DIR__ . '/ucms_search.index.inc';
-  _ucms_search_index_delete($index);
-  _ucms_search_index_create($index);
-  if ($doReindex) {
-    _ucms_search_index_reindex($index);
-  }
-}
-
-/**
  * Implements hook_ucms_search_index_reindex().
  */
 function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $query) {
@@ -101,51 +111,62 @@ function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $que
 }
 
 /**
- * Mark all content for reindexing in an index.
+ * Enqueue node to reindex.
  *
- * @param string $index
+ * @param int|int[] $nidList
  */
-function ucms_search_index_reindex($index) {
-  require_once __DIR__ . '/ucms_search.index.inc';
-  _ucms_search_index_reindex($index);
+function ucms_search_node_index_queue($nidList) {
+  if (!is_array($nidList)) {
+    $nidList = [$nidList];
+  }
+  $queue = &drupal_static('ucms_search_node_queue', []);
+  $queue = array_merge($queue, $nidList);
+  $queue = array_unique($queue);
 }
 
 /**
- * Index a single node
- *
- * @param string $index
- * @param stdClass $node
+ * Implements hook_exit().
  */
-function ucms_search_node_index($index, $node) {
-  require_once __DIR__ . '/ucms_search.index.inc';
-  _ucms_search_node_index($index, $node);
+function ucms_search_exit() {
+  $queue = &drupal_static('ucms_search_node_queue');
+  if ($queue) {
+    foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
+      ucms_search_index_reindex($index, $queue);
+    }
+    drupal_static_reset('ucms_search_node_queue');
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function ucms_search_node_insert($node) {
+  ucms_search_node_index_queue([$node->nid]);
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function ucms_search_node_update($node) {
+  ucms_search_node_index_queue([$node->nid]);
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function ucms_search_node_delete($node) {
+  // @todo Later queue and bulk
+  foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
+    ucms_search_index_node_delete($index, $node);
+  }
 }
 
 /**
  * Implements hook_cron().
  */
 function ucms_search_cron() {
-
-  $res = db_select('ucms_search_status', 's')
-    ->fields('s', ['nid', 'index_key'])
-    ->condition('s.needs_reindex', 1)
-    ->range(0, variable_get('ucms_search_cron_index_limit', UCMS_SEARCH_CRON_INDEX_LIMIT))
-    ->execute()
-  ;
-
-  $map = [];
-
-  foreach ($res as $item) {
-    $map[$item->nid][] = $item->index_key;
-  }
-
-  // Preload all nodes for performance.
-  node_load_multiple(array_keys($map));
-
-  foreach ($map as $nid => $indices) {
-    foreach ($indices as $index) {
-      ucms_search_node_index($index, node_load($nid));
-    }
+  foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
+    ucms_search_cron_index_dequeue($index);
   }
 }
 
