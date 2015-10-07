@@ -393,21 +393,31 @@ function ucms_contrib_favorite_render($account = null) {
   }
 
   $actions = [];
+
   if (user_access('access content overview')) {
     $actions = [
       l(t("Content admin"), 'admin/contribute'),
     ];
   }
+
   if (($layout = ucms_layout_context_get()) && ucms_layout_access('update', $layout)) {
+
     if (empty($_GET['edit'])) {
-      $actions[] = l(t("Edit page"), current_path(), [
+      $actions[] = l(t("Edit content"), current_path(), [
         'query' => ['edit' => 1] + drupal_get_query_parameters(),
       ]);
     } else {
-      $actions[] = l(t("Back to page"), current_path(), [
+      $actions[] = l(t("Back to view"), current_path(), [
         'query' => drupal_get_query_parameters(null, ['edit', 'q']),
       ]);
     }
+
+    $actions[] = l(t("Edit details"), 'layout/' . $layout->getId() . '/edit', [
+      'query' => drupal_get_destination(),
+    ]);
+    $actions[] = l(t("Delete"), 'layout/' . $layout->getId() . '/delete', [
+      'query' => drupal_get_destination(),
+    ]);
   }
 
   $ret['#actions'] = [

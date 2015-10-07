@@ -60,14 +60,56 @@ function ucms_layout_init() {
 function ucms_layout_menu() {
   $items = [];
 
+  // This is what the site is made for.
   $items['layout/%ucms_layout'] = [
     'title callback'    => 'ucms_layout_title',
     'title arguments'   => [1],
     'page callback'     => 'ucms_layout_blank',
     'page arguments'    => [1],
-    'access arguments'  => ['access content'],
+    'access callback'   => 'ucms_layout_access',
+    'access arguments'  => ['view', 1],
+    'type'              => MENU_CALLBACK,
   ];
 
+  // Update and delete operations.
+  $items['layout/%ucms_layout/edit'] = [
+    'title'             => "Edit page",
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_layout_admin_layout_edit_form', 1],
+    'access callback'   => 'ucms_layout_access',
+    'access arguments'  => ['update', 1],
+    'file'              => 'ucms_layout.admin.inc',
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['layout/%ucms_layout/delete'] = [
+    'title callback'    => 'ucms_layout_title',
+    'title arguments'   => [1],
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_layout_admin_layout_delete_form', 1],
+    'access callback'   => 'ucms_layout_access',
+    'access arguments'  => ['delete', 1],
+    'file'              => 'ucms_layout.admin.inc',
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  // Administration section.
+  $items['admin/layout'] = [
+    'title'             => "Pages",
+    'page callback'     => 'ucms_layout_admin_index',
+    'access arguments'  => ['access content overview'],
+    'file'              => 'ucms_layout.admin.inc',
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+  $items['admin/layout/add'] = [
+    'title'             => 'Add page',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_layout_admin_layout_add_form', 1],
+    'access arguments'  => ['create layout'],
+    'file'              => 'ucms_layout.admin.inc',
+    'type'              => MENU_LOCAL_ACTION,
+  ];
+
+  // AJAX endpoints.
   $items['admin/ucms/layout/%ucms_layout/add'] = [
     'page callback'     => 'ucms_layout_ajax_region_item_add',
     'page arguments'    => [3],
@@ -76,7 +118,6 @@ function ucms_layout_menu() {
     'file'              => 'ucms_layout.ajax.inc',
     'type'              => MENU_CALLBACK,
   ];
-
   $items['admin/ucms/layout/%ucms_layout/remove'] = [
     'page callback'     => 'ucms_layout_ajax_region_item_remove',
     'page arguments'    => [3],
@@ -87,6 +128,15 @@ function ucms_layout_menu() {
   ];
 
   return $items;
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function ucms_layout_admin_paths() {
+  return [
+    'layout/*/*' => true,
+  ];
 }
 
 /**

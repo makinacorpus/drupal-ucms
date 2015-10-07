@@ -186,6 +186,49 @@ function ucms_layout_save(\Ucms\Layout\Layout $layout) {
 }
 
 /**
+ * Delete a layout.
+ *
+ * @param int|\Ucms\Layout\Layout $id
+ *   Layout identifier or instance to delete.
+ */
+function ucms_layout_delete($id) {
+
+  if ($id instanceof \Ucms\Layout\Layout) {
+    $id = $id->getId();
+  }
+
+  $tx = null;
+
+  try {
+    $tx = db_transaction();
+
+    // We miss a few ON DELETE CASCADE.
+    db_delete('ucms_layout_data')
+      ->condition('layout_id', $id)
+      ->execute()
+    ;
+
+    db_delete('ucms_layout')
+     ->condition('id', $id)
+      ->execute()
+    ;
+
+    cache_clear_all('layout:' . $id, 'cache_layout');
+
+    unset($tx); // Explicit commit.
+
+  } catch (\Exception $e) {
+    try {
+      if ($tx) {
+        $tx->rollback();
+      }
+    } catch (\Exception $e) {}
+
+    throw $e;
+  }
+}
+
+/**
  * Load a layout instances.
  *
  * @param int[] $idList
