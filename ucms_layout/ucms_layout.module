@@ -335,8 +335,20 @@ function ucms_layout_theme() {
 function ucms_layout_block_list_alter(&$blocks) {
   global $theme_key;
 
-  foreach (system_region_list($theme_key) as $region => $title) {
-    $next_key = max(array_keys($blocks)) + 1;
+  $enabled = ucms_layout_theme_region_list($theme_key);
+
+  foreach (array_keys(system_region_list($theme_key)) as $region) {
+
+    if (empty($enabled[$region])) {
+      continue; // Region is disabled by config.
+    }
+
+    if (empty($blocks)) { // If empty max() throws a PHP warning.
+      $next_key = 666;
+    } else {
+      $next_key = max(array_keys($blocks)) + 1;
+    }
+
     $blocks[$next_key] = (object) [
       'bid' => $next_key,
       'cache' => 0,
