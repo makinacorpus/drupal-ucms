@@ -11,7 +11,5 @@
     <?php endforeach; ?>
     <?php echo render($pager); ?>
   </div>
-  <div id="ucms-contrib-cart">
-    <?php echo render($favorites); ?>
-  </div>
+  <?php echo render($favorites); ?>
 </div>

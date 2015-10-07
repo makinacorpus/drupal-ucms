@@ -403,6 +403,7 @@ function ucms_contrib_favorite_render($account = null) {
   }
 
   if (($layout = ucms_layout_context_get()) && ucms_layout_access('update', $layout)) {
+    drupal_add_js(['ucmsLayout' => $layout->getId()], 'setting');
 
     if (empty($_GET['edit'])) {
       $actions[] = l(t("Edit content"), current_path(), [
