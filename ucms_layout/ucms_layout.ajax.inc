@@ -70,7 +70,11 @@ function ucms_layout_ajax_region_item_add($layout) {
 
   ucms_layout_save($layout);
 
-  drupal_json_output(['success' => true]);
+  $node_view = node_view($node, $query['view_mode']);
+  drupal_json_output([
+    'success' => TRUE,
+    'node' => drupal_render($node_view),
+  ]);
 }
 
 /**

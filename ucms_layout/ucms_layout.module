@@ -358,7 +358,9 @@ function ucms_layout_preprocess_block(&$vars) {
   $block = $vars['block'];
   if ($block->module == 'ucms_layout') {
     $vars['attributes_array']['data-region'] = $block->region;
-    $vars['classes_array'][] = 'ucms-layout-empty-block';
+    if (!empty($vars['elements']['#type'])) {
+      $vars['classes_array'][] = 'ucms-layout-empty-block';
+    }
   }
 }
 

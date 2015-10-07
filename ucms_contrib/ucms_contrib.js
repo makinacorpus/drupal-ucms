@@ -83,9 +83,10 @@
         accept: "[data-nid].ucms-cart-item",
         drop: function (event, ui) {
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout + '/add', {
-            
-          }).done(function() {
-
+            'region': $(this).data('region'),
+            'nid': ui.draggable.data('nid')
+          }).done(function(data) {
+            $(this).append(data.node);
           }).fail(function() {
 
           });
