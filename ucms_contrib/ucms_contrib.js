@@ -1,18 +1,21 @@
 (function ($) {
+  /**
+   * Default settings for draggables
+   * @type {{revert: boolean, opacity: number, helper: string, appendTo: string, containment: string, cursorAt: {top: number, left: number}}}
+   */
   Drupal.ucmsDraggableDefaults = {
     revert: true,
     opacity: 0.75,
-    start: function () {
-      // Show the regions that are empty
-      $('.ucms-layout-empty-region').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
-      $('.ucms-layout-empty-block').toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
-    },
-    stop: function () {
-      // TODO Don't hide region that are now not empty
-      $('.ucms-layout-empty-region-hover').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
-      $('.ucms-layout-empty-block-hover').toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
-    }
+    helper: 'clone',
+    appendTo: 'body',
+    containment: 'window',
+    cursorAt: {top: 50, left: 50}
   };
+
+  /**
+   * Default settings for droppables and sortables
+   * @type {{tolerance: string, hoverClass: string, activate: Drupal.ucmsDroppableDefaults.activate, deactivate: Drupal.ucmsDroppableDefaults.deactivate}}
+   */
   Drupal.ucmsDroppableDefaults = {
     tolerance: 'pointer',
     hoverClass: "drop-highlighted-hover",
@@ -67,7 +70,6 @@
                   $(this).remove();
                 });
               }, 3000);
-              ui.draggable.animate(ui.draggable.data().uiDraggable.originalPosition);
             });
         }
       }));
@@ -77,6 +79,7 @@
         accept: "[data-nid].ucms-cart-item, [data-nid].ucms-region-item",
         drop: function (event, ui) {
           console.log('dropped', arguments);
+          ui.draggable.trashed = true;
           var nid = ui.draggable.data('nid');
           if (!ui.draggable.hasClass('ucms-region-item')) {
             // remove form cart
@@ -87,22 +90,38 @@
               });
           }
           else {
-            // remove form region
+            // Remove from region
             $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout + '/remove', {
-              'region': ui.draggable.parents('[data-region]').data('region')
+              region: ui.draggable.parents('[data-region]').data('region'),
+              token: settings.ucmsLayout.editToken
             }).done(function () {
               ui.draggable.remove();
-            }).fail(function () {
-
             });
           }
         }
       }));
+
       // Activate all draggables except sortables (aka region items)
-      $('[data-nid]:not(.ucms-region-item)', context).draggable($.extend({}, Drupal.ucmsDraggableDefaults, {
-        connectToSortable: '[data-region]',
-        cursorAt: {top: 50, left: 50}
-      }));
+      var wasDragging = false;
+      $('[data-nid]:not(.ucms-region-item)', context)
+        .draggable($.extend({}, Drupal.ucmsDraggableDefaults, {
+          connectToSortable: '[data-region]'
+        }))
+        .mousemove(function () {
+          if (wasDragging) {
+            console.log('start custom dragging');
+            // Show the regions that are empty
+            $('.ucms-layout-empty-region').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
+            $('.ucms-layout-empty-block').toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
+          }
+          wasDragging = false;
+        })
+        .mousedown(function () {
+          wasDragging = true;
+        })
+        .mouseup(function () {
+          wasDragging = false;
+        });
     }
   };
 
@@ -113,39 +132,63 @@
   Drupal.behaviors.ucmsRegion = {
     attach: function (context, settings) {
       // All regions are drop zones for cart items
-      $('[data-region]', context).sortable({
-        revert: true,
+      $('[data-region]', context).sortable($.extend({}, Drupal.ucmsDroppableDefaults, Drupal.ucmsDraggableDefaults, {
         items: '[data-nid]',
         connectWith: '[data-region], #ucms-cart-trash',
-        opacity: 0.75,
-        cursorAt: {top: 50, left: 50},
-        tolerance: 'pointer',
-        remove: function (event, ui) {
-          console.log('remove', arguments);
+        activate: function () {
+          // We just been activated, show ourselves
+          $(this).addClass('drop-highlighted')
         },
-        change: function (event, ui) {
-          console.log('change', arguments);
+        deactivate: function () {
+          // We just been deactivated, dim ourselves
+          $(this).removeClass('drop-highlighted drop-highlighted-over');
+          if (!$(this).find('[data-nid]').length) {
+            $(this).parents('.ucms-layout-empty-region-hover').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
+            $(this).toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
+          }
+        },
+        out: function () {
+          // We are no longer on zone using a cart item
+          $(this).removeClass('drop-highlighted-over');
         },
         receive: function (event, ui) {
+          if (ui.item.trashed) {
+            return; // Prevent receiving item on the way to the trash
+          }
           console.log('receive', arguments);
           // Add the new element to the layout
           var $region = $(this);
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout + '/add', {
             region: $(this).data('region'),
-            nid: ui.item.data('nid')
+            nid: ui.item.data('nid'),
+            'token': settings.ucmsLayout.editToken
           }).done(function (data) {
             var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
             $region.find('.ui-sortable').append(elem);
             $('[data-region]', context).sortable("refresh");
           });
+          // Remove from previous region if there is a sender
+          if (ui.sender && ui.sender.data('region')) {
+            $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout + '/remove', {
+              region: ui.sender.data('region'),
+              token: settings.ucmsLayout.editToken
+            });
+          }
         },
-        update: function (event, ui) {
-          console.log('update', arguments);
+        start: function (event, ui) {
+          console.log('start', arguments);
+          if (!ui.item.sender) {
+            $(this).addClass('drop-highlighted-over');
+          }
         },
         stop: function (event, ui) {
           console.log('stop', arguments);
+        },
+        update: function (event, ui) {
+          console.log('update', arguments);
+          // TODO ici on change de position
         }
-      });
+      }));
     }
   };
 }(jQuery));

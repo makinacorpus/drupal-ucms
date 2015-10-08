@@ -136,15 +136,19 @@ body [data-region].drop-highlighted {
   position: static;
 }
 
-body [data-region].drop-highlighted-hover {
+body [data-region].drop-highlighted-over {
   box-shadow: inset 0 0 0 10px #19e200;
 }
 
 .block-ucms-layout.ucms-layout-empty-block, .ucms-layout-empty-region {
   display: none;
+  border: dashed .2em #018fe2;
+  min-height: 2em;
+  transition: .5s;
+  padding: 10px;
 }
 .ucms-layout-empty-block-hover, .ucms-layout-empty-region-hover {
-  position: static !important;
+  height: 100px;
 }
 
 .region-page-top {
@@ -159,10 +163,7 @@ body [data-region].drop-highlighted-hover {
   cursor: move;
   z-index: 100;
 }
-.ui-draggable.ui-draggable-dragging {
-  background: #fff;
-}
-
+.ui-draggable.ui-draggable-dragging,
 .ui-sortable-helper {
   max-width: 120px;
   max-height: 100px;
