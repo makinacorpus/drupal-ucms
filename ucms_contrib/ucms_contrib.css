@@ -92,10 +92,6 @@
   background-color: #333;
 }
 
-.ui-draggable-dragging {
-  z-index: 10;
-}
-
 #ucms-cart-trash {
   position: absolute;
   background: #600;
@@ -133,7 +129,12 @@ body [data-region].drop-highlighted {
   border: dashed .2em #018fe2;
   min-height: 2em;
   transition: .5s;
-  position: static;
+}
+
+body [data-region].drop-highlighted:after {
+  content: " ";
+  display: table;
+  clear: both;
 }
 
 body [data-region].drop-highlighted-over {
@@ -142,10 +143,6 @@ body [data-region].drop-highlighted-over {
 
 .block-ucms-layout.ucms-layout-empty-block, .ucms-layout-empty-region {
   display: none;
-  border: dashed .2em #018fe2;
-  min-height: 2em;
-  transition: .5s;
-  padding: 10px;
 }
 .ucms-layout-empty-block-hover, .ucms-layout-empty-region-hover {
   height: 100px;
@@ -169,4 +166,13 @@ body [data-region].drop-highlighted-over {
   max-height: 100px;
   overflow: hidden;
   background: #fff;
+  float: none !important;
+}
+
+/* Fix fucking bootstrap banner */
+#page-header:after,
+.main-container > .row:after {
+  content: " ";
+  display: table;
+  clear: both;
 }
