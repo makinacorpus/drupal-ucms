@@ -87,10 +87,10 @@ function ucms_contrib_admin_content_search_form_submit($form, &$form_state) {
 /**
  * Main content page.
  *
- * @param string[] $types
- *   Content types (UCMS_CONTENT_TYPE_* constants list).
+ * @param string $tab
+ *   Tab name.
  */
-function ucms_contrib_admin_content_page($types = null) {
+function ucms_contrib_admin_content_page($tab = null) {
 
   $limit  = 16;
   $page   = isset($_GET['page']) ? ($_GET['page'] + 1) : 1;
@@ -150,10 +150,11 @@ function ucms_contrib_admin_content_page($types = null) {
     }
   }
 
-  if ($types !== null) {
+  $types = variable_get('ucms_contrib_tab_' . $tab . '_type');
+  if (!empty($types)) {
     $search
       ->getFilterQuery()
-      ->matchTermCollection('type', ucms_contrib_type_to_list($types))
+      ->matchTermCollection('type', $types)
     ;
   }
 

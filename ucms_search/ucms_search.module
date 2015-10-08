@@ -77,7 +77,7 @@ function ucms_search_query_create() {
 function ucms_search_client_get() {
   $instance = &drupal_static(__FUNCTION__);
   if (!$instance) {
-    $hosts = variable_get('ucms_search_elastic_hosts', ['localhost:9200']);
+    $hosts = variable_get('ucms_search_elastic_hosts', 'localhost:9200');
     if (!is_array($hosts)) {
       $hosts = [$hosts];
     }

@@ -28,21 +28,6 @@ const UCMS_STYLE_CONTENTADMIN = 'contentadmin';
 const UCMS_STYLE_FAVORITE = 'favorite';
 
 /**
- * All content.
- */
-const UCMS_CONTENT_TYPE_ALL = 'all';
-
-/**
- * All editorial content.
- */
-const UCMS_CONTENT_TYPE_EDITORIAL = 'content';
-
-/**
- * All media content.
- */
-const UCMS_CONTENT_TYPE_MEDIA = 'media';
-
-/**
  * Implements hook_menu().
  */
 function ucms_contrib_menu() {
@@ -52,10 +37,11 @@ function ucms_contrib_menu() {
   $items['admin/contribute'] = [
     'title'             => "Content",
     'page callback'     => 'ucms_contrib_admin_content_page',
-    'page arguments'    => [UCMS_CONTENT_TYPE_EDITORIAL],
+    'page arguments'    => ['text'],
     'access arguments'  => ['access content overview'],
     'file'              => 'ucms_contrib.pages.inc',
   ];
+  // @todo Use ucms_contrib_tab_list().
   $items['admin/contribute/text'] = [
     'title'             => "Content",
     'type'              => MENU_DEFAULT_LOCAL_TASK,
@@ -63,10 +49,21 @@ function ucms_contrib_menu() {
   $items['admin/contribute/media'] = [
     'title'             => "Media",
     'page callback'     => 'ucms_contrib_admin_content_page',
-    'page arguments'    => [UCMS_CONTENT_TYPE_MEDIA],
+    'page arguments'    => ['media'],
     'access arguments'  => ['access content overview'],
     'file'              => 'ucms_contrib.pages.inc',
     'type'              => MENU_LOCAL_TASK,
+  ];
+
+  // Site configuration.
+  $items['admin/structure/contribute'] = [
+    'title'             => "Contribution user interface",
+    'description'       => "Manage content types categorisation and how the main contribution user interface will look like and behave.",
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_contrib_admin_structure_form'],
+    'access arguments'  => ['administer content types'],
+    'file'              => 'ucms_contrib.admin.inc',
+    'type'              => MENU_NORMAL_ITEM,
   ];
 
   // Cart operations.
@@ -204,42 +201,15 @@ function ucms_contrib_forms($form_id, $args) {
 }
 
 /**
- * From the given realm give node types
- *
- * @param string|string[] $types
+ * Get contribution interface tab list.
  *
  * @return string[]
  */
-function ucms_contrib_type_to_list($types = []) {
-
-  if (UCMS_CONTENT_TYPE_ALL === $types) {
-    return array_keys(node_type_get_types());
-  }
-
-  $ret = [];
-
-  if (!is_array($types)) {
-    $types = [$types];
-  }
-
-  foreach ($types as $type) {
-    switch ($type) {
-
-      case UCMS_CONTENT_TYPE_EDITORIAL:
-        $ret[] = 'article';
-        $ret[] = 'news';
-        $ret[] = 'post';
-        break;
-
-      case UCMS_CONTENT_TYPE_MEDIA:
-        $ret[] = 'image';
-        break;
-    }
-  }
-
-  // @todo Provied fast alteration mecanism for other modules to add.
-
-  return $ret;
+function ucms_contrib_tab_list() {
+  return [
+    'text'  => t("Content"),
+    'media' => t("Media"),
+  ];
 }
 
 /**
