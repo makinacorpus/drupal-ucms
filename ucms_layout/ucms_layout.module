@@ -31,7 +31,7 @@ function ucms_layout_menu() {
   $items = [];
 
   // This is what the site is made for.
-  $items['layout/%ucms_layout'] = [
+  $items['layout/%ucms_layout_temporary'] = [
     'title callback'    => 'ucms_layout_title',
     'title arguments'   => [1],
     'page callback'     => 'ucms_layout_blank',
@@ -99,7 +99,7 @@ function ucms_layout_menu() {
   ];
 
   // AJAX endpoints.
-  $items['admin/ucms/layout/%ucms_layout/add'] = [
+  $items['admin/ucms/layout/%ucms_layout_temporary/add'] = [
     'page callback'     => 'ucms_layout_ajax_region_item_add',
     'page arguments'    => [3],
     'access callback'   => 'ucms_layout_access',
@@ -107,7 +107,7 @@ function ucms_layout_menu() {
     'file'              => 'ucms_layout.ajax.inc',
     'type'              => MENU_CALLBACK,
   ];
-  $items['admin/ucms/layout/%ucms_layout/remove'] = [
+  $items['admin/ucms/layout/%ucms_layout_temporary/remove'] = [
     'page callback'     => 'ucms_layout_ajax_region_item_remove',
     'page arguments'    => [3],
     'access callback'   => 'ucms_layout_access',
@@ -256,15 +256,41 @@ function ucms_layout_access($op, $layout, $account = null) {
 }
 
 /**
- * Menu helper: load layout instances.
- *
- * @param int[] $idList
- *   List of layout identifiers.
- *
- * @return \Ucms\Layout\Layout[]
+ * Menu helper: load layout instance.
  */
 function ucms_layout_load($id) {
   return ucms_layout_context_get()->getStorage()->load($id);
+}
+
+/**
+ * Menu helper: load layout instance in potential temporary context.
+ */
+function ucms_layout_temporary_load($id) {
+
+  $token      = null;
+  $context    = ucms_layout_context_get();
+
+  if (isset($_GET['edit']) && drupal_valid_token($_GET['edit'])) {
+    $token = $_GET['edit'];
+  } else if ('POST' === $_SERVER['REQUEST_METHOD'] && isset($_POST['token']) && drupal_valid_token($_POST['token'])) {
+    $token = $_POST['token'];
+  }
+
+  if ($token) {
+    $context->setToken($token);
+  }
+
+  if ($layout = $context->getStorage()->load($id)) {
+    $context->setCurrentLayout($layout);
+
+    return $layout;
+
+  } else {
+    // Wrong! Temporary but no context.
+    $context->setToken(null);
+  }
+
+  return false;
 }
 
 /**
@@ -458,12 +484,12 @@ function ucms_layout_edit_form($form, &$form_state) {
       $form['actions']['save'] = [
         '#type'   => 'submit',
         '#value'  => t("Save"),
-        '#submit' => ['ucms_layout_edit_form_submit_save']
+        '#submit' => ['ucms_layout_edit_form_save_submit']
       ];
       $form['actions']['cancel'] = [
         '#type'   => 'submit',
         '#value'  => t("Cancel"),
-        '#submit' => ['ucms_layout_edit_form_submit_cancel']
+        '#submit' => ['ucms_layout_edit_form_cancel_submit']
       ];
 
     } else {
@@ -471,7 +497,7 @@ function ucms_layout_edit_form($form, &$form_state) {
       $form['actions']['edit'] = [
         '#type'   => 'submit',
         '#value'  => t("Edit"),
-        '#submit' => ['ucms_layout_edit_form_submit_edit']
+        '#submit' => ['ucms_layout_edit_form_edit_submit']
       ];
     }
   }
@@ -482,63 +508,49 @@ function ucms_layout_edit_form($form, &$form_state) {
 /**
  * Edit form 'edit' button submit.
  */
-function ucms_layout_edit_form_submit_edit($form, &$form_state) {
-  $context  = ucms_layout_context_get();
-  $layout   = $context->getCurrentLayout();
-
-  if ($layout instanceof \Ucms\Layout\Layout) {
-    if (!$context->isTemporary()) {
-      $form_state['redirect'] = [
-        current_path(),
-        ['query' => ['edit' => drupal_get_token()] + drupal_get_query_parameters()]
-      ];
-    }
+function ucms_layout_edit_form_edit_submit($form, &$form_state) {
+  $context = ucms_layout_context_get();
+  if (!$context->isTemporary()) {
+    // @todo Generate a better token (random).
+    $token = drupal_get_token();
+    $layout = $context->getCurrentLayout();
+    $context->setToken($token);
+    // Saving the layout will force it be saved in the temporary storage.
+    $context->getStorage()->save($layout);
+    $form_state['redirect'] = [
+      current_path(),
+      ['query' => ['edit' => $token] + drupal_get_query_parameters()]
+    ];
   }
 }
 
 /**
  * Edit form 'save' button submit.
  */
-function ucms_layout_edit_form_submit_save($form, &$form_state) {
-
-  $context  = ucms_layout_context_get();
-  $layout   = $context->getCurrentLayout();
-
-  if ($layout instanceof \Ucms\Layout\Layout) {
-    if ($context->isTemporary()) {
-      // Loaded layout is already the temporary one at this stage.
-      $context->getStorage()->save($layout);
-
-      drupal_set_message(t("Changes have been saved"));
-
-      $form_state['redirect'] = [
-        current_path(),
-        ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
-      ];
-    }
+function ucms_layout_edit_form_save_submit($form, &$form_state) {
+  $context = ucms_layout_context_get();
+  if ($context->isTemporary()) {
+    $context->commit();
+    drupal_set_message(t("Changes have been dropped"), 'error');
+    $form_state['redirect'] = [
+      current_path(),
+      ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
+    ];
   }
 }
 
 /**
  * Edit form 'cancel' button submit.
  */
-function ucms_layout_edit_form_submit_cancel($form, &$form_state) {
-
+function ucms_layout_edit_form_cancel_submit($form, &$form_state) {
   $context  = ucms_layout_context_get();
-  $layout   = $context->getCurrentLayout();
-
-  if ($layout instanceof \Ucms\Layout\Layout) {
-    if ($context->isTemporary()) {
-      // Loaded layout is already the temporary one at this stage.
-      $context->getTemporaryStorage()->delete($layout);
-
-      drupal_set_message(t("Changes have been dropped"), 'error');
-
-      $form_state['redirect'] = [
-        current_path(),
-        ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
-      ];
-    }
+  if ($context->isTemporary()) {
+    $context->rollback();
+    drupal_set_message(t("Changes have been dropped"), 'error');
+    $form_state['redirect'] = [
+      current_path(),
+      ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
+    ];
   }
 }
 
@@ -546,31 +558,6 @@ function ucms_layout_edit_form_submit_cancel($form, &$form_state) {
  * Blank page.
  */
 function ucms_layout_blank($layout) {
-  if ($layout instanceof \Ucms\Layout\Layout) {
-    $context = ucms_layout_context_get();
-
-    if (!empty($_GET['edit'])) {
-
-      // Ensure validity of current token for obvious security reasons.
-      if (drupal_valid_token($_GET['edit'])) {
-
-        // Set token and propagate to JS.
-        $context->setToken($_GET['edit']);
-        drupal_add_js(['ucmsLayout' => ['editToken' => $_GET['edit']]], 'setting');
-
-        // Context is temporary, replace the real instance by the temp one.
-        if ($temp = $context->getTemporaryStorage()->load($layout->getId())) {
-          $layout = $temp;
-        }
-
-      } else {
-        drupal_goto(current_path());
-      }
-    }
-
-    $context->setCurrentLayout($layout);
-  }
-
   return [];
 }
 

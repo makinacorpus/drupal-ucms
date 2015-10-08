@@ -46,12 +46,6 @@ function ucms_layout_ajax_region_item_add($layout) {
     $query['view_mode'] = 'teaser';
   }
 
-  $context = ucms_layout_context_get();
-  $context->setToken($query['token']);
-  if ($temp = $context->getTemporaryStorage()->load($layout->getId())) {
-    $layout = $temp;
-  }
-
   $item = new \Ucms\Layout\Item($query['nid'], $query['view_mode']);
 
   switch ($query['mode']) {
@@ -74,7 +68,7 @@ function ucms_layout_ajax_region_item_add($layout) {
       break;
   }
 
-  $context->getTemporaryStorage()->save($layout);
+  ucms_layout_context_get()->getStorage()->save($layout);
 
   $node_view = node_view($node, $query['view_mode']);
   drupal_json_output([
@@ -115,15 +109,9 @@ function ucms_layout_ajax_region_item_remove($layout) {
     $query['position'] = 0;
   }
 
-  $context = ucms_layout_context_get();
-  $context->setToken($query['token']);
-  if ($temp = $context->getTemporaryStorage()->load($layout->getId())) {
-    $layout = $temp;
-  }
-
   $layout->getRegion($query['region'])->removeAt($query['position']);
 
-  $context->getTemporaryStorage()->save($layout);
+  ucms_layout_context_get()->getStorage()->save($layout);
 
   drupal_json_output(['success' => true]);
 }
