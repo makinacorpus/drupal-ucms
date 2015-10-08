@@ -536,7 +536,7 @@ function ucms_layout_edit_form_save_submit($form, &$form_state) {
   $context = ucms_layout_context_get();
   if ($context->isTemporary()) {
     $context->commit();
-    drupal_set_message(t("Changes have been dropped"), 'error');
+    drupal_set_message(t("Changed have been saved"));
     $form_state['redirect'] = [
       current_path(),
       ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
