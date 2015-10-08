@@ -6,7 +6,7 @@
   Drupal.ucmsDraggableDefaults = {
     revert: true,
     opacity: 0.75,
-    helper: function() {
+    helper: function () {
       return $(this).clone().removeClass('col-md-6');
     },
     appendTo: 'body',
@@ -80,7 +80,6 @@
       $('#ucms-cart-trash', context).droppable($.extend({}, Drupal.ucmsDroppableDefaults, {
         accept: "[data-nid].ucms-cart-item, [data-nid].ucms-region-item",
         drop: function (event, ui) {
-          console.log('dropped', arguments);
           ui.draggable.trashed = true;
           var nid = ui.draggable.data('nid');
           if (!ui.draggable.hasClass('ucms-region-item')) {
@@ -95,6 +94,7 @@
             // Remove from region
             $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
               region: ui.draggable.parents('[data-region]').data('region'),
+              position: ui.draggable.index(),
               token: settings.ucmsLayout.editToken
             }).done(function () {
               ui.draggable.remove();
@@ -117,6 +117,7 @@
   Drupal.behaviors.ucmsRegion = {
     attach: function (context, settings) {
       if (!settings.ucmsLayout) return;
+      var draggedItem;
 
       // All regions are drop zones for cart items
       $('[data-region]', context).sortable($.extend({}, Drupal.ucmsDroppableDefaults, Drupal.ucmsDraggableDefaults, {
@@ -124,9 +125,16 @@
         connectWith: '[data-region], #ucms-cart-trash',
         placeholder: {
           element: function () {
-            return $(this).clone().removeClass('col-md-6 ui-sortable-helper').addClass('ui-sortable-placeholder');
+            return $(this).clone().removeClass('col-md-6 ui-sortable-helper').addClass('ui-sortable-placeholder').css({
+              visibility: 'hidden',
+              maxHeight: '100px'
+            });
           },
-          update: function () {}
+          update: function () {
+          }
+        },
+        beforeStop: function (event, ui) {
+          draggedItem = ui.item;
         },
         activate: function () {
           // We just been activated, show ourselves
@@ -139,6 +147,10 @@
             $(this).parents('.ucms-layout-empty-region-hover').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
             $(this).toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
           }
+          else {
+            $(this).parents('.ucms-layout-empty-region-hover').removeClass('ucms-layout-empty-region-hover');
+            $(this).removeClass('ucms-layout-empty-block-hover');
+          }
         },
         out: function () {
           // We are no longer on zone using a cart item
@@ -148,17 +160,17 @@
           if (ui.item.trashed) {
             return; // Prevent receiving item on the way to the trash
           }
+          ui.item.justReceived = true;
           console.log('receive', arguments);
           // Add the new element to the layout
-          var $region = $(this);
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/add', {
             region: $(this).data('region'),
             nid: ui.item.data('nid'),
+            position: ui.item.index() - 1, // Don't ask me why
             token: settings.ucmsLayout.editToken
           }).done(function (data) {
             var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
-            $region.find('.ui-sortable').append(elem);
-            $('[data-region]', context).sortable("refresh");
+            $(draggedItem).replaceWith(elem);
           });
           // Remove from previous region if there is a sender
           if (ui.sender && ui.sender.data('region')) {
@@ -172,10 +184,24 @@
           if (!ui.item.sender) {
             $(this).addClass('drop-highlighted-over');
           }
+          ui.item.startPos = ui.item.index();
         },
         update: function (event, ui) {
+          if (ui.item.trashed || ui.item.justReceived) {
+            return; // Prevent updating item on the way to the trash
+          }
           console.log('update', arguments);
-          // TODO ici on change de position
+          // Add the new element to the layout
+          $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
+            region: $(this).data('region'),
+            nid: ui.item.data('nid'),
+            prevPosition: ui.item.startPos,
+            position: ui.item.index(),
+            token: settings.ucmsLayout.editToken
+          }).done(function (data) {
+            var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
+            $(draggedItem).replaceWith(elem);
+          });
         }
       }));
 
@@ -184,7 +210,6 @@
       $('[data-nid]', context)
         .mousemove(function () {
           if (wasDragging) {
-            console.log('start custom dragging');
             // Show the regions that are empty
             $('.ucms-layout-empty-region').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
             $('.ucms-layout-empty-block').toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');

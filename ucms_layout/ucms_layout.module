@@ -115,6 +115,14 @@ function ucms_layout_menu() {
     'file'              => 'ucms_layout.ajax.inc',
     'type'              => MENU_CALLBACK,
   ];
+  $items['admin/ucms/layout/%ucms_layout_temporary/move'] = [
+    'page callback'     => 'ucms_layout_ajax_region_item_move',
+    'page arguments'    => [3],
+    'access callback'   => 'ucms_layout_access',
+    'access arguments'  => ['update', 3],
+    'file'              => 'ucms_layout.ajax.inc',
+    'type'              => MENU_CALLBACK,
+  ];
 
   return $items;
 }

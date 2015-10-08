@@ -97,7 +97,7 @@ class Region implements \IteratorAggregate, \Countable
      */
     public function removeAt($position)
     {
-        if (!is_int($position) || $position < 0) {
+        if (!is_numeric($position) || $position < 0) {
             throw new \InvalidArgumentException();
         }
 
