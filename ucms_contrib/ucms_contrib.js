@@ -8,8 +8,14 @@
       return !dropped || !(dropped.hasClass('ui-sortable') || dropped.hasClass('ui-droppable'));
     },
     opacity: 0.75,
-    helper: function () {
-      return $(this).clone().removeClass('col-md-6');
+    helper: function (event, element) {
+      if ($(this).hasClass('ui-draggable')) {
+        return $(this).clone().removeClass('col-md-6'); // current element is a draggable
+      }
+      else {
+        // current element is a sortable item
+        return $(element).clone().removeClass('col-md-6').addClass('ui-sortable-helper');
+      }
     },
     appendTo: 'body',
     //containment: 'document', // TODO find out WTF is going on
@@ -92,10 +98,11 @@
               });
           }
           else {
+            console.log('trash', 'position', ui.draggable.index(), ui);
             // Remove from region
             $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
               region: ui.draggable.parents('[data-region]').data('region'),
-              position: ui.draggable.index(),
+              position: Math.max(ui.draggable.index() - 1, 0),
               token: settings.ucmsLayout.editToken
             }).done(function () {
               ui.draggable.remove();
@@ -162,13 +169,18 @@
             return; // Prevent receiving item on the way to the trash
           }
           ui.item.justReceived = true;
-          console.log('receive', arguments);
-          var $region = $(this);
+          console.log('receive', this, arguments);
+          var position = 0;
+          if (ui.item.hasClass('ui-draggable')) {
+            // coming from the carte
+            position = $(this).data().uiSortable.currentItem.index();
+          }
+
           // Add the new element to the layout
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/add', {
             region: $(this).data('region'),
             nid: ui.item.data('nid'),
-            position: $region.data().uiSortable.currentItem.index(), // Don't ask me why
+            position: position, // Don't ask me why
             token: settings.ucmsLayout.editToken
           }).done(function (data) {
             var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
@@ -188,9 +200,14 @@
           }
           ui.item.startPos = ui.item.index();
         },
+        over: function (event, ui) {
+          $(this).addClass('drop-highlighted-over');
+        },
         update: function (event, ui) {
-          if (ui.item.trashed || ui.item.hasClass('ui-draggable')) {
-            return; // Prevent updating item on the way to the trash or if element was dragged from cart
+          if (ui.item.trashed || ui.item.justReceived || ui.item.hasClass('ui-draggable')) {
+            // Prevent updating item on the way to the trash or if element was
+            // dragged from another, it will be handled by received
+            return;
           }
           console.log('update', arguments);
           // Add the new element to the layout
@@ -200,6 +217,23 @@
             prevPosition: ui.item.startPos,
             position: ui.item.index(),
             token: settings.ucmsLayout.editToken
+          });
+        },
+        remove: function (event, ui) {
+          if (ui.item.trashed || ui.item.hasClass('ui-draggable')) {
+            // Prevent updating item on the way to the trash or if element was
+            // dragged from cart
+            return;
+          }
+          console.log('removed', arguments);
+          // Add the new element to the layout
+          $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
+            region: $(this).data('region'),
+            nid: ui.item.data('nid'),
+            position: ui.item.startPos - 1,
+            token: settings.ucmsLayout.editToken
+          }, function () {
+            ui.item.remove()
           });
         }
       }));

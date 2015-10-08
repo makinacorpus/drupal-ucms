@@ -129,6 +129,7 @@ body [data-region].drop-highlighted {
   border: dashed .2em #018fe2;
   min-height: 2em;
   transition: .5s;
+  padding: 10px;
 }
 
 body [data-region].drop-highlighted:after {
@@ -156,10 +157,14 @@ body [data-region].drop-highlighted-over {
   z-index: 1;
 }
 
-.ui-draggable {
+.ui-sortable [data-nid],
+.ui-sortable [data-nid] a,
+.ui-draggable,
+.ui-draggable a {
   cursor: move;
   z-index: 100;
 }
+
 .ui-draggable.ui-draggable-dragging,
 .ui-sortable-helper {
   max-width: 100px;

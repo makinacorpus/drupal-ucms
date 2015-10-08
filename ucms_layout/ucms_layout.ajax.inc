@@ -48,25 +48,7 @@ function ucms_layout_ajax_region_item_add($layout) {
 
   $item = new \Ucms\Layout\Item($query['nid'], $query['view_mode']);
 
-  switch ($query['mode']) {
-
-    case 'prepend':
-      $layout->getRegion($query['region'])->prepend($item);
-      break;
-
-    case 'append':
-      $layout->getRegion($query['region'])->append($item);
-      break;
-
-    default:
-      if (empty($query['position'])) {
-        // Fallback to append.
-        $layout->getRegion($query['region'])->append($item);
-      } else {
-        $layout->getRegion($query['region'])->addAt($item, $query['position']);
-      }
-      break;
-  }
+  $layout->getRegion($query['region'])->addAt($item, $query['position']);
 
   ucms_layout_context_get()->getStorage()->save($layout);
 
