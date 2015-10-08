@@ -4,7 +4,9 @@
    * @type {{revert: boolean, opacity: number, helper: string, appendTo: string, containment: string, cursorAt: {top: number, left: number}}}
    */
   Drupal.ucmsDraggableDefaults = {
-    revert: true,
+    revert: function (dropped) {
+      return !dropped || !(dropped.hasClass('ui-sortable') || dropped.hasClass('ui-droppable'));
+    },
     opacity: 0.75,
     helper: function () {
       return $(this).clone().removeClass('col-md-6');
@@ -162,11 +164,12 @@
           }
           ui.item.justReceived = true;
           console.log('receive', arguments);
+          var $region = $(this);
           // Add the new element to the layout
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/add', {
             region: $(this).data('region'),
             nid: ui.item.data('nid'),
-            position: ui.item.index() - 1, // Don't ask me why
+            position: $region.data().uiSortable.currentItem.index(), // Don't ask me why
             token: settings.ucmsLayout.editToken
           }).done(function (data) {
             var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
@@ -187,8 +190,8 @@
           ui.item.startPos = ui.item.index();
         },
         update: function (event, ui) {
-          if (ui.item.trashed || ui.item.justReceived) {
-            return; // Prevent updating item on the way to the trash
+          if (ui.item.trashed || ui.item.hasClass('ui-draggable')) {
+            return; // Prevent updating item on the way to the trash or if element was dragged from cart
           }
           console.log('update', arguments);
           // Add the new element to the layout
@@ -198,9 +201,6 @@
             prevPosition: ui.item.startPos,
             position: ui.item.index(),
             token: settings.ucmsLayout.editToken
-          }).done(function (data) {
-            var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
-            $(draggedItem).replaceWith(elem);
           });
         }
       }));
