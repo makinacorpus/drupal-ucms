@@ -19,12 +19,12 @@ function ucms_layout_ajax_region_item_add($layout) {
   $query = $_POST;
 
   // CSRF protection.
-/*  if (empty($query['token'])) {
+  if (empty($query['token'])) {
     return MENU_ACCESS_DENIED; // No CSRF token.
   }
   if (!drupal_valid_token($query['token'])) {
     return MENU_ACCESS_DENIED; // Invalid CSRF token.
-  }*/
+  }
 
   // Input validation.
   if (!$layout instanceof \Ucms\Layout\Layout) {
@@ -44,6 +44,12 @@ function ucms_layout_ajax_region_item_add($layout) {
   }
   if (empty($query['view_mode'])) {
     $query['view_mode'] = 'teaser';
+  }
+
+  $context = ucms_layout_context_get();
+  $context->setToken($query['token']);
+  if ($temp = $context->getTemporaryStorage()->load($layout->getId())) {
+    $layout = $temp;
   }
 
   $item = new \Ucms\Layout\Item($query['nid'], $query['view_mode']);
@@ -68,7 +74,7 @@ function ucms_layout_ajax_region_item_add($layout) {
       break;
   }
 
-  ucms_layout_save($layout);
+  $context->getTemporaryStorage()->save($layout);
 
   $node_view = node_view($node, $query['view_mode']);
   drupal_json_output([
@@ -91,12 +97,12 @@ function ucms_layout_ajax_region_item_remove($layout) {
   $query = $_POST;
 
   // CSRF protection.
-/*  if (empty($query['token'])) {
+  if (empty($query['token'])) {
     return MENU_ACCESS_DENIED; // No CSRF token.
   }
   if (!drupal_valid_token($query['token'])) {
     return MENU_ACCESS_DENIED; // Invalid CSRF token.
-  }*/
+  }
 
   // Input validation.
   if (!$layout instanceof \Ucms\Layout\Layout) {
@@ -109,9 +115,15 @@ function ucms_layout_ajax_region_item_remove($layout) {
     $query['position'] = 0;
   }
 
+  $context = ucms_layout_context_get();
+  $context->setToken($query['token']);
+  if ($temp = $context->getTemporaryStorage()->load($layout->getId())) {
+    $layout = $temp;
+  }
+
   $layout->getRegion($query['region'])->removeAt($query['position']);
 
-  ucms_layout_save($layout);
+  $context->getTemporaryStorage()->save($layout);
 
   drupal_json_output(['success' => true]);
 }

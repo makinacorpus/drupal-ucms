@@ -45,7 +45,7 @@ function ucms_layout_admin_layout_add_form_submit($form, &$form_state) {
     ->setSiteId(0) // @todo
   ;
 
-  ucms_layout_save($layout);
+  ucms_layout_context_get()->getStorage()->save($layout);
 
   drupal_set_message(t("Page %page has been created.", ['%page' => $layout->getAdminTitle()]));
 
@@ -102,7 +102,7 @@ function ucms_layout_admin_layout_edit_form_update_submit($form, &$form_state) {
     ->setSiteId(0) // @todo
   ;
 
-  ucms_layout_save($layout);
+  ucms_layout_context_get()->getStorage()->save($layout);
 
   drupal_set_message(t("Page %page has been updated.", ['%page' => $layout->getAdminTitle()]));
 
@@ -138,7 +138,7 @@ function ucms_layout_admin_layout_delete_form($form, &$form_state, \Ucms\Layout\
  */
 function ucms_layout_admin_layout_delete_form_submit($form, &$form_state) {
 
-  ucms_layout_delete($form['#layout_id']);
+  ucms_layout_context_get()->getStorage()->delete($form['#layout_id']);
 
   drupal_set_message(t("Page %page has been deleted.", ['%page' => $form['#layout_title']]), 'error');
 

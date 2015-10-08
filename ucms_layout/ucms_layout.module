@@ -261,6 +261,18 @@ function ucms_layout_access($op, $layout, $account = null) {
 }
 
 /**
+ * Menu helper: load layout instances.
+ *
+ * @param int[] $idList
+ *   List of layout identifiers.
+ *
+ * @return \Ucms\Layout\Layout[]
+ */
+function ucms_layout_load($id) {
+  return ucms_layout_context_get()->getStorage()->load($id);
+}
+
+/**
  * Menu title callback.
  */
 function ucms_layout_title($layout) {
