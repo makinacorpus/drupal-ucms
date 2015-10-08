@@ -25,11 +25,6 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 /**
- * Because we do need this.
- */
-require_once __DIR__ . '/ucms_layout.crud.inc';
-
-/**
  * Implements hook_menu().
  */
 function ucms_layout_menu() {
