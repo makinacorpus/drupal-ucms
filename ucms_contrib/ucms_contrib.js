@@ -14,6 +14,7 @@
     }
   };
   Drupal.ucmsDroppableDefaults = {
+    tolerance: 'pointer',
     hoverClass: "drop-highlighted-hover",
     activate: function () {
       $(this).addClass('drop-highlighted');
@@ -29,7 +30,24 @@
    */
   Drupal.behaviors.ucmsCart = {
     attach: function (context, settings) {
-      // First drop zone, cart
+      // Hide forms
+      $('.ucms-contrib-result, .ucms-cart-item').find('form[id^=ucms-contrib-favorite-]').css('display', 'none');
+
+      // Toggle cart
+      var $ucmsCart = $('#ucms-contrib-cart');
+      var initial_width = $ucmsCart.css('width');
+      var $ucmsToggle = $('#ucms-cart-toggle');
+      $ucmsToggle.click(function () {
+        $ucmsCart.width() == 0 && $('#ucms-cart').show();
+        $ucmsCart.animate({
+          width: $ucmsCart.width() == 0 ? initial_width : '0px'
+        }, function () {
+          $ucmsCart.width() == 0 && $('#ucms-cart').hide();
+          $ucmsToggle.find('span').toggleClass('glyphicon-chevron-left glyphicon-chevron-right');
+        });
+      });
+
+      // First drop zone, cart, accepting only admin items
       $('#ucms-cart', context).droppable($.extend({}, Drupal.ucmsDroppableDefaults, {
         accept: "[data-nid]:not(.ucms-cart-item):not(.ucms-region-item)",
         drop: function (event, ui) {
@@ -53,12 +71,15 @@
             });
         }
       }));
-      // Second drop zone, trash
+
+      // Second drop zone, trash, accepting cart items or region items
       $('#ucms-cart-trash', context).droppable($.extend({}, Drupal.ucmsDroppableDefaults, {
         accept: "[data-nid].ucms-cart-item, [data-nid].ucms-region-item",
         drop: function (event, ui) {
+          console.log('dropped', arguments);
           var nid = ui.draggable.data('nid');
           if (!ui.draggable.hasClass('ucms-region-item')) {
+            // remove form cart
             $.get(settings.basePath + 'admin/cart/' + nid + '/remove/nojs')
               .done(function () {
                 // remove from cart
@@ -66,6 +87,7 @@
               });
           }
           else {
+            // remove form region
             $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout + '/remove', {
               'region': ui.draggable.parents('[data-region]').data('region')
             }).done(function () {
@@ -76,8 +98,11 @@
           }
         }
       }));
-      // Activate all draggables
-      $('[data-nid]', context).draggable(Drupal.ucmsDraggableDefaults);
+      // Activate all draggables except sortables (aka region items)
+      $('[data-nid]:not(.ucms-region-item)', context).draggable($.extend({}, Drupal.ucmsDraggableDefaults, {
+        connectToSortable: '[data-region]',
+        cursorAt: {top: 50, left: 50}
+      }));
     }
   };
 
@@ -87,22 +112,40 @@
    */
   Drupal.behaviors.ucmsRegion = {
     attach: function (context, settings) {
-      // All region are drop zone for cart items
-      $('[data-region]', context).droppable($.extend({}, Drupal.ucmsDroppableDefaults, {
-        accept: "[data-nid].ucms-cart-item",
-        drop: function (event, ui) {
+      // All regions are drop zones for cart items
+      $('[data-region]', context).sortable({
+        revert: true,
+        items: '[data-nid]',
+        connectWith: '[data-region], #ucms-cart-trash',
+        opacity: 0.75,
+        cursorAt: {top: 50, left: 50},
+        tolerance: 'pointer',
+        remove: function (event, ui) {
+          console.log('remove', arguments);
+        },
+        change: function (event, ui) {
+          console.log('change', arguments);
+        },
+        receive: function (event, ui) {
+          console.log('receive', arguments);
+          // Add the new element to the layout
           var $region = $(this);
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout + '/add', {
-            'region': $(this).data('region'),
-            'nid': ui.draggable.data('nid')
-          }).done(function(data) {
-            var elem = '<div class="ucms-region-item" data-nid="' + ui.draggable.data('nid') + '">' + data.node + '</div>';
-            $region.append(elem);
-          }).fail(function() {
-
+            region: $(this).data('region'),
+            nid: ui.item.data('nid')
+          }).done(function (data) {
+            var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
+            $region.find('.ui-sortable').append(elem);
+            $('[data-region]', context).sortable("refresh");
           });
+        },
+        update: function (event, ui) {
+          console.log('update', arguments);
+        },
+        stop: function (event, ui) {
+          console.log('stop', arguments);
         }
-      }));
+      });
     }
   };
 }(jQuery));
