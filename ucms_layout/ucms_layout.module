@@ -584,3 +584,18 @@ function template_preprocess_ucms_layout_item(&$variables) {
     $variables['content'] = [];
   }
 }
+
+/**
+ * Implements hook_custom_theme().
+ */
+function ucms_layout_custom_theme() {
+  $patterns = [
+    'admin/ucms/layout/*/add',
+    'admin/ucms/layout/*/remove',
+    'admin/ucms/layout/*/move',
+  ];
+  if (drupal_match_path(current_path(), implode("\n", $patterns))) {
+    // Use front-end theme for node_view on ajax calls.
+    return variable_get('theme_default');
+  }
+}
