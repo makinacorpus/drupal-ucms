@@ -162,11 +162,11 @@ body [data-region].drop-highlighted-over {
 }
 .ui-draggable.ui-draggable-dragging,
 .ui-sortable-helper {
-  max-width: 120px;
+  max-width: 100px;
   max-height: 100px;
   overflow: hidden;
   background: #fff;
-  float: none !important;
+  border-radius: 50px;
 }
 
 /* Fix fucking bootstrap banner */

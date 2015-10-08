@@ -45,11 +45,10 @@
       var initial_width = $ucmsCart.css('width');
       var $ucmsToggle = $('#ucms-cart-toggle');
       $ucmsToggle.click(function () {
-        $ucmsCart.width() == 0 && $('#ucms-cart').show();
+        var shown = !$ucmsCart.css('margin-right') || $ucmsCart.css('margin-right') == '0px';
         $ucmsCart.animate({
-          width: $ucmsCart.width() == 0 ? initial_width : '0px'
+          marginRight: shown ? '-' + initial_width : '0px'
         }, function () {
-          $ucmsCart.width() == 0 && $('#ucms-cart').hide();
           $ucmsToggle.find('span').toggleClass('glyphicon-chevron-left glyphicon-chevron-right');
         });
       });
