@@ -142,6 +142,9 @@ function _ucms_search_index_create($index, $params = []) {
               'updated' => [
                 'type' => 'date',
               ],
+              'tags' => [
+                'type' => 'integer',
+              ],
             ]
           ]
         ]
@@ -163,6 +166,26 @@ function _ucms_search_index_node_field_to_fulltext($node, $field_name) {
     $build = field_view_field('node', $node, $field_name, 'full');
     return drupal_render($build);
   }
+}
+
+/**
+ * Extract term identifiers from field
+ *
+ * @param stdClass $node
+ * @param string $field_name
+ *
+ * @return int[]
+ */
+function _ucms_search_index_node_field_to_tag_id_list($node, $field_name) {
+  $ret = [];
+  if ($items = field_get_items('node', $node, $field_name)) {
+    foreach ($items as $item) {
+      if (isset($item['tid'])) {
+        $ret[] = (int)$item['tid'];
+      }
+    }
+  }
+  return $ret;
 }
 
 /**
@@ -196,6 +219,7 @@ function ucms_search_index_node_delete($index, $nid) {
 function ucms_search_index_node_add($index, $node) {
 
   $body     = strip_tags(_ucms_search_index_node_field_to_fulltext($node, 'body'));
+  $tags     = _ucms_search_index_node_field_to_tag_id_list($node, 'tags');
   $created  = null;
   $changed  = null;
 
@@ -219,6 +243,7 @@ function ucms_search_index_node_add($index, $node) {
         'updated' => $changed->format(DateTime::ISO8601),
         'type'    => $node->type,
         'body'    => $body,
+        'tags'    => $tags,
       ],
     ])
   ;

@@ -150,6 +150,33 @@ function ucms_contrib_admin_content_page($tab = null) {
     }
   }
 
+  $tagsFacet = $ret['#facets']['tags'] = $search
+    ->createTermAggregation('tags', null)
+    ->setChoicesCallback(function ($values) {
+      if (is_array($values)) {
+        if ($terms = taxonomy_term_load_multiple($values)) {
+          foreach ($terms as $index => $term) {
+            $term[$index] = check_plain($term->name);
+          }
+          return $terms;
+        }
+      } else {
+        if ($term = taxonomy_term_load($values)) {
+          return check_plain($term->name);
+        }
+      }
+    })
+    ->setTitle(t("Tags"))
+  ;
+  // @todo This should be a generic API, somewhere
+  if (!empty($_GET[$tagsFacet->getField()])) {
+    if (is_array($_GET[$tagsFacet->getField()])) {
+      $tagsFacet->setSelectedValues($_GET[$tagsFacet->getField()]);
+    } else {
+      $tagsFacet->setSelectedValues([$_GET[$tagsFacet->getField()]]);
+    }
+  }
+
   $types = variable_get('ucms_contrib_tab_' . $tab . '_type');
   if (!empty($types)) {
     $search
