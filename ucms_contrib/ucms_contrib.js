@@ -107,7 +107,7 @@
       }));
 
       // Activate all draggables except sortables (aka region items)
-      $('[data-nid]:not(.ucms-region-item)', context).draggable($.extend({}, Drupal.ucmsDraggableDefaults, {
+      $('[data-nid].ucms-cart-item', context).draggable($.extend({}, Drupal.ucmsDraggableDefaults, {
         connectToSortable: '[data-region]'
       }));
     }
@@ -218,8 +218,8 @@
 
       // Add a custom dragging handler to activate empty region before activating sortables
       var wasDragging = false;
-      $('[data-nid]', context)
-        .mousemove(function (event) {
+      $(document)
+        .on('mousemove', '[data-nid]', function (event) {
           if (wasDragging) {
             // Show the regions that are empty
             $('.ucms-layout-empty-region').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
@@ -242,11 +242,10 @@
             inst.helper.remove();
           }
           wasDragging = false;
-        })
-        .mousedown(function () {
+        }).on('mousedown', '[data-nid]', function () {
           wasDragging = true;
         })
-        .mouseup(function () {
+        .on('mouseup', '[data-nid]', function () {
           wasDragging = false;
         });
     }
