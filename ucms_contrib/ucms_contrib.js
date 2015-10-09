@@ -65,7 +65,7 @@
               // add to cart list
               var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + nid + '">' + data.node + '</div>';
               $(elem).appendTo('#ucms-cart-list').draggable(Drupal.ucmsDraggableDefaults);
-              ui.draggable.animate(ui.draggable.data('uiDraggable').originalPosition);
+              ui.draggable.css(ui.draggable.data('uiDraggable').originalPosition);
             })
             .fail(function (xhr) {
               // display error and revert
@@ -76,7 +76,7 @@
                   $(this).remove();
                 });
               }, 3000);
-              ui.draggable.remove();
+              ui.draggable.animate(ui.draggable.data('uiDraggable').originalPosition);
             });
         }
       }));
