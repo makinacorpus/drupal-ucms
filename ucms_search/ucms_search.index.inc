@@ -195,6 +195,7 @@ function _ucms_search_index_node_field_to_tag_id_list($node, $field_name) {
  * @param int $nid
  */
 function ucms_search_index_node_delete($index, $nid) {
+return; // FIXME (throwing exceptions)
   ucms_search_client_get()
     ->delete([
       'index' => $index,
