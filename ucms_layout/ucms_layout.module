@@ -346,6 +346,18 @@ function ucms_layout_theme() {
 }
 
 /**
+ * Implements hook_form().
+ */
+function ucms_layout_forms($form_id, $args) {
+  // This implementation allows to use the same form more than once on the
+  // same page, see drupal_get_form() related calls. This is ugly but this
+  // is the right way to do it.
+  if (0 === strpos($form_id, 'ucms_layout_edit_form')) {
+    return [$form_id => ['callback' => 'ucms_layout_edit_form']];
+  }
+}
+
+/**
  * Implements hook_block_list_alter().
  */
 function ucms_layout_block_list_alter(&$blocks) {

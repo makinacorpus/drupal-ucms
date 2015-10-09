@@ -356,7 +356,7 @@ function ucms_contrib_favorite_remove($nid, $account = null) {
 function ucms_contrib_favorite_list($account = null) {
 
   if (!$account) {
-    $account = $GLOBALS['user'];
+    $account = $GLOBALS['user']->uid;
   }
   if (is_object($account)) {
     $account = $account->uid;
@@ -365,10 +365,11 @@ function ucms_contrib_favorite_list($account = null) {
   $q = db_select('ucms_contrib_cart', 'c');
   $q->fields('c', ['nid']);
   $q->join('node', 'n', "n.nid = c.nid");
+  $q->condition('n.uid', $account);
 
   return $q
-    ->extend('PagerDefault')
-    ->limit(12)
+    //->extend('PagerDefault')
+    //->limit(12)
     ->addTag('node_access')
     ->execute()
     ->fetchCol()
