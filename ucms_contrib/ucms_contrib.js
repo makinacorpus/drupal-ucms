@@ -70,7 +70,7 @@
             .fail(function (xhr) {
               // display error and revert
               var err_elem = '<div class="error">' + xhr.responseJSON.error + '</div>';
-              var $errElem = $('#ucms-cart-list').append(err_elem).find('div:last-child');
+              var $errElem = $(err_elem).appendTo('#ucms-cart-list');
               setTimeout(function () {
                 $errElem.fadeOut(function () {
                   $(this).remove();
