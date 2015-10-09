@@ -143,7 +143,12 @@ function ucms_layout_ajax_region_item_move($layout) {
 
   $item = new \Ucms\Layout\Item($query['nid'], $query['view_mode']);
 
-  $layout->getRegion($query['region'])->removeAt($query['prevPosition']);
+  if (!empty($query['prevRegion'])) {
+    $layout->getRegion($query['prevRegion'])->removeAt($query['prevPosition']);
+  }
+  else {
+    $layout->getRegion($query['region'])->removeAt($query['prevPosition']);
+  }
   $layout->getRegion($query['region'])->addAt($item, $query['position']);
 
   ucms_layout_context_get()->getStorage()->save($layout);

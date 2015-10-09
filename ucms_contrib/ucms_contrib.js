@@ -180,23 +180,30 @@
             position = ui.item.index();
           }
 
-          // Add the new element to the layout
-          $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/add', {
-            region: $(this).data('region'),
-            nid: ui.item.data('nid'),
-            position: position, // Don't ask me why
-            token: settings.ucmsLayout.editToken
-          }).done(function (data) {
-            var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
-            $(draggedItem).replaceWith(elem);
-          });
-          // Remove from previous region if there is a sender
-          console.log(ui.sender);
           if (ui.sender && ui.sender.data('region')) {
-            $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
-              region: ui.sender.data('region'),
-              position: ui.item.startPos,
+            // Move from previous region if there is a sender
+            $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
+              region: $(this).data('region'),
+              prevRegion: ui.sender.data('region'),
+              nid: ui.item.data('nid'),
+              position: position,
+              prevPosition: ui.item.startPos,
               token: settings.ucmsLayout.editToken
+            }).done(function (data) {
+              var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
+              $(draggedItem).replaceWith(elem);
+            });
+          }
+          else {
+            // Add to region from cart
+            $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/add', {
+              region: $(this).data('region'),
+              nid: ui.item.data('nid'),
+              position: position, // Don't ask me why
+              token: settings.ucmsLayout.editToken
+            }).done(function (data) {
+              var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
+              $(draggedItem).replaceWith(elem);
             });
           }
         },
