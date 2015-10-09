@@ -5,6 +5,7 @@
   right: 0;
   width: 220px;
   height: 100%;
+  z-index: 10;
 }
 
 #ucms-cart-toggle {
@@ -146,6 +147,10 @@ body [data-region].drop-highlighted-over {
 
 .ucms-layout-empty-block-hover, .ucms-layout-empty-region-hover {
   height: 100px;
+}
+
+#ucms-layout-edit-form {
+  float: right;
 }
 
 .region-page-top {
