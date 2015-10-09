@@ -9,15 +9,9 @@
       return !dropped || !(dropped.hasClass('ui-sortable') || dropped.hasClass('ui-droppable'));
     },
     opacity: 0.75,
-    helper: function (event, element) {
+    helper: function () {
       // Remove bootstrap class as it messes up layout
-      if ($(this).hasClass('ui-draggable')) {
-        return $(this).clone().removeClass('col-md-6'); // current element is a draggable
-      }
-      else {
-        // current element is a sortable item
-        return $(element).clone().removeClass('col-md-6').addClass('ui-sortable-helper');
-      }
+      return $(this).clone().removeClass('col-md-6'); // current element is a draggable
     },
     appendTo: 'body',
     containment: 'document',
@@ -100,7 +94,6 @@
               });
           }
           else {
-            console.log('trash', 'position', ui.draggable.index(), ui);
             // Remove from region
             $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
               region: ui.draggable.parents('[data-region]').data('region'),
@@ -133,13 +126,12 @@
       $('[data-region]', context).sortable($.extend({}, Drupal.ucmsDroppableDefaults, Drupal.ucmsDraggableDefaults, {
         items: '[data-nid]',
         connectWith: '[data-region], #ucms-cart-trash',
+        helper: null,
         placeholder: {
-          element: function () {
-            // Again create element without bootstrap class as it messes layout
-            return $(this).clone().removeClass('col-md-6 ui-sortable-helper').addClass('ui-sortable-placeholder').css({
-              visibility: 'hidden',
-              maxHeight: '100px'
-            });
+          element: function (element) {
+            // Again create element without bootstrap classes as it messes layout
+            var nodeName = element[0].nodeName.toLowerCase();
+            return $(document.createElement(nodeName)).addClass('ui-sortable-placeholder');
           },
           update: function () {
           }
@@ -171,8 +163,6 @@
           if (ui.item.trashed) {
             return; // Prevent receiving item on the way to the trash
           }
-          ui.item.justReceived = true;
-          console.log('receive', this, arguments);
           var position = 0;
           if (ui.item.hasClass('ui-draggable')) {
             // coming from the cart
@@ -210,12 +200,11 @@
           $(this).addClass('drop-highlighted-over');
         },
         update: function (event, ui) {
-          if (ui.item.trashed || ui.item.justReceived || ui.item.hasClass('ui-draggable')) {
+          if (ui.item.trashed || this !== this.currentContainer || ui.item.hasClass('ui-draggable')) {
             // Prevent updating item on the way to the trash or if element was
             // dragged from another, it will be handled by received
             return;
           }
-          console.log('update', arguments);
           // Add the new element to the layout
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
             region: $(this).data('region'),
