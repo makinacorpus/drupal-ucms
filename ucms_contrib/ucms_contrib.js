@@ -5,10 +5,12 @@
    */
   Drupal.ucmsDraggableDefaults = {
     revert: function (dropped) {
+      // Revert only if not dropped anywhere
       return !dropped || !(dropped.hasClass('ui-sortable') || dropped.hasClass('ui-droppable'));
     },
     opacity: 0.75,
     helper: function (event, element) {
+      // Remove bootstrap class as it messes up layout
       if ($(this).hasClass('ui-draggable')) {
         return $(this).clone().removeClass('col-md-6'); // current element is a draggable
       }
@@ -18,7 +20,7 @@
       }
     },
     appendTo: 'body',
-    //containment: 'document', // TODO find out WTF is going on
+    containment: 'document',
     cursorAt: {top: 50, left: 50}
   };
 
@@ -133,6 +135,7 @@
         connectWith: '[data-region], #ucms-cart-trash',
         placeholder: {
           element: function () {
+            // Again create element without bootstrap class as it messes layout
             return $(this).clone().removeClass('col-md-6 ui-sortable-helper').addClass('ui-sortable-placeholder').css({
               visibility: 'hidden',
               maxHeight: '100px'
@@ -172,8 +175,11 @@
           console.log('receive', this, arguments);
           var position = 0;
           if (ui.item.hasClass('ui-draggable')) {
-            // coming from the carte
+            // coming from the cart
             position = $(this).data().uiSortable.currentItem.index();
+          }
+          else {
+            position = ui.item.index();
           }
 
           // Add the new element to the layout
@@ -200,7 +206,7 @@
           }
           ui.item.startPos = ui.item.index();
         },
-        over: function (event, ui) {
+        over: function () {
           $(this).addClass('drop-highlighted-over');
         },
         update: function (event, ui) {
@@ -218,27 +224,10 @@
             position: ui.item.index(),
             token: settings.ucmsLayout.editToken
           });
-        },
-        remove: function (event, ui) {
-          if (ui.item.trashed || ui.item.hasClass('ui-draggable')) {
-            // Prevent updating item on the way to the trash or if element was
-            // dragged from cart
-            return;
-          }
-          console.log('removed', arguments);
-          // Add the new element to the layout
-          $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
-            region: $(this).data('region'),
-            nid: ui.item.data('nid'),
-            position: ui.item.startPos,
-            token: settings.ucmsLayout.editToken
-          }, function () {
-            ui.item.remove()
-          });
         }
       }));
 
-      // Add a custom dragging handler to activate empty region before sortables
+      // Add a custom dragging handler to activate empty region before activating sortables
       var wasDragging = false;
       $('[data-nid]', context)
         .mousemove(function () {
@@ -246,6 +235,8 @@
             // Show the regions that are empty
             $('.ucms-layout-empty-region').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
             $('.ucms-layout-empty-block').toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
+            // refresh containment (window) size as our layout has now changed
+            $('[data-nid]:not(.ucms-region-item)', context).draggable('refreshContainment');
           }
           wasDragging = false;
         })
