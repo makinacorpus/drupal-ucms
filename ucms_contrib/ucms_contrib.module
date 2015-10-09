@@ -35,10 +35,10 @@ function ucms_contrib_menu() {
 
   // Main administration pages.
   $items['admin/contribute'] = [
-    'title'             => "Content",
+    'title'             => "Content management",
     'page callback'     => 'ucms_contrib_admin_content_page',
     'page arguments'    => ['text'],
-    'access arguments'  => ['access content overview'],
+    'access arguments'  => ['access ucms content overview'],
     'file'              => 'ucms_contrib.pages.inc',
   ];
   // @todo Use ucms_contrib_tab_list().
@@ -50,7 +50,7 @@ function ucms_contrib_menu() {
     'title'             => "Media",
     'page callback'     => 'ucms_contrib_admin_content_page',
     'page arguments'    => ['media'],
-    'access arguments'  => ['access content overview'],
+    'access arguments'  => ['access ucms content overview'],
     'file'              => 'ucms_contrib.pages.inc',
     'type'              => MENU_LOCAL_TASK,
   ];
@@ -86,12 +86,46 @@ function ucms_contrib_menu() {
 }
 
 /**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  // Add node/add links on the content pages.
+  if (preg_match('@^admin/contribute.*$@', $root_path)) {
+    $tab = arg(2);
+    if (null === $tab) {
+      $tab = 'text';
+    }
+    if ($tab) {
+      if ($types = variable_get('ucms_contrib_tab_' . $tab . '_type')) {
+        $names = node_type_get_names();
+        foreach ($types as $type) {
+          if (node_access('create', $type)) {
+            $data['actions']['output'][] = array(
+              '#theme' => 'menu_local_action',
+              '#link' => [
+                'href'  => 'node/add/' . $type,
+                'title' => $names[$type],
+                'query' => drupal_get_destination(),
+              ],
+            );
+          }
+        }
+      }
+    }
+  }
+}
+
+
+/**
  * Implements hook_permission().
  */
 function ucms_contrib_permission() {
   return [
     'use favorites' => [
       'title' => "Access the favorites feature",
+    ],
+    'access ucms content overview' => [
+      'title' => "Access the UCMS content overview page",
     ],
   ];
 }

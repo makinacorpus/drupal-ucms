@@ -66,7 +66,7 @@ function ucms_layout_menu() {
   $items['admin/layout'] = [
     'title'             => "Pages",
     'page callback'     => 'ucms_layout_admin_index',
-    'access arguments'  => ['access content overview'],
+    'access arguments'  => ['access ucms content overview'],
     'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_NORMAL_ITEM,
   ];
@@ -84,7 +84,7 @@ function ucms_layout_menu() {
     'title'             => "Layout management",
     'description'       => "Manage usable regions layouts and site wide configuration.",
     'page callback'     => 'ucms_layout_admin_structure',
-    'access arguments'  => ['access content overview'],
+    'access arguments'  => ['administer content types'],
     'file'              => 'ucms_layout.admin.inc',
     'type'              => MENU_NORMAL_ITEM,
   ];
@@ -93,7 +93,7 @@ function ucms_layout_menu() {
     'title arguments'   => [3],
     'page callback'     => 'drupal_get_form',
     'page arguments'    => ['ucms_layout_admin_structure_theme_form', 3],
-    'access arguments'  => ['access content overview'],
+    'access arguments'  => ['administer content types'],
     'file'              => 'ucms_layout.admin.inc',
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];

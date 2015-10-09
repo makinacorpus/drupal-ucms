@@ -114,7 +114,7 @@ function ucms_contrib_admin_content_page($tab = null) {
   $typeFacet = $ret['#facets']['type'] = $search
     ->createTermAggregation('type', null)
     ->setChoicesMap(node_type_get_names())
-    ->setTitle(t("Content type"))
+    ->setTitle(t("Type"))
   ;
   // @todo This should be a generic API, somewhere
   if (!empty($_GET[$typeFacet->getField()])) {
@@ -174,6 +174,20 @@ function ucms_contrib_admin_content_page($tab = null) {
       $tagsFacet->setSelectedValues($_GET[$tagsFacet->getField()]);
     } else {
       $tagsFacet->setSelectedValues([$_GET[$tagsFacet->getField()]]);
+    }
+  }
+
+  $statusFacet = $ret['#facets']['status'] = $search
+    ->createTermAggregation('status', null)
+    ->setChoicesMap([0 => t("Unpublished"), 1 => t("Published")])
+    ->setTitle(t("Status"))
+  ;
+  // @todo This should be a generic API, somewhere
+  if (!empty($_GET[$statusFacet->getField()])) {
+    if (is_array($_GET[$statusFacet->getField()])) {
+      $statusFacet->setSelectedValues($_GET[$statusFacet->getField()]);
+    } else {
+      $statusFacet->setSelectedValues([$_GET[$statusFacet->getField()]]);
     }
   }
 

@@ -140,14 +140,22 @@ function ucms_search_exit() {
  * Implements hook_node_insert().
  */
 function ucms_search_node_insert($node) {
-  ucms_search_node_index_queue([$node->nid]);
+  // ucms_search_node_index_queue([$node->nid]);
+  // FIXME
+  ucms_search_index_node_add(UCMS_SEARCH_INDEX_PUBLIC, $node);
+  ucms_search_index_node_add(UCMS_SEARCH_INDEX_BACK, $node);
+  sleep(2);
 }
 
 /**
  * Implements hook_node_update().
  */
 function ucms_search_node_update($node) {
-  ucms_search_node_index_queue([$node->nid]);
+  // ucms_search_node_index_queue([$node->nid]);
+  // FIXME
+  ucms_search_index_node_add(UCMS_SEARCH_INDEX_PUBLIC, $node);
+  ucms_search_index_node_add(UCMS_SEARCH_INDEX_BACK, $node);
+  sleep(2);
 }
 
 /**

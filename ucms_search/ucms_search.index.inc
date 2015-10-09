@@ -130,6 +130,9 @@ function _ucms_search_index_create($index, $params = []) {
                 'analyzer'    => 'standard',
                 'term_vector' => 'yes'
               ],
+              'status' => [
+                'type' => 'integer',
+              ],
               'id' => [
                 'type' => 'long',
               ],
@@ -244,6 +247,7 @@ function ucms_search_index_node_add($index, $node) {
         'updated' => $changed->format(DateTime::ISO8601),
         'type'    => $node->type,
         'body'    => $body,
+        'status'  => (int)$node->status,
         'tags'    => $tags,
       ],
     ])
