@@ -365,7 +365,7 @@ function ucms_contrib_favorite_list($account = null) {
   $q = db_select('ucms_contrib_cart', 'c');
   $q->fields('c', ['nid']);
   $q->join('node', 'n', "n.nid = c.nid");
-  $q->condition('n.uid', $account);
+  $q->condition('c.uid', $account);
 
   return $q
     //->extend('PagerDefault')
