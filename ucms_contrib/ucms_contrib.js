@@ -230,7 +230,7 @@
           $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
             region: $(this).data('region'),
             nid: ui.item.data('nid'),
-            position: ui.item.startPos - 1,
+            position: ui.item.startPos,
             token: settings.ucmsLayout.editToken
           }, function () {
             ui.item.remove()
