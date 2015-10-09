@@ -57,14 +57,15 @@
 
       // First drop zone, cart, accepting only admin items
       $('#ucms-cart', context).droppable($.extend({}, Drupal.ucmsDroppableDefaults, {
-        accept: "[data-nid]:not(.ucms-cart-item):not(.ucms-region-item)",
+        accept: "[data-nid].ucms-contrib-result",
         drop: function (event, ui) {
           var nid = ui.draggable.data('nid');
           $.get(settings.basePath + 'admin/cart/' + nid + '/add/nojs')
             .done(function (data) {
               // add to cart list
               var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + nid + '">' + data.node + '</div>';
-              $('#ucms-cart-list').append(elem).find('div:last-child').draggable(Drupal.ucmsDraggableDefaults);
+              $(elem).appendTo('#ucms-cart-list').draggable(Drupal.ucmsDraggableDefaults);
+              ui.draggable.remove();
             })
             .fail(function (xhr) {
               // display error and revert
@@ -75,6 +76,7 @@
                   $(this).remove();
                 });
               }, 3000);
+              ui.draggable.remove();
             });
         }
       }));
@@ -96,8 +98,8 @@
           else {
             // Remove from region
             $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
-              region: ui.draggable.parents('[data-region]').data('region'),
-              position: Math.max(ui.draggable.index() - 1, 0),
+              region: $(ui.draggable.originRegion).data('region'),
+              position: ui.draggable.startPos,
               token: settings.ucmsLayout.editToken
             }).done(function () {
               ui.draggable.remove();
@@ -106,9 +108,13 @@
         }
       }));
 
-      // Activate all draggables except sortables (aka region items)
+      // Activate draggables from cart
       $('[data-nid].ucms-cart-item', context).draggable($.extend({}, Drupal.ucmsDraggableDefaults, {
         connectToSortable: '[data-region]'
+      }));
+      // Activate draggables from list
+      $('[data-nid].ucms-contrib-result', context).draggable($.extend({}, Drupal.ucmsDraggableDefaults, {
+        helper: 'original'
       }));
     }
   };
@@ -126,9 +132,11 @@
       $('[data-region]', context).sortable($.extend({}, Drupal.ucmsDroppableDefaults, Drupal.ucmsDraggableDefaults, {
         items: '[data-nid]',
         connectWith: '[data-region], #ucms-cart-trash',
-        helper: 'original',
+        helper: 'clone',
+        containment: false,
         placeholder: {
           element: function (element) {
+            $(this).data('startPosition', element.index());
             // Again create element without bootstrap classes as it messes layout
             var nodeName = element[0].nodeName.toLowerCase();
             return $(document.createElement(nodeName)).addClass('ui-sortable-placeholder');
@@ -183,9 +191,11 @@
             $(draggedItem).replaceWith(elem);
           });
           // Remove from previous region if there is a sender
+          console.log(ui.sender);
           if (ui.sender && ui.sender.data('region')) {
             $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
               region: ui.sender.data('region'),
+              position: ui.item.startPos,
               token: settings.ucmsLayout.editToken
             });
           }
@@ -194,7 +204,9 @@
           if (!ui.item.sender) {
             $(this).addClass('drop-highlighted-over');
           }
-          ui.item.startPos = ui.item.index();
+          ui.item.startPos = $(this).data('startPosition');
+          $(this).data('startPosition', null);
+          ui.item.originRegion = this;
         },
         over: function () {
           $(this).addClass('drop-highlighted-over');
@@ -219,27 +231,11 @@
       // Add a custom dragging handler to activate empty region before activating sortables
       var wasDragging = false;
       $(document)
-        .on('mousemove', '[data-nid]', function (event) {
+        .on('mousemove', '[data-nid]', function () {
           if (wasDragging) {
             // Show the regions that are empty
             $('.ucms-layout-empty-region').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
             $('.ucms-layout-empty-block').toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
-
-            // Refresh containment (window) size as our layout has now changed
-            var inst = $(this).data("uiDraggable") || $(this).data("sortableItem");
-            inst.helper = inst._createHelper(event);
-            inst.helper.addClass($(this).data("uiDraggable") ? "ui-draggable-dragging" : "ui-sortable-helper");
-            inst._cacheHelperProportions();
-            inst._cacheMargins();
-            inst.offset = inst.positionAbs = inst.element.offset();
-            inst.offset = {
-              top: inst.offset.top - inst.margins.top,
-              left: inst.offset.left - inst.margins.left,
-              parent: inst._getParentOffset(),
-              relative: inst._getRelativeOffset()
-            };
-            inst._setContainment();
-            inst.helper.remove();
           }
           wasDragging = false;
         }).on('mousedown', '[data-nid]', function () {
