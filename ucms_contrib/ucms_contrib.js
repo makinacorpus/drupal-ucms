@@ -239,6 +239,7 @@
               relative: inst._getRelativeOffset()
             };
             inst._setContainment();
+            inst.helper.remove();
           }
           wasDragging = false;
         })
