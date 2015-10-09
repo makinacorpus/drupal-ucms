@@ -126,7 +126,7 @@
       $('[data-region]', context).sortable($.extend({}, Drupal.ucmsDroppableDefaults, Drupal.ucmsDraggableDefaults, {
         items: '[data-nid]',
         connectWith: '[data-region], #ucms-cart-trash',
-        helper: null,
+        helper: 'original',
         placeholder: {
           element: function (element) {
             // Again create element without bootstrap classes as it messes layout
@@ -219,13 +219,26 @@
       // Add a custom dragging handler to activate empty region before activating sortables
       var wasDragging = false;
       $('[data-nid]', context)
-        .mousemove(function () {
+        .mousemove(function (event) {
           if (wasDragging) {
             // Show the regions that are empty
             $('.ucms-layout-empty-region').toggleClass('ucms-layout-empty-region ucms-layout-empty-region-hover');
             $('.ucms-layout-empty-block').toggleClass('ucms-layout-empty-block ucms-layout-empty-block-hover');
-            // refresh containment (window) size as our layout has now changed
-            $('[data-nid]:not(.ucms-region-item)', context).draggable('refreshContainment');
+
+            // Refresh containment (window) size as our layout has now changed
+            var inst = $(this).data("uiDraggable") || $(this).data("sortableItem");
+            inst.helper = inst._createHelper(event);
+            inst.helper.addClass($(this).data("uiDraggable") ? "ui-draggable-dragging" : "ui-sortable-helper");
+            inst._cacheHelperProportions();
+            inst._cacheMargins();
+            inst.offset = inst.positionAbs = inst.element.offset();
+            inst.offset = {
+              top: inst.offset.top - inst.margins.top,
+              left: inst.offset.left - inst.margins.left,
+              parent: inst._getParentOffset(),
+              relative: inst._getRelativeOffset()
+            };
+            inst._setContainment();
           }
           wasDragging = false;
         })

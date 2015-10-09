@@ -138,7 +138,6 @@ function _ucms_contrib_render_attach(&$build) {
   $build['#attached']['library'][] = array('system', 'ui.draggable');
   $build['#attached']['library'][] = array('system', 'ui.sortable');
   $build['#attached']['css'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css';
-  $build['#attached']['js'][] = drupal_get_path('module', 'ucms_contrib') . '/jquery-ui-refreshContainment.js';
   $build['#attached']['js'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js';
 }
 
