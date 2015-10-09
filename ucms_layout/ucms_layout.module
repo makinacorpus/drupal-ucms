@@ -64,7 +64,7 @@ function ucms_layout_menu() {
 
   // Administration section.
   $items['admin/layout'] = [
-    'title'             => "Pages",
+    'title'             => "Page building",
     'page callback'     => 'ucms_layout_admin_index',
     'access arguments'  => ['access ucms content overview'],
     'file'              => 'ucms_layout.pages.inc',
