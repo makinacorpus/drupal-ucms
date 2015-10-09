@@ -23,6 +23,9 @@ function ucms_layout_admin_layout_add_form($form, &$form_state) {
     '#description'    => t("This title will used for administrative pages and will never be shown to end users."),
   ];
 
+  if (module_exists('path')) {
+  }
+
   $form['actions']['#type'] = 'actions';
   $form['actions']['submit'] = [
     '#type'   => 'submit',
@@ -74,6 +77,18 @@ function ucms_layout_admin_layout_edit_form($form, &$form_state, \Ucms\Layout\La
     '#default_value'  => $layout->getAdminTitle(),
     '#description'    => t("This title will used for administrative pages and will never be shown to end users."),
   ];
+
+  /*
+  if (module_exists('path')) {
+    $form['path_alias'] = [
+      '#title'          => t("URL alias"),
+      '#field_prefix'   => url('/', ['absolute' => true]),
+      '#type'           => 'textfield',
+      '#description'    => t("You change here the URL of your page."),
+      '#default_value'  => drupal_get_path_alias('layout/' . $layout->getId()),
+    ];
+  }
+   */
 
   $form['actions']['#type'] = 'actions';
   $form['actions']['submit'] = [

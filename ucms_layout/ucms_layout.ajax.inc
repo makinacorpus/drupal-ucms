@@ -91,6 +91,21 @@ function ucms_layout_ajax_region_item_remove($layout) {
     $query['position'] = 0;
   }
 
+  // FIXME VERY UGLY
+  $lock_name = 'layout_update:' . $layout->getId();
+  $oups = false;
+  while (!lock_may_be_available($lock_name)) {
+    sleep(0.05);
+    $oups = true;
+  }
+  if (!lock_acquire($lock_name)) {
+    drupal_json_output(['success' => false]);
+    return;
+  }
+  if ($oups) {
+    $layout = ucms_layout_context_get()->getStorage()->load($layout->getId());
+  }
+
   $layout->getRegion($query['region'])->removeAt($query['position']);
 
   ucms_layout_context_get()->getStorage()->save($layout);
@@ -139,6 +154,21 @@ function ucms_layout_ajax_region_item_move($layout) {
   }
   if (empty($query['view_mode'])) {
     $query['view_mode'] = 'teaser';
+  }
+
+  // FIXME VERY UGLY
+  $lock_name = 'layout_update:' . $layout->getId();
+  $oups = false;
+  while (!lock_may_be_available($lock_name)) {
+    sleep(0.05);
+    $oups = true;
+  }
+  if (!lock_acquire($lock_name)) {
+    drupal_json_output(['success' => false]);
+    return;
+  }
+  if ($oups) {
+    $layout = ucms_layout_context_get()->getStorage()->load($layout->getId());
   }
 
   $item = new \Ucms\Layout\Item($query['nid'], $query['view_mode']);
