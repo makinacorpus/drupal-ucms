@@ -223,7 +223,7 @@ function theme_ucms_search_facet($variables) {
       foreach ($choices as $value => $string) {
         if (in_array($value, $values)) {
           $links[$value] = l('- ' . $string, current_path(), [
-            'query' => drupal_get_query_parameters(null, [$field, 'q']),
+            'query' => drupal_get_query_parameters(null, [$field, 'q', 'page']),
             'html'  => true,
           ]);
         } else {
@@ -236,12 +236,12 @@ function theme_ucms_search_facet($variables) {
       foreach ($choices as $value => $string) {
         if (in_array($value, $values)) {
           $links[$value] = l('- ' . $string, current_path(), [
-            'query' => drupal_get_query_parameters(null, [$field, 'q']),
+            'query' => drupal_get_query_parameters(null, [$field, 'q', 'page']),
             'html'  => true,
           ]);
         } else {
           $links[$value] = l($string, current_path(), [
-            'query' => [$field => $value] + drupal_get_query_parameters(),
+            'query' => [$field => $value] + drupal_get_query_parameters(null, ['q', 'page']),
             'html'  => true,
           ]);
         }
