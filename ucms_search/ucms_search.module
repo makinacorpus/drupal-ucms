@@ -114,10 +114,10 @@ function ucms_search_client_get() {
  *
  * @param string $index
  *
- * @return \Ucms\Search\Search
+ * @return \Ucms\Search\QueryAlteredSearch
  */
 function ucms_search_create($index) {
-  return (new \Ucms\Search\Search(ucms_search_client_get()))->setIndex($index);
+  return (new \Ucms\Search\QueryAlteredSearch(ucms_search_client_get()))->setIndex($index);
 }
 
 /**

@@ -177,7 +177,9 @@ class Search
     /**
      * Add facet aggregation
      *
-     * @param string $name
+     * @param string $parameterName
+     *   Facet query parameter name, if field name is not specified it will
+     *   also be used a facet field name
      * @param mixed[] $currentValues
      *   Current values for filtering if any
      * @param boolean $filter
@@ -191,17 +193,17 @@ class Search
      *
      * @return \Ucms\Search\TermFacet
      */
-    public function createTermAggregation($name, $values = null, $operator = Query::OP_OR, $field = null)
+    public function createTermAggregation($parameterName, $values = null, $operator = Query::OP_OR, $field = null)
     {
         if (!$field) {
-            $field = $name;
+            $field = $parameterName;
         }
 
         $facet = (new TermFacet($field, $operator))
           ->setSelectedValues($values)
         ;
 
-        $this->aggregations[$name] = $facet;
+        $this->aggregations[$parameterName] = $facet;
 
         return $facet;
     }
@@ -216,7 +218,7 @@ class Search
     {
         $ret = [];
 
-        foreach ($this->aggregations as $name => $facet) {
+        foreach ($this->aggregations as $parameterName => $facet) {
             $values = $facet->getSelectedValues();
 
             if ($values) {
@@ -231,7 +233,7 @@ class Search
                 ;
             }
 
-            $ret[$name] = [
+            $ret[$parameterName] = [
                 'terms' => [
                     'field' => $facet->getField(),
                 ],

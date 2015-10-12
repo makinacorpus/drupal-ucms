@@ -139,28 +139,47 @@ class TermFacet extends AbstractFacet
      */
     public function getFormattedChoices()
     {
-        $ret = [];
+        $ret    = [];
+        $loaded = [];
 
+        // Populate the raw formatted array with just values as values
+        foreach (array_keys($this->choices) as $value) {
+            $ret[$value] = $value;
+        }
+
+        // First start with arbitrarily set choices map
+        if ($this->choicesMap) {
+            $loaded = array_intersect_key($this->choicesMap, $ret);
+        }
+
+        // Execute the user given callback
+        if ($this->choicesCallback) {
+
+              $callbackLoaded = call_user_func(
+                  $this->choicesCallback,
+                  // Exclude already loaded items to leave the choices map
+                  // having precedence over the callback
+                  array_diff_key($ret, $loaded)
+              );
+
+              // We are forced to proceed to a two step merge (using foreach)
+              // else array_merge() as well as the + operator would terribly
+              // fail merging integer keys
+              if ($callbackLoaded) {
+                  foreach ($callbackLoaded as $value => $title) {
+                      $loaded[$value] = $title;
+                  }
+              }
+        }
+
+        // Append the count for each value
         foreach ($this->choices as $value => $count) {
-            $title = null;
-
-            if (isset($this->choicesMap[$value])) {
-                $title = $this->choicesMap[$value];
+            $append = ' <span class="badge">' . $count . '</span>';
+            if (isset($loaded[$value])) {
+                $ret[$value] = $loaded[$value] . $append;
             } else {
-                // @todo Later optimisation allowing to run a multiple process
-                // callback (for exemple user_load_multiple())... for
-                // performances.
-                if (is_callable($this->choicesCallback)) {
-                    $title = call_user_func($this->choicesCallback, $value);
-                }
+                $ret[$value] .= $append;
             }
-
-            // Default fallback on indexed value
-            if (!$title) {
-                $title = $value;
-            }
-
-            $ret[$value] = $title . " (". $count .")";
         }
 
         return $ret;

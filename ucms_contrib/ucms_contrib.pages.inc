@@ -52,10 +52,12 @@ function ucms_contrib_favorite_remove_form_submit($form, &$form_state) {
  */
 function ucms_contrib_admin_content_search_form($form, &$form_state) {
 
+  $param = \Ucms\Search\QueryAlteredSearch::PARAM_FULLTEXT_QUERY;
+
   $form['query'] = [
     '#type'           => 'textfield',
     '#attributes'     => ['placeholder' => t("Search")],
-    '#default_value'  => isset($_GET['s']) ? $_GET['s'] : null,
+    '#default_value'  => isset($_GET[$param]) ? $_GET[$param] : null,
   ];
 
   $form['submit'] = [
@@ -70,8 +72,9 @@ function ucms_contrib_admin_content_search_form($form, &$form_state) {
  * Search form submit.
  */
 function ucms_contrib_admin_content_search_form_submit($form, &$form_state) {
+  $param = \Ucms\Search\QueryAlteredSearch::PARAM_FULLTEXT_QUERY;
   if (!empty($form_state['values']['query'])) {
-    $query = ['s' => $form_state['values']['query']];
+    $query = [$param => $form_state['values']['query']];
     $form_state['redirect'] = [
       current_path(),
       ['query' => $query + drupal_get_query_parameters()],
@@ -79,7 +82,7 @@ function ucms_contrib_admin_content_search_form_submit($form, &$form_state) {
   } else {
     $form_state['redirect'] = [
       current_path(),
-      ['query' => drupal_get_query_parameters(null, ['q', 's'])],
+      ['query' => drupal_get_query_parameters(null, ['q', $param])],
     ];
   }
 }
@@ -91,9 +94,6 @@ function ucms_contrib_admin_content_search_form_submit($form, &$form_state) {
  *   Tab name.
  */
 function ucms_contrib_admin_content_page($tab = null) {
-
-  $limit  = 16;
-  $page   = isset($_GET['page']) ? ($_GET['page'] + 1) : 1;
 
   $ret = [
     '#theme'    => 'ucms_contrib_content_page',
@@ -111,105 +111,55 @@ function ucms_contrib_admin_content_page($tab = null) {
   $search = ucms_search_create(UCMS_SEARCH_INDEX_BACK);
 
   // Build facets
-  $typeFacet = $ret['#facets']['type'] = $search
+  $ret['#facets']['type'] = $search
     ->createTermAggregation('type', null)
     ->setChoicesMap(node_type_get_names())
     ->setTitle(t("Type"))
   ;
-  // @todo This should be a generic API, somewhere
-  if (!empty($_GET[$typeFacet->getField()])) {
-    if (is_array($_GET[$typeFacet->getField()])) {
-      $typeFacet->setSelectedValues($_GET[$typeFacet->getField()]);
-    } else {
-      $typeFacet->setSelectedValues([$_GET[$typeFacet->getField()]]);
-    }
-  }
 
-  $ownerFacet = $ret['#facets']['owner'] = $search
+  $ret['#facets']['owner'] = $search
     ->createTermAggregation('owner', null)
     ->setChoicesCallback(function ($values) {
-      if (is_array($values)) {
-        if ($accounts = user_load_multiple($values)) {
-          array_walk($accounts, 'format_username');
-          return $accounts;
+      if ($accounts = taxonomy_term_load_multiple($values)) {
+        foreach ($accounts as $index => $account) {
+          $accounts[$index] = format_username($account);
         }
-      } else {
-        if ($account = user_load($values)) {
-          return format_username($account);
-        }
+        return $accounts;
       }
     })
     ->setTitle(t("Owner"))
   ;
-  // @todo This should be a generic API, somewhere
-  if (!empty($_GET[$ownerFacet->getField()])) {
-    if (is_array($_GET[$ownerFacet->getField()])) {
-      $ownerFacet->setSelectedValues($_GET[$ownerFacet->getField()]);
-    } else {
-      $ownerFacet->setSelectedValues([$_GET[$ownerFacet->getField()]]);
-    }
-  }
 
-  $tagsFacet = $ret['#facets']['tags'] = $search
+  $ret['#facets']['tags'] = $search
     ->createTermAggregation('tags', null)
     ->setChoicesCallback(function ($values) {
-      if (is_array($values)) {
-        if ($terms = taxonomy_term_load_multiple($values)) {
-          foreach ($terms as $index => $term) {
-            $term[$index] = check_plain($term->name);
-          }
-          return $terms;
+      if ($terms = taxonomy_term_load_multiple($values)) {
+        foreach ($terms as $index => $term) {
+          $terms[$index] = check_plain($term->name);
         }
-      } else {
-        if ($term = taxonomy_term_load($values)) {
-          return check_plain($term->name);
-        }
+        return $terms;
       }
     })
     ->setTitle(t("Tags"))
   ;
-  // @todo This should be a generic API, somewhere
-  if (!empty($_GET[$tagsFacet->getField()])) {
-    if (is_array($_GET[$tagsFacet->getField()])) {
-      $tagsFacet->setSelectedValues($_GET[$tagsFacet->getField()]);
-    } else {
-      $tagsFacet->setSelectedValues([$_GET[$tagsFacet->getField()]]);
-    }
-  }
 
-  $statusFacet = $ret['#facets']['status'] = $search
+  $ret['#facets']['status'] = $search
     ->createTermAggregation('status', null)
     ->setChoicesMap([0 => t("Unpublished"), 1 => t("Published")])
     ->setTitle(t("Status"))
   ;
-  // @todo This should be a generic API, somewhere
-  if (!empty($_GET[$statusFacet->getField()])) {
-    if (is_array($_GET[$statusFacet->getField()])) {
-      $statusFacet->setSelectedValues($_GET[$statusFacet->getField()]);
-    } else {
-      $statusFacet->setSelectedValues([$_GET[$statusFacet->getField()]]);
-    }
-  }
 
   $types = variable_get('ucms_contrib_tab_' . $tab . '_type');
   if (!empty($types)) {
-    $search
-      ->getFilterQuery()
-      ->matchTermCollection('type', $types)
-    ;
+    $search->getFilterQuery()->matchTermCollection('type', $types);
   }
 
-  if (!empty($_GET['s'])) {
-    $search
-      ->getQuery()
-      ->matchTerm('combined', $_GET['s'], null, 0.8)
-    ;
-  }
+  $limit = 24;
 
   $response = $search
-    ->setLimit($limit)
-    ->setPage($page)
     ->addField('_id')
+    ->setLimit($limit)
+    ->prepare($_GET)
     ->doSearch()
   ;
 
