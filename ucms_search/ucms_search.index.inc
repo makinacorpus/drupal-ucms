@@ -2,9 +2,6 @@
 /**
  * @file
  * Various maintainance index operations.
- *
- * @todo
- *   Use the bulk API.
  */
 
 /**

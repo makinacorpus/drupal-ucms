@@ -1,4 +1,21 @@
 <?php
+/**
+ * @file
+ * UCMS Search feature.
+ *
+ * @todo
+ *   - Use the bulk API whenever possible
+ *   - Decoralate node index on cron and node index now
+ *   - Investigate if index without delay is possible (node_insert via ui)
+ *   - Fix node delete from index
+ *   - Add flexible schema (configurable dependent on fields)
+ *   - Allow multiple facet widgets
+ *   - Add checkbox based facet
+ *   - Add sort widgets
+ *   - Add drush integration
+ *   - Decoralate Lucene query builder and Lucene query string formatting
+ *   - Add Elastic search array query formatting (must, must not, etc...)
+ */
 
 /**
  * Public index name.

@@ -5,6 +5,12 @@
  *
  * This module provides a full UI based upon drag'n'drop for editing content
  * and manipulating layouts.
+ *
+ * @todo
+ *   - Keep cart items order same as insert
+ *   - Add other possible cart view modes (grid, list, ...)
+ *   - Add other possible UI view modes (grid, list, ...)
+ *   - Add UI sorting
  */
 
 /**
@@ -100,13 +106,13 @@ function ucms_contrib_menu() {
  * Implements hook_menu_local_tasks_alter().
  */
 function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
-  // Add node/add links on the content pages.
   if (preg_match('@^admin/contribute.*$@', $root_path)) {
     $tab = arg(2);
     if (null === $tab) {
       $tab = 'text';
     }
     if ($tab) {
+      // Adds node/add links on the content pages.
       if ($types = variable_get('ucms_contrib_tab_' . $tab . '_type')) {
         $names = node_type_get_names();
         foreach ($types as $type) {
@@ -125,7 +131,6 @@ function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     }
   }
 }
-
 
 /**
  * Implements hook_permission().
