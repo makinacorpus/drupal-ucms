@@ -28,6 +28,17 @@ const UCMS_STYLE_CONTENTADMIN = 'contentadmin';
 const UCMS_STYLE_FAVORITE = 'favorite';
 
 /**
+ * Implements hook_boot().
+ */
+function ucms_contrib_boot() {
+  if (!module_exists('composer_manager')) {
+    if (!@include_once __DIR__ . '/../vendor/autoload.php') {
+      watchdog(__FUNCTION__, "Missing composer autoload.php file", [], WATCHDOG_ERROR);
+    }
+  }
+}
+
+/**
  * Implements hook_menu().
  */
 function ucms_contrib_menu() {

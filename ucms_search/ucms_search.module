@@ -21,14 +21,20 @@ const UCMS_SEARCH_LIMIT = 100;
 const UCMS_SEARCH_CRON_INDEX_LIMIT = 250;
 
 /**
- * Hopefully, you did run composer install.
- */
-require_once __DIR__ . '/vendor/autoload.php';
-
-/**
  * Index operations.
  */
 require_once __DIR__ . '/ucms_search.index.inc';
+
+/**
+ * Implements hook_boot().
+ */
+function ucms_search_boot() {
+  if (!module_exists('composer_manager')) {
+    if (!@include_once __DIR__ . '/../vendor/autoload.php') {
+      watchdog(__FUNCTION__, "Missing composer autoload.php file", [], WATCHDOG_ERROR);
+    }
+  }
+}
 
 /**
  * Implements hook_menu().

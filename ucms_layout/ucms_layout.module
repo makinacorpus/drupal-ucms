@@ -20,9 +20,15 @@
  */
 
 /**
- * Hopefully, you did run composer install.
+ * Implements hook_boot().
  */
-require_once __DIR__ . '/vendor/autoload.php';
+function ucms_layout_boot() {
+  if (!module_exists('composer_manager')) {
+    if (!@include_once __DIR__ . '/../vendor/autoload.php') {
+      watchdog(__FUNCTION__, "Missing composer autoload.php file", [], WATCHDOG_ERROR);
+    }
+  }
+}
 
 /**
  * Implements hook_menu().
