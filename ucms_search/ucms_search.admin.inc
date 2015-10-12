@@ -12,10 +12,7 @@ function ucms_search_admin_index_form($form, &$form_state) {
   $form['indices'] = [
     '#title'    => t("Select one or more indices to operate"),
     '#type'     => 'checkboxes',
-    '#options'  => [
-      UCMS_SEARCH_INDEX_PUBLIC  => t("Front-office search index"),
-      UCMS_SEARCH_INDEX_BACK    => t("Back-office content administration page index"),
-    ],
+    '#options'  => ucms_search_index_list(),
     '#required' => true,
   ];
 
@@ -55,7 +52,7 @@ function ucms_search_admin_index_batch_operation($index, &$context) {
 
   if (empty($context['sandbox'])) {
 
-    ucms_search_index_clear($index, true);
+    ucms_search_index_clear($index);
 
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = db_select('ucms_search_status', 'u')

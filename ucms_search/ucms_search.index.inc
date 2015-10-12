@@ -7,26 +7,38 @@
 /**
  * Dequeue and index items.
  */
-function ucms_search_cron_index_dequeue($index, $limit = UCMS_SEARCH_CRON_INDEX_LIMIT) {
+function ucms_search_cron_index_dequeue($limit = null) {
 
-  $nodeIdList = db_select('ucms_search_status', 's')
-    ->fields('s', ['nid'])
-    ->condition('s.needs_reindex', 1)
-    ->condition('s.index_key', $index)
-    ->range(0, $limit)
-    ->execute()
-    ->fetchCol()
-  ;
+  $indices = ucms_search_index_list();
 
-  // Preload all nodes for performance.
-  $nodes = node_load_multiple($nodeIdList);
-  foreach ($nodes as $node) {
-    ucms_search_index_node_add($index, $node);
+  if (!$limit) {
+    $limit = ceil(
+      variable_get('ucms_search_cron_limit', UCMS_SEARCH_CRON_INDEX_LIMIT)
+        / count($indices)
+    );
   }
 
-  $toBeDeleted = array_diff(array_keys($nodes), $nodeIdList);
-  foreach ($toBeDeleted as $nid) {
-    ucms_search_index_node_delete($index, $nid);
+  foreach (array_keys($indices) as $index) {
+
+    $nodeIdList = db_select('ucms_search_status', 's')
+      ->fields('s', ['nid'])
+      ->condition('s.needs_reindex', 1)
+      ->condition('s.index_key', $index)
+      ->range(0, $limit)
+      ->execute()
+      ->fetchCol()
+    ;
+
+    // Preload all nodes for performance.
+    $nodes = node_load_multiple($nodeIdList);
+    foreach ($nodes as $node) {
+      ucms_search_index_node_add($index, $node);
+    }
+
+    $toBeDeleted = array_diff(array_keys($nodes), $nodeIdList);
+    foreach ($toBeDeleted as $nid) {
+      ucms_search_index_node_delete($index, $nid);
+    }
   }
 }
 
@@ -35,13 +47,10 @@ function ucms_search_cron_index_dequeue($index, $limit = UCMS_SEARCH_CRON_INDEX_
  *
  * @param string $index
  */
-function ucms_search_index_clear($index, $doReindex = false) {
-  require_once __DIR__ . '/ucms_search.index.inc';
+function ucms_search_index_clear($index) {
   _ucms_search_index_delete($index);
   _ucms_search_index_create($index);
-  if ($doReindex) {
-    return ucms_search_index_reindex($index);
-  }
+  return ucms_search_index_reindex($index);
 }
 
 /**
@@ -212,12 +221,46 @@ return; // FIXME (throwing exceptions)
 }
 
 /**
- * Index a single node
+ * Upsert a single node.
  *
  * @param string $index
- * @param stdClass $nodes
+ *   Index identifier.
+ * @param stdClass $node
+ *   Node object.
+ * @param boolean $force
+ *   Internal boolean, skip match test, this should never be used
+ *   outside of this module.
  */
-function ucms_search_index_node_add($index, $node) {
+function ucms_search_index_node_update($index, $node, $force = false) {
+  // FIXME use upsert.
+  ucms_search_index_node_add($index, $node, $force);
+}
+
+/**
+ * Index a single node.
+ *
+ * @param string $index
+ *   Index identifier.
+ * @param stdClass $node
+ *   Node object.
+ * @param boolean $force
+ *   Internal boolean, skip match test, this should never be used
+ *   outside of this module.
+ */
+function ucms_search_index_node_add($index, $node, $force = false) {
+
+  if (!$force) {
+    $matches = false;
+    foreach (module_implements('ucms_search_index_node') as $module) {
+      if (module_invoke($module, 'ucms_search_index_node', $index, $node)) {
+        $matches = true;
+        break;
+      }
+    }
+    if (!$matches) {
+      return;
+    }
+  }
 
   $body     = strip_tags(_ucms_search_index_node_field_to_fulltext($node, 'body'));
   $tags     = _ucms_search_index_node_field_to_tag_id_list($node, 'tags');

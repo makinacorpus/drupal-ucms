@@ -84,15 +84,6 @@ function ucms_search_theme() {
 }
 
 /**
- * Create query.
- *
- * @return \Ucms\Search\Query
- */
-function ucms_search_query_create() {
-  return new \Ucms\Search\Query();
-}
-
-/**
  * Get elastic search client.
  *
  * @return \Elasticsearch\Client
@@ -121,6 +112,18 @@ function ucms_search_create($index) {
 }
 
 /**
+ * Get node indexes.
+ *
+ * @return string[]
+ */
+function ucms_search_index_list() {
+  return [
+    UCMS_SEARCH_INDEX_PUBLIC  => t("Front-office search index"),
+    UCMS_SEARCH_INDEX_BACK    => t("Back-office content administration page index"),
+  ];
+}
+
+/**
  * Implements hook_ucms_search_index_reindex().
  */
 function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $query) {
@@ -130,6 +133,37 @@ function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $que
       $query->condition('n.status', 1);
       break;
   }
+}
+
+/**
+ * Implements hook_ucms_search_index_node().
+ */
+function ucms_search_ucms_search_index_node($index, $node) {
+  switch ($index) {
+
+    case UCMS_SEARCH_INDEX_PUBLIC:
+      if ($node->status) {
+        return true;
+      }
+      break;
+
+    case UCMS_SEARCH_INDEX_BACK:
+      return true;
+  }
+}
+
+/**
+ * Implements hook_ucms_search_index_reindex().
+ */
+function ucms_search_node_index_now($node) {
+  foreach (array_keys(ucms_search_index_list()) as $index) {
+    if (!$node->is_new && $node->created != $node->changed) {
+      ucms_search_index_node_update($index, $node);
+    } else {
+      ucms_search_index_node_add($index, $node);
+    }
+  }
+  sleep(2);
 }
 
 /**
@@ -152,7 +186,7 @@ function ucms_search_node_index_queue($nidList) {
 function ucms_search_exit() {
   $queue = &drupal_static('ucms_search_node_queue');
   if ($queue) {
-    foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
+    foreach (array_keys(ucms_search_index_list()) as $index) {
       ucms_search_index_reindex($index, $queue);
     }
     drupal_static_reset('ucms_search_node_queue');
@@ -160,25 +194,38 @@ function ucms_search_exit() {
 }
 
 /**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function ucms_search_form_node_form_alter(&$form, &$form_state) {
+  // If a node is modified from the node form, we must index it right now
+  // so that when the user returns on the node admin pages, he'll see nodes
+  // right away. This must be an opt-in behavior, false by default, in order
+  // to avoid any batch updating nodes from triggering this once per node.
+  $form['ucms_index_now'] = ['#type' => 'value', '#value' => true];
+}
+
+/**
  * Implements hook_node_insert().
  */
 function ucms_search_node_insert($node) {
-  // ucms_search_node_index_queue([$node->nid]);
-  // FIXME
-  ucms_search_index_node_add(UCMS_SEARCH_INDEX_PUBLIC, $node);
-  ucms_search_index_node_add(UCMS_SEARCH_INDEX_BACK, $node);
-  sleep(2);
+  if (isset($node->ucms_index_now) && $node->ucms_index_now) {
+    ucms_search_node_index_now($node);
+    sleep(2);  // FIXME
+  } else {
+    ucms_search_node_index_queue([$node->nid]);
+  }
 }
 
 /**
  * Implements hook_node_update().
  */
 function ucms_search_node_update($node) {
-  // ucms_search_node_index_queue([$node->nid]);
-  // FIXME
-  ucms_search_index_node_add(UCMS_SEARCH_INDEX_PUBLIC, $node);
-  ucms_search_index_node_add(UCMS_SEARCH_INDEX_BACK, $node);
-  sleep(2);
+  if (isset($node->ucms_index_now) && $node->ucms_index_now) {
+    ucms_search_node_index_now($node);
+    sleep(2); // FIXME
+  } else {
+    ucms_search_node_index_queue([$node->nid]);
+  }
 }
 
 /**
@@ -186,7 +233,7 @@ function ucms_search_node_update($node) {
  */
 function ucms_search_node_delete($node) {
   // @todo Later queue and bulk
-  foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
+  foreach (array_keys(ucms_search_index_list()) as $index) {
     ucms_search_index_node_delete($index, $node);
   }
 }
@@ -195,9 +242,7 @@ function ucms_search_node_delete($node) {
  * Implements hook_cron().
  */
 function ucms_search_cron() {
-  foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
-    ucms_search_cron_index_dequeue($index);
-  }
+  ucms_search_cron_index_dequeue();
 }
 
 /**

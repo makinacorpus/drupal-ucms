@@ -49,7 +49,7 @@ function ucms_search_schema() {
  * Implements hook_enable().
  */
 function ucms_search_enable() {
-  foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
+  foreach (array_keys(ucms_search_index_list()) as $index) {
     ucms_search_index_clear($index);
     ucms_search_index_reindex($index);
   }
@@ -60,7 +60,7 @@ function ucms_search_enable() {
  */
 function ucms_search_disable() {
   require_once __DIR__ . '/ucms_search.index.inc';
-  foreach ([UCMS_SEARCH_INDEX_PUBLIC, UCMS_SEARCH_INDEX_BACK] as $index) {
+  foreach (array_keys(ucms_search_index_list()) as $index) {
     _ucms_search_index_delete($index);
   }
 }
