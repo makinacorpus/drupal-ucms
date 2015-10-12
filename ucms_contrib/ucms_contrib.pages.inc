@@ -120,7 +120,7 @@ function ucms_contrib_admin_content_page($tab = null) {
   $ret['#facets']['owner'] = $search
     ->createTermAggregation('owner', null)
     ->setChoicesCallback(function ($values) {
-      if ($accounts = taxonomy_term_load_multiple($values)) {
+      if ($accounts = user_load_multiple($values)) {
         foreach ($accounts as $index => $account) {
           $accounts[$index] = format_username($account);
         }
