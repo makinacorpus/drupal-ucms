@@ -261,18 +261,36 @@ function theme_ucms_search_facet($variables) {
 
     if (empty($choices)) {
       // There is no choice for this field.
-      $links['_empty'] = t("No values");
+      $links['_empty'] = [
+        'title'       => t("No values"),
+        'href'        => current_path(),
+        'query'       => drupal_get_query_parameters(null, ['q', 'page']),
+        'html'        => true,
+        'attributes'  => ['class' => ['disabled']],
+        'language'    => (object)['language' => LANGUAGE_NONE],
+      ];
 
     } else if (1 === count($choices)) {
       // There is only one choice, and it might or might not be selected.
       foreach ($choices as $value => $string) {
         if (in_array($value, $values)) {
-          $links[$value] = l('- ' . $string, current_path(), [
-            'query' => drupal_get_query_parameters(null, [$field, 'q', 'page']),
-            'html'  => true,
-          ]);
+          $links[$value] = [
+            'title'       => $string,
+            'href'        => current_path(),
+            'query'       => drupal_get_query_parameters(null, [$field, 'q', 'page']),
+            'html'        => true,
+            'attributes'  => ['class' => ['active']],
+            // 'language'    => (object)['language' => LANGUAGE_NONE],
+          ];
         } else {
-          $links[$value] = $string;
+          $links['_empty'] = [
+            'title'       => $string,
+            'href'        => current_path(),
+            'query'       => [$field => $value] + drupal_get_query_parameters(null, ['q', 'page']),
+            'html'        => true,
+            'attributes'  => ['class' => ['disabled']],
+            'language'    => (object)['language' => LANGUAGE_NONE],
+          ];
         }
       }
 
@@ -280,19 +298,27 @@ function theme_ucms_search_facet($variables) {
       // There is more than once choice, some might be selected.
       foreach ($choices as $value => $string) {
         if (in_array($value, $values)) {
-          $links[$value] = l('- ' . $string, current_path(), [
-            'query' => drupal_get_query_parameters(null, [$field, 'q', 'page']),
-            'html'  => true,
-          ]);
+          $links[$value] = [
+            'title'       => $string,
+            'href'        => current_path(),
+            'query'       => drupal_get_query_parameters(null, [$field, 'q', 'page']),
+            'html'        => true,
+            'attributes'  => ['class' => ['active']],
+            // 'language'    => (object)['language' => LANGUAGE_NONE],
+          ];
         } else {
-          $links[$value] = l($string, current_path(), [
-            'query' => [$field => $value] + drupal_get_query_parameters(null, ['q', 'page']),
-            'html'  => true,
-          ]);
+          $links[$value] = [
+            'title'       => $string,
+            'href'        => current_path(),
+            'query'       => [$field => $value] + drupal_get_query_parameters(null, ['q', 'page']),
+            'html'        => true,
+            'attributes'  => [],
+            'language'    => (object)['language' => LANGUAGE_NONE],
+          ];
         }
       }
     }
 
-    return theme('item_list__ucms_search_facet_terms', ['title' => $facet->getTitle(), 'items' => $links]);
+    return theme('links__ucms_search_facet_terms', ['heading' => $facet->getTitle(), 'links' => $links]);
   }
 }
