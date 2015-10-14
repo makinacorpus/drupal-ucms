@@ -73,8 +73,6 @@ function drush_ucms_search_index_run() {
     return;
   }
 
-  $limit = UCMS_SEARCH_CRON_INDEX_LIMIT;
-
   foreach ($indices as $index) {
     $start = time();
 
@@ -82,14 +80,13 @@ function drush_ucms_search_index_run() {
 
     if ($doClear) {
       // Explicit confirmation in order to avoid accidental clear operations.
-      drush_print(dt("@index will be cleared", ['@index' => $index]));
-      if (!drush_confirm(dt(" - Do you want to proceed ?"))) {
-        drush_print(dt(" ! User cancel switching to next index."));
+      if (!drush_confirm(dt("Should I clear @index ?", ['@index' => $index]))) {
+        drush_log(dt("User cancel switching to next index."), 'warning');
         continue;
       }
 
       ucms_search_index_clear($index);
-      drush_print(' - ' . dt("node status cleared"));
+      drush_log(dt("@index cleared", ['@index' => $index]), 'success');
     }
 
     $count = 0;
@@ -102,38 +99,18 @@ function drush_ucms_search_index_run() {
       ->fetchField()
     ;
 
-    $nodeIdList   = [];
-    $progressBar  = drush_create_progress();
-
+    $progress = drush_create_progress();
+    $progress->setProgress($total, 0);
     do {
+      $done = ucms_search_index_dequeue_bulk($index);
+      $count += $done;
+      $progress->setProgress($total, $count);
+    } while ($done);
+    $progress->end();
 
-      $nodeIdList = db_select('ucms_search_status', 's')
-        ->fields('s', ['nid'])
-        ->condition('s.needs_reindex', 1)
-        ->condition('s.index_key', $index)
-        ->range(0, $limit)
-        ->execute()
-        ->fetchCol()
-      ;
-
-      $count += count($nodeIdList);
-
-      // Preload all nodes for performance.
-      $nodes = node_load_multiple($nodeIdList);
-      ucms_search_index_node_index_bulk($index, $nodes, true, false);
-
-      $progressBar->setProgress($total, $count);
-
-      /*
-      $toBeDeleted = array_diff(array_keys($nodes), $nodeIdList);
-      foreach ($toBeDeleted as $nid) {
-        ucms_search_index_node_delete($index, $nid);
-      }
-       */
-    } while ($nodeIdList);
-
-    $progressBar->end();
-
-    drush_print(" - " . dt("processing took @interval", ['@interval' => format_interval(time() - $start)]));
+    drush_log(dt("@index indexing took @interval", [
+      '@index' => $index,
+      '@interval' => format_interval(time() - $start),
+    ]), 'status');
   }
 }

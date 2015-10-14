@@ -256,7 +256,9 @@ function ucms_search_node_delete($node) {
  * Implements hook_cron().
  */
 function ucms_search_cron() {
-  ucms_search_cron_index_dequeue();
+  foreach (array_keys(ucms_search_index_list()) as $index) {
+    ucms_search_index_dequeue_bulk($index);
+  }
 }
 
 /**
