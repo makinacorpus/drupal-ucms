@@ -97,7 +97,6 @@ function ucms_contrib_admin_content_page($tab = null) {
 
   $ret = [
     '#theme'    => 'ucms_contrib_content_page',
-    '#items'    => [],
     '#facets'   => [],
     '#search'   => drupal_get_form('ucms_contrib_admin_content_search_form'),
   ];
@@ -167,8 +166,9 @@ function ucms_contrib_admin_content_page($tab = null) {
 
   if ($nidList = $response->getAllNodeIdentifiers()) {
 
-    $display = new \Ucms\Contrib\ContentAdminListDisplay();
-    $display->prepareFromQuery($_GET);
+    $display = (new \Ucms\Contrib\ContentAdminListDisplay())
+      ->prepareFromQuery($_GET)
+    ;
 
     $ret['#display']  = $display->renderLinks();
     $ret['#nodes']    = $display->render(node_load_multiple($nidList));

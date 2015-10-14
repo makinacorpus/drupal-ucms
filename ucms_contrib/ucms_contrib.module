@@ -1,5 +1,4 @@
 <?php
-use Ucms\Contrib\CartListDisplay;
 /**
  * @file
  * UCMS  - Contribution.
@@ -426,7 +425,7 @@ function ucms_contrib_favorite_render($account = null) {
   $nidList  = ucms_contrib_favorite_list($account);
   $nodes    = node_load_multiple($nidList);
 
-  $display = (new CartListDisplay())
+  $display = (new Ucms\Contrib\CartListDisplay())
     ->setParameterName('cd')
     ->prepareFromQuery($_GET)
   ;
