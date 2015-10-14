@@ -309,7 +309,7 @@ class DrushProgressBar
                         self::formatDuration($eta[1], self::FORMAT_TIME_FULL)
                     );
                 } else {
-                    $suffix = sprintf('done: %s', self::formatDuration($eta[0], self::FORMAT_TIME_FULL));
+                    $suffix = sprintf('elapsed: %s', self::formatDuration($eta[0], self::FORMAT_TIME_FULL));
                 }
             } else {
                 $suffix = dt("Computing...");
