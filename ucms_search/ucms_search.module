@@ -19,16 +19,22 @@
 
 /**
  * Public index name.
+ *
+ * FIXME: Ugly define/variable_get
  */
 define('UCMS_SEARCH_INDEX_PUBLIC', variable_get('ucms_search_elastic_index_front', 'node_public'));
 
 /**
  * Backoffice index name.
+ *
+ * FIXME: Ugly define/variable_get
  */
 define('UCMS_SEARCH_INDEX_BACK', variable_get('ucms_search_elastic_index_back', 'node_backoffice'));
 
 /**
  * Default number of items index each cron run.
+ *
+ * FIXME: Ugly define/variable_get
  */
 define('UCMS_SEARCH_CRON_INDEX_LIMIT', variable_get('ucms_search_elastic_index_limit', 500));
 
