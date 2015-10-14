@@ -32,6 +32,9 @@ class CartListDisplay extends AbstractListDisplay
         switch ($mode) {
 
             case 'grid':
+                if (empty($nodes)) {
+                    return [];
+                }
                 $ret = node_view_multiple($nodes, UCMS_VIEW_MODE_FAVORITE);
                 foreach ($ret['nodes'] as $nid => $content) {
                     $ret['nodes'][$nid] = [

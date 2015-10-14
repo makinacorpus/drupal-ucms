@@ -423,7 +423,7 @@ function ucms_contrib_favorite_render($account = null) {
   }
 
   $nidList  = ucms_contrib_favorite_list($account);
-  $nodes    = node_load_multiple($nidList);
+  $nodes    = $nidList ? node_load_multiple($nidList) : [];
 
   $display = (new Ucms\Contrib\CartListDisplay())
     ->setParameterName('cd')
