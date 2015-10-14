@@ -28,14 +28,19 @@ define('UCMS_SEARCH_INDEX_PUBLIC', variable_get('ucms_search_elastic_index_front
 define('UCMS_SEARCH_INDEX_BACK', variable_get('ucms_search_elastic_index_back', 'node_backoffice'));
 
 /**
- * Default search per page limit.
+ * Default number of items index each cron run.
  */
-const UCMS_SEARCH_LIMIT = 100;
+define('UCMS_SEARCH_CRON_INDEX_LIMIT', variable_get('ucms_search_elastic_index_limit', 500));
 
 /**
  * Default number of items index each cron run.
  */
-const UCMS_SEARCH_CRON_INDEX_LIMIT = 250;
+define('UCMS_SEARCH_ELASTIC_DEBUG', variable_get('ucms_search_elastic_debug', true));
+
+/**
+ * Default search per page limit.
+ */
+const UCMS_SEARCH_LIMIT = 100;
 
 /**
  * Index operations.
@@ -153,17 +158,14 @@ function ucms_search_ucms_search_index_node($index, $node) {
 }
 
 /**
- * Implements hook_ucms_search_index_reindex().
+ * Index or upsert a node into all matching indices.
+ *
+ * @param stdClass $node
  */
 function ucms_search_node_index_now($node) {
   foreach (array_keys(ucms_search_index_list()) as $index) {
-    if (!$node->is_new && $node->created != $node->changed) {
-      ucms_search_index_node_update($index, $node);
-    } else {
-      ucms_search_index_node_add($index, $node);
-    }
+    ucms_search_index_node_index($index, $node, false, true);
   }
-  sleep(2);
 }
 
 /**
@@ -172,6 +174,7 @@ function ucms_search_node_index_now($node) {
  * @param int|int[] $nidList
  */
 function ucms_search_node_index_queue($nidList) {
+  // FIXME see comment in ucms_search_exit().
   if (!is_array($nidList)) {
     $nidList = [$nidList];
   }
@@ -184,6 +187,8 @@ function ucms_search_node_index_queue($nidList) {
  * Implements hook_exit().
  */
 function ucms_search_exit() {
+  // FIXME The queue should be persistent in order to avoid loosing data
+  // in case of PHP crash or any other bugguy reason.
   $queue = &drupal_static('ucms_search_node_queue');
   if ($queue) {
     foreach (array_keys(ucms_search_index_list()) as $index) {
@@ -201,6 +206,9 @@ function ucms_search_form_node_form_alter(&$form, &$form_state) {
   // so that when the user returns on the node admin pages, he'll see nodes
   // right away. This must be an opt-in behavior, false by default, in order
   // to avoid any batch updating nodes from triggering this once per node.
+  // Also this will trigger the 'refresh' elastic option to be true at index
+  // time, which may cause performance problems on the shard if you do it too
+  // much on certain indices.
   $form['ucms_index_now'] = ['#type' => 'value', '#value' => true];
 }
 
@@ -208,9 +216,9 @@ function ucms_search_form_node_form_alter(&$form, &$form_state) {
  * Implements hook_node_insert().
  */
 function ucms_search_node_insert($node) {
+  // @see ucms_search_form_node_form_alter().
   if (isset($node->ucms_index_now) && $node->ucms_index_now) {
     ucms_search_node_index_now($node);
-    sleep(2);  // FIXME
   } else {
     ucms_search_node_index_queue([$node->nid]);
   }
@@ -220,9 +228,9 @@ function ucms_search_node_insert($node) {
  * Implements hook_node_update().
  */
 function ucms_search_node_update($node) {
+  // @see ucms_search_form_node_form_alter().
   if (isset($node->ucms_index_now) && $node->ucms_index_now) {
     ucms_search_node_index_now($node);
-    sleep(2); // FIXME
   } else {
     ucms_search_node_index_queue([$node->nid]);
   }
@@ -267,6 +275,7 @@ function theme_ucms_search_facet($variables) {
         'query'       => drupal_get_query_parameters(null, ['q', 'page']),
         'html'        => true,
         'attributes'  => ['class' => ['disabled']],
+        // Forces the l() function to skip the 'active' class.
         'language'    => (object)['language' => LANGUAGE_NONE],
       ];
 
@@ -280,7 +289,6 @@ function theme_ucms_search_facet($variables) {
             'query'       => drupal_get_query_parameters(null, [$field, 'q', 'page']),
             'html'        => true,
             'attributes'  => ['class' => ['active']],
-            // 'language'    => (object)['language' => LANGUAGE_NONE],
           ];
         } else {
           $links['_empty'] = [
@@ -289,6 +297,7 @@ function theme_ucms_search_facet($variables) {
             'query'       => [$field => $value] + drupal_get_query_parameters(null, ['q', 'page']),
             'html'        => true,
             'attributes'  => ['class' => ['disabled']],
+            // Forces the l() function to skip the 'active' class.
             'language'    => (object)['language' => LANGUAGE_NONE],
           ];
         }
@@ -304,7 +313,6 @@ function theme_ucms_search_facet($variables) {
             'query'       => drupal_get_query_parameters(null, [$field, 'q', 'page']),
             'html'        => true,
             'attributes'  => ['class' => ['active']],
-            // 'language'    => (object)['language' => LANGUAGE_NONE],
           ];
         } else {
           $links[$value] = [
@@ -313,6 +321,7 @@ function theme_ucms_search_facet($variables) {
             'query'       => [$field => $value] + drupal_get_query_parameters(null, ['q', 'page']),
             'html'        => true,
             'attributes'  => [],
+            // Forces the l() function to skip the 'active' class.
             'language'    => (object)['language' => LANGUAGE_NONE],
           ];
         }

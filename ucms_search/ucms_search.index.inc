@@ -14,6 +14,7 @@ function ucms_search_cron_index_dequeue($limit = null) {
   if (!$limit) {
     $limit = ceil(
       variable_get('ucms_search_cron_limit', UCMS_SEARCH_CRON_INDEX_LIMIT)
+      // Hey, whatever works works. Doh.
         / count($indices)
     );
   }
@@ -31,9 +32,8 @@ function ucms_search_cron_index_dequeue($limit = null) {
 
     // Preload all nodes for performance.
     $nodes = node_load_multiple($nodeIdList);
-    foreach ($nodes as $node) {
-      ucms_search_index_node_add($index, $node);
-    }
+
+    ucms_search_index_node_index_bulk($index, $nodes, true, false);
 
     $toBeDeleted = array_diff(array_keys($nodes), $nodeIdList);
     foreach ($toBeDeleted as $nid) {
@@ -198,69 +198,13 @@ function _ucms_search_index_node_field_to_tag_id_list($node, $field_name) {
 }
 
 /**
- * Remove a single node from index
+ * Process all fields of the given node and return an elastic friendly array.
  *
- * @param string $index
- * @param int $nid
- */
-function ucms_search_index_node_delete($index, $nid) {
-return; // FIXME (throwing exceptions)
-  ucms_search_client_get()
-    ->delete([
-      'index' => $index,
-      'id'    => $nid,
-      'type'  => 'node',
-    ])
-  ;
-
-  db_delete('ucms_search_status')
-    ->condition('nid', $nid)
-    ->condition('index_key', $index)
-    ->execute()
-  ;
-}
-
-/**
- * Upsert a single node.
- *
- * @param string $index
- *   Index identifier.
  * @param stdClass $node
- *   Node object.
- * @param boolean $force
- *   Internal boolean, skip match test, this should never be used
- *   outside of this module.
- */
-function ucms_search_index_node_update($index, $node, $force = false) {
-  // FIXME use upsert.
-  ucms_search_index_node_add($index, $node, $force);
-}
-
-/**
- * Index a single node.
  *
- * @param string $index
- *   Index identifier.
- * @param stdClass $node
- *   Node object.
- * @param boolean $force
- *   Internal boolean, skip match test, this should never be used
- *   outside of this module.
+ * @return array
  */
-function ucms_search_index_node_add($index, $node, $force = false) {
-
-  if (!$force) {
-    $matches = false;
-    foreach (module_implements('ucms_search_index_node') as $module) {
-      if (module_invoke($module, 'ucms_search_index_node', $index, $node)) {
-        $matches = true;
-        break;
-      }
-    }
-    if (!$matches) {
-      return;
-    }
-  }
+function _ucms_search_index_node_field_process($node) {
 
   $body     = strip_tags(_ucms_search_index_node_field_to_fulltext($node, 'body'));
   $tags     = _ucms_search_index_node_field_to_tag_id_list($node, 'tags');
@@ -274,24 +218,171 @@ function ucms_search_index_node_add($index, $node, $force = false) {
     $changed = new DateTime('@' . $node->changed);
   } catch (Exception $e) {}
 
-  ucms_search_client_get()
-    ->index([
+  return [
+    'title'   => $node->title,
+    'id'      => $node->nid,
+    'owner'   => $node->uid,
+    'created' => $created->format(DateTime::ISO8601),
+    'updated' => $changed->format(DateTime::ISO8601),
+    'type'    => $node->type,
+    'body'    => $body,
+    'status'  => (int)$node->status,
+    'tags'    => $tags,
+  ];
+}
+
+/**
+ * Remove a single node from index
+ *
+ * @param string $index
+ * @param int $nid
+ */
+function ucms_search_index_node_delete($index, $nid) {
+
+  return; // FIXME (throwing exceptions)
+
+  $response = ucms_search_client_get()
+    ->delete([
       'index' => $index,
-      'id'    => $node->nid,
+      'id'    => $nid,
       'type'  => 'node',
-      'body'  => [
-        'title'   => $node->title,
-        'id'      => $node->nid,
-        'owner'   => $node->uid,
-        'created' => $created->format(DateTime::ISO8601),
-        'updated' => $changed->format(DateTime::ISO8601),
-        'type'    => $node->type,
-        'body'    => $body,
-        'status'  => (int)$node->status,
-        'tags'    => $tags,
-      ],
     ])
   ;
+
+  if (UCMS_SEARCH_ELASTIC_DEBUG) {
+    watchdog(__FUNCTION__, '<pre>' . print_r($response, true) . '</pre>', null, WATCHDOG_DEBUG);
+  }
+
+  db_delete('ucms_search_status')
+    ->condition('nid', $nid)
+    ->condition('index_key', $index)
+    ->execute()
+  ;
+}
+
+/**
+ * Tell if the given node matches the given index.
+ *
+ * @param string $index
+ * @param stdClass $node
+ *
+ * @return boolean
+ */
+function ucms_search_index_node_matches($index, $node) {
+  foreach (module_implements('ucms_search_index_node') as $module) {
+    if (module_invoke($module, 'ucms_search_index_node', $index, $node)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Index or upsert given nodes using a bulk request.
+ *
+ * Note that Elastic Search will be as fast if you choose to do an explicit
+ * upsert or attempt to index a document with an already existing identifier,
+ * reason why we actually choose to only send index operations, this way we
+ * don't have to check ourselves if the document exists in the index or not.
+ * Elastic Search index operation is actually an upsert operation.
+ *
+ * @param string $index
+ *   Index identifier.
+ * @param stdClass[] $nodeList
+ *   Node object.
+ * @param boolean $force
+ *   Internal boolean, skip match test, this should never be used
+ *   outside of this module.
+ * @param boolean $refresh
+ *   Explicit refresh set to true for ElasticSearch, forcing the full shard
+ *   to be in sync for the next search.
+ */
+function ucms_search_index_node_index_bulk($index, $nodeList, $force = false, $refresh = false) {
+
+  if (empty($nodeList)) {
+    return;
+  }
+
+  $params   = [];
+  $nidList  = [];
+
+  foreach ($nodeList as $key => $node) {
+
+    if (!$force && !ucms_search_index_node_matches($index, $node)) {
+      unset($nodeList[$key]);
+    }
+
+    $params['body'][] = [
+      'index' => [
+        '_index'   => $index,
+        '_id'      => $node->nid,
+        '_type'    => 'node',
+        // @todo Refresh could be global.
+        // '_refresh' => (bool)$refresh,
+      ],
+    ];
+
+    $params['body'][] = _ucms_search_index_node_field_process($node);
+
+    $nidList[] = $node->nid;
+  }
+
+  $response = ucms_search_client_get()->bulk($params);
+
+  if (UCMS_SEARCH_ELASTIC_DEBUG) {
+    watchdog(__FUNCTION__, '<pre>' . print_r($response, true) . '</pre>', null, WATCHDOG_DEBUG);
+  }
+
+  db_update('ucms_search_status')
+    ->fields(['needs_reindex' => 0])
+    ->condition('nid', $nidList)
+    ->condition('index_key', $index)
+    ->execute()
+  ;
+}
+
+/**
+ * Index or upsert a single node.
+ *
+ * Note that Elastic Search will be as fast if you choose to do an explicit
+ * upsert or attempt to index a document with an already existing identifier,
+ * reason why we actually choose to only send index operations, this way we
+ * don't have to check ourselves if the document exists in the index or not.
+ * Elastic Search index operation is actually an upsert operation.
+ *
+ * @param string $index
+ *   Index identifier.
+ * @param stdClass $node
+ *   Node object.
+ * @param boolean $force
+ *   Internal boolean, skip match test, this should never be used
+ *   outside of this module.
+ * @param boolean $refresh
+ *   Explicit refresh set to true for ElasticSearch, forcing the full shard
+ *   to be in sync for the next search.
+ *
+ * @return boolean
+ *   True if the index command has been sent or false if node was dropped.
+ */
+function ucms_search_index_node_index($index, $node, $force = false, $refresh = false) {
+
+  if (!$force && !ucms_search_index_node_matches($index, $node)) {
+    return false;
+  }
+
+  $response = ucms_search_client_get()
+    ->index([
+      'index'   => $index,
+      'id'      => $node->nid,
+      'type'    => 'node',
+      'refresh' => (bool)$refresh,
+      'body'    => _ucms_search_index_node_field_process($node),
+    ])
+  ;
+
+  if (UCMS_SEARCH_ELASTIC_DEBUG) {
+    watchdog(__FUNCTION__, '<pre>' . print_r($response, true) . '</pre>', null, WATCHDOG_DEBUG);
+  }
 
   db_update('ucms_search_status')
     ->fields(['needs_reindex' => 0])
@@ -299,4 +390,6 @@ function ucms_search_index_node_add($index, $node, $force = false) {
     ->condition('index_key', $index)
     ->execute()
   ;
+
+  return true;
 }
