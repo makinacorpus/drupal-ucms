@@ -44,7 +44,6 @@
 
 #ucms-cart .item-list ul {
   list-style: none;
-  padding: 5px;
 }
 
 #ucms-cart .item-list a {
@@ -56,8 +55,9 @@
   color: #fff;
 }
 
-.ucms-cart-item {
+.ucms-cart-item > .node {
   overflow: hidden;
+  position: relative;
   height: 100px;
   padding-left: 0;
   padding-right: 0;
@@ -65,6 +65,14 @@
 
 .ucms-cart-item h2 {
   font-size: 12px;
+  position: absolute;
+  margin: 0;
+  padding: 3px;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.8;
+  background-color: #333;
 }
 
 .ucms-cart-item > form {
@@ -83,10 +91,6 @@
 .ucms-cart-item h2 a {
   color: white;
   font-weight: bold;
-}
-
-.ucms-cart-item h2 {
-  background-color: #333;
 }
 
 #ucms-cart-trash {

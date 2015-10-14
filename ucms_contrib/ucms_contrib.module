@@ -1,4 +1,5 @@
 <?php
+use Ucms\Contrib\CartListDisplay;
 /**
  * @file
  * UCMS  - Contribution.
@@ -152,19 +153,32 @@ function ucms_contrib_permission() {
 function ucms_contrib_theme() {
   return [
     'ucms_contrib_cart' => [
-      'variables' => ['account' => null, 'items' => [], 'actions' => null],
+      'variables' => [
+        'account' => null,
+        'items'   => [],
+        'actions' => null,
+        'display' => null,
+      ],
       'template'  => 'ucms-contrib-cart',
     ],
     'ucms_contrib_content_page' => [
       'variables' => [
         'favorites' => null,
+        'display'   => null,
         'account'   => null,
-        'items'     => [],
+        'nodes'     => [],
         'facets'    => [],
         'search'    => null,
         'pager'     => null,
       ],
-      'template'  => 'ucms-contrib-content-page',
+      'template'   => 'ucms-contrib-content-page',
+    ],
+    'ucms_contrib_content_result_grid' => [
+      'variables' => [
+        'nodes'     => [],
+        'view_mode' => UCMS_VIEW_MODE_CONTENTADMIN,
+      ],
+      'template'  => 'ucms-contrib-content-result-grid',
     ],
   ];
 }
@@ -409,21 +423,20 @@ function ucms_contrib_favorite_render($account = null) {
     $account = $account->uid;
   }
 
+  $nidList  = ucms_contrib_favorite_list($account);
+  $nodes    = node_load_multiple($nidList);
+
+  $display = (new CartListDisplay())
+    ->setParameterName('cd')
+    ->prepareFromQuery($_GET)
+  ;
+
   $ret = [
     '#theme'    => 'ucms_contrib_cart',
     '#account'  => $account,
-    '#items'    => [],
+    '#display'  => $display->renderLinks(),
+    '#items'    => $display->render($nodes),
   ];
-
-  $nidList = ucms_contrib_favorite_list($account);
-
-  if ($nidList) {
-    $view = node_view_multiple(node_load_multiple($nidList), UCMS_VIEW_MODE_FAVORITE);
-    foreach (element_children($view['nodes']) as $nid) {
-      $ret['#items'][$nid] = $view['nodes'][$nid];
-      $ret['#items'][$nid]['remove'] = drupal_get_form('ucms_contrib_favorite_remove_form_' . $nid, $nid);
-    }
-  }
 
   return $ret;
 }

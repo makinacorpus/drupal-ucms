@@ -166,16 +166,14 @@ function ucms_contrib_admin_content_page($tab = null) {
   pager_default_initialize($response->getTotal(), $limit);
 
   if ($nidList = $response->getAllNodeIdentifiers()) {
-    $view = node_view_multiple(node_load_multiple($nidList), UCMS_VIEW_MODE_CONTENTADMIN);
-    foreach (element_children($view['nodes']) as $nid) {
-      $ret['#items'][$nid] = $view['nodes'][$nid];
-      if (user_access('use favorites')) {
-        $ret['#items'][$nid]['add'] = drupal_get_form('ucms_contrib_favorite_add_form_' . $nid, $nid);
-      }
-    }
-  }
 
-  $ret['#pager'] = theme('pager');
+    $display = new \Ucms\Contrib\ContentAdminListDisplay();
+    $display->prepareFromQuery($_GET);
+
+    $ret['#display']  = $display->renderLinks();
+    $ret['#nodes']    = $display->render(node_load_multiple($nidList));
+    $ret['#pager']    = theme('pager');
+  }
 
   return $ret;
 }

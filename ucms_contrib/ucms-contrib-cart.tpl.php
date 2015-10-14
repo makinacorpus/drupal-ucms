@@ -7,13 +7,10 @@
     <div class="col-md-12">
       <h2 class="element-invisible"><?php echo t("Your favorites"); ?></h2>
       <?php echo render($actions); ?>
+      <?php echo render($display); ?>
     </div>
     <div id="ucms-cart-list">
-      <?php foreach ($items as $nid => $item): ?>
-        <div class="ucms-cart-item col-md-6" data-nid="<?php echo render($nid); ?>">
-          <?php echo render($item); ?>
-        </div>
-      <?php endforeach; ?>
+      <?php echo render($items); ?>
     </div>
   </div>
   <div id="ucms-cart-trash">
