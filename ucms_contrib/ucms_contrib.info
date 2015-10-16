@@ -5,4 +5,5 @@ package = UCMS
 php = 5.5
 dependencies[] = ucms_layout
 dependencies[] = ucms_search
+dependencies[] = usync
 usync[] = usync/
