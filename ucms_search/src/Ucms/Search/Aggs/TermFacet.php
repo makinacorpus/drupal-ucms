@@ -2,6 +2,8 @@
 
 namespace Ucms\Search\Aggs;
 
+use Ucms\Search\Lucene\Query;
+
 /**
  * Represent an Elastic Search facet based upon the aggregations feature
  */
