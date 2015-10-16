@@ -53,19 +53,6 @@ class CollectionQuery extends AbstractQuery implements
     }
 
     /**
-     * Get textual operator
-     *
-     * @return string
-     *   Textual operator, surrounded by whitespaces or only one whitespace in
-     *   case operator is not set (default behavior is to use default query
-     *   operator specified in Solr params).
-     */
-    protected function getTextualOperator()
-    {
-        return ($this->operator ? (' ' . $this->operator . ' ') : ' ');
-    }
-
-    /**
      * Remove element
      *
      * @param \Ucms\Search\Lucene\AbstractQuery $element
@@ -92,11 +79,11 @@ class CollectionQuery extends AbstractQuery implements
      */
     public function setOperator($operator)
     {
-        if ($operator == null || $operator == Query::OP_AND || $operator == Query::OP_OR) {
-            $this->operator = $operator;
-        } else {
+        if ($operator !== null && $operator !== Query::OP_AND && $operator !== Query::OP_OR) {
             throw new \InvalidArgumentException("Operator must be Query::OP_AND or Query::OP_OR");
         }
+
+        $this->operator = $operator;
 
         return $this;
     }
@@ -120,7 +107,8 @@ class CollectionQuery extends AbstractQuery implements
             return '';
         }
         if (count($this->elements) > 1) {
-            return '(' . implode($this->getTextualOperator() , $this->elements) . ')';
+            $operator = ($this->operator ? (' ' . $this->operator . ' ') : ' ');
+            return '(' . implode($operator, $this->elements) . ')';
         } else {
             reset($this->elements);
             return (string)current($this->elements);

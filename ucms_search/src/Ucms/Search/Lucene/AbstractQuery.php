@@ -61,10 +61,7 @@ abstract class AbstractQuery
      */
     public function setExclusion($exclusion)
     {
-        if (!empty($exclusion) &&
-            $exclusion !== Query::OP_PROHIBIT &&
-            $exclusion !== Query::OP_REQUIRE)
-        {
+        if (!empty($exclusion) && $exclusion !== Query::OP_PROHIBIT && $exclusion !== Query::OP_REQUIRE) {
             throw new \InvalidArgumentException("Exclusion must be Query::OP_REQUIRE or Query::OP_PROHIBIT");
         }
 
@@ -83,7 +80,7 @@ abstract class AbstractQuery
      */
     public function setBoost($boost)
     {
-        if (!empty($boost) && $boost <= 0) {
+        if (!empty($boost) && (!is_numeric($boost) && $boost <= 0)) {
             throw new \InvalidArgumentException("Boost must be a absolute positive float");
         }
 
@@ -133,7 +130,7 @@ abstract class AbstractQuery
         if ($this->exclusion) {
             $raw = $this->exclusion . $raw;
         } else if ($this->boost) {
-           $raw .= '^' . $this->boost;
+            $raw .= '^' . $this->boost;
         }
 
         return $raw;

@@ -20,12 +20,12 @@ class Search
     protected $index;
 
     /**
-     * @var \Ucms\Search\Query
+     * @var \Ucms\Search\Lucene\Query
      */
     protected $query;
 
     /**
-     * @var \Ucms\Search\Query
+     * @var \Ucms\Search\Lucene\Query
      */
     protected $filterQuery;
 
@@ -283,6 +283,8 @@ class Search
                                             'query' => (string)$this->filterQuery
                                         ],
                                     ],
+                                    // @todo Without this ElasticSearch seems to
+                                    // throw exceptions...
                                     '_cache' => true,
                                 ],
                             ],
@@ -305,6 +307,8 @@ class Search
                                             'query' => (string)$this->filterQuery
                                         ],
                                     ],
+                                    // @todo Without this ElasticSearch seems to
+                                    // throw exceptions...
                                     '_cache' => true,
                                 ],
                             ],

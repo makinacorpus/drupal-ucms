@@ -166,7 +166,7 @@ class Query extends CollectionQuery
      *   Timestamp, \DateTime parsable string or \DateTime object
      * @param boolean $inclusive
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function requireDateRange($field = null, $start = null, $stop = null, $inclusive = true)
     {
