@@ -17,7 +17,7 @@ class TypeRegistry
     /**
      * Default constructor
      */
-    protected function __construct()
+    public function __construct()
     {
         $this->nullInstance = new NullType();
     }
