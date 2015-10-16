@@ -6,8 +6,32 @@
 function ucms_search_schema() {
   $schema = [];
 
+  $schema['ucms_search_index'] = [
+    'description' => 'Search indices',
+    'fields' => [
+      'index_key' => [
+        'description' => "Index identifier",
+        'type'        => 'varchar',
+        'length'      => 128,
+        'not null'    => true,
+      ],
+      'name'     => [
+        'description' => "Human readable name",
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => true,
+      ],
+      'data' => [
+        'description' => "Serialized index param array",
+        'type'        => 'text',
+        'not null'    => true,
+      ],
+    ],
+    'primary key' => ['index_key'],
+  ];
+
   $schema['ucms_search_status'] = [
-    'description' => 'Cart',
+    'description' => 'Search node status',
     'fields' => [
       'nid' => [
         'description' => "Node identifier",
@@ -61,5 +85,14 @@ function ucms_search_disable() {
   require_once __DIR__ . '/ucms_search.index.inc';
   foreach (array_keys(ucms_search_index_list()) as $index) {
     _ucms_search_index_delete($index);
+  }
+}
+
+/**
+ * Adds the {ucms_search_index} table.
+ */
+function ucms_search_update_7001() {
+  if (!db_table_exists('ucms_search_index')) {
+    db_create_table('ucms_search_index', drupal_get_schema_unprocessed('ucms_search', 'ucms_search_index'));
   }
 }

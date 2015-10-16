@@ -25,6 +25,33 @@ function ucms_search_admin_index_format_bytes($bytes, $precision = 2) {
 }
 
 /**
+ * Get rendered actions links for given index.
+ *
+ * @param string $index
+ *   Index key.
+ *
+ * @return array
+ *   drupal_render() friendly structure.
+ */
+function ucms_search_admin_index_operations($index) {
+    $links  = [];
+
+    $base   = 'admin/config/search/indices/' . $index;
+    $query  = drupal_get_destination();
+
+    $links['mapping'] = [
+      'href'  => $base,
+      'title' => t("Mapping"),
+      'query' => $query,
+    ];
+
+    return [
+      '#theme' => 'links__ucms_search_index_actions',
+      '#links' => $links
+    ];
+}
+
+/**
  * Indices management.
  */
 function ucms_search_admin_index_form($form, &$form_state) {
@@ -84,7 +111,8 @@ function ucms_search_admin_index_form($form, &$form_state) {
       $row[] = $row[] = '<em>' . t("Error") . '</em>';
     }
 
-    $row[] = ''; // @todo Operations.
+    $actions = ucms_search_admin_index_operations($index);
+    $row[] = drupal_render($actions);
 
     $rows[$index] = $row;
   }
@@ -102,9 +130,63 @@ function ucms_search_admin_index_form($form, &$form_state) {
     '#value'  => t("Re-index selected"),
     '#submit' => ['ucms_search_admin_index_form_reindex_submit'],
   ];
+  $form['actions']['index'] = [
+    '#type'   => 'submit',
+    '#value'  => t("Index missing"),
+    '#submit' => ['ucms_search_admin_index_form_index_submit'],
+  ];
 
   return $form;
 }
+
+/**
+ * Indices management index missing button submit.
+ */
+function ucms_search_admin_index_form_index_submit($form, &$form_state) {
+
+  $operations = [];
+  foreach ($form_state['values']['indices'] as $index => $value) {
+    if ($value && $value === $index) {
+      $operations[] = ['ucms_search_admin_index_batch_operation', [$index]];
+    }
+  }
+
+  batch_set([
+    'title'       => t("Indexing missing documents"),
+    'file'        => drupal_get_path('module', 'ucms_search') . '/ucms_search.admin.inc',
+    'operations'  => $operations,
+  ]);
+}
+
+/**
+ * Batch operation for index missing.
+ */
+function ucms_search_admin_index_batch_operation($index, &$context) {
+
+  if (empty($context['sandbox'])) {
+
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = db_select('ucms_search_status', 'u')
+      ->condition('u.index_key', $index)
+      ->condition('u.needs_reindex', 1)
+      ->countQuery()
+      ->execute()
+      ->fetchField()
+    ;
+    $context['sandbox']['total'] = $context['sandbox']['max'];
+    $context['finished'] = 0;
+  }
+
+  $done = ucms_search_index_dequeue_bulk($index, 150);
+  $context['sandbox']['progress'] += $done;
+
+  if ($done) {
+    $context['finished'] = min([$context['sandbox']['progress'] / $context['sandbox']['max'], 0.9999]);
+  } else {
+    $context['finished'] = 1;
+  }
+}
+
 
 /**
  * Indices management re-index button submit.
@@ -114,7 +196,7 @@ function ucms_search_admin_index_form_reindex_submit($form, &$form_state) {
   $operations = [];
   foreach ($form_state['values']['indices'] as $index => $value) {
     if ($value && $value === $index) {
-      $operations[] = ['ucms_search_admin_index_batch_operation', [$index]];
+      $operations[] = ['ucms_search_admin_reindex_batch_operation', [$index]];
     }
   }
 
@@ -128,7 +210,7 @@ function ucms_search_admin_index_form_reindex_submit($form, &$form_state) {
 /**
  * Batch operation for reindex.
  */
-function ucms_search_admin_index_batch_operation($index, &$context) {
+function ucms_search_admin_reindex_batch_operation($index, &$context) {
 
   if (empty($context['sandbox'])) {
 
@@ -157,4 +239,24 @@ function ucms_search_admin_index_batch_operation($index, &$context) {
   } else {
     $context['finished'] = 1;
   }
+}
+
+/**
+ * Index mapping form.
+ */
+function ucms_search_admin_index_mapping_form($form, &$form_state, $index) {
+
+  $form['#index'] = $index;
+
+  return $form;
+}
+
+/**
+ * Index mapping add field form.
+ */
+function ucms_search_admin_index_mapping_add_field_form($form, &$form_state, $index) {
+
+  $form['#index'] = $index;
+
+  return $form;
 }

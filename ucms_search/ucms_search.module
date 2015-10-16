@@ -49,9 +49,19 @@ define('UCMS_SEARCH_ELASTIC_DEBUG', variable_get('ucms_search_elastic_debug', tr
 const UCMS_SEARCH_LIMIT = 100;
 
 /**
+ * Cache key: index list.
+ */
+const UCMS_SEARCH_CACHE_INDEX_LIST = 'ucms_search_index_list';
+
+/**
  * Index operations.
  */
 require_once __DIR__ . '/ucms_search.index.inc';
+
+/**
+ * µSync integration.
+ */
+require_once __DIR__ . '/ucms_search.usync.inc';
 
 /**
  * Implements hook_boot().
@@ -79,6 +89,27 @@ function ucms_search_menu() {
     'file'              => 'ucms_search.admin.inc',
     'type'              => MENU_NORMAL_ITEM,
   ];
+  $items['admin/config/search/indices/%ucms_search_index'] = [
+    'title callback'    => 'ucms_search_index_title',
+    'title arguments'   => [4],
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_search_admin_index_mapping_form', 4],
+    'access arguments'  => ['administer nodes'],
+    'file'              => 'ucms_search.admin.inc',
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/config/search/indices/%ucms_search_index/mapping'] = [
+    'title'             => "Mapping",
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+  ];
+  $items['admin/config/search/indices/%ucms_search_index/mapping/add'] = [
+    'title'             => "Add field",
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_search_admin_index_mapping_add_field_form', 4],
+    'access arguments'  => ['administer nodes'],
+    'file'              => 'ucms_search.admin.inc',
+    'type'              => MENU_LOCAL_ACTION,
+  ];
 
   return $items;
 }
@@ -92,6 +123,37 @@ function ucms_search_theme() {
       'variables' => ['facet' => null],
     ],
   ];
+}
+
+/**
+ * Menu helper.
+ *
+ * @param string $index
+ *
+ * @return string
+ *  Index key if exists.
+ */
+function ucms_search_index_load($index) {
+  if (array_key_exists($index, ucms_search_index_list())) {
+    return $index;
+  }
+  return false;
+}
+
+/**
+ * Menu helper.
+ *
+ * @param string $index
+ *
+ * @return string
+ *  Index name if exists.
+ */
+function ucms_search_index_title($index) {
+  $list = ucms_search_index_list();
+  if (array_key_exists($index, $list)) {
+    return $list[$index];
+  }
+  return false;
 }
 
 /**
@@ -120,47 +182,6 @@ function ucms_search_client_get() {
  */
 function ucms_search_create($index) {
   return (new \Ucms\Search\QueryAlteredSearch(ucms_search_client_get()))->setIndex($index);
-}
-
-/**
- * Get node indexes.
- *
- * @return string[]
- */
-function ucms_search_index_list() {
-  return [
-    UCMS_SEARCH_INDEX_PUBLIC  => t("Front-office search index"),
-    UCMS_SEARCH_INDEX_BACK    => t("Back-office content administration page index"),
-  ];
-}
-
-/**
- * Implements hook_ucms_search_index_reindex().
- */
-function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $query) {
-  switch ($index) {
-
-    case UCMS_SEARCH_INDEX_PUBLIC:
-      $query->condition('n.status', 1);
-      break;
-  }
-}
-
-/**
- * Implements hook_ucms_search_index_node().
- */
-function ucms_search_ucms_search_index_node($index, $node) {
-  switch ($index) {
-
-    case UCMS_SEARCH_INDEX_PUBLIC:
-      if ($node->status) {
-        return true;
-      }
-      break;
-
-    case UCMS_SEARCH_INDEX_BACK:
-      return true;
-  }
 }
 
 /**
@@ -202,6 +223,33 @@ function ucms_search_exit() {
     }
     drupal_static_reset('ucms_search_node_queue');
   }
+}
+
+/**
+ * Get type registry.
+ *
+ * @return \Ucms\Search\Mapping\TypeRegistry
+ */
+function ucms_search_type_registry_get() {
+  $instance = &drupal_static(__FUNCTION__);
+  if (!$instance) {
+    $types = module_invoke_all('ucms_search_type_registry');
+    drupal_alter('ucms_search_type_registry', $types);
+    $instance = (new \Ucms\Search\Mapping\TypeRegistry())->register($types);
+  }
+  return $instance;
+}
+
+/**
+ * Implements hook_ucms_search_type_registry().
+ */
+function ucms_search_ucms_search_type_registry() {
+  return [
+    'date'    => '\Ucms\Search\Mapping\DateType',
+    'integer' => '\Ucms\Search\Mapping\IntegerType',
+    'long'    => '\Ucms\Search\Mapping\LongType',
+    'string'  => '\Ucms\Search\Mapping\StringType',
+  ];
 }
 
 /**
@@ -249,6 +297,35 @@ function ucms_search_node_delete($node) {
   // @todo Later queue and bulk
   foreach (array_keys(ucms_search_index_list()) as $index) {
     ucms_search_index_node_delete($index, $node);
+  }
+}
+
+/**
+ * Implements hook_ucms_search_index_reindex().
+ */
+function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $query) {
+  switch ($index) {
+
+    case UCMS_SEARCH_INDEX_PUBLIC:
+      $query->condition('n.status', 1);
+      break;
+  }
+}
+
+/**
+ * Implements hook_ucms_search_index_node().
+ */
+function ucms_search_ucms_search_index_node($index, $node) {
+  switch ($index) {
+
+    case UCMS_SEARCH_INDEX_PUBLIC:
+      if ($node->status) {
+        return true;
+      }
+      break;
+
+    case UCMS_SEARCH_INDEX_BACK:
+      return true;
   }
 }
 

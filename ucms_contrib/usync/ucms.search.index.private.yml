@@ -1,0 +1,45 @@
+
+name: "Back-office index"
+
+settings:
+  number_of_shards:   1
+  number_of_replicas: 0
+
+mapping:
+  node:
+    properties:
+
+      title:
+        type:         string
+        analyzer:     standard
+        term_vector:  yes
+        copy_to:      combined
+
+      body:
+        type:         string
+        analyzer:     standard
+        term_vector:  yes
+        copy_to:      combined
+
+      combined:
+        type:         string
+        analyzer:     standard
+        term_vector:  yes
+
+      status:
+        type:         integer
+
+      id:
+        type:         long
+
+      owner:
+        type:         long
+
+      created:
+        type:         date
+
+      updated:
+        type:         date
+
+      tags:
+        type:         integer

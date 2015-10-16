@@ -5,6 +5,130 @@
  */
 
 /**
+ * Create or update index definition.
+ *
+ * @param string $index
+ *   Index key.
+ * @param string $name
+ *   Human readable title.
+ * @param array $param
+ *   This must contain the exact replica of the 'body' key that will be sent
+ *   to ElasticSearch indices()::create() array.
+ * @param boolean $force
+ *   Force index to be refreshed.
+ */
+function ucms_search_index_definition_save($index, $name, $param, $force = false) {
+
+  $updated  = false;
+  $existing = ucms_search_index_definition_load($index);
+
+  // Directly compare array structures, should be enough
+  if (!$existing || $force || $param !== $existing) {
+    // This was updated, then we really need to save it
+    $updated = true;
+  }
+
+  db_merge('ucms_search_index')
+    ->key(['index_key' => $index])
+    ->fields(['name' => $name, 'data' => serialize($param)])
+    ->execute()
+  ;
+
+  ucms_search_index_definition_cache_clear();
+  module_invoke_all('ucms_search_index_definition_save', $index, $param, $updated, !$existing);
+
+  if ($updated) {
+    ucms_search_index_clear($index);
+  }
+}
+
+/**
+ * Get node indexes.
+ *
+ * @return string[]
+ */
+function ucms_search_index_list() {
+
+  $list = &drupal_static(__FUNCTION__);
+  if (null !== $list) {
+    return $list;
+  }
+
+  // Attempt to have a zero SQL Drupal.
+  $cache = variable_get('ucms_search_cache_list', true);
+
+  if ($cache && ($cached = cache_get('ucms_search_index_list', 'cache_bootstrap'))) {
+    $list = $cached->data;
+  } else {
+    $list = db_query("SELECT index_key, name FROM {ucms_search_index}")->fetchAllKeyed();
+    if ($cache) {
+      cache_set('ucms_search_index_list', $list, 'cache_bootstrap');
+    }
+  }
+
+  return $list;
+}
+
+/**
+ * Load an index definition
+ *
+ * This is uncached, never use it during normal runtime
+ *
+ * @param string $index
+ *
+ * @return array
+ *   This must contain the exact replica of the 'body' key that will be sent
+ *   to ElasticSearch indices()::create() array.
+ */
+function ucms_search_index_definition_load($index) {
+
+  // Minor optimization, avoid lookups for unknow indexes.
+  $list = ucms_search_index_list();
+  if (!isset($list[$index])) {
+    return;
+  }
+
+  $cache = &drupal_static(__FUNCTION__, []);
+
+  // Can be null if index does not exists.
+  if (array_key_exists($index, $cache)) {
+    return $cache[$index];
+  }
+
+  $param = db_query("SELECT data FROM {ucms_search_index} WHERE index_key = :index", ['index' => $index])->fetchField();
+
+  if ($param) {
+    $param = unserialize($param);
+  }
+
+  return $cache[$index] = $param;
+}
+
+/**
+ * Delete an index definition
+ *
+ * @param string $index
+ */
+function ucms_search_index_definition_delete($index) {
+  db_delete('ucms_search_index')
+    ->condition('index_key', $index)
+    ->execute()
+  ;
+  ucms_search_index_definition_cache_clear();
+  module_invoke_all('ucms_search_index_definition_delete', $index);
+  _ucms_search_index_delete($index);
+}
+
+/**
+ * Clear all index definition related cache.
+ */
+function ucms_search_index_definition_cache_clear() {
+  drupal_static_reset('ucms_search_index_list');
+  drupal_static_reset('ucms_search_index_definition_load');
+  cache_clear_all('ucms_search_index_list', 'cache_bootstrap');
+}
+
+/**
  * Dequeue and index items.
  */
 function ucms_search_index_dequeue_bulk($index, $limit = null) {
@@ -103,58 +227,16 @@ function _ucms_search_index_delete($index) {
  * @param string $index
  * @param mixed[] $params
  */
-function _ucms_search_index_create($index, $params = []) {
+function _ucms_search_index_create($index) {
+  $param = ucms_search_index_definition_load($index);
+  if (!$param) {
+    throw new \InvalidArgumentException(sprintf("'%s' index definition does not exist", $index));
+  }
   $namespace = ucms_search_client_get()->indices();
   if (!$namespace->exists(['index' => $index])) {
     $namespace->create([
       'index' => $index,
-      'body' => [
-        'settings' => [
-          'number_of_shards' => 1,
-          'number_of_replicas' => 0,
-        ],
-        'mappings' => [
-          'node' => [
-            'properties' => [
-              'title' => [
-                'type'        => 'string',
-                'analyzer'    => 'standard',
-                'term_vector' => 'yes',
-                'copy_to'     => 'combined'
-              ],
-              'body' => [
-                'type'        => 'string',
-                'analyzer'    => 'standard',
-                'term_vector' => 'yes',
-                'copy_to'     => 'combined'
-              ],
-              'combined' => [
-                'type'        => 'string',
-                'analyzer'    => 'standard',
-                'term_vector' => 'yes'
-              ],
-              'status' => [
-                'type' => 'integer',
-              ],
-              'id' => [
-                'type' => 'long',
-              ],
-              'owner' => [
-                'type' => 'long',
-              ],
-              'created' => [
-                'type' => 'date',
-              ],
-              'updated' => [
-                'type' => 'date',
-              ],
-              'tags' => [
-                'type' => 'integer',
-              ],
-            ]
-          ]
-        ]
-      ],
+      'body'  => $param,
     ]);
   }
 }
