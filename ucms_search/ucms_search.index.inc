@@ -295,6 +295,12 @@ function _ucms_search_index_node_field_process($node) {
     $changed = new DateTime('@' . $node->changed);
   } catch (Exception $e) {}
 
+  // @todo Use field mapping from the index definition.
+  // @todo Allow via usync in param definition to set different field names
+  //   between the elastic index and the node field/properties.
+  // @todo Note the right place for this todo but allow usync definition to
+  //   also include basic matching rules whenever possible.
+
   return [
     'title'   => $node->title,
     'id'      => $node->nid,
