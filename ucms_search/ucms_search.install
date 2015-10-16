@@ -51,7 +51,6 @@ function ucms_search_schema() {
 function ucms_search_enable() {
   foreach (array_keys(ucms_search_index_list()) as $index) {
     ucms_search_index_clear($index);
-    ucms_search_index_reindex($index);
   }
 }
 

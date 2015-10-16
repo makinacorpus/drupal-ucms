@@ -203,8 +203,6 @@ function _ucms_search_index_node_field_to_tag_id_list($node, $field_name) {
  */
 function _ucms_search_index_node_field_process($node) {
 
-  $body     = strip_tags(_ucms_search_index_node_field_to_fulltext($node, 'body'));
-  $tags     = _ucms_search_index_node_field_to_tag_id_list($node, 'tags');
   $created  = null;
   $changed  = null;
 
@@ -219,12 +217,12 @@ function _ucms_search_index_node_field_process($node) {
     'title'   => $node->title,
     'id'      => $node->nid,
     'owner'   => $node->uid,
-    'created' => $created->format(DateTime::ISO8601),
-    'updated' => $changed->format(DateTime::ISO8601),
+    'created' => $created ? $created->format(DateTime::ISO8601) : null,
+    'updated' => $changed ? $changed->format(DateTime::ISO8601) : null,
     'type'    => $node->type,
-    'body'    => $body,
+    'body'    => strip_tags(_ucms_search_index_node_field_to_fulltext($node, 'body')),
     'status'  => (int)$node->status,
-    'tags'    => $tags,
+    'tags'    => _ucms_search_index_node_field_to_tag_id_list($node, 'tags'),
   ];
 }
 
