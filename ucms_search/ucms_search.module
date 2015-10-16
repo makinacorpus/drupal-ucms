@@ -268,7 +268,7 @@ function theme_ucms_search_facet($variables) {
   $facet = $variables['facet'];
 
   // @todo Improve this
-  if ($facet instanceof \Ucms\Search\TermFacet) {
+  if ($facet instanceof \Ucms\Search\Aggs\TermFacet) {
 
     $links    = [];
     $field    = $facet->getField();

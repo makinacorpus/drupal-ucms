@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search;
+namespace Ucms\Search\Lucene;
 
 class Query extends CollectionQuery
 {
@@ -42,7 +42,7 @@ class Query extends CollectionQuery
     /**
      * Create new term collection statement
      *
-     * @return \Ucms\Search\TermCollectionQuery
+     * @return \Ucms\Search\Lucene\TermCollectionQuery
      */
     public function createTermCollection($operator = Query::OP_AND)
     {
@@ -57,7 +57,7 @@ class Query extends CollectionQuery
     /**
      * Create new term collection statement
      *
-     * @return \Ucms\Search\CollectionQuery
+     * @return \Ucms\Search\Lucene\CollectionQuery
      */
     public function createCollection($operator = Query::OP_AND)
     {
@@ -72,7 +72,7 @@ class Query extends CollectionQuery
     /**
      * Create new term statement
      *
-     * @return \Ucms\Search\TermQuery
+     * @return \Ucms\Search\Lucene\TermQuery
      */
     public function createTerm()
     {
@@ -86,7 +86,7 @@ class Query extends CollectionQuery
     /**
      * Create new arbitrary range statement
      *
-     * @return \Ucms\Search\RangeQuery
+     * @return \Ucms\Search\Lucene\RangeQuery
      */
     public function createRange()
     {
@@ -100,7 +100,7 @@ class Query extends CollectionQuery
     /**
      * Create new arbitrary range statement
      *
-     * @return \Ucms\Search\DateRangeQuery
+     * @return \Ucms\Search\Lucene\DateRangeQuery
      */
     public function createDateRange()
     {
@@ -115,11 +115,11 @@ class Query extends CollectionQuery
      * Match single term to this query
      *
      * @param string $field
-     * @param string|\Ucms\Search\TermQuery $term
+     * @param string|\Ucms\Search\Lucene\TermQuery $term
      * @param float $boost
      * @param float $fuzzyness
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function matchTerm($field = null, $term, $boost = null, $fuzzyness = null)
     {
@@ -142,7 +142,7 @@ class Query extends CollectionQuery
      * @param mixed $stop
      * @param boolean $inclusive
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function requireRange($field = null, $start = null, $stop = null, $inclusive = true)
     {
@@ -184,9 +184,9 @@ class Query extends CollectionQuery
      * Require single term to this query
      *
      * @param string $field
-     * @param string|\Ucms\Search\TermQuery $term
+     * @param string|\Ucms\Search\Lucene\TermQuery $term
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function requireTerm($field = null, $term)
     {
@@ -204,9 +204,9 @@ class Query extends CollectionQuery
      * Prohibit single term to this query
      *
      * @param string $field
-     * @param string|\Ucms\Search\TermQuery $term
+     * @param string|\Ucms\Search\Lucene\TermQuery $term
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function prohibitTerm($field = null, $term)
     {
@@ -224,11 +224,11 @@ class Query extends CollectionQuery
      * Match term collection (OR by default)
      *
      * @param string $field
-     * @param string[]|\Ucms\Search\TermQuery[] $terms
+     * @param string[]|\Ucms\Search\Lucene\TermQuery[] $terms
      * @param float $boost
      * @param string $operator
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function matchTermCollection($field = null, $terms, $boost = null, $operator = self::OP_OR)
     {
@@ -251,11 +251,11 @@ class Query extends CollectionQuery
      * Require term collection (OR by default)
      *
      * @param string $field
-     * @param string[]|\Ucms\Search\TermQuery[] $terms
+     * @param string[]|\Ucms\Search\Lucene\TermQuery[] $terms
      * @param float $boost
      * @param string $operator
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function requireTermCollection($field = null, $terms, $operator = self::OP_OR)
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search;
+namespace Ucms\Search\Aggs;
 
 /**
  * Represent an Elastic Search facet based upon the aggregations feature
@@ -51,7 +51,7 @@ class TermFacet extends AbstractFacet
      *
      * @param string[] $valueFilter
      *
-     * @return \Ucms\Search\TermFacet
+     * @return \Ucms\Search\Aggs\TermFacet
      */
     public function setValueFilter($valueFilter)
     {
@@ -79,7 +79,7 @@ class TermFacet extends AbstractFacet
      *
      * @param string[] $choicesMap
      *
-     * @return \Ucms\Search\TermFacet
+     * @return \Ucms\Search\Aggs\TermFacet
      */
     public function setChoicesMap($choicesMap)
     {
@@ -104,7 +104,7 @@ class TermFacet extends AbstractFacet
      *
      * @param callable $choicesCallback
      *
-     * @return \Ucms\Search\TermFacet
+     * @return \Ucms\Search\Aggs\TermFacet
      */
     public function setChoicesCallback(callable $choicesCallback)
     {
@@ -123,7 +123,7 @@ class TermFacet extends AbstractFacet
      *
      * @param string $choices
      *
-     * @return \Ucms\Search\TermFacet
+     * @return \Ucms\Search\Aggs\TermFacet
      */
     public function setChoices($choices)
     {

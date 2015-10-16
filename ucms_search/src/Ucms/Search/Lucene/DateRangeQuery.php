@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search;
+namespace Ucms\Search\Lucene;
 
 class DateRangeQuery extends RangeQuery
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search;
+namespace Ucms\Search\Aggs;
 
 /**
  * Represent an Elastic Search facet based upon the aggregations feature
@@ -87,7 +87,7 @@ abstract class AbstractFacet
      *
      * @param string $title
      *
-     * @return \Ucms\Search\AbstractFacet
+     * @return \Ucms\Search\Aggs\AbstractFacet
      */
     public function setTitle($title)
     {
@@ -117,7 +117,7 @@ abstract class AbstractFacet
      *
      * @param string[] $selectedValues
      *
-     * @return \Ucms\Search\AbstractFacet
+     * @return \Ucms\Search\Aggs\AbstractFacet
      */
     public function setSelectedValues($selectedValues = [])
     {

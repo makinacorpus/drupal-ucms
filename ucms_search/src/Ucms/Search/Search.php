@@ -4,6 +4,9 @@ namespace Ucms\Search;
 
 use Elasticsearch\Client;
 
+use Ucms\Search\Aggs\TermFacet;
+use Ucms\Search\Lucene\Query;
+
 class Search
 {
     /**
@@ -42,7 +45,7 @@ class Search
     protected $fields = [];
 
     /**
-     * @var \Ucms\Search\AbstractFacet[]
+     * @var \Ucms\Search\Aggs\AbstractFacet[]
      */
     protected $aggregations = [];
 
@@ -127,7 +130,7 @@ class Search
     /**
      * Get query
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function getQuery()
     {
@@ -137,7 +140,7 @@ class Search
     /**
      * Get query
      *
-     * @return \Ucms\Search\Query
+     * @return \Ucms\Search\Lucene\Query
      */
     public function getFilterQuery()
     {
@@ -191,7 +194,7 @@ class Search
      * @param string $field
      *   Field name if different from the name
      *
-     * @return \Ucms\Search\TermFacet
+     * @return \Ucms\Search\Aggs\TermFacet
      */
     public function createTermAggregation($parameterName, $values = null, $operator = Query::OP_OR, $field = null)
     {
@@ -246,7 +249,7 @@ class Search
     /**
      * Get aggregations
      *
-     * @return \Ucms\Search\AbstractFacet[]
+     * @return \Ucms\Search\Aggs\AbstractFacet[]
      */
     public function getAggregations()
     {

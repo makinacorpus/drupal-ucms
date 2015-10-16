@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search;
+namespace Ucms\Search\Lucene;
 
 /**
  * Represent a simple user term or phrase
@@ -17,7 +17,7 @@ class TermQuery extends AbstractFuzzyQuery
      *
      * @param string $term
      *
-     * @return \Ucms\Search\TermQuery
+     * @return \Ucms\Search\Lucene\TermQuery
      */
     public function setValue($term)
     {

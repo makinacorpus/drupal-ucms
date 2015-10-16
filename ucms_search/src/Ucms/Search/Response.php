@@ -2,6 +2,8 @@
 
 namespace Ucms\Search;
 
+use Ucms\Search\Aggs\TermFacet;
+
 class Response
 {
     /**
