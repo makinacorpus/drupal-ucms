@@ -34,15 +34,9 @@ const UCMS_STYLE_CONTENTADMIN = 'contentadmin';
 const UCMS_STYLE_FAVORITE = 'favorite';
 
 /**
- * Implements hook_boot().
+ * Load the composer autoload, be flexible about it, it might be elsewhere.
  */
-function ucms_contrib_boot() {
-  if (!module_exists('composer_manager')) {
-    if (!@include_once __DIR__ . '/../vendor/autoload.php') {
-      watchdog(__FUNCTION__, "Missing composer autoload.php file", [], WATCHDOG_ERROR);
-    }
-  }
-}
+@include_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Implements hook_menu().
@@ -255,22 +249,6 @@ function ucms_contrib_image_default_styles() {
       ]],
     ],
   ];
-}
-
-/**
- * Implements hook_form().
- */
-function ucms_contrib_forms($form_id, $args) {
-  // This implementation allows to use the same form more than once on the
-  // same page, see drupal_get_form() related calls. This is ugly but this
-  // is the right way to do it.
-  if (0 === strpos($form_id, 'ucms_contrib_favorite_add_form')) {
-    require_once __DIR__ . '/ucms_contrib.pages.inc';
-    return [$form_id => ['callback' => 'ucms_contrib_favorite_add_form']];
-  } else if (0 === strpos($form_id, 'ucms_contrib_favorite_remove_form')) {
-    require_once __DIR__ . '/ucms_contrib.pages.inc';
-    return [$form_id => ['callback' => 'ucms_contrib_favorite_remove_form']];
-  }
 }
 
 /**
