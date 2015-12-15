@@ -1,26 +1,32 @@
 {
-	"name" : "makinacorpus/drupal-ucms",
-	"type" : "library",
-	"description" : " µCMS modules - Node/Elasticsearch/favorites based Drupal fast contribution UI/UX",
-	"homepage" : "http://github.com/makinacorpus/drupal-ucms",
-	"license" : "GPL-2",
-	"authors" : [{
-			"name" : "Pierre Rineau",
-			"email" : "pierre.rineau@makina-corpus.com"
-		}, {
+    "name" : "makinacorpus/drupal-ucms",
+    "type" : "drupal-module",
+    "description" : " µCMS modules - Node/Elasticsearch/favorites based Drupal fast contribution UI/UX",
+    "homepage" : "http://github.com/makinacorpus/drupal-ucms",
+    "license" : "GPL-2",
+    "authors" : [
+        {
+            "name" : "Pierre Rineau",
+            "email" : "pierre.rineau@makina-corpus.com"
+        },
+        {
             "name" : "Sébastien Corbin",
             "email" : "sebastien.corbin@makina-corpus.com"
-		}
-	],
-	"autoload" : {
-		"psr-0" : {
-			"Ucms\\Contrib\\" : "ucms_contrib/src",
-			"Ucms\\Layout\\" : "ucms_layout/src",
-			"Ucms\\Search\\" : "ucms_search/src"
-		}
-	},
+        },
+        {
+            "name" : "Makina Corpus",
+            "homepage" : "http://makina-corpus.com"
+        }
+    ],
+    "autoload" : {
+        "psr-0" : {
+            "Ucms\\Contrib\\" : "ucms_contrib/src",
+            "Ucms\\Layout\\" : "ucms_layout/src",
+            "Ucms\\Search\\" : "ucms_search/src"
+        }
+    },
     "require" : {
         "elasticsearch/elasticsearch" : "~2.0"
     },
-	"minimum-stability" : "dev"
+    "minimum-stability" : "dev"
 }
