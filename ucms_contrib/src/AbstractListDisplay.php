@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Contrib;
+namespace MakinaCorpus\Ucms\Contrib;
 
 abstract class AbstractListDisplay
 {
@@ -34,7 +34,7 @@ abstract class AbstractListDisplay
      *
      * @param string $mode
      *
-     * @return \Ucms\Contrib\AbstractListDisplay
+     * @return AbstractListDisplay
      */
     public function setDefaultMode($mode)
     {
@@ -70,7 +70,7 @@ abstract class AbstractListDisplay
      *
      * @param string $parameterName
      *
-     * @return \Ucms\Contrib\AbstractListDisplay
+     * @return AbstractListDisplay
      */
     public function setParameterName($parameterName)
     {
@@ -84,7 +84,7 @@ abstract class AbstractListDisplay
      *
      * @param string[] $query
      *
-     * @return \Ucms\Contrib\AbstractListDisplay
+     * @return AbstractListDisplay
      */
     public function prepareFromQuery($query)
     {

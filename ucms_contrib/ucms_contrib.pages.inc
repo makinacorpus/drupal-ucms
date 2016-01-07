@@ -52,7 +52,7 @@ function ucms_contrib_favorite_remove_form_submit($form, &$form_state) {
  */
 function ucms_contrib_admin_content_search_form($form, &$form_state) {
 
-  $param = \Ucms\Search\QueryAlteredSearch::PARAM_FULLTEXT_QUERY;
+  $param = \MakinaCorpus\Ucms\Search\QueryAlteredSearch::PARAM_FULLTEXT_QUERY;
 
   $form['query'] = [
     '#type'           => 'textfield',
@@ -72,7 +72,7 @@ function ucms_contrib_admin_content_search_form($form, &$form_state) {
  * Search form submit.
  */
 function ucms_contrib_admin_content_search_form_submit($form, &$form_state) {
-  $param = \Ucms\Search\QueryAlteredSearch::PARAM_FULLTEXT_QUERY;
+  $param = \MakinaCorpus\Ucms\Search\QueryAlteredSearch::PARAM_FULLTEXT_QUERY;
   if (!empty($form_state['values']['query'])) {
     $query = [$param => $form_state['values']['query']];
     $form_state['redirect'] = [
@@ -166,7 +166,7 @@ function ucms_contrib_admin_content_page($tab = null) {
 
   if ($nidList = $response->getAllNodeIdentifiers()) {
 
-    $display = (new \Ucms\Contrib\ContentAdminListDisplay())
+    $display = (new \MakinaCorpus\Ucms\Contrib\ContentAdminListDisplay())
       ->prepareFromQuery($_GET)
     ;
 

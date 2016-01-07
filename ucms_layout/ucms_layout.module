@@ -19,6 +19,10 @@
  *   - unit testing (sorry should have done that earlier).
  */
 
+use MakinaCorpus\Ucms\Layout\Context;
+use MakinaCorpus\Ucms\Layout\Item;
+use MakinaCorpus\Ucms\Layout\Layout;
+
 /**
  * Load the composer autoload, be flexible about it, it might be elsewhere.
  */
@@ -215,7 +219,7 @@ function ucms_layout_permission() {
  *
  * @param string $op
  *   May be 'view', 'update' or 'delete'.
- * @param int|\Ucms\Layout\Layout $id
+ * @param int|Layout $id
  *   Layout object or identifier.
  * @param stdClass $acount
  *   The account to check.
@@ -228,7 +232,7 @@ function ucms_layout_access($op, $layout, $account = null) {
     $account = $GLOBALS['user'];
   }
 
-  if (!$layout instanceof \Ucms\Layout\Layout) {
+  if (!$layout instanceof Layout) {
     $layout = ucms_layout_load($layout);
     if (!$layout) { // Is not a layout.
       return false;
@@ -310,7 +314,7 @@ function ucms_layout_temporary_load($id) {
  * Menu title callback.
  */
 function ucms_layout_title($layout) {
-  if ($layout instanceof \Ucms\Layout\Layout) {
+  if ($layout instanceof Layout) {
     return $layout->getTitle();
   }
   return t("Layout");
@@ -319,12 +323,12 @@ function ucms_layout_title($layout) {
 /**
  * Get current contextual layout.
  *
- * @return \Ucms\Layout\Context
+ * @return Context
  */
 function ucms_layout_context_get() {
   $instance = &drupal_static(__FUNCTION__);
   if (!$instance) {
-    $instance = new \Ucms\Layout\Context();
+    $instance = new Context();
   }
   return $instance;
 }
@@ -407,7 +411,7 @@ function ucms_layout_block_view($delta = '') {
   $layout   = $context->getCurrentLayout();
   $editMode = $context->isTemporary();
 
-  if (!$layout instanceof \Ucms\Layout\Layout) {
+  if (!$layout instanceof Layout) {
     return; // No layout on page.
   }
 
@@ -439,7 +443,7 @@ function ucms_layout_block_view($delta = '') {
       return;
     }
 
-    /* @var $item \Ucms\Layout\Item */
+    /* @var $item Item */
     foreach ($region as $item) {
       $nid = $item->getNodeId();
       if (isset($map[$nid])) {
@@ -502,7 +506,7 @@ function ucms_layout_edit_form($form, &$form_state) {
   $context  = ucms_layout_context_get();
   $layout   = $context->getCurrentLayout();
 
-  if ($layout instanceof \Ucms\Layout\Layout) {
+  if ($layout instanceof Layout) {
     if ($context->isTemporary()) {
 
       $form['actions']['#type'] = 'actions';

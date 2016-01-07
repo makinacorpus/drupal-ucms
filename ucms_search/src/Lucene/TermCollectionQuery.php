@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Lucene;
+namespace MakinaCorpus\Ucms\Search\Lucene;
 
 /**
  * Represent a user term collection
@@ -10,9 +10,9 @@ class TermCollectionQuery extends CollectionQuery
     /**
      * Add a term
      *
-     * @param string|\Ucms\Search\Lucene\TermQuery $element
+     * @param string|TermQuery $element
      *
-     * @return \Ucms\Search\Lucene\TermCollectionQuery
+     * @return TermCollectionQuery
      */
     public function add($element)
     {
@@ -31,9 +31,9 @@ class TermCollectionQuery extends CollectionQuery
     /**
      * Add a list of terms
      *
-     * @param string[]|\Ucms\Search\Lucene\TermQuery[] $terms
+     * @param string[]|TermQuery[] $terms
      *
-     * @return \Ucms\Search\Lucene\TermCollectionQuery
+     * @return TermCollectionQuery
      */
     public function addAll(array $terms)
     {

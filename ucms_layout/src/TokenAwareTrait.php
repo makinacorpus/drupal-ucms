@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 trait TokenAwareTrait
 {
@@ -18,7 +18,7 @@ trait TokenAwareTrait
      *
      * @param string $token
      *
-     * @return \Ucms\Layout\TemporaryStorage
+     * @return TemporaryStorage
      */
     public function setToken($token)
     {

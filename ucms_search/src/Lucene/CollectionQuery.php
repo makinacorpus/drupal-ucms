@@ -1,13 +1,13 @@
 <?php
 
-namespace Ucms\Search\Lucene;
+namespace MakinaCorpus\Ucms\Search\Lucene;
 
 class CollectionQuery extends AbstractQuery implements
     \IteratorAggregate,
     \Countable
 {
     /**
-     * @var \Ucms\Search\Lucene\AbstractQuery[]
+     * @var AbstractQuery[]
      */
     protected $elements = array();
 
@@ -37,9 +37,9 @@ class CollectionQuery extends AbstractQuery implements
     /**
      * Adds an element to the internal list
      *
-     * @param \Ucms\Search\Lucene\AbstractQuery $element
+     * @param AbstractQuery $element
      *
-     * @return \Ucms\Search\Lucene\CollectionQuery
+     * @return CollectionQuery
      */
     public function add($element)
     {
@@ -55,9 +55,9 @@ class CollectionQuery extends AbstractQuery implements
     /**
      * Remove element
      *
-     * @param \Ucms\Search\Lucene\AbstractQuery $element
+     * @param AbstractQuery $element
      *
-     * @return \Ucms\Search\Lucene\CollectionQuery
+     * @return CollectionQuery
      */
     protected function removeElement(AbstractQuery $element)
     {
@@ -75,7 +75,7 @@ class CollectionQuery extends AbstractQuery implements
      *
      * @param string $operator
      *
-     * @return \Ucms\Search\Lucene\CollectionQuery
+     * @return CollectionQuery
      */
     public function setOperator($operator)
     {

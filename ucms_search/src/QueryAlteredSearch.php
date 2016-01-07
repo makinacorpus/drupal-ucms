@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search;
+namespace MakinaCorpus\Ucms\Search;
 
 /**
  * Represent a search object based upon an incomming query, allowing
@@ -54,7 +54,7 @@ class QueryAlteredSearch extends Search
      *
      * @param string $parameterName
      *
-     * @return \Ucms\Search\QueryAlteredSearch
+     * @return QueryAlteredSearch
      */
     public function setFulltextParameterName($parameterName)
     {
@@ -68,7 +68,7 @@ class QueryAlteredSearch extends Search
      *
      * @param float $value
      *
-     * @return \Ucms\Search\QueryAlteredSearch
+     * @return QueryAlteredSearch
      */
     public function setFulltextRoaming($value)
     {
@@ -82,7 +82,7 @@ class QueryAlteredSearch extends Search
      *
      * @param int $value
      *
-     * @return \Ucms\Search\QueryAlteredSearch
+     * @return QueryAlteredSearch
      */
     public function setPageDelta($value)
     {
@@ -96,7 +96,7 @@ class QueryAlteredSearch extends Search
      *
      * @param string $parameterName
      *
-     * @return \Ucms\Search\QueryAlteredSearch
+     * @return QueryAlteredSearch
      */
     public function setPageParameter($parameterName)
     {
@@ -127,7 +127,7 @@ class QueryAlteredSearch extends Search
      *
      * @param string[] $query
      *
-     * @return \Ucms\Search\QueryAlteredSearch
+     * @return QueryAlteredSearch
      */
     public function prepare($query)
     {

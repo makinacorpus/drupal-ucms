@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\USync;
+namespace MakinaCorpus\Ucms\Search\USync;
 
 use USync\AST\Drupal\DrupalNodeInterface;
 use USync\AST\Drupal\DrupalNodeTrait;

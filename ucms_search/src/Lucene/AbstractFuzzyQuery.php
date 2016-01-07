@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Lucene;
+namespace MakinaCorpus\Ucms\Search\Lucene;
 
 /**
  * Applies fuzziness or romaing operator over an expression
@@ -14,7 +14,7 @@ abstract class AbstractFuzzyQuery extends AbstractQuery
      * @param int $fuzzyness
      *   Positive integer or null to unset
      *
-     * @return \Ucms\Search\Lucene\AbstractFuzzyQuery
+     * @return AbstractFuzzyQuery
      */
     public function setFuzzyness($fuzzyness)
     {
@@ -33,7 +33,7 @@ abstract class AbstractFuzzyQuery extends AbstractQuery
      * @param int $roaming
      *   Positive integer
      *
-     * @return \Ucms\Search\Lucene\AbstractFuzzyQuery
+     * @return AbstractFuzzyQuery
      */
     public function setRoaming($roaming)
     {

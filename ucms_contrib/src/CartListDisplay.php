@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Contrib;
+namespace MakinaCorpus\Ucms\Contrib;
 
 class CartListDisplay extends AbstractListDisplay
 {

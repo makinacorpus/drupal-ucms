@@ -9,7 +9,7 @@
  */
 function ucms_search_usync_loader_list() {
   return [
-    new \Ucms\Search\USync\IndexLoader(),
+    new \MakinaCorpus\Ucms\Search\USync\IndexLoader(),
   ];
 }
 
@@ -18,6 +18,6 @@ function ucms_search_usync_loader_list() {
  */
 function ucms_search_usync_path_map() {
   return [
-    'ucms.search.index.?name' => '\Ucms\Search\USync\IndexNode',
+    'ucms.search.index.?name' => '\MakinaCorpus\Ucms\Search\USync\IndexNode',
   ];
 }

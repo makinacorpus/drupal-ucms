@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 /**
  * Layout storage using Drupal database.
@@ -86,7 +86,7 @@ class DrupalStorage
      *
      * You should never call this method directly.
      *
-     * @param \Ucms\Layout\Layout $layout
+     * @param Layout $layout
      *   Layout to save
      * @param string $region
      *   Set this to update only one region
@@ -106,7 +106,7 @@ class DrupalStorage
 
             $values = [];
 
-            /* @var $item \Ucms\Layout\Item */
+            /* @var $item Item */
             foreach ($region as $delta => $item) {
                 $values[] = [
                     $layout->getId(),

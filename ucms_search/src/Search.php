@@ -1,11 +1,12 @@
 <?php
 
-namespace Ucms\Search;
+namespace MakinaCorpus\Ucms\Search;
 
 use Elasticsearch\Client;
 
-use Ucms\Search\Aggs\TermFacet;
-use Ucms\Search\Lucene\Query;
+use MakinaCorpus\Ucms\Search\Aggs\AbstractFacet;
+use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
+use MakinaCorpus\Ucms\Search\Lucene\Query;
 
 class Search
 {
@@ -20,12 +21,12 @@ class Search
     protected $index;
 
     /**
-     * @var \Ucms\Search\Lucene\Query
+     * @var Query
      */
     protected $query;
 
     /**
-     * @var \Ucms\Search\Lucene\Query
+     * @var Query
      */
     protected $filterQuery;
 
@@ -45,7 +46,7 @@ class Search
     protected $fields = [];
 
     /**
-     * @var \Ucms\Search\Aggs\AbstractFacet[]
+     * @var Aggs\AbstractFacet[]
      */
     protected $aggregations = [];
 
@@ -67,7 +68,7 @@ class Search
      * @param int $limit
      *   Positive integer or null if no limit
      *
-     * @return \Ucms\Search\Search
+     * @return Search
      */
     public function setLimit($limit)
     {
@@ -93,7 +94,7 @@ class Search
      * @param int $page
      *   Positive integer or null or 1 for first page
      *
-     * @return \Ucms\Search\Search
+     * @return Search
      */
     public function setPage($page)
     {
@@ -118,7 +119,7 @@ class Search
      *
      * @param string $index
      *
-     * @return \Ucms\Search\Search
+     * @return Search
      */
     public function setIndex($index)
     {
@@ -130,7 +131,7 @@ class Search
     /**
      * Get query
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function getQuery()
     {
@@ -140,7 +141,7 @@ class Search
     /**
      * Get query
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function getFilterQuery()
     {
@@ -152,7 +153,7 @@ class Search
      *
      * @param string[]
      *
-     * @return \Ucms\Search\Search
+     * @return Search
      */
     public function setFields(array $fields)
     {
@@ -166,7 +167,7 @@ class Search
      *
      * @param string $field
      *
-     * @return \Ucms\Search\Search
+     * @return Search
      */
     public function addField($field)
     {
@@ -194,7 +195,7 @@ class Search
      * @param string $field
      *   Field name if different from the name
      *
-     * @return \Ucms\Search\Aggs\TermFacet
+     * @return TermFacet
      */
     public function createTermAggregation($parameterName, $values = null, $operator = Query::OP_OR, $field = null)
     {
@@ -249,7 +250,7 @@ class Search
     /**
      * Get aggregations
      *
-     * @return \Ucms\Search\Aggs\AbstractFacet[]
+     * @return AbstractFacet[]
      */
     public function getAggregations()
     {

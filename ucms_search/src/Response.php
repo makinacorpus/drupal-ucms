@@ -1,13 +1,13 @@
 <?php
 
-namespace Ucms\Search;
+namespace MakinaCorpus\Ucms\Search;
 
-use Ucms\Search\Aggs\TermFacet;
+use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 
 class Response
 {
     /**
-     * @var \Ucms\Search\Search
+     * @var Search
      */
     protected $search;
 
@@ -24,7 +24,7 @@ class Response
     /**
      * Default constructor
      *
-     * @param \Ucms\Search\Search $search
+     * @param Search $search
      * @param array $rawResponse
      *   \Elasticsearch\Client::search() method return
      */

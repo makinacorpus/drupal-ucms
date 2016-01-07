@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Lucene;
+namespace MakinaCorpus\Ucms\Search\Lucene;
 
 class RangeQuery extends AbstractQuery
 {
@@ -28,7 +28,7 @@ class RangeQuery extends AbstractQuery
      * @param boolean $inclusive
      *   Set to true for inclusive mode, false for exclusive mode
      *
-     * @return \Ucms\Search\RangeQuery
+     * @return RangeQuery
      */
     public function setInclusive($inclusive = true)
     {
@@ -48,7 +48,7 @@ class RangeQuery extends AbstractQuery
      * @param null|mixed $start
      * @param null|mixed $stop
      *
-     * @return \Ucms\Search\RangeQuery
+     * @return RangeQuery
      */
     public function setRange($start, $stop)
     {

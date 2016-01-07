@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 /**
  * Storage interface.
@@ -16,7 +16,7 @@ interface StorageInterface
      * @param int[] $idList
      *   List of layout identifiers
      *
-     * @return \Ucms\Layout\Layout[]
+     * @return Layout[]
      *   Keys are layout identifiers, values are layout instances
      */
     public function loadAll($idList);
@@ -24,14 +24,14 @@ interface StorageInterface
     /**
      * Save a layout
      *
-     * @param \Ucms\Layout\Layout $layout
+     * @param Layout $layout
      */
     public function save(Layout $layout);
 
     /**
      * Delete a layout
      *
-     * @param int|\Ucms\Layout\Layout $id
+     * @param int|Layout $id
      *   Layout identifier or instance to delete.
      */
     public function delete($id);
@@ -41,7 +41,7 @@ interface StorageInterface
      *
      * @param int $id
      *
-     * @return \Ucms\Layout\Layout
+     * @return Layout
      */
     public function load($id);
 }

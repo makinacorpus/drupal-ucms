@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 class Region implements \IteratorAggregate, \Countable
 {
@@ -10,7 +10,7 @@ class Region implements \IteratorAggregate, \Countable
     private $name;
 
     /**
-     * @var \Ucms\Layout\Item[]
+     * @var Item[]
      */
     private $items = [];
 
@@ -44,7 +44,7 @@ class Region implements \IteratorAggregate, \Countable
      *
      * @param boolean $toggle
      *
-     * @return \Ucms\Layout\Region
+     * @return Region
      */
     public function toggleUpdateStatus($toggle)
     {
@@ -93,7 +93,7 @@ class Region implements \IteratorAggregate, \Countable
      *
      * @param int $position
      *
-     * @return \Ucms\Layout\Region
+     * @return Region
      */
     public function removeAt($position)
     {
@@ -115,7 +115,7 @@ class Region implements \IteratorAggregate, \Countable
      *
      * @param Item $item
      *
-     * @return \Ucms\Layout\Region
+     * @return Region
      */
     public function prepend(Item $item)
     {
@@ -129,7 +129,7 @@ class Region implements \IteratorAggregate, \Countable
      *
      * @param Item $item
      *
-     * @return \Ucms\Layout\Region
+     * @return Region
      */
     public function append(Item $item)
     {

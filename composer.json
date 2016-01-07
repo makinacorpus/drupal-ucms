@@ -20,10 +20,10 @@
     ],
     "autoload" : {
         "psr-4" : {
-            "Ucms\\Contrib\\" : "ucms_contrib/src",
-            "Ucms\\Layout\\" : "ucms_layout/src",
-            "Ucms\\Search\\" : "ucms_search/src",
-            "Ucms\\Site\\" : "ucms_site/src"
+            "MakinaCorpus\\Ucms\\Contrib\\" : "ucms_contrib/src",
+            "MakinaCorpus\\Ucms\\Layout\\" : "ucms_layout/src",
+            "MakinaCorpus\\Ucms\\Search\\" : "ucms_search/src",
+            "MakinaCorpus\\Ucms\\Site\\" : "ucms_site/src"
         }
     },
     "require" : {

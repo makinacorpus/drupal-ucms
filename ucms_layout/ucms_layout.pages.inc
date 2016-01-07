@@ -4,6 +4,8 @@
  * Layout management user pages.
  */
 
+use MakinaCorpus\Ucms\Layout\Layout;
+
 /**
  * Layout add form.
  */
@@ -41,7 +43,7 @@ function ucms_layout_admin_layout_add_form($form, &$form_state) {
  */
 function ucms_layout_admin_layout_add_form_submit($form, &$form_state) {
 
-  $layout = (new \Ucms\Layout\Layout())
+  $layout = (new Layout())
     ->setAccountId($GLOBALS['user']->uid)
     ->setAdminTitle($form_state['values']['title_admin'])
     ->setTitle($form_state['values']['title'])
@@ -58,7 +60,7 @@ function ucms_layout_admin_layout_add_form_submit($form, &$form_state) {
 /**
  * Layout edit form.
  */
-function ucms_layout_admin_layout_edit_form($form, &$form_state, \Ucms\Layout\Layout $layout) {
+function ucms_layout_admin_layout_edit_form($form, &$form_state, Layout $layout) {
 
   $form['#layout_id'] = $layout->getId();
 
@@ -137,7 +139,7 @@ function ucms_layout_admin_layout_edit_form_delete_submit($form, &$form_state) {
 /**
  * Layout delete form.
  */
-function ucms_layout_admin_layout_delete_form($form, &$form_state, \Ucms\Layout\Layout $layout) {
+function ucms_layout_admin_layout_delete_form($form, &$form_state, Layout $layout) {
 
   $form['#layout_id'] = $layout->getId();
   $form['#layout_title'] = $layout->getTitle();

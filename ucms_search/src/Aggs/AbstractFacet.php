@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Aggs;
+namespace MakinaCorpus\Ucms\Search\Aggs;
 
 /**
  * Represent an Elastic Search facet based upon the aggregations feature
@@ -87,7 +87,7 @@ abstract class AbstractFacet
      *
      * @param string $title
      *
-     * @return \Ucms\Search\Aggs\AbstractFacet
+     * @return AbstractFacet
      */
     public function setTitle($title)
     {
@@ -117,7 +117,7 @@ abstract class AbstractFacet
      *
      * @param string[] $selectedValues
      *
-     * @return \Ucms\Search\Aggs\AbstractFacet
+     * @return AbstractFacet
      */
     public function setSelectedValues($selectedValues = [])
     {
@@ -137,7 +137,7 @@ abstract class AbstractFacet
      * using the setSelectedValues() method, after query has been done, it
      * will return the selected values returned in the aggregation bucket
      *
-     * @return \Ucms\Search\string[]
+     * @return string[]
      */
     public function getSelectedValues()
     {

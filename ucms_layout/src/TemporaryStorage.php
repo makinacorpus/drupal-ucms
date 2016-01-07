@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 /**
  * Layout storage using Drupal cache system for temporarily being edited

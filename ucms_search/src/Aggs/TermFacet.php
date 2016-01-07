@@ -1,8 +1,8 @@
 <?php
 
-namespace Ucms\Search\Aggs;
+namespace MakinaCorpus\Ucms\Search\Aggs;
 
-use Ucms\Search\Lucene\Query;
+use MakinaCorpus\Ucms\Search\Lucene\Query;
 
 /**
  * Represent an Elastic Search facet based upon the aggregations feature
@@ -53,7 +53,7 @@ class TermFacet extends AbstractFacet
      *
      * @param string[] $valueFilter
      *
-     * @return \Ucms\Search\Aggs\TermFacet
+     * @return TermFacet
      */
     public function setValueFilter($valueFilter)
     {
@@ -81,7 +81,7 @@ class TermFacet extends AbstractFacet
      *
      * @param string[] $choicesMap
      *
-     * @return \Ucms\Search\Aggs\TermFacet
+     * @return TermFacet
      */
     public function setChoicesMap($choicesMap)
     {
@@ -106,7 +106,7 @@ class TermFacet extends AbstractFacet
      *
      * @param callable $choicesCallback
      *
-     * @return \Ucms\Search\Aggs\TermFacet
+     * @return TermFacet
      */
     public function setChoicesCallback(callable $choicesCallback)
     {
@@ -125,7 +125,7 @@ class TermFacet extends AbstractFacet
      *
      * @param string $choices
      *
-     * @return \Ucms\Search\Aggs\TermFacet
+     * @return TermFacet
      */
     public function setChoices($choices)
     {

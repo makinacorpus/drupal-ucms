@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Lucene;
+namespace MakinaCorpus\Ucms\Search\Lucene;
 
 /**
  * Applies boost and prohibit/require operators over an expression
@@ -57,7 +57,7 @@ abstract class AbstractQuery
      * @param string $exclusive
      *   Query::OP_REQUIRE or Query::OP_PROHIBIT or null
      *
-     * @return \Ucms\Search\Lucene\AbstractQuery
+     * @return AbstractQuery
      */
     public function setExclusion($exclusion)
     {
@@ -76,7 +76,7 @@ abstract class AbstractQuery
      * @param float $boost
      *   Float superior to 0 or null
      *
-     * @return \Ucms\Search\Lucene\AbstractQuery
+     * @return AbstractQuery
      */
     public function setBoost($boost)
     {
@@ -94,7 +94,7 @@ abstract class AbstractQuery
      *
      * @param string $field
      *
-     * @return \Ucms\Search\Lucene\AbstractQuery
+     * @return AbstractQuery
      */
     public function setField($field)
     {

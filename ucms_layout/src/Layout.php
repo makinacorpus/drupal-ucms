@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 class Layout
 {
@@ -46,7 +46,7 @@ class Layout
      *
      * @param int $id
      *
-     * @return \Ucms\Layout\Layout
+     * @return Layout
      */
     public function setId($id)
     {
@@ -70,7 +70,7 @@ class Layout
      *
      * @param int $id
      *
-     * @return \Ucms\Layout\Layout
+     * @return Layout
      */
     public function setSiteId($siteId)
     {
@@ -94,7 +94,7 @@ class Layout
      *
      * @param int $accountId
      *
-     * @return \Ucms\Layout\Layout
+     * @return Layout
      */
     public function setAccountId($accountId)
     {
@@ -118,7 +118,7 @@ class Layout
      *
      * @param string $title
      *
-     * @return \Ucms\Layout\Layout
+     * @return Layout
      */
     public function setTitle($title)
     {
@@ -142,7 +142,7 @@ class Layout
      *
      * @param string $title
      *
-     * @return \Ucms\Layout\Layout
+     * @return Layout
      */
     public function setAdminTitle($title)
     {
@@ -166,7 +166,7 @@ class Layout
      *
      * This will return only regions with data
      *
-     * @return \Ucms\Layout\Region[]
+     * @return Region[]
      */
     public function getAllRegions()
     {
@@ -180,7 +180,7 @@ class Layout
      *
      * @param string $name
      *
-     * @return \Ucms\Layout\Region
+     * @return Region
      */
     public function getRegion($name)
     {

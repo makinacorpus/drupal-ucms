@@ -4,10 +4,13 @@
  * AJAX callbacks.
  */
 
+use MakinaCorpus\Ucms\Layout\Item;
+use MakinaCorpus\Ucms\Layout\Layout;
+
 /**
  * Add item to a a region callback.
  *
- * @param \Ucms\Layout\Layout $layout
+ * @param Layout $layout
  * @return int
  */
 function ucms_layout_ajax_region_item_add($layout) {
@@ -27,7 +30,7 @@ function ucms_layout_ajax_region_item_add($layout) {
   }
 
   // Input validation.
-  if (!$layout instanceof \Ucms\Layout\Layout) {
+  if (!$layout instanceof Layout) {
     return MENU_NOT_FOUND;
   }
   if (empty($query['region'])) {
@@ -46,7 +49,7 @@ function ucms_layout_ajax_region_item_add($layout) {
     $query['view_mode'] = 'teaser';
   }
 
-  $item = new \Ucms\Layout\Item($query['nid'], $query['view_mode']);
+  $item = new Item($query['nid'], $query['view_mode']);
 
   $layout->getRegion($query['region'])->addAt($item, $query['position']);
 
@@ -62,7 +65,7 @@ function ucms_layout_ajax_region_item_add($layout) {
 /**
  * Add item to a a region callback.
  *
- * @param \Ucms\Layout\Layout $layout
+ * @param Layout $layout
  */
 function ucms_layout_ajax_region_item_remove($layout) {
 
@@ -81,7 +84,7 @@ function ucms_layout_ajax_region_item_remove($layout) {
   }
 
   // Input validation.
-  if (!$layout instanceof \Ucms\Layout\Layout) {
+  if (!$layout instanceof Layout) {
     return MENU_NOT_FOUND;
   }
   if (empty($query['region'])) {
@@ -102,7 +105,7 @@ function ucms_layout_ajax_region_item_remove($layout) {
 /**
  * Add item to a a region callback.
  *
- * @param \Ucms\Layout\Layout $layout
+ * @param Layout $layout
  * @return int
  */
 function ucms_layout_ajax_region_item_move($layout) {
@@ -122,7 +125,7 @@ function ucms_layout_ajax_region_item_move($layout) {
   }
 
   // Input validation.
-  if (!$layout instanceof \Ucms\Layout\Layout) {
+  if (!$layout instanceof Layout) {
     return MENU_NOT_FOUND;
   }
   if (empty($query['region'])) {
@@ -141,7 +144,7 @@ function ucms_layout_ajax_region_item_move($layout) {
     $query['view_mode'] = 'teaser';
   }
 
-  $item = new \Ucms\Layout\Item($query['nid'], $query['view_mode']);
+  $item = new Item($query['nid'], $query['view_mode']);
 
   if (!empty($query['prevRegion'])) {
     $layout->getRegion($query['prevRegion'])->removeAt($query['prevPosition']);

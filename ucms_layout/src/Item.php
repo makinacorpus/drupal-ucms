@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 class Item
 {
@@ -41,7 +41,7 @@ class Item
      *
      * @param string $viewMode
      *
-     * @return \Ucms\Layout\Item
+     * @return Item
      */
     public function setViewMode($viewMode)
     {

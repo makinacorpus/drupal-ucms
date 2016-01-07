@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Mapping;
+namespace MakinaCorpus\Ucms\Search\Mapping;
 
 class TypeRegistry
 {
@@ -10,7 +10,7 @@ class TypeRegistry
     private $instances = [];
 
     /**
-     * @var \Ucms\Search\Mapping\NullMapping
+     * @var NullType
      */
     private $nullInstance;
 
@@ -28,7 +28,7 @@ class TypeRegistry
      * @param mixed[] $types
      *   Keys are type names, values are either class name or instances
      *
-     * @return \Ucms\Search\Mapping\TypeRegistry
+     * @return TypeRegistry
      */
     public function register($types)
     {
@@ -47,11 +47,11 @@ class TypeRegistry
      *
      * @param string $type
      *   ElasticSearch field type
-     * @param string|\Ucms\Search\Mapping\TypeInterface $definition
+     * @param string|TypeInterface $definition
      *   Either the class name that will be instanciated later or the already
      *   instanciated TypeInterface object
      *
-     * @return \Ucms\Search\Mapping\TypeRegistry
+     * @return \TypeRegistry
      */
     public function register($type, $definition)
     {
@@ -65,7 +65,7 @@ class TypeRegistry
      *
      * @param string $type
      *
-     * @return \Ucms\Search\Mapping\TypeInterface
+     * @return TypeInterface
      */
     public function find($type)
     {

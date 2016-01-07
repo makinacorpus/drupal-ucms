@@ -1,23 +1,23 @@
 <?php
 
-namespace Ucms\Layout;
+namespace MakinaCorpus\Ucms\Layout;
 
 class Context
 {
     use TokenAwareTrait;
 
     /**
-     * @var \Ucms\Layout\StorageInterface
+     * @var StorageInterface
      */
     private $storage;
 
     /**
-     * @var \Ucms\Layout\TemporaryStorage
+     * @var TemporaryStorage
      */
     private $temporaryStorage;
 
     /**
-     * @var \Ucms\Layout\Layout
+     * @var Layout
      */
     private $layout;
 
@@ -32,7 +32,7 @@ class Context
     /**
      * Commit session changes and restore storage
      *
-     * @return \Ucms\Layout\Context
+     * @return Context
      */
     public function commit()
     {
@@ -56,7 +56,7 @@ class Context
     /**
      * Rollback session changes and restore storage
      *
-     * @return \Ucms\Layout\Context
+     * @return Context
      */
     public function rollback()
     {
@@ -84,7 +84,7 @@ class Context
      *
      * @param Layout $layout
      *
-     * @return \Ucms\Layout\Context
+     * @return Context
      */
     public function setCurrentLayout(Layout $layout)
     {
@@ -114,7 +114,7 @@ class Context
     /**
      * Get real life storage
      *
-     * @return \Ucms\Layout\StorageInterface
+     * @return StorageInterface
      */
     public function getStorage()
     {

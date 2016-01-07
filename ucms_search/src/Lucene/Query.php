@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Lucene;
+namespace MakinaCorpus\Ucms\Search\Lucene;
 
 class Query extends CollectionQuery
 {
@@ -42,7 +42,7 @@ class Query extends CollectionQuery
     /**
      * Create new term collection statement
      *
-     * @return \Ucms\Search\Lucene\TermCollectionQuery
+     * @return TermCollectionQuery
      */
     public function createTermCollection($operator = Query::OP_AND)
     {
@@ -57,7 +57,7 @@ class Query extends CollectionQuery
     /**
      * Create new term collection statement
      *
-     * @return \Ucms\Search\Lucene\CollectionQuery
+     * @return CollectionQuery
      */
     public function createCollection($operator = Query::OP_AND)
     {
@@ -72,7 +72,7 @@ class Query extends CollectionQuery
     /**
      * Create new term statement
      *
-     * @return \Ucms\Search\Lucene\TermQuery
+     * @return TermQuery
      */
     public function createTerm()
     {
@@ -86,7 +86,7 @@ class Query extends CollectionQuery
     /**
      * Create new arbitrary range statement
      *
-     * @return \Ucms\Search\Lucene\RangeQuery
+     * @return RangeQuery
      */
     public function createRange()
     {
@@ -100,7 +100,7 @@ class Query extends CollectionQuery
     /**
      * Create new arbitrary range statement
      *
-     * @return \Ucms\Search\Lucene\DateRangeQuery
+     * @return DateRangeQuery
      */
     public function createDateRange()
     {
@@ -115,11 +115,11 @@ class Query extends CollectionQuery
      * Match single term to this query
      *
      * @param string $field
-     * @param string|\Ucms\Search\Lucene\TermQuery $term
+     * @param string|TermQuery $term
      * @param float $boost
      * @param float $fuzzyness
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function matchTerm($field = null, $term, $boost = null, $fuzzyness = null)
     {
@@ -142,7 +142,7 @@ class Query extends CollectionQuery
      * @param mixed $stop
      * @param boolean $inclusive
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function requireRange($field = null, $start = null, $stop = null, $inclusive = true)
     {
@@ -166,7 +166,7 @@ class Query extends CollectionQuery
      *   Timestamp, \DateTime parsable string or \DateTime object
      * @param boolean $inclusive
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function requireDateRange($field = null, $start = null, $stop = null, $inclusive = true)
     {
@@ -184,9 +184,9 @@ class Query extends CollectionQuery
      * Require single term to this query
      *
      * @param string $field
-     * @param string|\Ucms\Search\Lucene\TermQuery $term
+     * @param string|TermQuery $term
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function requireTerm($field = null, $term)
     {
@@ -204,9 +204,9 @@ class Query extends CollectionQuery
      * Prohibit single term to this query
      *
      * @param string $field
-     * @param string|\Ucms\Search\Lucene\TermQuery $term
+     * @param string|TermQuery $term
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function prohibitTerm($field = null, $term)
     {
@@ -224,11 +224,11 @@ class Query extends CollectionQuery
      * Match term collection (OR by default)
      *
      * @param string $field
-     * @param string[]|\Ucms\Search\Lucene\TermQuery[] $terms
+     * @param string[]|TermQuery[] $terms
      * @param float $boost
      * @param string $operator
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function matchTermCollection($field = null, $terms, $boost = null, $operator = self::OP_OR)
     {
@@ -251,11 +251,11 @@ class Query extends CollectionQuery
      * Require term collection (OR by default)
      *
      * @param string $field
-     * @param string[]|\Ucms\Search\Lucene\TermQuery[] $terms
+     * @param string[]|TermQuery[] $terms
      * @param float $boost
      * @param string $operator
      *
-     * @return \Ucms\Search\Lucene\Query
+     * @return Query
      */
     public function requireTermCollection($field = null, $terms, $operator = self::OP_OR)
     {

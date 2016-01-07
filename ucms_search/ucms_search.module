@@ -17,6 +17,10 @@
  *   - Add Elastic search array query formatting (must, must not, etc...)
  */
 
+use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
+use MakinaCorpus\Ucms\Search\Mapping\TypeRegistry;
+use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
+
 /**
  * Public index name.
  *
@@ -172,10 +176,10 @@ function ucms_search_client_get() {
  *
  * @param string $index
  *
- * @return \Ucms\Search\QueryAlteredSearch
+ * @return QueryAlteredSearch
  */
 function ucms_search_create($index) {
-  return (new \Ucms\Search\QueryAlteredSearch(ucms_search_client_get()))->setIndex($index);
+  return (new QueryAlteredSearch(ucms_search_client_get()))->setIndex($index);
 }
 
 /**
@@ -222,14 +226,14 @@ function ucms_search_exit() {
 /**
  * Get type registry.
  *
- * @return \Ucms\Search\Mapping\TypeRegistry
+ * @return TypeRegistry
  */
 function ucms_search_type_registry_get() {
   $instance = &drupal_static(__FUNCTION__);
   if (!$instance) {
     $types = module_invoke_all('ucms_search_type_registry');
     drupal_alter('ucms_search_type_registry', $types);
-    $instance = (new \Ucms\Search\Mapping\TypeRegistry())->register($types);
+    $instance = (new TypeRegistry())->register($types);
   }
   return $instance;
 }
@@ -239,10 +243,10 @@ function ucms_search_type_registry_get() {
  */
 function ucms_search_ucms_search_type_registry() {
   return [
-    'date'    => '\Ucms\Search\Mapping\DateType',
-    'integer' => '\Ucms\Search\Mapping\IntegerType',
-    'long'    => '\Ucms\Search\Mapping\LongType',
-    'string'  => '\Ucms\Search\Mapping\StringType',
+    'date'    => '\MakinaCorpus\Ucms\Search\Mapping\DateType',
+    'integer' => '\MakinaCorpus\Ucms\Search\Mapping\IntegerType',
+    'long'    => '\MakinaCorpus\Ucms\Search\Mapping\LongType',
+    'string'  => '\MakinaCorpus\Ucms\Search\Mapping\StringType',
   ];
 }
 
@@ -339,7 +343,7 @@ function theme_ucms_search_facet($variables) {
   $facet = $variables['facet'];
 
   // @todo Improve this
-  if ($facet instanceof \Ucms\Search\Aggs\TermFacet) {
+  if ($facet instanceof TermFacet) {
 
     $links    = [];
     $field    = $facet->getField();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ucms\Search\Mapping;
+namespace MakinaCorpus\Ucms\Search\Mapping;
 
 class StringType implements TypeInterface
 {
