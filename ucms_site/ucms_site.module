@@ -4,6 +4,9 @@
  * UCMS - Site context and management.
  */
 
+use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\State;
+
 /**
  * Implements hook_boot().
  */
@@ -13,10 +16,8 @@ function ucms_site_boot() {
   if (!empty($_SERVER['HTTP_HOST'])) {
     $site = db_query("SELECT * FROM {ucms_site} WHERE http_host = :host LIMIT 1 OFFSET 0", [':host' => $_SERVER['HTTP_HOST']])->fetch();
     if ($site) {
-      $instance = &drupal_static('ucms_site_get', null);
-      $instance = $site;
-    } else {
-      //watchdog(__FUNCTION__, "Non existing site: @site", ['@site' => $_SERVER['HTTP_HOST']], WATCHDOG_ERROR);
+      drupal_static_reset('ucms_site_get');
+      drupal_static('ucms_site_get', $site);
     }
   }
   // @todo Else attempt to find another contextual information (GET parameter?)
@@ -31,6 +32,196 @@ function ucms_site_boot() {
  */
 function ucms_site_get() {
   return drupal_static(__FUNCTION__, null);
+}
+
+/**
+ * Gets the site access matrix for webmasters.
+ *
+ * @return int[][]
+ *   Multidimensional matrix, first dimension is site state, second dimension
+ *   is operation (view, delete or update), values of the second dimension are
+ *   booleans which indicates the access right.
+ */
+function ucms_site_access_matrix_get() {
+  // @todo Maybe later, make this configurable.
+  // @todo Take into account account.
+  return [
+    State::REQUESTED => [
+      Access::OP_VIEW   => false,
+      Access::OP_UPDATE => false,
+      Access::OP_DELETE => false,
+    ],
+    State::REJECTED => [
+      Access::OP_VIEW   => false,
+      Access::OP_UPDATE => false,
+      Access::OP_DELETE => false,
+    ],
+    State::PENDING => [
+      Access::OP_VIEW   => true,
+      Access::OP_UPDATE => false,
+      Access::OP_DELETE => false,
+    ],
+    State::INIT => [
+      Access::OP_VIEW   => true,
+      Access::OP_UPDATE => true,
+      Access::OP_DELETE => true,
+    ],
+    State::OFF => [
+      Access::OP_VIEW   => true,
+      Access::OP_UPDATE => true,
+      Access::OP_DELETE => true,
+    ],
+    State::ON => [
+      Access::OP_VIEW   => true,
+      Access::OP_UPDATE => true,
+      Access::OP_DELETE => true,
+    ],
+    State::ARCHIVE => [
+      Access::OP_VIEW   => true,
+      Access::OP_UPDATE => false,
+      Access::OP_DELETE => false,
+    ],
+  ];
+}
+
+/**
+ * Get current relative access data for the given user.
+ *
+ * If the current site is the main factory site, then we'll grant the user to
+ * see all sites he's attached to, otherwise when the current context is a
+ * specific site then attach only the rights to see this site to the user.
+ *
+ * Note that we can afford not loading this stuff in bulk because this should
+ * happen only once per HTTP request, since that in normal runtime this will
+ * be used only to determine current user account access rights to see the
+ * current page.
+ *
+ * @param int|stdClass $account
+ *   User account identifier.
+ *
+ * @param int|stdClass $site
+ *   Relative site identifier to check access for. Pass null here if the
+ *   current context is the back-office.
+ *
+ * @return int[]
+ *   List of site identifiers we should grant the user to.
+ */
+function ucms_site_node_access_data_get($account, $site = null) {
+
+  $uid    = (int)(is_object($account) ? $account->uid : $account);
+  $siteId = (int)(is_object($site) ? $site->id : $site);
+
+  $cache  = &drupal_static(__FUNCTION__, []);
+
+  if (isset($cache[$uid])) {
+    return $cache[$uid];
+  }
+
+  if ($siteId) {
+
+    // This is frontend!
+    return $cache[$account->uid] = db_select('ucms_site_access', 'usa')
+      ->fields('usa', ['site_id'])
+      ->condition('usa.uid', $uid)
+      ->condition('usa.uid', $siteId)
+      ->execute()
+      ->fetchCol()
+    ;
+  }
+
+  // Else we are on the master site backend.
+  return $cache[$account->uid] = db_select('ucms_site_access', 'usa')
+    ->fields('usa', ['site_id'])
+    ->condition('usa.uid', $uid)
+    ->execute()
+    ->fetchCol()
+  ;
+}
+
+/**
+ * Implements hook_node_load().
+ */
+function ucms_site_node_load($nodes, $types) {
+
+  // Attach site identifiers list to each node being loaded. Althought it does
+  // and extra SQL query, this being the core of the whole site business, we
+  // can't bypass this step nor risk it being stalled with unsynchronized data
+  // in cache.
+
+  // @todo Later in the future, determiner an efficient way of caching it,
+  // we'll need this data to be set in Elastic Search anyway so we'll risk data
+  // stalling in there.
+
+  $r = db_select('ucms_site_node', 'usn')
+    ->fields('usn', ['nid', 'site_id'])
+    ->condition('usn.nid', array_keys($nodes))
+    ->orderBy('usn.nid')
+    ->execute()
+  ;
+
+  foreach ($r as $row) {
+    $node = $nodes[$row->nid];
+    if (!property_exists($node, 'ucms_sites')) {
+      $node->ucms_sites = [];
+    }
+    $node->ucms_sites[] = $row->site_id;
+  }
+}
+
+/**
+ * Implements hook_node_access().
+ */
+function ucms_site_node_access($node, $op, $account) {
+
+  $ret          = [];
+  $currentSite  = ucms_site_get();
+  $siteIdList   = ucms_site_node_access_data_get($account->uid, $currentSite ? $currentSite->id : null);
+
+  switch ($op) {
+
+    case 'view':
+      
+      break;
+
+    case 'update':
+      break;
+
+    case 'delete':
+      break;
+  }
+
+  return $ret;
+}
+
+/**
+ * Implements hook_node_access_records().
+ */
+function ucms_site_node_access_records($node) {
+  $ret = [];
+
+  
+
+  return $ret;
+}
+
+/**
+ * Implements hook_node_grants().
+ */
+function ucms_site_node_grants($account, $op) {
+
+  $ret          = [];
+  $currentSite  = ucms_site_get();
+
+  switch ($op) {
+
+    case 'view':
+    case 'update':
+    case 'delete':
+      $ret[Access::REALM_SITE] = ucms_site_node_access_data_get($account->uid, $currentSite ? $currentSite->id : null);
+      break;
+  }
+
+  return $ret;
 }
 
 // @todo Implement node_access stuff.

@@ -4,72 +4,238 @@
  * Implements hook_schema().
  */
 function ucms_site_schema() {
-  $schema = array();
+  $schema = [];
 
-  $schema['ucms_site'] = array(
+  $schema['ucms_site'] = [
     'description' => 'Site instances',
-    'fields' => array(
-      'id' => array(
-        'description' => "Site identifier", 
-        'type'        => 'serial', 
-        'unsigned'    => true, 
+    'fields' => [
+      'id' => [
+        'description' => "Site identifier",
+        'type'        => 'serial',
+        'unsigned'    => true,
         'not null'    => true,
-      ),
-      'title_admin' => array(
-        'description' => 'Administrative title', 
-        'type'        => 'varchar', 
+      ],
+      'title_admin' => [
+        'description' => 'Administrative title',
+        'type'        => 'varchar',
         'length'      => 255,
-        'not null'    => true, 
+        'not null'    => true,
         'default'     => '',
-      ),
-      'title' => array(
+      ],
+      'title' => [
         'description' => 'Displayed title', 
-        'type'        => 'varchar', 
+        'type'        => 'varchar',
         'length'      => 255,
-        'not null'    => true, 
+        'not null'    => true,
         'default'     => '',
-      ),
-      'status' => array(
+      ],
+      'status' => [
         'description' => "Site workflow status",
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
         'default'     => 0,
-      ),
-      'theme' => array(
+      ],
+      'theme' => [
         'description' => "Theme to use",
         'type'        => 'varchar',
         'length'      => 255,
         'not null'    => false,
         'default'     => null,
-      ),
-      'http_host' => array(
+      ],
+      'http_host' => [
         'description' => "Site domain name",
         'type'        => 'varchar',
         'length'      => 1024,
         'not null'    => false,
         'default'     => null,
-      ),
-      'uid' => array(
+      ],
+      'relacement_of' => [
+        'description' => 'Plain text describing the legacy sites this one replaces',
+        'type'        => 'text',
+      ],
+      'uid' => [
         'description' => "Account owner",
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
         'default'     => 0,
-      ),
-    ),
-    'foreign keys' => array(
-      'site_id' => array(
+      ],
+    ],
+    'foreign keys' => [
+      'uid' => [
+        'table'   => 'users',
+        'columns' => ['uid' => 'uid'],
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  $schema['ucms_site_access'] = [
+    'description' => 'Sites webmasters',
+    'fields' => [
+      'site_id' => [
+        'description' => "Site identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'uid' => [
+        'description' => "Webmaster",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'site_id' => [
         'table'   => 'ucms_site', 
-        'columns' => array('site_id' => 'id'),
-      ),
-      'uid' => array(
+        'columns' => ['site_id' => 'id'],
+      ],
+      'uid' => [
         'table'   => 'users', 
-        'columns' => array('uid' => 'uid'),
-      ),
-    ),
-    'primary key' => array('id'),
-  );
+        'columns' => ['uid' => 'uid'],
+      ],
+    ],
+    'primary key' => ['site_id', 'uid'],
+  ];
+
+  $schema['ucms_site_node'] = [
+    'description' => 'Sites nodes',
+    'fields' => [
+      'site_id' => [
+        'description' => "Site identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'nid' => [
+        'description' => "Node identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'site_id' => [
+        'table'   => 'ucms_site',
+        'columns' => ['site_id' => 'id'],
+      ],
+      'nid' => [
+        'table'   => 'node',
+        'columns' => ['nid' => 'nid'],
+      ],
+    ],
+    'primary key' => ['site_id', 'nid'],
+  ];
 
   return $schema;
+}
+
+/**
+ * Implements hook_schema_alter().
+ */
+function ucms_site_schema_alter(&$schema) {
+  foreach (array_keys(ucms_site_install_schema_fix_list()) as $table) {
+    if (isset($schema[$table])) {
+      $schema[$table]['fields']['site_id'] = [
+        'description' => "Site identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ];
+      $schema[$table]['foreign keys']['site_id'] = [
+        'table'   => 'ucms_site',
+        'columns' => ['site_id' => 'id'],
+      ];
+    }
+  }
+}
+
+/**
+ * Get table on which we should add the 'site_id' column.
+ *
+ * @return mixed[]
+ *   Keys are table names, values are indexes to add, keyed by index name.
+ */
+function ucms_site_install_schema_fix_list() {
+  // @todo
+  //   - FOREIGN KEY constraints ?
+  //   - ON DELETE CASCAD ?
+  return [
+    'menu_custom' => [],
+  ];
+}
+
+/**
+ * Adds missing database table columns.
+ */
+function ucms_site_install_schema_fix() {
+
+  // Adds missing column.
+  foreach (ucms_site_install_schema_fix_list() as $table => $indexes) {
+    if (db_table_exists($table)) {
+      if (!db_field_exists($table, 'site_id')) {
+        db_add_field($table, 'site_id', [
+          'description' => "Site identifier",
+          'type'        => 'int',
+          'unsigned'    => true,
+          'not null'    => false,
+          'default'     => null,
+        ]);
+      }
+    }
+  }
+
+  // Add a few constraints.
+  // Hopefully, this syntax should work on both PostgreSQL and MySQL although
+  // this is pure coincidence, this is great for us.
+  $constraints = [
+    "ALTER TABLE {ucms_site_node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+  ];
+  foreach ($constraints as $statement) {
+    db_query($statement);
+  }
+}
+
+/**
+ * Adds missing database table columns.
+ */
+function ucms_site_uninstall_schema_fix() {
+  foreach (ucms_site_install_schema_fix_list() as $table) {
+    if (db_table_exists($table)) {
+      if (db_field_exists($table, 'site_id')) {
+        db_drop_field($table, 'site_id');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_module_installed().
+ */
+function ucms_site_module_installed($modules) {
+  ucms_site_install_schema_fix();
+}
+
+/**
+ * Implements hook_install().
+ */
+function ucms_site_install() {
+  ucms_site_install_schema_fix();
+}
+
+/**
+ * Implements hook_install().
+ */
+function ucms_site_uninstall() {
+  ucms_site_uninstall_schema_fix();
+}
+
+/**
+ * Fixes database constraints.
+ */
+function ucms_site_update_7001() {
+  ucms_site_install_schema_fix();
 }
