@@ -7,10 +7,33 @@
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\State;
 
+// @todo Implement variables overloading for site: name, home
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_site_permission() {
+  return [
+    Access::PERM_GLOBAL_VIEW => [
+      'title' => t("View global content"),
+    ],
+    Access::PERM_GLOBAL_EDIT => [
+      'title' => t("Edit global content"),
+    ],
+    Access::PERM_GLOBAL_LABELED_VIEW => [
+      'title' => t("View global labeled content"),
+    ],
+    Access::PERM_GLOBAL_LABELED_EDIT => [
+      'title' => t("Edit global labeled content"),
+    ],
+  ];
+}
+
 /**
  * Implements hook_boot().
  */
 function ucms_site_boot() {
+
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
   if (!empty($_SERVER['HTTP_HOST'])) {
@@ -20,8 +43,53 @@ function ucms_site_boot() {
       drupal_static('ucms_site_get', $site);
     }
   }
+
   // @todo Else attempt to find another contextual information (GET parameter?)
   // in order to determine preview mode or not.
+}
+
+/**
+ * Implements hook_init().
+ */
+function ucms_site_init() {
+  // We might have some problems due to the fact that the site is determined
+  // at hook_boot() time, for example, we cannot call the path_is_admin()
+  // function because modules have not been invoked. Site is being set way
+  // before at hook_boot() in order to ensure that everything actually using
+  // this information until now does it right (they should only be revelant
+  // for frontend anyway), but we have a chance right now to fix admin paths
+  // and remove the site information right now.
+  if (path_is_admin() && ucms_site_get()) {
+    drupal_static_reset('ucms_site_get');
+  }
+}
+
+/**
+ * Implements hook_custom_theme().
+ */
+function ucms_site_custom_theme() {
+
+  // This should be called way after the hook_init() run, so we are sure the
+  // site has been rightly set, and if we are in admin site has been removed,
+  // so if we have a site structure, we are 100% sure we are not in an admin
+  // path.
+  $site = ucms_site_get();
+
+  if (!$site) {
+    return;
+  }
+  if (!$site->theme) {
+    return;
+  }
+
+  // Ensure the theme is enabled for security, Drupal won't do it for
+  // you, you might experience surprises. There is sadly no shortcut
+  // we have to iterate over the full list of themes.
+  foreach (list_themes() as $name => $data) {
+    if ($site->theme === $name && $data->status) {
+      return $site->theme;
+    }
+  }
 }
 
 /**
@@ -32,110 +100,6 @@ function ucms_site_boot() {
  */
 function ucms_site_get() {
   return drupal_static(__FUNCTION__, null);
-}
-
-/**
- * Gets the site access matrix for webmasters.
- *
- * @return int[][]
- *   Multidimensional matrix, first dimension is site state, second dimension
- *   is operation (view, delete or update), values of the second dimension are
- *   booleans which indicates the access right.
- */
-function ucms_site_access_matrix_get() {
-  // @todo Maybe later, make this configurable.
-  // @todo Take into account account.
-  return [
-    State::REQUESTED => [
-      Access::OP_VIEW   => false,
-      Access::OP_UPDATE => false,
-      Access::OP_DELETE => false,
-    ],
-    State::REJECTED => [
-      Access::OP_VIEW   => false,
-      Access::OP_UPDATE => false,
-      Access::OP_DELETE => false,
-    ],
-    State::PENDING => [
-      Access::OP_VIEW   => true,
-      Access::OP_UPDATE => false,
-      Access::OP_DELETE => false,
-    ],
-    State::INIT => [
-      Access::OP_VIEW   => true,
-      Access::OP_UPDATE => true,
-      Access::OP_DELETE => true,
-    ],
-    State::OFF => [
-      Access::OP_VIEW   => true,
-      Access::OP_UPDATE => true,
-      Access::OP_DELETE => true,
-    ],
-    State::ON => [
-      Access::OP_VIEW   => true,
-      Access::OP_UPDATE => true,
-      Access::OP_DELETE => true,
-    ],
-    State::ARCHIVE => [
-      Access::OP_VIEW   => true,
-      Access::OP_UPDATE => false,
-      Access::OP_DELETE => false,
-    ],
-  ];
-}
-
-/**
- * Get current relative access data for the given user.
- *
- * If the current site is the main factory site, then we'll grant the user to
- * see all sites he's attached to, otherwise when the current context is a
- * specific site then attach only the rights to see this site to the user.
- *
- * Note that we can afford not loading this stuff in bulk because this should
- * happen only once per HTTP request, since that in normal runtime this will
- * be used only to determine current user account access rights to see the
- * current page.
- *
- * @param int|stdClass $account
- *   User account identifier.
- *
- * @param int|stdClass $site
- *   Relative site identifier to check access for. Pass null here if the
- *   current context is the back-office.
- *
- * @return int[]
- *   List of site identifiers we should grant the user to.
- */
-function ucms_site_node_access_data_get($account, $site = null) {
-
-  $uid    = (int)(is_object($account) ? $account->uid : $account);
-  $siteId = (int)(is_object($site) ? $site->id : $site);
-
-  $cache  = &drupal_static(__FUNCTION__, []);
-
-  if (isset($cache[$uid])) {
-    return $cache[$uid];
-  }
-
-  if ($siteId) {
-
-    // This is frontend!
-    return $cache[$account->uid] = db_select('ucms_site_access', 'usa')
-      ->fields('usa', ['site_id'])
-      ->condition('usa.uid', $uid)
-      ->condition('usa.uid', $siteId)
-      ->execute()
-      ->fetchCol()
-    ;
-  }
-
-  // Else we are on the master site backend.
-  return $cache[$account->uid] = db_select('ucms_site_access', 'usa')
-    ->fields('usa', ['site_id'])
-    ->condition('usa.uid', $uid)
-    ->execute()
-    ->fetchCol()
-  ;
 }
 
 /**
@@ -174,13 +138,14 @@ function ucms_site_node_load($nodes, $types) {
 function ucms_site_node_access($node, $op, $account) {
 
   $ret          = [];
-  $currentSite  = ucms_site_get();
-  $siteIdList   = ucms_site_node_access_data_get($account->uid, $currentSite ? $currentSite->id : null);
+  // $currentSite  = ucms_site_get();
+  // $siteIdList   = ucms_site_node_access_data_get($account->uid, $currentSite ? $currentSite->id : null);
+  // $nodeGrants   = ucms_site_node_access_records($node);
 
+  // @todo
   switch ($op) {
 
     case 'view':
-      
       break;
 
     case 'update':
@@ -199,7 +164,74 @@ function ucms_site_node_access($node, $op, $account) {
 function ucms_site_node_access_records($node) {
   $ret = [];
 
-  
+  // This is where it gets complicated.
+  $isGlobal = false;
+
+  if ($node->is_global) {
+    // Node is in the global base.
+    $isGlobal = true;
+
+    $ret[] = array(
+      'realm'         => Access::REALM_GLOBAL_LABELED,
+      'gid'           => Access::GID_DEFAULT,
+      'grant_view'    => 1,
+      'grant_update'  => 1,
+      'grant_delete'  => 1,
+      'priority'      => Access::PRIORITY_DEFAULT,
+    );
+
+    if (false /* Node is labeled */) {
+      // Node is labeled.
+      $ret[] = array(
+        'realm'         => Access::REALM_GLOBAL,
+        'gid'           => Access::GID_DEFAULT,
+        'grant_view'    => 1,
+        'grant_update'  => 0,
+        'grant_delete'  => 0,
+        'priority'      => Access::PRIORITY_DEFAULT,
+      );
+    } else {
+      // Node is not labeled.
+      $ret[] = array(
+        'realm'         => Access::REALM_GLOBAL,
+        'gid'           => Access::GID_DEFAULT,
+        'grant_view'    => 1,
+        'grant_update'  => 1,
+        'grant_delete'  => 1,
+        'priority'      => Access::PRIORITY_DEFAULT,
+      );
+    }
+  }
+
+  // Inject an entry for each site, even when the node is a global node, this
+  // will tell the Drupal API system if the node is visible or not inside a
+  // local site. Please note that we will never add the site state as a node
+  // grant, this will be determined at runtime: the reason for this is that if
+  // you change a site state, you would need to rebuild all its nodes grants
+  // and this would not be tolerable.
+  if (property_exists($node, 'ucms_sites')) {
+
+    // A node in any site and published should be visible by users.
+    $ret[] = array(
+      'realm'         => Access::REALM_PUBLIC,
+      'gid'           => Access::GID_DEFAULT,
+      'grant_view'    => $node->status,
+      'grant_update'  => 0,
+      'grant_delete'  => 0,
+      'priority'      => Access::PRIORITY_DEFAULT,
+    );
+
+    foreach ($node->ucms_sites as $siteId) {
+      $ret[] = array(
+        'realm'         => Access::REALM_SITE,
+        'gid'           => $siteId,
+        'grant_view'    => 1,
+        'grant_update'  => !$isGlobal,
+        'grant_delete'  => !$isGlobal,
+        'priority'      => Access::PRIORITY_DEFAULT,
+      );
+    }
+  }
 
   return $ret;
 }
@@ -209,22 +241,89 @@ function ucms_site_node_access_records($node) {
  */
 function ucms_site_node_grants($account, $op) {
 
-  $ret          = [];
-  $currentSite  = ucms_site_get();
+  $cache = &drupal_static(__FUNCTION__, []);
 
+  if (isset($cache[$account->uid][$op])) {
+    return $cache[$account->uid][$op];
+  }
+
+  $ret  = [];
+
+  // Deal with specific user rights.
   switch ($op) {
 
-    case 'view':
-    case 'update':
-    case 'delete':
-      $ret[Access::REALM_SITE] = ucms_site_node_access_data_get($account->uid, $currentSite ? $currentSite->id : null);
+    case Access::OP_VIEW:
+      if (user_access(Access::PERM_GLOBAL_VIEW)) {
+        $ret[Access::REALM_GLOBAL] = [Access::GID_DEFAULT];
+      }
+      if (user_access(Access::PERM_GLOBAL_LABELED_VIEW)) {
+        $ret[Access::REALM_GLOBAL_LABELED] = [Access::GID_DEFAULT];
+      }
+      break;
+
+    case Access::OP_UPDATE:
+    case Access::OP_DELETE:
+      if (user_access(Access::PERM_GLOBAL_EDIT)) {
+        $ret[Access::REALM_GLOBAL] = [Access::GID_DEFAULT];
+      }
+      if (user_access(Access::PERM_GLOBAL_LABELED_EDIT)) {
+        $ret[Access::REALM_GLOBAL_LABELED] = [Access::GID_DEFAULT];
+      }
       break;
   }
 
-  return $ret;
-}
+  $site = ucms_site_get();
 
-// @todo Implement node_access stuff.
-// @todo Implement node target table for node_access.
-// @todo Implement hook_custom_theme for setting the site theme
-// @todo Implement variables overloading for site: name, home
+  // Most complex part of this, deal with user's sites (the ones he's
+  // webmaster of): states here apply only for the user's sites, and
+  // not for public or global content.
+  $states = [];
+
+  switch ($op) {
+
+    case Access::OP_VIEW:
+      $states = [State::ARCHIVE, State::INIT, State::OFF, State::ON];
+      break;
+
+    case Access::OP_UPDATE:
+    case Access::OP_DELETE:
+      $states = [State::INIT, State::OFF, State::ON];
+      break;
+  }
+
+  // Hate to do a SQL query in such hook, but hopefully this will ever
+  // be run only once in the whole amount of time this HTTP request will
+  // run (yay).
+  $q = db_select('ucms_site_access', 'usa');
+  $q->join('ucms_site', 'us', "usa.site_id = us.id");
+  $q->fields('usa', ['site_id']);
+  $q->condition('us.state', $states);
+  $q->condition('usa.uid', $account->uid);
+
+  if ($site) {
+
+    // This is frontend, and we need to exclude everything else.
+    $siteIdList = $q
+      ->condition('usa.uid', $site->id)
+      ->range(0, 1)
+      ->execute()
+      ->fetchCol()
+    ;
+
+    // Note that if the site is public, we should also add the associated
+    // public realm to everyone, no matter their user access rights.
+    if (State::OFF == $site->state) {
+      $ret[Access::REALM_PUBLIC] = [Access::GID_DEFAULT];
+    }
+
+  } else {
+    // Else we are on the master site backend.
+    $siteIdList = $q->execute()->fetchCol();
+  }
+
+  if ($siteIdList) {
+    $ret[Access::REALM_SITE] = $siteIdList;
+  }
+
+  return $cache[$account->uid][$op] = $ret;
+}

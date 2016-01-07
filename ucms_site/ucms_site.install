@@ -29,8 +29,8 @@ function ucms_site_schema() {
         'not null'    => true,
         'default'     => '',
       ],
-      'status' => [
-        'description' => "Site workflow status",
+      'state' => [
+        'description' => "Site workflow state",
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
@@ -136,35 +136,29 @@ function ucms_site_schema() {
  * Implements hook_schema_alter().
  */
 function ucms_site_schema_alter(&$schema) {
-  foreach (array_keys(ucms_site_install_schema_fix_list()) as $table) {
-    if (isset($schema[$table])) {
-      $schema[$table]['fields']['site_id'] = [
-        'description' => "Site identifier",
-        'type'        => 'int',
-        'unsigned'    => true,
-        'not null'    => true,
-      ];
-      $schema[$table]['foreign keys']['site_id'] = [
-        'table'   => 'ucms_site',
-        'columns' => ['site_id' => 'id'],
-      ];
-    }
-  }
-}
 
-/**
- * Get table on which we should add the 'site_id' column.
- *
- * @return mixed[]
- *   Keys are table names, values are indexes to add, keyed by index name.
- */
-function ucms_site_install_schema_fix_list() {
-  // @todo
-  //   - FOREIGN KEY constraints ?
-  //   - ON DELETE CASCAD ?
-  return [
-    'menu_custom' => [],
-  ];
+  if (isset($schema['menu_custom'])) {
+    $schema['menu_custom']['fields']['site_id'] = [
+      'description' => "Site identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+    ];
+    $schema['menu_custom']['foreign keys']['site_id'] = [
+      'table'   => 'ucms_site',
+      'columns' => ['site_id' => 'id'],
+    ];
+  }
+
+  if (isset($schema['node'])) {
+    $schema['node']['fields']['is_global'] = [
+      'description' => "Does this node belongs to the global base",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 1,
+    ];
+  }
 }
 
 /**
@@ -172,19 +166,26 @@ function ucms_site_install_schema_fix_list() {
  */
 function ucms_site_install_schema_fix() {
 
-  // Adds missing column.
-  foreach (ucms_site_install_schema_fix_list() as $table => $indexes) {
-    if (db_table_exists($table)) {
-      if (!db_field_exists($table, 'site_id')) {
-        db_add_field($table, 'site_id', [
-          'description' => "Site identifier",
-          'type'        => 'int',
-          'unsigned'    => true,
-          'not null'    => false,
-          'default'     => null,
-        ]);
-      }
-    }
+  // Add {node}.is_global column.
+  if (db_table_exists('node') && !db_field_exists('node', 'is_global')) {
+    db_add_field('node', 'is_global', [
+      'description' => "Does this node belongs to the global base",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 1,
+    ]);
+  }
+
+  // Adds {menu_custom}.site_id column.
+  if (db_table_exists('menu_custom') && !db_field_exists('menu_custom', 'site_id')) {
+    db_add_field('menu_custom', 'site_id', [
+      'description' => "Site identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
   }
 
   // Add a few constraints.
@@ -203,12 +204,8 @@ function ucms_site_install_schema_fix() {
  * Adds missing database table columns.
  */
 function ucms_site_uninstall_schema_fix() {
-  foreach (ucms_site_install_schema_fix_list() as $table) {
-    if (db_table_exists($table)) {
-      if (db_field_exists($table, 'site_id')) {
-        db_drop_field($table, 'site_id');
-      }
-    }
+  if (db_table_exists('menu_custom') && db_field_exists('menu_custom', 'site_id')) {
+    db_drop_field('menu_custom', 'site_id');
   }
 }
 
