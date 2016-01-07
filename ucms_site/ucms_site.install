@@ -208,7 +208,7 @@ function ucms_site_uninstall_schema_fix() {
     db_drop_field('menu_custom', 'site_id');
   }
   if (db_table_exists('node') && db_field_exists('node', 'is_global')) {
-    db_drop_field('node', 'site_id');
+    db_drop_field('node', 'is_global');
   }
 }
 

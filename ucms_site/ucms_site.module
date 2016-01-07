@@ -10,6 +10,17 @@ use MakinaCorpus\Ucms\Site\State;
 // @todo Implement variables overloading for site: name, home
 
 /**
+ * Implements hook_menu().
+ */
+function ucms_site_menu() {
+  $items = [];
+
+  // @todo Administrative section.
+
+  return $items;
+}
+
+/**
  * Implements hook_permission().
  */
 function ucms_site_permission() {
@@ -180,7 +191,7 @@ function ucms_site_node_access_records($node) {
       'priority'      => Access::PRIORITY_DEFAULT,
     );
 
-    if (false /* Node is labeled */) {
+    if (false /* @todo Node is labeled */) {
       // Node is labeled.
       $ret[] = array(
         'realm'         => Access::REALM_GLOBAL,
