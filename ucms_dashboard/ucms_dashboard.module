@@ -1,0 +1,25 @@
+<?php
+/**
+ * UCMS - Dashboard and fioritures.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_dashboard_menu() {
+
+  $items = [];
+
+  // @todo
+  // Use the 'access administration pages' permission for dashboard.
+
+  return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function ucms_dashboard_menu_alter(&$items) {
+  // @todo Remove all the unnecessary pages using the 'access administration
+  // pages' or whatever else permission the users may have.
+}
