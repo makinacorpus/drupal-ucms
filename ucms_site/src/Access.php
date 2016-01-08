@@ -53,24 +53,29 @@ final class Access
     const OP_DELETE = 'delete';
 
     /**
+     * Request new site permission
+     */
+    const PERM_SITE_REQUEST = 'site request';
+
+    /**
      * User can view global labeled content permission.
      */
-    const PERM_GLOBAL_LABELED_VIEW = 'view global labeled content';
+    const PERM_GLOBAL_LABELED_VIEW = 'site content labeled view';
 
     /**
      * User can view global content permission.
      */
-    const PERM_GLOBAL_VIEW = 'view global content';
+    const PERM_GLOBAL_VIEW = 'site content global view';
 
     /**
      * User can edit global labeled content permission.
      */
-    const PERM_GLOBAL_LABELED_EDIT = 'edit global labeled content';
+    const PERM_GLOBAL_LABELED_EDIT = 'site content labeled edit';
 
     /**
      * User can edit global content permission.
      */
-    const PERM_GLOBAL_EDIT = 'edit global content';
+    const PERM_GLOBAL_EDIT = 'site content global edit';
 
     /**
      * Functional administrator role.
