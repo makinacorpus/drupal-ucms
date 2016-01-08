@@ -2,12 +2,13 @@
 /**
  * @file
  * UCMS - Site context and management.
+ *
+ * @todo
+ *   - Implement variables overloading for site: name, home
  */
 
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\State;
-
-// @todo Implement variables overloading for site: name, home
 
 /**
  * Implements hook_menu().
@@ -15,9 +16,33 @@ use MakinaCorpus\Ucms\Site\State;
 function ucms_site_menu() {
   $items = [];
 
-  // @todo Administrative section.
+  /*
+   * @todo
+   *
+  $items['admin/site'] = [
+    'page callback'     => 'ucms_site_list',
+    'access arguments'  => [Access::PERM_SITE_REQUEST],
+  ];
+  $items['admin/site/request'] = [
+    ''
+  ];
+  $items['admin/site/%ucms_site'] = [
+    
+  ];
+   */
 
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_permission() {
+  return [
+    Access::PERM_SITE_REQUEST => [
+      'title' => t("Request new site"),
+    ],
+  ];
 }
 
 /**
@@ -47,16 +72,23 @@ function ucms_site_boot() {
 
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
-  if (!empty($_SERVER['HTTP_HOST'])) {
-    $site = db_query("SELECT * FROM {ucms_site} WHERE http_host = :host LIMIT 1 OFFSET 0", [':host' => $_SERVER['HTTP_HOST']])->fetch();
-    if ($site) {
-      drupal_static_reset('ucms_site_get');
-      drupal_static('ucms_site_get', $site);
-    }
+  if (empty($_SERVER['HTTP_HOST'])) {
+    return;
   }
+
+  ucms_site_finder()->findByHostname($_SERVER['HTTP_HOST'], true);
 
   // @todo Else attempt to find another contextual information (GET parameter?)
   // in order to determine preview mode or not.
+}
+
+/**
+ * Get site finder service.
+ *
+ * @return \MakinaCorpus\Ucms\Site\SiteFinder
+ */
+function ucms_site_finder() {
+  return \Drupal::service('ucms_site_finder');
 }
 
 /**
@@ -70,8 +102,8 @@ function ucms_site_init() {
   // this information until now does it right (they should only be revelant
   // for frontend anyway), but we have a chance right now to fix admin paths
   // and remove the site information right now.
-  if (path_is_admin() && ucms_site_get()) {
-    drupal_static_reset('ucms_site_get');
+  if (path_is_admin(current_path())) {
+    ucms_site_finder()->dropContext();
   }
 }
 
@@ -84,7 +116,7 @@ function ucms_site_custom_theme() {
   // site has been rightly set, and if we are in admin site has been removed,
   // so if we have a site structure, we are 100% sure we are not in an admin
   // path.
-  $site = ucms_site_get();
+  $site = ucms_site_finder()->getContext();
 
   if (!$site) {
     return;
@@ -101,16 +133,6 @@ function ucms_site_custom_theme() {
       return $site->theme;
     }
   }
-}
-
-/**
- * Gets current site context.
- *
- * @return stdClass
- *   If nothing being returned, this means we are on master backoffice site.
- */
-function ucms_site_get() {
-  return drupal_static(__FUNCTION__, null);
 }
 
 /**
@@ -148,25 +170,32 @@ function ucms_site_node_load($nodes, $types) {
  */
 function ucms_site_node_access($node, $op, $account) {
 
-  $ret          = [];
-  // $currentSite  = ucms_site_get();
-  // $siteIdList   = ucms_site_node_access_data_get($account->uid, $currentSite ? $currentSite->id : null);
-  // $nodeGrants   = ucms_site_node_access_records($node);
+  if (is_string($node)) {
+    if ('create' === $op) {
+      // @todo Check creation permissions;
+    }
 
-  // @todo
-  switch ($op) {
-
-    case 'view':
-      break;
-
-    case 'update':
-      break;
-
-    case 'delete':
-      break;
+    return NODE_ACCESS_DENY;
   }
 
-  return $ret;
+  $grants   = ucms_site_node_grants($account, $op);
+  $records  = ucms_site_node_access_records($node);
+  $prop     = 'grant_' . $op;
+
+  foreach ($records as $record) {
+
+    if (empty($record[$prop])) {
+      continue;
+    }
+
+    foreach ($grants as $realm => $gids) {
+      if ($realm === $record['realm'] && in_array($record['gid'], $gids)) {
+        return NODE_ACCESS_ALLOW;
+      }
+    }
+  }
+
+  return NODE_ACCESS_DENY;
 }
 
 /**
@@ -237,8 +266,8 @@ function ucms_site_node_access_records($node) {
         'realm'         => Access::REALM_SITE,
         'gid'           => $siteId,
         'grant_view'    => 1,
-        'grant_update'  => !$isGlobal,
-        'grant_delete'  => !$isGlobal,
+        'grant_update'  => (int)!$isGlobal,
+        'grant_delete'  => (int)!$isGlobal,
         'priority'      => Access::PRIORITY_DEFAULT,
       );
     }
@@ -283,7 +312,7 @@ function ucms_site_node_grants($account, $op) {
       break;
   }
 
-  $site = ucms_site_get();
+  $site = ucms_site_finder()->getContext();
 
   // Most complex part of this, deal with user's sites (the ones he's
   // webmaster of): states here apply only for the user's sites, and
@@ -296,8 +325,7 @@ function ucms_site_node_grants($account, $op) {
       $states = [State::ARCHIVE, State::INIT, State::OFF, State::ON];
       break;
 
-    case Access::OP_UPDATE:
-    case Access::OP_DELETE:
+    default:
       $states = [State::INIT, State::OFF, State::ON];
       break;
   }
@@ -323,7 +351,7 @@ function ucms_site_node_grants($account, $op) {
 
     // Note that if the site is public, we should also add the associated
     // public realm to everyone, no matter their user access rights.
-    if (State::OFF == $site->state) {
+    if (State::ON == $site->state) {
       $ret[Access::REALM_PUBLIC] = [Access::GID_DEFAULT];
     }
 

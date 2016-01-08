@@ -1,0 +1,54 @@
+
+# Drupal special role: anonymous user
+anonymous:
+  name: Internaute
+  permission:
+    - access content
+
+# Drupal special role: authenticated user
+authenticated:
+  name: Compte client
+  permission:
+    - access content
+    - access administration pages
+    - view the administration theme
+
+admin_func:
+  name: Administrateur fonctionnel
+  permission:
+    - access site in maintenance mode
+    - site content global view
+    - site content global edit
+    - site content labeled view
+    - site content labeled edit
+
+admin_tech:
+  name: Administrateur technique
+  permission:
+    - access site in maintenance mode
+    - administer users
+    - bypass node access
+
+admin_user:
+  name: Administrateur des comptes client
+  permission:
+    - administer users
+
+moderator:
+  name: Modérateur
+  permission:
+    - site content global view
+    - site content labeled view
+
+webmaster_global:
+  name: Contributeur du référentiel global
+  permission:
+    - site content global view
+    - site content global edit
+    - site content labeled view
+
+webmaster_local:
+  name: Webmaster local
+  permission:
+    - site content global view
+    - site content labeled view
