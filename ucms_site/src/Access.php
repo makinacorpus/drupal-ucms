@@ -53,6 +53,11 @@ final class Access
     const OP_DELETE = 'delete';
 
     /**
+     * Access site dashboard permission
+     */
+    const PERM_SITE_DASHBOARD_ACCESS = 'site dashboard access';
+
+    /**
      * Request new site permission
      */
     const PERM_SITE_REQUEST = 'site request';

@@ -16,20 +16,21 @@ use MakinaCorpus\Ucms\Site\State;
 function ucms_site_menu() {
   $items = [];
 
-  /*
-   * @todo
-   *
-  $items['admin/site'] = [
-    'page callback'     => 'ucms_site_list',
+  $items['admin/dashboard/site'] = [
+    'title'             => "Sites",
+    'page callback'     => 'ucms_site_dashboard_site_list',
+    'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
+    'type'              => MENU_NORMAL_ITEM,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
+  $items['admin/dashboard/site/request'] = [
+    'title'             => "Request new site",
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_site_dashboard_site_request_form'],
     'access arguments'  => [Access::PERM_SITE_REQUEST],
+    'type'              => MENU_NORMAL_ITEM,
+    'file'              => 'ucms_site.dashboard.inc',
   ];
-  $items['admin/site/request'] = [
-    ''
-  ];
-  $items['admin/site/%ucms_site'] = [
-    
-  ];
-   */
 
   return $items;
 }
@@ -53,6 +54,9 @@ function ucms_site_permission() {
     ],
     Access::PERM_SITE_REQUEST => [
       'title' => t("Request new site"),
+    ],
+    Access::PERM_SITE_DASHBOARD_ACCESS => [
+      'title' => t("Access to site dashboard"),
     ],
     Access::PERM_SITE_VIEW_ALL => [
       'title' => t("View all sites no matter their state is"),
@@ -166,6 +170,9 @@ function ucms_site_init() {
   // and remove the site information right now.
   if (path_is_admin(current_path())) {
     ucms_site_finder()->dropContext();
+
+    // Also redirect on the main dashboard.
+    // @todo Needs a variable with the factory site URL.
   }
 }
 

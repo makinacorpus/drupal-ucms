@@ -11,6 +11,7 @@ authenticated:
   permission:
     - access content
     - access administration pages
+    - site request # Maybe not the best place
     - view the administration theme
 
 admin_func:
@@ -21,6 +22,7 @@ admin_func:
     - site content global edit
     - site content labeled view
     - site content labeled edit
+    - site dashboard access
     - site view all
 
 admin_tech:
@@ -29,6 +31,7 @@ admin_tech:
     - access site in maintenance mode
     - administer users
     - bypass node access
+    - site dashboard access
     - site view all
 
 admin_user:
@@ -54,3 +57,4 @@ webmaster_local:
   permission:
     - site content global view
     - site content labeled view
+    - site dashboard access
