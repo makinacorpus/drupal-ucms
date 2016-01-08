@@ -20,6 +20,47 @@ function ucms_dashboard_menu() {
  * Implements hook_menu_alter().
  */
 function ucms_dashboard_menu_alter(&$items) {
-  // @todo Remove all the unnecessary pages using the 'access administration
-  // pages' or whatever else permission the users may have.
+
+  // Remove all the unnecessary pages using the 'access administration pages'
+  // or whatever else permission the users may have.
+  foreach ([
+    'admin/compact',
+    'admin/config',
+    'admin/config/content',
+    'admin/config/development',
+    'admin/config/media',
+    'admin/config/regional',
+    'admin/config/search',
+    'admin/config/services',
+    'admin/config/system',
+    'admin/config/user-interface',
+    'admin/config/workflow',
+    'admin/index',
+    'admin/reports/status/rebuild',
+    'admin/structure',
+  ] as $path) {
+    $items[$path]['access arguments'] = ['non existing permission'];
+  }
+
+  // Single override where we change the 'admin' home page.
+  $items['admin'] = [
+    'title'             => "Dashboard",
+    'page callback'     => 'ucms_dashboard_page',
+    'access arguments'  => ['access administration pages'],
+    'type'              => MENU_NORMAL_ITEM,
+    'file'              => 'ucms_dashboard.pages.inc',
+    'file path'         => drupal_get_path('module', 'ucms_dashboard'),
+  ];
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ucms_dashboard_theme() {
+  return [
+    'ucms_dashbaord_page' => [
+      'variagles' => [],
+      'template'  => 'ucms_dashboard-page',
+    ],
+  ];
 }
