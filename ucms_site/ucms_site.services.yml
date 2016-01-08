@@ -1,5 +1,11 @@
 services:
 
+  # Site finder responsible for loading and updating site data
   ucms_site_finder:
     class: MakinaCorpus\Ucms\Site\SiteFinder
+    arguments: ["@database"]
+
+  # Site access helper
+  ucms_site_access:
+    class: MakinaCorpus\Ucms\Site\SiteAccessService
     arguments: ["@database"]

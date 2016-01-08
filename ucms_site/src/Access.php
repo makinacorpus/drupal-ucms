@@ -58,6 +58,11 @@ final class Access
     const PERM_SITE_REQUEST = 'site request';
 
     /**
+     * View all sites no matter the state permission.
+     */
+    const PERM_SITE_VIEW_ALL = 'site view all';
+
+    /**
      * User can view global labeled content permission.
      */
     const PERM_GLOBAL_LABELED_VIEW = 'site content labeled view';

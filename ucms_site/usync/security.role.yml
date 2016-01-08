@@ -21,6 +21,7 @@ admin_func:
     - site content global edit
     - site content labeled view
     - site content labeled edit
+    - site view all
 
 admin_tech:
   name: Administrateur technique
@@ -28,6 +29,7 @@ admin_tech:
     - access site in maintenance mode
     - administer users
     - bypass node access
+    - site view all
 
 admin_user:
   name: Administrateur des comptes client

@@ -37,17 +37,6 @@ function ucms_site_menu() {
 /**
  * Implements hook_permission().
  */
-function ucms_permission() {
-  return [
-    Access::PERM_SITE_REQUEST => [
-      'title' => t("Request new site"),
-    ],
-  ];
-}
-
-/**
- * Implements hook_permission().
- */
 function ucms_site_permission() {
   return [
     Access::PERM_GLOBAL_VIEW => [
@@ -62,6 +51,12 @@ function ucms_site_permission() {
     Access::PERM_GLOBAL_LABELED_EDIT => [
       'title' => t("Edit global labeled content"),
     ],
+    Access::PERM_SITE_REQUEST => [
+      'title' => t("Request new site"),
+    ],
+    Access::PERM_SITE_VIEW_ALL => [
+      'title' => t("View all sites no matter their state is"),
+    ],
   ];
 }
 
@@ -72,14 +67,71 @@ function ucms_site_boot() {
 
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
-  if (empty($_SERVER['HTTP_HOST'])) {
-    return;
+  if (!empty($_SERVER['HTTP_HOST'])) {
+    ucms_site_finder()->findByHostname($_SERVER['HTTP_HOST'], true);
   }
-
-  ucms_site_finder()->findByHostname($_SERVER['HTTP_HOST'], true);
 
   // @todo Else attempt to find another contextual information (GET parameter?)
   // in order to determine preview mode or not.
+}
+
+/**
+ * Implements hook_menu_site_status_alter().
+ */
+function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
+
+  global $user;
+
+  // Do not alter an already offline site
+  if (MENU_SITE_OFFLINE === $menu_site_status) {
+    return;
+  }
+
+  $site = ucms_site_finder()->getContext();
+  $access = ucms_site_access();
+
+  if (!$site) {
+    return;
+  }
+
+  switch ($site->state) {
+
+    case State::ON:
+      // Site is public and online, everything is fine, give me a break.
+      break;
+
+    case State::OFF:
+      // We are in maintainance mode, but site is up.
+      $menu_site_status = MENU_SITE_OFFLINE;
+      break;
+
+    case State::INIT:
+    case State::ARCHIVE:
+      // In all cases, this site if offline, but it does not mean the user
+      // cannot see it!
+      // @todo Find a better way to determine if the user can access
+      // in maintenance mode than the permission.
+      // $menu_site_status = MENU_SITE_OFFLINE;
+
+      // Certain people may see the site, webmaters and other roles.
+      if (user_access(Access::PERM_SITE_VIEW_ALL)) {
+        break;
+      }
+      if ($access->userIsWebmaster($site->id, $user->uid)) {
+        break;
+      }
+      // Else fallback on default and fail.
+
+    default:
+      // All other states define a site that does not really exists and should
+      // end up with a redirect somewhere else.
+      if ($uri = variable_get('ucms_site.redirect.uri')) {
+        drupal_goto($uri, [], variable_get('ucms_site.redirect.http_code', 307));
+      }
+      // Fallback on something that will prevent anyone to see the site.
+      $menu_site_status = MENU_SITE_OFFLINE;
+      break;
+  }
 }
 
 /**
@@ -90,6 +142,16 @@ function ucms_site_boot() {
 function ucms_site_finder() {
   return \Drupal::service('ucms_site_finder');
 }
+
+/**
+ * Get site access service.
+ *
+ * @return \MakinaCorpus\Ucms\Site\SiteAccessService
+ */
+function ucms_site_access() {
+  return \Drupal::service('ucms_site_access');
+}
+
 
 /**
  * Implements hook_init().
