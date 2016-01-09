@@ -28,7 +28,7 @@
     },
     "require" : {
         "elasticsearch/elasticsearch" : "~2.0",
-        "makinacorpus/drupal-sf-dic" : "~3.0"
+        "makinacorpus/drupal-sf-dic" : "*"
     },
     "minimum-stability" : "dev"
 }
