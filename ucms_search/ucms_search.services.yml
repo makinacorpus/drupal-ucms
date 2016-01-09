@@ -1,0 +1,42 @@
+parameters:
+
+  # Elastic client configuration, see ElasticSearch\ClientBuilder::fromConfig()
+  # factory method doc for extended information about client parameters and
+  # behaviors
+  ucms_search.elastic.config:
+    hosts: ["localhost:9200"]
+
+services:
+
+  ucms_search.elastic.client:
+    private: true
+    class: Elasticsearch\Client
+    factory: [Elasticsearch\ClientBuilder, fromConfig]
+    arguments: ["%ucms_search.elastic.config%"]
+
+  ucms_search.mapping.type_registry:
+    class: MakinaCorpus\Ucms\Search\Mapping\TypeRegistry
+
+  ucms_search.mapping.date:
+    private: true
+    class: MakinaCorpus\Ucms\Search\Mapping\DateType
+    arguments: ["date"]
+    tags: [{ name: ucms_search.mapping.type }]
+
+  ucms_search.mapping.integer:
+    private: true
+    class: MakinaCorpus\Ucms\Search\Mapping\IntegerType
+    arguments: ["integer"]
+    tags: [{ name: ucms_search.mapping.type }]
+
+  ucms_search.mapping.long:
+    private: true
+    class: MakinaCorpus\Ucms\Search\Mapping\LongType
+    arguments: ["long"]
+    tags: [{ name: ucms_search.mapping.type }]
+
+  ucms_search.mapping.string:
+    private: true
+    class: MakinaCorpus\Ucms\Search\Mapping\StringType
+    arguments: ["string"]
+    tags: [{ name: ucms_search.mapping.type }]

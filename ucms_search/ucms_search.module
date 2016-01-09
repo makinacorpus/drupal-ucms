@@ -158,17 +158,22 @@ function ucms_search_index_title($index) {
  * Get elastic search client.
  *
  * @return \Elasticsearch\Client
+ *
+ * @deprecated
  */
 function ucms_search_client_get() {
-  $instance = &drupal_static(__FUNCTION__);
-  if (!$instance) {
-    $hosts = variable_get('ucms_search_elastic_hosts', 'localhost:9200');
-    if (!is_array($hosts)) {
-      $hosts = [$hosts];
-    }
-    $instance = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build();
-  }
-  return $instance;
+  return \Drupal::service('ucms_search.elastic.client');
+}
+
+/**
+ * Get type registry.
+ *
+ * @return TypeRegistry
+ *
+ * @deprecated
+ */
+function ucms_search_type_registry_get() {
+  return \Drupal::service('ucms_search.mapping.type_registry');
 }
 
 /**
@@ -221,33 +226,6 @@ function ucms_search_exit() {
     }
     drupal_static_reset('ucms_search_node_queue');
   }
-}
-
-/**
- * Get type registry.
- *
- * @return TypeRegistry
- */
-function ucms_search_type_registry_get() {
-  $instance = &drupal_static(__FUNCTION__);
-  if (!$instance) {
-    $types = module_invoke_all('ucms_search_type_registry');
-    drupal_alter('ucms_search_type_registry', $types);
-    $instance = (new TypeRegistry())->register($types);
-  }
-  return $instance;
-}
-
-/**
- * Implements hook_ucms_search_type_registry().
- */
-function ucms_search_ucms_search_type_registry() {
-  return [
-    'date'    => '\MakinaCorpus\Ucms\Search\Mapping\DateType',
-    'integer' => '\MakinaCorpus\Ucms\Search\Mapping\IntegerType',
-    'long'    => '\MakinaCorpus\Ucms\Search\Mapping\LongType',
-    'string'  => '\MakinaCorpus\Ucms\Search\Mapping\StringType',
-  ];
 }
 
 /**
