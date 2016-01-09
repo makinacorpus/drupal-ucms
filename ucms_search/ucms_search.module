@@ -26,14 +26,14 @@ use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
  *
  * FIXME: Ugly define/variable_get
  */
-define('UCMS_SEARCH_INDEX_PUBLIC', variable_get('ucms_search_elastic_index_front', 'node_public'));
+define('UCMS_SEARCH_INDEX_PUBLIC', variable_get('ucms_search_elastic_index_front', 'public'));
 
 /**
  * Backoffice index name.
  *
  * FIXME: Ugly define/variable_get
  */
-define('UCMS_SEARCH_INDEX_BACK', variable_get('ucms_search_elastic_index_back', 'node_backoffice'));
+define('UCMS_SEARCH_INDEX_BACK', variable_get('ucms_search_elastic_index_back', 'private'));
 
 /**
  * Default number of items index each cron run.
