@@ -1,3 +1,3 @@
-# Ça envoie du poney en boite !
+# µCMS
 
-Et des paillettes dans les yeux.
+Site factory based upon a single Drupal instance and Elastic Search.
