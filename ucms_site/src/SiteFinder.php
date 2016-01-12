@@ -112,4 +112,57 @@ class SiteFinder
 
         return $site;
     }
+
+    /**
+     * Save given site
+     *
+     * If the given site has no identifier, its identifier will be set
+     *
+     * @param Site $site
+     * @param array $fields
+     *   If set, update only the given fields
+     */
+    public function save(Site $site, array $fields = null)
+    {
+        $eligible = [
+            'title_admin',
+            'title',
+            'state',
+            'theme',
+            'http_host',
+            'relacement_of',
+            'uid',
+        ];
+
+        if (null === $fields) {
+            $fields = $eligible;
+        } else {
+            $fields = array_intersect($eligible, $fields);
+        }
+
+        $values = [];
+        foreach ($fields as $field) {
+            $values[$field] = $site->{$field};
+        }
+
+        if ($site->id) {
+            $this
+                ->db
+                ->merge('ucms_site')
+                ->key(['id' => $site->id])
+                ->fields($values)
+                ->execute()
+            ;
+        } else {
+
+            $id = $this
+                ->db
+                ->insert('ucms_site')
+                ->fields($values)
+                ->execute()
+            ;
+
+            $site->id = $id;
+        }
+    }
 }

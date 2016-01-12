@@ -4,6 +4,8 @@
  * Dashboard related pages.
  */
 
+use MakinaCorpus\Ucms\Site\Site;
+
 /**
  * Main site list page.
  */
@@ -16,6 +18,13 @@ function ucms_site_dashboard_site_list() {
  */
 function ucms_site_dashboard_site_request_form($form, &$form_state) {
 
+  if (empty($form_state['storage']['site'])) {
+    $site = $form_state['storage']['site'] = new Site();
+    $site->uid = $GLOBALS['user']->uid;
+  } else {
+    $site = $form_state['storage']['site'];
+  }
+
   if (empty($form_state['storage']['step'])) {
     $step = 'a';
   } else {
@@ -25,11 +34,11 @@ function ucms_site_dashboard_site_request_form($form, &$form_state) {
   switch ($step) {
 
     case 'a':
-      return ucms_site_dashboard_site_request_form_step_a($form, $form_state);
+      return ucms_site_dashboard_site_request_form_step_a($form, $form_state, $site);
       break;
 
     case 'b':
-      return ucms_site_dashboard_site_request_form_step_b($form, $form_state);
+      return ucms_site_dashboard_site_request_form_step_b($form, $form_state, $site);
       break;
   }
 }
@@ -37,9 +46,36 @@ function ucms_site_dashboard_site_request_form($form, &$form_state) {
 /**
  * Request new site form (step a).
  */
-function ucms_site_dashboard_site_request_form_step_a($form, &$form_state) {
+function ucms_site_dashboard_site_request_form_step_a($form, &$form_state, Site $site) {
 
-  // @todo Form stuff
+  $form['title'] = [
+    '#title'          => t("Name"),
+    '#type'           => 'textfield',
+    '#default_value'  => $site->title,
+    '#attributes'     => ['placeholder' => t("Martray's optical")],
+    '#description'    => t("This will appear on the site as the site title"),
+    '#required'       => true,
+  ];
+
+  $form['title_admin'] = [
+    '#title'          => t("Description"),
+    '#type'           => 'textarea',
+    '#default_value'  => $site->title_admin,
+    '#description'    => t("This will be as the site's administrative description in platform backoffice"),
+    '#required'       => true,
+  ];
+
+  $form['http_host'] = [
+    '#title'          => t("Host name"),
+    '#type'           => 'textfield',
+    '#field_prefix'   => "http://",
+    '#default_value'  => $site->http_host,
+    '#attributes'     => ['placeholder' => "martray-optique.fr"],
+    '#description'    => t("Type here the site URL"),
+    '#required'       => true,
+  ];
+
+  // @todo Missing site type
 
   $form['actions']['#type'] = 'actions';
   $form['actions']['continue'] = [
@@ -62,7 +98,13 @@ function ucms_site_dashboard_site_request_form_step_a($form, &$form_state) {
  * Request new site form (step a) continue.
  */
 function ucms_site_dashboard_site_request_form_step_a_submit_continue($form, &$form_state) {
-  // @todo Set values in form state
+
+  /** @var $site Site */
+  $site = $form_state['storage']['site'];
+  $site->title = $form_state['values']['title'];
+  $site->title_admin = $form_state['values']['title_admin'];
+  $site->http_host = $form_state['values']['http_host'];
+
   $form_state['storage']['step'] = 'b';
   $form_state['rebuild'] = true;
 }
@@ -70,7 +112,7 @@ function ucms_site_dashboard_site_request_form_step_a_submit_continue($form, &$f
 /**
  * Request new site form (step b).
  */
-function ucms_site_dashboard_site_request_form_step_b($form, &$form_state) {
+function ucms_site_dashboard_site_request_form_step_b($form, &$form_state, Site $site) {
 
   // @todo Form stuff
 
@@ -102,5 +144,11 @@ function ucms_site_dashboard_site_request_form_step_b_submit_back($form, &$form_
  * Request new site form (step b) submit.
  */
 function ucms_site_dashboard_site_request_form_step_b_submit($form, &$form_state) {
-  // @todo Insert site into database.
+
+  /** @var $site Site */
+  $site = $form_state['storage']['site'];
+  $site->state = 0;
+
+  ucms_site_finder()->save($site);
+  drupal_set_message(t("Your site creation request has been submitted"));
 }

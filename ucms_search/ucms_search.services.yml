@@ -9,7 +9,7 @@ parameters:
 services:
 
   ucms_search.elastic.client:
-    private: true
+    public: false
     class: Elasticsearch\Client
     factory: [Elasticsearch\ClientBuilder, fromConfig]
     arguments: ["%ucms_search.elastic.config%"]
@@ -18,25 +18,25 @@ services:
     class: MakinaCorpus\Ucms\Search\Mapping\TypeRegistry
 
   ucms_search.mapping.date:
-    private: true
+    public: false
     class: MakinaCorpus\Ucms\Search\Mapping\DateType
     arguments: ["date"]
     tags: [{ name: ucms_search.mapping.type }]
 
   ucms_search.mapping.integer:
-    private: true
+    public: false
     class: MakinaCorpus\Ucms\Search\Mapping\IntegerType
     arguments: ["integer"]
     tags: [{ name: ucms_search.mapping.type }]
 
   ucms_search.mapping.long:
-    private: true
+    public: false
     class: MakinaCorpus\Ucms\Search\Mapping\LongType
     arguments: ["long"]
     tags: [{ name: ucms_search.mapping.type }]
 
   ucms_search.mapping.string:
-    private: true
+    public: false
     class: MakinaCorpus\Ucms\Search\Mapping\StringType
     arguments: ["string"]
     tags: [{ name: ucms_search.mapping.type }]

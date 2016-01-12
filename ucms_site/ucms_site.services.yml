@@ -8,4 +8,4 @@ services:
   # Site access helper
   ucms_site_access:
     class: MakinaCorpus\Ucms\Site\SiteAccessService
-    arguments: ["@database"]
+    arguments: ["@database", "@entity.manager"]

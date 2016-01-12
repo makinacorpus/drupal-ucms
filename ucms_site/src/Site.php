@@ -27,7 +27,7 @@ class Site
     /**
      * @var int
      */
-    public $state;
+    public $state = 0;
 
     /**
      * @var string
@@ -48,30 +48,4 @@ class Site
      * @var int
      */
     public $uid;
-
-    /**
-     * Has the given role access
-     *
-     * @param string $role
-     *   One of the Access::ROLE_ constants
-     */
-    public function roleHasAccess($role)
-    {
-        switch ($role) {
-
-            case Access::ROLE_ADMIN_FUNC:
-            case Access::ROLE_ADMIN_TECH:
-            case Access::ROLE_MODERATOR:
-            case Access::ROLE_WEBMASTER_LOCAL:
-                return in_array($this->state, [
-                    State::ARCHIVE,
-                    State::INIT,
-                    State::OFF,
-                    State::ON,
-                ]);
-
-            default:
-              return $this->state === State::ON;
-        }
-    }
 }

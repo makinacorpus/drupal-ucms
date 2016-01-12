@@ -31,6 +31,55 @@ function ucms_site_menu() {
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_site.dashboard.inc',
   ];
+  $items['admin/dashboard/site/%ucms_site'] = [
+    'title'             => "Site overview",
+    'page callback'     => 'ucms_site_dashboard_site_page_view',
+    'page arguments'    => [3],
+    'access callbacks'  => 'ucms_site_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_NORMAL_ITEM,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
+  $items['admin/dashboard/site/%ucms_site/view'] = [
+    'title'             => "Information",
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+  ];
+  $items['admin/dashboard/site/%ucms_site/log'] = [
+    'title'             => "Log",
+    'page callback'     => 'ucms_site_dashboard_site_page_log',
+    'page arguments'    => [3],
+    'access callbacks'  => 'ucms_site_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_LOCAL_TASK,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
+  $items['admin/dashboard/site/%ucms_site/webmasters'] = [
+    'title'             => "Webmasters",
+    'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
+    'page arguments'    => [3],
+    'access callbacks'  => 'ucms_site_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_LOCAL_TASK,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
+  $items['admin/dashboard/site/%ucms_site/edit'] = [
+    'title'             => "Site edit",
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_site_dashboard_site_edit_form', 3],
+    'access callbacks'  => 'ucms_site_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
+  $items['admin/dashboard/site/%ucms_site/delete'] = [
+    'title'             => "Site edit",
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => ['ucms_site_dashboard_site_delete_form', 3],
+    'access callbacks'  => 'ucms_site_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
 
   return $items;
 }
@@ -58,10 +107,55 @@ function ucms_site_permission() {
     Access::PERM_SITE_DASHBOARD_ACCESS => [
       'title' => t("Access to site dashboard"),
     ],
+    Access::PERM_SITE_MANAGE_ALL => [
+      'title' => t("Manage all sites no matter their state is"),
+    ],
     Access::PERM_SITE_VIEW_ALL => [
       'title' => t("View all sites no matter their state is"),
     ],
   ];
+}
+
+/**
+ * Get site finder service.
+ *
+ * @return \MakinaCorpus\Ucms\Site\SiteFinder
+ */
+function ucms_site_finder() {
+  return \Drupal::service('ucms_site_finder');
+}
+
+/**
+ * Get site access service.
+ *
+ * @return \MakinaCorpus\Ucms\Site\SiteAccessService
+ */
+function ucms_site_access() {
+  return \Drupal::service('ucms_site_access');
+}
+
+/**
+ * Menu helper.
+ */
+function ucms_site_load($id) {
+  try {
+    return ucms_site_finder()->findOne($id);
+  } catch (\InvalidArgumentException $e) {
+    return false;
+  }
+}
+
+/**
+ * Menu helper.
+ */
+function ucms_site_access_manage($site, $account = null) {
+  if (!$site instanceof Site) {
+    return false;
+  }
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  return ucms_site_access()->userCanManage($site, $account->uid);
 }
 
 /**
@@ -92,70 +186,29 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
   }
 
   $site = ucms_site_finder()->getContext();
-  $access = ucms_site_access();
 
   if (!$site) {
-    return;
+    return; // No site in context, nothing to check for.
+  }
+  if (State::ON == $site->state) {
+    return; // Normal runtime operation, nothing to do.
   }
 
-  switch ($site->state) {
-
-    case State::ON:
-      // Site is public and online, everything is fine, give me a break.
-      break;
-
-    case State::OFF:
-      // We are in maintainance mode, but site is up.
-      $menu_site_status = MENU_SITE_OFFLINE;
-      break;
-
-    case State::INIT:
-    case State::ARCHIVE:
-      // In all cases, this site if offline, but it does not mean the user
-      // cannot see it!
-      // @todo Find a better way to determine if the user can access
-      // in maintenance mode than the permission.
-      // $menu_site_status = MENU_SITE_OFFLINE;
-
-      // Certain people may see the site, webmaters and other roles.
-      if (user_access(Access::PERM_SITE_VIEW_ALL)) {
-        break;
-      }
-      if ($access->userIsWebmaster($site->id, $user->uid)) {
-        break;
-      }
-      // Else fallback on default and fail.
-
-    default:
-      // All other states define a site that does not really exists and should
-      // end up with a redirect somewhere else.
+  if (!ucms_site_access()->userCanView($site, $user->uid)) {
+    $menu_site_status = MENU_SITE_OFFLINE;
+    // State off means that the site is valid and up, but in maintainance mode,
+    // case in which we should just set the maintainance mode and leave,
+    // otherwise would mean that the site is neither ON nor OFF and does not
+    // exist for the outside, so redirect to something that exists (the main
+    // site). If we have nothing to redirect to, at least this code will
+    // fallback on site being offline.
+    if (State::OFF != $site->state) {
       if ($uri = variable_get('ucms_site.redirect.uri')) {
         drupal_goto($uri, [], variable_get('ucms_site.redirect.http_code', 307));
       }
-      // Fallback on something that will prevent anyone to see the site.
-      $menu_site_status = MENU_SITE_OFFLINE;
-      break;
+    }
   }
 }
-
-/**
- * Get site finder service.
- *
- * @return \MakinaCorpus\Ucms\Site\SiteFinder
- */
-function ucms_site_finder() {
-  return \Drupal::service('ucms_site_finder');
-}
-
-/**
- * Get site access service.
- *
- * @return \MakinaCorpus\Ucms\Site\SiteAccessService
- */
-function ucms_site_access() {
-  return \Drupal::service('ucms_site_access');
-}
-
 
 /**
  * Implements hook_init().
@@ -243,7 +296,6 @@ function ucms_site_node_access($node, $op, $account) {
     if ('create' === $op) {
       // @todo Check creation permissions;
     }
-
     return NODE_ACCESS_DENY;
   }
 

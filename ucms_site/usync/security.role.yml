@@ -23,6 +23,7 @@ admin_func:
     - site content labeled view
     - site content labeled edit
     - site dashboard access
+    - site manage all
     - site view all
 
 admin_tech:
@@ -32,6 +33,7 @@ admin_tech:
     - administer users
     - bypass node access
     - site dashboard access
+    - site manage all
     - site view all
 
 admin_user:
