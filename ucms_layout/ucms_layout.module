@@ -24,11 +24,6 @@ use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 
 /**
- * Load the composer autoload, be flexible about it, it might be elsewhere.
- */
-@include_once __DIR__ . '/../vendor/autoload.php';
-
-/**
  * Implements hook_menu().
  */
 function ucms_layout_menu() {

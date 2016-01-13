@@ -34,11 +34,6 @@ const UCMS_STYLE_CONTENTADMIN = 'contentadmin';
 const UCMS_STYLE_FAVORITE = 'favorite';
 
 /**
- * Load the composer autoload, be flexible about it, it might be elsewhere.
- */
-@include_once __DIR__ . '/../vendor/autoload.php';
-
-/**
  * Implements hook_menu().
  */
 function ucms_contrib_menu() {

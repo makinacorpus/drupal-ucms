@@ -68,11 +68,6 @@ require_once __DIR__ . '/ucms_search.index.inc';
 require_once __DIR__ . '/ucms_search.usync.inc';
 
 /**
- * Load the composer autoload, be flexible about it, it might be elsewhere.
- */
-@include_once __DIR__ . '/../vendor/autoload.php';
-
-/**
  * Implements hook_menu().
  */
 function ucms_search_menu() {
