@@ -40,7 +40,7 @@ function ucms_contrib_menu() {
   $items = [];
 
   // Main administration pages.
-  $items['admin/contribute'] = [
+  $items['admin/dashboard/content'] = [
     'title'             => "Content management",
     'page callback'     => 'ucms_contrib_admin_content_page',
     'page arguments'    => ['text'],
@@ -48,11 +48,11 @@ function ucms_contrib_menu() {
     'file'              => 'ucms_contrib.pages.inc',
   ];
   // @todo Use ucms_contrib_tab_list().
-  $items['admin/contribute/text'] = [
+  $items['admin/dashboard/content/text'] = [
     'title'             => "Content",
     'type'              => MENU_DEFAULT_LOCAL_TASK,
   ];
-  $items['admin/contribute/media'] = [
+  $items['admin/dashboard/content/media'] = [
     'title'             => "Media",
     'page callback'     => 'ucms_contrib_admin_content_page',
     'page arguments'    => ['media'],
@@ -62,7 +62,7 @@ function ucms_contrib_menu() {
   ];
 
   // Site configuration.
-  $items['admin/structure/contribute'] = [
+  $items['admin/structure/content'] = [
     'title'             => "Contribution user interface",
     'description'       => "Manage content types categorisation and how the main contribution user interface will look like and behave.",
     'page callback'     => 'drupal_get_form',
@@ -95,8 +95,8 @@ function ucms_contrib_menu() {
  * Implements hook_menu_local_tasks_alter().
  */
 function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
-  if (preg_match('@^admin/contribute.*$@', $root_path)) {
-    $tab = arg(2);
+  if (preg_match('@^admin/dashboard/content.*$@', $root_path)) {
+    $tab = arg(3);
     if (null === $tab) {
       $tab = 'text';
     }

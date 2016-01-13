@@ -10,8 +10,13 @@ function ucms_dashboard_menu() {
 
   $items = [];
 
-  // @todo
-  // Use the 'access administration pages' permission for dashboard.
+  $items['admin/dashboard'] = [
+    'title'             => "Dashboard",
+    'page callback'     => 'ucms_dashboard_page',
+    'access arguments'  => ['access administration pages'],
+    'type'              => MENU_NORMAL_ITEM,
+    'file'              => 'ucms_dashboard.pages.inc',
+  ];
 
   return $items;
 }
@@ -44,13 +49,18 @@ function ucms_dashboard_menu_alter(&$items) {
 
   // Single override where we change the 'admin' home page.
   $items['admin'] = [
-    'title'             => "Dashboard",
-    'page callback'     => 'ucms_dashboard_page',
+    'title'             => "Administration",
+    'page callback'     => 'ucms_dashboard_admin_redirect',
     'access arguments'  => ['access administration pages'],
-    'type'              => MENU_NORMAL_ITEM,
-    'file'              => 'ucms_dashboard.pages.inc',
-    'file path'         => drupal_get_path('module', 'ucms_dashboard'),
+    'type'              => MENU_CALLBACK,
   ];
+}
+
+/**
+ * Menu callback.
+ */
+function ucms_dashboard_admin_redirect() {
+  drupal_goto('admin/dashboard');
 }
 
 /**

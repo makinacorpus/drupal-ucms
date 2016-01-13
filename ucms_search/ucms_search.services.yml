@@ -9,7 +9,6 @@ parameters:
 services:
 
   ucms_search.elastic.client:
-    public: false
     class: Elasticsearch\Client
     factory: [Elasticsearch\ClientBuilder, fromConfig]
     arguments: ["%ucms_search.elastic.config%"]
