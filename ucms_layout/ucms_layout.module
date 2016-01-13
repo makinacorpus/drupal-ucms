@@ -43,21 +43,19 @@ function ucms_layout_menu() {
   // Update and delete operations.
   $items['layout/%ucms_layout/edit'] = [
     'title'             => "Edit page",
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_layout_admin_layout_edit_form', 1],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Form\LayoutEditForm', 1],
     'access callback'   => 'ucms_layout_access',
     'access arguments'  => ['update', 1],
-    'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['layout/%ucms_layout/delete'] = [
     'title callback'    => 'ucms_layout_title',
     'title arguments'   => [1],
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_layout_admin_layout_delete_form', 1],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Form\LayoutDeleteForm', 1],
     'access callback'   => 'ucms_layout_access',
     'access arguments'  => ['delete', 1],
-    'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -71,10 +69,9 @@ function ucms_layout_menu() {
   ];
   $items['admin/layout/add'] = [
     'title'             => 'Add page',
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_layout_admin_layout_add_form', 1],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Form\LayoutAddForm'],
     'access arguments'  => ['create layout'],
-    'file'              => 'ucms_layout.pages.inc',
     'type'              => MENU_LOCAL_ACTION,
   ];
 
@@ -90,10 +87,9 @@ function ucms_layout_menu() {
   $items['admin/structure/layout/%ucms_layout_theme'] = [
     'title callback'    => 'ucms_layout_theme_title',
     'title arguments'   => [3],
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_layout_admin_structure_theme_form', 3],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Admin\ThemeRegionsForm', 3],
     'access arguments'  => ['administer content types'],
-    'file'              => 'ucms_layout.admin.inc',
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 

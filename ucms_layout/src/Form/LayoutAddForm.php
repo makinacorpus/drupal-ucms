@@ -10,7 +10,7 @@ use MakinaCorpus\Ucms\Layout\StorageInterface;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LayoutEditForm extends FormBase
+class LayoutAddForm extends FormBase
 {
     /**
      * @var StorageInterface
@@ -40,7 +40,7 @@ class LayoutEditForm extends FormBase
      */
     public function getFormId()
     {
-        return 'ucms_layout_edit_form';
+        return 'ucms_layout_add_form';
     }
 
     /**
@@ -48,17 +48,10 @@ class LayoutEditForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, Layout $layout = null)
     {
-        if (!$layout) {
-            return $form;
-        }
-
-        $form['#layout_id'] = $layout->getId();
-
         $form['title'] = [
             '#title'          => t("Page title"),
             '#type'           => 'textfield',
             '#required'       => true,
-            '#default_value'  => $layout->getTitle(),
             '#description'    => t("The page title that will be displayed on frontend."),
         ];
 
@@ -66,47 +59,20 @@ class LayoutEditForm extends FormBase
             '#title'          => t("Title for administration"),
             '#type'           => 'textfield',
             '#required'       => true,
-            '#default_value'  => $layout->getAdminTitle(),
             '#description'    => t("This title will used for administrative pages and will never be shown to end users."),
         ];
 
-        /*
         if (module_exists('path')) {
-            $form['path_alias'] = [
-                '#title'          => t("URL alias"),
-                '#field_prefix'   => url('/', ['absolute' => true]),
-                '#type'           => 'textfield',
-                '#description'    => t("You change here the URL of your page."),
-                '#default_value'  => drupal_get_path_alias('layout/' . $layout->getId()),
-            ];
+            // @todo
         }
-         */
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'   => 'submit',
-            '#value'  => t("Update"),
-            '#submit' => ['::submitForm'],
-        ];
-        $form['actions']['delete'] = [
-            '#type'   => 'submit',
-            '#value'  => t("Delete"),
-            '#submit' => ['::deleteSubmit'],
-            '#limit_validation_errors' => [],
+            '#value'  => t("Create"),
         ];
 
         return $form;
-    }
-
-    /**
-     * Delete button click
-     */
-    public function deleteSubmit(array &$form, FormStateInterface $form_state)
-    {
-        // Else drupal_goto() will force the destination parameter to override us.
-        $destination = drupal_get_destination();
-        unset($_GET['destination']);
-        $form_state->setRedirect('layout/' . $form['#layout_id'] . '/delete', ['query' => $destination]);
     }
 
     /**
@@ -114,17 +80,16 @@ class LayoutEditForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $layout = $this
-          ->storage
-          ->load($form['#layout_id'])
-          ->setAdminTitle($form_state->getValue('title_admin'))
-          ->setTitle($form_state->getValue('title'))
-          ->setSiteId(0) // @todo
+        $layout = (new Layout())
+            ->setAccountId($this->currentUser()->uid)
+            ->setAdminTitle($form_state->getValue('title_admin'))
+            ->setTitle($form_state->getValue('title'))
+            ->setSiteId(0) // @todo
         ;
 
         $this->storage->save($layout);
 
-        drupal_set_message(t("Page %page has been updated.", ['%page' => $layout->getAdminTitle()]));
+        drupal_set_message(t("Page %page has been created.", ['%page' => $layout->getAdminTitle()]));
 
         $form_state->setRedirect('layout/' . $layout->getId());
     }

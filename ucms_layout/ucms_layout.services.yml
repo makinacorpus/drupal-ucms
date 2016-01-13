@@ -1,7 +1,6 @@
 services:
 
   ucms_layout.storage:
-    public: false
     class: MakinaCorpus\Ucms\Layout\DrupalStorage
     arguments: ["@database"]
 
