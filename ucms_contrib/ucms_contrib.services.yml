@@ -1,0 +1,6 @@
+services:
+
+  # Site finder responsible for loading and updating site data
+  ucms_contrib.cart:
+    class: MakinaCorpus\Ucms\Contrib\CartStorage
+    arguments: ["@database"]

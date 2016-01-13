@@ -22,7 +22,9 @@ function ucms_contrib_favorite_add_form($form, &$form_state, $nid) {
  */
 function ucms_contrib_favorite_add_form_submit($form, &$form_state) {
   $node = node_load($form['#nid']);
-  if (ucms_contrib_favorite_add($form['#nid'], $form['#uid'])) {
+  /* @var $cart \MakinaCorpus\Ucms\Contrib\CartStorage */
+  $cart = \Drupal::service('ucms_contrib.cart');
+  if ($cart->addFor($form['#uid'], $form['#nid'])) {
     drupal_set_message(t("%title added to your favorites", ['%title' => $node->title]));
   } else {
     drupal_set_message(t("%title is already a favorite", ['%title' => $node->title]), 'warning');
@@ -47,7 +49,9 @@ function ucms_contrib_favorite_remove_form($form, &$form_state, $nid) {
  */
 function ucms_contrib_favorite_remove_form_submit($form, &$form_state) {
   $node = node_load($form['#nid']);
-  ucms_contrib_favorite_remove($form['#nid'], $form['#uid']);
+  /* @var $cart \MakinaCorpus\Ucms\Contrib\CartStorage */
+  $cart = \Drupal::service('ucms_contrib.cart');
+  $cart->removeFor($form['#uid'], $form['#nid']);
   drupal_set_message(t("%title removed from your favorites", ['%title' => $node->title]));
 }
 

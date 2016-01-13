@@ -277,96 +277,6 @@ function ucms_contrib_preprocess_node(&$variables) {
 }
 
 /**
- * Add content to favorites.
- *
- * @param int $nid
- * @param int|stdClass $account
- *
- * @return boolean
- */
-function ucms_contrib_favorite_add($nid, $account = null) {
-
-  if (!$account) {
-    $account = $GLOBALS['user'];
-  }
-  if (is_object($account)) {
-    $account = $account->uid;
-  }
-
-  $exists = (bool)db_query("SELECT 1 FROM {ucms_contrib_cart} WHERE nid = :nid AND uid = :uid", [
-    ':nid' => $nid,
-    ':uid' => $account,
-  ])->fetchField();
-
-  if ($exists) {
-    return false;
-  }
-
-  db_merge('ucms_contrib_cart')
-    ->key([
-      'nid' => $nid,
-      'uid' => $account,
-    ])
-    ->execute()
-  ;
-
-  return true;
-}
-
-/**
- * Remove content from favorites.
- *
- * @param int $nid
- * @param int|stdClass $account
- */
-function ucms_contrib_favorite_remove($nid, $account = null) {
-
-  if (!$account) {
-    $account = $GLOBALS['user'];
-  }
-  if (is_object($account)) {
-    $account = $account->uid;
-  }
-
-  db_delete('ucms_contrib_cart')
-    ->condition('nid', $nid)
-    ->condition('uid', $account)
-    ->execute()
-  ;
-}
-
-/**
- * List favorite content.
- *
- * @param int|stdClass $account
- *
- * @return int[]
- *   Ordered list of node identifiers.
- */
-function ucms_contrib_favorite_list($account = null) {
-
-  if (!$account) {
-    $account = $GLOBALS['user']->uid;
-  }
-  if (is_object($account)) {
-    $account = $account->uid;
-  }
-
-  $q = db_select('ucms_contrib_cart', 'c');
-  $q->fields('c', ['nid']);
-  $q->join('node', 'n', "n.nid = c.nid");
-  $q->condition('c.uid', $account);
-
-  return $q
-    //->extend('PagerDefault')
-    //->limit(12)
-    ->addTag('node_access')
-    ->execute()
-    ->fetchCol()
-  ;
-}
-
-/**
  * Render one's favorite cart.
  *
  * @param int|stdClass $account
@@ -377,13 +287,16 @@ function ucms_contrib_favorite_list($account = null) {
 function ucms_contrib_favorite_render($account = null) {
 
   if (!$account) {
-    $account = $GLOBALS['user'];
-  }
-  if (is_object($account)) {
-    $account = $account->uid;
+    $uid = $GLOBALS['user']->uid;
+  } else if (is_object($account)) {
+    $uid = $account->uid;
+  } else {
+    $uid = (int)$account;
   }
 
-  $nidList  = ucms_contrib_favorite_list($account);
+  /* @var $cart \MakinaCorpus\Ucms\Contrib\CartStorage */
+  $cart     = \Drupal::service('ucms_contrib.cart');
+  $nidList  = $cart->listFor($uid);
   $nodes    = $nidList ? node_load_multiple($nidList) : [];
 
   $display = (new \MakinaCorpus\Ucms\Contrib\NodeCartDisplay())
@@ -393,7 +306,7 @@ function ucms_contrib_favorite_render($account = null) {
 
   $ret = [
     '#theme'    => 'ucms_contrib_cart',
-    '#account'  => $account,
+    '#account'  => $uid,
     '#display'  => $display->renderLinks(),
     '#items'    => $display->render($nodes),
   ];
