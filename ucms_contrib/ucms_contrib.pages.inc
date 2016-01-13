@@ -5,57 +5,6 @@ use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 
 /**
- * Node add to favorites form.
- */
-function ucms_contrib_favorite_add_form($form, &$form_state, $nid) {
-  $form['#nid'] = $nid;
-  $form['#uid'] = $GLOBALS['user']->uid;
-  $form['submit'] = [
-    '#type'   => 'submit',
-    '#value'  => t("Add to favorites"),
-  ];
-  return $form;
-}
-
-/**
- * Node add to favorites form submit.
- */
-function ucms_contrib_favorite_add_form_submit($form, &$form_state) {
-  $node = node_load($form['#nid']);
-  /* @var $cart \MakinaCorpus\Ucms\Contrib\CartStorage */
-  $cart = \Drupal::service('ucms_contrib.cart');
-  if ($cart->addFor($form['#uid'], $form['#nid'])) {
-    drupal_set_message(t("%title added to your favorites", ['%title' => $node->title]));
-  } else {
-    drupal_set_message(t("%title is already a favorite", ['%title' => $node->title]), 'warning');
-  }
-}
-
-/**
- * Remove node from favorites form.
- */
-function ucms_contrib_favorite_remove_form($form, &$form_state, $nid) {
-  $form['#nid'] = $nid;
-  $form['#uid'] = $GLOBALS['user']->uid;
-  $form['submit'] = [
-    '#type'   => 'submit',
-    '#value'  => t("Remove from favorites"),
-  ];
-  return $form;
-}
-
-/**
- * Node remove from favorites form submit.
- */
-function ucms_contrib_favorite_remove_form_submit($form, &$form_state) {
-  $node = node_load($form['#nid']);
-  /* @var $cart \MakinaCorpus\Ucms\Contrib\CartStorage */
-  $cart = \Drupal::service('ucms_contrib.cart');
-  $cart->removeFor($form['#uid'], $form['#nid']);
-  drupal_set_message(t("%title removed from your favorites", ['%title' => $node->title]));
-}
-
-/**
  * Main content page.
  *
  * @param string $tab
