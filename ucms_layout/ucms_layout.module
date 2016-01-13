@@ -321,11 +321,7 @@ function ucms_layout_title($layout) {
  * @return Context
  */
 function ucms_layout_context_get() {
-  $instance = &drupal_static(__FUNCTION__);
-  if (!$instance) {
-    $instance = new Context();
-  }
-  return $instance;
+  return \Drupal::service('ucms_layout.context');
 }
 
 /**
@@ -342,18 +338,6 @@ function ucms_layout_theme() {
       'template'  => 'ucms-layout-region',
     ],
   ];
-}
-
-/**
- * Implements hook_form().
- */
-function ucms_layout_forms($form_id, $args) {
-  // This implementation allows to use the same form more than once on the
-  // same page, see drupal_get_form() related calls. This is ugly but this
-  // is the right way to do it.
-  if (0 === strpos($form_id, 'ucms_layout_edit_form')) {
-    return [$form_id => ['callback' => 'ucms_layout_edit_form']];
-  }
 }
 
 /**
@@ -490,91 +474,6 @@ function ucms_layout_preprocess_region(&$vars) {
   }
   if ($empty) {
     $vars['classes_array'][] = 'ucms-layout-empty-region';
-  }
-}
-
-/**
- * Edit form.
- */
-function ucms_layout_edit_form($form, &$form_state) {
-
-  $context  = ucms_layout_context_get();
-  $layout   = $context->getCurrentLayout();
-
-  if ($layout instanceof Layout) {
-    if ($context->isTemporary()) {
-
-      $form['actions']['#type'] = 'actions';
-      $form['actions']['save'] = [
-        '#type'   => 'submit',
-        '#value'  => t("Save"),
-        '#submit' => ['ucms_layout_edit_form_save_submit']
-      ];
-      $form['actions']['cancel'] = [
-        '#type'   => 'submit',
-        '#value'  => t("Cancel"),
-        '#submit' => ['ucms_layout_edit_form_cancel_submit']
-      ];
-
-    } else {
-      $form['actions']['#type'] = 'actions';
-      $form['actions']['edit'] = [
-        '#type'   => 'submit',
-        '#value'  => t("Edit"),
-        '#submit' => ['ucms_layout_edit_form_edit_submit']
-      ];
-    }
-  }
-
-  return $form;
-}
-
-/**
- * Edit form 'edit' button submit.
- */
-function ucms_layout_edit_form_edit_submit($form, &$form_state) {
-  $context = ucms_layout_context_get();
-  if (!$context->isTemporary()) {
-    // @todo Generate a better token (random).
-    $token = drupal_get_token();
-    $layout = $context->getCurrentLayout();
-    $context->setToken($token);
-    // Saving the layout will force it be saved in the temporary storage.
-    $context->getStorage()->save($layout);
-    $form_state['redirect'] = [
-      current_path(),
-      ['query' => ['edit' => $token] + drupal_get_query_parameters()]
-    ];
-  }
-}
-
-/**
- * Edit form 'save' button submit.
- */
-function ucms_layout_edit_form_save_submit($form, &$form_state) {
-  $context = ucms_layout_context_get();
-  if ($context->isTemporary()) {
-    $context->commit();
-    drupal_set_message(t("Changed have been saved"));
-    $form_state['redirect'] = [
-      current_path(),
-      ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
-    ];
-  }
-}
-
-/**
- * Edit form 'cancel' button submit.
- */
-function ucms_layout_edit_form_cancel_submit($form, &$form_state) {
-  $context  = ucms_layout_context_get();
-  if ($context->isTemporary()) {
-    $context->rollback();
-    drupal_set_message(t("Changes have been dropped"), 'error');
-    $form_state['redirect'] = [
-      current_path(),
-      ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
-    ];
   }
 }
 

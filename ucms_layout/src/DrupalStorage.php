@@ -5,8 +5,23 @@ namespace MakinaCorpus\Ucms\Layout;
 /**
  * Layout storage using Drupal database.
  */
-class DrupalStorage
+class DrupalStorage implements StorageInterface
 {
+    /**
+     * @var \DatabaseConnection
+     */
+    private $db;
+
+    /**
+     * Default constructor
+     *
+     * @param \DatabaseConnection $db
+     */
+    public function __construct(\DatabaseConnection $db)
+    {
+        $this->db = $db;
+    }
+
     /**
      * {@inheritdoc}
      */

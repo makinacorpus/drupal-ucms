@@ -1,0 +1,10 @@
+services:
+
+  ucms_layout.storage:
+    public: false
+    class: MakinaCorpus\Ucms\Layout\DrupalStorage
+    arguments: ["@database"]
+
+  ucms_layout.context:
+    class: MakinaCorpus\Ucms\Layout\Context
+    arguments: ["@ucms_layout.storage"]

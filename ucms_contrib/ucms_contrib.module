@@ -174,7 +174,7 @@ function ucms_contrib_page_build(&$page) {
  */
 function ucms_contrib_preprocess_page(&$variables) {
   if (!path_is_admin(current_path()) && user_access('use favorites')) {
-    $variables['title_prefix']['layout_edit'] = drupal_get_form('ucms_layout_edit_form');
+    $variables['title_prefix']['layout_edit'] = \Drupal::formBuilder()->getForm('MakinaCorpus\Ucms\Layout\Form\LayoutEditForm');
   }
 }
 

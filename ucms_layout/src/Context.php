@@ -23,10 +23,12 @@ class Context
 
     /**
      * Default constructor
+     *
+     * @param StorageInterface $storage
      */
-    public function __construct()
+    public function __construct(StorageInterface $storage)
     {
-        $this->storage = new DrupalStorage();
+        $this->storage = $storage;
     }
 
     /**
