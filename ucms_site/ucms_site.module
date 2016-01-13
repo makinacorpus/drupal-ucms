@@ -43,6 +43,7 @@ function ucms_site_menu() {
     'title'             => "Information",
     'type'              => MENU_DEFAULT_LOCAL_TASK,
   ];
+  /*
   $items['admin/dashboard/site/%ucms_site/log'] = [
     'title'             => "Log",
     'page callback'     => 'ucms_site_dashboard_site_page_log',
@@ -79,6 +80,7 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
     'file'              => 'ucms_site.dashboard.inc',
   ];
+   */
 
   return $items;
 }

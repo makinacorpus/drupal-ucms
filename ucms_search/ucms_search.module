@@ -58,6 +58,11 @@ const UCMS_SEARCH_LIMIT = 100;
 const UCMS_SEARCH_CACHE_INDEX_LIST = 'ucms_search_index_list';
 
 /**
+ * So, Drupal 8 sucks they don't have any real API for this...
+ */
+require_once __DIR__ . '/ucms_search.batch.inc';
+
+/**
  * Index operations.
  */
 require_once __DIR__ . '/ucms_search.index.inc';
@@ -75,33 +80,11 @@ function ucms_search_menu() {
 
   $items['admin/config/search/indices'] = [
     'title'             => "Search indices",
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_search_admin_index_form'],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Search\Admin\IndexListForm'],
     'access arguments'  => ['administer nodes'],
     'description'       => "Manage search indices.",
-    'file'              => 'ucms_search.admin.inc',
     'type'              => MENU_NORMAL_ITEM,
-  ];
-  $items['admin/config/search/indices/%ucms_search_index'] = [
-    'title callback'    => 'ucms_search_index_title',
-    'title arguments'   => [4],
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_search_admin_index_mapping_form', 4],
-    'access arguments'  => ['administer nodes'],
-    'file'              => 'ucms_search.admin.inc',
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['admin/config/search/indices/%ucms_search_index/mapping'] = [
-    'title'             => "Mapping",
-    'type'              => MENU_DEFAULT_LOCAL_TASK,
-  ];
-  $items['admin/config/search/indices/%ucms_search_index/mapping/add'] = [
-    'title'             => "Add field",
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_search_admin_index_mapping_add_field_form', 4],
-    'access arguments'  => ['administer nodes'],
-    'file'              => 'ucms_search.admin.inc',
-    'type'              => MENU_LOCAL_ACTION,
   ];
 
   return $items;

@@ -45,7 +45,13 @@ function ucms_search_index_definition_save($index, $name, $param, $force = false
 /**
  * Get node indexes.
  *
+ * @todo
+ *   Convert to a service then remove me
+ *
  * @return string[]
+ *
+ * @deprecated
+ *   This should be removed in flavor of a service handling indices
  */
 function ucms_search_index_list() {
 
