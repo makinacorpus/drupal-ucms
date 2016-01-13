@@ -65,10 +65,9 @@ function ucms_contrib_menu() {
   $items['admin/structure/content'] = [
     'title'             => "Contribution user interface",
     'description'       => "Manage content types categorisation and how the main contribution user interface will look like and behave.",
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_contrib_admin_structure_form'],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Admin\NodeTabsForm'],
     'access arguments'  => ['administer content types'],
-    'file'              => 'ucms_contrib.admin.inc',
     'type'              => MENU_NORMAL_ITEM,
   ];
 
