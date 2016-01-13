@@ -70,10 +70,20 @@ function ucms_dashboard_theme() {
   return [
     'ucms_dashbaord_page' => [
       'variables' => [],
-      'template'  => 'ucms_dashboard-page',
+      'template' => 'ucms_dashboard-page',
+    ],
+    'ucms_dashboard_page_list' => [
+      'variables' => [
+        'display' => null,
+        'filters' => [],
+        'items'   => [],
+        'search'  => null,
+        'pager'   => null,
+      ],
+      'template' => 'ucms_dashboard-page-list',
     ],
     'ucms_dashboard_top' => [
-      'template'  => 'ucms_dashboard-top',
+      'template' => 'ucms_dashboard-top',
     ],
   ];
 }
@@ -89,3 +99,21 @@ function ucms_dashboard_page_build(&$page) {
     '#theme' => 'ucms_dashboard_top',
   ];
 }
+
+/**
+ * Implements template_preprocess_HOOK().
+ */
+function template_preprocess_ucms_dashboard_page_list(&$variables) {
+
+  /* @var $display \MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface */
+  $display = $variables['display'];
+
+  $variables['displayView']   = $display->render($variables['items']);
+  $variables['displayLinks']  = $display->renderLinks();
+
+  /* @var $filter \MakinaCorpus\Ucms\Dashboard\Page\FilterDisplayInterface */
+  foreach ($variables['filters'] as $index => $filter) {
+    $variables['filters'][$index] = $filter->render();
+  }
+}
+

@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
-class ContentAdminListDisplay extends AbstractListDisplay
+use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+
+class NodeAdminDisplay extends AbstractDisplay
 {
     /**
      * {@inheritdoc}

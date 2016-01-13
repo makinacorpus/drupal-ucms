@@ -64,6 +64,16 @@ class QueryAlteredSearch extends Search
     }
 
     /**
+     * Get fulltext query parameter name
+     *
+     * @return string
+     */
+    public function getFulltextParameterName()
+    {
+        return $this->fulltextParameterName;
+    }
+
+    /**
      * Set fulltext roaming and fuziness value, should be between 0 and 1
      *
      * @param float $value

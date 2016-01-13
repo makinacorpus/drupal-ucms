@@ -1,0 +1,136 @@
+<?php
+
+namespace MakinaCorpus\Ucms\Contrib;
+
+use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\FilterDisplay;
+use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
+
+class PrivateNodeDataSource implements DatasourceInterface
+{
+    /**
+     * @var QueryAlteredSearch
+     */
+    private $search;
+
+    /**
+     * @var DisplayInterface
+     */
+    private $display;
+
+    public function __construct(QueryAlteredSearch $search, DisplayInterface $display)
+    {
+        $this->search = $search;
+        $this->display = $display;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters($query)
+    {
+        $ret = [];
+
+        $ret[] = $this
+            ->search
+            ->createTermAggregation('type', null)
+            ->setChoicesMap(node_type_get_names())
+            ->setTitle(t("Type"))
+        ;
+
+        $ret[] = $this
+            ->search
+            ->createTermAggregation('owner', null)
+            ->setChoicesCallback(function ($values) {
+                if ($accounts = user_load_multiple($values)) {
+                    foreach ($accounts as $index => $account) {
+                        $accounts[$index] = format_username($account);
+                    }
+                    return $accounts;
+                }
+            })
+            ->setTitle(t("Owner"))
+        ;
+
+        $ret[] = $this
+            ->search
+            ->createTermAggregation('tags', null)
+            ->setChoicesCallback(function ($values) {
+                if ($terms = taxonomy_term_load_multiple($values)) {
+                    foreach ($terms as $index => $term) {
+                        $terms[$index] = check_plain($term->name);
+                    }
+                    return $terms;
+                }
+            })
+            ->setTitle(t("Tags"))
+        ;
+
+        $ret[] = $this
+            ->search
+            ->createTermAggregation('status', null)
+            ->setChoicesMap([0 => t("Unpublished"), 1 => t("Published")])
+            ->setTitle(t("Status"))
+        ;
+
+        // Apply rendering stuff for it to work
+        foreach ($ret as $index => $facet) {
+            $ret[$index] = new FilterDisplay(
+                $facet->getTitle(),
+                ['#theme' => 'ucms_search_facet', '#facet' => $facet]
+            );
+        }
+
+        return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDisplay()
+    {
+        return $this->display;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init($query) {}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItems($query)
+    {
+        $limit = 24;
+
+        $response = $this
+            ->search
+            ->addField('_id')
+            ->setLimit($limit)
+            ->prepare($query)
+            ->doSearch()
+        ;
+
+        pager_default_initialize($response->getTotal(), $limit);
+
+        return node_load_multiple($response->getAllNodeIdentifiers());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasSearchForm()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchFormParamName()
+    {
+        return $this->search->getFulltextParameterName();
+    }
+}

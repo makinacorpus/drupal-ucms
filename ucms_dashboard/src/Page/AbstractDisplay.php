@@ -1,8 +1,8 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib;
+namespace MakinaCorpus\Ucms\Dashboard\Page;
 
-abstract class AbstractListDisplay
+abstract class AbstractDisplay implements DisplayInterface
 {
     /**
      * @var string
@@ -34,9 +34,9 @@ abstract class AbstractListDisplay
      *
      * @param string $mode
      *
-     * @return AbstractListDisplay
+     * @return AbstractDisplay
      */
-    public function setDefaultMode($mode)
+    final public function setDefaultMode($mode)
     {
         if (!isset($this->getSupportedModes()[$mode])) {
             throw new \InvalidArgumentException(sprintf("'%s' does not support input mode '%s'", self::class, $mode));
@@ -54,7 +54,7 @@ abstract class AbstractListDisplay
      *
      * @return string
      */
-    public function getDefaultMode()
+    final public function getDefaultMode()
     {
         if ($this->defaultMode) {
             return $this->defaultMode;
@@ -70,9 +70,9 @@ abstract class AbstractListDisplay
      *
      * @param string $parameterName
      *
-     * @return AbstractListDisplay
+     * @return AbstractDisplay
      */
-    public function setParameterName($parameterName)
+    final public function setParameterName($parameterName)
     {
         $this->parameterName = $parameterName;
 
@@ -84,9 +84,9 @@ abstract class AbstractListDisplay
      *
      * @param string[] $query
      *
-     * @return AbstractListDisplay
+     * @return AbstractDisplay
      */
-    public function prepareFromQuery($query)
+    final public function prepareFromQuery($query)
     {
         $mode = null;
 
@@ -122,7 +122,7 @@ abstract class AbstractListDisplay
      * @return array
      *   drupal_render() friendly structure
      */
-    public function renderLinks($targetPath = null)
+    final public function renderLinks($targetPath = null)
     {
         $links = [];
 
@@ -187,7 +187,7 @@ abstract class AbstractListDisplay
      * @return array
      *   drupal_render() friendly structure
      */
-    public function render($items)
+    final public function render($items)
     {
         return $this->displayAs($this->currentMode, $items);
     }

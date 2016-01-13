@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
-class CartListDisplay extends AbstractListDisplay
+use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+
+class NodeCartDisplay extends AbstractDisplay
 {
     /**
      * {@inheritdoc}

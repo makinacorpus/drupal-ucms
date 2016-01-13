@@ -149,18 +149,6 @@ function ucms_contrib_theme() {
       ],
       'template'  => 'ucms-contrib-cart',
     ],
-    'ucms_contrib_content_page' => [
-      'variables' => [
-        'favorites' => null,
-        'display'   => null,
-        'account'   => null,
-        'nodes'     => [],
-        'facets'    => [],
-        'search'    => null,
-        'pager'     => null,
-      ],
-      'template'   => 'ucms-contrib-content-page',
-    ],
     'ucms_contrib_content_result_grid' => [
       'variables' => [
         'nodes'     => [],
@@ -398,7 +386,7 @@ function ucms_contrib_favorite_render($account = null) {
   $nidList  = ucms_contrib_favorite_list($account);
   $nodes    = $nidList ? node_load_multiple($nidList) : [];
 
-  $display = (new \MakinaCorpus\Ucms\Contrib\CartListDisplay())
+  $display = (new \MakinaCorpus\Ucms\Contrib\NodeCartDisplay())
     ->setParameterName('cd')
     ->prepareFromQuery($_GET)
   ;
@@ -413,14 +401,3 @@ function ucms_contrib_favorite_render($account = null) {
   return $ret;
 }
 
-/**
- * Implements template_preprocess_HOOK().
- */
-function template_preprocess_ucms_contrib_content_page(&$variables) {
-  foreach ($variables['facets'] as $delta => $facet) {
-    $variables['facets'][$delta] = [
-      '#theme' => 'ucms_search_facet',
-      '#facet' => $facet,
-    ];
-  }
-}
