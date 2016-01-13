@@ -9,6 +9,7 @@
  */
 function ucms_dashboard_page() {
   return [
-    '#theme' => 'ucms_dashboard_page',
+    '#theme'  => 'ucms_dashboard_page',
+    '#blocks' => [],
   ];
 }

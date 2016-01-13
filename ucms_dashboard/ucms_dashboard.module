@@ -59,8 +59,23 @@ function ucms_dashboard_menu_alter(&$items) {
 function ucms_dashboard_theme() {
   return [
     'ucms_dashbaord_page' => [
-      'variagles' => [],
+      'variables' => [],
       'template'  => 'ucms_dashboard-page',
     ],
+    'ucms_dashboard_top' => [
+      'template'  => 'ucms_dashboard-top',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function ucms_dashboard_page_build(&$page) {
+  if (!path_is_admin(current_path())) {
+    return;
+  }
+  $page['page_top']['ucms_dashboard_top'] = [
+    '#theme' => 'ucms_dashboard_top',
   ];
 }
