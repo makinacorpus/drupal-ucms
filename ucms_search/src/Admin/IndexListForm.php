@@ -6,6 +6,9 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 use Elasticsearch\Client;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
+
+use MakinaCorpus\Ucms\Search\IndexStorage;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -22,13 +25,19 @@ class IndexListForm extends FormBase
     private $client;
 
     /**
+     * @var IndexStorage
+     */
+    private $indexStorage;
+
+    /**
      * {inheritdoc}
      */
     static public function create(ContainerInterface $container)
     {
         return new self(
             $container->get('database'),
-            $container->get('ucms_search.elastic.client')
+            $container->get('ucms_search.elastic.client'),
+            $container->get('ucms_search.index_storage')
         );
     }
 
@@ -38,10 +47,11 @@ class IndexListForm extends FormBase
      * @param \DatabaseConnection $db
      * @param Client $client
      */
-    public function __construct(\DatabaseConnection $db, Client $client)
+    public function __construct(\DatabaseConnection $db, Client $client, IndexStorage $indexStorage)
     {
         $this->db = $db;
         $this->client = $client;
+        $this->indexStorage = $indexStorage;
     }
 
     /**
@@ -118,7 +128,7 @@ class IndexListForm extends FormBase
             ''
         ];
 
-        $indices  = ucms_search_index_list();
+        $indices  = $this->indexStorage->names();
         $stats    = null;
 
         $q = $this->db->select('ucms_search_status', 's');
@@ -141,7 +151,7 @@ class IndexListForm extends FormBase
 
         try {
             $stats = $this->client->indices()->status(['index' => implode(',', array_keys($indices))]);
-        } catch (Exception $e) {
+        } catch (Missing404Exception $e) {
             watchdog_exception(__FUNCTION__, $e);
         }
 

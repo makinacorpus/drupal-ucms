@@ -23,7 +23,7 @@ function ucms_search_admin_index_batch_operation($index, &$context) {
     $context['finished'] = 0;
   }
 
-  $done = ucms_search_index_dequeue_bulk($index, 150);
+  $done = ucms_search_indexer()->bulkDequeue($index, 150);
   $context['sandbox']['progress'] += $done;
 
   if ($done) {
@@ -40,7 +40,7 @@ function ucms_search_admin_reindex_batch_operation($index, &$context) {
 
   if (empty($context['sandbox'])) {
 
-    ucms_search_index_clear($index);
+    ucms_search_index_storage()->clear($index);
 
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = db_select('ucms_search_status', 'u')
@@ -57,7 +57,7 @@ function ucms_search_admin_reindex_batch_operation($index, &$context) {
     return;
   }
 
-  $done = ucms_search_index_dequeue_bulk($index, 150);
+  $done = ucms_search_indexer()->bulkDequeue($index, 150);
   $context['sandbox']['progress'] += $done;
 
   if ($done) {

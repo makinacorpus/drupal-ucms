@@ -8,6 +8,14 @@ parameters:
 
 services:
 
+  ucms_search.index_storage:
+    class: MakinaCorpus\Ucms\Search\IndexStorage
+    arguments: ["@ucms_search.elastic.client", "@database", "@ucms_search.node_indexer", "@cache.default", "@module_handler"]
+
+  ucms_search.node_indexer:
+    class: MakinaCorpus\Ucms\Search\NodeIndexer
+    arguments: ["@ucms_search.elastic.client", "@database", "@entity.manager", "@module_handler"]
+
   ucms_search.elastic.client:
     class: Elasticsearch\Client
     factory: [Elasticsearch\ClientBuilder, fromConfig]

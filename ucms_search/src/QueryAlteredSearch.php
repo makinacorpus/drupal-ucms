@@ -129,6 +129,7 @@ class QueryAlteredSearch extends Search
         if (array_key_exists($param, $query)) {
             return $query[$param];
         }
+
         return $default;
     }
 

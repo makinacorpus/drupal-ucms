@@ -63,11 +63,6 @@ const UCMS_SEARCH_CACHE_INDEX_LIST = 'ucms_search_index_list';
 require_once __DIR__ . '/ucms_search.batch.inc';
 
 /**
- * Index operations.
- */
-require_once __DIR__ . '/ucms_search.index.inc';
-
-/**
  * µSync integration.
  */
 require_once __DIR__ . '/ucms_search.usync.inc';
@@ -102,6 +97,24 @@ function ucms_search_theme() {
 }
 
 /**
+ * Get the index storage instance.
+ *
+ * @return \MakinaCorpus\Ucms\Search\IndexStorage
+ */
+function ucms_search_index_storage() {
+  return \Drupal::service('ucms_search.index_storage');
+}
+
+/**
+ * Get the indexer instance.
+ *
+ * @return \MakinaCorpus\Ucms\Search\NodeIndexer
+ */
+function ucms_search_indexer() {
+  return \Drupal::service('ucms_search.node_indexer');
+}
+
+/**
  * Menu helper.
  *
  * @param string $index
@@ -110,7 +123,7 @@ function ucms_search_theme() {
  *  Index key if exists.
  */
 function ucms_search_index_load($index) {
-  if (array_key_exists($index, ucms_search_index_list())) {
+  if (ucms_search_index_storage()->exists($index)) {
     return $index;
   }
   return false;
@@ -125,7 +138,7 @@ function ucms_search_index_load($index) {
  *  Index name if exists.
  */
 function ucms_search_index_title($index) {
-  $list = ucms_search_index_list();
+  $list = ucms_search_index_storage()->names();
   if (array_key_exists($index, $list)) {
     return $list[$index];
   }
@@ -171,8 +184,8 @@ function ucms_search_create($index) {
  * @param stdClass $node
  */
 function ucms_search_node_index_now($node) {
-  foreach (array_keys(ucms_search_index_list()) as $index) {
-    ucms_search_index_node_index($index, $node, false, true);
+  foreach (ucms_search_index_storage()->keys() as $index) {
+    ucms_search_indexer()->upsert($index, $node, false, true);
   }
 }
 
@@ -199,8 +212,8 @@ function ucms_search_exit() {
   // in case of PHP crash or any other bugguy reason.
   $queue = &drupal_static('ucms_search_node_queue');
   if ($queue) {
-    foreach (array_keys(ucms_search_index_list()) as $index) {
-      ucms_search_index_reindex($index, $queue);
+    foreach (ucms_search_index_storage()->keys() as $index) {
+      ucms_search_indexer()->bulkMarkForReindex($index, $queue);
     }
     drupal_static_reset('ucms_search_node_queue');
   }
@@ -249,8 +262,8 @@ function ucms_search_node_update($node) {
  */
 function ucms_search_node_delete($node) {
   // @todo Later queue and bulk
-  foreach (array_keys(ucms_search_index_list()) as $index) {
-    ucms_search_index_node_delete($index, $node);
+  foreach (ucms_search_index_storage()->keys() as $index) {
+    ucms_search_indexer()->delete($index, $node);
   }
 }
 
@@ -287,8 +300,8 @@ function ucms_search_ucms_search_index_node($index, $node) {
  * Implements hook_cron().
  */
 function ucms_search_cron() {
-  foreach (array_keys(ucms_search_index_list()) as $index) {
-    ucms_search_index_dequeue_bulk($index);
+  foreach (ucms_search_index_storage()->keys() as $index) {
+    ucms_search_indexer()->bulkDequeue($index);
   }
 }
 
