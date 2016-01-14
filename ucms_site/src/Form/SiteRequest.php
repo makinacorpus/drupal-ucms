@@ -6,12 +6,35 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteFinder;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Request site creation form
  */
 class SiteRequest extends FormBase
 {
+    /**
+     * {inheritdoc}
+     */
+    static public function create(ContainerInterface $container)
+    {
+        return new self(
+            $container->get('ucms_site_finder')
+        );
+    }
+
+    /**
+     * @var SiteFinder
+     */
+    protected $siteFinder;
+
+    public function __construct(SiteFinder $siteFinder)
+    {
+        $this->siteFinder = $siteFinder;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -66,7 +89,7 @@ class SiteRequest extends FormBase
             '#title'          => $this->t("Name"),
             '#type'           => 'textfield',
             '#default_value'  => $site->title,
-            '#attributes'     => ['placeholder' => t("Martray's optical")],
+            '#attributes'     => ['placeholder' => $this->t("Martray's optical")],
             '#description'    => $this->t("This will appear on the site as the site title"),
             '#required'       => true,
         ];
@@ -75,18 +98,29 @@ class SiteRequest extends FormBase
             '#title'          => $this->t("Description"),
             '#type'           => 'textarea',
             '#default_value'  => $site->title_admin,
+            '#attributes'     => ['placeholder' => $this->t("This site is about showing our glasses to our future clients")],
             '#description'    => $this->t("This will be as the site's administrative description in platform backoffice"),
             '#required'       => true,
         ];
 
         $form['http_host'] = [
-            '#title'          => t("Host name"),
-            '#type'           => 'textfield',
-            '#field_prefix'   => "http://",
-            '#default_value'  => $site->http_host,
+            '#title'            => $this->t("Host name"),
+            '#type'             => 'textfield',
+            '#field_prefix'     => "http://",
+            '#default_value'    => $site->http_host,
+            '#attributes'       => ['placeholder' => "martray-optique.fr"],
+            '#description'      => $this->t("Type here the site URL"),
+            '#element_validate' => ['::validateHttpHost'],
+            '#required'         => true,
+        ];
+
+        $form['replacement_of'] = [
+            '#title'          => $this->t("Replaces"),
+            '#type'           => 'textarea',
+            '#default_value'  => $site->relacement_of,
             '#attributes'     => ['placeholder' => "martray-optique.fr"],
-            '#description'    => $this->t("Type here the site URL"),
-            '#required'       => true,
+            '#description'    => $this->t("If the new site aims to replace an existing site, please copy/paste the site URI into this textarea, you may write more than one URI or any useful textual information."),
+            '#required'       => false,
         ];
 
         // @todo Missing site type
@@ -106,6 +140,28 @@ class SiteRequest extends FormBase
         ];
 
         return $form;
+    }
+
+    /**
+     * Validate HTTP host (must be unique)
+     */
+    public function validateHttpHost(&$element, FormStateInterface $form_state, &$complete_form)
+    {
+        $value = $form_state->getValue($element['#parents']);
+
+        if (empty($value)) {
+            $form_state->setError($element, $this->t("Host name cannot be empty"));
+            return;
+        }
+
+        $existing = $this
+            ->siteFinder
+            ->findByHostname($value)
+        ;
+
+        if ($existing) {
+            $form_state->setError($element, $this->t("Host name already exists"));
+        }
     }
 
     /**

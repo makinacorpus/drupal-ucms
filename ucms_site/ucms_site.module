@@ -82,6 +82,15 @@ function ucms_site_menu() {
   ];
    */
 
+  $items['admin/structure/site'] = [
+    'title'             => "Site factory configuration",
+    'description'       => "Global site configuration, such as allowed themes for sites",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Admin\SiteManagementForm'],
+    'access arguments'  => ['administer site configuration'],
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+
   return $items;
 }
 
