@@ -16,12 +16,12 @@ class IndexLoader extends AbstractLoader
 
     public function exists(NodeInterface $node, Context $context)
     {
-        return ucms_search_index_storage()->exists($node->getName());
+        return ucms_search_index()->exists($node->getName());
     }
 
     public function getExistingObject(NodeInterface $node, Context $context)
     {
-        $param = ucms_search_index_storage()->load($node->getName());
+        $param = ucms_search_index()->load($node->getName());
 
         if ($param) {
             // FIXME Missing 'name'
@@ -38,7 +38,7 @@ class IndexLoader extends AbstractLoader
 
     public function deleteExistingObject(NodeInterface $node, Context $context, $dirtyAllowed = false)
     {
-        ucms_search_index_storage()->delete($node->getName());
+        ucms_search_index()->delete($node->getName());
     }
 
     public function updateNodeFromExisting(NodeInterface $node, Context $context)
@@ -68,7 +68,7 @@ class IndexLoader extends AbstractLoader
 
         unset($param['name']);
 
-        \Drupal::service('ucms_search.index_storage')->definitionSave($node->getName(), $humanName, $param);
+        \Drupal::service('ucms_search.index_storage')->save($node->getName(), $humanName, $param);
     }
 
     public function canProcess(NodeInterface $node)

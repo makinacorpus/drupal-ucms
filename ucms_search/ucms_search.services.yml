@@ -10,11 +10,12 @@ services:
 
   ucms_search.index_storage:
     class: MakinaCorpus\Ucms\Search\IndexStorage
-    arguments: ["@ucms_search.elastic.client", "@database", "@ucms_search.node_indexer", "@cache.default", "@module_handler"]
+    arguments: ["@ucms_search.elastic.client", "@database", "@cache.default", "@entity.manager", "@module_handler"]
 
   ucms_search.node_indexer:
+    public: false
     class: MakinaCorpus\Ucms\Search\NodeIndexer
-    arguments: ["@ucms_search.elastic.client", "@database", "@entity.manager", "@module_handler"]
+    factory: ucms_search.index_storage:indexer
 
   ucms_search.elastic.client:
     class: Elasticsearch\Client
@@ -47,3 +48,8 @@ services:
     class: MakinaCorpus\Ucms\Search\Mapping\StringType
     arguments: ["string"]
     tags: [{ name: ucms_search.mapping.type }]
+
+  ucms_search.event.dequeue_node:
+    class: MakinaCorpus\Ucms\Search\EventSubscriber\DequeueNodeEventSubscriber
+    arguments: ["@ucms_search.node_indexer"]
+    tags: [{ name: event_subscriber}]

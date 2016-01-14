@@ -33,7 +33,7 @@ function drush_ucms_search_index_list() {
   $rows = [
     [dt("Module"), dt("Source")]
   ];
-  foreach (ucms_search_index_storage()->names() as $index => $name) {
+  foreach (ucms_search_index()->names() as $index => $name) {
     $rows[] = [$index, $name];
   }
   drush_print_table($rows, true);
@@ -44,7 +44,7 @@ function drush_ucms_search_index_list() {
  */
 function drush_ucms_search_index_run() {
 
-  $existing = ucms_search_index_storage()->names();
+  $existing = ucms_search_index()->names();
   $indices  = [];
   $doClear  = drush_get_option('clear');
 
@@ -85,7 +85,7 @@ function drush_ucms_search_index_run() {
         continue;
       }
 
-      ucms_search_index_storage()->clear($index);
+      ucms_search_index()->clear($index);
       drush_log(dt("@index cleared", ['@index' => $index]), 'success');
     }
 
@@ -102,7 +102,7 @@ function drush_ucms_search_index_run() {
     $progress = drush_create_progress();
     $progress->setProgress($total, 0);
     do {
-      $done = ucms_search_indexer()->bulkDequeue($index);
+      $done = ucms_search_index()->indexer($index)->bulkDequeue();
       $count += $done;
       $progress->setProgress($total, $count);
     } while ($done);

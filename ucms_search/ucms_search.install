@@ -75,8 +75,8 @@ function ucms_search_schema() {
 function ucms_search_enable() {
   // This can't be in the hook_install() since that we need our services to
   // be registered within the container before we can start using this.
-  foreach (ucms_search_index_storage()->keys() as $index) {
-    ucms_search_index_storage()->clear($index);
+  foreach (ucms_search_index()->keys() as $index) {
+    ucms_search_index()->clear($index);
   }
 }
 
@@ -86,8 +86,8 @@ function ucms_search_enable() {
 function ucms_search_disable() {
   // This can't be in the hook_uninstall() since that we need our services to
   // be registered within the container before we can start using this.
-  foreach (ucms_search_index_storage()->keys() as $index) {
-    ucms_search_index_storage()->clear($index);
+  foreach (ucms_search_index()->keys() as $index) {
+    ucms_search_index()->clear($index);
   }
 }
 

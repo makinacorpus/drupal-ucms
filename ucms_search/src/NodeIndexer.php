@@ -7,7 +7,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 
 use Elasticsearch\Client;
 
-class NodeIndexer
+class NodeIndexer implements NodeIndexerInterface
 {
     /**
      * Node(s) (is|are) being indexed hook
@@ -37,19 +37,37 @@ class NodeIndexer
     private $nodeController;
 
     /**
+     * Temporary queue of node identifiers which need to be marked as changed
+     * upon the request termination
+     *
+     * @var int[]
+     */
+    private $nodeQueue = [];
+
+    /**
+     * Index to work with
+     *
+     * @var string
+     */
+    private $index;
+
+    /**
      * Default constructor
      *
+     * @param string $index
      * @param Client $client
      * @param \DatabaseConnection $db
      * @param EntityManager $entityManager
      * @param ModuleHandlerInterface $moduleHandler
      */
     public function __construct(
+        $index,
         Client $client,
         \DatabaseConnection $db,
         EntityManager $entityManager,
         ModuleHandlerInterface $moduleHandler)
     {
+        $this->index = $index;
         $this->client = $client;
         $this->db = $db;
         $this->nodeController = $entityManager->getStorage('node');
@@ -57,12 +75,29 @@ class NodeIndexer
     }
 
     /**
-     * Dequeue and index items
-     *
-     * @param string $index
-     * @param int $limit
+     * {@inheritdoc}
      */
-    public function bulkDequeue($index, $limit = null)
+    public function enqueue(array $nodes)
+    {
+        foreach ($nodes as $node) {
+            $this->nodeQueue[$node->nid] = $node->nid;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function dequeue()
+    {
+        $this->bulkMarkForReindex($this->index, $this->nodeQueue);
+
+        $this->nodeQueue = [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function bulkDequeue($limit = null)
     {
         if (!$limit) {
             $limit = variable_get('ucms_search_cron_limit', UCMS_SEARCH_CRON_INDEX_LIMIT);
@@ -73,7 +108,7 @@ class NodeIndexer
             ->select('ucms_search_status', 's')
             ->fields('s', ['nid'])
             ->condition('s.needs_reindex', 1)
-            ->condition('s.index_key', $index)
+            ->condition('s.index_key', $this->index)
             ->range(0, $limit)
             ->execute()
             ->fetchCol()
@@ -86,29 +121,25 @@ class NodeIndexer
         }
         $count = count($nodes);
 
-        $this->bulkUpsert($index, $nodes, true, false);
+        $this->bulkUpsert($this->index, $nodes, true, false);
 
         $toBeDeleted = array_diff(array_keys($nodes), $nodeIdList);
         foreach ($toBeDeleted as $nid) {
-            $this->delete($index, $nid);
+            $this->delete($this->index, $nid);
         }
 
         return $count;
     }
 
     /**
-     * Mark all content for reindexing in an index.
-     *
-     * @param string $index
-     * @param int|int[] $nidList
-     *   List of node identifiers to reindex or delete
+     * {@inheritdoc}
      */
-    public function bulkMarkForReindex($index, $nidList = null)
+    public function bulkMarkForReindex($nidList = null)
     {
         $deleteQuery = $this
             ->db
             ->delete('ucms_search_status')
-            ->condition('index_key', $index)
+            ->condition('index_key', $this->index)
         ;
 
         if (null !== $nidList) {
@@ -122,10 +153,10 @@ class NodeIndexer
             ->fields('n', ['nid'])
         ;
 
-        $query->addExpression(':index', 'index_key', [':index' => $index]);
+        $query->addExpression(':index', 'index_key', [':index' => $this->index]);
         $query->addExpression(1, 'needs_reindex');
 
-        $this->moduleHandler->invokeAll('ucms_search_index_reindex', [$index, $query]);
+        $this->moduleHandler->invokeAll('ucms_search_index_reindex', [$this->index, $query]);
 
         if (null !== $nidList) {
             $query->condition('n.nid', $nidList);
@@ -140,12 +171,7 @@ class NodeIndexer
     }
 
     /**
-     * Extract textual data from content
-     *
-     * @param stdClass $node
-     * @param string $field_name
-     *
-     * @return string
+     * {@inheritdoc}
      */
     protected function nodeToFulltext($node, $field_name)
     {
@@ -157,12 +183,7 @@ class NodeIndexer
     }
 
     /**
-     * Extract term identifiers from field
-     *
-     * @param stdClass $node
-     * @param string $field_name
-     *
-     * @return int[]
+     * {@inheritdoc}
      */
     protected function nodeExtractTagIdList($node, $field_name)
     {
@@ -180,11 +201,7 @@ class NodeIndexer
     }
 
     /**
-     * Process all fields of the given node and return an elastic friendly array
-     *
-     * @param stdClass $node
-     *
-     * @return array
+     * {@inheritdoc}
      */
     protected function nodeProcessfield($node)
     {
@@ -218,17 +235,14 @@ class NodeIndexer
     }
 
     /**
-     * Remove a single node from index
-     *
-     * @param string $index
-     * @param int $nid
+     * {@inheritdoc}
      */
-    public function delete($index, $node)
+    public function delete($node)
     {
         $response = $this
             ->client
             ->delete([
-                'index' => $index,
+                'index' => $this->index,
                 'id'    => $node->nid,
                 'type'  => 'node',
             ])
@@ -242,18 +256,13 @@ class NodeIndexer
             ->db
             ->delete('ucms_search_status')
             ->condition('nid', $node->nid)
-            ->condition('index_key', $index)
+            ->condition('index_key', $this->index)
             ->execute()
         ;
     }
 
     /**
-     * Tell if the given node matches the given index.
-     *
-     * @param string $index
-     * @param stdClass $node
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function matches($index, $node)
     {
@@ -267,26 +276,9 @@ class NodeIndexer
     }
 
     /**
-     * Index or upsert given nodes using a bulk request
-     *
-     * Note that Elastic Search will be as fast if you choose to do an explicit
-     * upsert or attempt to index a document with an already existing identifier,
-     * reason why we actually choose to only send index operations, this way we
-     * don't have to check ourselves if the document exists in the index or not.
-     * Elastic Search index operation is actually an upsert operation.
-     *
-     * @param string $index
-     *   Index identifier
-     * @param stdClass[] $nodeList
-     *   Node object
-     * @param boolean $force
-     *   Internal boolean, skip match test, this should never be used
-     *   outside of this module
-     * @param boolean $refresh
-     *   Explicit refresh set to true for ElasticSearch, forcing the full shard
-     *   to be in sync for the next search
+     * {@inheritdoc}
      */
-    public function bulkUpsert($index, $nodeList, $force = false, $refresh = false)
+    public function bulkUpsert($nodeList, $force = false, $refresh = false)
     {
         if (empty($nodeList)) {
             return;
@@ -297,13 +289,13 @@ class NodeIndexer
 
         foreach ($nodeList as $key => $node) {
 
-            if (!$force && !$this->matches($index, $node)) {
+            if (!$force && !$this->matches($this->index, $node)) {
                 unset($nodeList[$key]);
             }
 
             $params['body'][] = [
                 'index' => [
-                    '_index'   => $index,
+                    '_index'   => $this->index,
                     '_id'      => $node->nid,
                     '_type'    => 'node',
                     // @todo Refresh could be global.
@@ -327,44 +319,24 @@ class NodeIndexer
             ->update('ucms_search_status')
             ->fields(['needs_reindex' => 0])
             ->condition('nid', $nidList)
-            ->condition('index_key', $index)
+            ->condition('index_key', $this->index)
             ->execute()
         ;
     }
 
     /**
-     * Index or upsert a single node
-     *
-     * Note that Elastic Search will be as fast if you choose to do an explicit
-     * upsert or attempt to index a document with an already existing identifier,
-     * reason why we actually choose to only send index operations, this way we
-     * don't have to check ourselves if the document exists in the index or not.
-     * Elastic Search index operation is actually an upsert operation.
-     *
-     * @param string $index
-     *   Index identifier
-     * @param stdClass $node
-     *   Node object
-     * @param boolean $force
-     *   Internal boolean, skip match test, this should never be used
-     *   outside of this module
-     * @param boolean $refresh
-     *   Explicit refresh set to true for ElasticSearch, forcing the full shard
-     *   to be in sync for the next search
-     *
-     * @return boolean
-     *   True if the index command has been sent or false if node was dropped
+     * {@inheritdoc}
      */
-    public function upsert($index, $node, $force = false, $refresh = false)
+    public function upsert($node, $force = false, $refresh = false)
     {
-        if (!$force && !$this->matches($index, $node)) {
+        if (!$force && !$this->matches($this->index, $node)) {
             return false;
         }
 
         $response = $this
             ->client
             ->index([
-                'index'   => $index,
+                'index'   => $this->index,
                 'id'      => $node->nid,
                 'type'    => 'node',
                 'refresh' => (bool)$refresh,
@@ -381,7 +353,7 @@ class NodeIndexer
             ->update('ucms_search_status')
             ->fields(['needs_reindex' => 0])
             ->condition('nid', $node->nid)
-            ->condition('index_key', $index)
+            ->condition('index_key', $this->index)
             ->execute()
         ;
 

@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use \Drupal\Core\Extension\ModuleHandlerInterface;
 
 use Elasticsearch\Client;
+use Drupal\Core\Entity\EntityManager;
 
 class IndexStorage
 {
@@ -42,9 +43,9 @@ class IndexStorage
     private $moduleHandler;
 
     /**
-     * @var NodeIndexer
+     * @var EntityManager
      */
-    private $nodeIndexer;
+    private $entityManager;
 
     /**
      * @var string[]
@@ -62,26 +63,56 @@ class IndexStorage
     private $cache;
 
     /**
+     * @var NodeIndexerChain
+     */
+    private $nodeIndexerChain;
+
+    /**
      * Default constructor
      *
      * @param Client $client
      * @param \DatabaseConnection $db
-     * @param NodeIndexer $nodeIndexer
      * @param \DrupalCacheInterface $cache
      * @param ModuleHandlerInterface $moduleHandler
      */
     public function __construct(
         Client $client,
         \DatabaseConnection $db,
-        NodeIndexer $nodeIndexer,
         CacheBackendInterface $cache,
+        EntityManager $entityManager,
         ModuleHandlerInterface $moduleHandler)
     {
         $this->client = $client;
         $this->db = $db;
         $this->cache = $cache;
-        $this->nodeIndexer = $nodeIndexer;
+        $this->entityManager = $entityManager;
         $this->moduleHandler = $moduleHandler;
+    }
+
+    /**
+     * Get node indexer for the given index
+     *
+     * @param string $index
+     *   If none is given, a passthru implementation that will work internally
+     *   on all indices at once will be given
+     *
+     * @return NodeIndexerInterface
+     */
+    public function indexer($index = null)
+    {
+        if (empty($this->nodeIndexerChain)) {
+            $list = [];
+            foreach ($this->keys() as $existing) {
+                $list[$existing] = new NodeIndexer($existing, $this->client, $this->db, $this->entityManager, $this->moduleHandler);
+            }
+            $this->nodeIndexerChain = new NodeIndexerChain($list);
+        }
+
+        if ($index) {
+            return $this->nodeIndexerChain->getIndexer($index);
+        }
+
+        return $this->nodeIndexerChain;
     }
 
     /**
@@ -97,7 +128,7 @@ class IndexStorage
      * @param boolean $force
      *   Force index to be refreshed
      */
-    public function definitionSave($index, $name, $param, $force = false)
+    public function save($index, $name, $param, $force = false)
     {
         $updated  = false;
         $existing = $this->load($index);
@@ -118,6 +149,8 @@ class IndexStorage
 
         $this->clearDefinitionCache();
         $this->moduleHandler->invokeAll(self::HOOK_DEF_SAVE, [$index, $param, $updated, !$existing]);
+
+        $this->nodeIndexerChain->addIndexer($index, new NodeIndexer($index, $this->client, $this->db, $this->entityManager, $this->moduleHandler));
 
         if ($updated) {
             $this->clear($index);
@@ -237,6 +270,8 @@ class IndexStorage
             ->execute()
         ;
 
+        $this->nodeIndexerChain->removeIndexer($index);
+
         $this->clearDefinitionCache();
 
         $this->moduleHandler->invokeAll(self::HOOK_DEF_DELETE, [$index]);
@@ -254,7 +289,7 @@ class IndexStorage
         $this->deleteInClient($index);
         $this->createInClient($index);
 
-        $this->nodeIndexer->bulkMarkForReindex($index);
+        $this->nodeIndexerChain->getIndexer($index)->bulkMarkForReindex();
     }
 
     /**
