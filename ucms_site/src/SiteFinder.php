@@ -56,6 +56,17 @@ class SiteFinder
     }
 
     /**
+     * Fix site instance
+     *
+     * @param Site $site
+     */
+    public function prepareInstance(Site $site)
+    {
+        $site->ts_created = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_created);
+        $site->ts_changed = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_changed);
+    }
+
+    /**
      * Find by hostname
      *
      * @param string $hostname
@@ -74,6 +85,10 @@ class SiteFinder
             )
             ->fetchObject('MakinaCorpus\\Ucms\\Site\\Site')
         ;
+
+        if ($site) {
+            $this->prepareInstance($site);
+        }
 
         if ($setAsContext) {
             if ($site) {
@@ -106,11 +121,55 @@ class SiteFinder
             ->fetchObject('MakinaCorpus\\Ucms\\Site\\Site')
         ;
 
+        if ($site) {
+            $this->prepareInstance($site);
+        }
+
         if (!$site) {
             throw new \InvalidArgumentException("Site does not exists");
         }
 
         return $site;
+    }
+
+    /**
+     * Load all sites from the given identifiers
+     *
+     * @param array $idList
+     *
+     * @return Site[]
+     */
+    public function loadAll($idList = [])
+    {
+        $ret = [];
+
+        if (empty($idList)) {
+            return $ret;
+        }
+
+        $sites = $this
+            ->db
+            ->select('ucms_site', 's')
+            ->fields('s')
+            ->condition('s.id', $idList)
+            ->execute()
+            ->fetchAll(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\Site')
+        ;
+
+        // Ensure order is the same
+        // FIXME: find a better way
+        $sort = [];
+        foreach ($sites as $site) {
+            $this->prepareInstance($site);
+            $sort[$site->id] = $site;
+        }
+        foreach ($idList as $id) {
+            if (isset($sort[$id])) {
+                $ret[$id] = $sort[$id];
+            }
+        }
+
+        return $ret;
     }
 
     /**

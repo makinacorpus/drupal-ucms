@@ -58,4 +58,14 @@ class Site
      * @var int
      */
     public $uid = 0;
+
+    /**
+     * @var \DateTime
+     */
+    public $ts_created;
+
+    /**
+     * @var \DateTime
+     */
+    public $ts_changed;
 }

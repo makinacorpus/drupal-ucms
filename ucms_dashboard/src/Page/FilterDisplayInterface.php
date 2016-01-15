@@ -16,8 +16,11 @@ interface FilterDisplayInterface
      *
      * If an empty value is returned, the filter won't be displayed
      *
+     * @param string[] $query
+     *   Current query
+     *
      * @return mixed
      *   drupal_render() friendly structure
      */
-    public function render();
+    public function build($query);
 }

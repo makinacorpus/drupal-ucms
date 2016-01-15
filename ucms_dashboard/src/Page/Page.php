@@ -53,7 +53,7 @@ class Page
 
     public function render()
     {
-        $query = $_GET;
+        $query = drupal_get_query_parameters();
 
         $this->datasource->init($query);
 
@@ -62,11 +62,15 @@ class Page
 
         $build = [
             '#theme'    => $this->getThemeFunctionName('ucms_dashboard_page_list'),
-            '#filters'  => $this->datasource->getFilters($query),
+            '#filters'  => [],
             '#display'  => $display,
             '#items'    => $this->datasource->getItems($query),
             '#pager'    => ['#theme' => $this->getThemeFunctionName('pager')],
         ];
+
+        foreach ($this->datasource->getFilters($query) as $index => $filter) {
+            $build['#filters'][$index] = $filter->build($query);
+        }
 
         if ($this->datasource->hasSearchForm()) {
             $build['#search'] = $this

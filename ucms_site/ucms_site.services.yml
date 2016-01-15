@@ -9,3 +9,7 @@ services:
   ucms_site_access:
     class: MakinaCorpus\Ucms\Site\SiteAccessService
     arguments: ["@database", "@entity.manager"]
+
+  ucms_site.admin.datasource:
+    class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
+    arguments: ["@database", "@ucms_site_finder"]

@@ -5,10 +5,11 @@
  */
 
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Dashboard\Page\Page;
 
 /**
  * Main site list page.
  */
 function ucms_site_dashboard_site_list() {
-  return [];
+  return (new Page(\Drupal::service('ucms_site.admin.datasource'), ['dashboard', 'site']))->render();
 }

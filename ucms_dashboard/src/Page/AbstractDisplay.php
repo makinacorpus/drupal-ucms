@@ -130,7 +130,12 @@ abstract class AbstractDisplay implements DisplayInterface
             $targetPath = current_path();
         }
 
-        foreach ($this->getSupportedModes() as $name => $title) {
+        $supportedMode = $this->getSupportedModes();
+        if (count($supportedMode) < 2) {
+            return [];
+        }
+
+        foreach ($supportedMode as $name => $title) {
             $attributes = [];
 
             if ($name === $this->getDefaultMode()) {

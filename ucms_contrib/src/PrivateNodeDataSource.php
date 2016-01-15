@@ -4,7 +4,8 @@ namespace MakinaCorpus\Ucms\Contrib;
 
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\FilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
 
 class PrivateNodeDataSource implements DatasourceInterface
@@ -26,9 +27,9 @@ class PrivateNodeDataSource implements DatasourceInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return TermFacet[]
      */
-    public function getFilters($query)
+    private function createTermFacets()
     {
         $ret = [];
 
@@ -74,12 +75,19 @@ class PrivateNodeDataSource implements DatasourceInterface
             ->setTitle(t("Status"))
         ;
 
+        return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters($query)
+    {
+        $ret = [];
+
         // Apply rendering stuff for it to work
-        foreach ($ret as $index => $facet) {
-            $ret[$index] = new FilterDisplay(
-                $facet->getTitle(),
-                ['#theme' => 'ucms_search_facet', '#facet' => $facet]
-            );
+        foreach ($this->search->getAggregations() as $facet) {
+            $ret[] = (new LinksFilterDisplay($facet->getField(), $facet->getTitle()))->setChoicesMap($facet->getFormattedChoices());
         }
 
         return $ret;
@@ -96,7 +104,10 @@ class PrivateNodeDataSource implements DatasourceInterface
     /**
      * {@inheritdoc}
      */
-    public function init($query) {}
+    public function init($query)
+    {
+        $this->createTermFacets();
+    }
 
     /**
      * {@inheritdoc}

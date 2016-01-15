@@ -74,6 +74,22 @@ function ucms_site_schema() {
         'not null'    => true,
         'default'     => 0,
       ],
+      'ts_created' => [
+        'decription'  => "Creation date",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => false,
+      ],
+      'ts_changed' => [
+        'decription'  => "Last updated time (state changed)",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => false,
+      ],
     ],
     'foreign keys' => [
       'uid' => [
