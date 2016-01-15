@@ -1,0 +1,8 @@
+services:
+
+  ucms_dashboard.context:
+    class: MakinaCorpus\Ucms\Dashboard\ContextPane
+
+  ucms.notification:
+    class: MakinaCorpus\Ucms\Dashboard\NotificationFacade
+    arguments: ["@service_container", "@module_handler"]

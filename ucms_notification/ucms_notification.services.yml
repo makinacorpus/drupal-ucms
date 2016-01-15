@@ -1,0 +1,13 @@
+services:
+
+  ucms_notification.default_message:
+    public: false
+    class: MakinaCorpus\APubSub\Notification\Formatter\RawTextFormatter
+    arguments: ['default_message']
+    tags: [{ name: apb.notification.formatter }]
+
+  ucms_notification.site_state_changed:
+    public: false
+    class: MakinaCorpus\Ucms\Notification\SiteStateChanged
+    arguments: ['site_state_changed', "@ucms_site_finder"]
+    tags: [{ name: apb.notification.formatter }]

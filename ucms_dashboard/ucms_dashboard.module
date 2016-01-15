@@ -64,11 +64,72 @@ function ucms_dashboard_admin_redirect() {
 }
 
 /**
+ * Implements hook_block_info().
+ */
+function ucms_dashboard_block_info() {
+  return [
+    'context' => [
+      'info'  => "Contextual pane",
+      'cache' => DRUPAL_NO_CACHE,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function ucms_dashboard_block_view($delta = '') {
+  switch ($delta) {
+
+    case 'context':
+      /* @var $context \MakinaCorpus\Ucms\Dashboard\ContextPane */
+      $context = \Drupal::service('ucms_dashboard.context');
+      if ($context->isEmpty()) {
+        if (module_exists('ucms_notification')) {
+          $context->add(notification_block_render($GLOBALS['user']));
+        } else {
+          $context->add(t("Hello"));
+        }
+      }
+      return [
+        'content' => [
+          '#theme' => 'ucms_dashboard_context',
+          '#items' => $context->getAll(),
+        ],
+      ];
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function ucms_dashboard_form_alter(&$form, &$form_state, &$form_id) {
+  if (path_is_admin(current_path()) && isset($form['actions'])) {
+    $form['#after_build'][] = 'ucms_dashboard_form_add_actions_to_context';
+  }
+}
+
+/**
+ * All form actions goes to context.
+ */
+function ucms_dashboard_form_add_actions_to_context($element) {
+  /* @var $context \MakinaCorpus\Ucms\Dashboard\ContextPane */
+  $context = \Drupal::service('ucms_dashboard.context');
+  // @todo Should add something that works with JS instead
+  $context->add($element['actions'], -1000);
+  return $element;
+}
+
+/**
  * Implements hook_theme().
  */
 function ucms_dashboard_theme() {
   return [
-    'ucms_dashbaord_page' => [
+    'ucms_dashboard_context' => [
+      'variables' => ['items' => []],
+      'template' => 'ucms_dashboard-context',
+    ],
+    'ucms_dashboard_page' => [
       'variables' => [],
       'template' => 'ucms_dashboard-page',
     ],

@@ -36,6 +36,13 @@ function ucms_site_schema() {
         'not null'    => true,
         'default'     => 0,
       ],
+      'type' => [
+        'description' => "Site type",
+        'type'        => 'varchar',
+        'length'      => 64,
+        'not null'    => false,
+        'default'     => null,
+      ],
       'theme' => [
         'description' => "Theme to use",
         'type'        => 'varchar',

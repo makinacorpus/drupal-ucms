@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Site\Page;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Ucms\Site\State;
 
 class SiteAdminDisplay extends AbstractDisplay
 {
@@ -53,6 +54,7 @@ class SiteAdminDisplay extends AbstractDisplay
 
             case 'table':
                 $rows   = [];
+                $states = State::getList();
 
                 // Preload users, we'll need it here
                 $accountMap = [];
@@ -65,10 +67,10 @@ class SiteAdminDisplay extends AbstractDisplay
                     $rows[] = [
                         check_plain($site->type),
                         check_plain($site->title),
-                        check_plain($site->state), // FIXMe
+                        check_plain($states[$site->state]),
                         format_interval($site->ts_created->getTimestamp()),
                         format_interval($site->ts_changed->getTimestamp()),
-                        isset($accountMap[$site]->uid) ? format_username($accountMap[$site]->uid) : '',
+                        isset($accountMap[$site]->uid) ? format_username($accountMap[$site->uid]) : '',
                     ];
                 }
 

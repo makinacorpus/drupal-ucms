@@ -62,6 +62,7 @@ class SiteFinder
      */
     public function prepareInstance(Site $site)
     {
+        $site->state = (int)$site->state;
         $site->ts_created = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_created);
         $site->ts_changed = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_changed);
     }
@@ -191,6 +192,9 @@ class SiteFinder
             'http_host',
             'relacement_of',
             'uid',
+            'type',
+            'ts_created',
+            'ts_changed',
         ];
 
         if (null === $fields) {
@@ -201,7 +205,20 @@ class SiteFinder
 
         $values = [];
         foreach ($fields as $field) {
-            $values[$field] = $site->{$field};
+            switch ($field) {
+
+                case 'ts_changed':
+                case 'ts_created':
+                    if (!$site->{$field} instanceof \DateTime) {
+                        $site->{$field} = new \DateTime();
+                    }
+                    $values[$field] = $site->{$field}->format('Y-m-d H:i:s');
+                    break;
+
+                default:
+                    $values[$field] = $site->{$field};
+                    break;
+            }
         }
 
         if ($site->id) {

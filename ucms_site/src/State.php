@@ -52,8 +52,8 @@ final class State
     static public function getList()
     {
         return [
+            self::REQUESTED => "Requested",
             self::REJECTED  => "Rejected",
-            self::REJECTED  => "Requested",
             self::PENDING   => "Creation",
             self::INIT      => "Initialization",
             self::OFF       => "Off",

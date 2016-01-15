@@ -25,6 +25,11 @@ class Site
     public $title;
 
     /**
+     * @var string
+     */
+    public $type = null;
+
+    /**
      * @var int
      */
     public $state = 0;

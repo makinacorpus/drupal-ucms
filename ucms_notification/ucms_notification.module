@@ -1,0 +1,9 @@
+<?php
+/**
+ * @file
+ * µCMS notifications module.
+ *
+ * This module has been separated from the rest in order to remain decoupled
+ * from the APubSub notification system, and deactivable.
+ */
+
