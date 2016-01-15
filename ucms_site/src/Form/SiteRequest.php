@@ -48,6 +48,8 @@ class SiteRequest extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
+        $form['#form_horizontal'] = true;
+
         $storage = &$form_state->getStorage();
 
         if (empty($storage['site'])) {
@@ -199,6 +201,54 @@ class SiteRequest extends FormBase
     {
         // @todo Form stuff
 
+        // WARNING I won't fetch the whole Drupal 8 API in the sf_dic module,
+        // this has to stop at some point, so I'll use only Drupal 7 API to
+        // handle themes, this will need porting.
+        $themes = list_themes();
+
+        $options = [];
+        foreach (variable_get('ucms_site_allowed_themes') as $theme) {
+
+            if (!isset($themes[$theme])) {
+                $this->logger('default')->alert(sprintf("Theme '%s' does not exist but is referenced into sites possible selection", $theme));
+                continue;
+            }
+            if (!$themes[$theme]->status) {
+                $this->logger('default')->alert(sprintf("Theme '%s' is not enabled but is referenced into sites possible selection", $theme));
+                continue;
+            }
+
+            if (isset($themes[$theme]) && file_exists($themes[$theme]->info['screenshot'])) {
+                $text = theme('image', [
+                    'path'        => $themes[$theme]->info['screenshot'],
+                    'alt'         => $this->t('Screenshot for !theme theme', ['!theme' => $themes[$theme]->info['name']]),
+                    'attributes'  => ['class' => ['screenshot']],
+                ]);
+            } else {
+                $text = $themes[$theme]->info['name'];
+            }
+
+            $options[$theme] = $text;
+        }
+
+        $form['theme'] = [
+            '#title'          => $this->t("Theme"),
+            '#type'           => 'radios',
+            '#options'        => $options,
+            '#default_value'  => $site->theme,
+            '#description'    => $this->t("This will be used for the whole site and cannot be changed once set")
+        ];
+
+        // Template site (which will be duplicated)
+        // Need to create the site cloning operation first
+        $form['template'] = [
+            '#title'          => $this->t("Template site"),
+            '#type'           => 'radios',
+            '#options'        => [$this->t("Not implemented yet")],
+            '#default_value'  => $site->template,
+            '#disabled'       => true,
+        ];
+
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'   => 'submit',
@@ -219,7 +269,12 @@ class SiteRequest extends FormBase
     public function submitStepABack(array $form, FormStateInterface $form_state)
     {
         $storage = &$form_state->getStorage();
-        // @todo Set values in form state
+
+        /** @var $site Site */
+        $site = $storage['site'];
+        $site->theme = $form_state->getValue('theme');
+        // $site->template = $form_state->getValue('template');
+
         $storage['step'] = 'a';
         $form_state->setRebuild(true);
     }
@@ -234,8 +289,12 @@ class SiteRequest extends FormBase
         /** @var $site Site */
         $site = $storage['site'];
         $site->state = 0;
+        $site->theme = $form_state->getValue('theme');
+        // $site->template = $form_state->getValue('template');
 
         ucms_site_finder()->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));
+
+        $form_state->setRedirect('admin/dashboard/site');
     }
 }

@@ -54,6 +54,19 @@ function ucms_site_schema() {
         'description' => 'Plain text describing the legacy sites this one replaces',
         'type'        => 'text',
       ],
+      'template_id' => [
+        'description' => "Site identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => false,
+      ],
+      'is_template' => [
+        'description' => "Is this site a template site",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
       'uid' => [
         'description' => "Account owner",
         'type'        => 'int',
@@ -66,6 +79,10 @@ function ucms_site_schema() {
       'uid' => [
         'table'   => 'users',
         'columns' => ['uid' => 'uid'],
+      ],
+      'template_id' => [
+        'table'   => 'ucms_site',
+        'columns' => ['template_id' => 'id'],
       ],
     ],
     'primary key' => ['id'],

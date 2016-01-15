@@ -32,7 +32,7 @@ class Site
     /**
      * @var string
      */
-    public $theme;
+    public $theme = null;
 
     /**
      * @var string
@@ -42,10 +42,20 @@ class Site
     /**
      * @var string
      */
-    public $relacement_of;
+    public $relacement_of = '';
 
     /**
      * @var int
      */
-    public $uid;
+    public $template = null;
+
+    /**
+     * @var int (but should be a boolean)
+     */
+    public $is_template = 0;
+
+    /**
+     * @var int
+     */
+    public $uid = 0;
 }
