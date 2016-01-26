@@ -18,9 +18,9 @@ class NodeActionProvider implements ActionProviderInterface
         if (node_access('update', $item)) {
             $ret[] = new Action(t("Edit"), 'node/' . $item->nid . '/edit', null, 'pencil', 0, true, true);
             if ($item->status) {
-                $ret[] = new Action(t("Publish"), 'node/' . $item->nid . '/publish', 'dialog', 'ok-circle', 0, false, true);
-            } else {
                 $ret[] = new Action(t("Unpublish"), 'node/' . $item->nid . '/unpublish', 'dialog', 'remove-circle', 0, false, true);
+            } else {
+                $ret[] = new Action(t("Publish"), 'node/' . $item->nid . '/publish', 'dialog', 'ok-circle', 0, false, true);
             }
             if (_node_revision_access($item)) {
                 $ret[] = new Action(t("Revisions"), 'node/' . $item->nid . '/revisions', null, 'th-list', 0, false);

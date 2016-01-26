@@ -59,7 +59,7 @@ final class Action
               case 'dialog':
                   $this->linkOptions = [
                     'attributes' => ['class' => ['use-ajax', 'minidialog']],
-                    'query' => drupal_get_destination() + ['minidialog' => 1],
+                    'query' => ['minidialog' => 1] + drupal_get_destination(),
                   ];
                   break;
             }

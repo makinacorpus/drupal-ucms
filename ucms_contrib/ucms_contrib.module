@@ -56,6 +56,40 @@ function ucms_contrib_menu() {
     'type'              => MENU_LOCAL_TASK,
   ];
 
+  // Node actions.
+  $items['node/%node/publish'] = [
+    'title'             => "Publish content",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodePublish', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['update', 1],
+    'type'              => MENU_LOCAL_TASK,
+  ];
+  $items['node/%node/unpublish'] = [
+    'title'             => "Unpublish content",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['update', 1],
+    'type'              => MENU_LOCAL_TASK,
+  ];
+  $items['node/%node/report'] = [
+    'title'             => "Flag as inappropriate",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeFlag', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['view', 1],
+    'type'              => MENU_LOCAL_TASK,
+  ];
+  $items['node/%node/unreport'] = [
+    'title'             => "Un-flag as innappropriate",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnflag', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['update', 1],
+    'type'              => MENU_LOCAL_TASK,
+  ];
+
   // Site configuration.
   $items['admin/structure/content'] = [
     'title'             => "Contribution user interface",
