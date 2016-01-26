@@ -76,14 +76,25 @@ function ucms_dashboard_block_info() {
 }
 
 /**
+ * Get current context pane.
+ *
+ * @return \MakinaCorpus\Ucms\Dashboard\Context\ContextPane
+ *
+ * @deprecated
+ *   Will be replaced by services one day.
+ */
+function ucms_dashboard_context_get() {
+  return \Drupal::service('ucms_dashboard.context');
+}
+
+/**
  * Implements hook_block_view().
  */
 function ucms_dashboard_block_view($delta = '') {
   switch ($delta) {
 
     case 'context':
-      /* @var $context \MakinaCorpus\Ucms\Dashboard\ContextPane */
-      $context = \Drupal::service('ucms_dashboard.context');
+      $context = ucms_dashboard_context_get();
       if ($context->isEmpty()) {
         if (module_exists('ucms_notification')) {
           $context->add(notification_block_render($GLOBALS['user']));
@@ -93,8 +104,12 @@ function ucms_dashboard_block_view($delta = '') {
       }
       return [
         'content' => [
-          '#theme' => 'ucms_dashboard_context',
-          '#items' => $context->getAll(),
+          '#theme'    => 'ucms_dashboard_context',
+          '#items'    => $context->getAll(),
+          '#attached' => [
+            'css' => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css'],
+            'js'  => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js'],
+          ],
         ],
       ];
   }
@@ -113,8 +128,7 @@ function ucms_dashboard_form_alter(&$form, &$form_state, &$form_id) {
  * All form actions goes to context.
  */
 function ucms_dashboard_form_add_actions_to_context($element) {
-  /* @var $context \MakinaCorpus\Ucms\Dashboard\ContextPane */
-  $context = \Drupal::service('ucms_dashboard.context');
+  $context = ucms_dashboard_context_get();
   // @todo Should add something that works with JS instead
   $context->add($element['actions'], -1000);
   return $element;

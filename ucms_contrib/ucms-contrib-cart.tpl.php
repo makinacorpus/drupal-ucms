@@ -1,8 +1,4 @@
 <div id="ucms-contrib-cart">
-  <a id="ucms-cart-toggle" href="#">
-    <span class="glyphicon glyphicon-chevron-right"></span>
-  </a>
-
   <div id="ucms-cart" class="container-fluid">
     <div class="col-md-12">
       <h2 class="element-invisible"><?php echo t("Your favorites"); ?></h2>

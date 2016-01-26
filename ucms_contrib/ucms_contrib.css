@@ -1,32 +1,7 @@
-/* Slide wrapper */
-#ucms-contrib-cart {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 220px;
-  height: 100%;
-  z-index: 10;
-}
-
-#ucms-cart-toggle {
-  position: absolute;
-  display: inline-block;
-  top: 50%;
-  margin-top: -1em;
-  right: 100%;
-  background: #333;
-  padding: 10px 0 10px 5px;
-  border-radius: 10px 0 0 10px;
-  font-size: 18px;
-}
-
 #ucms-cart {
   position: absolute;
   top: 0;
   bottom: 6em;
-  background: #333;
-  z-index: 2;
-  padding: 70px 0 0 0;
   width: 100%;
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Dashboard;
+namespace MakinaCorpus\Ucms\Dashboard\Context;
 
 class ContextPane
 {
@@ -11,12 +11,14 @@ class ContextPane
      *
      * @param mixed $value
      *   Anything that can be rendered
+     * @param string $tab
+     *   Tab identifier
      * @param int $priority
      *   Will determine order
      *
      * @return ContextPane
      */
-    public function add($value, $priority = 0)
+    public function add($value, $tab = null, $priority = 0)
     {
         if (!empty($value)) {
             $this->items[$priority][] = $value;

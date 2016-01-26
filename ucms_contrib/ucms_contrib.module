@@ -47,12 +47,7 @@ function ucms_contrib_menu() {
     'access arguments'  => ['access ucms content overview'],
     'file'              => 'ucms_contrib.pages.inc',
   ];
-  // @todo Use ucms_contrib_tab_list().
-  $items['admin/dashboard/content/text'] = [
-    'title'             => "Content",
-    'type'              => MENU_DEFAULT_LOCAL_TASK,
-  ];
-  $items['admin/dashboard/content/media'] = [
+  $items['admin/dashboard/media'] = [
     'title'             => "Media",
     'page callback'     => 'ucms_contrib_admin_content_page',
     'page arguments'    => ['media'],
@@ -94,7 +89,7 @@ function ucms_contrib_menu() {
  * Implements hook_menu_local_tasks_alter().
  */
 function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
-  if (preg_match('@^admin/dashboard/content.*$@', $root_path)) {
+  if (preg_match('@^admin/dashboard/(content|media).*$@', $root_path)) {
     $tab = arg(3);
     if (null === $tab) {
       $tab = 'text';
@@ -116,6 +111,17 @@ function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
           }
         }
       }
+    }
+  }
+
+  // @todo find a better place
+  if (user_access('use favorites')) {
+    $path = current_path();
+    if ('admin/dashboard/content' === $path ||
+        'admin/dashboard/media' === $path ||
+        ucms_layout_context_get()->isTemporary()
+    ){
+      ucms_dashboard_context_get()->add(ucms_contrib_favorite_render());
     }
   }
 }
@@ -159,34 +165,12 @@ function ucms_contrib_theme() {
 }
 
 /**
- * Implements hook_page_build().
- */
-function ucms_contrib_page_build(&$page) {
-  if (!path_is_admin(current_path()) && user_access('use favorites')) {
-    // @todo Maybe later, render this using AJAX?
-    $page['page_top']['ucms_cart'] = ucms_contrib_favorite_render();
-    _ucms_contrib_render_attach($page['page_top']['ucms_cart']);
-  }
-}
-
-/**
  * Implements hook_preprocess_page().
  */
 function ucms_contrib_preprocess_page(&$variables) {
   if (!path_is_admin(current_path()) && user_access('use favorites')) {
     $variables['title_prefix']['layout_edit'] = \Drupal::formBuilder()->getForm('MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm');
   }
-}
-
-/**
- * Append CSS and JS to #attached on selected element.
- */
-function _ucms_contrib_render_attach(&$build) {
-  $build['#attached']['library'][] = array('system', 'ui.droppable');
-  $build['#attached']['library'][] = array('system', 'ui.draggable');
-  $build['#attached']['library'][] = array('system', 'ui.sortable');
-  $build['#attached']['css'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css';
-  $build['#attached']['js'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js';
 }
 
 /**
@@ -309,6 +293,12 @@ function ucms_contrib_favorite_render($account = null) {
     '#display'  => $display->renderLinks(),
     '#items'    => $display->render($nodes),
   ];
+
+  $ret['#attached']['library'][] = ['system', 'ui.droppable'];
+  $ret['#attached']['library'][] = ['system', 'ui.draggable'];
+  $ret['#attached']['library'][] = ['system', 'ui.sortable'];
+  $ret['#attached']['css'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css';
+  $ret['#attached']['js'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js';
 
   return $ret;
 }

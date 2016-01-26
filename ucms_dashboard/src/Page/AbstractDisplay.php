@@ -208,7 +208,10 @@ abstract class AbstractDisplay implements DisplayInterface
      * @param string[]
      *   Keys are internal names, values are human readable names
      */
-    abstract protected function getSupportedModes();
+    protected function getSupportedModes()
+    {
+        return ['default' => 'default'];
+    }
 
     /**
      * Render content

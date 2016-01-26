@@ -42,19 +42,6 @@
       // Hide forms
       $('.ucms-contrib-result, .ucms-cart-item').find('form[id^=ucms-contrib-favorite-]').css('display', 'none');
 
-      // Toggle cart
-      var $ucmsCart = $('#ucms-contrib-cart');
-      var initial_width = $ucmsCart.css('width');
-      var $ucmsToggle = $('#ucms-cart-toggle');
-      $ucmsToggle.click(function () {
-        var shown = !$ucmsCart.css('margin-right') || $ucmsCart.css('margin-right') == '0px';
-        $ucmsCart.animate({
-          marginRight: shown ? '-' + initial_width : '0px'
-        }, function () {
-          $ucmsToggle.find('span').toggleClass('glyphicon-chevron-left glyphicon-chevron-right');
-        });
-      });
-
       // First drop zone, cart, accepting only admin items
       $('#ucms-cart', context).droppable($.extend({}, Drupal.ucmsDroppableDefaults, {
         accept: "[data-nid].ucms-contrib-result",
