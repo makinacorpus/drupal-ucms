@@ -140,7 +140,8 @@ function ucms_dashboard_form_add_actions_to_context($element) {
 function ucms_dashboard_theme() {
   return [
     'ucms_dashboard_actions' => [
-      'variables' => ['item' => null, 'actions' => []],
+      'variables' => ['item' => null, 'actions' => [], 'mode' => 'link'],
+      'template'  => 'ucms_dashboard-actions',
     ],
     'ucms_dashboard_context' => [
       'variables' => ['items' => []],
@@ -189,18 +190,39 @@ function template_preprocess_ucms_dashboard_page_list(&$variables) {
 }
 
 /**
- * Implements theme_HOOK().
+ * Render item actions.
+ *
+ * @param array $variables
  */
-function theme_ucms_dashboard_actions($variables) {
-  $links = [];
+function template_preprocess_ucms_dashboard_actions(&$variables) {
   foreach ($variables['actions'] as $key => $action) {
     /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action */
-    $links[$key] = $action->getLinkOptions();
-    $links[$key]['title'] = $action->getTitle();
-    $links[$key]['href'] = $action->getURI();
-    if (empty($links[$key]['html'])) {
-      $links[$key]['html'] = false; // Avoid some PHP warnings.
+    if ($action->isPrimary()) {
+      $target = 'primary';
+    } else {
+      $target = 'secondary';
     }
+    $item = [];
+    $item['options']  = $action->getLinkOptions();
+    $item['options'] += ['attributes' => []];
+    if (isset($item['options']['attributes']['class'])) {
+      $item['options']['attributes']['class'] = implode(' ', $item['options']['attributes']['class']);
+    } else {
+      $item['options']['attributes']['class'] = '';
+    }
+    $item['title']    = $action->getTitle();
+    $item['href']     = $action->getURI();
+    $item['priority'] = $action->getPriority();
+    $item['icon']     = $action->getIcon();
+    $variables[$target][$key] = $item;
   }
-  return theme('links__ucms_contrib_actions', ['links' => $links]);
+  foreach (['primary', 'secondary'] as $target) {
+    usort($variables[$target], function ($a, $b) {
+      return $a['priority'] - $b['priority'];
+    });
+  }
+  if ($variables['mode']) {
+    $variables['theme_hook_suggestions'][] = 'ucms_dashboard_actions__' . $variables['mode'];
+  }
 }
+

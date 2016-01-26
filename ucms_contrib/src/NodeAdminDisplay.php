@@ -64,7 +64,7 @@ class NodeAdminDisplay extends AbstractDisplay
                         $node->status ? t("published") : t("unpublished"),
                         format_date($node->created),
                         isset($accountMap[$node->uid]) ? format_username($accountMap[$node->uid]) : format_username($anonymous),
-                        theme('ucms_dashboard_actions__table', ['actions' => $this->getActions($node)]),
+                        theme('ucms_dashboard_actions', ['actions' => $this->getActions($node), 'mode' => 'icon']),
                     ];
                 }
 

@@ -18,6 +18,8 @@ final class Action
 
     private $icon;
 
+    private $primary = true;
+
     /**
      * Default constructor
      *
@@ -34,26 +36,40 @@ final class Action
      *   this, sorry)
      * @param int $priority
      *   Global ordering priority for this action
+     * @param boolean $primary
+     *   If set to false, this action might be displayed into a second level
+     *   actions dropdown instead of being directly accessible
+     * @param boolean $addCurrentDestination
+     *   If set to true, this code will automatically add the current page as
+     *   a query destination for the action
      */
-    public function __construct($title, $uri, $options = [], $icon = null, $priority = 0)
+    public function __construct($title, $uri, $options = [], $icon = null, $priority = 0, $primary = true, $addCurrentDestination = false)
     {
         $this->title = $title;
         $this->uri = $uri;
-        $this->icon = (string)$icon;
-        $this->priority = (int)$priority;
+        $this->icon = $icon;
+        $this->priority = $priority;
+        $this->primary = $primary;
 
         if (is_array($options)) {
-          $this->linkOptions = $options;
+            $this->linkOptions = $options;
         } else {
-          switch ($options) {
+            switch ($options) {
 
-            case 'dialog':
-              $this->linkOptions = [
-                'attributes' => ['class' => ['use-ajax', 'minidialog']],
-                'query' => drupal_get_destination() + ['minidialog' => 1],
-              ];
-              break;
-          }
+              case 'dialog':
+                  $this->linkOptions = [
+                    'attributes' => ['class' => ['use-ajax', 'minidialog']],
+                    'query' => drupal_get_destination() + ['minidialog' => 1],
+                  ];
+                  break;
+            }
+        }
+
+        if ($addCurrentDestination && !isset($this->linkOptions['query']['destination'])) {
+            if (!isset($this->linkOptions['query'])) {
+                $this->linkOptions['query'] = [];
+            }
+            $this->linkOptions['query'] += drupal_get_destination();
         }
     }
 
@@ -80,5 +96,10 @@ final class Action
     public function getPriority()
     {
         return $this->priority;
+    }
+
+    public function isPrimary()
+    {
+        return $this->primary;
     }
 }
