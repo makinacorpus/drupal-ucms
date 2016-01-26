@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Page;
 
+use MakinaCorpus\Ucms\Dashboard\Action\Action;
+
 /**
  * Use this class to interface with the main dashboard page layout
  *
@@ -55,6 +57,16 @@ interface DatasourceInterface
      * @return mixed[]
      */
     public function getItems($query);
+
+    /**
+     * Get item actions
+     *
+     * @param mixed $item
+     *   Anything you returned in getItems()
+     *
+     * @return Action[]
+     */
+    public function getItemActions($item);
 
     /**
      * Does this connector implements a full text search form

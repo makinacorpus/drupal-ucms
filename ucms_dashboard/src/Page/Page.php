@@ -4,6 +4,8 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
 
 use Drupal\Core\Form\FormBuilderInterface;
 
+use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
+
 class Page
 {
     /**
@@ -24,6 +26,11 @@ class Page
     private $formBuilder;
 
     /**
+     * @var ActionRegistry
+     */
+    private $actionRegistry;
+
+    /**
      * Default constructor
      *
      * @param DatasourceInterface $datasource
@@ -37,6 +44,8 @@ class Page
         // @todo
         //  - this MUST be injected
         $this->formBuilder = \Drupal::formBuilder();
+        // @todo this too
+        $this->actionRegistry = \Drupal::service('ucms_dashboard.action_provider_registry');
     }
 
     /**
@@ -59,6 +68,10 @@ class Page
 
         $display = $this->datasource->getDisplay();
         $display->prepareFromQuery($query);
+
+        if ($display instanceof AbstractDisplay) {
+            $display->setActionRegistry($this->actionRegistry);
+        }
 
         $build = [
             '#theme'    => $this->getThemeFunctionName('ucms_dashboard_page_list'),

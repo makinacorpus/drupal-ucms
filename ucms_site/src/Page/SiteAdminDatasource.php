@@ -2,13 +2,19 @@
 
 namespace MakinaCorpus\Ucms\Site\Page;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
+use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Site\SiteAccessService;
 use MakinaCorpus\Ucms\Site\SiteFinder;
-use MakinaCorpus\Ucms\Site\State;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 class SiteAdminDatasource implements DatasourceInterface
 {
+    use StringTranslationTrait;
+
     /**
      * @var \DatabaseConnection
      */
@@ -17,7 +23,12 @@ class SiteAdminDatasource implements DatasourceInterface
     /**
      * @var SiteFinder
      */
-    private $siteFinder;
+    private $finder;
+
+    /**
+     * @var SiteAccessService
+     */
+    private $access;
 
     /**
      * @var SiteAdminDisplay
@@ -26,12 +37,16 @@ class SiteAdminDatasource implements DatasourceInterface
 
     /**
      * Default constructor
-     * @param SiteFinder $siteFinder
+     *
+     * @param \DatabaseConnection $db
+     * @param SiteFinder $finder
+     * @param SiteAccessService $access
      */
-    public function __construct(\DatabaseConnection $db, SiteFinder $siteFinder)
+    public function __construct(\DatabaseConnection $db, SiteFinder $finder, SiteAccessService $access)
     {
         $this->db = $db;
-        $this->siteFinder = $siteFinder;
+        $this->finder = $finder;
+        $this->access = $access;
         $this->display = new SiteAdminDisplay();
     }
 
@@ -41,7 +56,7 @@ class SiteAdminDatasource implements DatasourceInterface
     public function getFilters($query)
     {
         return [
-            (new LinksFilterDisplay('state', "State"))->setChoicesMap(State::getList()),
+            (new LinksFilterDisplay('state', "State"))->setChoicesMap(SiteState::getList()),
         ];
     }
 
@@ -65,14 +80,12 @@ class SiteAdminDatasource implements DatasourceInterface
     {
         $limit = 24;
 
-        $q = $this
-            ->db
-            ->select('ucms_site', 's')
-        ;
-
+        $q = $this->db->select('ucms_site', 's');
         $q->leftJoin('users', 'u', "u.uid = s.uid");
 
-        // @todo Handle filters
+        if (isset($query['state'])) {
+            $q->condition('s.state', $query['state']);
+        }
 
         $idList = $q
             ->fields('s', ['id'])
@@ -84,7 +97,35 @@ class SiteAdminDatasource implements DatasourceInterface
             ->fetchCol()
         ;
 
-        return $this->siteFinder->loadAll($idList);
+        return $this->finder->loadAll($idList);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemActions($item)
+    {
+        /* @var $item \MakinaCorpus\Ucms\Site\Site */
+        $ret = [];
+
+        if ($this->access->userCanView($item)) {
+            $ret[] = new Action($this->t("Details"), 'admin/dashboard/site/' . $item->id);
+        }
+        if ($this->access->userCanManage($item)) {
+            $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit');
+        }
+        if ($this->access->userCanManageWebmasters($item)) {
+            $ret[] = new Action($this->t("Manage webmasters"), 'admin/dashboard/site/' . $item->id . '/webmasters');
+        }
+        if ($this->access->userCanDelete($item)) {
+            $ret[] = new Action($this->t("Delete"), 'admin/dashboard/site/' . $item->id . '/delete');
+        }
+
+        // FIXME: Missing state-transition site state transformation
+        //   missing 'change to state ...'
+        //   missing 'approve change state to ...'
+
+        return $ret;
     }
 
     /**
@@ -102,4 +143,4 @@ class SiteAdminDatasource implements DatasourceInterface
     {
         return 's';
     }
-}
+ }

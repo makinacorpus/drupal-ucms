@@ -266,7 +266,7 @@ class NodeIndexer implements NodeIndexerInterface
      */
     public function matches($index, $node)
     {
-        foreach ($this->moduleHandler->implementsHook(self::HOOK_NODE_INDEX) as $module) {
+        foreach ($this->moduleHandler->getImplementations(self::HOOK_NODE_INDEX) as $module) {
             if ($this->moduleHandler->invoke($module, self::HOOK_NODE_INDEX, [$index, $node])) {
                 return true;
             }

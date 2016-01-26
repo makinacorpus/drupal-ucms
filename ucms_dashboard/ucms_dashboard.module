@@ -125,6 +125,9 @@ function ucms_dashboard_form_add_actions_to_context($element) {
  */
 function ucms_dashboard_theme() {
   return [
+    'ucms_dashboard_actions' => [
+      'variables' => ['item' => null, 'actions' => []],
+    ],
     'ucms_dashboard_context' => [
       'variables' => ['items' => []],
       'template' => 'ucms_dashboard-context',
@@ -171,3 +174,19 @@ function template_preprocess_ucms_dashboard_page_list(&$variables) {
   $variables['displayLinks']  = $display->renderLinks();
 }
 
+/**
+ * Implements theme_HOOK().
+ */
+function theme_ucms_dashboard_actions($variables) {
+  $links = [];
+  foreach ($variables['actions'] as $key => $action) {
+    /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action */
+    $links[$key] = $action->getLinkOptions();
+    $links[$key]['title'] = $action->getTitle();
+    $links[$key]['href'] = $action->getURI();
+    if (empty($links[$key]['html'])) {
+      $links[$key]['html'] = false; // Avoid some PHP warnings.
+    }
+  }
+  return theme('links__ucms_contrib_actions', ['links' => $links]);
+}

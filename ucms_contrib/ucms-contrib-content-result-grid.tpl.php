@@ -4,5 +4,8 @@
       $view = node_view($node, $view_mode);
       echo render($view);
     ?>
+    <?php if (isset($actions)): ?>
+      <?php echo render($actions); ?>
+    <?php endif; ?>
   </div>
 <?php endforeach; ?>

@@ -312,4 +312,3 @@ function ucms_contrib_favorite_render($account = null) {
 
   return $ret;
 }
-

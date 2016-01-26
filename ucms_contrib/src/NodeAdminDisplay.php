@@ -64,6 +64,7 @@ class NodeAdminDisplay extends AbstractDisplay
                         $node->status ? t("published") : t("unpublished"),
                         format_date($node->created),
                         isset($accountMap[$node->uid]) ? format_username($accountMap[$node->uid]) : format_username($anonymous),
+                        theme('ucms_dashboard_actions__table', ['actions' => $this->getActions($node)]),
                     ];
                 }
 
@@ -71,7 +72,7 @@ class NodeAdminDisplay extends AbstractDisplay
                     '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
                     '#suffix' => '</div>', // FIXME should be in theme
                     '#theme'  => 'table',
-                    '#header' => [t("Type"), t("Title"), t("Status"), t("Date"), t("Owner")],
+                    '#header' => [t("Type"), t("Title"), t("Status"), t("Date"), t("Owner"), ''],
                     '#rows'   => $rows,
                 ];
         }

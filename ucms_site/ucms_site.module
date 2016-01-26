@@ -8,7 +8,7 @@
  */
 
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\State;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Implements hook_menu().
@@ -200,7 +200,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
   if (!$site) {
     return; // No site in context, nothing to check for.
   }
-  if (State::ON == $site->state) {
+  if (SiteState::ON == $site->state) {
     return; // Normal runtime operation, nothing to do.
   }
 
@@ -212,7 +212,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     // exist for the outside, so redirect to something that exists (the main
     // site). If we have nothing to redirect to, at least this code will
     // fallback on site being offline.
-    if (State::OFF != $site->state) {
+    if (SiteState::OFF != $site->state) {
       if ($uri = variable_get('ucms_site.redirect.uri')) {
         drupal_goto($uri, [], variable_get('ucms_site.redirect.http_code', 307));
       }
@@ -453,11 +453,11 @@ function ucms_site_node_grants($account, $op) {
   switch ($op) {
 
     case Access::OP_VIEW:
-      $states = [State::ARCHIVE, State::INIT, State::OFF, State::ON];
+      $states = [SiteState::ARCHIVE, SiteState::INIT, SiteState::OFF, SiteState::ON];
       break;
 
     default:
-      $states = [State::INIT, State::OFF, State::ON];
+      $states = [SiteState::INIT, SiteState::OFF, SiteState::ON];
       break;
   }
 
@@ -482,7 +482,7 @@ function ucms_site_node_grants($account, $op) {
 
     // Note that if the site is public, we should also add the associated
     // public realm to everyone, no matter their user access rights.
-    if (State::ON == $site->state) {
+    if (SiteState::ON == $site->state) {
       $ret[Access::REALM_PUBLIC] = [Access::GID_DEFAULT];
     }
 

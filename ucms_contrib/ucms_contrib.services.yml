@@ -4,3 +4,8 @@ services:
   ucms_contrib.cart:
     class: MakinaCorpus\Ucms\Contrib\CartStorage
     arguments: ["@database"]
+
+  ucms_contrib.node_action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
+    tags: [{name: ucms_dashboard.action_provider}]

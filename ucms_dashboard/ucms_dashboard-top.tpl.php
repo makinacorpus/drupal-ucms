@@ -19,6 +19,12 @@
           </a>
         </li>
         <li>
+          <a href="<?php echo url('admin/dashboard/media'); ?>">
+            <span aria-hidden="true" class="glyphicon glyphicon-picture"></span>
+            <?php echo t("Media"); ?>
+          </a>
+        </li>
+        <li>
           <a href="<?php echo url('admin/dashboard/label'); ?>">
             <span aria-hidden="true" class="glyphicon glyphicon-tags"></span>
             <?php echo t("Labels"); ?>

@@ -5,12 +5,13 @@ namespace MakinaCorpus\Ucms\Site\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\Ucms\Dashboard\NotificationFacade;
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteFinder;
-use MakinaCorpus\Ucms\Site\State;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Request site creation form
@@ -24,7 +25,7 @@ class SiteRequest extends FormBase
     {
         return new self(
             $container->get('ucms_site_finder'),
-            $container->get('ucms.notification')
+            $container->get('event_dispatcher')
         );
     }
 
@@ -34,14 +35,14 @@ class SiteRequest extends FormBase
     protected $siteFinder;
 
     /**
-     * @var NotificationFacade
+     * @var EventDispatcherInterface
      */
-    protected $notification;
+    protected $dispatcher;
 
-    public function __construct(SiteFinder $siteFinder, NotificationFacade $notification)
+    public function __construct(SiteFinder $siteFinder, EventDispatcherInterface $dispatcher)
     {
         $this->siteFinder = $siteFinder;
-        $this->notification = $notification;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -281,7 +282,7 @@ class SiteRequest extends FormBase
 
         /** @var $site Site */
         $site = $storage['site'];
-        $site->state = State::REQUESTED;
+        $site->state = SiteState::REQUESTED;
         $site->theme = $form_state->getValue('theme');
         $site->ts_created = $site->ts_changed = new \DateTime();
         // $site->template = $form_state->getValue('template');
@@ -299,14 +300,14 @@ class SiteRequest extends FormBase
 
         /** @var $site Site */
         $site = $storage['site'];
-        $site->state = State::REQUESTED;
+        $site->state = SiteState::REQUESTED;
         $site->theme = $form_state->getValue('theme');
         // $site->template = $form_state->getValue('template');
 
         ucms_site_finder()->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));
 
-        $this->notification->siteStateChanged($site, State::REQUESTED, null, $this->currentUser());
+        $this->dispatcher->dispatch('site:request', new ResourceEvent('site', $site->id, $this->currentUser()->uid));
 
         $form_state->setRedirect('admin/dashboard/site');
     }

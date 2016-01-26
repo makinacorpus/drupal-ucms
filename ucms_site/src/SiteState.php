@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Site;
 /**
  * State enumeration.
  */
-final class State
+final class SiteState
 {
     /**
      * Site is a pending request.

@@ -2,6 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Page;
 
+use MakinaCorpus\Ucms\Dashboard\Action\Action;
+use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
+
 abstract class AbstractDisplay implements DisplayInterface
 {
     /**
@@ -20,6 +23,11 @@ abstract class AbstractDisplay implements DisplayInterface
     private $defaultMode;
 
     /**
+     * @var ActionRegistry
+     */
+    private $actionRegistry;
+
+    /**
      * Get this list arbitrary type identifier, used to hint theme hooks
      *
      * @return string
@@ -27,6 +35,16 @@ abstract class AbstractDisplay implements DisplayInterface
     public function getType()
     {
         return 'default';
+    }
+
+    /**
+     * Set action registry
+     *
+     * @param ActionRegistry $actionRegistry
+     */
+    public function setActionRegistry(ActionRegistry $actionRegistry)
+    {
+        $this->actionRegistry = $actionRegistry;
     }
 
     /**
@@ -114,6 +132,22 @@ abstract class AbstractDisplay implements DisplayInterface
     }
 
     /**
+     * Get actions for item
+     *
+     * @param mixed $item
+     *
+     * @return Action[]
+     */
+    protected function getActions($item)
+    {
+        if (!$this->actionRegistry) {
+            return [];
+        }
+
+        return $this->actionRegistry->getActions($item);
+    }
+
+    /**
      * Render view links
      *
      * @param string $targetPath
@@ -153,6 +187,10 @@ abstract class AbstractDisplay implements DisplayInterface
                 'title'       => t("Display as @mode", ['@mode' => $title]),
                 'query'       => $query,
                 'attributes'  => $attributes,
+                // Forces the l() function to skip the 'active' class by adding empty
+                // attributes array and settings a stupid language onto the link (this
+                // is Drupal 7 specific and exploit a Drupal weird behavior)
+                'language'    => (object)['language' => LANGUAGE_NONE],
             ];
         }
 

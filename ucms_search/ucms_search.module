@@ -175,11 +175,15 @@ function ucms_search_form_node_form_alter(&$form, &$form_state) {
  * Implements hook_node_insert().
  */
 function ucms_search_node_insert($node) {
-  // @see ucms_search_form_node_form_alter().
-  if (isset($node->ucms_index_now) && $node->ucms_index_now) {
-    ucms_search_index()->indexer()->upsert($node, false, true);
-  } else {
-    ucms_search_index()->indexer()->enqueue([$node]);
+  try {
+    // @see ucms_search_form_node_form_alter().
+    if (isset($node->ucms_index_now) && $node->ucms_index_now) {
+      ucms_search_index()->indexer()->upsert($node, false, true);
+    } else {
+      ucms_search_index()->indexer()->enqueue([$node]);
+    }
+  } catch (\Exception $e) {
+    watchdog_exception(__FUNCTION__, $e);
   }
 }
 
@@ -187,11 +191,15 @@ function ucms_search_node_insert($node) {
  * Implements hook_node_update().
  */
 function ucms_search_node_update($node) {
-  // @see ucms_search_form_node_form_alter().
-  if (isset($node->ucms_index_now) && $node->ucms_index_now) {
-    ucms_search_index()->indexer()->upsert($node, false, true);
-  } else {
-    ucms_search_index()->indexer()->enqueue([$node]);
+  try {
+    // @see ucms_search_form_node_form_alter().
+    if (isset($node->ucms_index_now) && $node->ucms_index_now) {
+      ucms_search_index()->indexer()->upsert($node, false, true);
+    } else {
+      ucms_search_index()->indexer()->enqueue([$node]);
+    }
+  } catch (\Exception $e) {
+    watchdog_exception(__FUNCTION__, $e);
   }
 }
 
@@ -199,7 +207,11 @@ function ucms_search_node_update($node) {
  * Implements hook_node_delete().
  */
 function ucms_search_node_delete($node) {
-  ucms_search_index()->indexer()->delete($node);
+  try {
+    ucms_search_index()->indexer()->delete($node);
+  } catch (\Exception $e) {
+    watchdog_exception(__FUNCTION__, $e);
+  }
 }
 
 /**
