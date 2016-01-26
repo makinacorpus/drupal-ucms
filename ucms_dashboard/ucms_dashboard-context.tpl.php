@@ -5,7 +5,7 @@
   <div class="inner">
     <?php foreach ($items as $item): ?>
       <?php echo render($item); ?>
-      <hr/>
+      <!-- <hr/> -->
     <?php endforeach; ?>
   </div>
 </div>
