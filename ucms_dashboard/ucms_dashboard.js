@@ -19,7 +19,7 @@
         });
       });
       // Initial toggle if needed
-      if ($.cookie('contextual-pane-hidden')) {
+      if ($.cookie('contextual-pane-hidden') && $.cookie('contextual-pane-hidden') !== 'false') {
         $contextualPane.css('margin-right', '-' + initial_width);
         $toggle.find('span').toggleClass('glyphicon-chevron-left glyphicon-chevron-right');
       }
