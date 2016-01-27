@@ -150,6 +150,7 @@ class IndexStorage
         $this->clearDefinitionCache();
         $this->moduleHandler->invokeAll(self::HOOK_DEF_SAVE, [$index, $param, $updated, !$existing]);
 
+        $this->indexer();
         $this->nodeIndexerChain->addIndexer($index, new NodeIndexer($index, $this->client, $this->db, $this->entityManager, $this->moduleHandler));
 
         if ($updated) {
