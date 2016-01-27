@@ -4,6 +4,22 @@
  */
 
 /**
+ * Use contextual pane permission.
+ */
+const UCMS_DASHBOARD_PERM_USE_CONTEXT_PANE = 'use contextual pane';
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_dashboard_permission() {
+  return [
+    UCMS_DASHBOARD_PERM_USE_CONTEXT_PANE => [
+      'title' => t("Use contextual pane"),
+    ],
+  ];
+}
+
+/**
  * Implements hook_menu().
  */
 function ucms_dashboard_menu() {
@@ -64,18 +80,6 @@ function ucms_dashboard_admin_redirect() {
 }
 
 /**
- * Implements hook_block_info().
- */
-function ucms_dashboard_block_info() {
-  return [
-    'context' => [
-      'info'  => "Contextual pane",
-      'cache' => DRUPAL_NO_CACHE,
-    ],
-  ];
-}
-
-/**
  * Get current context pane.
  *
  * @return \MakinaCorpus\Ucms\Dashboard\Context\ContextPane
@@ -85,34 +89,6 @@ function ucms_dashboard_block_info() {
  */
 function ucms_dashboard_context_get() {
   return \Drupal::service('ucms_dashboard.context');
-}
-
-/**
- * Implements hook_block_view().
- */
-function ucms_dashboard_block_view($delta = '') {
-  switch ($delta) {
-
-    case 'context':
-      $context = ucms_dashboard_context_get();
-      if ($context->isEmpty()) {
-        if (module_exists('ucms_notification')) {
-          $context->add(notification_block_render($GLOBALS['user']));
-        } else {
-          $context->add(t("Hello"));
-        }
-      }
-      return [
-        'content' => [
-          '#theme'    => 'ucms_dashboard_context',
-          '#items'    => $context->getAll(),
-          '#attached' => [
-            'css' => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css'],
-            'js'  => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js'],
-          ],
-        ],
-      ];
-  }
 }
 
 /**
@@ -171,12 +147,32 @@ function ucms_dashboard_theme() {
  * Implements hook_page_build().
  */
 function ucms_dashboard_page_build(&$page) {
-  if (!path_is_admin(current_path())) {
-    return;
+
+  if (user_access(UCMS_DASHBOARD_PERM_USE_CONTEXT_PANE)) {
+
+    $context = ucms_dashboard_context_get();
+
+    if ($context->isEmpty()) {
+      if (module_exists('ucms_notification')) {
+        $context->add(notification_block_render($GLOBALS['user']));
+      }
+    }
+
+    $page['page_top']['ucms_context_pane'] = [
+      '#theme'    => 'ucms_dashboard_context',
+      '#items'    => $context->getAll(),
+      '#attached' => [
+        'css' => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css'],
+        'js'  => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js'],
+      ],
+    ];
   }
-  $page['page_top']['ucms_dashboard_top'] = [
-    '#theme' => 'ucms_dashboard_top',
-  ];
+
+  if (path_is_admin(current_path())) {
+    $page['page_top']['ucms_dashboard_top'] = [
+      '#theme' => 'ucms_dashboard_top',
+    ];
+  }
 }
 
 /**

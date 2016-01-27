@@ -121,11 +121,11 @@ body [data-region].drop-highlighted-over {
   box-shadow: inset 0 0 5px 10px #018fe2;
 }
 
-.block-ucms-layout.ucms-layout-empty-block, .ucms-layout-empty-region {
+.ucms-layout-empty-region {
   display: none;
 }
 
-.ucms-layout-empty-block-hover, .ucms-layout-empty-region-hover {
+.ucms-layout-empty-region-hover {
   height: 100px;
 }
 

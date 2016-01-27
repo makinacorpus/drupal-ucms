@@ -337,50 +337,10 @@ function ucms_layout_theme() {
 }
 
 /**
- * Implements hook_block_list_alter().
+ * Implements hook_page_build().
  */
-function ucms_layout_block_list_alter(&$blocks) {
-  global $theme_key;
-
-  $enabled = ucms_layout_theme_region_list($theme_key);
-
-  foreach (array_keys(system_region_list($theme_key)) as $region) {
-
-    if (empty($enabled[$region])) {
-      continue; // Region is disabled by config.
-    }
-
-    if (empty($blocks)) { // If empty max() throws a PHP warning.
-      $next_key = 666;
-    } else {
-      $next_key = max(array_keys($blocks)) + 1;
-    }
-
-    $blocks[$next_key] = (object) [
-      'bid' => $next_key,
-      'cache' => 0,
-      'custom' => 0,
-      'delta' => $theme_key . ':' . $region,
-      'module' => 'ucms_layout',
-      'pages' => '',
-      'region' => $region,
-      'status' => 1,
-      'title' => '',
-      'visibility' => 0,
-      'weight' => 0,
-    ];
-  }
-}
-
-/**
- * Implements hook_block_info().
- */
-function ucms_layout_block_view($delta = '') {
+function ucms_layout_page_build(&$page) {
   global $theme;
-
-  if (!strpos($delta, ':')) {
-    return; // Invalid delta.
-  }
 
   $context  = ucms_layout_context_get();
   $layout   = $context->getCurrentLayout();
@@ -390,68 +350,46 @@ function ucms_layout_block_view($delta = '') {
     return; // No layout on page.
   }
 
-  list($btheme, $region) = explode(':', $delta, 2);
-  if (!$btheme) {
-    return; // No theme set.
-  }
-  if (!$region) {
-    return; // No region set.
-  }
-  if ($btheme !== $theme) {
-    return; // Wrong theme.
-  }
+  foreach (array_keys(system_region_list($theme)) as $regionId) {
 
-  $items  = [];
-  $region = $layout->getRegion($region);
+    $items  = [];
+    $region = $layout->getRegion($regionId);
 
-  // Preload all nodes for performance.
-  $nodeIdList = $region->getAllNodeIds();
+    // Preload all nodes for performance.
+    $nodeIdList = $region->getAllNodeIds();
 
-  if ($nodeIdList) {
-    $map = node_load_multiple($nodeIdList);
+    if ($nodeIdList) {
+      $map = node_load_multiple($nodeIdList);
 
-    $map = array_filter($map, function ($node) {
-      return node_access('view', $node);
-    });
+      $map = array_filter($map, function ($node) {
+        return node_access('view', $node);
+      });
 
-    if (empty($map) && !$editMode) {
-      return;
-    }
+      if (empty($map) && !$editMode) {
+        return;
+      }
 
-    /* @var $item Item */
-    foreach ($region as $item) {
-      $nid = $item->getNodeId();
-      if (isset($map[$nid])) {
-        $items[] = [
-          '#theme'      => 'ucms_layout_item',
-          '#nid'        => $item->getNodeId(),
-          '#node'       => $map[$nid],
-          '#view_mode'  => $item->getViewMode(),
-        ];
+      /* @var $item Item */
+      foreach ($region as $item) {
+        $nid = $item->getNodeId();
+        if (isset($map[$nid])) {
+          $items[] = [
+            '#theme'      => 'ucms_layout_item',
+            '#nid'        => $item->getNodeId(),
+            '#node'       => $map[$nid],
+            '#view_mode'  => $item->getViewMode(),
+          ];
+        }
       }
     }
-  } else if (!$editMode) {
-    return;
-  }
 
-  if (empty($items)) {
-    // Trick block.module so that it's not "empty"
-    $items = ['#markup' => ''];
-  }
+    if ($editMode && empty($items)) {
+      // Trick block.module so that it's not "empty"
+      $items = ['#markup' => ''];
+    }
 
-  return ['content' => $items];
-}
-
-/**
- * Implements hook_preprocess_block().
- */
-function ucms_layout_preprocess_block(&$vars) {
-  // Add attributes and classes to block
-  $block = $vars['block'];
-  if ($block->module == 'ucms_layout') {
-    $vars['attributes_array']['data-region'] = $block->region;
-    if (!empty($vars['elements']['#type'])) {
-      $vars['classes_array'][] = 'ucms-layout-empty-block';
+    if ($items) {
+      $page[$regionId] = $items;
     }
   }
 }
@@ -461,14 +399,11 @@ function ucms_layout_preprocess_block(&$vars) {
  */
 function ucms_layout_preprocess_region(&$vars) {
   // Lookup for all blocks, if these are only ucms empty block, add class
-  $empty = TRUE;
-  foreach (element_children($vars['elements']) as $delta) {
-    $block = $vars['elements'][$delta];
-    if (!isset($block['#block']) || $block['#block']->module != 'ucms_layout' || empty($block['#type'])) {
-      $empty = FALSE;
-    }
+  $vars['attributes_array']['data-region'] = $vars['region'];
+  if (!empty($vars['elements']['#type'])) {
+    $vars['classes_array'][] = 'ucms-layout-empty-block';
   }
-  if ($empty) {
+  if (!element_children($vars['elements'])) {
     $vars['classes_array'][] = 'ucms-layout-empty-region';
   }
 }
