@@ -226,18 +226,21 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
  */
 function ucms_dashboard_library() {
   // Contrib.
-  $libraries['ucms_dashboard'] = array(
-    'title' => 'UCMS - Dashboard',
-    'version' => '0.1',
-    'js' => array(
-      drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js' => array(),
-    ),
-    'css' => array(
-      drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css' => array(
-        'type' => 'file',
+  $libraries['ucms_dashboard'] = [
+    'title'        => 'UCMS - Dashboard',
+    'version'      => '0.1',
+    'js'           => [
+      drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js' => [],
+    ],
+    'css'          => [
+      drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css' => [
+        'type'  => 'file',
         'media' => 'screen',
-      ),
-    ),
-  );
+      ],
+    ],
+    'dependencies' => [
+      ['system', 'jquery.cookie'],
+    ],
+  ];
   return $libraries;
 }
