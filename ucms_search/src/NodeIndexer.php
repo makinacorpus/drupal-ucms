@@ -89,6 +89,10 @@ class NodeIndexer implements NodeIndexerInterface
      */
     public function dequeue()
     {
+        if (empty($this->nodeQueue)) {
+            return;
+        }
+
         $this->bulkMarkForReindex($this->index, $this->nodeQueue);
 
         $this->nodeQueue = [];
