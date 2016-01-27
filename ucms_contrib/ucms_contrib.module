@@ -331,8 +331,28 @@ function ucms_contrib_favorite_render($account = null) {
   $ret['#attached']['library'][] = ['system', 'ui.droppable'];
   $ret['#attached']['library'][] = ['system', 'ui.draggable'];
   $ret['#attached']['library'][] = ['system', 'ui.sortable'];
-  $ret['#attached']['css'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css';
-  $ret['#attached']['js'][] = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js';
+  $ret['#attached']['library'][] = ['ucms_contrib', 'ucms_contrib'];
 
   return $ret;
+}
+
+/**
+ * Implements hook_library().
+ */
+function ucms_contrib_library() {
+  // Contrib.
+  $libraries['ucms_contrib'] = array(
+    'title' => 'UCMS - Contrib',
+    'version' => '0.1',
+    'js' => array(
+      drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js' => array(),
+    ),
+    'css' => array(
+      drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
+    ),
+  );
+  return $libraries;
 }
