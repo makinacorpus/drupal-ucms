@@ -30,6 +30,7 @@ class SiteAdminDisplay extends AbstractDisplay
             ['data' => t("Created"), 'field' => 's.ts_created'],
             ['data' => t("Last update"), 'field' => 's.ts_changed', 'sort' => 'desc'],
             ['data' => t("Owner"), 'field' => 'u.name'],
+            ['data' => ''],
         ];
     }
 
@@ -71,6 +72,7 @@ class SiteAdminDisplay extends AbstractDisplay
                         format_interval($site->ts_created->getTimestamp()),
                         format_interval($site->ts_changed->getTimestamp()),
                         isset($accountMap[$site]->uid) ? format_username($accountMap[$site->uid]) : '',
+                        theme('ucms_dashboard_actions', ['actions' => $this->getActions($site), 'mode' => 'icon']),
                     ];
                 }
 
