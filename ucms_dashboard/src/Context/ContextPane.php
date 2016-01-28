@@ -3,19 +3,36 @@
 namespace MakinaCorpus\Ucms\Dashboard\Context;
 
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ContextPane
 {
+    /**
+     * @var mixed[]
+     */
     private $items = [];
 
+    /**
+     * @var EventDispatcherInterface
+     */
     private $dispatcher;
 
-    public function __construct(EventDispatcherInterface $dispatcher) {
+    /**
+     * Default constructor
+     *
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(EventDispatcherInterface $dispatcher)
+    {
         $this->dispatcher = $dispatcher;
     }
 
-    public function init() {
+    /**
+     * Lazy initialise the object
+     */
+    public function init()
+    {
         $event = new ContextPaneEvent($this);
         $this->dispatcher->dispatch('ucms_dashboard.context_init', $event);
     }

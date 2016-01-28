@@ -72,7 +72,7 @@ class DrupalStorage implements StorageInterface
                 $layout = (new Layout())
                     ->setId($row->id)
                     ->setSiteId($row->site_id)
-                    ->setAccountId($row->uid)
+                    ->setNodeId($row->nid)
                     ->setAdminTitle($row->title_admin)
                     ->setTitle($row->title)
                 ;
@@ -168,11 +168,11 @@ class DrupalStorage implements StorageInterface
             $row->id          = $layout->getId();
             $row->title_admin = $layout->getAdminTitle();
             $row->title       = $layout->getTitle();
-            $row->site_id     = 0; // FIXME
-            $row->uid         = $layout->getAccountId();
+            $row->site_id     = $layout->getSiteId();
+            $row->nid         = $layout->getNodeId();
 
-            if (empty($row->uid)) {
-                $row->uid = $GLOBALS['user']->uid;
+            if (empty($row->nid)) {
+                $row->nid = $GLOBALS['user']->nid;
             }
 
             if ($layout->getId()) {
@@ -181,7 +181,6 @@ class DrupalStorage implements StorageInterface
                 drupal_write_record('ucms_layout', $row);
             }
 
-            $layout->getAccountId($row->uid);
             $layout->setId((int)$row->id);
 
             cache_clear_all('layout:' . $layout->getId(), 'cache_layout');

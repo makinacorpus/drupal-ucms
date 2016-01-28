@@ -8,7 +8,6 @@ use Symfony\Component\EventDispatcher\Event;
 
 class ContextPaneEvent extends Event
 {
-
     private $contextPane;
 
     public function __construct(ContextPane $contextPane)

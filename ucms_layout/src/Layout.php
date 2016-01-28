@@ -17,7 +17,7 @@ class Layout
     /**
      * @var int
      */
-    private $uid;
+    private $nid;
 
     /**
      * @var string
@@ -92,13 +92,13 @@ class Layout
     /**
      * Set owner account identifier
      *
-     * @param int $accountId
+     * @param int $nodeId
      *
      * @return Layout
      */
-    public function setAccountId($accountId)
+    public function setNodeId($nodeId)
     {
-        $this->uid = $accountId;
+        $this->nid = $nodeId;
 
         return $this;
     }
@@ -108,9 +108,9 @@ class Layout
      *
      * @return int
      */
-    public function getAccountId()
+    public function getNodeId()
     {
-        return $this->uid;
+        return $this->nid;
     }
 
     /**

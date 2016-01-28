@@ -216,7 +216,7 @@ function ucms_site_schema_alter(&$schema) {
 }
 
 /**
- * Adds missing database table columns.
+ * Adds missing database table columns and constraints
  */
 function ucms_site_install_schema_fix() {
 

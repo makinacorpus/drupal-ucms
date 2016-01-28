@@ -4,108 +4,110 @@
  * Implements hook_schema().
  */
 function ucms_layout_schema() {
-  $schema = array();
+  $schema = [];
 
-  $schema['ucms_layout'] = array(
+  $schema['ucms_layout'] = [
     'description' => 'Layout instances',
-    'fields' => array(
-      'id' => array(
-        'description' => "Layout identifier", 
-        'type'        => 'serial', 
-        'unsigned'    => true, 
+    'fields' => [
+      'id' => [
+        'description' => "Layout identifier",
+        'type'        => 'serial',
+        'unsigned'    => true,
         'not null'    => true,
-      ),
-      'title_admin' => array(
-        'description' => 'Administrative title', 
-        'type'        => 'varchar', 
+      ],
+      'title_admin' => [
+        'description' => 'Administrative title',
+        'type'        => 'varchar',
         'length'      => 255,
-        'not null'    => true, 
+        'not null'    => true,
         'default'     => '',
-      ),
-      'title' => array(
-        'description' => 'Displayed title', 
-        'type'        => 'varchar', 
+      ],
+      'title' => [
+        'description' => 'Displayed title',
+        'type'        => 'varchar',
         'length'      => 255,
-        'not null'    => true, 
+        'not null'    => true,
         'default'     => '',
-      ),
-      'site_id' => array(
+      ],
+      'site_id' => [
         'description' => 'Site identifier',
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
-      ),
-      'uid' => array(
-        'description' => "Account owner",
+      ],
+      'nid' => [
+        'description' => 'Node identifier this layout is attached to',
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
-        'default'     => 0,
-      ),
-    ),
-    'foreign keys' => array(
-      'site_id' => array(
-        'table'   => 'ucms_site', 
-        'columns' => array('site_id' => 'id'),
-      ),
-      'uid' => array(
-        'table'   => 'users', 
-        'columns' => array('uid' => 'uid'),
-      ),
-    ),
-    'primary key' => array('id'),
-  );
+      ],
+    ],
+    'unique keys' => [
+      'site_id_nid_key' => ['site_id', 'nid'],
+    ],
+    'foreign keys' => [
+      'site_id' => [
+        'table'   => 'ucms_site',
+        'columns' => ['site_id' => 'id'],
+      ],
+      'nid' => [
+        'table'   => 'node',
+        'columns' => ['nid' => 'nid'],
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
 
-  $schema['ucms_layout_data'] = array(
+  $schema['ucms_layout_data'] = [
     'description' => 'Layout instances data',
-    'fields' => array(
-      'layout_id' => array(
-        'description' => "Layout identifier", 
+    'fields' => [
+      'layout_id' => [
+        'description' => "Layout identifier",
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
-      ),
-      'region' => array(
-        'description' => 'Region', 
+      ],
+      'region' => [
+        'description' => 'Region',
         'type'        => 'varchar',
         'length'      => 64,
         'not null'    => true,
-      ),
-      'nid' => array(
+      ],
+      'nid' => [
         'description' => 'Node identifier',
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
-      ),
-      'weight' => array(
+      ],
+      'weight' => [
         'description' => "Weight in region",
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
         'default'     => 0,
-      ),
-      'view_mode' => array(
+      ],
+      'view_mode' => [
         'description' => "Node view mode",
         'type'        => 'varchar',
         'length'      => 64,
         'not null'    => true,
         'default'     => 'teaser',
-      ),
-    ),
-    'foreign keys' => array(
-      'layout_id' => array(
-        'table'   => 'ucms_layout', 
-        'columns' => array('layout_id' => 'id'),
-      ),
-      'nid' => array(
-        'table'   => 'node', 
-        'columns' => array('nid' => 'nid'),
-      ),
-    ),
-    'indexes' => array(
-      'ucms_layout_sort_idx' => array('layout_id', 'region', 'weight'),
-    ),
-  );
+      ],
+    ],
+    'foreign keys' => [
+      'layout_id' => [
+        'table'   => 'ucms_layout',
+        'columns' => ['layout_id' => 'id'],
+      ],
+      'nid' => [
+        'table'   => 'node',
+        'columns' => ['nid' => 'nid'],
+      ],
+    ],
+    'indexes' => [
+      'ucms_layout_sort_idx' => ['layout_id', 'region', 'weight'],
+    ],
+  ];
 
   $schema['cache_layout'] = drupal_get_schema_unprocessed('system', 'cache');
   $schema['cache_layout']['description'] = 'Cache table for the Field module to store already built field information.';
@@ -114,16 +116,51 @@ function ucms_layout_schema() {
 }
 
 /**
+ * Adds missing database table columns and constraints.
+ */
+function ucms_layout_install_schema_fix() {
+  // Add a few constraints.
+  // Hopefully, this syntax should work on both PostgreSQL and MySQL although
+  // this is pure coincidence, this is great for us.
+  $constraints = [
+    "ALTER TABLE {ucms_layout} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    "ALTER TABLE {ucms_layout} ADD CONSTRAINT FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
+    "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT FOREIGN KEY (layout_id) REFERENCES {ucms_layout} (id) ON DELETE CASCADE",
+    "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
+  ];
+  foreach ($constraints as $statement) {
+    db_query($statement);
+  }
+}
+
+/**
  * Implements hook_install().
+ */
+function ucms_layout_install() {
+  ucms_layout_install_schema_fix();
+}
+
+/**
+ * Create the {cache_layout} table.
  */
 function ucms_layout_update_7001() {
   if (!db_table_exists('cache_layout')) {
-    db_create_table(
-      'cache_layout',
-      drupal_get_schema_unprocessed(
-        'ucms_layout',
-        'cache_layout'
-      )
-    );
+    db_create_table('cache_layout', drupal_get_schema_unprocessed('ucms_layout', 'cache_layout'));
   }
+}
+
+/**
+ * Refactor the schema (sorry about this one).
+ */
+function ucms_layout_update_7002() {
+
+  db_drop_table('ucms_layout_data');
+  db_drop_table('ucms_layout');
+
+  cache_clear_all('*', 'cache_layout', true);
+
+  db_create_table('ucms_layout', drupal_get_schema_unprocessed('ucms_layout', 'ucms_layout'));
+  db_create_table('ucms_layout_data', drupal_get_schema_unprocessed('ucms_layout', 'ucms_layout_data'));
+
+  ucms_layout_install_schema_fix();
 }

@@ -29,52 +29,6 @@ use MakinaCorpus\Ucms\Layout\Layout;
 function ucms_layout_menu() {
   $items = [];
 
-  // This is what the site is made for.
-  $items['layout/%ucms_layout_temporary'] = [
-    'title callback'    => 'ucms_layout_title',
-    'title arguments'   => [1],
-    'page callback'     => 'ucms_layout_blank',
-    'page arguments'    => [1],
-    'access callback'   => 'ucms_layout_access',
-    'access arguments'  => ['view', 1],
-    'type'              => MENU_CALLBACK,
-  ];
-
-  // Update and delete operations.
-  $items['layout/%ucms_layout/edit'] = [
-    'title'             => "Edit page",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Form\LayoutEditForm', 1],
-    'access callback'   => 'ucms_layout_access',
-    'access arguments'  => ['update', 1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['layout/%ucms_layout/delete'] = [
-    'title callback'    => 'ucms_layout_title',
-    'title arguments'   => [1],
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Form\LayoutDeleteForm', 1],
-    'access callback'   => 'ucms_layout_access',
-    'access arguments'  => ['delete', 1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-
-  // Administration section.
-  $items['admin/layout'] = [
-    'title'             => "Page building",
-    'page callback'     => 'ucms_layout_admin_index',
-    'access arguments'  => ['access ucms content overview'],
-    'file'              => 'ucms_layout.pages.inc',
-    'type'              => MENU_NORMAL_ITEM,
-  ];
-  $items['admin/layout/add'] = [
-    'title'             => 'Add page',
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Form\LayoutAddForm'],
-    'access arguments'  => ['create layout'],
-    'type'              => MENU_LOCAL_ACTION,
-  ];
-
   // Structure related configuration for administrator.
   $items['admin/structure/layout'] = [
     'title'             => "Layout management",
@@ -174,141 +128,17 @@ function ucms_layout_theme_region_list($theme) {
 }
 
 /**
- * Implements hook_admin_paths().
- */
-function ucms_layout_admin_paths() {
-  return [
-    'layout/*/*' => true,
-  ];
-}
-
-/**
- * Implements hook_permission().
- */
-function ucms_layout_permission() {
-  return [
-    'create layout' => [
-      'title' => t("Create a layout"),
-    ],
-    'update own layout' => [
-      'title' => t("Update own layout"),
-    ],
-    'delete own layout' => [
-      'title' => t("Delete own layout"),
-    ],
-    'update any layout' => [
-      'title' => t("Update any layout"),
-    ],
-    'delete any layout' => [
-      'title' => t("Delete any layout"),
-    ],
-  ];
-}
-
-/**
- * Layout access.
- *
- * @param string $op
- *   May be 'view', 'update' or 'delete'.
- * @param int|Layout $id
- *   Layout object or identifier.
- * @param stdClass $acount
- *   The account to check.
- *
- * @return boolean
- */
-function ucms_layout_access($op, $layout, $account = null) {
-
-  if (!$account) {
-    $account = $GLOBALS['user'];
-  }
-
-  if (!$layout instanceof Layout) {
-    $layout = ucms_layout_load($layout);
-    if (!$layout) { // Is not a layout.
-      return false;
-    }
-  }
-
-  switch ($op) {
-
-    case 'view':
-      return user_access('access content', $account);
-
-    case 'update':
-      if (user_access('update any layout', $account)) {
-        return true;
-      }
-      if (user_access('update own layout') && $account->uid == $layout->getId()) {
-        return true;
-      }
-      return false;;
-
-    case 'delete':
-      if (user_access('delete any layout', $account)) {
-        return true;
-      }
-      if (user_access('delete own layout') && $account->uid == $layout->getId()) {
-        return true;
-      }
-      return false;;
-
-    default:
-      return false;
-  }
-}
-
-/**
- * Menu helper: load layout instance.
- */
-function ucms_layout_load($id) {
-  return ucms_layout_context_get()->getStorage()->load($id);
-}
-
-/**
  * Menu helper: load layout instance in potential temporary context.
  */
 function ucms_layout_temporary_load($id) {
-
-  $token      = null;
-  $context    = ucms_layout_context_get();
-
-  if (isset($_GET['edit']) && drupal_valid_token($_GET['edit'])) {
-    $token = $_GET['edit'];
-  } else if ('POST' === $_SERVER['REQUEST_METHOD'] && isset($_POST['token']) && drupal_valid_token($_POST['token'])) {
-    $token = $_POST['token'];
-  }
-
-  if ($token) {
-    $context->setToken($token);
-  }
-
-  if ($layout = $context->getStorage()->load($id)) {
-    $context->setCurrentLayout($layout);
-    if ($token) {
-      drupal_add_js(['ucmsLayout' => [
-        'editToken' => $token,
-        'layoutId' => $layout->getId(),
-      ]], 'setting');
+  $context = ucms_layout_context_get();
+  if ($context->isTemporary()) {
+    $layout = $context->getCurrentLayout();
+    if ($layout instanceof Layout) {
+      return $layout;
     }
-    return $layout;
-
-  } else {
-    // Wrong! Temporary but no context.
-    $context->setToken(null);
   }
-
-  return false;
-}
-
-/**
- * Menu title callback.
- */
-function ucms_layout_title($layout) {
-  if ($layout instanceof Layout) {
-    return $layout->getTitle();
-  }
-  return t("Layout");
+  return false; // Strict false because null passes, phoque.
 }
 
 /**
@@ -337,6 +167,35 @@ function ucms_layout_theme() {
 }
 
 /**
+ * Implements hook_init().
+ */
+function ucms_layout_init() {
+  // We don't have any choice but loading it this moment since a few other
+  // modules might need to check whether the current context is temporary
+  // or not, so do it at init.
+  // @todo
+  //   Later on, fix this.
+  if (!path_is_admin(current_path()) &&
+      !arg(2) &&
+      ($node = menu_get_object()) && !empty($node->layout_id)
+  ){
+    $context = ucms_layout_context_get();
+
+    if (isset($_GET['edit']) && drupal_valid_token($_GET['edit'])) {
+      $context->setToken($_GET['edit']);
+    } else if ('POST' === $_SERVER['REQUEST_METHOD'] && isset($_POST['token']) && drupal_valid_token($_POST['token'])) {
+      $context->setToken($_POST['token']);
+    }
+
+    if ($layout = $context->getStorage()->load($node->layout_id)) {
+      $context->setCurrentLayout($layout);
+    } else {
+      $context->setToken(null);
+    }
+  }
+}
+
+/**
  * Implements hook_page_build().
  */
 function ucms_layout_page_build(&$page) {
@@ -350,7 +209,14 @@ function ucms_layout_page_build(&$page) {
     return; // No layout on page.
   }
 
-  foreach (array_keys(system_region_list($theme)) as $regionId) {
+  if ($editMode) {
+    drupal_add_js(['ucmsLayout' => [
+      'editToken' => $context->getToken(),
+      'layoutId' => $layout->getId()
+    ]], 'setting');
+  }
+
+  foreach (ucms_layout_theme_region_list($theme) as $regionId) {
 
     $items  = [];
     $region = $layout->getRegion($regionId);
@@ -409,13 +275,6 @@ function ucms_layout_preprocess_region(&$vars) {
 }
 
 /**
- * Blank page.
- */
-function ucms_layout_blank($layout) {
-  return [];
-}
-
-/**
  * Implements template_preprocess_HOOK().
  */
 function template_preprocess_ucms_layout_item(&$variables) {
@@ -426,17 +285,3 @@ function template_preprocess_ucms_layout_item(&$variables) {
   }
 }
 
-/**
- * Implements hook_custom_theme().
- */
-function ucms_layout_custom_theme() {
-  $patterns = [
-    'admin/ucms/layout/*/add',
-    'admin/ucms/layout/*/remove',
-    'admin/ucms/layout/*/move',
-  ];
-  if (drupal_match_path(current_path(), implode("\n", $patterns))) {
-    // Use front-end theme for node_view on ajax calls.
-    return variable_get('theme_default');
-  }
-}

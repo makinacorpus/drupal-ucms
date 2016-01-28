@@ -211,22 +211,13 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
  * Implements hook_library().
  */
 function ucms_dashboard_library() {
-  // Contrib.
-  $libraries['ucms_dashboard'] = [
-    'title'        => 'UCMS - Dashboard',
-    'version'      => '0.1',
-    'js'           => [
-      drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js' => [],
-    ],
-    'css'          => [
-      drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css' => [
-        'type'  => 'file',
-        'media' => 'screen',
-      ],
-    ],
-    'dependencies' => [
-      ['system', 'jquery.cookie'],
+  return [
+    'ucms_dashboard' => [
+      'title'        => 'UCMS - Dashboard',
+      'version'      => '0.1',
+      'js'           => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js' => [],],
+      'css'          => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css' => ['type'  => 'file', 'media' => 'screen']],
+      'dependencies' => [['system', 'jquery.cookie']],
     ],
   ];
-  return $libraries;
 }
