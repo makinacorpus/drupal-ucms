@@ -91,24 +91,6 @@ function ucms_dashboard_context_get() {
   return \Drupal::service('ucms_dashboard.context');
 }
 
-/**
- * Implements hook_form_alter().
- */
-function ucms_dashboard_form_alter(&$form, &$form_state, &$form_id) {
-  if (path_is_admin(current_path()) && isset($form['actions'])) {
-    $form['#after_build'][] = 'ucms_dashboard_form_add_actions_to_context';
-  }
-}
-
-/**
- * All form actions goes to context.
- */
-function ucms_dashboard_form_add_actions_to_context($element) {
-  $context = ucms_dashboard_context_get();
-  // @todo Should add something that works with JS instead
-  $context->add($element['actions'], -1000);
-  return $element;
-}
 
 /**
  * Implements hook_theme().

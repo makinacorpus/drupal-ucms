@@ -25,4 +25,36 @@
       }
     }
   };
+
+  /**
+   * Behavior for handling contextual pane actions
+   * @type {{attach: Drupal.behaviors.ucmsDashboardPane.attach}}
+   */
+  Drupal.behaviors.ucmsDashboardPaneActions = {
+    attach: function (context) {
+      if ($(context).find('#page').length) {
+        var $contextualPane = $('#contextual-pane');
+        // Get all buttons (link or input) in form-actions
+        var $buttons = $('#page .form-actions', context).find('input[type=submit], button, a.btn');
+        // Iterate in reverse as they are floated right
+        $($buttons.get().reverse()).each(function () {
+          var $originalButton = $(this);
+          var $clonedButton = $originalButton.clone().click(function () {
+            // Simulate click on original button
+            if (!$(this).is('a')) {
+              $originalButton.click();
+            }
+          });
+          $contextualPane.find('.inner').append($clonedButton)
+        });
+      }
+    },
+    detach: function (context) {
+      // Destroy all previous buttons
+      if ($(context).find('#page').length) {
+        var $contextualPane = $('#contextual-pane');
+        $contextualPane.find('.inner button').remove()
+      }
+    }
+  };
 }(jQuery));
