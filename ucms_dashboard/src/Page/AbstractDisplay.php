@@ -195,7 +195,7 @@ abstract class AbstractDisplay implements DisplayInterface
         }
 
         return [
-            '#theme' => 'links__ucms_contrib_dislay_switch',
+            '#theme' => 'links__ucms_contrib_display_switch',
             '#links' => $links,
         ];
     }
