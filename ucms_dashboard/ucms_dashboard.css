@@ -7,6 +7,9 @@
   height: 100%;
   z-index: 10;
 }
+.navbar {
+  z-index: 20;
+}
 
 #contextual-pane .inner {
   position: absolute;
@@ -16,7 +19,7 @@
   left: 0;
   background: #333;
   z-index: 2;
-  padding: 70px 0 0 0;
+  padding: 60px 0 0 0;
   width: 100%;
 }
 
@@ -24,7 +27,6 @@
   position: absolute;
   display: inline-block;
   top: 50%;
-  margin-top: -1em;
   right: 100%;
   background: #333;
   padding: 10px 0 10px 5px;

@@ -16,7 +16,7 @@
         <span class="sr-only"><?php echo t("More actions"); ?></span>
         <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu dropdown-menu-right">
         <?php foreach ($secondary as $link): ?>
           <li>
             <a href="<?php echo url($link['href'], $link['options']); ?>"<?php echo drupal_attributes($link['options']['attributes']); ?>>
