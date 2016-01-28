@@ -40,21 +40,15 @@ function ucms_contrib_menu() {
   $items = [];
 
   // Main administration pages.
-  $items['admin/dashboard/content'] = [
-    'title'             => "Content management",
-    'page callback'     => 'ucms_contrib_admin_content_page',
-    'page arguments'    => ['text'],
-    'access arguments'  => ['access ucms content overview'],
-    'file'              => 'ucms_contrib.pages.inc',
-  ];
-  $items['admin/dashboard/media'] = [
-    'title'             => "Media",
-    'page callback'     => 'ucms_contrib_admin_content_page',
-    'page arguments'    => ['media'],
-    'access arguments'  => ['access ucms content overview'],
-    'file'              => 'ucms_contrib.pages.inc',
-    'type'              => MENU_LOCAL_TASK,
-  ];
+  foreach (ucms_contrib_tab_list() as $key => $label) {
+    $items['admin/dashboard/' . $key] = [
+      'title'            => $label,
+      'page callback'    => 'ucms_contrib_admin_content_page',
+      'page arguments'   => [$key],
+      'access arguments' => ['access ucms content overview'],
+      'file'             => 'ucms_contrib.pages.inc',
+    ];
+  }
 
   // Node actions.
   $items['node/%node/publish'] = [
@@ -123,31 +117,6 @@ function ucms_contrib_menu() {
  * Implements hook_menu_local_tasks_alter().
  */
 function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
-  if (preg_match('@^admin/dashboard/(content|media).*$@', $root_path)) {
-    $tab = arg(3);
-    if (null === $tab) {
-      $tab = 'text';
-    }
-    if ($tab) {
-      // Adds node/add links on the content pages.
-      if ($types = variable_get('ucms_contrib_tab_' . $tab . '_type')) {
-        $names = node_type_get_names();
-        foreach ($types as $type) {
-          if (node_access('create', $type)) {
-            $data['actions']['output'][] = array(
-              '#theme' => 'menu_local_action',
-              '#link' => [
-                'href'  => 'node/add/' . $type,
-                'title' => $names[$type],
-                'query' => drupal_get_destination(),
-              ],
-            );
-          }
-        }
-      }
-    }
-  }
-
   // @todo find a better place
   if (user_access('use favorites')) {
     $path = current_path();
@@ -258,8 +227,8 @@ function ucms_contrib_image_default_styles() {
  */
 function ucms_contrib_tab_list() {
   return [
-    'text'  => t("Content"),
-    'media' => t("Media"),
+    'content'  => "Content",
+    'media' => "Media",
   ];
 }
 

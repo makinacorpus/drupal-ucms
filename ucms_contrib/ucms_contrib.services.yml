@@ -9,3 +9,8 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
+
+  ucms_contrib.context_pane_event_listener:
+    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
+    tags:
+        - { name: event_listener, event: ucms_dashboard.context_init }

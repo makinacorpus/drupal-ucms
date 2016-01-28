@@ -152,6 +152,8 @@ function ucms_dashboard_page_build(&$page) {
 
     $context = ucms_dashboard_context_get();
 
+    $context->init();
+
     if ($context->isEmpty()) {
       if (module_exists('ucms_notification')) {
         $context->add(notification_block_render($GLOBALS['user']));
@@ -212,9 +214,11 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
     $variables[$target][$key] = $item;
   }
   foreach (['primary', 'secondary'] as $target) {
-    usort($variables[$target], function ($a, $b) {
-      return $a['priority'] - $b['priority'];
-    });
+    if (isset($variables[$target])) {
+      usort($variables[$target], function ($a, $b) {
+        return $a['priority'] - $b['priority'];
+      });
+    }
   }
   if ($variables['mode']) {
     $variables['theme_hook_suggestions'][] = 'ucms_dashboard_actions__' . $variables['mode'];

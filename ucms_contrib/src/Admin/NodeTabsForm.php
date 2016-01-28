@@ -35,7 +35,7 @@ class NodeTabsForm extends FormBase
 
         foreach (ucms_contrib_tab_list() as $tab => $name) {
             $form['tab'][$tab] = [
-                '#title'  => t("%tab tab", ['%tab' => $name]),
+                '#title'  => t("%tab tab", ['%tab' => t($name)]),
                 '#type'   => 'fieldset',
             ];
             $form['tab'][$tab]['types'] = [
