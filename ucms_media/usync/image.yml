@@ -1,0 +1,28 @@
+# Image node type
+field:
+
+  image:
+    label: Image
+    type: image
+
+entity:
+  node:
+
+    image:
+      field:
+        # Remove default body field
+        body: ~
+        image: true
+
+view:
+  node:
+
+    image:
+
+      default:
+        image:
+          type: iresponsive
+          settings:
+            viewport: 60
+            html_tag: img
+            include_full: false
