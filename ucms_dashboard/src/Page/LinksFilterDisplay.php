@@ -83,28 +83,54 @@ class LinksFilterDisplay
             $values = $query[$this->queryParameter];
 
             if (!is_array($values)) {
-                $values = [$values];
+                if (false !== strpos($values, ',')) {
+                    $values = explode(',', $values);
+                } else {
+                    $values = [$values];
+                }
             }
         }
 
-        return $values;
+        return array_map('trim', $values);
     }
 
     /**
      * Get query parameters for a singe link
      *
-     * @todo
-     *   Handle possible multiple values
-     *
      * @param string[] $query
+     *   Contextual query that represents the current page state
+     * @param string $value
+     *   Value for the given link
+     * @param boolean $remove
+     *   Instead of adding the value, it must removed from the query
+     *
+     * @return string[]
+     *   New query with value added or removed
      */
-    protected function getParametersForLink($query, $value, $isActive = false)
+    protected function getParametersForLink($query, $value, $remove = false)
     {
-        if ($isActive) {
+        if (isset($query[$this->queryParameter])) {
+            $actual = explode(',', $query[$this->queryParameter]);
+        } else {
+            $actual = [];
+        }
+
+        if ($remove) {
+            if (false !== ($pos = array_search($value, $actual))) {
+                unset($actual[$pos]);
+            }
+        } else {
+            if (false === array_search($value, $actual)) {
+                $actual[] = $value;
+            }
+        }
+
+        if (empty($actual)) {
             unset($query[$this->queryParameter]);
             return $query;
         } else {
-            return [$this->queryParameter => $value] + $query;
+            sort($actual);
+            return [$this->queryParameter => implode(',', $actual)] + $query;
         }
     }
 
