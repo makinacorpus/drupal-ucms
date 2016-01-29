@@ -38,6 +38,47 @@ class SiteAccessService
     }
 
     /**
+     * Get state transition matrix
+     *
+     * This is a 3 dimensions array:
+     *   - first dimension is from state
+     *   - second dimension is to state
+     *   - third dimension is a list of roles identifiers
+     *
+     * @see MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
+     *
+     * @return int[int[int[]]]
+     */
+    public function getStateTransitionMatrix()
+    {
+        return variable_get('ucms_site_state_transition_matrix', []);
+    }
+
+    /**
+     * Update state transition matrix
+     *
+     * @param int[int[int[]]] $matrix
+     *   The full matrix as described in the ::getStateTransitionMatrix()
+     *   method
+     */
+    public function updateStateTransitionMatrix(array $matrix)
+    {
+        // Do some cleanup, we don't need to store too many things
+        foreach ($matrix as $from => $toList) {
+            foreach ($toList as $to => $roleList) {
+                $current = array_filter($roleList);
+                if ($from == $to || empty($current)) {
+                    unset($matrix[$from][$to]);
+                } else {
+                    // Store the role list as key-value for easier usage
+                    $matrix[$from][$to] = array_combine($current, $current);
+                }
+            }
+        }
+        variable_set('ucms_site_state_transition_matrix', $matrix);
+    }
+
+    /**
      * Get current user identifier
      *
      * @return int

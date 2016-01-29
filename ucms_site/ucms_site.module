@@ -91,6 +91,16 @@ function ucms_site_menu() {
     'access arguments'  => ['administer site configuration'],
     'type'              => MENU_NORMAL_ITEM,
   ];
+  $items['admin/structure/site/global'] = [
+    'title'             => "Settings",
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+  ];  $items['admin/structure/site/transitions'] = [
+    'title'             => "Transitions",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm'],
+    'access arguments'  => ['administer site configuration'],
+    'type'              => MENU_LOCAL_TASK,
+  ];
 
   return $items;
 }
@@ -123,6 +133,17 @@ function ucms_site_permission() {
     ],
     Access::PERM_SITE_VIEW_ALL => [
       'title' => t("View all sites no matter their state is"),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ucms_site_theme() {
+  return [
+    'ucms_site_state_transition_form' => [
+      'render element' => 'form',
     ],
   ];
 }
@@ -497,4 +518,31 @@ function ucms_site_node_grants($account, $op) {
   }
 
   return $cache[$account->uid][$op] = $ret;
+}
+
+/**
+ * Render the state transition form.
+ */
+function theme_ucms_site_state_transition_form($variables) {
+  $form = $variables['form'];
+
+  $header = [''];
+  $rows   = [];
+  $map    = SiteState::getList();
+
+  foreach (element_children($form['transitions']) as $k1) {
+    $header[] = $map[$k1];
+    $row = [];
+    $row[] = ['data' => $map[$k1], 'header' => true];
+    foreach (element_children($form['transitions'][$k1]) as $k2) {
+      if ($k1 != $k2) {
+        $row[] = drupal_render_children($form['transitions'][$k1][$k2]);
+      } else {
+        $row[] = ['data' => '<span class="text-muted">' . t("N/A") . '</span>', 'style' => 'text-align: center;'];
+      }
+    }
+    $rows[] = $row;
+  }
+
+  return theme('table', ['header' => $header, 'rows' => $rows]) . drupal_render_children($form);
 }

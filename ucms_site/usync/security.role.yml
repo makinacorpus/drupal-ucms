@@ -12,12 +12,14 @@ authenticated:
     - access content
     - access administration pages
     - site request # Maybe not the best place
+    - use contextual pane
     - view the administration theme
 
 admin_func:
   name: Administrateur fonctionnel
   permission:
     - access site in maintenance mode
+    - administer users
     - site content global view
     - site content global edit
     - site content labeled view
@@ -36,27 +38,22 @@ admin_tech:
     - site manage all
     - site view all
 
-admin_user:
-  name: Administrateur des comptes client
-  permission:
-    - administer users
-
-moderator:
-  name: Modérateur
-  permission:
-    - site content global view
-    - site content labeled view
-
-webmaster_global:
+global_contrib:
   name: Contributeur du référentiel global
   permission:
     - site content global view
     - site content global edit
     - site content labeled view
 
-webmaster_local:
+local_webmaster:
   name: Webmaster local
   permission:
     - site content global view
     - site content labeled view
     - site dashboard access
+
+# This role has no permission, only content stuff will be delegated thus
+# it needs to be set in the business API layer
+local_contrib:
+  name: Contributeur local
+  permission: []
