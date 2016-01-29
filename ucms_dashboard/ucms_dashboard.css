@@ -23,6 +23,11 @@
   width: 100%;
 }
 
+#contextual-pane .tabs {
+  position: relative;
+  color: #fff;
+}
+
 #contextual-pane-toggle {
   position: absolute;
   display: inline-block;

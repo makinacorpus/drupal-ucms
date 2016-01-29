@@ -20,13 +20,7 @@ class ContextPaneEventListener
             $backlink = new Action(t("Go to site"), '<front>', null, 'globe');
         }
         $contextPane = $event->getContextPane();
-        $contextPane->add(
-            [
-                '#theme' => 'ucms_dashboard_actions',
-                '#actions' => [$backlink],
-            ],
-            -2000
-        );
+        $contextPane->addActions([$backlink]);
 
         // Add node creation link
         if (substr(current_path(), 0, 16) == 'admin/dashboard/') {
@@ -46,13 +40,7 @@ class ContextPaneEventListener
                         true);
                 }
             }
-            $contextPane->add(
-                [
-                    '#theme' => 'ucms_dashboard_actions',
-                    '#actions' => $actions,
-                ],
-                -2000
-            );
+            $contextPane->addActions($actions);
         }
     }
 

@@ -102,7 +102,12 @@ function ucms_dashboard_theme() {
       'template'  => 'ucms_dashboard-actions',
     ],
     'ucms_dashboard_context' => [
-      'variables' => ['items' => []],
+      'variables' => [
+        'tabs'        => [],
+        'items'       => [],
+        'actions'     => [],
+        'default_tab' => '',
+      ],
       'template' => 'ucms_dashboard-context',
     ],
     'ucms_dashboard_page' => [
@@ -136,16 +141,29 @@ function ucms_dashboard_page_build(&$page) {
 
     $context->init();
 
-    if ($context->isEmpty()) {
-      if (module_exists('ucms_notification')) {
-        $context->add(notification_block_render($GLOBALS['user']));
+    if (module_exists('ucms_notification')) {
+      $context->addTab('notification', t("Notifications"), 'bell')
+              ->add(notification_block_render($GLOBALS['user']), 'notification');
+      // Set default tab on dashboard
+      if (current_path() == 'admin/dashboard') {
+        $context->setDefaultTab('notification');
       }
     }
 
+    $actions = [];
+    foreach ($context->getActions() as $list) {
+      $actions[] = [
+        '#theme'   => 'ucms_dashboard_actions',
+        '#actions' => $list,
+      ];
+    }
     $page['page_top']['ucms_context_pane'] = [
-      '#theme'    => 'ucms_dashboard_context',
-      '#items'    => $context->getAll(),
-      '#attached' => [
+      '#theme'       => 'ucms_dashboard_context',
+      '#items'       => $context->getAll(),
+      '#tabs'        => $context->getTabs(),
+      '#default_tab' => $context->getDefaultTab(),
+      '#actions'     => $actions,
+      '#attached'    => [
         'library' => [['ucms_dashboard', 'ucms_dashboard']],
       ],
     ];

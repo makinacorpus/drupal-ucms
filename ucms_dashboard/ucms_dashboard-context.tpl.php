@@ -1,11 +1,24 @@
 <div id="contextual-pane">
-  <a id="contextual-pane-toggle" href="#">
-    <span class="glyphicon glyphicon-chevron-right"></span>
-  </a>
-  <div class="inner">
-    <?php foreach ($items as $item): ?>
-      <?php echo render($item); ?>
-      <!-- <hr/> -->
+  <div id="contextual-pane-toggle">
+    <?php foreach ($tabs as $key => $tab): ?>
+      <a href="#tab-<?php echo $key; ?>" <?php if ($key == $default_tab): ?>class="active"<?php endif; ?>>
+        <span class="glyphicon glyphicon-<?php echo $tab['icon']; ?>"></span>
+        <span class="sr-only"><?php echo $tab['label']; ?></span>
+      </a>
     <?php endforeach; ?>
+  </div>
+  <div class="inner">
+    <div class="actions">
+      <?php echo render($actions); ?>
+    </div>
+    <div class="tabs">
+      <?php foreach ($tabs as $key => $tab): ?>
+        <div id="tab-<?php echo $key; ?>">
+          <?php foreach ($items[$key] as $item): ?>
+            <?php echo render($item); ?>
+          <?php endforeach; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
   </div>
 </div>

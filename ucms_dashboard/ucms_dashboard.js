@@ -53,7 +53,7 @@
       // Destroy all previous buttons
       if ($(context).find('#page').length) {
         var $contextualPane = $('#contextual-pane');
-        $contextualPane.find('.inner button').remove()
+        $contextualPane.find('.actions').find('input[type=submit], button, a.btn').remove()
       }
     }
   };
