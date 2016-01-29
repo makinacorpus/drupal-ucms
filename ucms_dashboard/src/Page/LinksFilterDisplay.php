@@ -183,7 +183,7 @@ class LinksFilterDisplay
         }
 
         return [
-            '#theme'    => 'links__ucms__dashboard__filter',
+            '#theme'    => 'links__ucms_dashboard_filter',
             '#heading'  => $this->getTitle(),
             '#links'    => $links,
         ];
