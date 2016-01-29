@@ -375,6 +375,26 @@ class SiteAccessService
     }
 
     /**
+     * Can the given user switch the given site to the given state
+     *
+     * @param Site $iste
+     * @param int $state
+     * @param int $userId
+     *
+     * @return boolean
+     */
+    public function userCanSwitch($site, $state, $userId = null)
+    {
+        if (null === $userId) {
+            $userId = $this->getCurrentUserId();
+        }
+
+        $allowed = $this->getAllowedTransitions($site, $userId);
+
+        return isset($allowed[$state]);
+    }
+
+    /**
      * Can the given user delete the given site
      *
      * @param Site $site

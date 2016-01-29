@@ -304,7 +304,7 @@ class SiteRequest extends FormBase
         $site->theme = $form_state->getValue('theme');
         // $site->template = $form_state->getValue('template');
 
-        ucms_site_finder()->save($site);
+        $this->siteFinder->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));
 
         $this->dispatcher->dispatch('site:request', new ResourceEvent('site', $site->id, $this->currentUser()->uid));

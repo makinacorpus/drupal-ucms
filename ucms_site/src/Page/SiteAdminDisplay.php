@@ -25,6 +25,7 @@ class SiteAdminDisplay extends AbstractDisplay
     {
         return [
             ['data' => t("Type"), 'field' => 's.type'],
+            ['data' => t("Hostname"), 'field' => 's.http_host'],
             ['data' => t("Title"), 'field' => 's.title'],
             ['data' => t("State"), 'field' => 's.state'],
             ['data' => t("Created"), 'field' => 's.ts_created'],
@@ -67,6 +68,7 @@ class SiteAdminDisplay extends AbstractDisplay
                 foreach ($sites as $site) {
                     $rows[] = [
                         check_plain($site->type),
+                        check_plain($site->http_host),
                         check_plain($site->title),
                         check_plain($states[$site->state]),
                         format_interval($site->ts_created->getTimestamp()),

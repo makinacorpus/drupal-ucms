@@ -82,6 +82,14 @@ function ucms_site_menu() {
     'file'              => 'ucms_site.dashboard.inc',
   ];
    */
+  $items['admin/dashboard/site/%ucms_site/switch/%'] = [
+    'title'             => "Switch site state",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\SiteSwitch', 3, 5],
+    'access callbacks'  => 'ucms_site_menu_access_switch',
+    'access arguments'  => ['switch', 3, 5],
+    'type'              => MENU_NORMAL_ITEM,
+  ];
 
   $items['admin/structure/site'] = [
     'title'             => "Site factory configuration",
@@ -180,7 +188,7 @@ function ucms_site_load($id) {
 /**
  * Menu helper.
  */
-function ucms_site_access_manage($site, $account = null) {
+function ucms_site_menu_access_manage($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
   }
@@ -188,6 +196,19 @@ function ucms_site_access_manage($site, $account = null) {
     $account = $GLOBALS['user'];
   }
   return ucms_site_access()->userCanManage($site, $account->uid);
+}
+
+/**
+ * Menu access check helper.
+ */
+function ucms_site_menu_access_switch($site, $state, $account = null) {
+  if (!$site instanceof Site) {
+    return false;
+  }
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  return ucms_site_access()->userCanSwitch($site, $state, $account->uid);
 }
 
 /**

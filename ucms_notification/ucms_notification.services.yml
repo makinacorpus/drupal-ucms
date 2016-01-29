@@ -9,3 +9,8 @@ services:
     class: MakinaCorpus\Ucms\Notification\SiteRequest
     arguments: ["@ucms_site_finder"]
     tags: [{ name: apb.notification.formatter, event: "site:request", auto: true, channels: site.admin }]
+
+  ucms_notification.site_switch:
+    class: MakinaCorpus\Ucms\Notification\SiteSwitch
+    arguments: ["@ucms_site_finder"]
+    tags: [{ name: apb.notification.formatter, event: "site:switch", auto: true, channels: site.admin }]
