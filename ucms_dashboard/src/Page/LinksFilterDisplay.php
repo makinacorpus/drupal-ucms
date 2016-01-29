@@ -7,6 +7,8 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
  */
 class LinksFilterDisplay
 {
+    const URL_VALUE_SEP = '|';
+
     /**
      * @var string[]
      */
@@ -83,8 +85,8 @@ class LinksFilterDisplay
             $values = $query[$this->queryParameter];
 
             if (!is_array($values)) {
-                if (false !== strpos($values, ',')) {
-                    $values = explode(',', $values);
+                if (false !== strpos($values, self::URL_VALUE_SEP)) {
+                    $values = explode(self::URL_VALUE_SEP, $values);
                 } else {
                     $values = [$values];
                 }
@@ -110,7 +112,7 @@ class LinksFilterDisplay
     protected function getParametersForLink($query, $value, $remove = false)
     {
         if (isset($query[$this->queryParameter])) {
-            $actual = explode(',', $query[$this->queryParameter]);
+            $actual = explode(self::URL_VALUE_SEP, $query[$this->queryParameter]);
         } else {
             $actual = [];
         }
@@ -130,7 +132,7 @@ class LinksFilterDisplay
             return $query;
         } else {
             sort($actual);
-            return [$this->queryParameter => implode(',', $actual)] + $query;
+            return [$this->queryParameter => implode(self::URL_VALUE_SEP, $actual)] + $query;
         }
     }
 
