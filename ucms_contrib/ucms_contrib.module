@@ -57,7 +57,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodePublish', 1],
     'access callback'   => 'node_access',
     'access arguments'  => ['update', 1],
-    'type'              => MENU_LOCAL_TASK,
+    'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/unpublish'] = [
     'title'             => "Unpublish content",
@@ -65,7 +65,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish', 1],
     'access callback'   => 'node_access',
     'access arguments'  => ['update', 1],
-    'type'              => MENU_LOCAL_TASK,
+    'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/report'] = [
     'title'             => "Flag as inappropriate",
@@ -73,7 +73,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeFlag', 1],
     'access callback'   => 'node_access',
     'access arguments'  => ['view', 1],
-    'type'              => MENU_LOCAL_TASK,
+    'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/unreport'] = [
     'title'             => "Un-flag as innappropriate",
@@ -81,7 +81,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnflag', 1],
     'access callback'   => 'node_access',
     'access arguments'  => ['update', 1],
-    'type'              => MENU_LOCAL_TASK,
+    'type'              => MENU_CALLBACK,
   ];
 
   // Site configuration.
@@ -111,22 +111,6 @@ function ucms_contrib_menu() {
   ];
 
   return $items;
-}
-
-/**
- * Implements hook_menu_local_tasks_alter().
- */
-function ucms_contrib_menu_local_tasks_alter(&$data, $router_item, $root_path) {
-  // @todo find a better place
-  if (user_access('use favorites')) {
-    $path = current_path();
-    if ('admin/dashboard/content' === $path ||
-        'admin/dashboard/media' === $path ||
-        ucms_layout_context_get()->isTemporary()
-    ){
-      ucms_dashboard_context_get()->add(ucms_contrib_favorite_render());
-    }
-  }
 }
 
 /**
