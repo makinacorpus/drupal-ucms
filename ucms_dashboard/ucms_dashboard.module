@@ -125,7 +125,8 @@ function ucms_dashboard_theme() {
       'template' => 'ucms_dashboard-page-list',
     ],
     'ucms_dashboard_top' => [
-      'template' => 'ucms_dashboard-top',
+      'variables' => [],
+      'template'  => 'ucms_dashboard-top',
     ],
   ];
 }
