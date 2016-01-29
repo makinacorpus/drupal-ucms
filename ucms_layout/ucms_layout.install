@@ -15,20 +15,6 @@ function ucms_layout_schema() {
         'unsigned'    => true,
         'not null'    => true,
       ],
-      'title_admin' => [
-        'description' => 'Administrative title',
-        'type'        => 'varchar',
-        'length'      => 255,
-        'not null'    => true,
-        'default'     => '',
-      ],
-      'title' => [
-        'description' => 'Displayed title',
-        'type'        => 'varchar',
-        'length'      => 255,
-        'not null'    => true,
-        'default'     => '',
-      ],
       'site_id' => [
         'description' => 'Site identifier',
         'type'        => 'int',

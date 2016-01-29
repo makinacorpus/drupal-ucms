@@ -7,6 +7,11 @@ class Context
     use TokenAwareTrait;
 
     /**
+     * Layout context is initializing
+     */
+    const EVENT_INIT = 'ucms_layout.context_init';
+
+    /**
      * @var StorageInterface
      */
     private $storage;

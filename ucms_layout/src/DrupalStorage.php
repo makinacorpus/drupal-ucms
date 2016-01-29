@@ -73,8 +73,6 @@ class DrupalStorage implements StorageInterface
                     ->setId($row->id)
                     ->setSiteId($row->site_id)
                     ->setNodeId($row->nid)
-                    ->setAdminTitle($row->title_admin)
-                    ->setTitle($row->title)
                 ;
 
                 if (!empty($regionMap[$row->id])) {
@@ -166,8 +164,6 @@ class DrupalStorage implements StorageInterface
             // Value object that will get us the identifier then
             $row = new \stdClass();
             $row->id          = $layout->getId();
-            $row->title_admin = $layout->getAdminTitle();
-            $row->title       = $layout->getTitle();
             $row->site_id     = $layout->getSiteId();
             $row->nid         = $layout->getNodeId();
 

@@ -147,7 +147,17 @@ function ucms_layout_temporary_load($id) {
  * @return Context
  */
 function ucms_layout_context_get() {
-  return \Drupal::service('ucms_layout.context');
+  static $init = false;
+
+  $context = \Drupal::service('ucms_layout.context');
+
+  // @todo Find a better way.
+  if (!$init) {
+    ucms_layout_context_init($context);
+    $init = true;
+  }
+
+  return $context;
 }
 
 /**
@@ -167,9 +177,33 @@ function ucms_layout_theme() {
 }
 
 /**
- * Implements hook_init().
+ * Implements hook_node_load().
  */
-function ucms_layout_init() {
+function ucms_layout_node_load($node) {
+  // @todo
+  //   This should be moved out into lazy code in the storage...
+  // Sorry, query... But at least, only when necessary.
+  // Please note that the composite context fully depends on site, and not only
+  // on node, so you cannot possibly load it another way than using the context.
+  if (($object = menu_get_object()) && $node->nid == $object->nid && ($site = ucms_site_finder()->getContext())) {
+    $id = db_query("SELECT id FROM {ucms_layout} WHERE nid = :nid", $node->nid)->fetchField();
+    if (!$id) {
+      $id = db_insert('ucms_layout')
+        ->fields([
+          'nid'     => $node->nid,
+          'site_id' => $site->id,
+        ])
+        ->execute()
+      ;
+    }
+    $node->layout_id = $id;
+  }
+}
+
+/**
+ * Initialize context.
+ */
+function ucms_layout_context_init(Context $context) {
   // We don't have any choice but loading it this moment since a few other
   // modules might need to check whether the current context is temporary
   // or not, so do it at init.
@@ -179,8 +213,6 @@ function ucms_layout_init() {
       !arg(2) &&
       ($node = menu_get_object()) && !empty($node->layout_id)
   ){
-    $context = ucms_layout_context_get();
-
     if (isset($_GET['edit']) && drupal_valid_token($_GET['edit'])) {
       $context->setToken($_GET['edit']);
     } else if ('POST' === $_SERVER['REQUEST_METHOD'] && isset($_POST['token']) && drupal_valid_token($_POST['token'])) {

@@ -20,16 +20,6 @@ class Layout
     private $nid;
 
     /**
-     * @var string
-     */
-    private $title;
-
-    /**
-     * @var string
-     */
-    private $adminTitle;
-
-    /**
      * @var []
      */
     private $regions = [];
@@ -111,54 +101,6 @@ class Layout
     public function getNodeId()
     {
         return $this->nid;
-    }
-
-    /**
-     * Set title
-     *
-     * @param string $title
-     *
-     * @return Layout
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Set administrative title
-     *
-     * @param string $title
-     *
-     * @return Layout
-     */
-    public function setAdminTitle($title)
-    {
-        $this->adminTitle = $title;
-
-        return $this;
-    }
-
-    /**
-     * Get adminitrative title
-     *
-     * @return string
-     */
-    public function getAdminTitle()
-    {
-        return $this->adminTitle;
     }
 
     /**
