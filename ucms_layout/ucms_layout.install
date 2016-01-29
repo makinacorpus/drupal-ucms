@@ -109,13 +109,21 @@ function ucms_layout_install_schema_fix() {
   // Hopefully, this syntax should work on both PostgreSQL and MySQL although
   // this is pure coincidence, this is great for us.
   $constraints = [
-    "ALTER TABLE {ucms_layout} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-    "ALTER TABLE {ucms_layout} ADD CONSTRAINT FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
-    "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT FOREIGN KEY (layout_id) REFERENCES {ucms_layout} (id) ON DELETE CASCADE",
-    "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
+    'ucms_layout' => [
+      "ALTER TABLE {ucms_layout} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      "ALTER TABLE {ucms_layout} ADD CONSTRAINT FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
+    ],
+    'ucms_layout_data' => [
+      "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT FOREIGN KEY (layout_id) REFERENCES {ucms_layout} (id) ON DELETE CASCADE",
+      "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
+    ],
   ];
-  foreach ($constraints as $statement) {
-    db_query($statement);
+  foreach ($constraints as $table => $statements) {
+    if (db_table_exists($table)) {
+      foreach ($statements as $statement) {
+        db_query($statement);
+      }
+    }
   }
 }
 
