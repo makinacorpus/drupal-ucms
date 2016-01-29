@@ -6,7 +6,11 @@
         <?php if ($link['icon']): ?>
           <span class="glyphicon glyphicon-<?php echo $link['icon']; ?>" aria-hidden="true"></span>
         <?php endif; ?>
-        <?php echo check_plain($link['title']); ?>
+        <?php if ($icon): ?>
+          <span class="sr-only"><?php echo check_plain($link['title']); ?></span>
+        <?php else: ?>
+          <?php echo check_plain($link['title']); ?>
+        <?php endif; ?>
       </a>
     <?php endforeach; ?>
   <?php endif; ?>

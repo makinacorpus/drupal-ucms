@@ -222,7 +222,7 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
     }
   }
   if ($variables['mode']) {
-    $variables['theme_hook_suggestions'][] = 'ucms_dashboard_actions__' . $variables['mode'];
+    $variables['icon'] = $variables['mode'] === 'icon';
   }
 }
 
