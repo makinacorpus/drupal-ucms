@@ -99,21 +99,6 @@ function ucms_search_index() {
  * @param string $index
  *
  * @return string
- *  Index key if exists.
- */
-function ucms_search_index_load($index) {
-  if (ucms_search_index()->exists($index)) {
-    return $index;
-  }
-  return false;
-}
-
-/**
- * Menu helper.
- *
- * @param string $index
- *
- * @return string
  *  Index name if exists.
  */
 function ucms_search_index_title($index) {
