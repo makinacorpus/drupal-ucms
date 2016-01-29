@@ -27,6 +27,11 @@ class SiteAccessService
     private $accessCache = [];
 
     /**
+     * @var string[]
+     */
+    private $roleListCache;
+
+    /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
@@ -39,6 +44,10 @@ class SiteAccessService
 
     /**
      * Get state transition matrix
+     *
+     * @todo
+     *   This sadly fundamentally broken since role are identifiers, it should
+     *   use permissions instead, but this would be severly broken too somehow
      *
      * This is a 3 dimensions array:
      *   - first dimension is from state
@@ -79,6 +88,46 @@ class SiteAccessService
     }
 
     /**
+     * Get relative roles identifiers
+     *
+     * @todo
+     *   This sadly fundamentally broken since role are identifiers, it should
+     *   use permissions instead, but this would be severly broken too somehow
+     *
+     * @return int[]
+     *   Keys are role identifiers, values are Access::ROLE_* constants
+     */
+    public function getRelativeRoles()
+    {
+        return variable_get('ucms_site_relative_roles');
+    }
+
+    /**
+     * Set relative role identifiers
+     *
+     * @param int[] $roleIdList
+     */
+    public function updateRelativeRoles($roleIdList)
+    {
+        variable_set('ucms_site_relative_roles', array_filter(array_map('intval', $roleIdList)));
+    }
+
+    /**
+     * Get Drupal role list
+     *
+     * @return string(]
+     *   Keys are internal role identifiers, values are role names
+     */
+    public function getDrupalRoleList()
+    {
+        if (null === $this->roleListCache) {
+            $this->roleListCache = $this->db->query("SELECT rid, name FROM {role} ORDER BY rid")->fetchAllKeyed();
+        }
+
+        return $this->roleListCache;
+    }
+
+    /**
      * Get current user identifier
      *
      * @return int
@@ -87,6 +136,95 @@ class SiteAccessService
     {
         // FIXME: Inject it instead
         return $GLOBALS['user']->uid;
+    }
+
+    /**
+     * Get user role identifiers
+     *
+     * @param int $userId
+     *
+     * @return int[]
+     */
+    protected function getUserRoleList($userId = null)
+    {
+        if (null === $userId) {
+            $userId = $this->getCurrentUserId();
+        }
+
+        $users = $this->userController->load([$userId]);
+
+        if (!$users) {
+            return [];
+        }
+
+        return array_keys(reset($users)->roles);
+    }
+
+    /**
+     * Get user role in site
+     *
+     * @param Site $site
+     * @param int $userId
+     *
+     * @return int
+     *   One of the Access:ROLE_* constants
+     */
+    protected function getUserRoleCacheValue(Site $site, $userId)
+    {
+        $siteId = $site->id;
+
+        if (isset($this->accessCache[$siteId][$userId])) {
+            return $this->accessCache[$siteId][$userId];
+        }
+
+        return $this->accessCache[$siteId][$userId] = (int)$this
+            ->db
+            ->query(
+                "SELECT role FROM {ucms_site_access} WHERE site_id = :siteId AND uid = :userId LIMIT 1 OFFSET 0",
+                [
+                    ':siteId' => $siteId,
+                    ':userId' => $userId,
+                ]
+            )
+            ->fetchField()
+        ;
+    }
+
+    /**
+     * Get user relative role list to site, including global roles
+     *
+     * @param int $userId
+     *
+     * @return int[]
+     */
+    public function getUserSiteRoleList(Site $site, $userId = null)
+    {
+        $ret = [];
+
+        $relativeRoles  = $this->getRelativeRoles();
+        $userSiteRole   = $this->getUserRoleCacheValue($site, $userId);
+
+        // First check the user site roles if any
+        if ($userSiteRole) {
+            foreach ($relativeRoles as $rid => $role) {
+                if ($userSiteRole === $role) {
+                    $ret[] = $rid;
+                }
+            }
+        }
+
+        foreach ($this->getUserRoleList($userId) as $rid) {
+            // Exlude relative role, they are not global but relative, the fact
+            // we set the role onto the Drupal user only means that it has this
+            // role only once
+            // @todo
+            //   consider removing those at the global level for once
+            if (!isset($relativeRoles[$rid])) {
+                $ret[] = $rid;
+            }
+        }
+
+        return $ret;
     }
 
     /**
@@ -130,23 +268,24 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        $siteId = $site->id;
+        return Access::ROLE_WEBMASTER === $this->getUserRoleCacheValue($site, $userId);
+    }
 
-        if (isset($this->accessCache[$siteId][$userId])) {
-            return $this->accessCache[$siteId][$userId];
+    /**
+     * Is the given user contributor of the given site
+     *
+     * @param Site $site
+     * @param int $userId
+     *
+     * @return boolean
+     */
+    public function userIsContributor(Site $site, $userId = null)
+    {
+        if (null === $userId) {
+            $userId = $this->getCurrentUserId();
         }
 
-        return $this->accessCache[$siteId][$userId] = (bool)$this
-            ->db
-            ->query(
-                "SELECT 1 FROM {ucms_site_access} WHERE site_id = :siteId AND uid = :userId LIMIT 1 OFFSET 0",
-                [
-                    ':siteId' => $siteId,
-                    ':userId' => $userId,
-                ]
-            )
-            ->fetchField()
-        ;
+        return Access::ROLE_CONTRIB === $this->getUserRoleCacheValue($site, $userId);
     }
 
     /**
@@ -167,14 +306,22 @@ class SiteAccessService
             return true;
         }
 
+        // @todo
+        //   this should be based upon a matrix
         switch ($site->state) {
 
             case SiteState::INIT:
-            case SiteState::OFF:
             case SiteState::ARCHIVE:
                 return $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)
                     || $this->userHasPermission(Access::PERM_SITE_VIEW_ALL, $userId)
                     || $this->userIsWebmaster($site, $userId)
+                ;
+
+            case SiteState::OFF:
+                return $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)
+                    || $this->userHasPermission(Access::PERM_SITE_VIEW_ALL, $userId)
+                    || $this->userIsWebmaster($site, $userId)
+                    || $this->userIsContributor($site, $userId)
                 ;
         }
 
@@ -242,6 +389,37 @@ class SiteAccessService
         }
 
         return SiteState::ARCHIVE == $site->state && $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId);
+    }
+
+    /**
+     * Get allow transition list for the given site and user
+     *
+     * @param Site $site
+     * @param int $userId
+     *
+     * @return string[]
+     *   Keys are state identifiers and values are states names
+     */
+    public function getAllowedTransitions(Site $site, $userId = null)
+    {
+        if (null === $userId) {
+            $userId = $this->getCurrentUserId();
+        }
+
+        $ret = [];
+        $states = SiteState::getList();
+        $matrix = $this->getStateTransitionMatrix();
+        $roles  = $this->getUserSiteRoleList($site, $userId);
+
+        foreach ($states as $state => $name) {
+            foreach ($roles as $rid) {
+                if (isset($matrix[$site->state][$state][$rid])) {
+                    $ret[$state] = $name;
+                }
+            }
+        }
+
+        return $ret;
     }
 
     /**

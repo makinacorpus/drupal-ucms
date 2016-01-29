@@ -93,37 +93,17 @@ final class Access
     const PERM_GLOBAL_EDIT = 'site content global edit';
 
     /**
-     * Functional administrator role
+     * Site relative role: none
      */
-    const ROLE_ADMIN_FUNC = 'admin_func';
+    const ROLE_NONE = 0;
 
     /**
-     * Technical administrator role
+     * Site relative role: webmaster
      */
-    const ROLE_ADMIN_TECH = 'admin_tech';
+    const ROLE_WEBMASTER = 1;
 
     /**
-     * User accounts administrator role
+     * Site relative role: contributor
      */
-    const ROLE_ADMIN_USER = 'admin_user';
-
-    /**
-     * Internet visitor role
-     */
-    const ROLE_ANONYMOUS = 'anonymous';
-
-    /**
-     * Content moderator
-     */
-    const ROLE_MODERATOR = 'moderator';
-
-    /**
-     * Global database webmaster
-     */
-    const ROLE_WEBMASTER_GLOBAL = 'webmaster_global';
-
-    /**
-     * Local database webmaster
-     */
-    const ROLE_WEBMASTER_LOCAL = 'webmaster_local';
+    const ROLE_CONTRIB = 2;
 }

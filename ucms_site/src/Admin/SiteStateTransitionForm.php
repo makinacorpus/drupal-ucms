@@ -52,11 +52,7 @@ class SiteStateTransitionForm extends FormBase
 
         $form['#theme'] = 'ucms_site_state_transition_form';
 
-        // @todo
-        //   if porting this to D8, this query should be replaced by some API
-        //   services giving the right role list instead, hence there is no
-        //   dependency on the database service
-        $roleMap  = db_query("SELECT rid, name FROM {role} ORDER BY name")->fetchAllKeyed();
+        $roleMap  = $this->access->getDrupalRoleList();
         $matrix   = $this->access->getStateTransitionMatrix();
 
         $stateList = SiteState::getList();

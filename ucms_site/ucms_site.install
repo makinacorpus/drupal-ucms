@@ -126,6 +126,13 @@ function ucms_site_schema() {
         'unsigned'    => true,
         'not null'    => true,
       ],
+      'role' => [
+        'description' => "Role in site, 1 = webmaster, 2 = contrib",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 1,
+      ],
     ],
     'foreign keys' => [
       'site_id' => [
@@ -432,4 +439,19 @@ function ucms_site_uninstall() {
  */
 function ucms_site_update_7004() {
   ucms_site_install_schema_fix();
+}
+
+/**
+ * Adds the {ucms_site_access}.role column.
+ */
+function ucms_site_update_7005() {
+  if (!db_field_exists('ucms_site_access', 'role')) {
+    db_add_field('ucms_site_access', 'role', [
+      'description' => "Role in site, 1 = webmaster, 2 = contrib",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 1,
+    ]);
+  }
 }
