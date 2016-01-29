@@ -311,19 +311,19 @@ function ucms_contrib_favorite_render($account = null) {
  * Implements hook_library().
  */
 function ucms_contrib_library() {
-  // Contrib.
-  $libraries['ucms_contrib'] = [
-    'title'   => 'UCMS - Contrib',
-    'version' => '0.1',
-    'js'      => [
-      drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js' => [],
-    ],
-    'css'     => [
-      drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css' => [
-        'type'  => 'file',
-        'media' => 'screen',
+  return [
+    'ucms_contrib' => [
+      'title'   => 'UCMS - Contrib',
+      'version' => '0.1',
+      'js'      => [
+        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js' => [],
+      ],
+      'css'     => [
+        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css' => [
+          'type'  => 'file',
+          'media' => 'screen',
+        ],
       ],
     ],
   ];
-  return $libraries;
 }
