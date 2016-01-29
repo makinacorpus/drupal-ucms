@@ -190,6 +190,33 @@ function ucms_site_schema_alter(&$schema) {
     ];
   }
 
+  if (isset($schema['taxonomy_term_data'])) {
+    $schema['taxonomy_term_data']['fields']['is_locked'] = [
+      'description' => "Does this term is locked for modification and so the nodes are",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 0,
+    ];
+  }
+
+  if (isset($schema['url_alias'])) {
+    $schema['url_alias']['fields']['is_canonical'] = [
+      'description' => "Is this alias the canonical alias for the source path",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 0,
+    ];
+    $schema['url_alias']['fields']['site_id'] = [
+      'description' => "Site identifier the alias lies on",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ];
+  }
+
   if (isset($schema['node'])) {
     $schema['node']['fields']['is_global'] = [
       'description' => "Does this node belongs to the global base",
@@ -212,6 +239,13 @@ function ucms_site_schema_alter(&$schema) {
       'not null'    => true,
       'default'     => 1,
     ];
+    $schema['node']['fields']['site_id'] = [
+      'description' => "Original site identifier this node was created into",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ];
   }
 }
 
@@ -220,7 +254,7 @@ function ucms_site_schema_alter(&$schema) {
  */
 function ucms_site_install_schema_fix() {
 
-  // Add {node}.is_global column.
+  // Adds {node}.is_global column.
   if (db_table_exists('node') && !db_field_exists('node', 'is_global')) {
     db_add_field('node', 'is_global', [
       'description' => "Does this node belongs to the global base",
@@ -230,7 +264,7 @@ function ucms_site_install_schema_fix() {
       'default'     => 1,
     ]);
   }
-  // Add {node}.is_flagged column.
+  // Adds {node}.is_flagged column.
   if (db_table_exists('node') && !db_field_exists('node', 'is_flagged')) {
     db_add_field('node', 'is_flagged', [
       'description' => "Does this node is marked as innapropriate",
@@ -240,7 +274,7 @@ function ucms_site_install_schema_fix() {
       'default'     => 0,
     ]);
   }
-  // Add {node}.is_clonable column.
+  // Adds {node}.is_clonable column.
   if (db_table_exists('node') && !db_field_exists('node', 'is_clonable')) {
     db_add_field('node', 'is_clonable', [
       'description' => "Does this node is clonable",
@@ -248,6 +282,27 @@ function ucms_site_install_schema_fix() {
       'unsigned'    => true,
       'not null'    => true,
       'default'     => 1,
+    ]);
+  }
+  // Adds {node}.is_clonable column.
+  if (db_table_exists('node') && !db_field_exists('node', 'site_id')) {
+    db_add_field('node', 'site_id', [
+      'description' => "Original site identifier this node was created into",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+
+  // Adds {taxonomy_term_data}.is_locked column.
+  if (db_table_exists('taxonomy_term_data') && !db_field_exists('taxonomy_term_data', 'is_locked')) {
+    db_add_field('taxonomy_term_data', 'is_locked', [
+      'description' => "Does this term is locked for modification and so the nodes are",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 0,
     ]);
   }
 
@@ -261,16 +316,69 @@ function ucms_site_install_schema_fix() {
       'default'     => null,
     ]);
   }
+  if (db_table_exists('url_alias') && !db_field_exists('url_alias', 'is_canonical')) {
+    db_add_field('url_alias', 'is_canonical', [
+      'description' => "Is this alias the canonical alias for the source path",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 0,
+    ]);
+  }
+  if (db_table_exists('url_alias') && !db_field_exists('url_alias', 'site_id')) {
+    db_add_field('url_alias', 'site_id', [
+      'description' => "Site identifier the alias lies on",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
 
   // Add a few constraints.
   // Hopefully, this syntax should work on both PostgreSQL and MySQL although
   // this is pure coincidence, this is great for us.
   $constraints = [
-    "ALTER TABLE {ucms_site_node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-    "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    'ucms_site_node' => [
+      "ALTER TABLE {ucms_site_node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    ],
+    'ucms_site_access' => [
+      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    ],
+    // Also, add some core ones.
+    'menu_custom' => [
+      "ALTER TABLE {menu_custom} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    ],
+    'menu_links' => [
+      "ALTER TABLE {menu_links} ADD CONSTRAINT FOREIGN KEY (menu_name) REFERENCES {menu_custom} (menu_name) ON DELETE CASCADE",
+    ],
+    'node' => [
+      "ALTER TABLE {node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id)",
+    ],
+    'ucms_site_access' => [
+      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    ],
+    'role_permission' => [
+      "ALTER TABLE {role_permission} ADD CONSTRAINT FOREIGN KEY (rid) REFERENCES {role} (rid) ON DELETE CASCADE",
+    ],
+    'url_alias' => [
+      "ALTER TABLE {url_alias} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+    ],
+    'users_roles' => [
+      "ALTER TABLE {users_roles} ADD CONSTRAINT FOREIGN KEY (rid) REFERENCES {role} (rid) ON DELETE CASCADE",
+      "ALTER TABLE {users_roles} ADD CONSTRAINT FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
+    ],
   ];
-  foreach ($constraints as $statement) {
-    db_query($statement);
+  foreach ($constraints as $table => $statements) {
+    if (db_table_exists($table)) {
+      foreach ($statements as $statement) {
+        db_query($statement);
+      }
+    }
   }
 }
 
@@ -278,10 +386,22 @@ function ucms_site_install_schema_fix() {
  * Adds missing database table columns.
  */
 function ucms_site_uninstall_schema_fix() {
+  if (db_table_exists('taxonomy_term_data') && db_field_exists('taxonomy_term_data', 'is_locked')) {
+    db_drop_field('taxonomy_term_data', 'is_locked');
+  }
   if (db_table_exists('menu_custom') && db_field_exists('menu_custom', 'is_global')) {
     db_drop_field('menu_custom', 'site_id');
   }
+  if (db_table_exists('node') && db_field_exists('node', 'is_clonable')) {
+    db_drop_field('node', 'is_clonable');
+  }
+  if (db_table_exists('node') && db_field_exists('node', 'is_flagged')) {
+    db_drop_field('node', 'is_flagged');
+  }
   if (db_table_exists('node') && db_field_exists('node', 'is_global')) {
+    db_drop_field('node', 'is_global');
+  }
+  if (db_table_exists('node') && db_field_exists('node', 'site_id')) {
     db_drop_field('node', 'is_global');
   }
 }
@@ -310,6 +430,6 @@ function ucms_site_uninstall() {
 /**
  * Fixes database constraints.
  */
-function ucms_site_update_7002() {
+function ucms_site_update_7004() {
   ucms_site_install_schema_fix();
 }
