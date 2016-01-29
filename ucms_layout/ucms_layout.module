@@ -182,19 +182,41 @@ function ucms_layout_theme() {
 function ucms_layout_node_load($node) {
   // @todo
   //   This should be moved out into lazy code in the storage...
+  //   This won't work with entitycache and should be deported.
   // Sorry, query... But at least, only when necessary.
   // Please note that the composite context fully depends on site, and not only
   // on node, so you cannot possibly load it another way than using the context.
   if (($object = menu_get_object()) && $node->nid == $object->nid && ($site = ucms_site_finder()->getContext())) {
-    $id = db_query("SELECT id FROM {ucms_layout} WHERE nid = :nid", $node->nid)->fetchField();
+    // Do not embed the original load into a transaction to avoid locking.
+    $id = (int)db_query("SELECT id FROM {ucms_layout} WHERE nid = :nid", $node->nid)->fetchField();
     if (!$id) {
-      $id = db_insert('ucms_layout')
-        ->fields([
-          'nid'     => $node->nid,
-          'site_id' => $site->id,
-        ])
-        ->execute()
-      ;
+      try {
+        $tx = db_transaction();
+        $id = (int)db_select('ucms_layout', 'ul')
+          ->fields('ul', ['id'])
+          ->condition('ul.nid', $node->nid)
+          ->condition('ul.site_id', $site->id)
+          ->execute()
+          ->fetchField()
+        ;
+        // If another transaction happened before our first select and this
+        // transaction, we will have an id here, then just close the transaction
+        // and use this id.
+        if (!$id) {
+          $id = (int)db_insert('ucms_layout')->fields(['nid' => $node->nid, 'site_id' => $site->id])->execute();
+        }
+        unset($tx); // Explicit commit.
+      } catch (Exception $e) {
+        if ($tx) { // Exception might happen without transaction started.
+          try {
+            $tx->rollback();
+          } catch (Exception $e2) {
+            watchdog_exception(__FUNCTION__, $e2); // You're fucked.
+          }
+        }
+        watchdog_exception(__FUNCTION__, $e);
+        throw $e; // You shall not pass.
+      }
     }
     $node->layout_id = $id;
   }
