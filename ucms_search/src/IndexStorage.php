@@ -271,6 +271,7 @@ class IndexStorage
             ->execute()
         ;
 
+        $this->indexer();
         $this->nodeIndexerChain->removeIndexer($index);
 
         $this->clearDefinitionCache();
@@ -290,6 +291,7 @@ class IndexStorage
         $this->deleteInClient($index);
         $this->createInClient($index);
 
+        $this->indexer();
         $this->nodeIndexerChain->getIndexer($index)->bulkMarkForReindex();
     }
 

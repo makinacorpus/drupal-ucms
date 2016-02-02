@@ -125,7 +125,7 @@ class NodeIndexer implements NodeIndexerInterface
         }
         $count = count($nodes);
 
-        $this->bulkUpsert($this->index, $nodes, true, false);
+        $this->bulkUpsert($nodes, true, false);
 
         $toBeDeleted = array_diff(array_keys($nodes), $nodeIdList);
         foreach ($toBeDeleted as $nid) {
