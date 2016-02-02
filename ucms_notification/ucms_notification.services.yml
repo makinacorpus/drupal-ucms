@@ -1,16 +1,15 @@
 services:
 
-  # ucms_notification.default_message:
-  #   class: MakinaCorpus\APubSub\Notification\Formatter\RawTextFormatter
-  #  arguments: ['default_message']
-  #  tags: [{ name: apb.notification.formatter }]
+  ucms_notification.service:
+    class: MakinaCorpus\Ucms\Notification\NotificationService
+    arguments: ["@apb.notification", "@entity.manager"]
 
   ucms_notification.site_request:
-    class: MakinaCorpus\Ucms\Notification\SiteRequest
+    class: MakinaCorpus\Ucms\Notification\Formatter\SiteRequest
     arguments: ["@ucms_site_finder"]
     tags: [{ name: apb.notification.formatter, event: "site:request", auto: true, channels: site.admin }]
 
   ucms_notification.site_switch:
-    class: MakinaCorpus\Ucms\Notification\SiteSwitch
+    class: MakinaCorpus\Ucms\Notification\Formatter\SiteSwitch
     arguments: ["@ucms_site_finder"]
     tags: [{ name: apb.notification.formatter, event: "site:switch", auto: true, channels: site.admin }]

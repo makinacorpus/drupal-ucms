@@ -5,49 +5,94 @@
  *
  * This module has been separated from the rest in order to remain decoupled
  * from the APubSub notification system, and deactivable.
+ *
+ * @todo
+ *   Handle role removal on users (role add is handled at login time)
+ *
+ * Complete list of channels we will use:
+ *  - admin:client:   user account administration messages
+ *  - admin:contenu:  content management messages
+ *  - admin:label:    taxonomy management messages
+ *  - admin:site:     site administration messages
+ *  - client:X:       each user private messages
+ *  - label:X:        each taxonomy term own channel
+ *  - site:X:         each site management own channel
  */
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Notification\Access;
 
-  /*
-   * Testing code
-   *
+/**
+ * Implements hook_permission().
+ */
+function ucms_notification_permission() {
+  return [
+    Access::PERM_NOTIF_CONTENT => [
+      'title' => t("Receive content admin notifications"),
+    ],
+    Access::PERM_NOTIF_LABEL => [
+      'title' => t("Receive label admin notifications"),
+    ],
+    Access::PERM_NOTIF_SEO => [
+      'title' => t("Receive SEO admin notifications"),
+    ],
+    Access::PERM_NOTIF_SITE => [
+      'title' => t("Receive site admin notifications"),
+    ],
+    Access::PERM_NOTIF_USER => [
+      'title' => t("Receive user admin notifications"),
+    ],
+  ];
+}
 
-  /* @var $n \MakinaCorpus\APubSub\Notification\NotificationService * /
-  $n = \Drupal::service('apb.notification');
-  $n->getBackend()->createChannel('site.admin');
-  $n->getSubscriber(1)->subscribe('site.admin');
-  $n->getSubscriber(6)->subscribe('site.admin');
+/**
+ * Get custom notification service.
+ *
+ * @return \MakinaCorpus\Ucms\Notification\NotificationService
+ *
+ * @deprecated
+ *   Only services should access other services.
+ */
+function ucms_notification_service() {
+  return \Drupal::service('ucms_notification.service');
+}
 
-  \Drupal::service('apb.notification')->subscribe('node', range(1, 50), 1);
-  \Drupal::service('apb.notification')->subscribe('node', ['a', 'b', 'c', 'd'], 1);
-  \Drupal::service('apb.notification')->subscribe('node', range(1, 50), 6);
-  \Drupal::service('apb.notification')->subscribe('node', ['a', 'b', 'c', 'd'], 6);
+/**
+ * Implements hook_user_login().
+ */
+function ucms_notification_user_login(&$edit, $account) {
+  ucms_notification_service()->refreshSubscriptionsFor($account->uid);
+}
 
-  // Testing code.
-  $nids = [1,2,3,4,5,6,7,8,9,10];
-  $uids = [1,2,3,6,7,8];
-  \Drupal::service('apb.notification')->notify('node', $nids, 'update', ['uid' => $uids]);
+/**
+ * Implements hook_user_update().
+ */
+function ucms_notification_user_update(&$edit, $account, $category) {
+  if ($account->original && array_intersect_key($account->roles, $account->original->roles)) {
+    ucms_notification_service()->refreshSubscriptionsFor($account->uid);
+  }
+}
 
-  $nids = [22, 23];
-  $uids = [1,2];
-  \Drupal::service('apb.notification')->notify('node', $nids, 'update', ['uid' => $uids]);
+/**
+ * Implements hook_user_cancel().
+ */
+function ucms_notification_user_cancel($edit, $account, $method) {
+  ucms_notification_service()->deleteSubscriptionsFor($account->uid);
+}
 
-  \Drupal::service('apb.notification')->notify('node', [1], 'update', ['uid' => [2]]);
-  \Drupal::service('apb.notification')->notify('node', [1], 'update', ['uid' => [6]]);
-  \Drupal::service('apb.notification')->notify('node', ['a'], 'update', ['uid' => [2]]);
-  \Drupal::service('apb.notification')->notify('node', ['a', 'b', 'c', 'd'], 'update', ['uid' => [6]]);
-
-  die("done");
-
-   */
+/**
+ * Implements hook_user_delete().
+ */
+function ucms_notification_user_delete($account) {
+  ucms_notification_service()->deleteSubscriptionsFor($account->uid);
+}
 
 /**
  * Implements hook_node_udpate().
- */
+ *
 function ucms_notification_node_update($node) {
   global $user;
-  /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+  /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */ /**
   $dispatcher = \Drupal::service('event_dispatcher');
   $dispatcher->dispatch('node:update', new ResourceEvent('node', $node->nid, $user->uid));
 }
+ */

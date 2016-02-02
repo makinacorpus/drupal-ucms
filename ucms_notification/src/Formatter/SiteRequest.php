@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Notification;
+namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
