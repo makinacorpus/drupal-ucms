@@ -113,6 +113,7 @@ class SiteRequest extends FormBase
             '#attributes'     => ['placeholder' => $this->t("This site is about showing our glasses to our future clients")],
             '#description'    => $this->t("This will be as the site's administrative description in platform backoffice"),
             '#required'       => true,
+            '#rows'           => 3,
         ];
 
         $form['http_host'] = [
@@ -133,6 +134,16 @@ class SiteRequest extends FormBase
             '#attributes'     => ['placeholder' => "martray-optique.fr"],
             '#description'    => $this->t("If the new site aims to replace an existing site, please copy/paste the site URI into this textarea, you may write more than one URI or any useful textual information."),
             '#required'       => false,
+            '#rows'           => 2,
+        ];
+        $form['http_redirects'] = [
+            '#title'          => $this->t("Host name redirects"),
+            '#type'           => 'textarea',
+            '#default_value'  => $site->http_redirects,
+            '#attributes'     => ['placeholder' => "www.martray-optique.fr, martraylunettes.fr"],
+            '#description'    => $this->t("List of domain names that should redirect on this site, this is, you may write more than one URI or any useful textual information."),
+            '#required'       => false,
+            '#rows'           => 2,
         ];
 
         // @todo Missing site type
@@ -195,10 +206,12 @@ class SiteRequest extends FormBase
         $values   = &$form_state->getValues();
 
         /** @var $site Site */
-        $site               = $storage['site'];
-        $site->title        = $values['title'];
-        $site->title_admin  = $values['title_admin'];
-        $site->http_host    = $values['http_host'];
+        $site                 = $storage['site'];
+        $site->title          = $values['title'];
+        $site->title_admin    = $values['title_admin'];
+        $site->http_host      = $values['http_host'];
+        $site->http_redirects = $values['http_redirects'];
+        $site->relacement_of  = $values['relacement_of'];
 
         $storage['step'] = 'b';
         $form_state->setRebuild(true);

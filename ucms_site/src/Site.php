@@ -47,6 +47,11 @@ class Site
     /**
      * @var string
      */
+    public $http_redirects = '';
+
+    /**
+     * @var string
+     */
     public $relacement_of = '';
 
     /**
