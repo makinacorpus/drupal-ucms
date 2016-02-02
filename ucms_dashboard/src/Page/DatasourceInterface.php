@@ -18,13 +18,35 @@ interface DatasourceInterface
     /**
      * Get ready to display filters
      *
-     * @param string $query
+     * @param string[] $query
      *   Incomming query parameters
      *
      * @return FilterDisplayInterface[]
      *   Keys does not matter, while values should be render arrays
      */
     public function getFilters($query);
+
+    /**
+     * Get sort fields
+     *
+     * @param string[] $query
+     *   Incomming query parameters
+     *
+     * @return string[]
+     *   Keys are field names, values are human readable labels 
+     */
+    public function getSortFields($query);
+
+    /**
+     * Get default sort
+     *
+     * @return string[]
+     *   First value is sort field, second is sort order,
+     *   if first value is null, first in the list will be the default,
+     *   if seconf value is null, default is descending
+     *   if the whole return is null, all is default
+     */
+    public function getDefaultSort();
 
     /**
      * Get display handler
@@ -38,7 +60,7 @@ interface DatasourceInterface
      * filters building needing a request to the backend, then this is the place
      * where you should probably do it
      *
-     * @param string $query
+     * @param string[] $query
      *   Incomming query parameters
      */
     public function init($query);
@@ -51,7 +73,7 @@ interface DatasourceInterface
      * instance will really display items, since it may change the display
      * depending upon current context
      *
-     * @param string $query
+     * @param string[] $query
      *   Incomming query parameters
      *
      * @return mixed[]

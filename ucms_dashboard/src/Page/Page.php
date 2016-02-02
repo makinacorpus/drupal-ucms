@@ -66,6 +66,14 @@ class Page
 
         $this->datasource->init($query);
 
+        $sortManager = new SortManager();
+        if ($sortFields = $this->datasource->getSortFields($query)) {
+            $sortManager->setFields($sortFields);
+        }
+        if ($sortDefault = $this->datasource->getDefaultSort()) {
+            $sortManager->setDefault(...$sortDefault);
+        }
+
         $display = $this->datasource->getDisplay();
         $display->prepareFromQuery($query);
 
@@ -74,16 +82,19 @@ class Page
         }
 
         $build = [
-            '#theme'    => $this->getThemeFunctionName('ucms_dashboard_page_list'),
-            '#filters'  => [],
-            '#display'  => $display,
-            '#items'    => $this->datasource->getItems($query),
-            '#pager'    => ['#theme' => $this->getThemeFunctionName('pager')],
+            '#theme'      => $this->getThemeFunctionName('ucms_dashboard_page_list'),
+            '#filters'    => [],
+            '#display'    => $display,
+            '#items'      => $this->datasource->getItems($query),
+            '#pager'      => ['#theme' => $this->getThemeFunctionName('pager')],
         ];
 
+        // Make this happen after the query has run
         foreach ($this->datasource->getFilters($query) as $index => $filter) {
             $build['#filters'][$index] = $filter->build($query);
         }
+        $build['#sort_field'] = $sortManager->buildFieldLinks($query);
+        $build['#sort_order'] = $sortManager->builOrderLinks($query);
 
         if ($this->datasource->hasSearchForm()) {
             $build['#search'] = $this

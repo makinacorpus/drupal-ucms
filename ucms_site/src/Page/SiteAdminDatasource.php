@@ -5,13 +5,14 @@ namespace MakinaCorpus\Ucms\Site\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Site\SiteAccessService;
 use MakinaCorpus\Ucms\Site\SiteFinder;
 use MakinaCorpus\Ucms\Site\SiteState;
 
-class SiteAdminDatasource implements DatasourceInterface
+class SiteAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
@@ -63,15 +64,35 @@ class SiteAdminDatasource implements DatasourceInterface
     /**
      * {@inheritdoc}
      */
-    public function getDisplay()
+    public function getSortFields($query)
     {
-        return $this->display;
+        return [
+            's.id'          => $this->t("identifier"),
+            's.title'       => $this->t("title"),
+            's.http_host'   => $this->t("hostname"),
+            's.state'       => $this->t("state"),
+            's.type'        => $this->t("type"),
+            's.ts_changed'  => $this->t("lastest update date"),
+            's.ts_created'  => $this->t("creation date"),
+            'u.name'        => $this->t("owner name"),
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function init($query) {}
+    public function getDefaultSort()
+    {
+        return ['s.ts_changed', SortManager::DESC];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDisplay()
+    {
+        return $this->display;
+    }
 
     /**
      * {@inheritdoc}
@@ -126,21 +147,5 @@ class SiteAdminDatasource implements DatasourceInterface
         //   missing 'approve change state to ...'
 
         return $ret;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasSearchForm()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearchFormParamName()
-    {
-        return 's';
     }
  }

@@ -7,6 +7,8 @@
   </div>
   <div id="ucms-contrib-results">
     <?php echo render($search); ?>
+    <?php echo render($sort_field); ?>
+    <?php echo render($sort_order); ?>
     <?php echo render($displayView); ?>
     <?php echo render($pager); ?>
   </div>

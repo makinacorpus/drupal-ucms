@@ -112,15 +112,17 @@ function ucms_dashboard_theme() {
     ],
     'ucms_dashboard_page' => [
       'variables' => [],
-      'template' => 'ucms_dashboard-page',
+      'template'  => 'ucms_dashboard-page',
     ],
     'ucms_dashboard_page_list' => [
       'variables' => [
-        'display' => null,
-        'filters' => [],
-        'items'   => [],
-        'search'  => null,
-        'pager'   => null,
+        'display'     => null,
+        'filters'     => [],
+        'items'       => [],
+        'search'      => null,
+        'pager'       => null,
+        'sort_field'  => null,
+        'sort_order'  => null,
       ],
       'template' => 'ucms_dashboard-page-list',
     ],

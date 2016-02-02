@@ -2,13 +2,14 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
+use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 
-class PrivateNodeDataSource implements DatasourceInterface
+class PrivateNodeDataSource extends AbstractDatasource
 {
     /**
      * @var QueryAlteredSearch
@@ -127,22 +128,6 @@ class PrivateNodeDataSource implements DatasourceInterface
         pager_default_initialize($response->getTotal(), $limit);
 
         return node_load_multiple($response->getAllNodeIdentifiers());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getItemActions($item)
-    {
-
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasSearchForm()
-    {
-        return true;
     }
 
     /**
