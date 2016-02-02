@@ -42,6 +42,12 @@
             <?php echo t("Users"); ?>
           </a>
         </li>
+        <li>
+          <a href="<?php echo url('admin/dashboard/seo'); ?>">
+            <span aria-hidden="true" class="glyphicon glyphicon-globe"></span>
+            <?php echo t("SEO"); ?>
+          </a>
+        </li>
       </ul>
     </div>
   </div>
