@@ -52,7 +52,7 @@ class Site
     /**
      * @var string
      */
-    public $relacement_of = '';
+    public $replacement_of = '';
 
     /**
      * @var int

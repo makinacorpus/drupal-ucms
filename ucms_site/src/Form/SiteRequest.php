@@ -130,7 +130,7 @@ class SiteRequest extends FormBase
         $form['replacement_of'] = [
             '#title'          => $this->t("Replaces"),
             '#type'           => 'textarea',
-            '#default_value'  => $site->relacement_of,
+            '#default_value'  => $site->replacement_of,
             '#attributes'     => ['placeholder' => "martray-optique.fr"],
             '#description'    => $this->t("If the new site aims to replace an existing site, please copy/paste the site URI into this textarea, you may write more than one URI or any useful textual information."),
             '#required'       => false,
