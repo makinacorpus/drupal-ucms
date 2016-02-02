@@ -28,16 +28,6 @@ abstract class AbstractDisplay implements DisplayInterface
     private $actionRegistry;
 
     /**
-     * Get this list arbitrary type identifier, used to hint theme hooks
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return 'default';
-    }
-
-    /**
      * Set action registry
      *
      * @param ActionRegistry $actionRegistry

@@ -5,13 +5,6 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
 interface DisplayInterface
 {
     /**
-     * Get this list arbitrary type identifier, used to hint theme hooks
-     *
-     * @return string
-     */
-    public function getType();
-
-    /**
      * Set default mode
      *
      * @param string $mode

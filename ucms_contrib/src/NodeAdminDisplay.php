@@ -9,14 +9,6 @@ class NodeAdminDisplay extends AbstractDisplay
     /**
      * {@inheritdoc}
      */
-    public function getType()
-    {
-        return 'contentadmin';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getSupportedModes()
     {
         return [

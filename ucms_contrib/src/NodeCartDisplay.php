@@ -9,14 +9,6 @@ class NodeCartDisplay extends AbstractDisplay
     /**
      * {@inheritdoc}
      */
-    public function getType()
-    {
-        return 'favorite';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function displayAs($mode, $nodes)
     {
         if (empty($nodes)) {

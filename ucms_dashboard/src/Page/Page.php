@@ -81,20 +81,28 @@ class Page
             $display->setActionRegistry($this->actionRegistry);
         }
 
+        $items = $this
+            ->datasource
+            ->getItems(
+                $query,
+                $sortManager->getCurrentField($query),
+                $sortManager->getCurrentOrder($query)
+            )
+        ;
+
         $build = [
             '#theme'      => $this->getThemeFunctionName('ucms_dashboard_page_list'),
             '#filters'    => [],
             '#display'    => $display,
-            '#items'      => $this->datasource->getItems($query),
+            '#items'      => $items,
             '#pager'      => ['#theme' => $this->getThemeFunctionName('pager')],
+            '#sort_field' => $sortManager->buildFieldLinks($query),
+            '#sort_order' => $sortManager->builOrderLinks($query),
         ];
 
-        // Make this happen after the query has run
         foreach ($this->datasource->getFilters($query) as $index => $filter) {
             $build['#filters'][$index] = $filter->build($query);
         }
-        $build['#sort_field'] = $sortManager->buildFieldLinks($query);
-        $build['#sort_order'] = $sortManager->builOrderLinks($query);
 
         if ($this->datasource->hasSearchForm()) {
             $build['#search'] = $this
