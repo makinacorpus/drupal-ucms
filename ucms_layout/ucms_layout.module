@@ -180,6 +180,7 @@ function ucms_layout_theme() {
  * Implements hook_node_load().
  */
 function ucms_layout_node_load($node) {
+  return;
   // @todo
   //   This should be moved out into lazy code in the storage...
   //   This won't work with entitycache and should be deported.
