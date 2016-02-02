@@ -26,10 +26,14 @@ class ContextPane
 
     private $actions = [];
 
+    /**
+     * @var string
+     */
     private $defaultTab = null;
 
     /**
      * ContextPane constructor.
+     *
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(EventDispatcherInterface $dispatcher)
