@@ -182,8 +182,9 @@ class SortManager
         }
 
         return [
-            '#theme' => 'links__ucms_dashboard_sort__field',
-            '#links' => $links,
+            '#theme'    => 'links__ucms_dashboard_sort__field',
+            '#heading'  => $this->t("Sort by"),
+            '#links'    => $links,
         ];
     }
 
@@ -207,8 +208,9 @@ class SortManager
         }
 
         return [
-            '#theme' => 'links__ucms_dashboard_sort__order',
-            '#links' => $links,
+            '#theme'    => 'links__ucms_dashboard_sort__order',
+            '#heading'  => $this->t("Order by"),
+            '#links'    => $links,
         ];
     } 
 }
