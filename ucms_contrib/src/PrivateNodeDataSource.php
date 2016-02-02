@@ -113,7 +113,7 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query)
+    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC)
     {
         $limit = 24;
 

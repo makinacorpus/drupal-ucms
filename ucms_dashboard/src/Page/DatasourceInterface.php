@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Page;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-
 /**
  * Use this class to interface with the main dashboard page layout
  *
@@ -75,20 +73,14 @@ interface DatasourceInterface
      *
      * @param string[] $query
      *   Incomming query parameters
+     * @param string $sortField
+     *   Default sort field
+     * @param string $sortOrder
+     *   Default sort order
      *
      * @return mixed[]
      */
-    public function getItems($query);
-
-    /**
-     * Get item actions
-     *
-     * @param mixed $item
-     *   Anything you returned in getItems()
-     *
-     * @return Action[]
-     */
-    public function getItemActions($item);
+    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC);
 
     /**
      * Does this connector implements a full text search form

@@ -12,7 +12,7 @@ services:
 
   ucms_site.admin.datasource:
     class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
-    arguments: ["@database", "@ucms_site_finder", "@ucms_site_access"]
+    arguments: ["@database", "@ucms_site_finder"]
 
   ucms_site.site_action_provider:
     public: false

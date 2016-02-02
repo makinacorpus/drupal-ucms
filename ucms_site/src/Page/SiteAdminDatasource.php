@@ -4,11 +4,9 @@ namespace MakinaCorpus\Ucms\Site\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Site\SiteAccessService;
 use MakinaCorpus\Ucms\Site\SiteFinder;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -27,11 +25,6 @@ class SiteAdminDatasource extends AbstractDatasource
     private $finder;
 
     /**
-     * @var SiteAccessService
-     */
-    private $access;
-
-    /**
      * @var SiteAdminDisplay
      */
     private $display;
@@ -43,11 +36,10 @@ class SiteAdminDatasource extends AbstractDatasource
      * @param SiteFinder $finder
      * @param SiteAccessService $access
      */
-    public function __construct(\DatabaseConnection $db, SiteFinder $finder, SiteAccessService $access)
+    public function __construct(\DatabaseConnection $db, SiteFinder $finder)
     {
         $this->db = $db;
         $this->finder = $finder;
-        $this->access = $access;
         $this->display = new SiteAdminDisplay();
     }
 
@@ -97,7 +89,7 @@ class SiteAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query)
+    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC)
     {
         $limit = 24;
 
@@ -108,44 +100,18 @@ class SiteAdminDatasource extends AbstractDatasource
             $q->condition('s.state', $query['state']);
         }
 
+        if ($sortField) {
+            $q->orderBy($sortField, SortManager::DESC === $sortOrder ? 'desc' : 'asc');
+        }
+
         $idList = $q
             ->fields('s', ['id'])
             ->extend('PagerDefault')
-            ->extend('TableSort')
-            ->orderByHeader($this->display->getTableHeaders())
             ->limit($limit)
             ->execute()
             ->fetchCol()
         ;
 
         return $this->finder->loadAll($idList);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getItemActions($item)
-    {
-        /* @var $item \MakinaCorpus\Ucms\Site\Site */
-        $ret = [];
-
-        if ($this->access->userCanView($item)) {
-            $ret[] = new Action($this->t("Details"), 'admin/dashboard/site/' . $item->id);
-        }
-        if ($this->access->userCanManage($item)) {
-            $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit');
-        }
-        if ($this->access->userCanManageWebmasters($item)) {
-            $ret[] = new Action($this->t("Manage webmasters"), 'admin/dashboard/site/' . $item->id . '/webmasters');
-        }
-        if ($this->access->userCanDelete($item)) {
-            $ret[] = new Action($this->t("Delete"), 'admin/dashboard/site/' . $item->id . '/delete');
-        }
-
-        // FIXME: Missing state-transition site state transformation
-        //   missing 'change to state ...'
-        //   missing 'approve change state to ...'
-
-        return $ret;
     }
  }

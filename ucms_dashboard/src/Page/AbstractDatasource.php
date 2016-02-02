@@ -40,13 +40,6 @@ abstract class AbstractDatasource implements DatasourceInterface
     /**
      * {@inheritdoc}
      */
-    public function getItemActions($item)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function hasSearchForm()
     {
         return false;
