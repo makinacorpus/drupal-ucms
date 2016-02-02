@@ -211,7 +211,7 @@ class SiteRequest extends FormBase
         $site->title_admin    = $values['title_admin'];
         $site->http_host      = $values['http_host'];
         $site->http_redirects = $values['http_redirects'];
-        $site->relacement_of  = $values['relacement_of'];
+        $site->replacement_of = $values['replacement_of'];
 
         $storage['step'] = 'b';
         $form_state->setRebuild(true);
