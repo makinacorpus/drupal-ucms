@@ -157,12 +157,12 @@ function ucms_site_theme() {
 }
 
 /**
- * Get site finder service.
+ * Get site storage service.
  *
- * @return \MakinaCorpus\Ucms\Site\SiteFinder
+ * @return \MakinaCorpus\Ucms\Site\SiteStorage
  */
-function ucms_site_finder() {
-  return \Drupal::service('ucms_site_finder');
+function ucms_site_storage() {
+  return \Drupal::service('ucms_site.storage');
 }
 
 /**
@@ -179,7 +179,7 @@ function ucms_site_access() {
  */
 function ucms_site_load($id) {
   try {
-    return ucms_site_finder()->findOne($id);
+    return ucms_site_storage()->findOne($id);
   } catch (\InvalidArgumentException $e) {
     return false;
   }
@@ -219,7 +219,7 @@ function ucms_site_boot() {
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
   if (!empty($_SERVER['HTTP_HOST'])) {
-    ucms_site_finder()->findByHostname($_SERVER['HTTP_HOST'], true);
+    ucms_site_storage()->findByHostname($_SERVER['HTTP_HOST'], true);
   }
 
   // @todo Else attempt to find another contextual information (GET parameter?)
@@ -238,7 +238,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     return;
   }
 
-  $site = ucms_site_finder()->getContext();
+  $site = ucms_site_storage()->getContext();
 
   if (!$site) {
     return; // No site in context, nothing to check for.
@@ -275,7 +275,7 @@ function ucms_site_init() {
   // for frontend anyway), but we have a chance right now to fix admin paths
   // and remove the site information right now.
   if (path_is_admin(current_path())) {
-    ucms_site_finder()->dropContext();
+    ucms_site_storage()->dropContext();
 
     // Also redirect on the main dashboard.
     // @todo Needs a variable with the factory site URL.
@@ -291,7 +291,7 @@ function ucms_site_custom_theme() {
   // site has been rightly set, and if we are in admin site has been removed,
   // so if we have a site structure, we are 100% sure we are not in an admin
   // path.
-  $site = ucms_site_finder()->getContext();
+  $site = ucms_site_storage()->getContext();
 
   if (!$site) {
     return;
@@ -486,7 +486,7 @@ function ucms_site_node_grants($account, $op) {
       break;
   }
 
-  $site = ucms_site_finder()->getContext();
+  $site = ucms_site_storage()->getContext();
 
   // Most complex part of this, deal with user's sites (the ones he's
   // webmaster of): states here apply only for the user's sites, and

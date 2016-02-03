@@ -1,8 +1,8 @@
 services:
 
-  # Site finder responsible for loading and updating site data
-  ucms_site_finder:
-    class: MakinaCorpus\Ucms\Site\SiteFinder
+  # Site storage responsible for loading and updating site data
+  ucms_site.storage:
+    class: MakinaCorpus\Ucms\Site\SiteStorage
     arguments: ["@database"]
 
   # Site access helper
@@ -12,7 +12,7 @@ services:
 
   ucms_site.admin.datasource:
     class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
-    arguments: ["@database", "@ucms_site_finder"]
+    arguments: ["@database", "@ucms_site.storage"]
 
   ucms_site.site_action_provider:
     public: false

@@ -7,8 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteFinder;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\SiteStorage;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,24 +24,24 @@ class SiteRequest extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_site_finder'),
+            $container->get('ucms_site.storage'),
             $container->get('event_dispatcher')
         );
     }
 
     /**
-     * @var SiteFinder
+     * @var SiteStorage
      */
-    protected $siteFinder;
+    protected $storage;
 
     /**
      * @var EventDispatcherInterface
      */
     protected $dispatcher;
 
-    public function __construct(SiteFinder $siteFinder, EventDispatcherInterface $dispatcher)
+    public function __construct(SiteStorage $storage, EventDispatcherInterface $dispatcher)
     {
-        $this->siteFinder = $siteFinder;
+        $this->storage = $storage;
         $this->dispatcher = $dispatcher;
     }
 
@@ -177,12 +177,7 @@ class SiteRequest extends FormBase
             return;
         }
 
-        $existing = $this
-            ->siteFinder
-            ->findByHostname($value)
-        ;
-
-        if ($existing) {
+        if ($this->storage->findByHostname($value)) {
             $form_state->setError($element, $this->t("Host name already exists"));
         }
     }
@@ -317,7 +312,7 @@ class SiteRequest extends FormBase
         $site->theme = $form_state->getValue('theme');
         // $site->template = $form_state->getValue('template');
 
-        $this->siteFinder->save($site);
+        $this->storage->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));
 
         $this->dispatcher->dispatch('site:request', new ResourceEvent('site', $site->id, $this->currentUser()->uid));

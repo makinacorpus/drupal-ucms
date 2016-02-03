@@ -4,24 +4,24 @@ namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
-use MakinaCorpus\Ucms\Site\SiteFinder;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\SiteStorage;
 
 class SiteSwitch extends AbstractNotificationFormatter
 {
     /**
-     * @var SiteFinder
+     * @var SiteStorage
      */
-    private $siteFinder;
+    private $storage;
 
     /**
      * Default constructor
      *
-     * @param SiteFinder $siteFinder
+     * @param SiteStorage $storage
      */
-    public function __construct(SiteFinder $siteFinder)
+    public function __construct(SiteStorage $storage)
     {
-        $this->siteFinder = $siteFinder;
+        $this->storage = $storage;
     }
 
     /**
@@ -41,7 +41,7 @@ class SiteSwitch extends AbstractNotificationFormatter
     protected function getTitles($idList)
     {
         $ret = [];
-        foreach ($this->siteFinder->loadAll($idList) as $site) {
+        foreach ($this->storage->loadAll($idList) as $site) {
             $ret[$site->id] = $site->title;
         }
         return $ret;

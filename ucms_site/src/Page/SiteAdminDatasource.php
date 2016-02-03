@@ -7,8 +7,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Site\SiteFinder;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\SiteStorage;
 
 class SiteAdminDatasource extends AbstractDatasource
 {
@@ -20,9 +20,9 @@ class SiteAdminDatasource extends AbstractDatasource
     private $db;
 
     /**
-     * @var SiteFinder
+     * @var SiteStorage
      */
-    private $finder;
+    private $storage;
 
     /**
      * @var SiteAdminDisplay
@@ -33,13 +33,13 @@ class SiteAdminDatasource extends AbstractDatasource
      * Default constructor
      *
      * @param \DatabaseConnection $db
-     * @param SiteFinder $finder
+     * @param SiteStorage $storage
      * @param SiteAccessService $access
      */
-    public function __construct(\DatabaseConnection $db, SiteFinder $finder)
+    public function __construct(\DatabaseConnection $db, SiteStorage $storage)
     {
         $this->db = $db;
-        $this->finder = $finder;
+        $this->storage = $storage;
         $this->display = new SiteAdminDisplay();
     }
 
@@ -112,6 +112,6 @@ class SiteAdminDatasource extends AbstractDatasource
             ->fetchCol()
         ;
 
-        return $this->finder->loadAll($idList);
+        return $this->storage->loadAll($idList);
     }
  }

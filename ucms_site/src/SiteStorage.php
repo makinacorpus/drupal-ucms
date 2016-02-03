@@ -3,9 +3,9 @@
 namespace MakinaCorpus\Ucms\Site;
 
 /**
- * Site finder service
+ * Site storage service
  */
-class SiteFinder
+class SiteStorage
 {
     /**
      * @var \DatabaseConnection
@@ -193,9 +193,9 @@ class SiteFinder
             'http_redirects',
             'replacement_of',
             'uid',
+            'template_id',
+            'is_template',
             'type',
-            'ts_created',
-            'ts_changed',
         ];
 
         if (null === $fields) {
@@ -206,21 +206,10 @@ class SiteFinder
 
         $values = [];
         foreach ($fields as $field) {
-            switch ($field) {
-
-                case 'ts_changed':
-                case 'ts_created':
-                    if (!$site->{$field} instanceof \DateTime) {
-                        $site->{$field} = new \DateTime();
-                    }
-                    $values[$field] = $site->{$field}->format('Y-m-d H:i:s');
-                    break;
-
-                default:
-                    $values[$field] = $site->{$field};
-                    break;
-            }
+            $values[$field] = $site->{$field};
         }
+
+        $values['ts_changed'] = (new \DateTime())->format('Y-m-d H:i:s');
 
         if ($site->id) {
             $this
@@ -231,6 +220,7 @@ class SiteFinder
                 ->execute()
             ;
         } else {
+            $values['ts_created'] = $values['ts_changed'];
 
             $id = $this
                 ->db

@@ -187,7 +187,7 @@ function ucms_layout_node_load($node) {
   // Sorry, query... But at least, only when necessary.
   // Please note that the composite context fully depends on site, and not only
   // on node, so you cannot possibly load it another way than using the context.
-  if (($object = menu_get_object()) && $node->nid == $object->nid && ($site = ucms_site_finder()->getContext())) {
+  if (($object = menu_get_object()) && $node->nid == $object->nid && ($site = ucms_site_storage()->getContext())) {
     // Do not embed the original load into a transaction to avoid locking.
     $id = (int)db_query("SELECT id FROM {ucms_layout} WHERE nid = :nid", $node->nid)->fetchField();
     if (!$id) {
