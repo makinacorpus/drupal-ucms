@@ -211,7 +211,7 @@ class SiteAccessService
      *
      * @return int[]
      */
-    public function getUserSiteRoleList(Site $site, $userId = null)
+    public function getRelativeUserRoleList(Site $site, $userId = null)
     {
         $ret = [];
 
@@ -443,7 +443,7 @@ class SiteAccessService
         $ret = [];
         $states = SiteState::getList();
         $matrix = $this->getStateTransitionMatrix();
-        $roles  = $this->getUserSiteRoleList($site, $userId);
+        $roles  = $this->getRelativeUserRoleList($site, $userId);
 
         foreach ($states as $state => $name) {
             foreach ($roles as $rid) {
