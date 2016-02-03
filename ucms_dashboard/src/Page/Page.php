@@ -73,8 +73,11 @@ class Page
     public function render()
     {
         $query = drupal_get_query_parameters();
+        // @todo
+        //   ugly
+        $fixedQuery = LinksFilterDisplay::fixQuery($query);
 
-        $this->datasource->init($query);
+        $this->datasource->init($fixedQuery);
 
         $sortManager = new SortManager();
         if ($sortFields = $this->datasource->getSortFields($query)) {
@@ -93,9 +96,9 @@ class Page
         $items = $this
             ->datasource
             ->getItems(
-                $query,
-                $sortManager->getCurrentField($query),
-                $sortManager->getCurrentOrder($query)
+                $fixedQuery,
+                $sortManager->getCurrentField($fixedQuery),
+                $sortManager->getCurrentOrder($fixedQuery)
             )
         ;
 
@@ -105,8 +108,8 @@ class Page
             '#display'    => $this->display,
             '#items'      => $items,
             '#pager'      => ['#theme' => $this->getThemeFunctionName('pager')],
-            '#sort_field' => $sortManager->buildFieldLinks($query),
-            '#sort_order' => $sortManager->builOrderLinks($query),
+            '#sort_field' => $sortManager->buildFieldLinks($fixedQuery),
+            '#sort_order' => $sortManager->builOrderLinks($fixedQuery),
         ];
 
         foreach ($this->datasource->getFilters($query) as $index => $filter) {
@@ -118,7 +121,7 @@ class Page
                 ->formBuilder
                 ->getForm(
                     '\MakinaCorpus\Ucms\Dashboard\Page\SearchForm',
-                    $query,
+                    $fixedQuery,
                     $this->datasource->getSearchFormParamName()
                 )
             ;

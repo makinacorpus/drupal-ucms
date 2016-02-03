@@ -10,6 +10,23 @@ class LinksFilterDisplay
     const URL_VALUE_SEP = '|';
 
     /**
+     * Sure ugly has hell, but right now I have no clean solution
+     *
+     * @param string[] $query
+     *
+     * @return string[]
+     */
+    static public function fixQuery(array $query)
+    {
+        foreach ($query as $key => $value) {
+            if (false !== strpos($value, self::URL_VALUE_SEP)) {
+                $query[$key] = explode(self::URL_VALUE_SEP, $value);
+            }
+        }
+        return $query;
+    }
+
+    /**
      * @var string[]
      */
     private $choicesMap = [];
