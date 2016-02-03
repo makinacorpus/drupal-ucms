@@ -57,7 +57,7 @@ class Site
     /**
      * @var int
      */
-    public $template = null;
+    public $template_id = null;
 
     /**
      * @var int (but should be a boolean)
