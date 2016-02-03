@@ -43,9 +43,11 @@ class SiteAdminDatasource extends AbstractDatasource
     public function getFilters($query)
     {
         return [
-            (new LinksFilterDisplay('state', "State"))->setChoicesMap(SiteState::getList()),
+            (new LinksFilterDisplay('state', $this->t("State")))->setChoicesMap(SiteState::getList()),
             // @todo missing site type registry or variable somewhere
-            
+            (new LinksFilterDisplay('theme', $this->t("Theme")))->setChoicesMap($this->manager->getAllowedThemesOptionList()),
+            (new LinksFilterDisplay('template', $this->t("Template")))->setChoicesMap($this->manager->getTemplateList()),
+            (new LinksFilterDisplay('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
         ];
     }
 
@@ -86,6 +88,27 @@ class SiteAdminDatasource extends AbstractDatasource
 
         if (isset($query['state'])) {
             $q->condition('s.state', $query['state']);
+        }
+        if (isset($query['theme'])) {
+            $q->condition('s.theme', $query['theme']);
+        }
+        if (isset($query['template'])) {
+            $q->condition('s.template_id', $query['template']);
+        }
+
+        // Quite ugly, but working as of now
+        // @todo find a more elegant way
+        if (isset($query['other'])) {
+            if (!is_array($query['other'])) {
+                $query['other'] = [$query['other']];
+            }
+            foreach ($query['other'] as $value) {
+                switch ($value) {
+                    case 't':
+                        $q->condition('s.is_template', 1);
+                        break;
+                }
+            }
         }
 
         if ($sortField) {

@@ -179,16 +179,6 @@ class LinksFilterDisplay
             $links[$value] = $link;
         }
 
-        if (empty($links)) {
-            // This is no links to display, do not leave an empty title
-            $links['_empty'] = [
-                'title'       => t("No values"),
-                'href'        => current_path(),
-                'query'       => $query,
-                'attributes'  => ['class' => ['disabled']],
-            ];
-        }
-
         // Forces the l() function to skip the 'active' class by adding empty
         // attributes array and settings a stupid language onto the link (this
         // is Drupal 7 specific and exploit a Drupal weird behavior)

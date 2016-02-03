@@ -62,6 +62,37 @@ class SiteManager
     }
 
     /**
+     * Get allowed template sites identifiers along with their title
+     */
+    public function getTemplateList()
+    {
+        foreach ($this->storage->findTemplates() as $site) {
+            yield $site->id => $site->title;
+        }
+    }
+
+    /**
+     * Get allowed front-end themes along with human name
+     *
+     * @return string[]
+     */
+    public function getAllowedThemesOptionList()
+    {
+        $ret = [];
+        $all = list_themes();
+
+        foreach ($this->getAllowedThemes() as $theme) {
+            if (isset($all[$theme])) {
+                $ret[$theme] = $all[$theme]->info['name'];
+            } else {
+                $ret[$theme] = "oups";
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
      * Set allowed front-end themes
      *
      * @param string[] $themes

@@ -103,6 +103,16 @@ class SiteStorage
     }
 
     /**
+     * Find template sites
+     *
+     * @return Site[] $site
+     */
+    public function findTemplates()
+    {
+        return $this->loadWithConditions(['is_template' => 1]);
+    }
+
+    /**
      * Load site by identifier
      *
      * @param int $id
@@ -131,6 +141,56 @@ class SiteStorage
         }
 
         return $site;
+    }
+
+    /**
+     * Load all sites using conditions
+     *
+     * @param array $conditions
+     *   Keys are field names, values are either single values or list of values
+     * @param string $orderField
+     *   Field name
+     * @param string $order
+     *   'asc' or 'desc'
+     * @param int $limit
+     *
+     * @return Site[]
+     */
+    private function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100)
+    {
+        $ret = [];
+
+        if (empty($conditions)) {
+            return $ret;
+        }
+
+        $q = $this
+            ->db
+            ->select('ucms_site', 's')
+            ->fields('s')
+        ;
+
+        foreach ($conditions as $field => $values) {
+            // @todo handle date types
+            // @todo handle wrong input (non existing fields)
+            $q->condition('s.' . $field, $values);
+        }
+
+        if ($orderField) {
+            $q->orderBy('s.' . $field, $order === 'desc' ? 'desc' : 'asc');
+        }
+
+        $sites = $q
+            ->execute()
+            ->fetchAll(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\Site')
+        ;
+
+        foreach ($sites as $site) {
+            $this->prepareInstance($site);
+            $ret[$site->id] = $site;
+        }
+
+        return $ret;
     }
 
     /**
