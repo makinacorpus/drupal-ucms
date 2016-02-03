@@ -6,9 +6,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\Site\SiteStorage;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 class SiteAdminDatasource extends AbstractDatasource
 {
@@ -90,6 +91,11 @@ class SiteAdminDatasource extends AbstractDatasource
             $q->orderBy($sortField, SortManager::DESC === $sortOrder ? 'desc' : 'asc');
         }
 
+        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        if (!empty($query[$sParam])) {
+            $q->condition('s.title', '%' . db_like($query[$sParam]) . '%', 'LIKE');
+        }
+
         $idList = $q
             ->fields('s', ['id'])
             ->extend('PagerDefault')
@@ -99,5 +105,13 @@ class SiteAdminDatasource extends AbstractDatasource
         ;
 
         return $this->storage->loadAll($idList);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasSearchForm()
+    {
+        return true;
     }
  }

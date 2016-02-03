@@ -25,8 +25,12 @@ class SearchForm extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, $query = null, $parameterName = self::DEFAULT_PARAM_NAME)
+    public function buildForm(array $form, FormStateInterface $form_state, $query = null, $parameterName = null)
     {
+        if (!$parameterName) {
+            $parameterName = self::DEFAULT_PARAM_NAME;
+        }
+
         $form_state
             ->setCached(false)
             ->setTemporaryValue(self::TEMP_PARAM, $parameterName)
