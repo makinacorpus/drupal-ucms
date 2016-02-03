@@ -29,4 +29,5 @@ services:
 
   ucms_site.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventListener
+    arguments: ["@ucms_dashboard.action_provider_registry"]
     tags: [{name: event_listener, event: ucms_dashboard.context_init}]

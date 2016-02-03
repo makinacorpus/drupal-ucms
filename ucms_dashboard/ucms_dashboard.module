@@ -221,6 +221,10 @@ function template_preprocess_ucms_dashboard_page_list(&$variables) {
 function template_preprocess_ucms_dashboard_actions(&$variables) {
   foreach ($variables['actions'] as $key => $action) {
     /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action */
+    // Remove actions for which the path is the same.
+    if (current_path() === $action->getURI()) {
+      continue;
+    }
     if ($action->isPrimary()) {
       $target = 'primary';
     } else {
