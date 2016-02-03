@@ -25,11 +25,6 @@ class SiteAdminDatasource extends AbstractDatasource
     private $storage;
 
     /**
-     * @var SiteAdminDisplay
-     */
-    private $display;
-
-    /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
@@ -40,7 +35,6 @@ class SiteAdminDatasource extends AbstractDatasource
     {
         $this->db = $db;
         $this->storage = $storage;
-        $this->display = new SiteAdminDisplay();
     }
 
     /**
@@ -76,14 +70,6 @@ class SiteAdminDatasource extends AbstractDatasource
     public function getDefaultSort()
     {
         return ['s.ts_changed', SortManager::DESC];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDisplay()
-    {
-        return $this->display;
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Contrib;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
@@ -17,14 +16,13 @@ class PrivateNodeDataSource extends AbstractDatasource
     private $search;
 
     /**
-     * @var DisplayInterface
+     * Default constructor
+     *
+     * @param QueryAlteredSearch $search
      */
-    private $display;
-
-    public function __construct(QueryAlteredSearch $search, DisplayInterface $display)
+    public function __construct(QueryAlteredSearch $search)
     {
         $this->search = $search;
-        $this->display = $display;
     }
 
     /**
@@ -92,14 +90,6 @@ class PrivateNodeDataSource extends AbstractDatasource
         }
 
         return $ret;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDisplay()
-    {
-        return $this->display;
     }
 
     /**

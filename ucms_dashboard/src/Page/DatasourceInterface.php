@@ -47,13 +47,6 @@ interface DatasourceInterface
     public function getDefaultSort();
 
     /**
-     * Get display handler
-     *
-     * @return DisplayInterface
-     */
-    public function getDisplay();
-
-    /**
      * This method is called before all others, if some operations such as the
      * filters building needing a request to the backend, then this is the place
      * where you should probably do it

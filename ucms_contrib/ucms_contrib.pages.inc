@@ -21,9 +21,10 @@ function ucms_contrib_admin_content_page($tab = null) {
     $search->getFilterQuery()->matchTermCollection('type', $types);
   }
 
-  $datasource = new PrivateNodeDataSource($search, new NodeAdminDisplay());
+  $datasource = new PrivateNodeDataSource($search);
+  $display = new NodeAdminDisplay();
 
-  $ret['page'] = (new Page($datasource, ['dashboard', 'content']))->render();
+  $ret['page'] = (new Page($datasource, $display, ['dashboard', 'content']))->render();
 
   return $ret;
 }

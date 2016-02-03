@@ -14,6 +14,11 @@ class Page
     private $datasource;
 
     /**
+     * @var DisplayInterface
+     */
+    private $display;
+
+    /**
      * Template suggestions
      *
      * @var string[]
@@ -36,9 +41,10 @@ class Page
      * @param DatasourceInterface $datasource
      * @param string[] $suggestions
      */
-    public function __construct(DatasourceInterface $datasource, $suggestions = null)
+    public function __construct(DatasourceInterface $datasource, DisplayInterface $display, $suggestions = null)
     {
         $this->datasource = $datasource;
+        $this->display = $display;
         $this->suggestions = $suggestions;
 
         // @todo
@@ -74,11 +80,10 @@ class Page
             $sortManager->setDefault(...$sortDefault);
         }
 
-        $display = $this->datasource->getDisplay();
-        $display->prepareFromQuery($query);
+        $this->display->prepareFromQuery($query);
 
-        if ($display instanceof AbstractDisplay) {
-            $display->setActionRegistry($this->actionRegistry);
+        if ($this->display instanceof AbstractDisplay) {
+            $this->display->setActionRegistry($this->actionRegistry);
         }
 
         $items = $this
@@ -93,7 +98,7 @@ class Page
         $build = [
             '#theme'      => $this->getThemeFunctionName('ucms_dashboard_page_list'),
             '#filters'    => [],
-            '#display'    => $display,
+            '#display'    => $this->display,
             '#items'      => $items,
             '#pager'      => ['#theme' => $this->getThemeFunctionName('pager')],
             '#sort_field' => $sortManager->buildFieldLinks($query),
