@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Site\Admin;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\Ucms\Site\SiteAccessService;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,22 +17,22 @@ class SiteStateTransitionForm extends FormBase
      */
     static public function create(ContainerInterface $container)
     {
-        return new self($container->get('ucms_site_access'));
+        return new self($container->get('ucms_site.manager'));
     }
 
     /**
-     * @var SiteAccessService
+     * @var SiteManager
      */
-    private $access;
+    private $manager;
 
     /**
      * Default constructor
      *
-     * @param SiteAccessService $access
+     * @param SiteManager $manager
      */
-    public function __construct(SiteAccessService $access)
+    public function __construct(SiteManager $manager)
     {
-        $this->access = $access;
+        $this->manager = $manager;
     }
 
     /**
@@ -52,8 +52,9 @@ class SiteStateTransitionForm extends FormBase
 
         $form['#theme'] = 'ucms_site_state_transition_form';
 
-        $roleMap  = $this->access->getDrupalRoleList();
-        $matrix   = $this->access->getStateTransitionMatrix();
+        $access   = $this->manager->getAccess();
+        $roleMap  = $access->getDrupalRoleList();
+        $matrix   = $access->getStateTransitionMatrix();
 
         $stateList = SiteState::getList();
         $s1 = array_keys($stateList);
@@ -97,7 +98,7 @@ class SiteStateTransitionForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $this->access->updateStateTransitionMatrix($form_state->getValue('transitions'));
+        $this->manager->getAccess()->updateStateTransitionMatrix($form_state->getValue('transitions'));
 
         drupal_set_message($this->t('The configuration options have been saved.'));
     }

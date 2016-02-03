@@ -8,7 +8,7 @@ use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Site\SiteStorage;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 class SiteAdminDatasource extends AbstractDatasource
@@ -21,21 +21,20 @@ class SiteAdminDatasource extends AbstractDatasource
     private $db;
 
     /**
-     * @var SiteStorage
+     * @var SiteManager
      */
-    private $storage;
+    private $manager;
 
     /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
-     * @param SiteStorage $storage
-     * @param SiteAccessService $access
+     * @param SiteManager $manager
      */
-    public function __construct(\DatabaseConnection $db, SiteStorage $storage)
+    public function __construct(\DatabaseConnection $db, SiteManager $manager)
     {
         $this->db = $db;
-        $this->storage = $storage;
+        $this->manager = $manager;
     }
 
     /**
@@ -45,6 +44,8 @@ class SiteAdminDatasource extends AbstractDatasource
     {
         return [
             (new LinksFilterDisplay('state', "State"))->setChoicesMap(SiteState::getList()),
+            // @todo missing site type registry or variable somewhere
+            
         ];
     }
 
@@ -104,7 +105,7 @@ class SiteAdminDatasource extends AbstractDatasource
             ->fetchCol()
         ;
 
-        return $this->storage->loadAll($idList);
+        return $this->manager->getStorage()->loadAll($idList);
     }
 
     /**

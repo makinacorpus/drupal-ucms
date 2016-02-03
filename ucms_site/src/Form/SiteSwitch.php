@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteStorage;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,15 +24,15 @@ class SiteSwitch extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_site.storage'),
+            $container->get('ucms_site.manager'),
             $container->get('event_dispatcher')
         );
     }
 
     /**
-     * @var SiteStorage
+     * @var SiteManager
      */
-    private $storage;
+    private $manager;
 
     /**
      * @var EventDispatcherInterface
@@ -42,12 +42,12 @@ class SiteSwitch extends FormBase
     /**
      * Default constructor
      *
-     * @param SiteStorage $storage
+     * @param SiteManager $manager
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(SiteStorage $storage, EventDispatcherInterface $dispatcher)
+    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher)
     {
-        $this->storage = $storage;
+        $this->manager = $manager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -84,7 +84,7 @@ class SiteSwitch extends FormBase
         $list = SiteState::getList();
 
         $site->state = $state;
-        $this->storage->save($site, ['state']);
+        $this->manager->getStorage()->save($site, ['state']);
         drupal_set_message($this->t("Site @site has been switched from @from to @to", [
             '@site' => $site->title,
             '@from' => $list[$data['from']],

@@ -5,10 +5,10 @@ namespace MakinaCorpus\Ucms\Site\Admin;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\Ucms\Site\SiteAccessService;
+use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use MakinaCorpus\Ucms\Site\Access;
 
 class SiteManagementForm extends FormBase
 {
@@ -17,22 +17,22 @@ class SiteManagementForm extends FormBase
      */
     static public function create(ContainerInterface $container)
     {
-        return new self($container->get('ucms_site_access'));
+        return new self($container->get('ucms_site.manager'));
     }
 
     /**
-     * @var SiteAccessService
+     * @var SiteManager
      */
-    private $access;
+    private $manager;
 
     /**
      * Default constructor
      *
-     * @param SiteAccessService $access
+     * @param SiteManager $manager
      */
-    public function __construct(SiteAccessService $access)
+    public function __construct(SiteManager $manager)
     {
-        $this->access = $access;
+        $this->manager = $manager;
     }
 
     /**
@@ -72,8 +72,8 @@ class SiteManagementForm extends FormBase
         //   if porting this to D8, this query should be replaced by some API
         //   services giving the right role list instead, hence there is no
         //   dependency on the database service
-        $relativeRoles = $this->access->getRelativeRoles();
-        foreach ($this->access->getDrupalRoleList() as $rid => $name) {
+        $relativeRoles = $this->manager->getAccess()->getRelativeRoles();
+        foreach ($this->manager->getAccess()->getDrupalRoleList() as $rid => $name) {
             $form['roles'][$rid] = [
                 '#title'          => $name,
                 '#type'           => 'select',
@@ -113,7 +113,7 @@ class SiteManagementForm extends FormBase
             $values[$rid] = (int)$role;
           }
         }
-        $this->access->updateRelativeRoles($values);
+        $this->manager->getAccess()->updateRelativeRoles($values);
 
         drupal_set_message($this->t('The configuration options have been saved.'));
     }

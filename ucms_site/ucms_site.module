@@ -157,21 +157,12 @@ function ucms_site_theme() {
 }
 
 /**
- * Get site storage service.
+ * Get site manager service.
  *
- * @return \MakinaCorpus\Ucms\Site\SiteStorage
+ * @return \MakinaCorpus\Ucms\Site\SiteManager
  */
-function ucms_site_storage() {
-  return \Drupal::service('ucms_site.storage');
-}
-
-/**
- * Get site access service.
- *
- * @return \MakinaCorpus\Ucms\Site\SiteAccessService
- */
-function ucms_site_access() {
-  return \Drupal::service('ucms_site_access');
+function ucms_site_manager() {
+  return \Drupal::service('ucms_site.manager');
 }
 
 /**
@@ -179,7 +170,7 @@ function ucms_site_access() {
  */
 function ucms_site_load($id) {
   try {
-    return ucms_site_storage()->findOne($id);
+    return ucms_site_manager()->getStorage()->findOne($id);
   } catch (\InvalidArgumentException $e) {
     return false;
   }
@@ -195,7 +186,7 @@ function ucms_site_menu_access_manage($site, $account = null) {
   if (!$account) {
     $account = $GLOBALS['user'];
   }
-  return ucms_site_access()->userCanManage($site, $account->uid);
+  return ucms_site_manager()->getAccess()->userCanManage($site, $account->uid);
 }
 
 /**
@@ -208,7 +199,7 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
   if (!$account) {
     $account = $GLOBALS['user'];
   }
-  return ucms_site_access()->userCanSwitch($site, $state, $account->uid);
+  return ucms_site_manager()->getAccess()->userCanSwitch($site, $state, $account->uid);
 }
 
 /**
@@ -219,7 +210,7 @@ function ucms_site_boot() {
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
   if (!empty($_SERVER['HTTP_HOST'])) {
-    ucms_site_storage()->findByHostname($_SERVER['HTTP_HOST'], true);
+    ucms_site_manager()->getStorage()->findByHostname($_SERVER['HTTP_HOST'], true);
   }
 
   // @todo Else attempt to find another contextual information (GET parameter?)
@@ -238,7 +229,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     return;
   }
 
-  $site = ucms_site_storage()->getContext();
+  $site = ucms_site_manager()->getStorage()->getContext();
 
   if (!$site) {
     return; // No site in context, nothing to check for.
@@ -247,7 +238,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     return; // Normal runtime operation, nothing to do.
   }
 
-  if (!ucms_site_access()->userCanView($site, $user->uid)) {
+  if (!ucms_site_manager()->getAccess()->userCanView($site, $user->uid)) {
     $menu_site_status = MENU_SITE_OFFLINE;
     // State off means that the site is valid and up, but in maintainance mode,
     // case in which we should just set the maintainance mode and leave,
@@ -275,7 +266,7 @@ function ucms_site_init() {
   // for frontend anyway), but we have a chance right now to fix admin paths
   // and remove the site information right now.
   if (path_is_admin(current_path())) {
-    ucms_site_storage()->dropContext();
+    ucms_site_manager()->getStorage()->dropContext();
 
     // Also redirect on the main dashboard.
     // @todo Needs a variable with the factory site URL.
@@ -291,7 +282,7 @@ function ucms_site_custom_theme() {
   // site has been rightly set, and if we are in admin site has been removed,
   // so if we have a site structure, we are 100% sure we are not in an admin
   // path.
-  $site = ucms_site_storage()->getContext();
+  $site = ucms_site_manager()->getStorage()->getContext();
 
   if (!$site) {
     return;
@@ -486,7 +477,7 @@ function ucms_site_node_grants($account, $op) {
       break;
   }
 
-  $site = ucms_site_storage()->getContext();
+  $site = ucms_site_manager()->getStorage()->getContext();
 
   // Most complex part of this, deal with user's sites (the ones he's
   // webmaster of): states here apply only for the user's sites, and

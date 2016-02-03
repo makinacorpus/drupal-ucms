@@ -15,9 +15,9 @@ class SiteAccessService
     private $db;
 
     /**
-     * @var \DrupalEntityControllerInterface
+     * @var EntityManager
      */
-    private $userController;
+    private $entityManager;
 
     /**
      * User access cache
@@ -35,11 +35,25 @@ class SiteAccessService
      * Default constructor
      *
      * @param \DatabaseConnection $db
+     * @param EntityManager $entityManager
      */
     public function __construct(\DatabaseConnection $db, EntityManager $entityManager)
     {
         $this->db = $db;
-        $this->userController = $entityManager->getStorage('user');
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * Get user controller
+     *
+     * This needs to be done this way because the entity subsystem might not
+     * be initialized yet when this object is
+     *
+     * @return \DrupalEntityControllerInterface
+     */
+    protected function getUserController()
+    {
+        return $this->entityManager->getStorage('user');
     }
 
     /**
@@ -151,7 +165,7 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        $users = $this->userController->load([$userId]);
+        $users = $this->getUserController()->load([$userId]);
 
         if (!$users) {
             return [];
@@ -245,7 +259,7 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        $users = $this->userController->load([$userId]);
+        $users = $this->getUserController()->load([$userId]);
 
         if (!$users) {
             return false;

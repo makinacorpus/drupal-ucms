@@ -6,27 +6,27 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteAccessService;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionSeparator;
+use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SiteActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
 
     /**
-     * @var SiteAccessService
+     * @var SiteManager
      */
-    private $access;
+    private $manager;
 
     /**
      * Default constructor
      *
-     * @param SiteAccessService $access
+     * @param SiteManager $manager
      */
-    public function __construct(SiteAccessService $access)
+    public function __construct(SiteManager $manager)
     {
-        $this->access = $access;
+        $this->manager = $manager;
     }
 
     /**
@@ -36,10 +36,12 @@ class SiteActionProvider implements ActionProviderInterface
     {
         $ret = [];
 
-        if ($this->access->userCanManage($item)) {
+        $access = $this->manager->getAccess();
+
+        if ($access->userCanManage($item)) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
             $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -5, true, true);
-            if ($this->access->userCanView($item)) {
+            if ($access->userCanView($item)) {
               $ret[] = new Action($this->t("Got to site"), url('http://' . $item->http_host), null, 'share-alt', -2, false);
             }
             $ret[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->id . '/log', null, 'list-alt', -1, false);
@@ -47,12 +49,12 @@ class SiteActionProvider implements ActionProviderInterface
 
         // Append all possible state switch operations
         $i = 10;
-        foreach ($this->access->getAllowedTransitions($item) as $state => $name) {
+        foreach ($access->getAllowedTransitions($item) as $state => $name) {
             $ret[] = new Action($this->t("Switch to @state", ['@state' => $name]), 'admin/dashboard/site/' . $item->id . '/switch/' . $state, 'dialog', 'refresh', ++$i, false, true);
         }
 
         // @todo Consider delete as a state
-        if ($this->access->userCanManageWebmasters($item)) {
+        if ($access->userCanManageWebmasters($item)) {
             $ret[] = new ActionSeparator(0, false);
             // 100 as priority is enough to be number of states there is ($i)
             $ret[] = new Action($this->t("Add webmaster"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'user', 100, false, true);

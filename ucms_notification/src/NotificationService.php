@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityManager;
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\APubSub\Notification\NotificationService as BaseNotificationService;
-use MakinaCorpus\Ucms\Site\SiteAccessService;
 
 /**
  * Handles site access
@@ -27,7 +26,7 @@ class NotificationService
     /**
      * Default constructor
      *
-     * @param SiteAccessService $siteAccess
+     * @param BaseNotificationService $notificationService
      * @param EntityManager $entityManager
      */
     public function __construct(BaseNotificationService $notificationService, EntityManager $entityManager)

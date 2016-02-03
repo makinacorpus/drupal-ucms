@@ -7,8 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\SiteStorage;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -24,24 +24,24 @@ class SiteRequest extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_site.storage'),
+            $container->get('ucms_site.manager'),
             $container->get('event_dispatcher')
         );
     }
 
     /**
-     * @var SiteStorage
+     * @var SiteManager
      */
-    protected $storage;
+    protected $manager;
 
     /**
      * @var EventDispatcherInterface
      */
     protected $dispatcher;
 
-    public function __construct(SiteStorage $storage, EventDispatcherInterface $dispatcher)
+    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher)
     {
-        $this->storage = $storage;
+        $this->manager = $manager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -60,19 +60,19 @@ class SiteRequest extends FormBase
     {
         $form['#form_horizontal'] = true;
 
-        $storage = &$form_state->getStorage();
+        $formData = &$form_state->getStorage();
 
-        if (empty($storage['site'])) {
-            $site = $storage['site'] = new Site();
+        if (empty($formData['site'])) {
+            $site = $formData['site'] = new Site();
             $site->uid = $this->currentUser()->uid;
         } else {
-            $site = $storage['site'];
+            $site = $formData['site'];
         }
 
-        if (empty($storage['step'])) {
+        if (empty($formData['step'])) {
             $step = 'a';
         } else {
-            $step = $storage['step'];
+            $step = $formData['step'];
         }
 
         switch ($step) {
@@ -177,7 +177,7 @@ class SiteRequest extends FormBase
             return;
         }
 
-        if ($this->storage->findByHostname($value)) {
+        if ($this->manager->getStorage()->findByHostname($value)) {
             $form_state->setError($element, $this->t("Host name already exists"));
         }
     }
@@ -197,18 +197,18 @@ class SiteRequest extends FormBase
      */
     public function submitStepA(array $form, FormStateInterface $form_state)
     {
-        $storage  = &$form_state->getStorage();
+        $formData = &$form_state->getStorage();
         $values   = &$form_state->getValues();
 
         /** @var $site Site */
-        $site                 = $storage['site'];
+        $site                 = $formData['site'];
         $site->title          = $values['title'];
         $site->title_admin    = $values['title_admin'];
         $site->http_host      = $values['http_host'];
         $site->http_redirects = $values['http_redirects'];
         $site->replacement_of = $values['replacement_of'];
 
-        $storage['step'] = 'b';
+        $formData['step'] = 'b';
         $form_state->setRebuild(true);
     }
 
@@ -286,16 +286,16 @@ class SiteRequest extends FormBase
      */
     public function submitStepABack(array $form, FormStateInterface $form_state)
     {
-        $storage = &$form_state->getStorage();
+        $formData = &$form_state->getStorage();
 
         /** @var $site Site */
-        $site = $storage['site'];
+        $site = $formData['site'];
         $site->state = SiteState::REQUESTED;
         $site->theme = $form_state->getValue('theme');
         $site->ts_created = $site->ts_changed = new \DateTime();
         // $site->template = $form_state->getValue('template');
 
-        $storage['step'] = 'a';
+        $formData['step'] = 'a';
         $form_state->setRebuild(true);
     }
 
@@ -304,15 +304,15 @@ class SiteRequest extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $storage  = &$form_state->getStorage();
+        $formData = &$form_state->getStorage();
 
         /** @var $site Site */
-        $site = $storage['site'];
+        $site = $formData['site'];
         $site->state = SiteState::REQUESTED;
         $site->theme = $form_state->getValue('theme');
         // $site->template = $form_state->getValue('template');
 
-        $this->storage->save($site);
+        $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));
 
         $this->dispatcher->dispatch('site:request', new ResourceEvent('site', $site->id, $this->currentUser()->uid));
