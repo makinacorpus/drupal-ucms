@@ -95,6 +95,10 @@ class SiteAdminDatasource extends AbstractDatasource
         if (isset($query['template'])) {
             $q->condition('s.template_id', $query['template']);
         }
+        if (!empty($query['uid'])) {
+            $q->join('ucms_site_access', 'sa', "sa.site_id = s.id");
+            $q->condition('sa.uid', $query['uid']);
+        }
 
         // Quite ugly, but working as of now
         // @todo find a more elegant way
@@ -122,6 +126,7 @@ class SiteAdminDatasource extends AbstractDatasource
 
         $idList = $q
             ->fields('s', ['id'])
+            ->groupBy('s.id')
             ->extend('PagerDefault')
             ->limit($limit)
             ->execute()

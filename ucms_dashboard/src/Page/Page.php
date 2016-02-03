@@ -36,6 +36,11 @@ class Page
     private $actionRegistry;
 
     /**
+     * @var string[]
+     */
+    private $baseQuery = [];
+
+    /**
      * Default constructor
      *
      * @param FormBuilderInterface $formBuilder
@@ -70,12 +75,40 @@ class Page
         return implode('__', [$hook] + $this->suggestions);
     }
 
+    /**
+     * Set base query
+     *
+     * Base query will remove anything from it that is not a defined filter,
+     * but will apply per default the others, removing them from the filter
+     * list
+     *
+     * @param string[]
+     *
+     * @return Page
+     */
+    public function setBaseQuery($baseQuery)
+    {
+        $this->baseQuery = $baseQuery;
+
+        return $this;
+    }
+
+    /**
+     * Build and return current usable query from both the environment and the
+     * set base query, if any
+     *
+     * @return string[]
+     */
+    private function buildQuery()
+    {
+        // @todo This should be injected
+        return $this->baseQuery + drupal_get_query_parameters();
+    }
+
     public function render()
     {
-        $query = drupal_get_query_parameters();
-        // @todo
-        //   ugly
-        $fixedQuery = LinksFilterDisplay::fixQuery($query);
+        $query = $this->buildQuery();
+        $fixedQuery = LinksFilterDisplay::fixQuery($query); // @todo this is ugly
 
         $this->datasource->init($fixedQuery);
 
@@ -113,6 +146,9 @@ class Page
         ];
 
         foreach ($this->datasource->getFilters($query) as $index => $filter) {
+            if (isset($this->baseQuery[$filter->getField()])) {
+                continue; // Drop forced filters
+            }
             $build['#filters'][$index] = $filter->build($query);
         }
 

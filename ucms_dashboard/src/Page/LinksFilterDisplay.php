@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
 /**
  * Default implementation that will convert a single hashmap to a set of links
  */
-class LinksFilterDisplay
+class LinksFilterDisplay implements FilterDisplayInterface
 {
     const URL_VALUE_SEP = '|';
 
@@ -84,6 +84,14 @@ class LinksFilterDisplay
         }
 
         return $this->title;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getField()
+    {
+        return $this->queryParameter;
     }
 
     /**

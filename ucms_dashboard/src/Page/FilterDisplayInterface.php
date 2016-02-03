@@ -12,6 +12,13 @@ interface FilterDisplayInterface
     public function getTitle();
 
     /**
+     * Get field name
+     *
+     * @return string
+     */
+    public function getField();
+
+    /**
      * Get rendered filter
      *
      * If an empty value is returned, the filter won't be displayed

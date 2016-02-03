@@ -8,6 +8,19 @@ use MakinaCorpus\Ucms\Site\SiteState;
 class SiteAdminDisplay extends AbstractDisplay
 {
     /**
+     * @var string
+     */
+    private $emptyMessage;
+
+    /**
+     * Default constructor
+     */
+    public function __construct($emptyMessage = null)
+    {
+        $this->emptyMessage = $emptyMessage;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function displayAs($mode, $sites)
@@ -41,6 +54,7 @@ class SiteAdminDisplay extends AbstractDisplay
             '#suffix' => '</div>', // FIXME should be in theme
             '#theme'  => 'table',
             '#header' => [t("Type"), t("Hostname"), t("Title"), t("State"), t("Created"), t("Last update"), t("Owner"), ''],
+            '#empty'  => $this->emptyMessage,
             '#rows'   => $rows,
         ];
     }
