@@ -7,17 +7,22 @@ namespace MakinaCorpus\Ucms\Site;
  * carry the site wide configuration; this means to reduce the number of
  * services dependencies for other components
  */
-class SiteManager
+final class SiteManager
 {
     /**
      * @var SiteAccessService
      */
-    protected $access;
+    private $access;
 
     /**
      * @var SiteStorage
      */
-    protected $storage;
+    private $storage;
+
+    /**
+     * @var Site
+     */
+    private $context;
 
     /**
      * Default constructor
@@ -29,6 +34,34 @@ class SiteManager
     {
         $this->storage = $storage;
         $this->access = $access;
+    }
+
+    /**
+     * Set current site context
+     *
+     * @param Site $site
+     */
+    public function setContext(Site $site)
+    {
+        $this->context = $site;
+    }
+
+    /**
+     * Get current context
+     *
+     * @return Site
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * Remove current context
+     */
+    public function dropContext()
+    {
+        $this->context = null;
     }
 
     /**
@@ -58,7 +91,7 @@ class SiteManager
      */
     public function getAllowedThemes()
     {
-        return variable_get('ucms_site_allowed_themes');
+        return variable_get('ucms_site_allowed_themes', []);
     }
 
     /**
@@ -110,5 +143,26 @@ class SiteManager
     public function isThemeAllowed($theme)
     {
         return in_array($theme, $this->getAllowedThemes());
+    }
+
+    /**
+     * Get site home node type
+     *
+     * @return string
+     *   It may be null, beware
+     */
+    public function getHomeNodeType()
+    {
+        return variable_get('ucms_site_home_node_type');
+    }
+
+    /**
+     * Set home node type
+     *
+     * @param string $type
+     */
+    public function setHomeNodeType($type)
+    {
+        variable_set('ucms_site_home_node_type', $type);
     }
 }

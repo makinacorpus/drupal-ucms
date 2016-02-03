@@ -12,9 +12,9 @@ class NodeAdminDisplay extends AbstractDisplay
     protected function getSupportedModes()
     {
         return [
+            'table' => t("table"),
             'grid'  => t("thumbnail grid"),
             'list'  => t("teaser list"),
-            'table' => t("table"),
         ];
     }
 

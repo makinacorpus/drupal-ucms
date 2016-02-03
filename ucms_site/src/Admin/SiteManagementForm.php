@@ -51,6 +51,16 @@ class SiteManagementForm extends FormBase
         $form['#form_horizontal'] = true;
         $form['#tree'] = true;
 
+        $form['home_node_type'] = [
+            '#title'          => $this->t("Default node type for site home page"),
+            '#type'           => 'radios',
+            '#options'        => node_type_get_names(),
+            '#default_value'  => $this->manager->getHomeNodeType(),
+            '#description'    => $this->t("When a site is created, a node with the given type will be automatically created and set as the site page"),
+        ];
+
+        $form['sep0']['#markup'] = '<hr/>';
+
         $options = [];
         foreach (list_themes() as $theme => $data) {
             if ($data->status) {
@@ -58,11 +68,12 @@ class SiteManagementForm extends FormBase
             }
         }
 
+        $allowed = $this->manager->getAllowedThemes();
         $form['themes'] = [
             '#title'          => $this->t("Allowed themes"),
             '#type'           => 'checkboxes',
             '#options'        => $options,
-            '#default_value'  => variable_get('ucms_site_allowed_themes', []),
+            '#default_value'  => array_combine($allowed, $allowed),
             '#description'    => $this->t("Themes available in the site request form to be choosen by the requester"),
         ];
 
@@ -104,7 +115,7 @@ class SiteManagementForm extends FormBase
     {
         // This works because no values are empty()
         $values = array_keys(array_filter($form_state->getValue('themes')));
-        variable_set('ucms_site_allowed_themes', array_combine($values, $values));
+        $this->manager->setAllowedThemes($values);
 
         // And this too
         $values = [];
@@ -114,6 +125,8 @@ class SiteManagementForm extends FormBase
           }
         }
         $this->manager->getAccess()->updateRelativeRoles($values);
+
+        $this->manager->setHomeNodeType($form_state->getValue('home_node_type'));
 
         drupal_set_message($this->t('The configuration options have been saved.'));
     }

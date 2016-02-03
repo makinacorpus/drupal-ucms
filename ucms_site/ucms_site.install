@@ -101,11 +101,22 @@ function ucms_site_schema() {
         'length'      => 16,
         'not null'    => false,
       ],
+      'home_nid' => [
+        'description' => "Site homepage node identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
     ],
     'foreign keys' => [
       'uid' => [
         'table'   => 'users',
         'columns' => ['uid' => 'uid'],
+      ],
+      'home_nid' => [
+        'table'   => 'node',
+        'columns' => ['home_nid' => 'nid'],
       ],
       'template_id' => [
         'table'   => 'ucms_site',
@@ -250,6 +261,20 @@ function ucms_site_schema_alter(&$schema) {
       'not null'    => true,
       'default'     => 1,
     ];
+    $schema['node']['fields']['origin_nid'] = [
+      'description' => "Original parent of all parents this node was cloned with",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ];
+    $schema['node']['fields']['parent_nid'] = [
+      'description' => "Node from which this node was cloned with",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ];
     $schema['node']['fields']['site_id'] = [
       'description' => "Original site identifier this node was created into",
       'type'        => 'int',
@@ -299,6 +324,26 @@ function ucms_site_install_schema_fix() {
   if (db_table_exists('node') && !db_field_exists('node', 'site_id')) {
     db_add_field('node', 'site_id', [
       'description' => "Original site identifier this node was created into",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+  // Adds {node}.parent_nid column.
+  if (db_table_exists('node') && !db_field_exists('node', 'origin_nid')) {
+    db_add_field('node', 'origin_nid', [
+      'description' => "Original parent of all parents this node was cloned with",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+  // Adds {node}.parent_nid column.
+  if (db_table_exists('node') && !db_field_exists('node', 'parent_nid')) {
+    db_add_field('node', 'parent_nid', [
+      'description' => "Node from which this node was cloned with",
       'type'        => 'int',
       'unsigned'    => true,
       'not null'    => false,
@@ -365,7 +410,9 @@ function ucms_site_install_schema_fix() {
       "ALTER TABLE {menu_links} ADD CONSTRAINT FOREIGN KEY (menu_name) REFERENCES {menu_custom} (menu_name) ON DELETE CASCADE",
     ],
     'node' => [
-      "ALTER TABLE {node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id)",
+      "ALTER TABLE {node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE SET NULL ON UPDATE CASCADE",
+      "ALTER TABLE {node} ADD FOREIGN KEY (origin_nid) REFERENCES node (nid) ON DELETE SET NULL ON UPDATE CASCADE",
+      "ALTER TABLE {node} ADD FOREIGN KEY (parent_nid) REFERENCES node (nid) ON DELETE SET NULL ON UPDATE CASCADE",
     ],
     'ucms_site_access' => [
       "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
@@ -439,13 +486,6 @@ function ucms_site_uninstall() {
 }
 
 /**
- * Fixes database constraints.
- */
-function ucms_site_update_7004() {
-  ucms_site_install_schema_fix();
-}
-
-/**
  * Adds the {ucms_site_access}.role column.
  */
 function ucms_site_update_7005() {
@@ -470,4 +510,26 @@ function ucms_site_update_7006() {
       'type'        => 'text',
     ]);
   }
+}
+
+/**
+ * Adds the {ucms_site}.home_nid column.
+ */
+function ucms_site_update_7007() {
+  if (!db_field_exists('ucms_site', 'home_nid')) {
+    db_add_field('ucms_site', 'home_nid', [
+      'description' => "Site homepage node identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 0,
+    ]);
+  }
+}
+
+/**
+ * Fixes database constraints.
+ */
+function ucms_site_update_7009() {
+  ucms_site_install_schema_fix();
 }

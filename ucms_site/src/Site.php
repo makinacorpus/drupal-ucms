@@ -78,4 +78,9 @@ class Site
      * @var \DateTime
      */
     public $ts_changed;
+
+    /**
+     * @var int
+     */
+    public $home_nid = null;
 }

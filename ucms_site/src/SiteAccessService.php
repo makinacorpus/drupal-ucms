@@ -51,9 +51,72 @@ class SiteAccessService
      *
      * @return \DrupalEntityControllerInterface
      */
-    protected function getUserController()
+    private function getUserController()
     {
         return $this->entityManager->getStorage('user');
+    }
+
+    /**
+     * Get current user identifier
+     *
+     * @return int
+     */
+    private function getCurrentUserId()
+    {
+        // FIXME: Inject it instead
+        return $GLOBALS['user']->uid;
+    }
+
+    /**
+     * Get user role identifiers
+     *
+     * @param int $userId
+     *
+     * @return int[]
+     */
+    private function getUserRoleList($userId = null)
+    {
+        if (null === $userId) {
+            $userId = $this->getCurrentUserId();
+        }
+
+        $users = $this->getUserController()->load([$userId]);
+
+        if (!$users) {
+            return [];
+        }
+
+        return array_keys(reset($users)->roles);
+    }
+
+    /**
+     * Get user role in site
+     *
+     * @param Site $site
+     * @param int $userId
+     *
+     * @return int
+     *   One of the Access:ROLE_* constants
+     */
+    private function getUserRoleCacheValue(Site $site, $userId)
+    {
+        $siteId = $site->id;
+
+        if (isset($this->accessCache[$siteId][$userId])) {
+            return $this->accessCache[$siteId][$userId];
+        }
+
+        return $this->accessCache[$siteId][$userId] = (int)$this
+            ->db
+            ->query(
+                "SELECT role FROM {ucms_site_access} WHERE site_id = :siteId AND uid = :userId LIMIT 1 OFFSET 0",
+                [
+                    ':siteId' => $siteId,
+                    ':userId' => $userId,
+                ]
+            )
+            ->fetchField()
+        ;
     }
 
     /**
@@ -139,69 +202,6 @@ class SiteAccessService
         }
 
         return $this->roleListCache;
-    }
-
-    /**
-     * Get current user identifier
-     *
-     * @return int
-     */
-    protected function getCurrentUserId()
-    {
-        // FIXME: Inject it instead
-        return $GLOBALS['user']->uid;
-    }
-
-    /**
-     * Get user role identifiers
-     *
-     * @param int $userId
-     *
-     * @return int[]
-     */
-    protected function getUserRoleList($userId = null)
-    {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        $users = $this->getUserController()->load([$userId]);
-
-        if (!$users) {
-            return [];
-        }
-
-        return array_keys(reset($users)->roles);
-    }
-
-    /**
-     * Get user role in site
-     *
-     * @param Site $site
-     * @param int $userId
-     *
-     * @return int
-     *   One of the Access:ROLE_* constants
-     */
-    protected function getUserRoleCacheValue(Site $site, $userId)
-    {
-        $siteId = $site->id;
-
-        if (isset($this->accessCache[$siteId][$userId])) {
-            return $this->accessCache[$siteId][$userId];
-        }
-
-        return $this->accessCache[$siteId][$userId] = (int)$this
-            ->db
-            ->query(
-                "SELECT role FROM {ucms_site_access} WHERE site_id = :siteId AND uid = :userId LIMIT 1 OFFSET 0",
-                [
-                    ':siteId' => $siteId,
-                    ':userId' => $userId,
-                ]
-            )
-            ->fetchField()
-        ;
     }
 
     /**
@@ -300,6 +300,21 @@ class SiteAccessService
         }
 
         return Access::ROLE_CONTRIB === $this->getUserRoleCacheValue($site, $userId);
+    }
+
+    /**
+     * Can the user reference this node on one of his sites
+     *
+     * @param stdClass $node
+     * @param int $userId
+     *
+     * @return boolean
+     */
+    public function userCanReference($node, $userId)
+    {
+        // Let's say, from this very moment, that as long as the user can see
+        // the node he might want to add it on one of his sites
+        return true;
     }
 
     /**

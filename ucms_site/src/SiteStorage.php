@@ -13,11 +13,6 @@ class SiteStorage
     private $db;
 
     /**
-     * @var Site
-     */
-    private $context;
-
-    /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
@@ -25,34 +20,6 @@ class SiteStorage
     public function __construct(\DatabaseConnection $db)
     {
         $this->db = $db;
-    }
-
-    /**
-     * Set current site context
-     *
-     * @param Site $site
-     */
-    public function setContext(Site $site)
-    {
-        $this->context = $site;
-    }
-
-    /**
-     * Get current context
-     *
-     * @return Site
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
-
-    /**
-     * Remove current context
-     */
-    public function dropContext()
-    {
-        $this->context = null;
     }
 
     /**
@@ -76,7 +43,7 @@ class SiteStorage
      * @return Site
      *   Site instance, or null if not found
      */
-    public function findByHostname($hostname, $setAsContext = false)
+    public function findByHostname($hostname)
     {
         $site = $this
             ->db
@@ -89,14 +56,6 @@ class SiteStorage
 
         if ($site) {
             $this->prepareInstance($site);
-        }
-
-        if ($setAsContext) {
-            if ($site) {
-                $this->setContext($site);
-            } else {
-                $this->dropContext();
-            }
         }
 
         return $site;

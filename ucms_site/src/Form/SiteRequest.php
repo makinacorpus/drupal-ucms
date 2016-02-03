@@ -225,7 +225,7 @@ class SiteRequest extends FormBase
         $themes = list_themes();
 
         $options = [];
-        foreach (variable_get('ucms_site_allowed_themes') as $theme) {
+        foreach ($this->manager->getAllowedThemes() as $theme) {
 
             if (!isset($themes[$theme])) {
                 $this->logger('default')->alert(sprintf("Theme '%s' does not exist but is referenced into sites possible selection", $theme));

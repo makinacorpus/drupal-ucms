@@ -82,11 +82,31 @@ function ucms_site_menu() {
     'type'              => MENU_LOCAL_TASK,
     'file'              => 'ucms_site.dashboard.inc',
   ];
+  /*
+  $items['admin/dashboard/site/%ucms_site/webmasters/add'] = [
+    'title'             => "Webmasters",
+    'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
+    'page arguments'    => [3],
+    'access callbacks'  => 'ucms_site_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_LOCAL_TASK,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
+  $items['admin/dashboard/site/%ucms_site/webmasters/remove/%'] = [
+    'title'             => "Webmasters",
+    'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
+    'page arguments'    => [3],
+    'access callbacks'  => 'ucms_site_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_LOCAL_TASK,
+    'file'              => 'ucms_site.dashboard.inc',
+  ];
+   */
 
   $items['admin/dashboard/site/%ucms_site/edit'] = [
     'title'             => "Site edit",
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_site_dashboard_site_edit_form', 3],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\SiteEdit', 3],
     'access callbacks'  => 'ucms_site_access_manage',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
@@ -106,7 +126,16 @@ function ucms_site_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\SiteSwitch', 3, 5],
     'access callbacks'  => 'ucms_site_menu_access_switch',
-    'access arguments'  => ['switch', 3, 5],
+    'access arguments'  => [3, 5],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  $items['node/%node/reference'] = [
+    'title'             => "Reference this content",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\NodeReference', 1],
+    'access callbacks'  => 'ucms_site_menu_access_reference',
+    'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -185,6 +214,15 @@ function ucms_site_manager() {
 }
 
 /**
+ * Get site manager service.
+ *
+ * @return \MakinaCorpus\Ucms\Site\NodeDispatcher
+ */
+function ucms_site_node_dispatcher() {
+  return \Drupal::service('ucms_site.node_dispatcher');
+}
+
+/**
  * Menu helper.
  */
 function ucms_site_load($id) {
@@ -222,14 +260,32 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
 }
 
 /**
+ * Menu access check helper.
+ */
+function ucms_site_menu_access_reference($node, $account = null) {
+  return node_access('view', $node, $account) && ucms_site_manager()
+      ->getAccess()
+      ->userCanReference($node, isset($account) ? $account->uid : null)
+  ;
+}
+
+/**
  * Implements hook_boot().
  */
 function ucms_site_boot() {
 
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
+  $manager = ucms_site_manager();
+
   if (!empty($_SERVER['HTTP_HOST'])) {
-    ucms_site_manager()->getStorage()->findByHostname($_SERVER['HTTP_HOST'], true);
+    if ($site = ucms_site_manager()->getStorage()->findByHostname($_SERVER['HTTP_HOST'])) {
+      $manager->setContext($site);
+    } else {
+      $manager->dropContext();
+    }
+  } else {
+    $manager->dropContext();
   }
 
   // @todo Else attempt to find another contextual information (GET parameter?)
@@ -248,7 +304,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     return;
   }
 
-  $site = ucms_site_manager()->getStorage()->getContext();
+  $site = ucms_site_manager()->getContext();
 
   if (!$site) {
     return; // No site in context, nothing to check for.
@@ -284,8 +340,8 @@ function ucms_site_init() {
   // this information until now does it right (they should only be revelant
   // for frontend anyway), but we have a chance right now to fix admin paths
   // and remove the site information right now.
-  if (path_is_admin(current_path())) {
-    ucms_site_manager()->getStorage()->dropContext();
+  if ('node' !== arg(0) && path_is_admin(current_path())) {
+    ucms_site_manager()->dropContext();
 
     // Also redirect on the main dashboard.
     // @todo Needs a variable with the factory site URL.
@@ -301,7 +357,7 @@ function ucms_site_custom_theme() {
   // site has been rightly set, and if we are in admin site has been removed,
   // so if we have a site structure, we are 100% sure we are not in an admin
   // path.
-  $site = ucms_site_manager()->getStorage()->getContext();
+  $site = ucms_site_manager()->getContext();
 
   if (!$site) {
     return;
@@ -321,33 +377,48 @@ function ucms_site_custom_theme() {
 }
 
 /**
+ * Implements hook_node_presave().
+ */
+function ucms_site_node_presave($node) {
+  $dispatcher = ucms_site_node_dispatcher();
+  if (empty($node->nid)) {
+    $dispatcher->onPreInsert($node);
+  } else {
+    $dispatcher->onPreUpdate($node);
+  }
+  $dispatcher->onPreSave($node);
+}
+
+/**
  * Implements hook_node_load().
  */
 function ucms_site_node_load($nodes, $types) {
+  ucms_site_node_dispatcher()->onLoad($nodes);
+}
 
-  // Attach site identifiers list to each node being loaded. Althought it does
-  // and extra SQL query, this being the core of the whole site business, we
-  // can't bypass this step nor risk it being stalled with unsynchronized data
-  // in cache.
+/**
+ * Implements hook_node_insert().
+ */
+function ucms_site_node_insert($node) {
+  $dispatcher = ucms_site_node_dispatcher();
+  $dispatcher->onInsert($node);
+  $dispatcher->onSave($node);
+}
 
-  // @todo Later in the future, determiner an efficient way of caching it,
-  // we'll need this data to be set in Elastic Search anyway so we'll risk data
-  // stalling in there.
+/**
+ * Implements hook_node_update().
+ */
+function ucms_site_node_update($node) {
+  $dispatcher = ucms_site_node_dispatcher();
+  $dispatcher->onUpdate($node);
+  $dispatcher->onSave($node);
+}
 
-  $r = db_select('ucms_site_node', 'usn')
-    ->fields('usn', ['nid', 'site_id'])
-    ->condition('usn.nid', array_keys($nodes))
-    ->orderBy('usn.nid')
-    ->execute()
-  ;
-
-  foreach ($r as $row) {
-    $node = $nodes[$row->nid];
-    if (!property_exists($node, 'ucms_sites')) {
-      $node->ucms_sites = [];
-    }
-    $node->ucms_sites[] = $row->site_id;
-  }
+/**
+ * Implements hook_node_delete().
+ */
+function ucms_site_node_delete($node) {
+  ucms_site_node_dispatcher()->onDelete($node);
 }
 
 /**
@@ -496,7 +567,7 @@ function ucms_site_node_grants($account, $op) {
       break;
   }
 
-  $site = ucms_site_manager()->getStorage()->getContext();
+  $site = ucms_site_manager()->getContext();
 
   // Most complex part of this, deal with user's sites (the ones he's
   // webmaster of): states here apply only for the user's sites, and
