@@ -4,5 +4,9 @@ services:
     class: MakinaCorpus\Ucms\Dashboard\Context\ContextPane
     arguments: ['@event_dispatcher']
 
+  ucms_dashboard.page_factory:
+    class: MakinaCorpus\Ucms\Dashboard\Page\PageFactory
+    arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry"]
+
   ucms_dashboard.action_provider_registry:
     class: MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry

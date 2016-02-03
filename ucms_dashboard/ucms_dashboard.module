@@ -3,6 +3,10 @@
  * UCMS - Dashboard and fioritures.
  */
 
+use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\Page;
+
 /**
  * Use contextual pane permission.
  */
@@ -77,6 +81,26 @@ function ucms_dashboard_menu_alter(&$items) {
  */
 function ucms_dashboard_admin_redirect() {
   drupal_goto('admin/dashboard');
+}
+
+/**
+ * Fetch a specific page.
+ *
+ * Sad but true story, because we are not going to inject the controllers we
+ * are forced to keep this in the procedural code, in order for page callbacks
+ * to be able to use it.
+ *
+ * @param DatasourceInterface $datasource
+ * @param DisplayInterface $display
+ * @param string[] $suggestions
+ *   An arbitrary number of string which will derivate the template suggestions
+ *   for example, let's say you set here ['foo', 'bar'], the derivative template
+ *   to use will be: 'ucms_dashboard-page-list--foo--bar'.
+ *
+ * @return Page
+ */
+function ucms_dashboard_page_get(DatasourceInterface $datasource, DisplayInterface $display, $suggestions) {
+  return \Drupal::service('ucms_dashboard.page_factory')->get($datasource, $display, $suggestions);
 }
 
 /**

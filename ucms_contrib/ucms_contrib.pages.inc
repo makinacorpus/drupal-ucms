@@ -24,7 +24,7 @@ function ucms_contrib_admin_content_page($tab = null) {
   $datasource = new PrivateNodeDataSource($search);
   $display = new NodeAdminDisplay();
 
-  $ret['page'] = (new Page($datasource, $display, ['dashboard', 'content']))->render();
+  $ret['page'] = ucms_dashboard_page_get($datasource, $display, ['dashboard', 'content'])->render();
 
   return $ret;
 }

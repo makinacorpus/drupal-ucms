@@ -38,20 +38,24 @@ class Page
     /**
      * Default constructor
      *
+     * @param FormBuilderInterface $formBuilder
+     * @param ActionRegistry $actionRegistry
      * @param DatasourceInterface $datasource
+     * @param DisplayInterface $display
      * @param string[] $suggestions
      */
-    public function __construct(DatasourceInterface $datasource, DisplayInterface $display, $suggestions = null)
-    {
+    public function __construct(
+        FormBuilderInterface $formBuilder,
+        ActionRegistry $actionRegistry,
+        DatasourceInterface $datasource,
+        DisplayInterface $display,
+        $suggestions = null
+    ) {
         $this->datasource = $datasource;
         $this->display = $display;
         $this->suggestions = $suggestions;
-
-        // @todo
-        //  - this MUST be injected
-        $this->formBuilder = \Drupal::formBuilder();
-        // @todo this too
-        $this->actionRegistry = \Drupal::service('ucms_dashboard.action_provider_registry');
+        $this->formBuilder = $formBuilder;
+        $this->actionRegistry = $actionRegistry;
     }
 
     /**
