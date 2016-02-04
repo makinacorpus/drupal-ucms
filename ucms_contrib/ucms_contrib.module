@@ -125,8 +125,9 @@ function ucms_contrib_page_build(&$page) {
         ucms_layout_context_get()->isTemporary()
     ){
       ucms_dashboard_context_get()
-          ->addTab('cart', t("Cart"), 'shopping-cart')
-          ->add(ucms_contrib_favorite_render(), 'cart');
+        ->addTab('cart', t("Cart"), 'shopping-cart')
+        ->add(ucms_contrib_favorite_render(), 'cart')
+      ;
     }
   }
 }
