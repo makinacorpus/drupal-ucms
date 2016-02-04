@@ -58,7 +58,7 @@ class Page
     ) {
         $this->datasource = $datasource;
         $this->display = $display;
-        $this->suggestions = $suggestions;
+        $this->suggestions = $suggestions ? $suggestions : [];
         $this->formBuilder = $formBuilder;
         $this->actionRegistry = $actionRegistry;
     }
@@ -99,15 +99,18 @@ class Page
      *
      * @return string[]
      */
-    private function buildQuery()
+    private function buildQuery($query = null)
     {
+        if (null === $query) {
+            $query = drupal_get_query_parameters();
+        }
         // @todo This should be injected
-        return $this->baseQuery + drupal_get_query_parameters();
+        return $this->baseQuery + $query;
     }
 
-    public function render()
+    public function render($query = [], $route = '/')
     {
-        $query = $this->buildQuery();
+        $query = $this->buildQuery($query);
         $fixedQuery = LinksFilterDisplay::fixQuery($query); // @todo this is ugly
 
         $this->datasource->init($fixedQuery);
@@ -141,15 +144,18 @@ class Page
             '#display'    => $this->display,
             '#items'      => $items,
             '#pager'      => ['#theme' => $this->getThemeFunctionName('pager')],
-            '#sort_field' => $sortManager->buildFieldLinks($fixedQuery),
-            '#sort_order' => $sortManager->builOrderLinks($fixedQuery),
+            '#sort_field' => $sortManager->buildFieldLinks($fixedQuery, $route),
+            '#sort_order' => $sortManager->builOrderLinks($fixedQuery, $route),
         ];
 
-        foreach ($this->datasource->getFilters($query) as $index => $filter) {
-            if (isset($this->baseQuery[$filter->getField()])) {
-                continue; // Drop forced filters
+        $filters = $this->datasource->getFilters($query);
+        if ($filters) {
+            foreach ($filters as $index => $filter) {
+                if (isset($this->baseQuery[$filter->getField()])) {
+                    continue; // Drop forced filters
+                }
+                $build['#filters'][$index] = $filter->build($query);
             }
-            $build['#filters'][$index] = $filter->build($query);
         }
 
         if ($this->datasource->hasSearchForm()) {

@@ -43,13 +43,12 @@ interface DisplayInterface
     /**
      * Render view links
      *
-     * @param string $targetPath
-     *   Path to use if not the actual one
+     * @param string $route
      *
      * @return array
      *   drupal_render() friendly structure
      */
-    public function renderLinks($targetPath = null);
+    public function renderLinks($route);
 
     /**
      * Render content (object must be prepared with query)

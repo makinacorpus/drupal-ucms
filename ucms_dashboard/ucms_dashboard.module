@@ -210,7 +210,7 @@ function template_preprocess_ucms_dashboard_page_list(&$variables) {
   /* @var $display \MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface */
   $display = $variables['display'];
   $variables['displayView']   = $display->render($variables['items']);
-  $variables['displayLinks']  = $display->renderLinks();
+  $variables['displayLinks']  = $display->renderLinks(current_path());
 }
 
 /**

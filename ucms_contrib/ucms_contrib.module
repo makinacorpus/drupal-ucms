@@ -296,7 +296,7 @@ function ucms_contrib_favorite_render($account = null) {
   $ret = [
     '#theme'    => 'ucms_contrib_cart',
     '#account'  => $uid,
-    '#display'  => $display->renderLinks(),
+    '#display'  => $display->renderLinks(current_path()),
     '#items'    => $display->render($nodes),
   ];
 

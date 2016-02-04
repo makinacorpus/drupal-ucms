@@ -140,19 +140,14 @@ abstract class AbstractDisplay implements DisplayInterface
     /**
      * Render view links
      *
-     * @param string $targetPath
-     *   Path to use if not the actual one
+     * @param string $route
      *
      * @return array
      *   drupal_render() friendly structure
      */
-    final public function renderLinks($targetPath = null)
+    final public function renderLinks($route)
     {
         $links = [];
-
-        if (!$targetPath) {
-            $targetPath = current_path();
-        }
 
         $supportedMode = $this->getSupportedModes();
         if (count($supportedMode) < 2) {
@@ -173,14 +168,14 @@ abstract class AbstractDisplay implements DisplayInterface
             }
 
             $links[$name] = [
-                'href'        => $targetPath,
+                'href'        => $route,
                 'title'       => t("Display as @mode", ['@mode' => $title]),
                 'query'       => $query,
                 'attributes'  => $attributes,
                 // Forces the l() function to skip the 'active' class by adding empty
                 // attributes array and settings a stupid language onto the link (this
                 // is Drupal 7 specific and exploit a Drupal weird behavior)
-                'language'    => (object)['language' => LANGUAGE_NONE],
+                'language'    => (object)['language' => 'und'],
             ];
         }
 

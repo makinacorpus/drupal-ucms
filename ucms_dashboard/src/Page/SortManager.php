@@ -138,17 +138,17 @@ class SortManager
         return $this->defaultOrder;
     }
 
-    private function buildLink($query, $param, $value, $label, $current, $default)
+    private function buildLink($query, $route, $param, $value, $label, $current, $default)
     {
         $link = [
-            'href'        => current_path(),
-            'title'       => filter_xss($label),
+            'href'        => $route,
+            'title'       => $label,
             'html'        => true,
             'attributes'  => [],
             // Forces the l() function to skip the 'active' class by adding empty
             // attributes array and settings a stupid language onto the link (this
             // is Drupal 7 specific and exploit a Drupal weird behavior)
-            'language'    => (object)['language' => LANGUAGE_NONE],
+            'language'    => (object)['language' => 'und'],
         ];
 
         if ($value === $default) {
@@ -167,18 +167,19 @@ class SortManager
      * Build field links
      *
      * @param string[] $query
+     * @param string $href
      *
      * @return mixed
      *   drupal_render() friendly structure
      */
-    public function buildFieldLinks($query)
+    public function buildFieldLinks($query, $route)
     {
         $links = [];
 
         $current = $this->getCurrentField($query);
 
         foreach ($this->allowed as $value => $label) {
-            $links[$value] = $this->buildLink($query, $this->paramField, $value, $label, $current, $this->defaultField);
+            $links[$value] = $this->buildLink($query, $route, $this->paramField, $value, $label, $current, $this->defaultField);
         }
 
         return [
@@ -192,11 +193,12 @@ class SortManager
      * Build order links
      *
      * @param string[] $query
+     * @param string $href
      *
      * @return mixed
      *   drupal_render() friendly structure
      */
-    public function builOrderLinks($query)
+    public function builOrderLinks($query, $route)
     {
         $links  = [];
 
@@ -204,7 +206,7 @@ class SortManager
         $map = [self::ASC => $this->t("ascending"), self::DESC => $this->t("descending")];
 
         foreach ($map as $value => $label) {
-            $links[$value] = $this->buildLink($query, $this->paramOrder, $value, $label, $current, $this->defaultOrder);;
+            $links[$value] = $this->buildLink($query, $route, $this->paramOrder, $value, $label, $current, $this->defaultOrder);;
         }
 
         return [

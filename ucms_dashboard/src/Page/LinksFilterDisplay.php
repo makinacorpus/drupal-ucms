@@ -164,7 +164,7 @@ class LinksFilterDisplay implements FilterDisplayInterface
     /**
      * {inheritdoc}
      */
-    public function build($query)
+    public function build($query, $route)
     {
         $links = [];
         $selectedValues = $this->getSelectedValues($query);
@@ -172,8 +172,8 @@ class LinksFilterDisplay implements FilterDisplayInterface
         foreach ($this->choicesMap as $value => $label) {
 
             $link = [
-                'href'  => current_path(),
-                'title' => filter_xss($label),
+                'href'  => $route,
+                'title' => $label,
                 'html'  => true,
             ];
 
@@ -194,7 +194,7 @@ class LinksFilterDisplay implements FilterDisplayInterface
             if (empty($link['attributes'])) {
                 $link['attributes'] = [];
             }
-            $link['language'] = (object)['language' => LANGUAGE_NONE];
+            $link['language'] = (object)['language' => 'und'];
         }
 
         return [

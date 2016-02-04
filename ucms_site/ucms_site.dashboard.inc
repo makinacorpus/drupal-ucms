@@ -19,7 +19,9 @@ function ucms_site_dashboard_site_list_all() {
   $datasource = \Drupal::service('ucms_site.admin.datasource');
   $display    = new SiteAdminDisplay(t("There is not sites yet."));
 
-  return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])->render();
+  return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])
+    ->render(drupal_get_query_parameters(), current_path())
+  ;
 }
 
 /**
@@ -33,7 +35,7 @@ function ucms_site_dashboard_site_list_mine() {
 
   return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])
     ->setBaseQuery(['uid' => $user->uid])
-    ->render()
+    ->render(drupal_get_query_parameters(), current_path()
   ;
 }
 
@@ -52,7 +54,9 @@ function ucms_site_dashboard_site_list_archive() {
       $query['uid'] = $user->uid;
   }
 
-  return $page->setBaseQuery($query)->render();
+  return $page->setBaseQuery($query)
+    ->render(drupal_get_query_parameters(), current_path()
+  ;
 }
 
 /**
