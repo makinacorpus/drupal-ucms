@@ -2,8 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
-
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 
