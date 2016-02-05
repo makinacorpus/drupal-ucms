@@ -35,7 +35,7 @@ function ucms_site_dashboard_site_list_mine() {
 
   return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])
     ->setBaseQuery(['uid' => $user->uid])
-    ->render(drupal_get_query_parameters(), current_path()
+    ->render(drupal_get_query_parameters(), current_path())
   ;
 }
 
@@ -55,7 +55,7 @@ function ucms_site_dashboard_site_list_archive() {
   }
 
   return $page->setBaseQuery($query)
-    ->render(drupal_get_query_parameters(), current_path()
+    ->render(drupal_get_query_parameters(), current_path())
   ;
 }
 

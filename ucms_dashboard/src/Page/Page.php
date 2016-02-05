@@ -154,7 +154,7 @@ class Page
                 if (isset($this->baseQuery[$filter->getField()])) {
                     continue; // Drop forced filters
                 }
-                $build['#filters'][$index] = $filter->build($query);
+                $build['#filters'][$index] = $filter->build($query, $route);
             }
         }
 
