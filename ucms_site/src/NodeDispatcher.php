@@ -215,8 +215,18 @@ class NodeDispatcher
 
     public function onInsert($node)
     {
-        if (property_exists($node, 'site_id') && !empty($node->site_id)) {
-            $this->createReference($this->manager->getStorage()->findOne($node->site_id), $node);
+        if (!empty($node->site_id)) {
+            $site = $this->manager->getStorage()->findOne($node->site_id);
+
+            $this->createReference($site, $node);
+
+            // Site might not have an homepage, because the factory wasn't
+            // configured properly before creation, so just set this node
+            // as home page.
+            if (empty($site->home_nid)) {
+                $site->home_nid = $node->nid;
+                $this->manager->getStorage()->save($site, ['home_nid']);
+            }
         }
     }
 

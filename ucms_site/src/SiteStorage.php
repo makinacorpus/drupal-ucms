@@ -215,6 +215,7 @@ class SiteStorage
             'template_id',
             'is_template',
             'type',
+            'home_nid',
         ];
 
         if (null === $fields) {
