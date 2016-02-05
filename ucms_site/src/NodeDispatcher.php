@@ -182,20 +182,21 @@ class NodeDispatcher
             $node->ucms_sites = [];
         }
 
+        if (!property_exists($node, 'site_id')) {
+            $node->site_id = null;
+        }
+
         // If the node is created in a specific site context, then gives the
         // node ownership to this site, note this might change in the end, it
         // is mostly the node original site.
-        if (!property_exists($node, 'site_id') || (empty($node->site_id) && false !== $node->site_id)) {
+        if (!empty($node->site_id)) {
+            $node->ucms_sites[] = $node->site_id;
+            $node->is_global = 0;
+        } else if (false !== $node->site_id) {
             if ($site = $this->manager->getContext()) {
-
                 $node->site_id = $site->id;
                 $node->ucms_sites[] = $site->id;
-
-                // Note that the node may be global and referenced in a site
-                // at the same time, but it cannot be global and have an site
-                // origin, hence we force 0 here
                 $node->is_global = 0;
-
             } else {
                 $node->is_global = 1;
             }
@@ -225,6 +226,11 @@ class NodeDispatcher
 
     public function onSave($node)
     {
+        $sites = $this->manager->getStorage()->loadAll($node->ucms_sites);
+
+        foreach ($sites as $site) {
+            $this->createReference($site, $node);
+        }
     }
 
     public function onDelete($node)

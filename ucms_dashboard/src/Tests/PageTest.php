@@ -50,6 +50,4 @@ class PageTest extends AbstractDrupalTest
     {
         // @todo
     }
-
-    
 }
