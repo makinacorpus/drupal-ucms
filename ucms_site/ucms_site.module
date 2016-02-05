@@ -282,6 +282,14 @@ function ucms_site_boot() {
   if (!empty($_SERVER['HTTP_HOST'])) {
     if ($site = ucms_site_manager()->getStorage()->findByHostname($_SERVER['HTTP_HOST'])) {
       $manager->setContext($site);
+
+      // This has to be done before drupal_path_initialize() which is run right
+      // before the hook_init(), so this will be the one and only alteration
+      // being done on hook_boot().
+      if ($site->home_nid) {
+        $GLOBALS['conf']['site_frontpage'] = 'node/' . $site->home_nid;
+      }
+
     } else {
       $manager->dropContext();
     }
@@ -334,6 +342,8 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
  * Implements hook_init().
  */
 function ucms_site_init() {
+  $manager = ucms_site_manager();
+
   // We might have some problems due to the fact that the site is determined
   // at hook_boot() time, for example, we cannot call the path_is_admin()
   // function because modules have not been invoked. Site is being set way
@@ -341,11 +351,18 @@ function ucms_site_init() {
   // this information until now does it right (they should only be revelant
   // for frontend anyway), but we have a chance right now to fix admin paths
   // and remove the site information right now.
-  if ('node' !== arg(0) && path_is_admin(current_path())) {
-    ucms_site_manager()->dropContext();
-
+  if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8)  && path_is_admin(current_path())) {
+    $manager->dropContext();
     // Also redirect on the main dashboard.
     // @todo Needs a variable with the factory site URL.
+  }
+
+  // From this point, we have a context, and all access checks passed, so we
+  // can safely alter the environment.
+  if ($site = $manager->getContext()) {
+    if ($site->title) {
+      $GLOBALS['conf']['site_name'] = $site->title;
+    }
   }
 }
 
@@ -353,6 +370,13 @@ function ucms_site_init() {
  * Implements hook_custom_theme().
  */
 function ucms_site_custom_theme() {
+
+  if (path_is_admin(current_path())) {
+    // Because there is actually a few admin paths that are accessible from
+    // the sites themselves (node add, edit and menu tree) we can't override
+    // the theme when we are working in an admin path.
+    return;
+  }
 
   // This should be called way after the hook_init() run, so we are sure the
   // site has been rightly set, and if we are in admin site has been removed,
