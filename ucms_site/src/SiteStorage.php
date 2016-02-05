@@ -30,8 +30,18 @@ class SiteStorage
     public function prepareInstance(Site $site)
     {
         $site->state = (int)$site->state;
-        $site->ts_created = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_created);
-        $site->ts_changed = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_changed);
+
+        if ($site->ts_created) {
+            $site->ts_created = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_created);
+        } else {
+            $site->ts_created = new \DateTime();
+        }
+
+        if ($site->ts_changed) {
+            $site->ts_changed = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_changed);
+        } else {
+            $site->ts_changed = new \DateTime();
+        }
     }
 
     /**
