@@ -1,0 +1,182 @@
+<?php
+/**
+ * @file
+ * UCMS - Pseudo SSO accross sites.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_sso_menu() {
+  $items = [];
+
+  $items['sso/check'] = [
+    'page callback'     => 'ucms_sso_callback_check',
+    'access callback'   => true,
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['sso/login'] = [
+    'page callback'     => 'ucms_sso_callback_login',
+    'access callback'   => 'user_is_anonymous',
+    'type'              => MENU_CALLBACK,
+  ];
+
+  return $items;
+}
+
+/**
+ * Get default URL scheme. Later will always be 'https'.
+ */
+function ucms_sso_scheme_get() {
+  // @todo only https later
+  return $GLOBALS['is_https'] ? 'https' : 'http';
+}
+
+/**
+ * Tells if the current site is master.
+ *
+ * @return boolean
+ */
+function ucms_sso_is_master() {
+  return !ucms_site_manager()->getContext() && !drupal_is_cli() && $_SERVER['HTTP_HOST'] === variable_get('ucms_site_master_hostname');
+}
+
+/**
+ * Get a valid HTTP Origin header if it matches an existing site.
+ *
+ * @return boolean
+ */
+function ucms_sso_origin_get() {
+  if (!empty($_SERVER['HTTP_ORIGIN'])) {
+    $manager = ucms_site_manager();
+    $site = $manager->getStorage()->findByHostname($_SERVER['HTTP_ORIGIN']);
+    if ($site && $manager->getAccess()->userCanView($site)) {
+      return $site->http_host;
+    }
+  }
+}
+
+/**
+ * Implements hook_init().
+ */
+function ucms_sso_init() {
+  if (ucms_sso_is_master()) {
+    if ($origin = ucms_sso_origin_get()) {
+      drupal_add_http_header('Access-Control-Allow-Origin', ucms_sso_scheme_get() . '://' . $origin);
+      drupal_add_http_header('Access-Control-Allow-Credentials', 'true');
+      drupal_add_http_header('Access-Control-Allow-Headers', 'Accept, Content-Type');
+      drupal_add_http_header('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+    }
+
+  } else {
+    // If there is no origin in the HTTP headers, this means we are building
+    // a full web page, then we need to add this JS.
+    if (!user_is_logged_in() && ($data = ucms_sso_js())) {
+      drupal_add_js($data, ['type' => 'inline', 'scope' => 'header']);
+    }
+  }
+}
+
+/**
+ * (Not really an) SSO callback.
+ */
+function ucms_sso_callback_check() {
+  if (!$origin = ucms_sso_origin_get()) {
+    return MENU_ACCESS_DENIED;
+  }
+  if (!user_is_logged_in()) {
+    return MENU_ACCESS_DENIED;
+  }
+  // User 42 is logged on site A (master).
+  // User 42 goes on site B (slave).
+  // Site B does an AJAX request on A (this callback).
+  //  - Token exists: it returns OK, then redirect the client on itself
+  //    with session id as token on site B (the next callback).
+  //  - Token is wrong: it returns NO, a JavaScript cookie is set and it
+  //    prevents the user from loggin in for a few minutes.
+  return drupal_json_output(['status' => 1, 'uri' => ucms_sso_scheme_get() . '://' . $origin . '/sso/login/?s=' . session_id()]);
+}
+
+/**
+ * (Not really an) SSO callback.
+ */
+function ucms_sso_callback_login() {
+  if (empty($_GET['s'])) {
+    return MENU_ACCESS_DENIED;
+  }
+  $sessionId = preg_replace('@[^\d\w-_]@', '', $_GET['s']);
+  if (!$sessionId) {
+    return MENU_ACCESS_DENIED;
+  }
+  // @todo Find a better way, but sessions must be shared.
+  setcookie(session_name(), false);
+  $params = session_get_cookie_params();
+  $expire = $params['lifetime'] ? REQUEST_TIME + $params['lifetime'] : 0;
+  setcookie(session_name(), $sessionId, $expire, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+  // Leave the user to the page he sould be.
+  drupal_goto();
+}
+
+/**
+ * Get the SSO javascript.
+ */
+function ucms_sso_js() {
+
+  $masterHostname = variable_get('ucms_site_master_hostname');
+
+  if (!$masterHostname) {
+    return;
+  }
+
+  $master = url(ucms_sso_scheme_get() . '://' . $masterHostname . '/sso/check');
+
+  // This is the packed version, please note that you want to edit the
+  // ucms_sso.js instead, then pack it using http://dean.edwards.name/packer/
+  // in which case, don't worry about the ${master}, it will be left untouched
+  // by the packer.
+  return <<<EOT
+(function(){"use strict";var d=document;function n(){return Math.floor(Date.now()/1000)}function stop(){d.cookie="usso="+(n()+240)}function may(){var a=d.cookie.match(/usso=([\d]+)(;|$)/);return!a||a[1]<n()}if(may()){var x=new XMLHttpRequest();x.open("GET","${master}");x.withCredentials=true;x.setRequestHeader("Accept","application/json");x.onerror=function(){stop()};x.onload=function(){try{var d=JSON.parse(this.responseText);if(d.status&&d.uri){window.location.href=d.uri+"&destination="+window.location.href}stop()}catch(e){stop()}};x.send()}}());
+EOT;
+
+  return <<<EOT
+// No jQuery dependency else we will have problems.
+(function () {
+  "use strict";
+  var d = document;
+  // Fetch unix timestamp.
+  function n() {
+    return Math.floor(Date.now() / 1000);
+  }
+  // Tell the browser to stop checking for a while.
+  function stop() {
+    d.cookie = "usso=" + (n() + 240); // 3 minutes
+  }
+  // Can the broswer attempt?
+  function may() {
+    var match = d.cookie.match(/usso=([\d]+)(;|$)/);
+    return !match || match[1] < n();
+  }
+  if (may()) {
+    var x = new XMLHttpRequest();
+    x.open("GET", "${master}");
+    x.withCredentials = true;
+    x.setRequestHeader("Accept", "application/json");
+    x.onerror = function () {
+      stop();
+    };
+    x.onload = function () {
+      try {
+        var d = JSON.parse(this.responseText);
+        if (d.status && d.uri) {
+          window.location.href = d.uri + "&destination=" + window.location.href;
+        }
+        stop();
+      } catch (e) {
+        stop();
+      }
+    };
+    x.send();
+  }
+}());
+EOT;
+}

@@ -55,6 +55,11 @@ class SiteStorage
      */
     public function findByHostname($hostname)
     {
+        // Proceed to a few cleanups, in case.
+        if (false !== ($pos = strpos($hostname, '://'))) {
+          $hostname = substr($hostname, $pos + 3);
+        }
+
         $site = $this
             ->db
             ->query(
