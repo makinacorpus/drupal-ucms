@@ -1,0 +1,15 @@
+services:
+
+  ucms_label.manager:
+    class: MakinaCorpus\Ucms\Label\LabelManager
+    arguments: ["@database"]
+
+  ucms_label.admin.datasource:
+    class: MakinaCorpus\Ucms\Label\Page\LabelAdminDatasource
+    arguments: ["@database", "@ucms_label.manager"]
+
+  ucms_label.label_action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\Label\Action\LabelActionProvider
+    arguments: ["@ucms_label.manager"]
+    tags: [{name: ucms_dashboard.action_provider}]

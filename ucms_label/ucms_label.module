@@ -1,0 +1,116 @@
+<?php
+/**
+ * @file
+ * UCMS - Label management.
+ */
+
+
+use MakinaCorpus\Ucms\Label\LabelAccess;
+
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_label_menu() {
+  $items = [];
+
+  $items['admin/dashboard/label'] = [
+    'title'             => "Labels",
+    'page callback'     => 'ucms_label_dashboard_label_list',
+    'access arguments'  => [LabelAccess::PERM_ACCESS_DASHBOARD],
+    'type'              => MENU_NORMAL_ITEM,
+    'file'              => 'ucms_label.dashboard.inc',
+  ];
+
+  $items['admin/dashboard/label/add'] = [
+    'title'             => "Add new label",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelEdit'],
+    'access callback'   => 'ucms_label_access_manage',
+    'access arguments'  => [LabelAccess::OP_ADD],
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+
+  $items['admin/dashboard/label/%taxonomy_term'] = [
+    'title'             => "Edit label",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelEdit', 3],
+    'access callback'   => 'ucms_label_access_manage',
+    'access arguments'  => [LabelAccess::OP_EDIT, 3],
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+
+  $items['admin/dashboard/label/%taxonomy_term/edit'] = [
+    'title'             => "Label edit",
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+  ];
+
+//  $items['admin/dashboard/label/%ucms_label/log'] = [
+//    'title'             => "Label log",
+//    'page callback'     => 'ucms_label_dashboard_label_page_log',
+//    'page arguments'    => [3],
+//    'access callback'   => 'ucms_label_access_manage',
+//    'access arguments'  => ['view_log', 3],
+//    'type'              => MENU_LOCAL_TASK,
+//    'file'              => 'ucms_label.dashboard.inc',
+//  ];
+//
+//  $items['admin/dashboard/label/%taxonomy_term/delete'] = [
+//    'title'             => "Delete label",
+//    'page callback'     => 'drupal_get_form',
+//    'page arguments'    => ['ucms_label_dashboard_label_delete_form', 3],
+//    'access callback'   => 'ucms_label_access_manage',
+//    'access arguments'  => [LabelAccess::OP_DELETE, 3],
+//    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+//    'file'              => 'ucms_label.dashboard.inc',
+//  ];
+
+  return $items;
+}
+
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_label_permission() {
+  return [
+    LabelAccess::PERM_ACCESS_DASHBOARD => [
+      'title' => t("View labels"),
+    ],
+    LabelAccess::PERM_EDIT_LOCKED => [
+      'title' => t("Edit locked labels"),
+    ],
+    LabelAccess::PERM_EDIT_NON_LOCKED => [
+      'title' => t("Edit non locked labels"),
+    ],
+  ];
+}
+
+
+/**
+ * Checks the user's permissions for operations on labels.
+ */
+function ucms_label_access_manage($op, $label = null, $account = null) {
+  if (!$account) {
+    global $user;
+    $account = $user;
+  }
+
+  switch ($op) {
+    case LabelAccess::OP_ADD:
+    case LabelAccess::OP_DELETE:
+      return user_access(LabelAccess::PERM_EDIT_NON_LOCKED, $account)
+          || user_access(LabelAccess::PERM_EDIT_LOCKED, $account);
+
+    case LabelAccess::OP_EDIT:
+      if ((boolean) $label->is_locked === true) {
+        return user_access(LabelAccess::PERM_EDIT_LOCKED, $account);
+      } else {
+        return user_access(LabelAccess::PERM_EDIT_NON_LOCKED, $account);
+      }
+
+    //case LabelAccess::OP_VIEW_LOG: break;
+  }
+
+  return false;
+}
