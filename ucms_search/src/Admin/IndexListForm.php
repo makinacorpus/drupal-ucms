@@ -131,6 +131,11 @@ class IndexListForm extends FormBase
         $indices  = $this->indexStorage->names();
         $stats    = null;
 
+        $aliases = [];
+        foreach (array_keys($indices) as $index) {
+            $aliases[$index] = $this->indexStorage->getIndexRealname($index);
+        }
+
         $q = $this->db->select('ucms_search_status', 's');
         $q->fields('s', ['index_key']);
         $q->addExpression("COUNT(index_key)", 'count');
@@ -150,13 +155,15 @@ class IndexListForm extends FormBase
         ;
 
         try {
-            $stats = $this->client->indices()->status(['index' => implode(',', array_keys($indices))]);
+            $stats = $this->client->indices()->status(['index' => implode(',', $aliases)]);
         } catch (Missing404Exception $e) {
             watchdog_exception(__FUNCTION__, $e);
         }
 
         $rows = [];
         foreach ($indices as $index => $name) {
+
+            $alias = $aliases[$index];
 
             $row = [
                 check_plain($index),
@@ -166,9 +173,9 @@ class IndexListForm extends FormBase
             $row[] = isset($total[$index]) ? number_format($total[$index]) : 0;
             $row[] = isset($waiting[$index]) ? number_format($waiting[$index]) : 0;
 
-            if ($stats && $stats['indices'][$index]) {
-                $row[] = number_format($stats['indices'][$index]['docs']['num_docs']);
-                $row[] = $this->formatBytes($stats['indices'][$index]['index']['size_in_bytes']);
+            if ($stats && $stats['indices'][$alias]) {
+                $row[] = number_format($stats['indices'][$alias]['docs']['num_docs']);
+                $row[] = $this->formatBytes($stats['indices'][$alias]['index']['size_in_bytes']);
             } else {
                 $row[] = $row[] = '<em>' . $this->t("Error") . '</em>';
             }

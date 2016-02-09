@@ -17,22 +17,7 @@
  *   - Add Elastic search array query formatting (must, must not, etc...)
  */
 
-use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
-
-/**
- * Public index name.
- *
- * FIXME: Ugly define/variable_get
- */
-define('UCMS_SEARCH_INDEX_PUBLIC', variable_get('ucms_search_elastic_index_front', 'public'));
-
-/**
- * Backoffice index name.
- *
- * FIXME: Ugly define/variable_get
- */
-define('UCMS_SEARCH_INDEX_BACK', variable_get('ucms_search_elastic_index_back', 'private'));
 
 /**
  * Default number of items index each cron run.
@@ -194,7 +179,7 @@ function ucms_search_node_delete($node) {
 function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $query) {
   switch ($index) {
 
-    case UCMS_SEARCH_INDEX_PUBLIC:
+    case 'public':
       $query->condition('n.status', 1);
       break;
   }
@@ -206,13 +191,13 @@ function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $que
 function ucms_search_ucms_search_index_node($index, $node) {
   switch ($index) {
 
-    case UCMS_SEARCH_INDEX_PUBLIC:
+    case 'public':
       if ($node->status) {
         return true;
       }
       break;
 
-    case UCMS_SEARCH_INDEX_BACK:
+    case 'private':
       return true;
   }
 }

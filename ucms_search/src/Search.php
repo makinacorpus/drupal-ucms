@@ -11,7 +11,7 @@ use MakinaCorpus\Ucms\Search\Lucene\Query;
 class Search
 {
     /**
-     * @var \Elasticsearch\Client $client
+     * @var \Elasticsearch\Client
      */
     protected $client;
 

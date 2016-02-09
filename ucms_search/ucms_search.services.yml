@@ -6,11 +6,15 @@ parameters:
   ucms_search.elastic.config:
     hosts: ["localhost:9200"]
 
+  # Maps the Drupal index logical names to Elastic Search real indices names
+  # keys are Drupal indices names, values are Elastic indices names
+  ucms_search.elastic.index_map: []
+
 services:
 
   ucms_search.index_storage:
     class: MakinaCorpus\Ucms\Search\IndexStorage
-    arguments: ["@ucms_search.elastic.client", "@database", "@cache.default", "@entity.manager", "@module_handler"]
+    arguments: ["@ucms_search.elastic.client", "@database", "@cache.default", "@entity.manager", "@module_handler", "%ucms_search.elastic.index_map%"]
 
   ucms_search.node_indexer:
     public: false

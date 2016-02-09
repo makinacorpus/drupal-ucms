@@ -52,6 +52,11 @@ class NodeIndexer implements NodeIndexerInterface
     private $index;
 
     /**
+     * @var string
+     */
+    private $indexRealname;
+
+    /**
      * Default constructor
      *
      * @param string $index
@@ -65,13 +70,15 @@ class NodeIndexer implements NodeIndexerInterface
         Client $client,
         \DatabaseConnection $db,
         EntityManager $entityManager,
-        ModuleHandlerInterface $moduleHandler)
+        ModuleHandlerInterface $moduleHandler,
+        $indexRealname = null)
     {
         $this->index = $index;
         $this->client = $client;
         $this->db = $db;
         $this->nodeController = $entityManager->getStorage('node');
         $this->moduleHandler = $moduleHandler;
+        $this->indexRealname = ($indexRealname ? $indexRealname : $index);
     }
 
     /**
@@ -246,7 +253,7 @@ class NodeIndexer implements NodeIndexerInterface
         $response = $this
             ->client
             ->delete([
-                'index' => $this->index,
+                'index' => $this->indexRealname,
                 'id'    => $node->nid,
                 'type'  => 'node',
             ])
@@ -299,7 +306,7 @@ class NodeIndexer implements NodeIndexerInterface
 
             $params['body'][] = [
                 'index' => [
-                    '_index'   => $this->index,
+                    '_index'   => $this->indexRealname,
                     '_id'      => $node->nid,
                     '_type'    => 'node',
                     // @todo Refresh could be global.
@@ -340,7 +347,7 @@ class NodeIndexer implements NodeIndexerInterface
         $response = $this
             ->client
             ->index([
-                'index'   => $this->index,
+                'index'   => $this->indexRealname,
                 'id'      => $node->nid,
                 'type'    => 'node',
                 'refresh' => (bool)$refresh,

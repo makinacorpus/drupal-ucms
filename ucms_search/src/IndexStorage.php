@@ -50,6 +50,11 @@ class IndexStorage
     /**
      * @var string[]
      */
+    private $indexAliasMap = [];
+
+    /**
+     * @var string[]
+     */
     private $indexListCache = [];
 
     /**
@@ -74,19 +79,42 @@ class IndexStorage
      * @param \DatabaseConnection $db
      * @param \DrupalCacheInterface $cache
      * @param ModuleHandlerInterface $moduleHandler
+     * @param string[] $indexAliasMap
+     *   Keys are logical indices names (those used as keys for the Drupal code)
+     *   while values are the real indices names in Elastic Search.
      */
     public function __construct(
         Client $client,
         \DatabaseConnection $db,
         CacheBackendInterface $cache,
         EntityManager $entityManager,
-        ModuleHandlerInterface $moduleHandler)
+        ModuleHandlerInterface $moduleHandler,
+        array $indexAliasMap = null)
     {
         $this->client = $client;
         $this->db = $db;
         $this->cache = $cache;
         $this->entityManager = $entityManager;
         $this->moduleHandler = $moduleHandler;
+        if ($indexAliasMap) {
+            $this->indexAliasMap = $indexAliasMap;
+        }
+    }
+
+    /**
+     * Get index real name for Elastic Search
+     *
+     * @param string $index
+     *
+     * @return string
+     */
+    public function getIndexRealname($index)
+    {
+        if (isset($this->indexAliasMap[$index])) {
+            return $this->indexAliasMap[$index];
+        }
+
+        return $index;
     }
 
     /**
@@ -103,7 +131,14 @@ class IndexStorage
         if (empty($this->nodeIndexerChain)) {
             $list = [];
             foreach ($this->keys() as $existing) {
-                $list[$existing] = new NodeIndexer($existing, $this->client, $this->db, $this->entityManager, $this->moduleHandler);
+                $list[$existing] = new NodeIndexer(
+                    $existing,
+                    $this->client,
+                    $this->db,
+                    $this->entityManager,
+                    $this->moduleHandler,
+                    $this->getIndexRealname($existing)
+                );
             }
             $this->nodeIndexerChain = new NodeIndexerChain($list);
         }
@@ -151,7 +186,16 @@ class IndexStorage
         $this->moduleHandler->invokeAll(self::HOOK_DEF_SAVE, [$index, $param, $updated, !$existing]);
 
         $this->indexer();
-        $this->nodeIndexerChain->addIndexer($index, new NodeIndexer($index, $this->client, $this->db, $this->entityManager, $this->moduleHandler));
+        $this->nodeIndexerChain->addIndexer(
+            $index,
+            new NodeIndexer(
+                $index,
+                $this->client,
+                $this->db,
+                $this->entityManager,
+                $this->moduleHandler,
+                $this->getIndexRealname($index)
+            ));
 
         if ($updated) {
             $this->clear($index);
@@ -312,7 +356,7 @@ class IndexStorage
 
         if (!$namespace->exists(['index' => $index])) {
             $namespace->create([
-                'index' => $index,
+                'index' => $this->getIndexRealname($index),
                 'body'  => $param,
             ]);
         }
@@ -327,8 +371,10 @@ class IndexStorage
     {
         $namespace = $this->client->indices();
 
-        if ($namespace->exists(['index' => $index])) {
-            $namespace->delete(['index' => $index]);
+        $indexRealname = $this->getIndexRealname($index);
+
+        if ($namespace->exists(['index' => $indexRealname])) {
+            $namespace->delete(['index' => $indexRealname]);
         }
     }
 

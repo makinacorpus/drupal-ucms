@@ -14,7 +14,7 @@ function ucms_contrib_admin_content_page($tab = null) {
 
   $ret = [];
 
-  $search = ucms_search_create(UCMS_SEARCH_INDEX_BACK);
+  $search = ucms_search_create('private');
 
   $types = variable_get('ucms_contrib_tab_' . $tab . '_type');
   if (!empty($types)) {
