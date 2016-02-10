@@ -1,4 +1,4 @@
-<div id="contextual-pane">
+<div id="contextual-pane" class="pane-right">
   <div id="contextual-pane-toggle">
     <?php foreach ($tabs as $key => $tab): ?>
       <a href="#tab-<?php echo $key; ?>">
@@ -9,6 +9,9 @@
   </div>
   <div class="inner">
     <div class="actions">
+      <a href="#" id="contextual-pane-switch-position" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon-collapse-down"></span>
+      </a>
       <?php echo render($actions); ?>
     </div>
     <div class="tabs">

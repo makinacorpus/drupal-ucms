@@ -1,12 +1,21 @@
 
 #contextual-pane {
   position: fixed;
+  z-index: 110;
+}
+#contextual-pane.pane-right {
   top: 0;
   right: 0;
   width: 330px;
   height: 100%;
-  z-index: 10;
 }
+#contextual-pane.pane-down {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 330px;
+}
+
 .navbar {
   z-index: 20;
 }
@@ -19,15 +28,17 @@
   left: 0;
   background: #333;
   z-index: 2;
-  padding: 60px 0 0 0;
   width: 100%;
+  padding-top: 10px;
+}
+#contextual-pane.pane-right .inner {
+  padding-top: 60px;
 }
 
 #contextual-pane .tabs {
   position: relative;
   color: #fff;
 }
-
 #contextual-pane .tabs > div {
   position: absolute;
   width: 100%;
@@ -35,7 +46,6 @@
   overflow: scroll;
   display: none;
 }
-
 #contextual-pane .tabs > div.active {
   display: block;
 }
@@ -43,14 +53,26 @@
 #contextual-pane-toggle {
   position: absolute;
   display: inline-block;
+  background: #333;
+  font-size: 18px;
+}
+#contextual-pane.pane-right #contextual-pane-toggle {
   top: 50%;
   right: 100%;
-  background: #333;
   padding: 10px 0 10px 5px;
   border-radius: 10px 0 0 10px;
-  font-size: 18px;
+}
+#contextual-pane.pane-down #contextual-pane-toggle {
+  bottom: 100%;
+  left: 50%;
+  padding: 5px 10px 0 10px;
+  border-radius: 10px 10px 0 0;
 }
 
 #contextual-pane-toggle .active {
   color: #fff;
+}
+
+#contextual-pane-switch-position {
+  font-size: 110%;
 }

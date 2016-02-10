@@ -6,15 +6,32 @@
   Drupal.behaviors.ucmsDashboardPane = {
     attach: function (context, settings) {
       var $contextualPane = $('#contextual-pane', context);
-      var initial_width = $contextualPane.css('width');
       var $toggle = $('#contextual-pane-toggle', context);
+
+      // Handle pane position
+      var $panePositionSwitch = $('#contextual-pane-switch-position');
+      $panePositionSwitch.click(function () {
+        $contextualPane.toggleClass('pane-right pane-down');
+        position = $contextualPane.attr('class').substr(5);
+        $.cookie('contextual-pane-position', position, {path: '/'});
+        $panePositionSwitch.find('span').toggleClass('glyphicon-collapse-down glyphicon-expand');
+        resizeTabs();
+      });
+      if ($.cookie('contextual-pane-position') && $.cookie('contextual-pane-position') !== 'right') {
+        // Second toggle if pane must be hidden
+        $panePositionSwitch.click();
+      }
+
+      var position = $contextualPane.attr('class').substr(5);
+      var initial_size = position == 'right' ? $contextualPane.css('width') : $contextualPane.css('height');
 
       /**
        * Quick function to determine if pane is hidden.
        * @returns {boolean}
        */
       function paneIsHidden() {
-        return $contextualPane.css('margin-right') && $contextualPane.css('margin-right') != '0px';
+        var propName = (position == 'right' ? 'margin-right' : 'margin-bottom');
+        return $contextualPane.css(propName) && $contextualPane.css(propName) != '0px';
       }
 
       /**
@@ -22,9 +39,9 @@
        */
       function togglePane(shown) {
         $.cookie('contextual-pane-hidden', !shown, {path: '/'});
-        $contextualPane.animate({
-          marginRight: shown ? '0px' : '-' + initial_width
-        });
+        var prop = {};
+        prop[position == 'right' ? 'marginRight' : 'marginBottom'] = shown ? '0px' : '-' + initial_size;
+        $contextualPane.animate(prop);
       }
 
       // Action to do on button click
@@ -60,7 +77,11 @@
       }
 
       // Handle tab height
-      $contextualPane.find('.tabs').height($contextualPane.find('.inner').height() - $contextualPane.find('.actions').height());
+      function resizeTabs() {
+        $contextualPane.find('.tabs').height($contextualPane.find('.inner').height() - $contextualPane.find('.actions').height());
+      }
+
+      resizeTabs();
     }
   };
 
