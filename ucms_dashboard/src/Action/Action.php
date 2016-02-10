@@ -20,6 +20,8 @@ class Action
 
     private $primary = true;
 
+    private $disabled = false;
+
     /**
      * Default constructor
      *
@@ -42,14 +44,17 @@ class Action
      * @param boolean $addCurrentDestination
      *   If set to true, this code will automatically add the current page as
      *   a query destination for the action
+     * @param boolean $disabled
+     *   If set to true, action will be disabled
      */
-    public function __construct($title, $uri, $options = [], $icon = null, $priority = 0, $primary = true, $addCurrentDestination = false)
+    public function __construct($title, $uri, $options = [], $icon = null, $priority = 0, $primary = true, $addCurrentDestination = false, $disabled = false)
     {
         $this->title = $title;
         $this->uri = $uri;
         $this->icon = $icon;
         $this->priority = $priority;
         $this->primary = $primary;
+        $this->disabled = $disabled;
 
         if (is_array($options)) {
             $this->linkOptions = $options;
@@ -63,6 +68,12 @@ class Action
                   ];
                   break;
             }
+        }
+
+        $this->linkOptions['attributes']['title'] = $this->title;
+
+        if ($disabled) {
+            $this->linkOptions['attributes']['class'][] = 'disabled';
         }
 
         if ($addCurrentDestination && !isset($this->linkOptions['query']['destination'])) {
@@ -101,5 +112,10 @@ class Action
     public function isPrimary()
     {
         return $this->primary;
+    }
+
+    public function isDisabled()
+    {
+        return $this->disabled;
     }
 }
