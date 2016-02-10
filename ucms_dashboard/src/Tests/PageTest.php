@@ -11,10 +11,8 @@ class PageTest extends AbstractDrupalTest
 {
     public function testEmptyPage()
     {
-        $formBuilder = $this
-            ->getMockBuilder('\Drupal\Core\Form\FormBuilderInterface')
-            ->getMock()
-        ;
+        $formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
+        $formBuilder->method('getForm')->willReturn(['#type' => 'form']);
 
         $actionRegistry = new ActionRegistry();
         $datasource = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface');
@@ -42,6 +40,11 @@ class PageTest extends AbstractDrupalTest
         $render = $page->render([], 'some/path');
         $this->assertArrayHasKey('#sort_field', $render);
         $this->assertArrayHasKey('#sort_order', $render);
+
+        // Search form should be here whenever the datasource tells us to
+        $datasource->method('hasSearchForm')->willReturn(true);
+        $render = $page->render([], 'some/path');
+        $this->assertArrayHasKey('#search', $render);
     }
 
     public function testSortManagerStuff()
