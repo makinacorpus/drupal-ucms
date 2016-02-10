@@ -2,6 +2,55 @@
 /**
  * @file
  * UCMS - Pseudo SSO accross sites.
+ *
+ * 1) User already connected on site SSO:
+ * 
+ * Browser             Site X     Site SSO  cache(shared)
+ *  |  GET /foo (ano.)    |           |
+ *  |-------------------->|           |
+ *  |   foo + sso js      |           |   token+domain:
+ *  |<--------------------|           |  [session id +
+ *  | Ajax /sso/check (+credentials)  |   IP + domain]
+ *  |-------------------------------->|------>|
+ *  |     json (one time token)       |       |
+ *  |<--------------------------------|       |
+ *  |GET /sso/login/token |                   |
+ *  |-------------------->|  token + domain   |
+ *  |                     |------------------>|
+ *  |                     |    session_id     |
+ *  |                     |<------------------|
+ *  |  302 + session_id   |  here we also check the user IP
+ *  |<--------------------|  is the same and sends the session_id
+ *  |  get /foo (session) |  as a valid X domain cookie.
+ *  |-------------------->|
+ *  | foo (authenticated) |
+ *  |<--------------------|
+ * The user, having a valid session id (credentials) on SSO domain
+ * will automatically be connected on site X, with, at the end, a
+ * valid PHP session on domain X (using same session id as the one used
+ * on SSO domain).
+ * - token can only be used 1 time.
+ * - token has a short validity (1 minute)
+ * - token can only be used on the Site X domain (using Ajax Origin header)
+ * - site X domain is checked out, to be a domain managed by the factory only.
+ *
+ * 2) user is not yet connected
+ * Browser             Site X     Site SSO
+ *  |  GET /foo (ano.)    |           |
+ *  |-------------------->|           |
+ *  |   foo + sso js      |           |
+ *  |<--------------------|           |
+ *  | Ajax /sso/check (no creds)      |
+ *  |-------------------------------->|
+ *  |     refusal                     |
+ *  |<--------------------------------|
+ *  | (main anonymous page is unaltered)
+ *  |
+ *   \--> TODO: login link/page should redirect to master domain
+ *   \--> TODO: login link should first send an ajax query to /sso/check
+ *                    to check that the user been recently connected
+ *  TODO: remove the js retry loop
+ *  TODO: ensure the refusal page for anonymous check on /sso/check can be cached by Varnish
  */
 
 /**
@@ -62,6 +111,12 @@ function ucms_sso_origin_get() {
 function ucms_sso_init() {
   if (ucms_sso_is_master()) {
     if ($origin = ucms_sso_origin_get()) {
+      // we had an origin in the request query, should not happen with images or classical pages
+      // so we can be quite sure this was an ajax request
+      // We need to allow modern browsers to send cookies on theses ajax cross domain requests
+      // Note that Access-Control-Allow-Origin: * would not work with credentials, so we
+      // also need to send a domain specific authorization.
+      // the ucms_sso_origin_get() made the check about validity of this origin.
       drupal_add_http_header('Access-Control-Allow-Origin', ucms_sso_scheme_get() . '://' . $origin);
       drupal_add_http_header('Access-Control-Allow-Credentials', 'true');
       drupal_add_http_header('Access-Control-Allow-Headers', 'Accept, Content-Type');
@@ -85,6 +140,7 @@ function ucms_sso_callback_check() {
     return MENU_ACCESS_DENIED;
   }
   if (!user_is_logged_in()) {
+  // TODO: if no credentials were sent, that's a purely anonymous check, the refusal response could be cacheable by varnish
     return MENU_ACCESS_DENIED;
   }
   // User 42 is logged on site A (master).
@@ -94,7 +150,24 @@ function ucms_sso_callback_check() {
   //    with session id as token on site B (the next callback).
   //  - Token is wrong: it returns NO, a JavaScript cookie is set and it
   //    prevents the user from loggin in for a few minutes.
-  return drupal_json_output(['status' => 1, 'uri' => ucms_sso_scheme_get() . '://' . $origin . '/sso/login/?s=' . session_id()]);
+
+  // generate one-time-token for the user, bind to the origin and ip adress
+  // the token also depends on the current session_id
+  $user_ip =  ip_address();
+  $sso_record = array(
+      'ip' => $user_ip,
+      'origin' => $origin,
+      'session' => session_id(),
+      'validity' => REQUEST_TIME + 60,
+  );
+  $hmac = hash_hmac('sha256',
+                    $sso_record['ip'] . $sso_record['origin'] . $sso_record['session'] . $sso_record['validity'],
+                    'H4rm0nyeH4SHm4k3iy5555',
+                    FALSE);
+  $one_time_token = $hmac;
+  $cache_key = 'sso_checkx' . $origin .'x'. $hmac;
+  cache_set($cache_key, $sso_record, 'cache_sso', $sso_record['validity']);
+  return drupal_json_output(['status' => 1, 'uri' => ucms_sso_scheme_get() . '://' . $origin . '/sso/login/?s=' . $one_time_token]);
 }
 
 /**
@@ -104,11 +177,38 @@ function ucms_sso_callback_login() {
   if (empty($_GET['s'])) {
     return MENU_ACCESS_DENIED;
   }
-  $sessionId = preg_replace('@[^\d\w-_]@', '', $_GET['s']);
-  if (!$sessionId) {
+
+  $hmac = $_GET['s'];
+  if (!ctype_xdigit($hmac)) {
     return MENU_ACCESS_DENIED;
   }
-  // @todo Find a better way, but sessions must be shared.
+
+  // retrieve stored temporary token storage
+  $domain = $_SERVER['HTTP_HOST'];
+  $cache_key = 'sso_checkx' . $domain .'x'. $hmac;
+  $cache_entry = cache_get($cache_key, 'cache_sso');
+  if (!isset($cache_entry) || !$cache_entry) {
+    return MENU_ACCESS_DENIED;
+  }
+
+  $sso_record = $cache_entry->data;
+
+  // ALWAYS invalidate this token for future use
+  // that's a ONE TIME thing
+  cache_set($cache_key, $sso_record, 'cache_sso', REQUEST_TIME);
+
+  // check that this record was for this site, this IP, and with a good validity
+  $user_ip =  ip_address();
+  if ($user_ip != $sso_record['ip'] ||
+      $domain != $sso_record['origin'] ||
+      $sso_record['validity'] < REQUEST_TIME) {
+    // reject user
+    return MENU_ACCESS_DENIED;
+  }
+
+  $sessionId = $sso_record['session'];
+
+  // Set the new session cookie on this domain, which is in fact the same as the master domain session
   setcookie(session_name(), false);
   $params = session_get_cookie_params();
   $expire = $params['lifetime'] ? REQUEST_TIME + $params['lifetime'] : 0;

@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_sso_schema() {
+  
+  $schema = array();
+  $schema['cache_sso'] = drupal_get_schema_unprocessed('system', 'cache');
+  return $schema;
+
+}
+
+/**
+* Implements hook_flush_caches().
+*/
+function ucms_sso_flush_caches() {
+  return array('cache_sso');
+}
