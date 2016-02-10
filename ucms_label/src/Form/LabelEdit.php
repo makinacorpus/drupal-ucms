@@ -74,7 +74,7 @@ class LabelEdit extends FormBase
 
         $form['name'] = array(
             '#type' => 'textfield',
-            '#title' => t('Name'),
+            '#title' => $this->t('Name'),
             '#default_value' => isset($term->name) ? $term->name : '',
             '#maxlength' => 255,
             '#required' => true,
@@ -84,8 +84,8 @@ class LabelEdit extends FormBase
 //        $form['description'] = array(
 //            '#type' => 'text_format',
 //            '#title' => t('Description'),
-//            '#default_value' => $term->description,
-//            '#format' => $term->format,
+//            '#default_value' => isset($term->description) ? $term->description : '',
+//            '#format' => isset($term->format) ? $term->format : '',
 //            '#weight' => 0,
 //        );
 
@@ -112,23 +112,23 @@ class LabelEdit extends FormBase
 
             $form['parent'] = array(
                 '#type' => 'select',
-                '#title' => t('Parent term'),
+                '#title' => $this->t('Parent term'),
                 '#options' => $options,
                 '#empty_value' => '0',
-                '#empty_option' => '<' . t('root') . '>',
+                '#empty_option' => '<' . $this->t('root') . '>',
                 '#default_value' => !empty($parent) ? $parent->tid : null,
                 '#multiple' => false,
             );
 
             if ($has_children) {
                 $form['parent']['#disabled'] = true;
-                $form['parent']['#description'] = t("You must move or delete the children labels if you want to define a parent label for this one.");
+                $form['parent']['#description'] = $this->t("You must move or delete the children labels if you want to define a parent label for this one.");
             }
         }
 
         $form['locked'] = array(
             '#type' => 'checkbox',
-            '#title' => t('Non editable label'),
+            '#title' => $this->t('Non editable label'),
             '#default_value' => isset($term->is_locked) ? $term->is_locked : 0,
         );
 
@@ -142,17 +142,9 @@ class LabelEdit extends FormBase
         $form['actions'] = array('#type' => 'actions');
         $form['actions']['submit'] = array(
             '#type' => 'submit',
-            '#value' => t('Save'),
+            '#value' => $this->t('Save'),
             '#weight' => 5,
         );
-
-//        if ($term !== null) {
-//            $form['actions']['delete'] = array(
-//                '#type' => 'submit',
-//                '#value' => t('Delete'),
-//                '#weight' => 10,
-//            );
-//        }
 
         return $form;
     }

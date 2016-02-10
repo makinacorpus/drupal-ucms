@@ -3,11 +3,16 @@
 
 namespace MakinaCorpus\Ucms\Label\Page;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 
 
 class LabelAdminDisplay extends AbstractDisplay
 {
+    use StringTranslationTrait;
+
+
     /**
      * @var string
      */
@@ -33,7 +38,7 @@ class LabelAdminDisplay extends AbstractDisplay
         foreach ($labels as $label) {
             $rows[] = [
                 check_plain($label->name),
-                ($label->is_locked == 1) ? t("Non editable") : t("Editable"),
+                ($label->is_locked == 1) ? $this->t("Non editable") : $this->t("Editable"),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($label), 'mode' => 'icon']),
             ];
         }
@@ -42,11 +47,10 @@ class LabelAdminDisplay extends AbstractDisplay
             '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
             '#suffix' => '</div>',                  // FIXME should be in theme
             '#theme'  => 'table',
-            '#header' => [t("Label"), t("Status"), ''],
+            '#header' => [$this->t("Label"), $this->t("Status"), ''],
             '#empty'  => $this->emptyMessage,
             '#rows'   => $rows,
         ];
     }
-
 }
 
