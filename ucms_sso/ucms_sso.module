@@ -162,7 +162,7 @@ function ucms_sso_callback_check() {
   );
   $hmac = hash_hmac('sha256',
                     $sso_record['ip'] . $sso_record['origin'] . $sso_record['session'] . $sso_record['validity'],
-                    'H4rm0nyeH4SHm4k3iy5555',
+                    variable_get('ucms_sso_token_salt','please_edit_settings_file_to_alter_salt'),
                     FALSE);
   $one_time_token = $hmac;
   $cache_key = 'sso_checkx' . $origin .'x'. $hmac;
