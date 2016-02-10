@@ -1,7 +1,7 @@
 <div id="contextual-pane">
   <div id="contextual-pane-toggle">
     <?php foreach ($tabs as $key => $tab): ?>
-      <a href="#tab-<?php echo $key; ?>" <?php if ($key == $default_tab): ?>class="active"<?php endif; ?>>
+      <a href="#tab-<?php echo $key; ?>">
         <span class="glyphicon glyphicon-<?php echo $tab['icon']; ?>"></span>
         <span class="sr-only"><?php echo $tab['label']; ?></span>
       </a>

@@ -114,25 +114,6 @@ function ucms_contrib_menu() {
 }
 
 /**
- * Implements hook_page_build().
- */
-function ucms_contrib_page_build(&$page) {
-  // @todo find a better place
-  if (user_access('use favorites')) {
-    $path = current_path();
-    if ('admin/dashboard/content' === $path ||
-        'admin/dashboard/media' === $path ||
-        ucms_layout_context_get()->isTemporary()
-    ){
-      ucms_dashboard_context_get()
-        ->addTab('cart', t("Cart"), 'shopping-cart')
-        ->add(ucms_contrib_favorite_render(), 'cart')
-      ;
-    }
-  }
-}
-
-/**
  * Implements hook_permission().
  */
 function ucms_contrib_permission() {

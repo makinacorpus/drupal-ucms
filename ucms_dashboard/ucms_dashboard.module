@@ -130,7 +130,6 @@ function ucms_dashboard_theme() {
         'tabs'        => [],
         'items'       => [],
         'actions'     => [],
-        'default_tab' => '',
       ],
       'template' => 'ucms_dashboard-context',
     ],
@@ -184,14 +183,22 @@ function ucms_dashboard_page_build(&$page) {
         '#actions' => $list,
       ];
     }
+    $js_setting = [
+      'type' => 'setting',
+      'data' => [
+        'ucms_dashboard' => [
+          'defaultPane' => $context->getDefaultTab(),
+        ],
+      ],
+    ];
     $page['page_top']['ucms_context_pane'] = [
-      '#theme'       => 'ucms_dashboard_context',
-      '#items'       => $context->getAll(),
-      '#tabs'        => $context->getTabs(),
-      '#default_tab' => $context->getDefaultTab(),
-      '#actions'     => $actions,
-      '#attached'    => [
+      '#theme'    => 'ucms_dashboard_context',
+      '#items'    => $context->getAll(),
+      '#tabs'     => $context->getTabs(),
+      '#actions'  => $actions,
+      '#attached' => [
         'library' => [['ucms_dashboard', 'ucms_dashboard']],
+        'js'      => [$js_setting],
       ],
     ];
   }
