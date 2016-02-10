@@ -52,8 +52,8 @@ class LabelAdminDatasource extends AbstractDatasource
         }
 
         $statuses = [
-            1 => t("Non editable"),
             0 => t("Editable"),
+            1 => t("Non editable"),
         ];
 
         return [
