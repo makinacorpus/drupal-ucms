@@ -23,7 +23,7 @@ class NodeIndexerTest extends AbstractElasticTest
         $storage = $this->getIndexStorage();
 
         $indexer = $storage->indexer();
-        $this->assertInstanceOf('MakinaCorpus\Ucms\Search\NodeIndexerChain', $indexer);
+        $this->assertInstanceOf('\MakinaCorpus\Ucms\Search\NodeIndexerChain', $indexer);
 
         $aIndexer = $this
             ->getMockBuilder('\MakinaCorpus\Ucms\Search\NodeIndexer')
