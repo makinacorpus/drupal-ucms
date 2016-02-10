@@ -57,7 +57,10 @@ class LabelActionProvider implements ActionProviderInterface
      */
     public function supports($item)
     {
-        return ($item->vocabulary_machine_name === $this->manager->getVocabularyMachineName());
+        return (
+            isset($item->vocabulary_machine_name) &&
+            ($item->vocabulary_machine_name === $this->manager->getVocabularyMachineName())
+        );
     }
 }
 
