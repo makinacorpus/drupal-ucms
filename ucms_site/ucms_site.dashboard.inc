@@ -17,7 +17,7 @@ use MakinaCorpus\Ucms\Site\SiteState;
 function ucms_site_dashboard_site_list_all() {
 
   $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(t("There is not sites yet."));
+  $display    = new SiteAdminDisplay(t("There is no sites yet."));
 
   return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])
     ->render(drupal_get_query_parameters(), current_path())
@@ -31,7 +31,7 @@ function ucms_site_dashboard_site_list_mine() {
   global $user;
 
   $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(t("You have not site."));
+  $display    = new SiteAdminDisplay(t("You have no site."));
 
   return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])
     ->setBaseQuery(['uid' => $user->uid])
