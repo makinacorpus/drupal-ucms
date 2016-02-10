@@ -35,7 +35,7 @@ final class LabelManager
 
     /**
      * Load the labels vocabulary.
-     * 
+     *
      * @return stdClass
      */
     public function loadVocabulary()
@@ -127,9 +127,83 @@ final class LabelManager
      * @return integer Constant SAVED_NEW or SAVED_UPDATED.
      * @see taxonomy_term_save().
      */
-    function saveLabel(\stdClass $label)
+    public function saveLabel(\stdClass $label)
     {
         return taxonomy_term_save($label);
+    }
+
+
+    /**
+     * Is the user allowed to edit the given label?
+     *
+     * @param stdClass $label
+     * @param stdClass $account
+     * @return boolean
+     */
+    public function canEditLabel(\stdClass $label, \stdClass $account = null)
+    {
+        if ($account === null) {
+            global $user;
+            $account = $user;
+        }
+
+        return ($label->is_locked == 0)
+            ? user_access(LabelAccess::PERM_EDIT_NON_LOCKED, $account)
+            : user_access(LabelAccess::PERM_EDIT_LOCKED, $account);
+    }
+
+
+    /**
+     * Is the user allowed to edit all labels (i.e. locked and non locked labels)?
+     *
+     * @param stdClass $account
+     * @return boolean
+     */
+    public function canEditAllLabels(\stdClass $account = null)
+    {
+        if ($account === null) {
+            global $user;
+            $account = $user;
+        }
+
+        return (
+            user_access(LabelAccess::PERM_EDIT_NON_LOCKED, $account) &&
+            user_access(LabelAccess::PERM_EDIT_LOCKED, $account)
+        );
+    }
+
+
+    /**
+     * Is the user allowed to edit locked labels?
+     *
+     * @param stdClass $account
+     * @return boolean
+     */
+    public function canEditLockedLabels(\stdClass $account = null)
+    {
+        if ($account === null) {
+            global $user;
+            $account = $user;
+        }
+
+        return user_access(LabelAccess::PERM_EDIT_LOCKED, $account);
+    }
+
+
+    /**
+     * Is the user allowed to edit non locked labels?
+     *
+     * @param stdClass $account
+     * @return boolean
+     */
+    public function canEditNonLockedLabels(\stdClass $account = null)
+    {
+        if ($account === null) {
+            global $user;
+            $account = $user;
+        }
+
+        return user_access(LabelAccess::PERM_EDIT_NON_LOCKED, $account);
     }
 
 }

@@ -40,9 +40,7 @@ class LabelActionProvider implements ActionProviderInterface
     {
         $actions = [];
 
-        if (($item->is_locked == 0 && user_access(LabelAccess::PERM_EDIT_NON_LOCKED)) ||
-            ($item->is_locked == 1 && user_access(LabelAccess::PERM_EDIT_LOCKED))
-        ) {
+        if ($this->manager->canEditLabel($item)) {
             $actions[] = new Action($this->t("Edit"), 'admin/dashboard/label/' . $item->tid . '/edit', null, 'pencil', -15, true, true);
             //$actions[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->tid . '/log', null, 'list-alt', -10, false);
             //$actions[] = new Action($this->t("Delete"), 'admin/dashboard/label/' . $item->tid . '/delete', null, 'trash', -5, true, true);

@@ -132,15 +132,10 @@ class LabelEdit extends FormBase
             '#default_value' => isset($term->is_locked) ? $term->is_locked : 0,
         );
 
-        if (!isset($term->tid))  {
-            $restricted = (int) user_access(LabelAccess::PERM_EDIT_NON_LOCKED)
-                + (int) user_access(LabelAccess::PERM_EDIT_LOCKED);
-
-            if ($restricted === 1) {
-                $form['locked']['#disabled'] = true;
-                if (user_access(LabelAccess::PERM_EDIT_LOCKED)) {
-                    $form['locked']['#default_value'] = 1;
-                }
+        if (!isset($term->tid) && !$this->manager->canEditAllLabels()) {
+            $form['locked']['#disabled'] = true;
+            if (!$this->manager->canEditLockedLabels()) {
+                $form['locked']['#default_value'] = 1;
             }
         }
 
@@ -155,7 +150,6 @@ class LabelEdit extends FormBase
 //            $form['actions']['delete'] = array(
 //                '#type' => 'submit',
 //                '#value' => t('Delete'),
-//                '#access' => user_access("delete terms in $vocabulary->vid") || user_access('administer taxonomy'),
 //                '#weight' => 10,
 //            );
 //        }
