@@ -113,7 +113,11 @@ function ucms_search_client_get() {
  * @return QueryAlteredSearch
  */
 function ucms_search_create($index) {
-  return (new QueryAlteredSearch(ucms_search_client_get()))->setIndex($index);
+
+  $client = ucms_search_client_get();
+  $index  = ucms_search_index()->getIndexRealname($index);
+
+  return (new QueryAlteredSearch($client))->setIndex($index);
 }
 
 /**
