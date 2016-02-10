@@ -1,7 +1,7 @@
 
 #contextual-pane {
   position: fixed;
-  z-index: 110;
+  z-index: 10;
 }
 #contextual-pane.pane-right {
   top: 0;
