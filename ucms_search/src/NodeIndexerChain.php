@@ -117,10 +117,10 @@ class NodeIndexerChain implements NodeIndexerInterface
     /**
      * {inheritdoc}
      */
-    public function matches($index, $node)
+    public function matches($node)
     {
         foreach ($this->chain as $indexer) {
-            if ($indexer->matches($index, $node)) {
+            if ($indexer->matches($node)) {
                 return true;
             }
         }

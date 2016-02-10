@@ -46,12 +46,11 @@ interface NodeIndexerInterface
     /**
      * Tell if the given node matches the given index.
      *
-     * @param string $index
      * @param stdClass $node
      *
      * @return boolean
      */
-    public function matches($index, $node);
+    public function matches($node);
 
     /**
      * Index or upsert given nodes using a bulk request

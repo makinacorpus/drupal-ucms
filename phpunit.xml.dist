@@ -13,6 +13,7 @@
     <testsuites>
         <testsuite name="Dashboard test suite">
             <directory>./ucms_dashboard/src/Tests/</directory>
+            <directory>./ucms_search/src/Tests/</directory>
         </testsuite>
     </testsuites>
 
@@ -28,5 +29,6 @@
 
     <php>
         <var name="DRUPAL_PATH" value="/var/www/monsite/public" />
+        <var name="ELASTIC_HOST" value="localhost:9200" />
     </php>
 </phpunit>

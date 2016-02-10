@@ -275,10 +275,10 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function matches($index, $node)
+    public function matches($node)
     {
         foreach ($this->moduleHandler->getImplementations(self::HOOK_NODE_INDEX) as $module) {
-            if ($this->moduleHandler->invoke($module, self::HOOK_NODE_INDEX, [$index, $node])) {
+            if ($this->moduleHandler->invoke($module, self::HOOK_NODE_INDEX, [$this->index, $node])) {
                 return true;
             }
         }
@@ -300,7 +300,7 @@ class NodeIndexer implements NodeIndexerInterface
 
         foreach ($nodeList as $key => $node) {
 
-            if (!$force && !$this->matches($this->index, $node)) {
+            if (!$force && !$this->matches($node)) {
                 unset($nodeList[$key]);
             }
 
@@ -340,7 +340,7 @@ class NodeIndexer implements NodeIndexerInterface
      */
     public function upsert($node, $force = false, $refresh = false)
     {
-        if (!$force && !$this->matches($this->index, $node)) {
+        if (!$force && !$this->matches($node)) {
             return false;
         }
 
