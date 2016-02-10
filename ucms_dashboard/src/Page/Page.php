@@ -150,11 +150,11 @@ class Page
 
         $filters = $this->datasource->getFilters($query);
         if ($filters) {
-            foreach ($filters as $index => $filter) {
+            foreach ($filters as $filter) {
                 if (isset($this->baseQuery[$filter->getField()])) {
                     continue; // Drop forced filters
                 }
-                $build['#filters'][$index] = $filter->build($query, $route);
+                $build['#filters'][$filter->getField()] = $filter->build($query, $route);
             }
         }
 
