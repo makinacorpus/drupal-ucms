@@ -105,7 +105,7 @@ function ucms_site_schema() {
         'description' => "Site homepage node identifier",
         'type'        => 'int',
         'unsigned'    => true,
-        'not null'    => true,
+        'not null'    => false,
         'default'     => 0,
       ],
     ],
@@ -416,9 +416,7 @@ function ucms_site_install_schema_fix() {
     ],
     'ucms_site_access' => [
       "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
     ],
     'role_permission' => [
       "ALTER TABLE {role_permission} ADD CONSTRAINT FOREIGN KEY (rid) REFERENCES {role} (rid) ON DELETE CASCADE",
@@ -532,4 +530,19 @@ function ucms_site_update_7007() {
  */
 function ucms_site_update_7009() {
   ucms_site_install_schema_fix();
+}
+
+/**
+ * Fixes {ucms_site}.home_nid can be NULL.
+ */
+function ucms_site_update_7010() {
+  if (db_field_exists('ucms_site', 'home_nid')) {
+    db_change_field('ucms_site', 'home_nid', 'home_nid', [
+      'description' => "Site homepage node identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => 0,
+    ]);
+  }
 }
