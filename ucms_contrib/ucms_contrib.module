@@ -328,3 +328,65 @@ function ucms_contrib_library() {
     ],
   ];
 }
+
+/**
+ * Implements hook_field_attach_view_alter().
+ */
+function ucms_contrib_field_attach_view_alter(&$output, $context) {
+  $mapping = [
+    UCMS_VIEW_MODE_CONTENTADMIN => UCMS_STYLE_CONTENTADMIN,
+    UCMS_VIEW_MODE_FAVORITE     => UCMS_STYLE_FAVORITE,
+  ];
+
+  // Force image style on content viewed in admin mode
+  $image_found = FALSE;
+  if (in_array($context['view_mode'], array_keys($mapping))) {
+    foreach (element_children($output) as $field_name) {
+      $element = &$output[$field_name];
+      if ($element['#field_type'] == 'image' && $element['#formatter'] == 'image') {
+        foreach (element_children($element) as $delta) {
+          if ($delta === 0) {
+            $image_found = TRUE;
+            // Force image style related to view mode.
+            $element[$delta]['#image_style'] = $mapping[$context['view_mode']];
+            $element[$delta]['#item']['attributes']['class'] = 'img-responsive img-rounded';
+          }
+          else {
+            // Hide other image for slideshows.
+            $element[$delta]['#access'] = FALSE;
+          }
+        }
+      }
+      else {
+        $element['#access'] = FALSE;
+      }
+    }
+  }
+
+  if (!$image_found) {
+    // Add a default image for other medias/content.
+    $icon_mapping = [
+      // media
+      'document'  => 'file',
+      'video'     => 'film',
+      // Composite content
+      'list_type' => 'list',
+      'search'    => 'search',
+      'geosearch' => 'map-marker',
+      // other content
+      'form'      => 'list-alt',
+      'job_offer' => 'briefcase',
+    ];
+    $markup = '<div class="ucms-default-icon img-thumbnail"><div><div>';
+    if (!empty($icon_mapping[$output['#bundle']])) {
+      $markup .= '<span class="glyphicon glyphicon-' . $icon_mapping[$output['#bundle']] . '"></span>';
+    }
+    else {
+      $markup = '<span>' . node_type_get_name($context['entity']) . '</span>';
+    }
+    $markup .= '</div></div></div>';
+    $output['default_icon'] = [
+      '#markup' => $markup,
+    ];
+  }
+}
