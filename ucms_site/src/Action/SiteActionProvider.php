@@ -42,7 +42,7 @@ class SiteActionProvider implements ActionProviderInterface
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
             $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -5, true, true);
             if ($access->userCanView($item)) {
-              $ret[] = new Action($this->t("Got to site"), url('http://' . $item->http_host), null, 'share-alt', -2, false);
+              $ret[] = new Action($this->t("Go to site"), url('http://' . $item->http_host), null, 'share-alt', -2, false);
             }
             $ret[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->id . '/log', null, 'list-alt', -1, false);
         }
