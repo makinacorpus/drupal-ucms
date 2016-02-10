@@ -6,7 +6,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionSeparator;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -55,7 +54,6 @@ class SiteActionProvider implements ActionProviderInterface
 
         // @todo Consider delete as a state
         if ($access->userCanManageWebmasters($item)) {
-            $ret[] = new ActionSeparator(0, false);
             // 100 as priority is enough to be number of states there is ($i)
             $ret[] = new Action($this->t("Add webmaster"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'user', 100, false, true);
             $ret[] = new Action($this->t("Manage webmasters"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'user', 101, false, true);
