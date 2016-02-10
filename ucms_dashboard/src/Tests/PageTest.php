@@ -17,16 +17,8 @@ class PageTest extends AbstractDrupalTest
         ;
 
         $actionRegistry = new ActionRegistry();
-
-        $datasource = $this
-            ->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface')
-            ->getMock()
-        ;
-
-        $display = $this
-            ->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface')
-            ->getMock()
-        ;
+        $datasource = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface');
+        $display = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface');
 
         $page = new Page($formBuilder, $actionRegistry, $datasource, $display);
         $render = $page->render([], 'some/path');
@@ -36,12 +28,20 @@ class PageTest extends AbstractDrupalTest
         $this->assertArrayHasKey('#display', $render);
         $this->assertArrayHasKey('#items', $render);
         $this->assertArrayHasKey('#pager', $render);
-        $this->assertArrayHasKey('#sort_field', $render);
-        $this->assertArrayHasKey('#sort_order', $render);
         $this->assertArrayNotHasKey('#search', $render);
-
         $this->assertEmpty($render['#filters']);
         $this->assertEmpty($render['#items']);
+
+        // Sort field and sort order should no be displayed if there is no
+        // sort field given by the datasource
+        $this->assertArrayNotHasKey('#sort_field', $render);
+        $this->assertArrayNotHasKey('#sort_order', $render);
+
+        // But it should when thers is!
+        $datasource->method('getSortFields')->willReturn(['some' => 'field', 'other' => 'field too']);
+        $render = $page->render([], 'some/path');
+        $this->assertArrayHasKey('#sort_field', $render);
+        $this->assertArrayHasKey('#sort_order', $render);
     }
 
     public function testSortManagerStuff()

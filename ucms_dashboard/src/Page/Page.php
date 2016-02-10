@@ -116,15 +116,18 @@ class Page
         $this->datasource->init($fixedQuery);
 
         $sortManager = new SortManager();
+        $sortIsEnabled = false;
+
         if ($sortFields = $this->datasource->getSortFields($query)) {
             $sortManager->setFields($sortFields);
-        }
-        if ($sortDefault = $this->datasource->getDefaultSort()) {
-            $sortManager->setDefault(...$sortDefault);
+            // Do not set the sort order links if there is no field to sort on
+            if ($sortDefault = $this->datasource->getDefaultSort()) {
+                $sortManager->setDefault(...$sortDefault);
+            }
+            $sortIsEnabled = true;
         }
 
         $this->display->prepareFromQuery($query);
-
         if ($this->display instanceof AbstractDisplay) {
             $this->display->setActionRegistry($this->actionRegistry);
         }
@@ -144,9 +147,14 @@ class Page
             '#display'    => $this->display,
             '#items'      => $items,
             '#pager'      => ['#theme' => $this->getThemeFunctionName('pager')],
-            '#sort_field' => $sortManager->buildFieldLinks($fixedQuery, $route),
-            '#sort_order' => $sortManager->builOrderLinks($fixedQuery, $route),
         ];
+
+        if ($sortIsEnabled) {
+            $build += [
+                '#sort_field' => $sortManager->buildFieldLinks($fixedQuery, $route),
+                '#sort_order' => $sortManager->builOrderLinks($fixedQuery, $route),
+            ];
+        }
 
         $filters = $this->datasource->getFilters($query);
         if ($filters) {
