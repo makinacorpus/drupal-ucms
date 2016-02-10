@@ -4,7 +4,7 @@
  * UCMS - Pseudo SSO accross sites.
  *
  * 1) User already connected on site SSO:
- * 
+ *
  * Browser             Site X     Site SSO  cache(shared)
  *  |  GET /foo (ano.)    |           |
  *  |-------------------->|           |
@@ -35,6 +35,7 @@
  * - site X domain is checked out, to be a domain managed by the factory only.
  *
  * 2) user is not yet connected
+ *
  * Browser             Site X     Site SSO
  *  |  GET /foo (ano.)    |           |
  *  |-------------------->|           |
@@ -111,18 +112,18 @@ function ucms_sso_origin_get() {
 function ucms_sso_init() {
   if (ucms_sso_is_master()) {
     if ($origin = ucms_sso_origin_get()) {
-      // we had an origin in the request query, should not happen with images or classical pages
-      // so we can be quite sure this was an ajax request
-      // We need to allow modern browsers to send cookies on theses ajax cross domain requests
-      // Note that Access-Control-Allow-Origin: * would not work with credentials, so we
-      // also need to send a domain specific authorization.
-      // the ucms_sso_origin_get() made the check about validity of this origin.
+      // we had an origin in the request query, should not happen with images
+      // or classical pages so we can be quite sure this was an ajax request.
+      // We need to allow modern browsers to send cookies on theses ajax cross
+      // domain requests.
+      // Note that Access-Control-Allow-Origin: * would not work with
+      // credentials, so we also need to send a domain specific authorization.
+      // The ucms_sso_origin_get() made the check about validity of this origin.
       drupal_add_http_header('Access-Control-Allow-Origin', ucms_sso_scheme_get() . '://' . $origin);
       drupal_add_http_header('Access-Control-Allow-Credentials', 'true');
       drupal_add_http_header('Access-Control-Allow-Headers', 'Accept, Content-Type');
       drupal_add_http_header('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
     }
-
   } else {
     // If there is no origin in the HTTP headers, this means we are building
     // a full web page, then we need to add this JS.
@@ -136,13 +137,17 @@ function ucms_sso_init() {
  * (Not really an) SSO callback.
  */
 function ucms_sso_callback_check() {
+
   if (!$origin = ucms_sso_origin_get()) {
     return MENU_ACCESS_DENIED;
   }
+
   if (!user_is_logged_in()) {
-  // TODO: if no credentials were sent, that's a purely anonymous check, the refusal response could be cacheable by varnish
+    // TODO: if no credentials were sent, that's a purely anonymous check,
+    //   the refusal response could be cacheable by varnish.
     return MENU_ACCESS_DENIED;
   }
+
   // User 42 is logged on site A (master).
   // User 42 goes on site B (slave).
   // Site B does an AJAX request on A (this callback).
@@ -151,62 +156,57 @@ function ucms_sso_callback_check() {
   //  - Token is wrong: it returns NO, a JavaScript cookie is set and it
   //    prevents the user from loggin in for a few minutes.
 
-  // generate one-time-token for the user, bind to the origin and ip adress
-  // the token also depends on the current session_id
-  $user_ip =  ip_address();
-  $sso_record = array(
-      'ip' => $user_ip,
-      'origin' => $origin,
-      'session' => session_id(),
-      'validity' => REQUEST_TIME + 60,
-  );
-  $hmac = hash_hmac('sha256',
-                    $sso_record['ip'] . $sso_record['origin'] . $sso_record['session'] . $sso_record['validity'],
-                    variable_get('ucms_sso_token_salt','please_edit_settings_file_to_alter_salt'),
-                    FALSE);
-  $one_time_token = $hmac;
-  $cache_key = 'sso_checkx' . $origin .'x'. $hmac;
-  cache_set($cache_key, $sso_record, 'cache_sso', $sso_record['validity']);
-  return drupal_json_output(['status' => 1, 'uri' => ucms_sso_scheme_get() . '://' . $origin . '/sso/login/?s=' . $one_time_token]);
+  // Generate one-time-token for the user, bind to the origin and ip adress
+  // the token also depends on the current session identifier.
+  $record = [
+    'ip'        => ip_address(),
+    'origin'    => $origin,
+    'session'   => session_id(),
+    'validity'  => REQUEST_TIME + 60,
+  ];
+
+  $token = drupal_get_token($record['ip'] . $record['origin'] . $record['session'] . $record['validity']);
+
+  cache_set($origin .':'. $token, $record, 'cache_sso', $record['validity']);
+
+  return drupal_json_output(['status' => 1, 'uri' => ucms_sso_scheme_get() . '://' . $origin . '/sso/login/?s=' . $token]);
 }
 
 /**
  * (Not really an) SSO callback.
  */
 function ucms_sso_callback_login() {
+
   if (empty($_GET['s'])) {
     return MENU_ACCESS_DENIED;
   }
 
-  $hmac = $_GET['s'];
-  if (!ctype_xdigit($hmac)) {
+  $token = $_GET['s'];
+
+  if (!ctype_xdigit($token)) {
     return MENU_ACCESS_DENIED;
   }
 
   // retrieve stored temporary token storage
   $domain = $_SERVER['HTTP_HOST'];
-  $cache_key = 'sso_checkx' . $domain .'x'. $hmac;
-  $cache_entry = cache_get($cache_key, 'cache_sso');
-  if (!isset($cache_entry) || !$cache_entry) {
+  $cid    = $domain .':'. $token;
+  $entry  = cache_get($cid, 'cache_sso');
+
+  if (!$entry) {
     return MENU_ACCESS_DENIED;
   }
 
-  $sso_record = $cache_entry->data;
+  $record = $entry->data;
 
-  // ALWAYS invalidate this token for future use
-  // that's a ONE TIME thing
-  cache_set($cache_key, $sso_record, 'cache_sso', REQUEST_TIME);
+  // ALWAYS invalidate this token for future use that's a ONE TIME thing.
+  cache_clear_all($cid, 'cache_sso');
 
-  // check that this record was for this site, this IP, and with a good validity
-  $user_ip =  ip_address();
-  if ($user_ip != $sso_record['ip'] ||
-      $domain != $sso_record['origin'] ||
-      $sso_record['validity'] < REQUEST_TIME) {
-    // reject user
+  // Check that this record was for this site, this IP, and with a good validity.
+  if (ip_address() !== $record['ip'] || $domain != $record['origin'] || $record['validity'] < REQUEST_TIME) {
     return MENU_ACCESS_DENIED;
   }
 
-  $sessionId = $sso_record['session'];
+  $sessionId = $record['session'];
 
   // Set the new session cookie on this domain, which is in fact the same as the master domain session
   setcookie(session_name(), false);
