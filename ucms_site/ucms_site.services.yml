@@ -29,7 +29,7 @@ services:
   ucms_site.site_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@ucms_site.manager", "@module_handler"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_site.node_action_provider:

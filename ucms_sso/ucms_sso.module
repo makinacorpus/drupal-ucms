@@ -57,12 +57,21 @@
  *  TODO: remove the js retry loop?
  */
 
+use MakinaCorpus\Ucms\Site\Site;
+
 /**
  * Implements hook_menu().
  */
 function ucms_sso_menu() {
   $items = [];
 
+  $items['sso/goto/%ucms_site'] = [
+    'page callback'     => 'ucms_sso_callback_goto',
+    'page arguments'    => [2],
+    'access callback'   => 'ucms_site_menu_access_view',
+    'access arguments'  => [2],
+    'type'              => MENU_CALLBACK,
+  ];
   $items['sso/check'] = [
     'page callback'     => 'ucms_sso_callback_check',
     'access callback'   => true,
@@ -70,7 +79,7 @@ function ucms_sso_menu() {
   ];
   $items['sso/login'] = [
     'page callback'     => 'ucms_sso_callback_login',
-    'access callback'   => 'user_is_anonymous',
+    'access callback'   => true,
     'type'              => MENU_CALLBACK,
   ];
 
@@ -137,6 +146,44 @@ function ucms_sso_init() {
 }
 
 /**
+ * Write token.
+ *
+ * @param string $origin
+ *
+ * @return string
+ *   Valid URL for login into the site.
+ */
+function ucms_sso_write_token($origin, $destination = null) {
+
+  // Generate one-time-token for the user, bind to the origin and ip adress
+  // the token also depends on the current session identifier.
+  $record = [
+    'ip'        => ip_address(),
+    'origin'    => $origin,
+    'session'   => session_id(),
+    'validity'  => REQUEST_TIME + 60,
+  ];
+
+  $token = drupal_get_token($record['ip'] . $record['origin'] . $record['session'] . $record['validity']);
+
+  cache_set($origin .':'. $token, $record, 'cache_sso', $record['validity']);
+
+  $query = ['s' => $token];
+  if ($destination) {
+    $query['destination'] = $destination;
+  }
+
+  return url(ucms_sso_scheme_get() . '://' . $origin . '/sso/login/', ['query' => $query, 'absolute' => true]);
+}
+
+/**
+ * Goto site forcing user to log in.
+ */
+function ucms_sso_callback_goto(Site $site) {
+  drupal_goto(ucms_sso_write_token($site->http_host, '/'));
+}
+
+/**
  * (Not really an) SSO callback.
  */
 function ucms_sso_callback_check() {
@@ -163,20 +210,7 @@ function ucms_sso_callback_check() {
   //  - Token is wrong: it returns NO, a JavaScript cookie is set and it
   //    prevents the user from loggin in for a few minutes.
 
-  // Generate one-time-token for the user, bind to the origin and ip adress
-  // the token also depends on the current session identifier.
-  $record = [
-    'ip'        => ip_address(),
-    'origin'    => $origin,
-    'session'   => session_id(),
-    'validity'  => REQUEST_TIME + 60,
-  ];
-
-  $token = drupal_get_token($record['ip'] . $record['origin'] . $record['session'] . $record['validity']);
-
-  cache_set($origin .':'. $token, $record, 'cache_sso', $record['validity']);
-
-  return drupal_json_output(['status' => 1, 'uri' => ucms_sso_scheme_get() . '://' . $origin . '/sso/login/?s=' . $token]);
+  return drupal_json_output(['status' => 1, 'uri' => ucms_sso_write_token($origin)]);
 }
 
 /**
@@ -190,15 +224,21 @@ function ucms_sso_callback_login() {
 
   $token = $_GET['s'];
 
-  if (!ctype_xdigit($token)) {
+  if (!preg_match('/^[a-zA-Z0-9_-]+$/', $token)) {
     return MENU_ACCESS_DENIED;
   }
 
   // retrieve stored temporary token storage
   $domain = $_SERVER['HTTP_HOST'];
   $cid    = $domain .':'. $token;
-  $entry  = cache_get($cid, 'cache_sso');
 
+  if (user_is_logged_in()) {
+    // User is logged in, attempt token removal and exit.
+    cache_clear_all($cid, 'cache_sso');
+    drupal_goto();
+  }
+
+  $entry = cache_get($cid, 'cache_sso');
   if (!$entry) {
     return MENU_ACCESS_DENIED;
   }

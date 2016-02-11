@@ -237,6 +237,19 @@ function ucms_site_load($id) {
 /**
  * Menu helper.
  */
+function ucms_site_menu_access_view($site, $account = null) {
+  if (!$site instanceof Site) {
+    return false;
+  }
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  return ucms_site_manager()->getAccess()->userCanView($site, $account->uid);
+}
+
+/**
+ * Menu helper.
+ */
 function ucms_site_menu_access_manage($site, $account = null) {
   if (!$site instanceof Site) {
     return false;

@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
@@ -19,13 +20,19 @@ class SiteActionProvider implements ActionProviderInterface
     private $manager;
 
     /**
+     * @var boolean
+     */
+    private $ssoEnabled = false;
+
+    /**
      * Default constructor
      *
      * @param SiteManager $manager
      */
-    public function __construct(SiteManager $manager)
+    public function __construct(SiteManager $manager, ModuleHandlerInterface $moduleHandler = null)
     {
         $this->manager = $manager;
+        $this->ssoEnabled = $moduleHandler ? $moduleHandler->moduleExists('ucms_sso') : false;
     }
 
     /**
@@ -39,10 +46,15 @@ class SiteActionProvider implements ActionProviderInterface
 
         if ($access->userCanManage($item)) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
-            $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -5, true, true);
             if ($access->userCanView($item)) {
-              $ret[] = new Action($this->t("Go to site"), url('http://' . $item->http_host), null, 'share-alt', -2, false);
+                if ($this->ssoEnabled) {
+                    $uri = url('sso/goto/' . $item->id);
+                } else {
+                    $uri = url('http://' . $item->http_host);
+                }
+                $ret[] = new Action($this->t("Go to site"), $uri, null, 'share-alt', -5, true);
             }
+            $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -2, false, true);
             $ret[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->id . '/log', null, 'list-alt', -1, false);
         }
 
