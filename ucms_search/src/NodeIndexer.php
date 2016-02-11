@@ -100,7 +100,7 @@ class NodeIndexer implements NodeIndexerInterface
             return;
         }
 
-        $this->bulkMarkForReindex($this->index, $this->nodeQueue);
+        $this->bulkMarkForReindex($this->nodeQueue);
 
         $this->nodeQueue = [];
     }
@@ -136,7 +136,7 @@ class NodeIndexer implements NodeIndexerInterface
 
         $toBeDeleted = array_diff(array_keys($nodes), $nodeIdList);
         foreach ($toBeDeleted as $nid) {
-            $this->delete($this->index, $nid);
+            $this->delete($nid);
         }
 
         return $count;
