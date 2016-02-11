@@ -197,7 +197,7 @@ function ucms_dashboard_page_build(&$page) {
       '#tabs'     => $context->getTabs(),
       '#actions'  => $actions,
       '#attached' => [
-        'library' => [['ucms_dashboard', 'ucms_dashboard']],
+        'library' => [['ucms_dashboard', 'ucms_dashboard'], ['system', 'jquery.once']],
         'js'      => [$js_setting],
       ],
     ];
