@@ -110,7 +110,7 @@
    */
   Drupal.behaviors.ucmsDashboardPaneActions = {
     attach: function (context) {
-      if ($(context).find('#page').length) {
+      $(context).find('#page').once('ucmsDashboardPaneActions', function(){
         var $contextualPane = $('#contextual-pane');
         // Get all buttons (link or input) in form-actions
         var $buttons = $('#page .form-actions', context).find('input[type=submit], button, a.btn');
@@ -123,15 +123,16 @@
               $originalButton.click();
             }
           });
-          $contextualPane.find('.inner').append($clonedButton)
+          $contextualPane.find('.inner').append($clonedButton);
         });
-      }
+      });
     },
     detach: function (context) {
       // Destroy all previous buttons
       if ($(context).find('#page').length) {
         var $contextualPane = $('#contextual-pane');
-        $contextualPane.find('.actions').find('input[type=submit], button, a.btn').remove()
+        $contextualPane.find('.actions').find('input[type=submit], button, a.btn').remove();
+        $(context).find('#page').removeClass('ucmsDashboardPaneActions-processed');
       }
     }
   };
