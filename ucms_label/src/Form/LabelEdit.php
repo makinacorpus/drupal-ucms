@@ -100,12 +100,10 @@ class LabelEdit extends FormBase
                 $has_children = $this->manager->hasChildren($label);
             }
 
-            $root_labels = $this->manager->loadRootLabels();
-
             $options = [];
-            foreach ($root_labels as $label) {
-                if (!isset($label->tid) || $label->tid != $label->tid) {
-                    $options[$label->tid] = $label->name;
+            foreach ($this->manager->loadRootLabels() as $root_label) {
+                if (!isset($label->tid) || $label->tid != $root_label->tid) {
+                    $options[$root_label->tid] = $root_label->name;
                 }
             }
 
