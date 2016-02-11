@@ -3,10 +3,10 @@
 namespace MakinaCorpus\Ucms\Search;
 
 use Drupal\Core\Cache\CacheBackendInterface;
-use \Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 use Elasticsearch\Client;
-use Drupal\Core\Entity\EntityManager;
 
 class IndexStorage
 {
@@ -48,6 +48,11 @@ class IndexStorage
     private $entityManager;
 
     /**
+     * @var boolean
+     */
+    private $preventBulkUsage = false;
+
+    /**
      * @var string[]
      */
     private $indexAliasMap = [];
@@ -82,6 +87,9 @@ class IndexStorage
      * @param string[] $indexAliasMap
      *   Keys are logical indices names (those used as keys for the Drupal code)
      *   while values are the real indices names in Elastic Search.
+     * @param boolean $preventBulkUsage
+     *   If set to true, the indexers will be configured to avoid the ES bulk
+     *   API, this is an ugly workaround due to a buggy environment we do use
      */
     public function __construct(
         Client $client,
@@ -89,7 +97,8 @@ class IndexStorage
         CacheBackendInterface $cache,
         EntityManager $entityManager,
         ModuleHandlerInterface $moduleHandler,
-        array $indexAliasMap = null)
+        array $indexAliasMap = null,
+        $preventBulkUsage = false)
     {
         $this->client = $client;
         $this->db = $db;
@@ -99,6 +108,7 @@ class IndexStorage
         if ($indexAliasMap) {
             $this->indexAliasMap = $indexAliasMap;
         }
+        $this->preventBulkUsage = $preventBulkUsage;
     }
 
     /**
@@ -137,7 +147,8 @@ class IndexStorage
                     $this->db,
                     $this->entityManager,
                     $this->moduleHandler,
-                    $this->getIndexRealname($existing)
+                    $this->getIndexRealname($existing),
+                    $this->preventBulkUsage
                 );
             }
             $this->nodeIndexerChain = new NodeIndexerChain($list);
@@ -194,7 +205,8 @@ class IndexStorage
                 $this->db,
                 $this->entityManager,
                 $this->moduleHandler,
-                $this->getIndexRealname($index)
+                $this->getIndexRealname($index),
+                $this->preventBulkUsage
             ));
 
         if ($updated) {

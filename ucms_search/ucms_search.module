@@ -27,11 +27,6 @@ use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
 define('UCMS_SEARCH_CRON_INDEX_LIMIT', variable_get('ucms_search_elastic_index_limit', 500));
 
 /**
- * Default number of items index each cron run.
- */
-define('UCMS_SEARCH_ELASTIC_DEBUG', variable_get('ucms_search_elastic_debug', true));
-
-/**
  * Default search per page limit.
  */
 const UCMS_SEARCH_LIMIT = 100;

@@ -37,6 +37,11 @@ class NodeIndexer implements NodeIndexerInterface
     private $nodeController;
 
     /**
+     * @var boolean
+     */
+    private $preventBulkUsage = false;
+
+    /**
      * Temporary queue of node identifiers which need to be marked as changed
      * upon the request termination
      *
@@ -64,6 +69,7 @@ class NodeIndexer implements NodeIndexerInterface
      * @param \DatabaseConnection $db
      * @param EntityManager $entityManager
      * @param ModuleHandlerInterface $moduleHandler
+     * @param boolean $preventBulkUsage
      */
     public function __construct(
         $index,
@@ -71,7 +77,8 @@ class NodeIndexer implements NodeIndexerInterface
         \DatabaseConnection $db,
         EntityManager $entityManager,
         ModuleHandlerInterface $moduleHandler,
-        $indexRealname = null)
+        $indexRealname = null,
+        $preventBulkUsage = false)
     {
         $this->index = $index;
         $this->client = $client;
@@ -79,6 +86,7 @@ class NodeIndexer implements NodeIndexerInterface
         $this->nodeController = $entityManager->getStorage('node');
         $this->moduleHandler = $moduleHandler;
         $this->indexRealname = ($indexRealname ? $indexRealname : $index);
+        $this->preventBulkUsage = $preventBulkUsage;
     }
 
     /**
@@ -250,7 +258,7 @@ class NodeIndexer implements NodeIndexerInterface
      */
     public function delete($node)
     {
-        $response = $this
+        $this
             ->client
             ->delete([
                 'index' => $this->indexRealname,
@@ -258,10 +266,6 @@ class NodeIndexer implements NodeIndexerInterface
                 'type'  => 'node',
             ])
         ;
-
-        if (UCMS_SEARCH_ELASTIC_DEBUG) {
-            watchdog(__FUNCTION__, '<pre>' . print_r($response, true) . '</pre>', null, WATCHDOG_DEBUG);
-        }
 
         $this
             ->db
@@ -295,6 +299,13 @@ class NodeIndexer implements NodeIndexerInterface
             return;
         }
 
+        if ($this->preventBulkUsage) {
+            foreach ($nodeList as $node) {
+                $this->upsert($node);
+            }
+            return;
+        }
+
         $params   = [];
         $nidList  = [];
 
@@ -319,11 +330,7 @@ class NodeIndexer implements NodeIndexerInterface
             $nidList[] = $node->nid;
         }
 
-        $response = $this->client->bulk($params);
-
-        if (UCMS_SEARCH_ELASTIC_DEBUG) {
-            watchdog(__FUNCTION__, '<pre>' . print_r($response, true) . '</pre>', null, WATCHDOG_DEBUG);
-        }
+        $this->client->bulk($params);
 
         $this
             ->db
@@ -344,7 +351,7 @@ class NodeIndexer implements NodeIndexerInterface
             return false;
         }
 
-        $response = $this
+        $this
             ->client
             ->index([
                 'index'   => $this->indexRealname,
@@ -354,10 +361,6 @@ class NodeIndexer implements NodeIndexerInterface
                 'body'    => $this->nodeProcessfield($node),
             ])
         ;
-
-        if (UCMS_SEARCH_ELASTIC_DEBUG) {
-            watchdog(__FUNCTION__, '<pre>' . print_r($response, true) . '</pre>', null, WATCHDOG_DEBUG);
-        }
 
         $this
             ->db

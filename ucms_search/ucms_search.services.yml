@@ -10,11 +10,23 @@ parameters:
   # keys are Drupal indices names, values are Elastic indices names
   ucms_search.elastic.index_map: []
 
+  # If you set this to true, bulk operations will never be used, this is a
+  # workaround because we experienced problems with a misconfigured ES
+  # https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+  ucms_search.elastic.never_bulk: false
+
 services:
 
   ucms_search.index_storage:
     class: MakinaCorpus\Ucms\Search\IndexStorage
-    arguments: ["@ucms_search.elastic.client", "@database", "@cache.default", "@entity.manager", "@module_handler", "%ucms_search.elastic.index_map%"]
+    arguments:
+      - "@ucms_search.elastic.client"
+      - "@database"
+      - "@cache.default"
+      - "@entity.manager"
+      - "@module_handler"
+      - "%ucms_search.elastic.index_map%"
+      - "%ucms_search.elastic.never_bulk%"
 
   ucms_search.node_indexer:
     public: false
