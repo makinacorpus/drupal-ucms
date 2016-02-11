@@ -129,17 +129,14 @@ function ucms_label_menu_item_title($op, $label) {
 function ucms_label_taxonomy_term_presave($term) {
   $manager = \Drupal::service('ucms_label.manager');
 
-  if (!isset($term->original->parent)) {
-    $term->original->parent = 0;
-  }
+  if (!empty($term->tid) && $term->vocabulary_machine_name == $manager->getVocabularyMachineName()) {
+    if (!isset($term->original->parent)) {
+      $term->original->parent = 0;
+    }
 
-  if (
-    !empty($term->tid) &&
-    $term->vocabulary_machine_name == $manager->getVocabularyMachineName() &&
-    $manager->hasChildren($term) &&
-    $term->parent != $term->original->parent
-  ) {
-    throw new \LogicException("Can't define a parent to a label which has children.");
+    if ($manager->hasChildren($term) && $term->parent != $term->original->parent) {
+      throw new \LogicException("Can't define a parent to a label which has children.");
+    }
   }
 }
 
