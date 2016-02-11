@@ -2,6 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 /**
  * Site storage service
  */
@@ -13,13 +17,19 @@ class SiteStorage
     private $db;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(\DatabaseConnection $db, EventDispatcherInterface $dispatcher = null)
     {
         $this->db = $db;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -168,6 +178,23 @@ class SiteStorage
     }
 
     /**
+     * Dispatch an event
+     *
+     * @param Site $site
+     * @param string $event
+     * @param string $data
+     * @param int $userId
+     */
+    private function dispatch(Site $site, $event, $data = [], $userId = null)
+    {
+        if (!$this->dispatcher) {
+            return;
+        }
+
+        $this->dispatcher->dispatch('site:' . $event, new ResourceEvent('site', $site->id, $userId, $data));
+    }
+
+    /**
      * Load all sites from the given identifiers
      *
      * @param array $idList
@@ -254,6 +281,9 @@ class SiteStorage
                 ->fields($values)
                 ->execute()
             ;
+
+            $this->dispatch($site, 'create', [], $site->uid);
+
         } else {
             $values['ts_created'] = $values['ts_changed'];
 
@@ -265,6 +295,8 @@ class SiteStorage
             ;
 
             $site->id = $id;
+
+            $this->dispatch($site, 'save', [], $site->uid);
         }
     }
 }

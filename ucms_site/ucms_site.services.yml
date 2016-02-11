@@ -4,7 +4,7 @@ services:
   ucms_site.storage:
     public: false
     class: MakinaCorpus\Ucms\Site\SiteStorage
-    arguments: ["@database"]
+    arguments: ["@database", "@event_dispatcher"]
 
   # Site access helper
   ucms_site.access:
