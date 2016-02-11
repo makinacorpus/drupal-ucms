@@ -34,7 +34,7 @@ class ContextPaneEventListener
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)
     {
         if (
-            (substr(current_path(), 0, 21) == 'admin/dashboard/label') &&
+            (current_path() == 'admin/dashboard/label') &&
             ($this->manager->canEditNonLockedLabels() || $this->manager->canEditLockedLabels())
         ) {
             $action = new Action($this->t("Create label"), 'admin/dashboard/label/add', 'dialog', null, 0, true, true);
