@@ -12,5 +12,6 @@ services:
 
   ucms_contrib.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
+    arguments: ["@ucms_layout.context"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
