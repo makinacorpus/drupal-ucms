@@ -146,9 +146,13 @@ function ucms_sso_callback_check() {
   }
 
   if (!user_is_logged_in()) {
-    // TODO: if no credentials were sent, that's a purely anonymous check,
-    //   the refusal response could be cacheable by varnish.
-    return MENU_ACCESS_DENIED;
+    // we use a cacheable json response, has all really anonymous users
+    // will end up there and this can be easily managed by the reverse
+    // proxy cache this will be a 200 and not a 403, better chances of
+    //  caching.
+    // With cache_page activated we have a cache duration and the
+    // Vary: Cookie header.
+    return drupal_json_output(['status' => 0]);
   }
 
   // User 42 is logged on site A (master).
