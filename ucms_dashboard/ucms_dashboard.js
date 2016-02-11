@@ -123,7 +123,7 @@
               $originalButton.click();
             }
           });
-          $contextualPane.find('.inner').append($clonedButton);
+          $contextualPane.find('.inner .actions').append($clonedButton);
         });
       });
     },
