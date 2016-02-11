@@ -37,7 +37,7 @@ class ContextPaneEventListener
             (substr(current_path(), 0, 21) == 'admin/dashboard/label') &&
             ($this->manager->canEditNonLockedLabels() || $this->manager->canEditLockedLabels())
         ) {
-            $action = new Action($this->t("Create label"), 'admin/dashboard/label/add', null, null, 0, true, true);
+            $action = new Action($this->t("Create label"), 'admin/dashboard/label/add', 'dialog', null, 0, true, true);
             $event->getContextPane()->addActions([$action]);
         }
     }

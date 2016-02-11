@@ -41,8 +41,8 @@ class LabelActionProvider implements ActionProviderInterface
         $actions = [];
 
         if ($this->manager->canEditLabel($item)) {
-            $actions[] = new Action($this->t("Edit"), 'admin/dashboard/label/' . $item->tid . '/edit', null, 'pencil', -10, true, true);
-            $actions[] = new Action($this->t("Delete"), 'admin/dashboard/label/' . $item->tid . '/delete', null, 'trash', -5, true, true, $this->manager->hasChildren($item));
+            $actions[] = new Action($this->t("Edit"), 'admin/dashboard/label/' . $item->tid . '/edit', 'dialog', 'pencil', -10, true, true);
+            $actions[] = new Action($this->t("Delete"), 'admin/dashboard/label/' . $item->tid . '/delete', 'dialog', 'trash', -5, true, true, $this->manager->hasChildren($item));
         }
 
         return $actions;
