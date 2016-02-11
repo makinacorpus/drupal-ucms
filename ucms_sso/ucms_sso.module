@@ -50,8 +50,11 @@
  *   \--> TODO: login link/page should redirect to master domain
  *   \--> TODO: login link should first send an ajax query to /sso/check
  *                    to check that the user been recently connected
- *  TODO: remove the js retry loop
- *  TODO: ensure the refusal page for anonymous check on /sso/check can be cached by Varnish
+ *  TODO: Safari may have problems with the Vary: Cookie on the /sso/check refusal
+ *        (caching the refusal). One solution is adding random on the ajax check
+ *        (like the usso timestamp) and ignoring this query string argument on
+ *        the reverse proxy cache side (to store only 1 version for all anon.)
+ *  TODO: remove the js retry loop?
  */
 
 /**
