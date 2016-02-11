@@ -5,7 +5,7 @@
    */
   Drupal.behaviors.ucmsDashboardPane = {
     attach: function (context, settings) {
-      $(context).find('#contextual-pane').once('ucmsDashboardPane', function(){
+      $(context).find('#contextual-pane').once('ucmsDashboardPane', function () {
         var $contextualPane = $('#contextual-pane', context);
         var $toggle = $('#contextual-pane-toggle', context);
 
@@ -13,7 +13,7 @@
         var $panePositionSwitch = $('#contextual-pane-switch-position');
         $panePositionSwitch.click(function () {
           $contextualPane.toggleClass('pane-right pane-down');
-          position = panePosition()
+          position = panePosition();
           $.cookie('contextual-pane-position', position, {path: '/'});
           $panePositionSwitch.find('span').toggleClass('glyphicon-collapse-down glyphicon-expand');
           resizeTabs();
@@ -28,17 +28,17 @@
 
         /**
          * Quick function to determine pane position.
-         * @returns {boolean}
+         * @returns {string}
          */
         function panePosition() {
           if ($contextualPane.hasClass('pane-right')) {
-              return 'right';
+            return 'right';
           } else if ($contextualPane.hasClass('pane-down')) {
-              return 'down';
+            return 'down';
           } else if ($contextualPane.hasClass('pane-left')) {
-              return 'left';
+            return 'left';
           } else if ($contextualPane.hasClass('pane-up')) {
-              return 'up';
+            return 'up';
           }
         }
 
@@ -62,7 +62,7 @@
         }
 
         // Action to do on button click
-        $toggle_link = $toggle.find('a');
+        var $toggle_link = $toggle.find('a');
         $toggle_link.click(function () {
           var $currentLink = $(this);
 
@@ -100,6 +100,8 @@
         }
 
         resizeTabs();
+
+        $(window).resize(resizeTabs);
       });
     }
   };
@@ -110,7 +112,7 @@
    */
   Drupal.behaviors.ucmsDashboardPaneActions = {
     attach: function (context) {
-      $(context).find('#page').once('ucmsDashboardPaneActions', function(){
+      $(context).find('#page').once('ucmsDashboardPaneActions', function () {
         var $contextualPane = $('#contextual-pane');
         // Get all buttons (link or input) in form-actions
         var $buttons = $('#page .form-actions', context).find('input[type=submit], button, a.btn');
