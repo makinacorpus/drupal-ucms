@@ -7,7 +7,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
-use MakinaCorpus\Ucms\Label\LabelAccess;
 use MakinaCorpus\Ucms\Label\LabelManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,7 +20,7 @@ class LabelEdit extends FormBase
 {
 
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     static public function create(ContainerInterface $container)
     {
@@ -62,20 +61,20 @@ class LabelEdit extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, $term = null)
+    public function buildForm(array $form, FormStateInterface $form_state, \stdClass $label = null)
     {
         $form['#form_horizontal'] = true;
 
-        if ($term === null) {
-            $term = new \stdClass();
+        if ($label === null) {
+            $label = new \stdClass();
         }
 
-        $form_state->setTemporaryValue('term', $term);
+        $form_state->setTemporaryValue('label', $label);
 
         $form['name'] = array(
             '#type' => 'textfield',
             '#title' => $this->t('Name'),
-            '#default_value' => isset($term->name) ? $term->name : '',
+            '#default_value' => isset($label->name) ? $label->name : '',
             '#maxlength' => 255,
             '#required' => true,
             '#weight' => -5,
@@ -84,8 +83,8 @@ class LabelEdit extends FormBase
 //        $form['description'] = array(
 //            '#type' => 'text_format',
 //            '#title' => t('Description'),
-//            '#default_value' => isset($term->description) ? $term->description : '',
-//            '#format' => isset($term->format) ? $term->format : '',
+//            '#default_value' => isset($label->description) ? $label->description : '',
+//            '#format' => isset($label->format) ? $label->format : '',
 //            '#weight' => 0,
 //        );
 
@@ -96,16 +95,16 @@ class LabelEdit extends FormBase
         if (!variable_get('taxonomy_override_selector', FALSE)) {
             $has_children = false;
 
-            if (isset($term->tid)) {
-                $parent = $this->manager->loadParent($term);
-                $has_children = $this->manager->hasChildren($term);
+            if (isset($label->tid)) {
+                $parent = $this->manager->loadParent($label);
+                $has_children = $this->manager->hasChildren($label);
             }
 
             $root_labels = $this->manager->loadRootLabels();
 
             $options = [];
             foreach ($root_labels as $label) {
-                if (!isset($term->tid) || $term->tid != $label->tid) {
+                if (!isset($label->tid) || $label->tid != $label->tid) {
                     $options[$label->tid] = $label->name;
                 }
             }
@@ -129,10 +128,10 @@ class LabelEdit extends FormBase
         $form['locked'] = array(
             '#type' => 'checkbox',
             '#title' => $this->t('Non editable label'),
-            '#default_value' => isset($term->is_locked) ? $term->is_locked : 0,
+            '#default_value' => isset($label->is_locked) ? $label->is_locked : 0,
         );
 
-        if (!isset($term->tid) && !$this->manager->canEditAllLabels()) {
+        if (!isset($label->tid) && !$this->manager->canEditAllLabels()) {
             $form['locked']['#disabled'] = true;
             if (!$this->manager->canEditLockedLabels()) {
                 $form['locked']['#default_value'] = 1;
@@ -155,17 +154,22 @@ class LabelEdit extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $term = $form_state->getTemporaryValue('term');
-        $term->name = $form_state->getValue('name');
-        $term->is_locked = $form_state->getValue('locked');
-        $term->parent = ($parent = $form_state->getValue('parent')) ? $parent : 0;
-        $term->vid = $this->manager->getVocabularyId();
-        $term->vocabulary_machine_name = $this->manager->getVocabularyMachineName();
-        $this->manager->saveLabel($term);
+        $label = $form_state->getTemporaryValue('label');
+        $label->name = $form_state->getValue('name');
+        $label->is_locked = $form_state->getValue('locked');
+        $label->parent = ($parent = $form_state->getValue('parent')) ? $parent : 0;
+        $label->vid = $this->manager->getVocabularyId();
+        $label->vocabulary_machine_name = $this->manager->getVocabularyMachineName();
 
-        drupal_set_message($this->t("The new label has been created."));
+        $op = $this->manager->saveLabel($label);
 
-        //$this->dispatcher->dispatch('label:request', new ResourceEvent('label', $term->tid, $this->currentUser()->uid));
+        if ($op == SAVED_NEW) {
+            drupal_set_message($this->t("The new \"@name\" label has been created.", array('@name' => $label->name)));
+            //$this->dispatcher->dispatch('label:add', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+        } else {
+            drupal_set_message($this->t("The \"@name\" label has been updated.", array('@name' => $label->name)));
+            //$this->dispatcher->dispatch('label:edit', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+        }
 
         $form_state->setRedirect('admin/dashboard/label');
     }

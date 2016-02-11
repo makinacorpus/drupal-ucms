@@ -33,25 +33,22 @@ function ucms_label_menu() {
 
   $items['admin/dashboard/label/%taxonomy_term/edit'] = [
     'title callback'    => 'ucms_label_menu_item_title',
-    'title arguments'    => [LabelAccess::OP_EDIT, 3],
+    'title arguments'   => [LabelAccess::OP_EDIT, 3],
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelEdit', 3],
     'access callback'   => 'ucms_label_access_manage',
     'access arguments'  => [LabelAccess::OP_EDIT, 3],
     'type'              => MENU_CALLBACK,
-    'weight'            => 10,
   ];
 
   $items['admin/dashboard/label/%taxonomy_term/delete'] = [
     'title callback'    => 'ucms_label_menu_item_title',
-    'title arguments'    => [LabelAccess::OP_DELETE, 3],
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_label_dashboard_label_delete_form', 3],
+    'title arguments'   => [LabelAccess::OP_DELETE, 3],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelDelete', 3],
     'access callback'   => 'ucms_label_access_manage',
     'access arguments'  => [LabelAccess::OP_DELETE, 3],
     'type'              => MENU_CALLBACK,
-    'file'              => 'ucms_label.dashboard.inc',
-    'weight'            => 20,
   ];
 
   return $items;
