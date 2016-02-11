@@ -3,8 +3,6 @@
 
 namespace MakinaCorpus\Ucms\Label;
 
-use MakinaCorpus\Ucms\Label\Error\LabelDeletionException;
-
 
 /**
  * Class to abstract functions of the taxonomy module.
@@ -127,10 +125,25 @@ final class LabelManager
      * Save the label.
      *
      * @return integer Constant SAVED_NEW or SAVED_UPDATED.
+     * @throws \LogicException
      * @see taxonomy_term_save().
      */
     public function saveLabel(\stdClass $label)
     {
+        if (!empty($label->tid)) {
+            // Prevents to save a label with a parent if it has children.
+            // The labels vocabulary must have only two levels.
+            if (!isset($label->original)) {
+                $label->original = entity_load_unchanged('taxonomy_term', $label->tid);
+            }
+            if (!isset($label->original->parent)) {
+                $label->original->parent = 0;
+            }
+            if ($this->hasChildren($label) && $label->parent != $label->original->parent) {
+                throw new \LogicException("Can't define a parent to a label which has children.");
+            }
+        }
+
         return taxonomy_term_save($label);
     }
 
@@ -139,12 +152,14 @@ final class LabelManager
      * Delete the label.
      *
      * @return integer Constant SAVED_DELETED if no exception occurs.
+     * @throws \LogicException
      * @see taxonomy_term_delete().
      */
     public function deleteLabel(\stdClass $label)
     {
+        // Prevents to delete a label which has children.
         if ($this->hasChildren($label)) {
-            throw new LabelDeletionException("Can't delete a label which has children.");
+            throw new \LogicException("Can't delete a label which has children.");
         }
         return taxonomy_term_delete($label->tid);
     }

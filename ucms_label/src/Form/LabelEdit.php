@@ -152,21 +152,26 @@ class LabelEdit extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $label = $form_state->getTemporaryValue('label');
-        $label->name = $form_state->getValue('name');
-        $label->is_locked = $form_state->getValue('locked');
-        $label->parent = ($parent = $form_state->getValue('parent')) ? $parent : 0;
-        $label->vid = $this->manager->getVocabularyId();
-        $label->vocabulary_machine_name = $this->manager->getVocabularyMachineName();
+        try {
+            $label = $form_state->getTemporaryValue('label');
+            $label->name = $form_state->getValue('name');
+            $label->is_locked = $form_state->getValue('locked');
+            $label->parent = ($parent = $form_state->getValue('parent')) ? $parent : 0;
+            $label->vid = $this->manager->getVocabularyId();
+            $label->vocabulary_machine_name = $this->manager->getVocabularyMachineName();
 
-        $op = $this->manager->saveLabel($label);
+            $op = $this->manager->saveLabel($label);
 
-        if ($op == SAVED_NEW) {
-            drupal_set_message($this->t("The new \"@name\" label has been created.", array('@name' => $label->name)));
-            //$this->dispatcher->dispatch('label:add', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
-        } else {
-            drupal_set_message($this->t("The \"@name\" label has been updated.", array('@name' => $label->name)));
-            //$this->dispatcher->dispatch('label:edit', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+            if ($op == SAVED_NEW) {
+                drupal_set_message($this->t("The new \"@name\" label has been created.", array('@name' => $label->name)));
+                //$this->dispatcher->dispatch('label:add', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+            } else {
+                drupal_set_message($this->t("The \"@name\" label has been updated.", array('@name' => $label->name)));
+                //$this->dispatcher->dispatch('label:edit', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+            }
+        }
+        catch (\Exception $e) {
+            drupal_set_message($this->t("An error occured during the edition of the \"@name\" label. Please try again.", array('@name' => $label->name)), 'error');
         }
 
         $form_state->setRedirect('admin/dashboard/label');

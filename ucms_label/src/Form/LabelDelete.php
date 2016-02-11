@@ -64,7 +64,7 @@ class LabelDelete extends FormBase
     public function buildForm(array $form, FormStateInterface $form_state, \stdClass $label = null)
     {
         if ($label === null) {
-          return [];
+            return [];
         }
 
         $form_state->setTemporaryValue('label', $label);
@@ -83,8 +83,8 @@ class LabelDelete extends FormBase
             $this->manager->deleteLabel($label);
             drupal_set_message($this->t("\"@name\" label has been deleted.", array('@name' => $label->name)));
         }
-        catch (Exception $e) {
-            drupal_set_message($this->t("Error during deletion of the \"@name\" label. Please try again.", array('@name' => $label->name)), 'error');
+        catch (\Exception $e) {
+            drupal_set_message($this->t("An error occured during the deletion of the \"@name\" label. Please try again.", array('@name' => $label->name)), 'error');
         }
     }
 
