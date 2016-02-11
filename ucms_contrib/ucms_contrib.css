@@ -184,6 +184,7 @@ body [data-region].drop-highlighted-over {
   -webkit-animation: pulse 1s linear infinite;
   animation: pulse 1s linear infinite;
   border: solid 1px #018fe2;
+  z-index: 120;
 }
 
 .ui-sortable-placeholder {
