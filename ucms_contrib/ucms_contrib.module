@@ -363,7 +363,7 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
       $markup .= '<span class="glyphicon glyphicon-' . $icon_mapping[$output['#bundle']] . '"></span>';
     }
     else {
-      $markup = '<span>' . node_type_get_name($context['entity']) . '</span>';
+      $markup .= '<span>' . node_type_get_name($context['entity']) . '</span>';
     }
     $markup .= '</div></div></div>';
     $output['default_icon'] = [
