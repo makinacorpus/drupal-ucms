@@ -352,11 +352,12 @@ class IndexStorage
             throw new \InvalidArgumentException(sprintf("'%s' index definition does not exist", $index));
         }
 
-        $namespace = $this->client->indices();
+        $namespace      = $this->client->indices();
+        $indexRealname  = $this->getIndexRealname($index);
 
-        if (!$namespace->exists(['index' => $index])) {
+        if (!$namespace->exists(['index' => $indexRealname])) {
             $namespace->create([
-                'index' => $this->getIndexRealname($index),
+                'index' => $indexRealname,
                 'body'  => $param,
             ]);
         }
@@ -369,9 +370,8 @@ class IndexStorage
      */
     protected function deleteInClient($index)
     {
-        $namespace = $this->client->indices();
-
-        $indexRealname = $this->getIndexRealname($index);
+        $namespace      = $this->client->indices();
+        $indexRealname  = $this->getIndexRealname($index);
 
         if ($namespace->exists(['index' => $indexRealname])) {
             $namespace->delete(['index' => $indexRealname]);
