@@ -54,11 +54,16 @@
         /**
          * Hide or show pane, and toggle link
          */
-        function togglePane(shown) {
+        function togglePane(shown, fast) {
           $.cookie('contextual-pane-hidden', !shown, {path: '/'});
           var prop = {};
           prop[position == 'right' ? 'marginRight' : 'marginBottom'] = shown ? '0px' : '-' + initial_size;
-          $contextualPane.animate(prop);
+          if (fast) {
+            $contextualPane.css(prop);
+          }
+          else {
+            $contextualPane.animate(prop);
+          }
         }
 
         // Action to do on button click
@@ -88,9 +93,12 @@
         });
 
         // Initial toggle for default tab
-        $toggle.find('a[href=#tab-' + settings.ucms_dashboard.defaultPane + ']').click();
         if ($.cookie('contextual-pane-hidden') && $.cookie('contextual-pane-hidden') !== 'false') {
-          // Second toggle if pane must be hidden
+          // Pane must be hidden
+          togglePane(false, true);
+          $toggle_link.removeClass('active');
+        }
+        else {
           $toggle.find('a[href=#tab-' + settings.ucms_dashboard.defaultPane + ']').click();
         }
 
