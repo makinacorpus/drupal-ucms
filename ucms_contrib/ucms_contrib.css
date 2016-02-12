@@ -277,6 +277,9 @@ body [data-region].drop-highlighted-over {
   position: relative;
   width: 100%;
 }
+.ucms-cart-item .ucms-default-icon {
+  display: block;
+}
 .ucms-default-icon:before {
   content: "";
   display: block;
