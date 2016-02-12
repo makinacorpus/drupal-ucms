@@ -481,7 +481,7 @@ class SiteAccessService
      */
     private function mergeUsersWithRole(Site $site, $userIdList, $role)
     {
-        if (!is_array($userIdList) || !$userIdList instanceof \Traversable) {
+        if (!is_array($userIdList) && !$userIdList instanceof \Traversable) {
             $userIdList = [$userIdList];
         }
 
@@ -557,7 +557,7 @@ class SiteAccessService
 
         /* @var $q \SelectQuery */
         $r = $q
-            ->range($limit, $offset)
+            ->range($offset, $limit)
             ->orderBy('u.uid')
             ->execute()
         ;
@@ -650,7 +650,7 @@ class SiteAccessService
      */
     public function listContributors(Site $site)
     {
-        return $this->listUsersWithRole($site, Access::ROLE_WEBMASTER);
+        return $this->listUsersWithRole($site, Access::ROLE_CONTRIB);
     }
 
     /**
