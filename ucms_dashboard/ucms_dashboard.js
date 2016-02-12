@@ -8,6 +8,8 @@
       $(context).find('#contextual-pane').once('ucmsDashboardPane', function () {
         var $contextualPane = $('#contextual-pane', context);
         var $toggle = $('#contextual-pane-toggle', context);
+        var $page = $('#page', context);
+
 
         // Handle pane position
         var $panePositionSwitch = $('#contextual-pane-switch-position');
@@ -17,6 +19,7 @@
           $.cookie('contextual-pane-position', position, {path: '/'});
           $panePositionSwitch.find('span').toggleClass('glyphicon-collapse-down glyphicon-expand');
           resizeTabs();
+          $page.css('padding-right', position == 'right' ? initial_size : '0px');
         });
         if ($.cookie('contextual-pane-position') && $.cookie('contextual-pane-position') !== 'right') {
           // Second toggle if pane must be hidden
@@ -25,6 +28,9 @@
 
         var position = panePosition();
         var initial_size = position == 'right' ? $contextualPane.css('width') : $contextualPane.css('height');
+        if (position == 'right') {
+          $page.css('padding-right', initial_size);
+        }
 
         /**
          * Quick function to determine pane position.
@@ -60,9 +66,15 @@
           prop[position == 'right' ? 'marginRight' : 'marginBottom'] = shown ? '0px' : '-' + initial_size;
           if (fast) {
             $contextualPane.css(prop);
+            if (position == 'right') {
+              $page.css('padding-right', shown ? initial_size : '0px');
+            }
           }
           else {
             $contextualPane.animate(prop);
+            if (position == 'right') {
+              $page.animate({paddingRight: shown ? initial_size : '0px'});
+            }
           }
         }
 
