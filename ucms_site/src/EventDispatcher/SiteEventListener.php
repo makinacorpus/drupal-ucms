@@ -32,7 +32,7 @@ class SiteEventListener
         ;
     }
 
-    public function onSiteUpdate(SiteEvent $event)
+    public function onSiteSave(SiteEvent $event)
     {
         // @todo ?
     }

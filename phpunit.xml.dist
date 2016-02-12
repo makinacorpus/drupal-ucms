@@ -14,6 +14,7 @@
         <testsuite name="Dashboard test suite">
             <directory>./ucms_dashboard/src/Tests/</directory>
             <directory>./ucms_search/src/Tests/</directory>
+            <directory>./ucms_site/src/Tests/</directory>
         </testsuite>
     </testsuites>
 
@@ -21,7 +22,6 @@
         <whitelist>
             <directory>./</directory>
             <exclude>
-                <directory>./src/Tests</directory>
                 <directory>./vendor</directory>
             </exclude>
         </whitelist>
