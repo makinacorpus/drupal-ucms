@@ -72,8 +72,22 @@ class PageTest extends AbstractDrupalTest
         $this->assertNotTrue(in_array('active', $render['#sort_field']['#links']['kitten']['attributes']['class']));
         $this->assertTrue(in_array('active', $render['#sort_field']['#links']['sam']['attributes']['class']));
 
-        // Test a bit deeper how links are built
-        // @todo
+        // Default link must not have the field parameter
+        $this->assertArrayNotHasKey('st', $render['#sort_field']['#links']['kitten']['query']);
+
+        // Tests that arbitrary values are kept
+        // In active field links
+        $this->assertArrayHasKey('some', $render['#sort_field']['#links']['sam']['query']);
+        $this->assertSame('query', $render['#sort_field']['#links']['sam']['query']['some']);
+        // In inactive field links
+        $this->assertArrayHasKey('some', $render['#sort_field']['#links']['kitten']['query']);
+        $this->assertSame('query', $render['#sort_field']['#links']['kitten']['query']['some']);
+        // In active sort links
+        $this->assertArrayHasKey('some', $render['#sort_order']['#links']['desc']['query']);
+        $this->assertSame('query', $render['#sort_order']['#links']['desc']['query']['some']);
+        // In inactive sort links
+        $this->assertArrayHasKey('some', $render['#sort_order']['#links']['asc']['query']);
+        $this->assertSame('query', $render['#sort_order']['#links']['asc']['query']['some']);
     }
 
     public function testFiltersInBaseQueryAreDropped()

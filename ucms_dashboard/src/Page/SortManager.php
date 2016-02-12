@@ -152,7 +152,8 @@ class SortManager
         ];
 
         if ($value === $default) {
-            $link['query'] = array_filter([$param => null] + $query); 
+            $link['query'] = $query;
+            unset($link['query'][$param]);
         } else {
             $link['query'] = [$param => $value] + $query;
         }
