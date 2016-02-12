@@ -472,6 +472,80 @@ class SiteAccessService
     }
 
     /**
+     * Add webmasters
+     *
+     * @param Site $site
+     * @param int|int[] $userIdList
+     */
+    public function addWebmasters(Site $site, $userIdList)
+    {
+        // @todo and unit test me
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * Remove webmasters
+     *
+     * @param Site $site
+     * @param int|int[] $userIdList
+     */
+    public function removeWebmasters(Site $site, $userIdList)
+    {
+        // @todo and unit test me
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * Add contributors
+     *
+     * @param Site $site
+     * @param int|int[] $userIdList
+     */
+    public function addContributors(Site $site, $userIdList)
+    {
+        // @todo and unit test me
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * Remove contributors
+     *
+     * @param Site $site
+     * @param int|int[] $userIdList
+     */
+    public function removeContributors(Site $site, $userIdList)
+    {
+        // @todo and unit test me
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * List webmasters
+     *
+     * @param Site $site
+     *
+     * @return int[]
+     */
+    public function listWebmasters(Site $site)
+    {
+        // @todo and unit test me
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * List contributors
+     *
+     * @param Site $site
+     *
+     * @return int[]
+     */
+    public function listContributors(Site $site)
+    {
+        // @todo and unit test me
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
      * Reset internal cache
      *
      * If I did it right, you should never have to use this
