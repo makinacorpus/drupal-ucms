@@ -25,15 +25,21 @@ final class SiteManager
     private $context;
 
     /**
+     * @var \DatabaseConnection
+     */
+    private $db;
+
+    /**
      * Default constructor
      *
      * @param SiteStorage $storage
      * @param SiteAccessService $access
      */
-    public function __construct(SiteStorage $storage, SiteAccessService $access)
+    public function __construct(SiteStorage $storage, SiteAccessService $access, \DatabaseConnection $db)
     {
         $this->storage = $storage;
         $this->access = $access;
+        $this->db = $db;
     }
 
     /**
@@ -164,5 +170,27 @@ final class SiteManager
     public function setHomeNodeType($type)
     {
         variable_set('ucms_site_home_node_type', $type);
+    }
+
+    /**
+     * Create site menu
+     *
+     * @param Site $site
+     * @param string $name
+     *   Drupal menu_name suffix (will be prefixed by something technical)
+     */
+    public function createMenu(Site $site, $name)
+    {
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * Get site menus
+     *
+     * @param Site $site
+     */
+    public function getMenus(Site $site)
+    {
+        return $this->db->query('SELECT * FROM {menu_custom} WHERE site_id = ?', [$site->id])->fetchAllAssoc('menu_name', \PDO::FETCH_ASSOC);
     }
 }

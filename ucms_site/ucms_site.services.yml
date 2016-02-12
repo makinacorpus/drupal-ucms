@@ -15,7 +15,7 @@ services:
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:
     class: MakinaCorpus\Ucms\Site\SiteManager
-    arguments: ["@ucms_site.storage", "@ucms_site.access"]
+    arguments: ["@ucms_site.storage", "@ucms_site.access", "@database"]
 
   # Node dispatcher, handles node attach/detach/clone to sites
   ucms_site.node_dispatcher:

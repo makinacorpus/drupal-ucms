@@ -242,8 +242,10 @@ class SiteStorage
      * @param Site $site
      * @param array $fields
      *   If set, update only the given fields
+     * @param int $userId
+     *   Who did this!
      */
-    public function save(Site $site, array $fields = null)
+    public function save(Site $site, array $fields = null, $userId = null)
     {
         $eligible = [
             'title_admin',
@@ -274,6 +276,8 @@ class SiteStorage
         $values['ts_changed'] = (new \DateTime())->format('Y-m-d H:i:s');
 
         if ($site->id) {
+            $this->dispatch($site, 'preCreate', [], $userId);
+
             $this
                 ->db
                 ->merge('ucms_site')
@@ -282,9 +286,10 @@ class SiteStorage
                 ->execute()
             ;
 
-            $this->dispatch($site, 'create', [], $site->uid);
-
+            $this->dispatch($site, 'create', [], $userId);
         } else {
+            $this->dispatch($site, 'preSave', [], $userId);
+
             $values['ts_created'] = $values['ts_changed'];
 
             $id = $this
@@ -296,7 +301,7 @@ class SiteStorage
 
             $site->id = $id;
 
-            $this->dispatch($site, 'save', [], $site->uid);
+            $this->dispatch($site, 'save', [], $userId);
         }
     }
 }

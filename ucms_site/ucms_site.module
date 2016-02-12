@@ -303,6 +303,12 @@ function ucms_site_boot() {
         $GLOBALS['conf']['site_frontpage'] = 'node/' . $site->home_nid;
       }
 
+      // We have to fake menu_load_all() because Drupal attemps to load
+      // everything no matter what happens, and this is the single and only
+      // non-scalable function in the whole core menu handling, so let's just
+      // bypass it.
+      drupal_static('menu_load_all', $manager->getMenus($site));
+
     } else {
       $manager->dropContext();
     }
