@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Dashboard\Context;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class ContextPane
@@ -32,13 +33,31 @@ class ContextPane
     private $defaultTab = null;
 
     /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
+     * @var boolean
+     */
+    private $isOpened = false;
+
+    /**
      * ContextPane constructor.
      *
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(EventDispatcherInterface $dispatcher)
+    public function __construct(EventDispatcherInterface $dispatcher, RequestStack $requestStack)
     {
         $this->dispatcher = $dispatcher;
+        $this->requestStack = $requestStack;
+
+        $this->isOpened = (bool)$this
+            ->requestStack
+            ->getMasterRequest()
+            ->cookies
+            ->get('contextual-pane-hidden', true)
+        ;
     }
 
     /**
@@ -47,7 +66,34 @@ class ContextPane
     public function init()
     {
         $event = new ContextPaneEvent($this);
+
         $this->dispatcher->dispatch('ucms_dashboard.context_init', $event);
+    }
+
+    /**
+     * Is pane opened
+     *
+     * @return boolean
+     */
+    public function isOpened()
+    {
+        return $this->isOpened;
+    }
+
+    /**
+     * Force pane to close
+     */
+    public function close()
+    {
+        $this->isOpened = false;
+    }
+
+    /**
+     * Force pane to open
+     */
+    public function open()
+    {
+        $this->isOpened = true;
     }
 
     /**

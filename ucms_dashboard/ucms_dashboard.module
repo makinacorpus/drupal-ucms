@@ -188,6 +188,7 @@ function ucms_dashboard_page_build(&$page) {
       'data' => [
         'ucms_dashboard' => [
           'defaultPane' => $context->getDefaultTab(),
+          'isOpened'    => $context->isOpened(),
         ],
       ],
     ];

@@ -2,7 +2,7 @@ services:
 
   ucms_dashboard.context:
     class: MakinaCorpus\Ucms\Dashboard\Context\ContextPane
-    arguments: ['@event_dispatcher']
+    arguments: ['@event_dispatcher', '@request_stack']
 
   ucms_dashboard.page_factory:
     class: MakinaCorpus\Ucms\Dashboard\Page\PageFactory
