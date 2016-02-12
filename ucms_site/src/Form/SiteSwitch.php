@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Site\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
@@ -91,7 +91,7 @@ class SiteSwitch extends FormBase
             '@to'   => $list[$data['to']],
         ]));
 
-        $this->dispatcher->dispatch('site:switch', new ResourceEvent('site', $site->id, $this->currentUser()->uid, $data));
+        $this->dispatcher->dispatch('site:switch', new SiteEvent($site, $this->currentUser()->uid, $data));
 
         $form_state->setRedirect('admin/dashboard/site');
     }

@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -191,7 +191,7 @@ class SiteStorage
             return;
         }
 
-        $this->dispatcher->dispatch('site:' . $event, new ResourceEvent('site', $site->id, $userId, $data));
+        $this->dispatcher->dispatch('site:' . $event, new SiteEvent($site, $userId, $data));
     }
 
     /**
@@ -276,7 +276,7 @@ class SiteStorage
         $values['ts_changed'] = (new \DateTime())->format('Y-m-d H:i:s');
 
         if ($site->id) {
-            $this->dispatch($site, 'preCreate', [], $userId);
+            $this->dispatch($site, 'preSave', [], $userId);
 
             $this
                 ->db
@@ -286,9 +286,9 @@ class SiteStorage
                 ->execute()
             ;
 
-            $this->dispatch($site, 'create', [], $userId);
+            $this->dispatch($site, 'save', [], $userId);
         } else {
-            $this->dispatch($site, 'preSave', [], $userId);
+            $this->dispatch($site, 'preCreate', [], $userId);
 
             $values['ts_created'] = $values['ts_changed'];
 
@@ -301,7 +301,7 @@ class SiteStorage
 
             $site->id = $id;
 
-            $this->dispatch($site, 'save', [], $userId);
+            $this->dispatch($site, 'create', [], $userId);
         }
     }
 }

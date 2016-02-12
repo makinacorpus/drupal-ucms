@@ -472,39 +472,139 @@ class SiteAccessService
     }
 
     /**
+     * Merge users with role
+     *
+     * @param Site $site
+     * @param int|int[] $userIdList
+     * @param int $role
+     *   Access::ROLE_* constant
+     */
+    private function mergeUsersWithRole(Site $site, $userIdList, $role)
+    {
+        if (!is_array($userIdList) || !$userIdList instanceof \Traversable) {
+            $userIdList = [$userIdList];
+        }
+
+        foreach ($userIdList as $userId) {
+            // Could be better with a load before and a single bulk insert
+            // and a single bulk update, but right now let's go with simple,
+            $this
+                ->db
+                ->merge('ucms_site_access')
+                ->key(['site_id' => $site->id, 'uid' => $userId])
+                ->fields(['role' => $role])
+                ->execute()
+            ;
+            // Let any exception pass, any exception would mean garbage has
+            // been given to this method
+        }
+    }
+
+    /**
+     * Remove users with role
+     *
+     * If any of the users is webmaster, this role will be kept
+     *
+     * @param Site $site
+     * @param int|int[] $userIdList
+     * @param int $role
+     *   Access::ROLE_* constant
+     */
+    private function removeUsersWithRole(Site $site, $userIdList, $role = null)
+    {
+        $q = $this
+            ->db
+            ->delete('ucms_site_access')
+            ->condition('site_id', $site->id)
+            ->condition('uid', $userIdList)
+        ;
+
+        if ($role) {
+            $q->condition('role', $role);
+        }
+
+        $q->execute();
+    }
+
+    /**
+     * List users with role
+     *
+     * If role is null, list all users
+     *
+     * @param Site $site
+     * @param int $role
+     * @param int $limit
+     * @param int $offset
+     *
+     * @return SiteAccessRecord[]
+     */
+    private function listUsersWithRole(Site $site, $role = null, $limit = 100, $offset = 0)
+    {
+        $q = $this
+            ->db
+            ->select('ucms_site_access', 'u')
+            ->fields('u')
+            ->condition('u.site_id', $site->id)
+        ;
+
+        // @todo
+        //  - should we add an added date in the access table?
+        //  - return a cursor instead ? with a count() method for paging
+
+        if ($role) {
+            $q->condition('u.role', $role);
+        }
+
+        /* @var $q \SelectQuery */
+        $r = $q
+            ->range($limit, $offset)
+            ->orderBy('u.uid')
+            ->execute()
+        ;
+
+        /* @var $r \PDOStatement */
+        $r->setFetchMode(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\SiteAccessRecord');
+
+        return $r->fetchAll();
+    }
+
+    /**
      * Add webmasters
+     *
+     * If any of the users is contributor, it will be ranked to webmaster
      *
      * @param Site $site
      * @param int|int[] $userIdList
      */
     public function addWebmasters(Site $site, $userIdList)
     {
-        // @todo and unit test me
-        throw new \Exception("Not implemented yet");
+        $this->mergeUsersWithRole($site, $userIdList, Access::ROLE_WEBMASTER);
     }
 
     /**
      * Remove webmasters
+     *
+     * If any of the users is contributor, this role will be kept
      *
      * @param Site $site
      * @param int|int[] $userIdList
      */
     public function removeWebmasters(Site $site, $userIdList)
     {
-        // @todo and unit test me
-        throw new \Exception("Not implemented yet");
+        $this->removeUsersWithRole($site, $userIdList, Access::ROLE_WEBMASTER);
     }
 
     /**
      * Add contributors
+     *
+     * If any of the users is webmaster, it will be lowered to contributor
      *
      * @param Site $site
      * @param int|int[] $userIdList
      */
     public function addContributors(Site $site, $userIdList)
     {
-        // @todo and unit test me
-        throw new \Exception("Not implemented yet");
+        $this->mergeUsersWithRole($site, $userIdList, Access::ROLE_CONTRIB);
     }
 
     /**
@@ -515,8 +615,18 @@ class SiteAccessService
      */
     public function removeContributors(Site $site, $userIdList)
     {
-        // @todo and unit test me
-        throw new \Exception("Not implemented yet");
+        $this->removeUsersWithRole($site, $userIdList, Access::ROLE_CONTRIB);
+    }
+
+    /**
+     * Remove users from site whatever is their role
+     *
+     * @param Site $site
+     * @param int|int[] $userIdList
+     */
+    public function removeUsers(Site $site, $userIdList)
+    {
+        $this->removeUsersWithRole($site, $userIdList);
     }
 
     /**
@@ -524,12 +634,11 @@ class SiteAccessService
      *
      * @param Site $site
      *
-     * @return int[]
+     * @return SiteAccessRecord[]
      */
     public function listWebmasters(Site $site)
     {
-        // @todo and unit test me
-        throw new \Exception("Not implemented yet");
+        return $this->listUsersWithRole($site, Access::ROLE_WEBMASTER);
     }
 
     /**
@@ -537,12 +646,23 @@ class SiteAccessService
      *
      * @param Site $site
      *
-     * @return int[]
+     * @return SiteAccessRecord[]
      */
     public function listContributors(Site $site)
     {
-        // @todo and unit test me
-        throw new \Exception("Not implemented yet");
+        return $this->listUsersWithRole($site, Access::ROLE_WEBMASTER);
+    }
+
+    /**
+     * List contributors
+     *
+     * @param Site $site
+     *
+     * @return SiteAccessRecord[]
+     */
+    public function listAllUsers(Site $site)
+    {
+        return $this->listUsersWithRole($site);
     }
 
     /**

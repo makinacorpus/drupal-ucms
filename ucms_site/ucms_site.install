@@ -546,3 +546,22 @@ function ucms_site_update_7010() {
     ]);
   }
 }
+
+/**
+ * For testing sites, set the site requester in the {ucms_site_access} table
+ * as rightful webmaster.
+ */
+function ucms_site_update_7011() {
+  db_query("
+    INSERT INTO {ucms_site_access} (uid, site_id, role)
+    SELECT s.uid, s.id, 1
+    FROM {ucms_site} s
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM {ucms_site_access} a
+      WHERE
+        a.uid = s.uid
+        AND a.site_id = s.id
+    )
+  ");
+}

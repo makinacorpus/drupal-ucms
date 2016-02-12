@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Site\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
@@ -315,7 +315,7 @@ class SiteRequest extends FormBase
         $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));
 
-        $this->dispatcher->dispatch('site:request', new ResourceEvent('site', $site->id, $this->currentUser()->uid));
+        $this->dispatcher->dispatch('site:request', new SiteEvent($site, $this->currentUser()->uid));
 
         $form_state->setRedirect('admin/dashboard/site');
     }

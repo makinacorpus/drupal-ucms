@@ -42,3 +42,10 @@ services:
     class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_dashboard.action_provider_registry"]
     tags: [{name: event_listener, event: ucms_dashboard.context_init}]
+
+  ucms_site.site_event_listener:
+    class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventListener
+    arguments: ["@ucms_site.manager"]
+    tags:
+      - {name: event_listener, event: "site:create"}
+      - {name: event_listener, event: "site:save"}

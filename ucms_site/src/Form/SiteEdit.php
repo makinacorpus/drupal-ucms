@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Site\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -177,7 +177,7 @@ class SiteEdit extends FormBase
         $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Site modifications have been saved"));
 
-        $this->dispatcher->dispatch('site:update', new ResourceEvent('site', $site->id, $this->currentUser()->uid));
+        $this->dispatcher->dispatch('site:update', new SiteEvent($site, $this->currentUser()->uid));
 
         $form_state->setRedirect('admin/dashboard/site/' . $site->id);
     }
