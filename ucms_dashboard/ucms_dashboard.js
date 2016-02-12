@@ -90,6 +90,7 @@
             $toggle_link.removeClass('active');
             $currentLink.addClass('active');
           }
+          return false; // Prevent hash change
         });
 
         // Initial toggle for default tab
