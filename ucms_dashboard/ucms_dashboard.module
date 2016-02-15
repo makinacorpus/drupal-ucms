@@ -246,6 +246,9 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
     } else {
       $item['options']['attributes']['class'] = '';
     }
+    if ($target == 'primary') {
+      $item['options']['attributes']['class'] .= ' btn btn-default';
+    }
     $item['title']    = $action->getTitle();
     $item['href']     = $action->getURI();
     $item['priority'] = $action->getPriority();

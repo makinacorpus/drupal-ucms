@@ -373,3 +373,17 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
     ];
   }
 }
+
+
+/**
+ * Preprocess theme_ucms_contrib_content_result_grid().
+ *
+ * @param $vars
+ */
+function template_preprocess_ucms_contrib_content_result_grid(&$vars) {
+  $node_views = node_view_multiple($vars['nodes'], $vars['view_mode']);
+  $vars['nodes'] = [];
+  foreach(element_children($node_views['nodes']) as $child_key) {
+    $vars['nodes'][$child_key] = $node_views['nodes'][$child_key];
+  }
+}

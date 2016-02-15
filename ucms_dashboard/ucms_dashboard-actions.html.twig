@@ -1,0 +1,36 @@
+<div class="btn-group" role="group" aria-label="actions">
+  {% if primary %}
+    {% for link in primary %}
+      <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
+        {% if link.icon %}
+          <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+        {% endif %}
+        {% if icon %}
+          <span class="sr-only">{{ link.title|check_plain }}</span>
+        {% else %}
+          {{ link.title|check_plain }}
+        {% endif %}
+      </a>
+    {% endfor %}
+  {% endif %}
+  {% if secondary %}
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">{{ "More actions"|t }}</span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right">
+        {% for link in secondary %}
+          <li>
+            <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
+              {% if link.icon %}
+                <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+              {% endif %}
+              {{ link.title|check_plain }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+</div>

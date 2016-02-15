@@ -1,0 +1,27 @@
+<div id="contextual-pane" class="pane-right">
+  <div id="contextual-pane-toggle">
+    {% for key, tab in tabs %}
+      <a href="#tab-{{ key }}">
+        <span class="glyphicon glyphicon-{{ tab.icon }}"></span>
+        <span class="sr-only">{{ tab.label }}</span>
+      </a>
+    {% endfor %}
+  </div>
+  <div class="inner">
+    <div class="actions">
+      <a href="#" id="contextual-pane-switch-position" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon-collapse-down"></span>
+      </a>
+      {{ actions }}
+    </div>
+    <div class="tabs">
+      {% for key, tab in tabs %}
+        <div id="tab-{{ key }}">
+          {% for item in items.key %}
+            {{ item }}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<nav id="toolbar" class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse" aria-expanded="false">
+        <span class="sr-only">{{ "Toggle navigation"|t }}</span>
+      </button>
+      <a class="navbar-brand" href="{{ url('admin') }}">
+        <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
+        <span class="sr-only">{{ "Administration"|t }}</span>
+      </a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="nav-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="{{ url('admin/dashboard/content') }}">
+            <span aria-hidden="true" class="glyphicon glyphicon-file"></span>
+            {{ "Content"|t }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ url('admin/dashboard/media') }}">
+            <span aria-hidden="true" class="glyphicon glyphicon-picture"></span>
+            {{ "Media"|t }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ url('admin/dashboard/label') }}">
+            <span aria-hidden="true" class="glyphicon glyphicon-tags"></span>
+            {{ "Labels"|t }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ url('admin/dashboard/site') }}">
+            <span aria-hidden="true" class="glyphicon glyphicon-cloud"></span>
+            {{ "Sites"|t }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ url('admin/dashboard/user') }}">
+            <span aria-hidden="true" class="glyphicon glyphicon-user"></span>
+            {{ "Users"|t }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ url('admin/dashboard/seo') }}">
+            <span aria-hidden="true" class="glyphicon glyphicon-globe"></span>
+            {{ "SEO"|t }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
