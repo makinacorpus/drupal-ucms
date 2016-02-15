@@ -17,9 +17,7 @@
     <div class="tabs">
       {% for key, tab in tabs %}
         <div id="tab-{{ key }}">
-          {% for item in items.key %}
-            {{ item }}
-          {% endfor %}
+          {{ items[key] }}
         </div>
       {% endfor %}
     </div>
