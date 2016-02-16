@@ -208,10 +208,17 @@ class ContextPane
      * Add a group of actions for this context.
      *
      * @param $actions
+     * @param null $title
      * @return $this
      */
-    public function addActions($actions) {
-        $this->actions[] = $actions;
+    public function addActions($actions, $title = null)
+    {
+        if ($title) {
+            $this->actions[$title] = $actions;
+        } else {
+            $this->actions[] = $actions;
+        }
+
         return $this;
     }
 

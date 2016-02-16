@@ -179,7 +179,7 @@ function ucms_dashboard_context_get() {
 function ucms_dashboard_theme() {
   return [
     'ucms_dashboard_actions' => [
-      'variables' => ['item' => null, 'actions' => [], 'mode' => 'link'],
+      'variables' => ['item' => null, 'actions' => [], 'mode' => 'link', 'title' => ''],
       'template'  => 'ucms_dashboard-actions',
     ],
     'ucms_dashboard_context' => [
@@ -236,10 +236,11 @@ function ucms_dashboard_page_build(&$page) {
     }
 
     $actions = [];
-    foreach ($context->getActions() as $list) {
+    foreach ($context->getActions() as $title => $list) {
       $actions[] = [
         '#theme'   => 'ucms_dashboard_actions',
         '#actions' => $list,
+        '#title'   => $title,
       ];
     }
     $js_setting = [

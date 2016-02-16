@@ -77,12 +77,12 @@ class ContextPaneEventListener
                         null,
                         null,
                         $index,
-                        !$index,
+                        FALSE,
                         true
                     );
                 }
             }
-            $contextPane->addActions($actions);
+            $contextPane->addActions($actions, $this->t("Create item"));
         }
     }
 }

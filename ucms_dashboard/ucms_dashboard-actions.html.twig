@@ -16,7 +16,11 @@
   {% if secondary %}
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="sr-only">{{ "More actions"|t }}</span>
+        {% if primary %}
+          <span class="sr-only">{{ "More actions"|t }}</span>
+        {% else %}
+          {{ title }}
+        {% endif %}
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right">
