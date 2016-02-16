@@ -31,7 +31,7 @@ class NodeUnpublish extends FormBase
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
         $node = $form_state->getTemporaryValue('node');
-        $node->status = 1;
+        $node->status = 0;
         node_save($node);
 
         drupal_set_message($this->t("%title has been unpublished.", ['%title' => $node->title]), 'warning');
