@@ -304,4 +304,20 @@ class SiteStorage
             $this->dispatch($site, 'create', [], $userId);
         }
     }
+
+    /**
+     * Delete the given sites
+     *
+     * @param Site $site
+     * @param int $userId
+     *   Who did this!
+     */
+    public function delete(Site $site, $userId = null)
+    {
+        $this->dispatch($site, 'preDelete', [], $userId);
+
+        $this->db->delete('ucms_site')->condition('id', $site->id)->execute();
+
+        $this->dispatch($site, 'delete', [], $userId);
+    }
 }

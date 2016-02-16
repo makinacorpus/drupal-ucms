@@ -167,17 +167,17 @@ function ucms_site_menu() {
  */
 function ucms_site_permission() {
   return [
-    Access::PERM_GLOBAL_VIEW => [
-      'title' => t("View global content"),
+    Access::PERM_CONTENT_MANAGE_GLOBAL => [
+      'title' => t("Manage global content"),
     ],
-    Access::PERM_GLOBAL_EDIT => [
-      'title' => t("Edit global content"),
+    Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED => [
+      'title' => t("Manage global locked content"),
     ],
-    Access::PERM_GLOBAL_LABELED_VIEW => [
-      'title' => t("View global labeled content"),
+    Access::PERM_CONTENT_VIEW_ALL => [
+      'title' => t("View all content no matter where it stands"),
     ],
-    Access::PERM_GLOBAL_LABELED_EDIT => [
-      'title' => t("Edit global labeled content"),
+    Access::PERM_CONTENT_VIEW_GLOBAL => [
+      'title' => t("View global published content"),
     ],
     Access::PERM_SITE_REQUEST => [
       'title' => t("Request new site"),
@@ -547,201 +547,21 @@ function ucms_site_node_delete($node) {
  * Implements hook_node_access().
  */
 function ucms_site_node_access($node, $op, $account) {
-
-  if (is_string($node)) {
-    if ('create' === $op) {
-      // @todo Check creation permissions;
-    }
-    return NODE_ACCESS_DENY;
-  }
-
-  $grants   = ucms_site_node_grants($account, $op);
-  $records  = ucms_site_node_access_records($node);
-  $prop     = 'grant_' . $op;
-
-  foreach ($records as $record) {
-
-    if (empty($record[$prop])) {
-      continue;
-    }
-
-    foreach ($grants as $realm => $gids) {
-      if ($realm === $record['realm'] && in_array($record['gid'], $gids)) {
-        return NODE_ACCESS_ALLOW;
-      }
-    }
-  }
-
-  return NODE_ACCESS_DENY;
+  return \Drupal::service('ucms_site.node_access_helper')->canUserAccess($node, $op, $account);
 }
 
 /**
  * Implements hook_node_access_records().
  */
 function ucms_site_node_access_records($node) {
-  $ret = [];
-
-  // This is where it gets complicated.
-  $isGlobal = false;
-
-  if ($node->is_global) {
-    // Node is in the global base.
-    $isGlobal = true;
-
-    $ret[] = array(
-      'realm'         => Access::REALM_GLOBAL_LABELED,
-      'gid'           => Access::GID_DEFAULT,
-      'grant_view'    => 1,
-      'grant_update'  => 1,
-      'grant_delete'  => 1,
-      'priority'      => Access::PRIORITY_DEFAULT,
-    );
-
-    if (false /* @todo Node is labeled */) {
-      // Node is labeled.
-      $ret[] = array(
-        'realm'         => Access::REALM_GLOBAL,
-        'gid'           => Access::GID_DEFAULT,
-        'grant_view'    => 1,
-        'grant_update'  => 0,
-        'grant_delete'  => 0,
-        'priority'      => Access::PRIORITY_DEFAULT,
-      );
-    } else {
-      // Node is not labeled.
-      $ret[] = array(
-        'realm'         => Access::REALM_GLOBAL,
-        'gid'           => Access::GID_DEFAULT,
-        'grant_view'    => 1,
-        'grant_update'  => 1,
-        'grant_delete'  => 1,
-        'priority'      => Access::PRIORITY_DEFAULT,
-      );
-    }
-  }
-
-  // Inject an entry for each site, even when the node is a global node, this
-  // will tell the Drupal API system if the node is visible or not inside a
-  // local site. Please note that we will never add the site state as a node
-  // grant, this will be determined at runtime: the reason for this is that if
-  // you change a site state, you would need to rebuild all its nodes grants
-  // and this would not be tolerable.
-  if (property_exists($node, 'ucms_sites')) {
-
-    // A node in any site and published should be visible by users.
-    $ret[] = array(
-      'realm'         => Access::REALM_PUBLIC,
-      'gid'           => Access::GID_DEFAULT,
-      'grant_view'    => $node->status,
-      'grant_update'  => 0,
-      'grant_delete'  => 0,
-      'priority'      => Access::PRIORITY_DEFAULT,
-    );
-
-    foreach ($node->ucms_sites as $siteId) {
-      $ret[] = array(
-        'realm'         => Access::REALM_SITE,
-        'gid'           => $siteId,
-        'grant_view'    => 1,
-        'grant_update'  => (int)!$isGlobal,
-        'grant_delete'  => (int)!$isGlobal,
-        'priority'      => Access::PRIORITY_DEFAULT,
-      );
-    }
-  }
-
-  return $ret;
+  return \Drupal::service('ucms_site.node_access_helper')->getNodeGrants($node);
 }
 
 /**
  * Implements hook_node_grants().
  */
 function ucms_site_node_grants($account, $op) {
-
-  $cache = &drupal_static(__FUNCTION__, []);
-
-  if (isset($cache[$account->uid][$op])) {
-    return $cache[$account->uid][$op];
-  }
-
-  $ret  = [];
-
-  // Deal with specific user rights.
-  switch ($op) {
-
-    case Access::OP_VIEW:
-      if (user_access(Access::PERM_GLOBAL_VIEW)) {
-        $ret[Access::REALM_GLOBAL] = [Access::GID_DEFAULT];
-      }
-      if (user_access(Access::PERM_GLOBAL_LABELED_VIEW)) {
-        $ret[Access::REALM_GLOBAL_LABELED] = [Access::GID_DEFAULT];
-      }
-      break;
-
-    case Access::OP_UPDATE:
-    case Access::OP_DELETE:
-      if (user_access(Access::PERM_GLOBAL_EDIT)) {
-        $ret[Access::REALM_GLOBAL] = [Access::GID_DEFAULT];
-      }
-      if (user_access(Access::PERM_GLOBAL_LABELED_EDIT)) {
-        $ret[Access::REALM_GLOBAL_LABELED] = [Access::GID_DEFAULT];
-      }
-      break;
-  }
-
-  $site = ucms_site_manager()->getContext();
-
-  // Most complex part of this, deal with user's sites (the ones he's
-  // webmaster of): states here apply only for the user's sites, and
-  // not for public or global content.
-  $states = [];
-
-  switch ($op) {
-
-    case Access::OP_VIEW:
-      $states = [SiteState::ARCHIVE, SiteState::INIT, SiteState::OFF, SiteState::ON];
-      break;
-
-    default:
-      $states = [SiteState::INIT, SiteState::OFF, SiteState::ON];
-      break;
-  }
-
-  // Hate to do a SQL query in such hook, but hopefully this will ever
-  // be run only once in the whole amount of time this HTTP request will
-  // run (yay).
-  $q = db_select('ucms_site_access', 'usa');
-  $q->join('ucms_site', 'us', "usa.site_id = us.id");
-  $q->fields('usa', ['site_id']);
-  $q->condition('us.state', $states);
-  $q->condition('usa.uid', $account->uid);
-
-  if ($site) {
-
-    // This is frontend, and we need to exclude everything else.
-    $siteIdList = $q
-      ->condition('usa.uid', $site->id)
-      ->range(0, 1)
-      ->execute()
-      ->fetchCol()
-    ;
-
-    // Note that if the site is public, we should also add the associated
-    // public realm to everyone, no matter their user access rights.
-    if (SiteState::ON == $site->state) {
-      $ret[Access::REALM_PUBLIC] = [Access::GID_DEFAULT];
-    }
-
-  } else {
-    // Else we are on the master site backend.
-    $siteIdList = $q->execute()->fetchCol();
-  }
-
-  if ($siteIdList) {
-    $ret[Access::REALM_SITE] = $siteIdList;
-  }
-
-  return $cache[$account->uid][$op] = $ret;
+  return \Drupal::service('ucms_site.node_access_helper')->getUserGrants($account, $op);
 }
 
 /**

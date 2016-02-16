@@ -8,36 +8,6 @@ namespace MakinaCorpus\Ucms\Site;
 final class Access
 {
     /**
-     * Default group identifier for grants where it does not make sense
-     */
-    const GID_DEFAULT = 1;
-
-    /**
-     * Default priority for grants
-     */
-    const PRIORITY_DEFAULT = 1;
-
-    /**
-     * Default realm for access checks
-     */
-    const REALM_PUBLIC = 'ucms_public';
-
-    /**
-     * Default realm for access checks
-     */
-    const REALM_SITE = 'ucms_site';
-
-    /**
-     * Default realm for access checks
-     */
-    const REALM_GLOBAL = 'ucms_global';
-
-    /**
-     * Default realm for access checks
-     */
-    const REALM_GLOBAL_LABELED = 'ucms_global_labeled';
-
-    /**
      * View operation
      */
     const OP_VIEW = 'view';
@@ -53,12 +23,32 @@ final class Access
     const OP_DELETE = 'delete';
 
     /**
-     * Access site dashboard permission
+     * Manage global content, view global locked content
+     */
+    const PERM_CONTENT_MANAGE_GLOBAL = 'content manage global';
+
+    /**
+     * Manage global locked and non locked content
+     */
+    const PERM_CONTENT_MANAGE_GLOBAL_LOCKED = 'content manage global locked';
+
+    /**
+     * View all content in all circumstances
+     */
+    const PERM_CONTENT_VIEW_ALL = 'content view all';
+
+    /**
+     * View published global content
+     */
+    const PERM_CONTENT_VIEW_GLOBAL = 'content view global';
+
+    /**
+     * Access the site dashboard
      */
     const PERM_SITE_DASHBOARD_ACCESS = 'site dashboard access';
 
     /**
-     * Request new site permission
+     * Request a new site
      */
     const PERM_SITE_REQUEST = 'site request';
 
@@ -71,26 +61,6 @@ final class Access
      * View all sites no matter the state permission
      */
     const PERM_SITE_VIEW_ALL = 'site view all';
-
-    /**
-     * User can view global labeled content permission
-     */
-    const PERM_GLOBAL_LABELED_VIEW = 'site content labeled view';
-
-    /**
-     * User can view global content permission
-     */
-    const PERM_GLOBAL_VIEW = 'site content global view';
-
-    /**
-     * User can edit global labeled content permission
-     */
-    const PERM_GLOBAL_LABELED_EDIT = 'site content labeled edit';
-
-    /**
-     * User can edit global content permission
-     */
-    const PERM_GLOBAL_EDIT = 'site content global edit';
 
     /**
      * Site relative role: none

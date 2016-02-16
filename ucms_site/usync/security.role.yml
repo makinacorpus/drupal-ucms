@@ -19,10 +19,8 @@ admin_func:
   permission:
     - access site in maintenance mode
     - administer users
-    - site content global view
-    - site content global edit
-    - site content labeled view
-    - site content labeled edit
+    - content manage global locked
+    - content view all
     - site dashboard access
     - site manage all
     - site view all
@@ -40,16 +38,13 @@ admin_tech:
 global_contrib:
   name: Contributeur du référentiel global
   permission:
-    - site content global view
-    - site content global edit
-    - site content labeled view
+    - content manage global
+    - content view global
 
 local_webmaster:
   name: Webmaster local
   permission:
-    - site content global view
-    - site content labeled view
-    - site dashboard access
+    - content view global
 
 # This role has no permission, only content stuff will be delegated thus
 # it needs to be set in the business API layer

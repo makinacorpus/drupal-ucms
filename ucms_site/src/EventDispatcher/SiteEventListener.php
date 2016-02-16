@@ -25,11 +25,13 @@ class SiteEventListener
     {
         $site = $event->getSite();
 
-        $this
-            ->manager
-            ->getAccess()
-            ->addWebmasters($site, $site->uid)
-        ;
+        if ($site->uid) { // Skips anonymous
+            $this
+                ->manager
+                ->getAccess()
+                ->addWebmasters($site, $site->uid)
+            ;
+        }
     }
 
     public function onSiteSave(SiteEvent $event)
