@@ -54,10 +54,12 @@ class ContextPaneEventListener
         //     maybe bring in the RequestStack
         if (!path_is_admin(current_path())) {
             $backlink = new Action(t("Go to dashboard"), 'admin/dashboard', null, 'dashboard');
-        } else {
-            $backlink = new Action(t("Go to site"), '<front>', null, 'globe');
+            $contextPane->addActions([$backlink]);
         }
-        $contextPane->addActions([$backlink]);
+        /*else {
+            // @Todo possibly store the last site visited in the session to provide a backlink
+            $backlink = new Action(t("Go to site"), '<front>', null, 'globe');
+        }*/
 
         // Add node creation link
         if (substr(current_path(), 0, 16) == 'admin/dashboard/') {
