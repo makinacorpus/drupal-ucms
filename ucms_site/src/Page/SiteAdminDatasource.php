@@ -121,7 +121,11 @@ class SiteAdminDatasource extends AbstractDatasource
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
         if (!empty($query[$sParam])) {
-            $q->condition('s.title', '%' . db_like($query[$sParam]) . '%', 'LIKE');
+            $q->condition(
+                db_or()
+                  ->condition('s.title', '%' . db_like($query[$sParam]) . '%', 'LIKE')
+                  ->condition('s.http_host', '%' . db_like($query[$sParam]) . '%', 'LIKE')
+            );
         }
 
         $idList = $q
