@@ -48,6 +48,14 @@
             {{ "SEO"|t }}
           </a>
         </li>
+        {% if logged_in %}
+          <li>
+            <a href="{{ url('user/logout',{'query':{'destination':'user'}}) }}">
+              <span aria-hidden="true" class="glyphicon glyphicon-off"></span>
+              {{ "Logout"|t }}
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   </div>
