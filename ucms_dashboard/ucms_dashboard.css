@@ -54,22 +54,39 @@
   position: absolute;
   display: inline-block;
   background: #333;
-  font-size: 18px;
+  font-size: 22px;
+}
+
+#contextual-pane #contextual-pane-toggle a {
+  color: #999;
+  display: inline-block;
 }
 #contextual-pane.pane-right #contextual-pane-toggle {
   top: 50%;
   right: 100%;
-  padding: 10px 0 10px 5px;
   border-radius: 10px 0 0 10px;
 }
 #contextual-pane.pane-down #contextual-pane-toggle {
   bottom: 100%;
   left: 50%;
-  padding: 5px 10px 0 10px;
   border-radius: 10px 10px 0 0;
 }
+#contextual-pane.pane-right #contextual-pane-toggle a {
+  border-top: solid 1px #999;
+  padding: 10px 5px 5px 5px;
+}
+#contextual-pane.pane-right #contextual-pane-toggle a:first-child {
+  border-top: none;
+}
+#contextual-pane.pane-down #contextual-pane-toggle a {
+  border-left: solid 1px #999;
+  padding: 5px 8px 0;
+}
+#contextual-pane.pane-down #contextual-pane-toggle a:first-child {
+  border-left: none;
+}
 
-#contextual-pane-toggle .active {
+#contextual-pane #contextual-pane-toggle a.active {
   color: #fff;
 }
 
