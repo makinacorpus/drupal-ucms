@@ -19,7 +19,7 @@
           $.cookie('contextual-pane-position', position, {path: '/'});
           $panePositionSwitch.find('span').toggleClass('glyphicon-collapse-down glyphicon-expand');
           resizeTabs();
-          $page.css('padding-right', position == 'right' ? initial_size : '0px');
+          $page.css('padding-right', position == 'right' ? initial_size : '15ppx');
         });
         if ($.cookie('contextual-pane-position') && $.cookie('contextual-pane-position') !== 'right') {
           // Second toggle if pane must be hidden
@@ -67,13 +67,13 @@
           if (fast) {
             $contextualPane.css(prop);
             if (position == 'right') {
-              $page.css('padding-right', shown ? initial_size : '0px');
+              $page.css('padding-right', shown ? initial_size : '15px');
             }
           }
           else {
             $contextualPane.animate(prop);
             if (position == 'right') {
-              $page.animate({paddingRight: shown ? initial_size : '0px'});
+              $page.animate({paddingRight: shown ? initial_size : '15px'});
             }
           }
         }
