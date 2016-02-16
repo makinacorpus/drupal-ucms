@@ -83,6 +83,22 @@ function ucms_contrib_menu() {
     'access arguments'  => ['update', 1],
     'type'              => MENU_CALLBACK,
   ];
+  $items['node/%node/star'] = [
+    'title'             => "Star",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeStar', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['view', 1],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['node/%node/unstar'] = [
+    'title'             => "Unstar",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnstar', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['update', 1],
+    'type'              => MENU_CALLBACK,
+  ];
 
   // Site configuration.
   $items['admin/structure/content'] = [
