@@ -252,8 +252,22 @@ class NodeAccessHelper
     {
         if (is_string($node)) {
             if ('create' === $op) {
-                // @todo Check creation permissions;
+
+                // @todo
+                //   - check for "hidden" content types, like home pages
+
+                $access = $this->manager->getAccess();
+                $site   = $this->manager->getContext();
+
+                if ($site) {
+                    if ($access->userIsContributor($site, $account->uid) || $access->userIsWebmaster($site, $account->uid)) {
+                        return NODE_ACCESS_ALLOW;
+                    }
+                } else if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL, $account) || user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED, $account)) {
+                    return NODE_ACCESS_ALLOW;
+                }
             }
+
             return NODE_ACCESS_DENY;
         }
 

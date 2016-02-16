@@ -18,6 +18,7 @@ admin_func:
   name: Administrateur fonctionnel
   permission:
     - access site in maintenance mode
+    - access ucms content overview
     - administer users
     - content manage global locked
     - content view all
@@ -29,6 +30,7 @@ admin_tech:
   name: Administrateur technique
   permission:
     - access site in maintenance mode
+    - access ucms content overview
     - administer users
     - bypass node access
     - site dashboard access
@@ -38,12 +40,14 @@ admin_tech:
 global_contrib:
   name: Contributeur du référentiel global
   permission:
+    - access ucms content overview
     - content manage global
     - content view global
 
 local_webmaster:
   name: Webmaster local
   permission:
+    - access ucms content overview
     - content view global
 
 # This role has no permission, only content stuff will be delegated thus

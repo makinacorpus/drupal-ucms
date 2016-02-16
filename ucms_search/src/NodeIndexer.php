@@ -241,15 +241,19 @@ class NodeIndexer implements NodeIndexerInterface
         //   also include basic matching rules whenever possible.
 
         return [
-            'title'   => $node->title,
-            'id'      => $node->nid,
-            'owner'   => $node->uid,
-            'created' => $created ? $created->format(\DateTime::ISO8601) : null,
-            'updated' => $changed ? $changed->format(\DateTime::ISO8601) : null,
-            'type'    => $node->type,
-            'body'    => strip_tags($this->nodeToFulltext($node, 'body')),
-            'status'  => (int)$node->status,
-            'tags'    => $this->nodeExtractTagIdList($node, 'tags'),
+            'title'       => $node->title,
+            'id'          => $node->nid,
+            'owner'       => $node->uid,
+            'created'     => $created ? $created->format(\DateTime::ISO8601) : null,
+            'updated'     => $changed ? $changed->format(\DateTime::ISO8601) : null,
+            'type'        => $node->type,
+            'body'        => strip_tags($this->nodeToFulltext($node, 'body')),
+            'status'      => (int)$node->status,
+            'tags'        => $this->nodeExtractTagIdList($node, 'tags'),
+            'is_starred'  => (bool)$node->is_starred,
+            'is_flagged'  => (bool)$node->is_flagged,
+            'is_global'   => (bool)$node->is_global,
+            'is_locked'   => (bool)$node->is_clonable,
         ];
     }
 

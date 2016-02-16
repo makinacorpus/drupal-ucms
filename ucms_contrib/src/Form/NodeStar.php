@@ -32,6 +32,7 @@ class NodeStar extends FormBase
     {
         $node = $form_state->getTemporaryValue('node');
         $node->is_starred = 1;
+        $node->ucms_index_now = 1; // @todo find a better way
         node_save($node);
 
         drupal_set_message($this->t("%title has been starred.", ['%title' => $node->title]));

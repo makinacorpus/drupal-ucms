@@ -47,9 +47,9 @@ class NodeActionProvider implements ActionProviderInterface
         }
 
         if (empty($item->is_starred)) {
-            $ret[] = new Action(t("Star"), 'node/' . $item->nid . '/star', 'dialog', 'star-empty', 0, false, true);
+            $ret[] = new Action(t("Star"), 'node/' . $item->nid . '/star', 'dialog', 'star', 0, false, true);
         } else {
-            $ret[] = new Action(t("Unstar"), 'node/' . $item->nid . '/unstar', 'dialog', 'star', 0, false, true);
+            $ret[] = new Action(t("Unstar"), 'node/' . $item->nid . '/unstar', 'dialog', 'star-empty', 0, false, true);
         }
         if (node_access('delete', $item)) {
             $ret[] = new Action(t("Delete"), 'node/' . $item->nid . '/delete', 'dialog', 'trash', 0, false, true);

@@ -41,6 +41,12 @@ services:
   ucms_search.mapping.type_registry:
     class: MakinaCorpus\Ucms\Search\Mapping\TypeRegistry
 
+  ucms_search.mapping.boolean:
+    public: false
+    class: MakinaCorpus\Ucms\Search\Mapping\BooleanType
+    arguments: ["boolean"]
+    tags: [{ name: ucms_search.mapping.type }]
+
   ucms_search.mapping.date:
     public: false
     class: MakinaCorpus\Ucms\Search\Mapping\DateType
