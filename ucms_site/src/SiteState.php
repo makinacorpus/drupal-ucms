@@ -45,13 +45,16 @@ final class SiteState
     /**
      * Get a list of values as human readable values in english
      *
+     * @param string|string[] $exlude
+     *   List of states to exclude
+     *
      * @return string[]
      *   Values are states as integers, values are human readable names
      *   in english, ready for translation
      */
-    static public function getList()
+    static public function getList($exclude = null)
     {
-        return [
+        $states = [
             self::REQUESTED => "Requested",
             self::REJECTED  => "Rejected",
             self::PENDING   => "Creation",
@@ -60,5 +63,15 @@ final class SiteState
             self::ON        => "On",
             self::ARCHIVE   => "Archive",
         ];
+
+        if (null !== $exclude) {
+            if (is_array($exclude)) {
+                $states = array_diff_key($states, array_flip($exclude));
+            } else {
+                unset($states[$exclude]);
+            }
+        }
+
+        return $states;
     }
 }

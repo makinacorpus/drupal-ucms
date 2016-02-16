@@ -43,7 +43,7 @@ class SiteAdminDatasource extends AbstractDatasource
     public function getFilters($query)
     {
         return [
-            (new LinksFilterDisplay('state', $this->t("State")))->setChoicesMap(SiteState::getList()),
+            (new LinksFilterDisplay('state', $this->t("State")))->setChoicesMap(SiteState::getList(SiteState::ARCHIVE)),
             // @todo missing site type registry or variable somewhere
             (new LinksFilterDisplay('theme', $this->t("Theme")))->setChoicesMap($this->manager->getAllowedThemesOptionList()),
             (new LinksFilterDisplay('template', $this->t("Template")))->setChoicesMap($this->manager->getTemplateList()),
