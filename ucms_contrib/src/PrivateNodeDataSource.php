@@ -86,7 +86,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         // Apply rendering stuff for it to work
         foreach ($this->search->getAggregations() as $facet) {
-            $ret[] = (new LinksFilterDisplay($facet->getField(), $facet->getTitle()))->setChoicesMap($facet->getFormattedChoices());
+            $ret[] = (new LinksFilterDisplay($facet->getField(), $facet->getTitle(), true))->setChoicesMap($facet->getFormattedChoices());
         }
 
         return $ret;

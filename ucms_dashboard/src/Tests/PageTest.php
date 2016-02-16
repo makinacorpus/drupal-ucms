@@ -129,6 +129,7 @@ class PageTest extends AbstractDrupalTest
                 'a'       => "The A choice",
                 '666'     => "The 666 choice",
                 'trout'   => "The special trout slap choice",
+                'unsafe'   => "<h1>A non-safe choice",
             ])
         ;
 
@@ -147,6 +148,9 @@ class PageTest extends AbstractDrupalTest
         $this->assertArrayHasKey('a', $render['#links']);
         $this->assertArrayHasKey('666', $render['#links']);
         $this->assertArrayHasKey('trout', $render['#links']);
+
+        // Test that markup is safe
+        $this->assertSame('&lt;h1&gt;A non-safe choice', $render['#links']['unsafe']['title']);
 
         // 'a' and 'trout' being selected, click on 'a' removes 'a' and keeps 'trout'
         $this->assertSame('trout', $render['#links']['a']['query']['awesome_test_field']);

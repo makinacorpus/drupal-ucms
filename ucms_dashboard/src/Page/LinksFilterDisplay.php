@@ -42,17 +42,25 @@ class LinksFilterDisplay implements FilterDisplayInterface
     private $title;
 
     /**
+     * @var string
+     */
+    private $safe_markup;
+
+    /**
      * Default constructor
      *
      * @param string $queryParameter
      *   Query parameter name
      * @param string $title
      *   $title
+     * @param bool $safe_markup
+     *   Title is safe to output
      */
-    public function __construct($queryParameter, $title = null)
+    public function __construct($queryParameter, $title = null, $safe_markup = false)
     {
         $this->queryParameter = $queryParameter;
         $this->title = $title;
+        $this->safe_markup = $safe_markup;
     }
 
     /**
@@ -173,7 +181,7 @@ class LinksFilterDisplay implements FilterDisplayInterface
 
             $link = [
                 'href'  => $route,
-                'title' => check_plain($label),
+                'title' => $this->safe_markup ? $label : check_plain($label),
                 'html'  => true,
             ];
 
