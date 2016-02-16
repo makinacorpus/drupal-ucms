@@ -55,7 +55,7 @@ function ucms_site_menu() {
     'title'             => "Site overview",
     'page callback'     => 'ucms_site_dashboard_site_page_view',
     'page arguments'    => [3],
-    'access callback'   => 'ucms_site_menu_access_manage',
+    'access callback'   => 'ucms_site_menu_access_overview',
     'access arguments'  => [3],
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_site.dashboard.inc',
@@ -68,7 +68,7 @@ function ucms_site_menu() {
     'title'             => "Log",
     'page callback'     => 'ucms_site_dashboard_site_page_log',
     'page arguments'    => [3],
-    'access callback'   => 'ucms_site_menu_access_manage',
+    'access callback'   => 'ucms_site_menu_access_overview',
     'access arguments'  => [3],
     'type'              => MENU_LOCAL_TASK,
     'file'              => 'ucms_site.dashboard.inc',
@@ -250,6 +250,19 @@ function ucms_site_menu_access_view($site, $account = null) {
 /**
  * Menu helper.
  */
+function ucms_site_menu_access_overview($site, $account = null) {
+  if (!$site instanceof Site) {
+    return false;
+  }
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  return ucms_site_manager()->getAccess()->userCanOverview($site, $account->uid);
+}
+
+/**
+ * Menu helper.
+ */
 function ucms_site_menu_access_manage($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
@@ -305,6 +318,9 @@ function ucms_site_boot() {
       // being done on hook_boot().
       if ($site->home_nid) {
         $GLOBALS['conf']['site_frontpage'] = 'node/' . $site->home_nid;
+      } else {
+        // We do need a fallback, else the dashboard module will hit us.
+        $GLOBALS['conf']['site_frontpage'] = 'node';
       }
       // We have to fake menu_load_all() because Drupal attemps to load
       // everything no matter what happens, and this is the single and only

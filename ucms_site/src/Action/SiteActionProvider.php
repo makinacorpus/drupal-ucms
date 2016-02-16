@@ -44,7 +44,7 @@ class SiteActionProvider implements ActionProviderInterface
 
         $access = $this->manager->getAccess();
 
-        if ($access->userCanManage($item)) {
+        if ($access->userCanOverview($item)) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
             if ($access->userCanView($item)) {
                 if ($this->ssoEnabled) {
@@ -54,7 +54,9 @@ class SiteActionProvider implements ActionProviderInterface
                 }
                 $ret[] = new Action($this->t("Go to site"), $uri, null, 'share-alt', -5, true);
             }
-            $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -2, false, true);
+            if ($access->userCanManage($item)) {
+                $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -2, false, true);
+            }
             $ret[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->id . '/log', null, 'list-alt', -1, false);
         }
 

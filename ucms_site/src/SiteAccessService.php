@@ -358,6 +358,37 @@ class SiteAccessService
     }
 
     /**
+     * Can the given user see administrative information about the site
+     *
+     * @param Site $site
+     * @param int $userId
+     */
+    public function userCanOverview(Site $site, $userId = null)
+    {
+        if (null === $userId) {
+            $userId = $this->getCurrentUserId();
+        }
+
+        if ($this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)) {
+            return true;
+        }
+
+        switch ($site->state) {
+
+            case SiteState::INIT:
+            case SiteState::OFF:
+            case SiteState::ON:
+                return $this->userIsContributor($site, $userId)
+                    || $this->userIsWebmaster($site, $userId);
+
+            default:
+                return $this->userIsWebmaster($site, $userId);
+        }
+
+        return false;
+    }
+
+    /**
      * Can the given user manage the given site
      *
      * @param Site $site
