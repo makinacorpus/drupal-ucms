@@ -1,5 +1,17 @@
 (function ($) {
   /**
+   * Some general behaviors
+   */
+  Drupal.behaviors.ucmsContrib = {
+    attach: function (context) {
+      // Prevent chrome bug with inputs inside anchors
+      $('#ucms-contrib-facets', context).find('a input').click(function() {
+        location.href = $(this).parents('a').attr('href');
+      });
+    }
+  };
+
+  /**
    * Default settings for draggables
    * @type {{revert: boolean, opacity: number, helper: string, appendTo: string, containment: string, cursorAt: {top: number, left: number}}}
    */
