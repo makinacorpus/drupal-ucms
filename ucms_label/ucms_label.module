@@ -159,3 +159,75 @@ function ucms_label_taxonomy_term_delete($term) {
     throw new \LogicException("Can't delete a label which has children.");
   }
 }
+
+
+/**
+ * Provide options for label
+ *
+ * @param $field
+ * @return array
+ */
+function ucms_label_allowed_values($field) {
+  $options = [];
+  foreach ($field['settings']['allowed_values'] as $tree) {
+    if ($vocabulary = taxonomy_vocabulary_machine_name_load($tree['vocabulary'])) {
+      if ($terms = taxonomy_get_tree($vocabulary->vid, $tree['parent'])) {
+        $parents = [];
+        foreach ($terms as $term) {
+          if ($term->depth == 0) {
+            $options[$term->name] = [];
+            $parents[$term->tid] = $term->name;
+          }
+          else {
+            $options[$parents[$term->parents[0]]][] = $term->name;
+          }
+        }
+      }
+    }
+  }
+  return $options;
+}
+
+
+/**
+ * Implements hook_library().
+ */
+function ucms_label_library() {
+  $libraries['select2'] = array(
+    'title' => 'Select2',
+    'website' => 'https://select2.github.io',
+    'version' => '4.0.1',
+    'js' => array(
+      drupal_get_path('module', 'ucms_label') . '/js/select2.min.js' => array(),
+    ),
+    'css' => array(
+      drupal_get_path('module', 'ucms_label') . '/js/select2.min.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
+    ),
+  );
+  return $libraries;
+}
+
+
+/**
+ * Implements hook_field_attach_form().
+ */
+function ucms_label_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function ucms_label_field_widget_options_select_form_alter(&$element, &$form_state, $context) {
+  // Attach select2 library on labels vocabulary.
+  $field = $context['field'];
+  if ($field['type'] == "taxonomy_term_reference" && $field['settings']['allowed_values'][0]['vocabulary'] == "labels") {
+    $element['#attached']['library'][] = ['ucms_label', 'select2'];
+    $element['#attached']['js'][] = [
+      'data' => "jQuery(function(){jQuery('#edit-labels select').select2()})",
+      'type' => 'inline'
+    ];
+  }
+}
