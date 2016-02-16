@@ -173,7 +173,7 @@ class LinksFilterDisplay implements FilterDisplayInterface
 
             $link = [
                 'href'  => $route,
-                'title' => $label,
+                'title' => check_plain($label),
                 'html'  => true,
             ];
 
