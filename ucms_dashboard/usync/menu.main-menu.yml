@@ -29,13 +29,13 @@ item:
       - {name: "Créer un flux twitter", path: "node/add/twitter"}
   -
     name: "Étiquettes"
-    path: "admin/dashboard/labels"
+    path: "admin/dashboard/label"
     expanded: true
     options:
       icon: 'tags'
   -
     name: "Sites"
-    path: "admin/dashboard/sites"
+    path: "admin/dashboard/site"
     expanded: true
     options:
       icon: 'cloud'
