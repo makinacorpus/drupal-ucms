@@ -278,8 +278,8 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
  */
 function ucms_site_menu_access_reference($node, $account = null) {
   return node_access('view', $node, $account) && ucms_site_manager()
-      ->getAccess()
-      ->userCanReference($node, isset($account) ? $account->uid : null)
+    ->getAccess()
+    ->userCanReference($node, isset($account) ? $account->uid : null)
   ;
 }
 
@@ -287,6 +287,10 @@ function ucms_site_menu_access_reference($node, $account = null) {
  * Implements hook_boot().
  */
 function ucms_site_boot() {
+
+  if (drupal_is_cli()) {
+    return; // Make drush happy.
+  }
 
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
@@ -302,7 +306,6 @@ function ucms_site_boot() {
       if ($site->home_nid) {
         $GLOBALS['conf']['site_frontpage'] = 'node/' . $site->home_nid;
       }
-
       // We have to fake menu_load_all() because Drupal attemps to load
       // everything no matter what happens, and this is the single and only
       // non-scalable function in the whole core menu handling, so let's just
@@ -321,13 +324,37 @@ function ucms_site_boot() {
 }
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function ucms_site_module_implements_alter(&$implementations, $hook) {
+  switch ($hook) {
+    case 'menu_site_status_alter':
+      unset($implementations['user']);
+      break;
+  }
+}
+
+/**
  * Implements hook_menu_site_status_alter().
  */
 function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
 
   global $user;
 
-  // Do not alter an already offline site
+  if (drupal_is_cli()) {
+    return; // Make drush happy.
+  }
+  if (!ucms_site_manager()->hasContext()) {
+    return; // Do not alter proper behavior on master.
+  }
+
+  // Allow SSO login when site is down.
+  if ('sso/login' === current_path()) {
+    $menu_site_status = MENU_SITE_ONLINE;
+    return;
+  }
+
+  // Do not alter an already offline site.
   if (MENU_SITE_OFFLINE === $menu_site_status) {
     return;
   }
@@ -350,10 +377,33 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     // site). If we have nothing to redirect to, at least this code will
     // fallback on site being offline.
     if (SiteState::OFF != $site->state) {
-      if ($uri = variable_get('ucms_site.redirect.uri')) {
-        drupal_goto($uri, [], variable_get('ucms_site.redirect.http_code', 307));
-      }
+      ucms_site_redirect_to_default();
     }
+  }
+}
+
+/**
+ * Is current site master.
+ *
+ * @return boolean
+ */
+function ucms_site_is_master() {
+  return variable_get('ucms_site_master_hostname') === $_SERVER['HTTP_HOST'];
+}
+
+/**
+ * Redirect to mater
+ */
+function ucms_site_redirect_to_master() {
+  drupal_goto(($GLOBALS['is_https'] ? 'https' : 'http') . '://' .variable_get('ucms_site_master_hostname') . '/admin/dashboard');
+}
+
+/**
+ * Redirect to mater
+ */
+function ucms_site_redirect_to_default() {
+  if ($uri = variable_get('ucms_site.redirect.uri')) {
+    drupal_goto($uri, [], variable_get('ucms_site.redirect.http_code', 307));
   }
 }
 
@@ -361,6 +411,11 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
  * Implements hook_init().
  */
 function ucms_site_init() {
+
+  if (drupal_is_cli()) {
+    return; // Make drush happy.
+  }
+
   $manager = ucms_site_manager();
 
   // We might have some problems due to the fact that the site is determined
@@ -370,18 +425,25 @@ function ucms_site_init() {
   // this information until now does it right (they should only be revelant
   // for frontend anyway), but we have a chance right now to fix admin paths
   // and remove the site information right now.
-  if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8)  && path_is_admin(current_path())) {
-    $manager->dropContext();
-    // Also redirect on the main dashboard.
-    // @todo Needs a variable with the factory site URL.
-  }
+  if ($manager->hasContext()) {
+    if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8)  && path_is_admin(current_path())) {
+      if (user_is_logged_in()) {
+        // Logged-in users should not 403 on sites, but go to dashboard instead.
+        ucms_site_redirect_to_master();
+      }
+    } else {
 
-  // From this point, we have a context, and all access checks passed, so we
-  // can safely alter the environment.
-  if ($site = $manager->getContext()) {
-    if ($site->title) {
-      $GLOBALS['conf']['site_name'] = $site->title;
+      // Normal runtime, there is a context, and path is not admin.
+      $site = $manager->getContext();
+
+      if ($site->title) {
+        $GLOBALS['conf']['site_name'] = $site->title;
+      }
+
+      // @todo other alterations here
     }
+  } else if (user_is_logged_in() && !ucms_site_is_master()) {
+    ucms_site_redirect_to_master(); // Site does not exists.
   }
 }
 

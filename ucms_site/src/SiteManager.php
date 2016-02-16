@@ -71,6 +71,16 @@ final class SiteManager
     }
 
     /**
+     * Has context
+     *
+     * @return boolean
+     */
+    public function hasContext()
+    {
+        return !!$this->context;
+    }
+
+    /**
      * Get storage service
      *
      * @return SiteStorage
