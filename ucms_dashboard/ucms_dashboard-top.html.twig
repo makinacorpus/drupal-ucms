@@ -11,52 +11,7 @@
     </div>
 
     <div class="collapse navbar-collapse" id="nav-collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a href="{{ url('admin/dashboard/content') }}">
-            <span aria-hidden="true" class="glyphicon glyphicon-file"></span>
-            {{ "Content"|t }}
-          </a>
-        </li>
-        <li>
-          <a href="{{ url('admin/dashboard/media') }}">
-            <span aria-hidden="true" class="glyphicon glyphicon-picture"></span>
-            {{ "Media"|t }}
-          </a>
-        </li>
-        <li>
-          <a href="{{ url('admin/dashboard/label') }}">
-            <span aria-hidden="true" class="glyphicon glyphicon-tags"></span>
-            {{ "Labels"|t }}
-          </a>
-        </li>
-        <li>
-          <a href="{{ url('admin/dashboard/site') }}">
-            <span aria-hidden="true" class="glyphicon glyphicon-cloud"></span>
-            {{ "Sites"|t }}
-          </a>
-        </li>
-        <li>
-          <a href="{{ url('admin/dashboard/user') }}">
-            <span aria-hidden="true" class="glyphicon glyphicon-user"></span>
-            {{ "Users"|t }}
-          </a>
-        </li>
-        <li>
-          <a href="{{ url('admin/dashboard/seo') }}">
-            <span aria-hidden="true" class="glyphicon glyphicon-globe"></span>
-            {{ "SEO"|t }}
-          </a>
-        </li>
-        {% if logged_in %}
-          <li>
-            <a href="{{ url('user/logout',{'query':{'destination':'user'}}) }}">
-              <span aria-hidden="true" class="glyphicon glyphicon-off"></span>
-              {{ "Logout"|t }}
-            </a>
-          </li>
-        {% endif %}
-      </ul>
+      {{ links }}
     </div>
   </div>
 </nav>
