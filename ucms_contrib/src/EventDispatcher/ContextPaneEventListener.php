@@ -41,7 +41,10 @@ class ContextPaneEventListener
                 'admin/dashboard/media',
             ];
             // @todo Inject services
-            if (in_array($router_item['path'], $allowed_routes) || $this->layoutContext->isTemporary()) {
+            if (in_array($router_item['path'], $allowed_routes)
+                || in_array($router_item['tab_parent'], $allowed_routes)
+                || $this->layoutContext->isTemporary()
+            ) {
                 $contextPane
                     ->addTab('cart', t("Cart"), 'shopping-cart')
                     ->add(ucms_contrib_favorite_render(), 'cart')
