@@ -172,6 +172,17 @@ function ucms_dashboard_context_get() {
   return \Drupal::service('ucms_dashboard.context');
 }
 
+/**
+ * Get dashboard.
+ *
+ * @return \MakinaCorpus\Ucms\Dashboard\Dashboard\Dashboard
+ *
+ * @deprecated
+ *   Will be replaced by services one day.
+ */
+function ucms_dashboard_dashboard_get() {
+  return \Drupal::service('ucms_dashboard.dashboard');
+}
 
 /**
  * Implements hook_theme().
@@ -191,7 +202,7 @@ function ucms_dashboard_theme() {
       'template' => 'ucms_dashboard-context',
     ],
     'ucms_dashboard_page' => [
-      'variables' => [],
+      'variables' => ['portlets' => []],
       'template'  => 'ucms_dashboard-page',
     ],
     'ucms_dashboard_page_list' => [

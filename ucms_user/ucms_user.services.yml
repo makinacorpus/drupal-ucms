@@ -1,0 +1,5 @@
+services:
+
+  ucms_user.dashboard_event_listener:
+    class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventListener
+    tags: [{name: event_listener, event: ucms_dashboard.dashboard_init}]

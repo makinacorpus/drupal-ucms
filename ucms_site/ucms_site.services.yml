@@ -54,3 +54,7 @@ services:
     tags:
       - {name: event_listener, event: "site:create"}
       - {name: event_listener, event: "site:save"}
+
+  ucms_site.dashboard_event_listener:
+    class: MakinaCorpus\Ucms\Site\EventDispatcher\DashboardEventListener
+    tags: [{name: event_listener, event: ucms_dashboard.dashboard_init}]
