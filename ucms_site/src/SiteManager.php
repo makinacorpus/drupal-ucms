@@ -203,4 +203,26 @@ final class SiteManager
     {
         return $this->db->query('SELECT * FROM {menu_custom} WHERE site_id = ?', [$site->id])->fetchAllAssoc('menu_name', \PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Load sites for which the user is webmaster
+     *
+     * @param integer $userId
+     * @return Site[]
+     */
+    public function loadWebmasterSites($userId = null)
+    {
+        if (null === $userId) {
+            $userId = $GLOBALS['user']->uid;
+        }
+
+        $roles = $this->getAccess()->getUserRoles($userId);
+        foreach ($roles as $siteId => $role) {
+            if ($role != Access::ROLE_WEBMASTER) {
+                unset($roles[$siteId]);
+            }
+        }
+
+        return $this->getStorage()->loadAll(array_keys($roles));
+    }
 }
