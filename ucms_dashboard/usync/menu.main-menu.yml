@@ -40,6 +40,12 @@ item:
     options:
       icon: 'cloud'
   -
+    name: "Utilisateurs"
+    path: "admin/dashboard/user"
+    expanded: true
+    options:
+      icon: 'user'
+  -
     name: "SEO"
     path: "admin/dashboard/seo"
     expanded: true
