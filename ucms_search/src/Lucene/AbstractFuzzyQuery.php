@@ -51,7 +51,7 @@ abstract class AbstractFuzzyQuery extends AbstractQuery
     {
         $raw = trim($this->toRawString());
 
-        if (empty($raw)) {
+        if (!isset($raw) || (''===$raw)) {
             return '';
         }
 
