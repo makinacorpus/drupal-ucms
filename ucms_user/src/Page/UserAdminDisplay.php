@@ -30,18 +30,18 @@ class UserAdminDisplay extends AbstractDisplay
 
     /**
      * {@inheritdoc}
-     * @todo Detect for each user if it's a webmaster.
      */
     protected function displayAs($mode, $users)
     {
+        $manager = \Drupal::service('ucms_site.manager');
         $rows = [];
 
         foreach ($users as $user) {
             $rows[] = [
                 check_plain($user->mail),
-                check_plain(format_username($user)),
+                filter_xss(format_username($user)),
                 ($user->status == 0) ? $this->t("Disabled") : $this->t("Enabled"),
-                '@todo', //(???) ? $this->t("Yes") : $this->t("No"),
+                $manager->getAccess()->userIsWebmaster(null, $user->uid) ? $this->t("Yes") : $this->t("No"),
                 format_interval(time() - $user->created),
                 format_interval(time() - $user->login),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($user), 'mode' => 'icon']),
