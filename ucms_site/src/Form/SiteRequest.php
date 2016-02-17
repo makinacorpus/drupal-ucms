@@ -263,7 +263,7 @@ class SiteRequest extends FormBase
             '#title'          => $this->t("Template site"),
             '#type'           => 'radios',
             '#options'        => [$this->t("Not implemented yet")],
-            '#default_value'  => $site->template,
+            '#default_value'  => $site->template_id,
             '#disabled'       => true,
         ];
 
