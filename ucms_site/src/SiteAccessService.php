@@ -92,31 +92,63 @@ class SiteAccessService
     /**
      * Get user role in site
      *
-     * @param Site $site
      * @param int $userId
+     * @param Site $site
      *
-     * @return int
-     *   One of the Access:ROLE_* constants
+     * @return int|int[]
+     *   An uniq Access:ROLE_* constant matching the given user and site,
+     *   or an array of Access:ROLE_* constants keyed by site identifiers
+     *   if no site is provided.
      */
-    private function getUserRoleCacheValue(Site $site, $userId)
+    private function getUserRoleCacheValue($userId, Site $site = null)
     {
-        $siteId = $site->id;
+        if (!isset($this->accessCache[$userId])) {
+            $this->accessCache[$userId] = $this
+                ->db
+                ->query(
+                    "SELECT site_id, role FROM {ucms_site_access} WHERE uid = :userId",
+                    [':userId' => $userId]
+                )
+                ->fetchAllKeyed();
+            ;
 
-        if (isset($this->accessCache[$siteId][$userId])) {
-            return $this->accessCache[$siteId][$userId];
+            array_walk($this->accessCache[$userId], 'intval');
         }
 
-        return $this->accessCache[$siteId][$userId] = (int)$this
-            ->db
-            ->query(
-                "SELECT role FROM {ucms_site_access} WHERE site_id = :siteId AND uid = :userId LIMIT 1 OFFSET 0",
-                [
-                    ':siteId' => $siteId,
-                    ':userId' => $userId,
-                ]
-            )
-            ->fetchField()
-        ;
+        if (null !== $site) {
+            return !empty($this->accessCache[$userId][$site->id])
+                ? $this->accessCache[$userId][$site->id]
+                : Access::ROLE_NONE;
+        }
+
+        return $this->accessCache[$userId];
+    }
+
+    /**
+     * Get the user roles for all sites
+     *
+     * @param int $userId
+     *
+     * @return int[]
+     *   The Access:ROLE_* constants keyed by site identifiers.
+     */
+    public function getUserRoles($userId)
+    {
+        return $this->getUserRoleCacheValue($userId);
+    }
+
+    /**
+     * Get the user role for a given site
+     *
+     * @param int $userId
+     * @param Site $site
+     *
+     * @return int
+     *   The Access:ROLE_* constants matching the given site.
+     */
+    public function getUserRole($userId, Site $site)
+    {
+        return $this->getUserRoleCacheValue($userId, $site);
     }
 
     /**
@@ -213,10 +245,14 @@ class SiteAccessService
      */
     public function getRelativeUserRoleList(Site $site, $userId = null)
     {
+        if (null === $userId) {
+            $userId = $this->getCurrentUserId();
+        }
+
         $ret = [];
 
         $relativeRoles  = $this->getRelativeRoles();
-        $userSiteRole   = $this->getUserRoleCacheValue($site, $userId);
+        $userSiteRole   = $this->getUserRoleCacheValue($userId, $site);
 
         // First check the user site roles if any
         if ($userSiteRole) {
@@ -282,7 +318,7 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        return Access::ROLE_WEBMASTER === $this->getUserRoleCacheValue($site, $userId);
+        return Access::ROLE_WEBMASTER === $this->getUserRoleCacheValue($userId, $site);
     }
 
     /**
@@ -299,7 +335,7 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        return Access::ROLE_CONTRIB === $this->getUserRoleCacheValue($site, $userId);
+        return Access::ROLE_CONTRIB === $this->getUserRoleCacheValue($userId, $site);
     }
 
     /**
