@@ -307,34 +307,56 @@ class SiteAccessService
     }
 
     /**
-     * Is the given user webmaster of the given site
+     * Is the given user a webmaster.
+     * If a site is given, is the given user webmaster of this site.
      *
      * @param Site $site
      * @param int $userId
+     *  The current user ID by default
      *
      * @return boolean
      */
-    public function userIsWebmaster(Site $site, $userId = null)
+    public function userIsWebmaster(Site $site = null, $userId = null)
     {
         if (null === $userId) {
             $userId = $this->getCurrentUserId();
+        }
+
+        if (null === $site) {
+            foreach ($this->getUserRoleCacheValue($userId) as $role) {
+                if (Access::ROLE_WEBMASTER === $role) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         return Access::ROLE_WEBMASTER === $this->getUserRoleCacheValue($userId, $site);
     }
 
     /**
-     * Is the given user contributor of the given site
+     * Is the given user a contributor.
+     * If a site is given, the given user contributor of this site.
      *
      * @param Site $site
      * @param int $userId
+     *  The current user ID by default
      *
      * @return boolean
      */
-    public function userIsContributor(Site $site, $userId = null)
+    public function userIsContributor(Site $site = null, $userId = null)
     {
         if (null === $userId) {
             $userId = $this->getCurrentUserId();
+        }
+
+        if (null === $site) {
+            foreach ($this->getUserRoleCacheValue($userId) as $role) {
+                if (Access::ROLE_CONTRIB === $role) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         return Access::ROLE_CONTRIB === $this->getUserRoleCacheValue($userId, $site);
