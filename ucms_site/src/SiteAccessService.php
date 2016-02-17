@@ -112,7 +112,9 @@ class SiteAccessService
                 ->fetchAllKeyed();
             ;
 
-            array_walk($this->accessCache[$userId], 'intval');
+            array_walk($this->accessCache[$userId], function(&$val, $key) {
+                $val = (integer) $val;
+            });
         }
 
         if (null !== $site) {
