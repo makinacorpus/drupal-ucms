@@ -224,17 +224,6 @@ function ucms_dashboard_page_build(&$page) {
 
     $context->init();
 
-    if (module_exists('ucms_notification')) {
-      $context
-        ->addTab('notification', t("Notifications"), 'bell')
-        ->add(notification_block_render($GLOBALS['user']), 'notification')
-      ;
-      // Set default tab on dashboard
-      if (current_path() == 'admin/dashboard') {
-        $context->setDefaultTab('notification');
-      }
-    }
-
     $actions = [];
     foreach ($context->getActions() as $title => $list) {
       $actions[] = [

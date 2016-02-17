@@ -46,6 +46,7 @@ class ContextPane
      * ContextPane constructor.
      *
      * @param EventDispatcherInterface $dispatcher
+     * @param RequestStack $requestStack
      */
     public function __construct(EventDispatcherInterface $dispatcher, RequestStack $requestStack)
     {

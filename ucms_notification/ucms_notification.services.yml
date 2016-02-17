@@ -13,3 +13,9 @@ services:
     class: MakinaCorpus\Ucms\Notification\Formatter\SiteSwitch
     arguments: ["@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "site:switch", auto: true, channels: "admin:site" }]
+
+  ucms_notification.context_pane_event_listener:
+    class: MakinaCorpus\Ucms\Notification\EventDispatcher\ContextPaneEventListener
+    arguments: ["@ucms_layout.context"]
+    tags:
+      - { name: event_listener, event: ucms_dashboard.context_init }
