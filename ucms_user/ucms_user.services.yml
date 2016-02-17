@@ -1,5 +1,17 @@
 services:
 
+  # Data source service for listing page
+  ucms_user.admin.datasource:
+    class: MakinaCorpus\Ucms\User\Page\UserAdminDatasource
+    arguments: ["@database", "@ucms_site.access"]
+
+  # Action provider for the listing page
+  ucms_user.action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\User\Action\UserActionProvider
+    tags: [{name: ucms_dashboard.action_provider}]
+
+  # Dashboard event listener to provide portlets
   ucms_user.dashboard_event_listener:
     class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventListener
     tags: [{name: event_listener, event: ucms_dashboard.dashboard_init}]
