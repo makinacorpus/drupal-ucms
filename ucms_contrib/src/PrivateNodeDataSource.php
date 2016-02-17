@@ -45,7 +45,7 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->setChoicesCallback(function ($values) {
                 if ($accounts = user_load_multiple($values)) {
                     foreach ($accounts as $index => $account) {
-                        $accounts[$index] = format_username($account);
+                        $accounts[$index] = filter_xss(format_username($account));
                     }
                     return $accounts;
                 }

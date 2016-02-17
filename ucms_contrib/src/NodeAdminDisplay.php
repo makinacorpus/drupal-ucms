@@ -55,7 +55,9 @@ class NodeAdminDisplay extends AbstractDisplay
                         '<div class="ucms-contrib-result" data-nid="' . $node->nid . '">' . l($node->title, 'node/' . $node->nid) . '</div>',
                         $node->status ? t("published") : t("unpublished"),
                         format_date($node->created),
-                        isset($accountMap[$node->uid]) ? format_username($accountMap[$node->uid]) : format_username($anonymous),
+                        isset($accountMap[$node->uid])
+                            ? filter_xss(format_username($accountMap[$node->uid]))
+                            : filter_xss(format_username($anonymous)),
                         theme('ucms_dashboard_actions', ['actions' => $this->getActions($node), 'mode' => 'icon']),
                     ];
                 }
