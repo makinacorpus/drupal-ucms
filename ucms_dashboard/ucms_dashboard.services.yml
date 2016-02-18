@@ -4,10 +4,6 @@ services:
     class: MakinaCorpus\Ucms\Dashboard\Context\ContextPane
     arguments: ['@event_dispatcher', '@request_stack']
 
-  ucms_dashboard.dashboard:
-    class: MakinaCorpus\Ucms\Dashboard\Dashboard\Dashboard
-    arguments: ['@event_dispatcher']
-
   ucms_dashboard.page_factory:
     class: MakinaCorpus\Ucms\Dashboard\Page\PageFactory
     arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry"]
@@ -15,3 +11,6 @@ services:
   ucms_dashboard.action_provider_registry:
     public: false
     class: MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry
+
+  ucms_dashboard.portlet_registry:
+    class: MakinaCorpus\Ucms\Dashboard\Portlet\PortletRegistry

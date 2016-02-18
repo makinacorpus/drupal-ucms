@@ -1,13 +1,13 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Dashboard\Dashboard;
+namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
 
 /**
  * Class DashboardPortlet
  * @package MakinaCorpus\Ucms\Dashboard\Dashboard
  */
-abstract class DashboardPortlet implements DashboardPortletInterface
+abstract class Portlet implements PortletInterface
 {
     /**
      * @return array Render array usable in twig

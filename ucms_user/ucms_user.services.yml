@@ -15,3 +15,9 @@ services:
   ucms_user.dashboard_event_listener:
     class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventListener
     tags: [{name: event_listener, event: ucms_dashboard.dashboard_init}]
+
+  # Account portlet
+  ucms_user.account_portlet:
+    public: false
+    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
+    tags: [{ name: ucms_dashboard.portlet }]

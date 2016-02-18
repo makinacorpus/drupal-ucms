@@ -1,13 +1,13 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Dashboard\Dashboard;
+namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 
 /**
  * Interface for portlets.
  */
-interface DashboardPortletInterface
+interface PortletInterface
 {
 
     /**
@@ -32,9 +32,17 @@ interface DashboardPortletInterface
     /**
      * Render the content of this portlet.
      *
-     * @TODO Could be rendered in an Ajax reqest someday
-     * @return mixed
+     * @return []
      */
-    public function render();
+    // @TODO Could be rendered in an Ajax reqest someday
+    public function getContent();
+
+    /**
+     * Return true if portlet if visible for user.
+     *
+     * @param \stdClass $account
+     * @return bool
+     */
+    public function userIsAllowed(\stdClass $account);
 
 }

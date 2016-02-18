@@ -175,13 +175,13 @@ function ucms_dashboard_context_get() {
 /**
  * Get dashboard.
  *
- * @return \MakinaCorpus\Ucms\Dashboard\Dashboard\Dashboard
+ * @return \MakinaCorpus\Ucms\Dashboard\Portlet\PortletRegistry
  *
  * @deprecated
  *   Will be replaced by services one day.
  */
-function ucms_dashboard_dashboard_get() {
-  return \Drupal::service('ucms_dashboard.dashboard');
+function ucms_dashboard_portlet_registry_get() {
+  return \Drupal::service('ucms_dashboard.portlet_registry');
 }
 
 /**

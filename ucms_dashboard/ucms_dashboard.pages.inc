@@ -8,10 +8,10 @@
  * Main dashboard page.
  */
 function ucms_dashboard_page() {
-  $dashboard = ucms_dashboard_dashboard_get()->init();
+  $dashboard = ucms_dashboard_portlet_registry_get();
 
   return [
     '#theme'  => 'ucms_dashboard_page',
-    '#portlets' => $dashboard->getPortlets(),
+    '#portlets' => $dashboard->getPortletsForAccount(clone $GLOBALS['user']),
   ];
 }
