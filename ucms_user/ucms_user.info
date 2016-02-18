@@ -3,5 +3,6 @@ description = "Provides user management backoffice"
 core = 7.x
 package = UCMS
 php = 5.5
+dependencies[] = filechunk
 dependencies[] = sf_dic
 dependencies[] = ucms_site

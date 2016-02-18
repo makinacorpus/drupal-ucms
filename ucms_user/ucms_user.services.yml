@@ -11,6 +11,11 @@ services:
     class: MakinaCorpus\Ucms\User\Action\UserActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 
+  # Context pane event listener to provide the user creation button
+  ucms_user.context_pane_event_listener:
+    class: MakinaCorpus\Ucms\User\EventDispatcher\ContextPaneEventListener
+    tags: [{ name: event_listener, event: ucms_dashboard.context_init }]
+
   # Dashboard event listener to provide portlets
   ucms_user.dashboard_event_listener:
     class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventListener
