@@ -56,7 +56,7 @@ function ucms_user_menu() {
   $items['admin/dashboard/user/%user/view'] = [
     'title'             => 'View',
     'type'              => MENU_DEFAULT_LOCAL_TASK,
-    'weight'            => -10
+    'weight'            => -20
   ];
 
   $items['admin/dashboard/user/%user/edit'] = [
@@ -65,7 +65,40 @@ function ucms_user_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserEdit', 3],
     'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
     'type'              => MENU_LOCAL_TASK,
-    'weight'            => -5
+    'weight'            => -10
+  ];
+
+  $items['admin/dashboard/user/%user/reset-password'] = [
+    'title'             => 'Reset password',
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserResetPassword', 3],
+    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'type'              => MENU_LOCAL_TASK,
+  ];
+
+  $items['admin/dashboard/user/%user/delete'] = [
+    'title'             => 'Delete',
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserDelete', 3],
+    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'type'              => MENU_LOCAL_TASK,
+    'weight'            => 100,
+  ];
+
+  $items['admin/dashboard/user/%user/toggle'] = [
+    'title'             => 'Toggle status',
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserToggleStatus', 3],
+    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'type'              => MENU_CALLBACK,
+  ];
+
+  $items['admin/dashboard/user/%user/change-email'] = [
+    'title'             => 'Change email',
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserChangeEmail', 3],
+    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'type'              => MENU_CALLBACK,
   ];
 
   return $items;

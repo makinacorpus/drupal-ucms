@@ -84,7 +84,7 @@ class UserEdit extends FormBase
             '#type' => 'textfield',
             '#title' => $this->t('Email'),
             '#default_value' => isset($user->mail) ? $user->mail : '',
-            '#maxlength' => 255,
+            '#maxlength' => 254,
             '#required' => true,
             '#weight' => -5,
         );
@@ -133,6 +133,18 @@ class UserEdit extends FormBase
     /**
      * {@inheritdoc}
      */
+    public function validateForm(array &$form, FormStateInterface $form_state)
+    {
+        $mail = $form_state->getValue('mail');
+        if (!valid_email_address($mail)) {
+            $form_state->setErrorByName('mail', $this->t('The email address %mail is not valid.', array('%mail' => $mail)));
+        }
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
         try {
@@ -168,22 +180,21 @@ class UserEdit extends FormBase
             // Saves the user
             if (user_save($user, $form_state->getValues())) {
                 if ($is_new) {
-                    drupal_set_message($this->t("The new user \"@name\" has been created.", array('@name' => $user->name)));
-                    //$this->dispatcher->dispatch('label:add', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+                    drupal_set_message($this->t("The new user @name has been created.", array('@name' => $user->name)));
+                    //$this->dispatcher->dispatch('user:add', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
                 } else {
-                    drupal_set_message($this->t("The user \"@name\" has been updated.", array('@name' => $user->name)));
-                    //$this->dispatcher->dispatch('label:edit', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+                    drupal_set_message($this->t("The user @name has been updated.", array('@name' => $user->name)));
+                    //$this->dispatcher->dispatch('user:edit', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
                 }
             } else {
                 throw new \RuntimeException('Call to user_save() failed!');
             }
         }
         catch (\Exception $e) {
-            drupal_set_message($this->t("An error occured during the edition of the user \"@name\". Please try again.", array('@name' => $user->name)), 'error');
+            drupal_set_message($this->t("An error occured during the edition of the user @name. Please try again.", array('@name' => $user->name)), 'error');
         }
 
         $form_state->setRedirect('admin/dashboard/user');
     }
 
 }
-
