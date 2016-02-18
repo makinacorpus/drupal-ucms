@@ -44,7 +44,9 @@ class AccountPortlet extends Portlet
      */
     public function getActions()
     {
-        return [];
+        return [
+            new Action('Edit my information', 'admin/dashboard/user/'.$this->account->uid.'/edit', 'dialog', 'edit'),
+        ];
     }
 
     /**
@@ -54,23 +56,21 @@ class AccountPortlet extends Portlet
     public function getContent()
     {
         // Prevent any modification of the global object
-        $account = user_load($GLOBALS['user']->uid);
-
         $items[] = [
             $this->t('Username'),
-            check_plain(format_username($account)),
+            check_plain(format_username($this->account)),
         ];
 
         $items[] = [
             $this->t('E-mail'),
-            $account->mail,
+            $this->account->mail,
         ];
 
         $items[] = [
-            $this->formatPlural(count($account->roles), 'Role', 'Roles'),
+            $this->formatPlural(count($this->account->roles), 'Role', 'Roles'),
             [
                 '#theme' => 'item_list',
-                '#items' => $account->roles,
+                '#items' => $this->account->roles,
                 '#attributes' => ['class' => 'list-unstyled'],
             ],
         ];
@@ -100,6 +100,7 @@ class AccountPortlet extends Portlet
      */
     public function userIsAllowed(\stdClass $account)
     {
+        // @TODO should be in a constructor
         $this->account = $account;
         return true;
     }

@@ -41,6 +41,18 @@ function ucms_user_menu() {
     'file'              => 'ucms_user.dashboard.inc',
   ];
 
+  $items['admin/dashboard/user/%user/edit'] = [
+    'title callback'   => 'ucms_user_menu_item_edit_title',
+    'title arguments'  => [3],
+    'title'            => 'Edit my account information',
+    'page callback'    => 'sf_dic_page_form',
+    'page arguments'   => ['MakinaCorpus\Ucms\User\Form\AccountEditForm', 3],
+    'access callback'  => 'ucms_user_access_manage',
+    'access arguments' => [UserAccess::PERM_MANAGE_ALL, 3],
+    'type'             => MENU_CALLBACK,
+  ];
+
+
   $items['admin/dashboard/user/%user/view'] = [
     'title'             => 'View',
     'type'              => MENU_DEFAULT_LOCAL_TASK,
@@ -67,6 +79,35 @@ function ucms_user_menu_item_title($user) {
   return t("User @name", ['@name' => $user->name]);
 }
 
+
+/**
+ * Title callback for edit account menu item.
+ */
+function ucms_user_menu_item_edit_title($account) {
+  global $user;
+
+  if ($user->uid == $account->uid) {
+    return t("Edit my account information");
+  }
+
+  return t("Edit @name's account information", ['@name' => $account->name]);
+}
+
+/**
+ * Access callback for edit account form.
+ *
+ * @param $perm
+ * @param $account
+ * @return bool
+ */
+function ucms_user_access_manage($perm, $account) {
+  global $user;
+
+  if ($user->uid == $account->uid) {
+    return TRUE;
+  }
+  return user_access($perm);
+}
 
 /**
  * Implements hook_permission().
