@@ -118,9 +118,11 @@ class SiteAccessService
         }
 
         if (null !== $site) {
-            return !empty($this->accessCache[$userId][$site->id])
-                ? $this->accessCache[$userId][$site->id]
-                : Access::ROLE_NONE;
+            if (!empty($this->accessCache[$userId][$site->id])) {
+                return $this->accessCache[$userId][$site->id];
+            } else {
+                return Access::ROLE_NONE;
+            }
         }
 
         return $this->accessCache[$userId];

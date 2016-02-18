@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
-use MakinaCorpus\Ucms\Site\Access;
-
 /**
  * Drupal ACL builder for usage with node_access() related hooks
  */

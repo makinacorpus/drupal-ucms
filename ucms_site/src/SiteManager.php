@@ -43,6 +43,17 @@ final class SiteManager
     }
 
     /**
+     * Get current user identifier
+     *
+     * @return int
+     */
+    private function getCurrentUserId()
+    {
+        // FIXME: Inject it instead
+        return $GLOBALS['user']->uid;
+    }
+
+    /**
      * Set current site context
      *
      * @param Site $site
@@ -208,15 +219,17 @@ final class SiteManager
      * Load sites for which the user is webmaster
      *
      * @param integer $userId
+     *
      * @return Site[]
      */
     public function loadWebmasterSites($userId = null)
     {
         if (null === $userId) {
-            $userId = $GLOBALS['user']->uid;
+            $userId = $this->getCurrentUserId();
         }
 
         $roles = $this->getAccess()->getUserRoles($userId);
+
         foreach ($roles as $siteId => $role) {
             if ($role != Access::ROLE_WEBMASTER) {
                 unset($roles[$siteId]);
