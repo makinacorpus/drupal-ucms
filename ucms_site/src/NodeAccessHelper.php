@@ -20,7 +20,7 @@ class NodeAccessHelper
     /**
      * Grants for local contributors
      */
-    const REALM_CONTRIBUTOR = 'ucms_site_contrib';
+    const REALM_READONLY = 'ucms_site_ro';
 
     /**
      * Grants for people accessing the dashboard
@@ -36,11 +36,6 @@ class NodeAccessHelper
      * Grants for global non editable locked content
      */
     const REALM_GLOBAL_LOCKED = 'ucms_global_locked';
-
-    /**
-     * Grants for super viewers
-     */
-    const REALM_ALL = 'ucms_all';
 
     /**
      * Default group identifier for grants where it does not make sense
@@ -96,7 +91,7 @@ class NodeAccessHelper
 
         // People with "view all" permissions should view it
         $ret[] = [
-            'realm'         => self::REALM_ALL,
+            'realm'         => self::REALM_READONLY,
             'gid'           => self::GID_DEFAULT,
             'grant_view'    => 1,
             'grant_update'  => 0,
@@ -158,12 +153,12 @@ class NodeAccessHelper
                     'priority'      => self::PRIORITY_DEFAULT,
                 ];
 
-                // People with "view all" permissions should view it
-                // This is necessary to duplicate it even thought it already
-                // exists upper, because we changed the gid to ensure isolation
-                // at runtime, when in site context
+                // This grand allows multiple business use cases:
+                //   - user is a global administrator and can see everything
+                //   - user is a contributor on a specific site
+                //   - user is a webmaster on a readonly site
                 $ret[] = [
-                    'realm'         => self::REALM_ALL,
+                    'realm'         => self::REALM_READONLY,
                     'gid'           => $siteId,
                     'grant_view'    => 1,
                     'grant_update'  => 0,
@@ -211,12 +206,12 @@ class NodeAccessHelper
 
             // User can manager includes webmasters, so we're good to go
             if (user_access(Access::PERM_CONTENT_VIEW_ALL, $account)) {
-                $ret[self::REALM_ALL] = [$site->id];
+                $ret[self::REALM_READONLY] = [$site->id];
             }
             if ($access->userCanView($site, $userId) && $access->userIsWebmaster($site, $userId)) {
                 // Special case for archive, user might see but not edit
                 if (SiteState::ARCHIVE == $site->state) {
-                    $ret[self::REALM_ALL] = [$site->id];
+                    $ret[self::REALM_READONLY] = [$site->id];
                 } else {
                     $ret[self::REALM_WEBMASTER] = [$site->id];
                 }
@@ -230,19 +225,25 @@ class NodeAccessHelper
             if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED, $account)) {
                 $ret[self::REALM_GLOBAL_LOCKED] = [self::GID_DEFAULT];
             }
+
             if (user_access(Access::PERM_CONTENT_VIEW_ALL, $account)) {
-                $ret[self::REALM_ALL] = [self::GID_DEFAULT];
+                $ret[self::REALM_READONLY] = [self::GID_DEFAULT];
             } else if (user_access(Access::PERM_CONTENT_VIEW_GLOBAL, $account)) {
                 $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
             }
 
+            // @todo this should be loadAllSitesForUser()
             foreach ($this->manager->loadWebmasterSites($userId) as $site) {
-                switch ($site->state) {
-                    case SiteState::INIT:
-                    case SiteState::OFF:
-                    case SiteState::ON:
-                        $ret[self::REALM_WEBMASTER][] = $site->id;
-                        break;
+                if ($access->userCanView($site, $userId)) {
+                    if ($access->userIsWebmaster($site, $userId)) {
+                        if (SiteState::ARCHIVE === $site->state) {
+                            $ret[self::REALM_READONLY] = [$site->id];
+                        } else {
+                            $ret[self::REALM_WEBMASTER] = [$site->id];
+                        }
+                    } else {
+                        $ret[self::REALM_READONLY] = [$site->id];
+                    }
                 }
             }
         }

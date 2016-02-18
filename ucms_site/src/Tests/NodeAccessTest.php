@@ -490,7 +490,6 @@ class NodeAccessTest extends AbstractDrupalTest
             ->whenIAm([], ['on' => Access::ROLE_WEBMASTER])
 
                 ->getOutSite()
-                    /*
                     ->canSeeOnly([
                         'site_on_published',
                         'site_on_unpublished',
@@ -507,7 +506,6 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'site_on_locked_unpublished',
                     ])
-                      */
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -534,7 +532,6 @@ class NodeAccessTest extends AbstractDrupalTest
             ->whenIAm([], ['off' => Access::ROLE_WEBMASTER])
 
                 ->getOutSite()
-                    /*
                     ->canSeeOnly([
                         'site_off_published',
                         'site_off_unpublished',
@@ -543,7 +540,6 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_off_published',
                         'site_off_unpublished',
                     ])
-                      */
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -567,13 +563,11 @@ class NodeAccessTest extends AbstractDrupalTest
             ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER])
 
                 ->getOutSite()
-                    /*
                     ->canSeeOnly([
                         'site_archive_published',
                         'site_archive_unpublished',
                     ])
                     ->canEditNone()
-                      */
 
                 ->inSite('archive')
                     ->canSeeOnly([
