@@ -26,11 +26,6 @@ class NodeAccessTest extends AbstractDrupalTest
     protected $nodes = [];
 
     /**
-     * @var \stdClass[]
-     */
-    protected $accounts = [];
-
-    /**
      * @var Site
      */
     protected $sites = [];
@@ -39,16 +34,6 @@ class NodeAccessTest extends AbstractDrupalTest
      * @var \stdClass
      */
     protected $contextualAccount;
-
-    /**
-     * Get Drupal anonymous user
-     *
-     * @return \stdClass
-     */
-    protected function getAnonymousUser()
-    {
-        return drupal_anonymous_user();
-    }
 
     /**
      * Get site manager
@@ -82,28 +67,20 @@ class NodeAccessTest extends AbstractDrupalTest
      */
     protected function createDrupalUser($permissionList = [], $siteMap = [])
     {
-        $account = new \stdClass();
-        $this->accounts[] = $account;
-        $stupidHash = uniqid() . mt_rand();
-        $account->name = $stupidHash;
-        $account->mail = $stupidHash . '@example.com';
-        $account->roles = [];
-        user_save($account);
+        $account = parent::createDrupalUser($permissionList);
 
-        foreach ($siteMap as $label => $role) {
-            switch ($role) {
-                case Access::ROLE_WEBMASTER:
-                    $this->getSiteManager()->getAccess()->addWebmasters($this->getSite($label), $account->uid);
-                    break;
-                default:
-                    $this->getSiteManager()->getAccess()->addContributors($this->getSite($label), $account->uid);
-                    break;
+        if ($siteMap) {
+            foreach ($siteMap as $label => $role) {
+                switch ($role) {
+                    case Access::ROLE_WEBMASTER:
+                        $this->getSiteManager()->getAccess()->addWebmasters($this->getSite($label), $account->uid);
+                        break;
+                    default:
+                        $this->getSiteManager()->getAccess()->addContributors($this->getSite($label), $account->uid);
+                        break;
+                }
             }
         }
-
-        // Fake user access cache for testing
-        $data = &drupal_static('user_access');
-        $data[$account->uid] = array_combine($permissionList, $permissionList);
 
         return $account;
     }
@@ -365,9 +342,6 @@ class NodeAccessTest extends AbstractDrupalTest
      */
     protected function tearDown()
     {
-        foreach ($this->accounts as $account) {
-            user_delete($account->uid);
-        }
         foreach ($this->sites as $site) {
             $this->getSiteManager()->getStorage()->delete($site);
         }

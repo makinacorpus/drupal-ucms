@@ -13,9 +13,14 @@ class NodeAccessHelper
     const REALM_PUBLIC = 'ucms_public';
 
     /**
-     * Grants for webmasters
+     * Grants for local webmasters
      */
     const REALM_WEBMASTER = 'ucms_site';
+
+    /**
+     * Grants for local contributors
+     */
+    const REALM_CONTRIBUTOR = 'ucms_site_contrib';
 
     /**
      * Grants for people accessing the dashboard
@@ -231,12 +236,14 @@ class NodeAccessHelper
                 $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
             }
 
-            if (false) {
-                // @todo
-                //   - List of sites the webmaster is webmaster of, this
-                //     probably will be a performance killer though...
-                //   - Oh and those sites might only be init, on, off or archive
-                $ret[self::REALM_WEBMASTER] = [];
+            foreach ($this->manager->loadWebmasterSites($userId) as $site) {
+                switch ($site->state) {
+                    case SiteState::INIT:
+                    case SiteState::OFF:
+                    case SiteState::ON:
+                        $ret[self::REALM_WEBMASTER][] = $site->id;
+                        break;
+                }
             }
         }
 
