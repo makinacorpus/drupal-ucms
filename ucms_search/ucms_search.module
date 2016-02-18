@@ -106,13 +106,12 @@ function ucms_search_client_get() {
  * @param string $index
  *
  * @return QueryAlteredSearch
+ *
+ * @deprecated
+ *   You should inject the 'ucms_search.search_factory' service
  */
 function ucms_search_create($index) {
-
-  $client = ucms_search_client_get();
-  $index  = ucms_search_index()->getIndexRealname($index);
-
-  return (new QueryAlteredSearch($client))->setIndex($index);
+  return \Drupal::service('ucms_search.search_factory')->create($index);
 }
 
 /**

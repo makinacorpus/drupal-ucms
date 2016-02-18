@@ -38,6 +38,10 @@ services:
     factory: [Elasticsearch\ClientBuilder, fromConfig]
     arguments: ["%ucms_search.elastic.config%"]
 
+  ucms_search.search_factory:
+    class: MakinaCorpus\Ucms\Search\SearchFactory
+    arguments: ["@ucms_search.elastic.client", "@ucms_search.index_storage", "@event_dispatcher"]
+
   ucms_search.mapping.type_registry:
     class: MakinaCorpus\Ucms\Search\Mapping\TypeRegistry
 
@@ -72,6 +76,10 @@ services:
     tags: [{ name: ucms_search.mapping.type }]
 
   ucms_search.event.dequeue_node:
-    class: MakinaCorpus\Ucms\Search\EventSubscriber\DequeueNodeEventSubscriber
+    class: MakinaCorpus\Ucms\Search\EventDispatcher\DequeueNodeEventSubscriber
     arguments: ["@ucms_search.node_indexer"]
     tags: [{ name: event_subscriber}]
+
+  ucms_search.node_access_event_listener:
+    class: MakinaCorpus\Ucms\Search\EventDispatcher\SearchAccessEventListener
+    tags: [{ name: event_listener, event: ucms_search.search_create }]

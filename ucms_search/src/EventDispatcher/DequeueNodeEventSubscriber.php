@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Search\EventSubscriber;
+namespace MakinaCorpus\Ucms\Search\EventDispatcher;
 
 use MakinaCorpus\Ucms\Search\NodeIndexerInterface;
 

@@ -1,6 +1,8 @@
 
 name: "Back-office index"
 
+node_access: true # @todo handle that in code
+
 settings:
   number_of_shards:   1
   number_of_replicas: 0

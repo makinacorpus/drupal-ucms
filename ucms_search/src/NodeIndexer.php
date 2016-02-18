@@ -219,6 +219,25 @@ class NodeIndexer implements NodeIndexerInterface
         return $ret;
     }
 
+    protected function nodeExtractGrants($node)
+    {
+        // @todo Drupal is stupid, fix this
+        $grants = module_invoke_all('node_access_records', $node);
+        drupal_alter('node_access_records', $grants, $node);
+        if (empty($grants) && !empty($node->status)) {
+            $grants[] = ['realm' => 'all', 'gid' => 0, 'grant_view' => 1];
+        }
+
+        // Rewrite grants for elastic mapping usage
+        foreach ($grants as $index => $grant) {
+            if ($grant['grant_view']) {
+                $grants[$index] = $grant['realm'] . ':' . $grant['gid'];
+            }
+        }
+
+        return $grants;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -240,6 +259,8 @@ class NodeIndexer implements NodeIndexerInterface
         // @todo Note the right place for this todo but allow usync definition to
         //   also include basic matching rules whenever possible.
 
+
+
         return [
             'title'       => $node->title,
             'id'          => $node->nid,
@@ -254,6 +275,7 @@ class NodeIndexer implements NodeIndexerInterface
             'is_flagged'  => (bool)$node->is_flagged,
             'is_global'   => (bool)$node->is_global,
             'is_locked'   => (bool)$node->is_clonable,
+            'node_access' => $this->nodeExtractGrants($node),
         ];
     }
 

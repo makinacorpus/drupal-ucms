@@ -338,10 +338,10 @@ class Search
         if ($aggs) {
             $body['aggs'] = $aggs;
         }
-
+/*
         if ($this->fields) {
             $body['fields'] = $this->fields;
-        }
+        }*/
 
         $data = [
             'index' => $this->index,

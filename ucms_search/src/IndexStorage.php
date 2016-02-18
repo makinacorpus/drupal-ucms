@@ -185,6 +185,18 @@ class IndexStorage
             $updated = true;
         }
 
+        // Adds 'node_access' table ACL system replica into elastic index
+        // mapping so that we can query it later, this will only replicate
+        // grants for the view operation, here is the process:
+        //   - it identifies each (realm, gid) group for the node as a raw
+        //     string such as "REALM:GID"
+        //   - it stores a string term vector of those
+        //   - of course, it only stores those with 1 as value for grant_view
+        //   - in all queries, a nice alteration will be done to force it to
+        //     have a filter query that does a term exact match in the vector
+        //     for all user grants
+        $param['mapping']['node']['properties']['node_access']['type'] = 'string';
+
         $this
             ->db
             ->merge('ucms_search_index')
