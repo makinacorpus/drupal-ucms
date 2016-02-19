@@ -4,5 +4,7 @@ core = 7.x
 package = UCMS
 php = 5.5
 
+usync[] = usync/vocabulary.yml
+
 dependencies[] = sf_dic
 dependencies[] = ucms_dashboard
