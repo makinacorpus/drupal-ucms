@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 /**
  * Class Dashboard
  *
@@ -24,8 +22,6 @@ class PortletRegistry
      */
     public function getPortlets()
     {
-        ksort($this->portlets);
-
         return $this->portlets;
     }
 
@@ -38,9 +34,9 @@ class PortletRegistry
     public function getPortletsForAccount(\stdClass $account)
     {
         $portlets = [];
-        foreach ($this->getPortlets() as $portlet) {
+        foreach ($this->getPortlets() as $id => $portlet) {
             if ($portlet->userIsAllowed($account)) {
-                $portlets[] = $portlet;
+                $portlets[$id] = $portlet;
             }
         }
 
@@ -51,13 +47,10 @@ class PortletRegistry
      * Add a portlet to the list of portlets.
      *
      * @param PortletInterface $portlet
-     * @param float $position
+     * @param string $id
      */
-    public function addPortlet(PortletInterface $portlet, $position = 0.0)
+    public function addPortlet(PortletInterface $portlet, $id)
     {
-        while (isset($this->portlets[(string)$position])) {
-            $position += 0.01;
-        }
-        $this->portlets[(string)$position] = $portlet;
+        $this->portlets[$id] = $portlet;
     }
 }

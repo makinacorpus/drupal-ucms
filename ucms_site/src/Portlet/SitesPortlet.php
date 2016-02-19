@@ -79,17 +79,19 @@ class SitesPortlet extends Portlet
         $states = SiteState::getList();
         $rows = [];
         foreach ($items as $item) {
+            $options = ['attributes' => ['class' => ['btn-sm']]];
             if ($item instanceof Site) {
                 if ($item->state == SiteState::ON) {
                     // $this->t("Go to site")
-                    $action = new Action("", $item->http_host, ['absolute' => true], 'share-alt');
+                    $options += ['absolute' => true];
+                    $action = new Action("", $item->http_host, $options, 'share-alt');
                 } else {
                     // $this->t("Go to request")
-                    $action = new Action("", 'admin/dashboard/site/'.$item->id, [], 'edit');
+                    $action = new Action("", 'admin/dashboard/site/'.$item->id, $options, 'edit');
                 }
                 $rows[] = [
                     check_plain($item->title_admin),
-                    $item->ts_created->format('d/m/Y H:i'),
+                    $item->ts_created->format('d/m H:i'),
                     check_plain($states[$item->state]),
                     ['#theme' => 'ucms_dashboard_actions', '#actions' => [$action]],
                 ];

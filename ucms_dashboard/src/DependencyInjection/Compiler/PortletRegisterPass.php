@@ -27,7 +27,7 @@ class PortletRegisterPass implements CompilerPassInterface
 
 
         foreach ($taggedServices as $id => $attributes) {
-            $definition->addMethodCall('addPortlet', [new Reference($id)]);
+            $definition->addMethodCall('addPortlet', [new Reference($id), $id]);
         }
     }
 }

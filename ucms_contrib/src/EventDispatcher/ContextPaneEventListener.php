@@ -5,9 +5,14 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
+use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\Context as LayoutContext;
 
+/**
+ * Class ContextPaneEventListener
+ * @package MakinaCorpus\Ucms\Contrib\EventDispatcher
+ */
 class ContextPaneEventListener
 {
     use StringTranslationTrait;
@@ -18,15 +23,25 @@ class ContextPaneEventListener
     private $layoutContext;
 
     /**
+     * @var ActionProviderInterface
+     */
+    private $actionProvider;
+
+    /**
      * Default constructor
      *
      * @param LayoutContext $layoutContext
+     * @param ActionProviderInterface $actionProvider
      */
-    public function __construct(LayoutContext $layoutContext)
+    public function __construct(LayoutContext $layoutContext, ActionProviderInterface $actionProvider)
     {
         $this->layoutContext = $layoutContext;
+        $this->actionProvider = $actionProvider;
     }
 
+    /**
+     * @param ContextPaneEvent $event
+     */
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
@@ -66,26 +81,7 @@ class ContextPaneEventListener
 
         // Add node creation link
         if (substr(current_path(), 0, 16) == 'admin/dashboard/') {
-            $tab = arg(2);
-            $actions = [];
-            $types = node_type_get_names();
-            // @todo inject variable contents into a service
-            //   and get rid of variable_get() here
-            $tab_types = variable_get('ucms_contrib_tab_'.$tab.'_type', []);
-            foreach (array_values($tab_types) as $index => $type) {
-                if (node_access('create', $type)) {
-                    $actions [] = new Action(
-                        $this->t('Create !content_type', ['!content_type' => $this->t($types[$type])]),
-                        'node/add/'.strtr($type, '_', '-'),
-                        null,
-                        null,
-                        $index,
-                        FALSE,
-                        true
-                    );
-                }
-            }
-            $contextPane->addActions($actions, $this->t("Create item"));
+            $contextPane->addActions($this->actionProvider->getActions('content'), $this->t("Create item"));
         }
     }
 }

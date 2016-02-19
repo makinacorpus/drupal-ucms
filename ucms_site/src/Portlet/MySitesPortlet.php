@@ -75,9 +75,8 @@ class MySitesPortlet extends Portlet
     public function getContent()
     {
         // TODO
-        $sites = $this->siteManager->loadWebmasterSites($this->account->uid);
-
-        return [];
+        // $sites = $this->siteManager->loadWebmasterSites($this->account->uid);
+        return '@todo';
     }
 
     /**
