@@ -25,6 +25,9 @@ admin_func:
     - site dashboard access
     - site manage all
     - site view all
+    - access labels dashboard
+    - edit locked labels
+    - edit non locked labels
 
 admin_tech:
   name: Administrateur technique
@@ -49,6 +52,8 @@ local_webmaster:
   permission:
     - access ucms content overview
     - content view global
+    - access labels dashboard
+    - edit non locked labels
 
 # This role has no permission, only content stuff will be delegated thus
 # it needs to be set in the business API layer
