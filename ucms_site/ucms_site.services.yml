@@ -58,7 +58,7 @@ services:
   ucms_site.sites_portlet:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\SitesPortlet
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@database", "@ucms_site.manager"]
     tags: [{ name: ucms_dashboard.portlet }]
 
   ucms_site.my_sites_portlet:

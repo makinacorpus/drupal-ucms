@@ -6,7 +6,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Portlet\Portlet;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Class SitesPortlet
@@ -28,18 +31,23 @@ class SitesPortlet extends Portlet
     private $siteManager;
 
     /**
+     * @var SiteAdminDatasource
+     */
+    private $dataSource;
+
+    /**
      * SitePortlet constructor.
+     * @param \DatabaseConnection $db
      * @param SiteManager $siteManager
      */
-    public function __construct(SiteManager $siteManager)
+    public function __construct(\DatabaseConnection $db, SiteManager $siteManager)
     {
+        $this->dataSource = new SiteAdminDatasource($db, $siteManager);
         $this->siteManager = $siteManager;
     }
 
     /**
-     * Return the title of this portlet.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getTitle()
     {
@@ -47,9 +55,7 @@ class SitesPortlet extends Portlet
     }
 
     /**
-     * Return the path for the main page of this portlet.
-     *
-     * @return null|string
+     * {@inheritDoc}
      */
     public function getPath()
     {
@@ -57,35 +63,59 @@ class SitesPortlet extends Portlet
     }
 
     /**
-     * @return Action[]
+     * {@inheritDoc}
      */
     public function getActions()
     {
-        return [
-        ];
-    }
-
-    /**
-     * Render the content of this portlet.
-     *
-     * @TODO Could be rendered in an Ajax reqest someday
-     * @return mixed
-     */
-    public function getContent()
-    {
-
         return [];
     }
 
     /**
-     * Return true if portlet if visible for user.
-     *
-     * @param $account
-     * @return mixed
+     * {@inheritDoc}
+     */
+    public function getContent()
+    {
+        $items = $this->dataSource->getItems([], 'ts_changed');
+        $states = SiteState::getList();
+        $rows = [];
+        foreach ($items as $item) {
+            if ($item instanceof Site) {
+                if ($item->state == SiteState::ON) {
+                    // $this->t("Go to site")
+                    $action = new Action("", $item->http_host, ['absolute' => true], 'share-alt');
+                } else {
+                    // $this->t("Go to request")
+                    $action = new Action("", 'admin/dashboard/site/'.$item->id, [], 'edit');
+                }
+                $rows[] = [
+                    check_plain($item->title_admin),
+                    $item->ts_created->format('d/m/Y H:i'),
+                    check_plain($states[$item->state]),
+                    ['#theme' => 'ucms_dashboard_actions', '#actions' => [$action]],
+                ];
+            }
+        }
+
+        return [
+            '#theme' => 'table',
+            '#header' => [
+                $this->t('Title'),
+                $this->t('Request date'),
+                $this->t('Status'),
+                $this->t('Link'),
+            ],
+            '#rows' => $rows,
+            '#empty' => $this->t("No site created yet."),
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function userIsAllowed(\stdClass $account)
     {
         $this->account = $account;
+
         return user_access(Access::PERM_SITE_MANAGE_ALL, $this->account);
     }
 }
