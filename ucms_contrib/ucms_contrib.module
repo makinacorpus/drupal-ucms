@@ -72,8 +72,8 @@ function ucms_contrib_menu() {
       'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
     ];
-    $items['admin/dashboard/' . $key . '/marketting'] = [
-      'title'             => "Marketting",
+    $items['admin/dashboard/' . $key . '/group'] = [
+      'title'             => "Group",
       'page callback'     => 'ucms_contrib_admin_content_page_locked',
       'page arguments'    => [$key],
       'access arguments'  => [Access::PERM_CONTENT_VIEW_GLOBAL],
