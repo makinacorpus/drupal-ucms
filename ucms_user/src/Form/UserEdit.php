@@ -151,6 +151,15 @@ class UserEdit extends FormBase
             $user = $form_state->getTemporaryValue('user');
             $is_new = empty($user->uid);
 
+            // New user
+            if ($is_new) {
+                // Sets a password
+                require_once DRUPAL_ROOT . '/includes/password.inc';
+                $user->pass = user_hash_password(user_password(20));
+                // Ensure the user is disabled
+                $user->status = 0;
+            }
+
             // Prepares user picture
             $picture = reset($form_state->getValue('picture'));
 
