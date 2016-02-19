@@ -52,7 +52,8 @@ function ucms_site_menu() {
   ];
 
   $items['admin/dashboard/site/%ucms_site'] = [
-    'title'             => "Site overview",
+    'title callback'    => 'ucms_site_menu_item_title',
+    'title arguments'   => [3],
     'page callback'     => 'ucms_site_dashboard_site_page_view',
     'page arguments'    => [3],
     'access callback'   => 'ucms_site_menu_access_overview',
@@ -192,6 +193,15 @@ function ucms_site_permission() {
       'title' => t("View all sites no matter their state is"),
     ],
   ];
+}
+
+/**
+ * Title callback for menu items.
+ *
+ * @param Site $site
+ */
+function ucms_site_menu_item_title(Site $site) {
+  return $site->title_admin;
 }
 
 /**
