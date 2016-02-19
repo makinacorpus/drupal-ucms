@@ -19,7 +19,7 @@ admin_func:
   permission:
     - access site in maintenance mode
     - access ucms content overview
-    - administer users
+    - manage all users
     - content manage global locked
     - content view all
     - site dashboard access
@@ -31,7 +31,7 @@ admin_tech:
   permission:
     - access site in maintenance mode
     - access ucms content overview
-    - administer users
+    - manage all users
     - bypass node access
     - site dashboard access
     - site manage all
