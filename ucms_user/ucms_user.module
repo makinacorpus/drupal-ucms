@@ -171,23 +171,24 @@ function ucms_user_theme($existing, $type, $theme, $path) {
  * Implements template_preprocess_THEME().
  */
 function template_preprocess_ucms_user_profile(&$variables) {
+  $account = $variables['account'];
+
   // User picture
   $variables['picture'] = [
     '#theme' => 'user_picture',
-    '#account' => $variables['account'],
+    '#account' => $account,
   ];
 
   // Details table
   $manager = \Drupal::service('ucms_site.manager');
 
-  $roles = $variables['account']->roles;
+  $roles = $account->roles;
   if (isset($roles[DRUPAL_AUTHENTICATED_RID])) {
     unset($roles[DRUPAL_AUTHENTICATED_RID]);
   }
 
-  $sites = $manager->loadWebmasterSites($variables['account']->uid);
+  $sites = $manager->loadWebmasterSites($account->uid);
   $requests = [];
-
   foreach ($sites as $id => $site) {
     $uri = 'http://' . $site->http_host;
     $item = check_plain($site->title_admin) . ' (' . l($uri, $uri) . ')';
@@ -200,15 +201,17 @@ function template_preprocess_ucms_user_profile(&$variables) {
     }
   }
 
-  $sites = empty($sites) ? t("No site") : implode('<br/>', $sites);
+  $roles    = empty($roles) ? t("No role") : implode('<br/>', $roles);
+  $sites    = empty($sites) ? t("No site") : implode('<br/>', $sites);
   $requests = empty($requests) ? t("No pending request") : implode('<br/>', $requests);
+  $last_connection = ($account->login > 0) ? format_date($account->login) : t("Never");
 
   $variables['details_table'] = [
     '#theme' => 'table',
     '#rows' => [
-      [['data' => t("Created at"), 'header' => true], format_date($variables['account']->created)],
-      [['data' => t("Last connection at"), 'header' => true], format_date($variables['account']->login)],
-      [['data' => t("Roles"), 'header' => true], implode('<br/>', $roles)],
+      [['data' => t("Created at"), 'header' => true], format_date($account->created)],
+      [['data' => t("Last connection at"), 'header' => true], $last_connection],
+      [['data' => t("Roles"), 'header' => true], $roles],
       [['data' => t("Pending requests"), 'header' => true], $requests],
       [['data' => t("Sites"), 'header' => true], $sites],
     ],

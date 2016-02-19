@@ -43,7 +43,7 @@ class UserAdminDisplay extends AbstractDisplay
                 ($user->status == 0) ? $this->t("Disabled") : $this->t("Enabled"),
                 $manager->getAccess()->userIsWebmaster(null, $user->uid) ? $this->t("Yes") : $this->t("No"),
                 format_interval(time() - $user->created),
-                format_interval(time() - $user->login),
+                ($user->login > 0) ? format_interval(time() - $user->login) : $this->t("Never"),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($user), 'mode' => 'icon']),
             ];
         }
