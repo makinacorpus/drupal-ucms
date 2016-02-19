@@ -129,9 +129,9 @@ class LabelEdit extends FormBase
             '#default_value' => isset($label->is_locked) ? $label->is_locked : 0,
         );
 
-        if (!isset($label->tid) && !$this->manager->canEditAllLabels()) {
+        if (!$this->manager->canEditAllLabels()) {
             $form['locked']['#disabled'] = true;
-            if (!$this->manager->canEditLockedLabels()) {
+            if ($this->manager->canEditLockedLabels()) {
                 $form['locked']['#default_value'] = 1;
             }
         }
