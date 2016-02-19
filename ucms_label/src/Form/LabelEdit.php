@@ -109,10 +109,10 @@ class LabelEdit extends FormBase
 
             $form['parent'] = array(
                 '#type' => 'select',
-                '#title' => $this->t('Parent term'),
+                '#title' => $this->t('Parent label'),
                 '#options' => $options,
                 '#empty_value' => '0',
-                '#empty_option' => '<' . $this->t('root') . '>',
+                '#empty_option' => $this->t("- None -"),
                 '#default_value' => !empty($parent) ? $parent->tid : null,
                 '#multiple' => false,
             );
