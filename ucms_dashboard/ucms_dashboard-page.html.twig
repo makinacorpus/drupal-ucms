@@ -1,7 +1,7 @@
 <div id="dashboard">
   {% set classes = ['default', 'success', 'info', 'warning', 'danger'] %}
   {% for id, portlet in portlets %}
-    <div id="porlet-{{ machine_name(id) }}" class="col-md-4 col-sm-6">
+    <div id="porlet-{{ machine_name(id) }}" class="portlet col-md-4 col-sm-6">
       <div class="panel panel-{{ cycle(classes, loop.index0) }}{% if portlet.actions %} with-actions{% endif %}">
         <div class="panel-heading">
           <h3 class="panel-title">

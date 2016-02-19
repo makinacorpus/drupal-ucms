@@ -1,4 +1,6 @@
-
+/**
+ * Contextual pane
+ */
 #contextual-pane {
   position: fixed;
   z-index: 110;
@@ -92,4 +94,33 @@
 
 #contextual-pane-switch-position {
   font-size: 110%;
+}
+
+/**
+ * Dashboard
+ */
+#dashboard .portlet {
+  min-width: 415px;
+}
+
+#dashboard .scrolling {
+  overflow: auto;
+  max-height: 250px;
+  background: linear-gradient(white 30%, rgba(255, 255, 255, 0)), linear-gradient(rgba(255, 255, 255, 0), #fff 70%) 0 100%, radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;
+  background-repeat: no-repeat;
+  background-color: #fff;
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll
+}
+
+#dashboard .panel-body {
+  min-height: 280px
+}
+
+#dashboard .with-actions .panel-body {
+  min-height: 225px
+}
+
+#dashboard #porlet-ucms_site_sites_portlet table td:nth-of-type(2) {
+  white-space: nowrap
 }
