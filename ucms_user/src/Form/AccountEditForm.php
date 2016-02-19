@@ -25,9 +25,10 @@ class AccountEditForm extends FormBase
     /**
      * {@inheritdoc}
      */
-
-    public function buildForm(array $form, FormStateInterface $form_state, \stdClass $account = null)
+    public function buildForm(array $form, FormStateInterface $form_state)
     {
+        // @FIXME
+        $account = clone $GLOBALS['user'];
         $form_state->setTemporaryValue('account', $account);
 
         $form['name'] = array(

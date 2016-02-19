@@ -45,7 +45,7 @@ class AccountPortlet extends Portlet
     public function getActions()
     {
         return [
-            new Action('Edit my information', 'admin/dashboard/user/'.$this->account->uid.'/edit', 'dialog', 'edit'),
+            new Action('Edit my information', 'admin/dashboard/user/edit_mine', 'dialog', 'edit'),
         ];
     }
 

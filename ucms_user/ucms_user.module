@@ -41,17 +41,13 @@ function ucms_user_menu() {
     'file'              => 'ucms_user.dashboard.inc',
   ];
 
-  $items['admin/dashboard/user/%user/edit'] = [
-    'title callback'   => 'ucms_user_menu_item_edit_title',
-    'title arguments'  => [3],
+  $items['admin/dashboard/user/edit_mine'] = [
     'title'            => 'Edit my account information',
     'page callback'    => 'sf_dic_page_form',
     'page arguments'   => ['MakinaCorpus\Ucms\User\Form\AccountEditForm', 3],
-    'access callback'  => 'ucms_user_access_manage',
-    'access arguments' => [UserAccess::PERM_MANAGE_ALL, 3],
+    'access callback'  => TRUE,
     'type'             => MENU_CALLBACK,
   ];
-
 
   $items['admin/dashboard/user/%user/view'] = [
     'title'             => 'View',
@@ -113,18 +109,6 @@ function ucms_user_menu_item_title($user) {
 }
 
 
-/**
- * Title callback for edit account menu item.
- */
-function ucms_user_menu_item_edit_title($account) {
-  global $user;
-
-  if ($user->uid == $account->uid) {
-    return t("Edit my account information");
-  }
-
-  return t("Edit @name's account information", ['@name' => $account->name]);
-}
 
 /**
  * Access callback for edit account form.
