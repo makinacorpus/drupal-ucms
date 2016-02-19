@@ -102,7 +102,7 @@ function ucms_user_menu() {
 
 
 /**
- * Title callback form menu items.
+ * Title callback for menu items.
  */
 function ucms_user_menu_item_title($user) {
   return t("User @name", ['@name' => $user->name]);
