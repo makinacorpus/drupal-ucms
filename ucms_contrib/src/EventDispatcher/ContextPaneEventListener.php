@@ -80,8 +80,8 @@ class ContextPaneEventListener
         }*/
 
         // Add node creation link
-        if (substr(current_path(), 0, 16) == 'admin/dashboard/') {
-            $contextPane->addActions($this->actionProvider->getActions('content'), $this->t("Create item"));
+        if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), ['content', 'media'])) {
+            $contextPane->addActions($this->actionProvider->getActions(arg(2)), $this->t("Create item"));
         }
     }
 }
