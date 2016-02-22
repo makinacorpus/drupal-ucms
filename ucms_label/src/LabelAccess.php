@@ -31,24 +31,19 @@ final class LabelAccess
     const OP_DELETE = 'delete';
 
     /**
-     * View operation
-     */
-    const OP_VIEW_LOG = 'view_log';
-
-    /**
      * Access site dashboard permission
      */
-    const PERM_ACCESS_DASHBOARD = 'access labels dashboard';
+    const PERM_ACCESS_DASHBOARD = 'labels dashboard access';
 
     /**
      * Edit locked labels
      */
-    const PERM_EDIT_LOCKED = 'edit locked labels';
+    const PERM_EDIT_LOCKED = 'labels edit locked';
 
     /**
      * Edit non locked labels only
      */
-    const PERM_EDIT_NON_LOCKED = 'edit non locked labels';
+    const PERM_EDIT_NON_LOCKED = 'labels edit non locked';
 
 }
 

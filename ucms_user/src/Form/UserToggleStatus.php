@@ -61,9 +61,11 @@ class UserToggleStatus extends FormBase
 
         $form_state->setTemporaryValue('user', $user);
 
-        $question = $user->status
-            ? $this->t("Do you really want to disable the user @name?", ['@name' => $user->name])
-            : $this->t("Do you really want to enable the user @name?", ['@name' => $user->name]);
+        if ($user->status) {
+            $question = $this->t("Do you really want to disable the user @name?", ['@name' => $user->name]);
+        } else {
+            $question = $this->t("Do you really want to enable the user @name?", ['@name' => $user->name]);
+        }
 
         return confirm_form($form, $question, 'admin/dashboard/user', '');
     }
@@ -74,23 +76,18 @@ class UserToggleStatus extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        try {
-            $user = $form_state->getTemporaryValue('user');
-            $user->status = $user->status ? 0 : 1;
+        $user = $form_state->getTemporaryValue('user');
+        $user->status = $user->status ? 0 : 1;
 
-            if (user_save($user)) {
-                if ($user->status) {
-                    drupal_set_message($this->t("User @name has been enabled.", array('@name' => $user->name)));
-                } else {
-                    drupal_set_message($this->t("User @name has been disabled.", array('@name' => $user->name)));
-                }
-                //$this->dispatcher->dispatch('user:toggle_status', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+        if (user_save($user)) {
+            if ($user->status) {
+                drupal_set_message($this->t("User @name has been enabled.", array('@name' => $user->name)));
             } else {
-                throw new \RuntimeException('Call to user_save() failed!');
+                drupal_set_message($this->t("User @name has been disabled.", array('@name' => $user->name)));
             }
-        }
-        catch (\Exception $e) {
-            drupal_set_message($this->t("An error occured during the record of the new @name's status. Please try again.", array('@name' => $user->name)), 'error');
+            //$this->dispatcher->dispatch('user:toggle_status', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+        } else {
+            drupal_set_message($this->t("An error occured. Please try again."), 'error');
         }
 
         $form_state->setRedirect('admin/dashboard/user');

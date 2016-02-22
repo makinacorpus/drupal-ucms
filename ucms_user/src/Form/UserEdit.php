@@ -147,60 +147,55 @@ class UserEdit extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        try {
-            $user = $form_state->getTemporaryValue('user');
-            $is_new = empty($user->uid);
+        $user = $form_state->getTemporaryValue('user');
+        $is_new = empty($user->uid);
 
-            // New user
+        // New user
+        if ($is_new) {
+            // Sets a password
+            require_once DRUPAL_ROOT . '/includes/password.inc';
+            $user->pass = user_hash_password(user_password(20));
+            // Ensure the user is disabled
+            $user->status = 0;
+        }
+
+        // Prepares user picture
+        $picture = reset($form_state->getValue('picture'));
+
+        if (!empty($picture->fid)) {
             if ($is_new) {
-                // Sets a password
-                require_once DRUPAL_ROOT . '/includes/password.inc';
-                $user->pass = user_hash_password(user_password(20));
-                // Ensure the user is disabled
-                $user->status = 0;
-            }
-
-            // Prepares user picture
-            $picture = reset($form_state->getValue('picture'));
-
-            if (!empty($picture->fid)) {
-                if ($is_new) {
-                    $form_state->setValue('picture', $picture->fid);
-                } else {
-                    $form_state->setValue('picture', $picture);
-                }
-            }
-            elseif (!empty($user->picture->fid)) {
-                $form_state->setValue('picture_delete', 1);
-            }
-
-            // Prepares user roles
-            $userRoles  = $form_state->getValue('roles', []);
-            $siteRoles  = $this->siteManager->getAccess()->getRelativeRoles();
-
-            foreach (array_keys($siteRoles) as $rid) {
-                if (isset($user->roles[$rid])) {
-                    $userRoles[$rid] = true;
-                }
-            }
-
-            $form_state->setValue('roles', $userRoles);
-
-            // Saves the user
-            if (user_save($user, $form_state->getValues())) {
-                if ($is_new) {
-                    drupal_set_message($this->t("The new user @name has been created.", array('@name' => $user->name)));
-                    //$this->dispatcher->dispatch('user:add', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
-                } else {
-                    drupal_set_message($this->t("The user @name has been updated.", array('@name' => $user->name)));
-                    //$this->dispatcher->dispatch('user:edit', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
-                }
+                $form_state->setValue('picture', $picture->fid);
             } else {
-                throw new \RuntimeException('Call to user_save() failed!');
+                $form_state->setValue('picture', $picture);
             }
         }
-        catch (\Exception $e) {
-            drupal_set_message($this->t("An error occured during the edition of the user @name. Please try again.", array('@name' => $user->name)), 'error');
+        elseif (!empty($user->picture->fid)) {
+            $form_state->setValue('picture_delete', 1);
+        }
+
+        // Prepares user roles
+        $userRoles  = $form_state->getValue('roles', []);
+        $siteRoles  = $this->siteManager->getAccess()->getRelativeRoles();
+
+        foreach (array_keys($siteRoles) as $rid) {
+            if (isset($user->roles[$rid])) {
+                $userRoles[$rid] = true;
+            }
+        }
+
+        $form_state->setValue('roles', $userRoles);
+
+        // Saves the user
+        if (user_save($user, $form_state->getValues())) {
+            if ($is_new) {
+                drupal_set_message($this->t("The new user @name has been created.", array('@name' => $user->name)));
+                //$this->dispatcher->dispatch('user:add', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+            } else {
+                drupal_set_message($this->t("The user @name has been updated.", array('@name' => $user->name)));
+                //$this->dispatcher->dispatch('user:edit', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+            }
+        } else {
+            drupal_set_message($this->t("An error occured. Please try again."), 'error');
         }
 
         $form_state->setRedirect('admin/dashboard/user');

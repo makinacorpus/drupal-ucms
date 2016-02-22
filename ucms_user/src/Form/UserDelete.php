@@ -71,15 +71,10 @@ class UserDelete extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        try {
-            $user = $form_state->getTemporaryValue('user');
-            user_delete($user->uid);
-            drupal_set_message($this->t("User @name has been deleted.", array('@name' => $user->name)));
-            //$this->dispatcher->dispatch('user:delete', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
-        }
-        catch (\Exception $e) {
-            drupal_set_message($this->t("An error occured during the deletion of the user @name. Please try again.", array('@name' => $user->name)), 'error');
-        }
+        $user = $form_state->getTemporaryValue('user');
+        user_delete($user->uid);
+        drupal_set_message($this->t("User @name has been deleted.", array('@name' => $user->name)));
+        //$this->dispatcher->dispatch('user:delete', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
 
         $form_state->setRedirect('admin/dashboard/user');
     }

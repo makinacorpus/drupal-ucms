@@ -10,5 +10,5 @@ final class UserAccess
     /**
      * Manage all users: access dashboard, create, edit, delete, etc...
      */
-    const PERM_MANAGE_ALL = 'manage all users';
+    const PERM_MANAGE_ALL = 'users manage all';
 }

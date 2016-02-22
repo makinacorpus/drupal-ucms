@@ -71,21 +71,16 @@ class UserResetPassword extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        try {
-            require_once DRUPAL_ROOT . '/includes/password.inc';
-            
-            $user = $form_state->getTemporaryValue('user');
-            $user->pass = user_hash_password(user_password(20));
+        require_once DRUPAL_ROOT . '/includes/password.inc';
 
-            if (user_save($user)) {
-                drupal_set_message($this->t("@name's password has been resetted.", array('@name' => $user->name)));
-                //$this->dispatcher->dispatch('user:reset_password', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
-            } else {
-                throw new \RuntimeException('Call to user_save() failed!');
-            }
-        }
-        catch (\Exception $e) {
-            drupal_set_message($this->t("An error occured during resetting the password of the user @name. Please try again.", array('@name' => $user->name)), 'error');
+        $user = $form_state->getTemporaryValue('user');
+        $user->pass = user_hash_password(user_password(20));
+
+        if (user_save($user)) {
+            drupal_set_message($this->t("@name's password has been resetted.", array('@name' => $user->name)));
+            //$this->dispatcher->dispatch('user:reset_password', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+        } else {
+            drupal_set_message($this->t("An error occured. Please try again."), 'error');
         }
 
         $form_state->setRedirect('admin/dashboard/user');

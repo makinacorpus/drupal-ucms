@@ -98,19 +98,14 @@ class UserChangeEmail extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        try {
-            $user = $form_state->getTemporaryValue('user');
-            $user->mail = $form_state->getValue('mail');
+        $user = $form_state->getTemporaryValue('user');
+        $user->mail = $form_state->getValue('mail');
 
-            if (user_save($user)) {
-                drupal_set_message($this->t("@name's email address has been changed.", array('@name' => $user->name)));
-                //$this->dispatcher->dispatch('user:change_mail', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
-            } else {
-                throw new \RuntimeException('Call to user_save() failed!');
-            }
-        }
-        catch (\Exception $e) {
-            drupal_set_message($this->t("An error occured during the record of the new @name's email address. Please try again.", array('@name' => $user->name)), 'error');
+        if (user_save($user)) {
+            drupal_set_message($this->t("@name's email address has been changed.", array('@name' => $user->name)));
+            //$this->dispatcher->dispatch('user:change_mail', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+        } else {
+            drupal_set_message($this->t("An error occured. Please try again."), 'error');
         }
 
         $form_state->setRedirect('admin/dashboard/user');
