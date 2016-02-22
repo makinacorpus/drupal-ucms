@@ -6,7 +6,7 @@ namespace MakinaCorpus\Ucms\User\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -73,8 +73,9 @@ class UserDelete extends FormBase
     {
         $user = $form_state->getTemporaryValue('user');
         user_delete($user->uid);
+
         drupal_set_message($this->t("User @name has been deleted.", array('@name' => $user->name)));
-        //$this->dispatcher->dispatch('user:delete', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+        //$this->dispatcher->dispatch('user:delete', new UserEvent($user->uid, $this->currentUser()->uid));
 
         $form_state->setRedirect('admin/dashboard/user');
     }

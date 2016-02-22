@@ -6,7 +6,7 @@ namespace MakinaCorpus\Ucms\User\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -103,7 +103,7 @@ class UserChangeEmail extends FormBase
 
         if (user_save($user)) {
             drupal_set_message($this->t("@name's email address has been changed.", array('@name' => $user->name)));
-            //$this->dispatcher->dispatch('user:change_mail', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+            $this->dispatcher->dispatch('user:change_email', new UserEvent($user->uid, $this->currentUser()->uid));
         } else {
             drupal_set_message($this->t("An error occured. Please try again."), 'error');
         }

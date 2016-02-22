@@ -6,8 +6,8 @@ namespace MakinaCorpus\Ucms\User\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -189,10 +189,10 @@ class UserEdit extends FormBase
         if (user_save($user, $form_state->getValues())) {
             if ($is_new) {
                 drupal_set_message($this->t("The new user @name has been created.", array('@name' => $user->name)));
-                //$this->dispatcher->dispatch('user:add', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+                $this->dispatcher->dispatch('user:add', new UserEvent($user->uid, $this->currentUser()->uid));
             } else {
                 drupal_set_message($this->t("The user @name has been updated.", array('@name' => $user->name)));
-                //$this->dispatcher->dispatch('user:edit', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
+                $this->dispatcher->dispatch('user:edit', new UserEvent($user->uid, $this->currentUser()->uid));
             }
         } else {
             drupal_set_message($this->t("An error occured. Please try again."), 'error');

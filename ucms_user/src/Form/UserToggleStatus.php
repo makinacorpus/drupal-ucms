@@ -6,7 +6,7 @@ namespace MakinaCorpus\Ucms\User\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -82,10 +82,11 @@ class UserToggleStatus extends FormBase
         if (user_save($user)) {
             if ($user->status) {
                 drupal_set_message($this->t("User @name has been enabled.", array('@name' => $user->name)));
+                $this->dispatcher->dispatch('user:enable', new UserEvent($user->uid, $this->currentUser()->uid));
             } else {
                 drupal_set_message($this->t("User @name has been disabled.", array('@name' => $user->name)));
+                $this->dispatcher->dispatch('user:disable', new UserEvent($user->uid, $this->currentUser()->uid));
             }
-            //$this->dispatcher->dispatch('user:toggle_status', new ResourceEvent('user', $user->uid, $this->currentUser()->uid));
         } else {
             drupal_set_message($this->t("An error occured. Please try again."), 'error');
         }

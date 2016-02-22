@@ -4,6 +4,7 @@ services:
     class: MakinaCorpus\Ucms\Notification\NotificationService
     arguments: ["@apb.notification", "@entity.manager"]
 
+  # Site notifications
   ucms_notification.site_request:
     class: MakinaCorpus\Ucms\Notification\Formatter\SiteRequest
     arguments: ["@ucms_site.manager"]
@@ -14,6 +15,32 @@ services:
     arguments: ["@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "site:switch", auto: true, channels: "admin:site" }]
 
+  # User notifications
+  ucms_notification.user_add:
+    class: MakinaCorpus\Ucms\Notification\Formatter\UserAdd
+    tags: [{ name: apb.notification.formatter, event: "user:add", auto: true, channels: "admin:client" }]
+
+  ucms_notification.user_edit:
+    class: MakinaCorpus\Ucms\Notification\Formatter\UserEdit
+    tags: [{ name: apb.notification.formatter, event: "user:edit", auto: true, channels: "admin:client" }]
+
+  ucms_notification.user_enable:
+    class: MakinaCorpus\Ucms\Notification\Formatter\UserEnable
+    tags: [{ name: apb.notification.formatter, event: "user:enable", auto: true, channels: "admin:client" }]
+
+  ucms_notification.user_disable:
+    class: MakinaCorpus\Ucms\Notification\Formatter\UserDisable
+    tags: [{ name: apb.notification.formatter, event: "user:disable", auto: true, channels: "admin:client" }]
+
+  ucms_notification.user_change_email:
+    class: MakinaCorpus\Ucms\Notification\Formatter\UserChangeEmail
+    tags: [{ name: apb.notification.formatter, event: "user:change_email", auto: true, channels: "admin:client" }]
+
+  ucms_notification.user_reset_password:
+    class: MakinaCorpus\Ucms\Notification\Formatter\UserResetPassword
+    tags: [{ name: apb.notification.formatter, event: "user:reset_password", auto: true, channels: "admin:client" }]
+
+  # Context pane event listener
   ucms_notification.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_layout.context"]
