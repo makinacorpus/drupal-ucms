@@ -9,8 +9,8 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 class SitesPortlet extends AbstractPortlet
@@ -18,9 +18,9 @@ class SitesPortlet extends AbstractPortlet
     use StringTranslationTrait;
 
     /**
-     * @var AccountInterface
+     * @var \DatabaseConnection
      */
-    private $account;
+    private $db;
 
     /**
      * @var SiteManager
@@ -28,18 +28,14 @@ class SitesPortlet extends AbstractPortlet
     private $siteManager;
 
     /**
-     * @var SiteAdminDatasource
-     */
-    private $dataSource;
-
-    /**
-     * SitePortlet constructor.
+     * Default constructor
+     *
      * @param \DatabaseConnection $db
      * @param SiteManager $siteManager
      */
     public function __construct(\DatabaseConnection $db, SiteManager $siteManager)
     {
-        $this->dataSource = new SiteAdminDatasource($db, $siteManager);
+        $this->db = $db;
         $this->siteManager = $siteManager;
     }
 
@@ -72,11 +68,15 @@ class SitesPortlet extends AbstractPortlet
      */
     public function getContent()
     {
-        $items = $this->dataSource->getItems([], 'ts_changed');
-        $states = SiteState::getList();
-        $rows = [];
+        $datasource = new SiteAdminDatasource($this->db, $this->siteManager);
+        $items      = $datasource->getItems([], 'ts_changed');
+        $states     = SiteState::getList();
+        $rows       = [];
+
         foreach ($items as $item) {
+            /* @var $item Site */
             $options = ['attributes' => ['class' => ['btn-sm']]];
+
             if ($item instanceof Site) {
                 if ($item->state == SiteState::ON) {
                     // $this->t("Go to site")
@@ -113,8 +113,6 @@ class SitesPortlet extends AbstractPortlet
      */
     public function userIsAllowed(AccountInterface $account)
     {
-        $this->account = $account;
-
-        return $this->account->hasPermission(Access::PERM_SITE_MANAGE_ALL);
+        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL);
     }
 }

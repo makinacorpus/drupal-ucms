@@ -4,14 +4,8 @@ namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 
-/**
- * Class Dashboard
- *
- * @package MakinaCorpus\Ucms\Dashboard\Dashboard
- */
 class PortletRegistry
 {
-
     /**
      * @var PortletInterface[]
      */
@@ -36,14 +30,16 @@ class PortletRegistry
      */
     public function getPortletsForAccount(AccountInterface $account)
     {
-        $portlets = [];
+        $ret = [];
+
         foreach ($this->getPortlets() as $id => $portlet) {
             if ($portlet->userIsAllowed($account)) {
-                $portlets[$id] = $portlet;
+                $portlet->setAccount($account);
+                $ret[$id] = $portlet;
             }
         }
 
-        return $portlets;
+        return $ret;
     }
 
     /**

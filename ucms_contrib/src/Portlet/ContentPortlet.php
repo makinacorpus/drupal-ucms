@@ -18,7 +18,8 @@ class ContentPortlet extends AbstractPortlet
     private $actionProvider;
 
     /**
-     * ContentPortlet constructor.
+     * Default constructor
+     *
      * @param ActionProviderInterface $actionProvider
      */
     public function __construct(ActionProviderInterface $actionProvider)

@@ -2,16 +2,41 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
+use Drupal\Core\Session\AccountInterface;
+
 abstract class AbstractPortlet implements PortletInterface
 {
     /**
-     * @return array Render array usable in twig
+     * @var AccountInterface
+     */
+    private $account;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAccount(AccountInterface $account)
+    {
+        $this->account = $account;
+    }
+
+    /**
+     * Get current account
+     *
+     * @return AccountInterface
+     */
+    protected function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function renderActions()
     {
         return [
-            '#theme' => 'ucms_dashboard_actions',
-            '#actions' => $this->getActions(),
+            '#theme'    => 'ucms_dashboard_actions',
+            '#actions'  => $this->getActions(),
         ];
     }
 }

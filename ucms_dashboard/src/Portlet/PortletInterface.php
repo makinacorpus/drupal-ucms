@@ -11,7 +11,6 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
  */
 interface PortletInterface
 {
-
     /**
      * Return the title of this portlet.
      *
@@ -36,7 +35,6 @@ interface PortletInterface
      *
      * @return []
      */
-    // @TODO Could be rendered in an Ajax reqest someday
     public function getContent();
 
     /**
@@ -48,4 +46,10 @@ interface PortletInterface
      */
     public function userIsAllowed(AccountInterface $account);
 
+    /**
+     * Set account to work with
+     *
+     * @param AccountInterface $account
+     */
+    public function setAccount(AccountInterface $account);
 }

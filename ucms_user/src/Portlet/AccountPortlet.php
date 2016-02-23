@@ -13,11 +13,6 @@ class AccountPortlet extends AbstractPortlet
     use StringTranslationTrait;
 
     /**
-     * @var AccountInterface
-     */
-    private $account;
-
-    /**
      * Return the title of this portlet.
      *
      * @return string
@@ -43,7 +38,7 @@ class AccountPortlet extends AbstractPortlet
     public function getActions()
     {
         return [
-            new Action('Edit my information', 'admin/dashboard/user/edit_mine', 'dialog', 'edit'),
+            new Action('Edit my information', 'admin/dashboard/user/my-account', 'dialog', 'edit'),
         ];
     }
 
@@ -53,33 +48,19 @@ class AccountPortlet extends AbstractPortlet
      */
     public function getContent()
     {
+        $items    = [];
+        $account  = $this->getAccount();
+
         // Prevent any modification of the global object
-        $items[] = [
-            $this->t('Username'),
-            check_plain(format_username($this->account)),
-        ];
+        $items[] = [$this->t('Username'), $account->getDisplayName()];
+        $items[] = [$this->t('E-mail'), $account->getEmail()];
 
+        $roles = $account->getRoles(true);
         $items[] = [
-            $this->t('E-mail'),
-            $this->account->mail,
-        ];
-
-        $items[] = [
-            $this->formatPlural(count($this->account->roles), 'Role', 'Roles'),
+            $this->formatPlural(count($roles), 'Role', 'Roles'),
             [
-                '#theme' => 'item_list',
-                '#items' => $this->account->roles,
-                '#attributes' => ['class' => 'list-unstyled'],
-            ],
-        ];
-
-        // TODO
-        $sites = ['@todo'];
-        $items[] = [
-            $this->formatPlural(count($sites), 'Site', 'Sites'),
-            [
-                '#theme' => 'item_list',
-                '#items' => $sites,
+                '#theme'      => 'item_list',
+                '#items'      => $roles,
                 '#attributes' => ['class' => 'list-unstyled'],
             ],
         ];

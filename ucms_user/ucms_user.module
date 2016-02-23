@@ -42,7 +42,7 @@ function ucms_user_menu() {
     'file'              => 'ucms_user.dashboard.inc',
   ];
 
-  $items['admin/dashboard/user/edit_mine'] = [
+  $items['admin/dashboard/user/my-account'] = [
     'title'            => 'Edit my account information',
     'page callback'    => 'sf_dic_page_form',
     'page arguments'   => ['MakinaCorpus\Ucms\User\Form\AccountEditForm', 3],
