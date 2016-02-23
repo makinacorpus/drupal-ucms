@@ -4,6 +4,8 @@
 namespace MakinaCorpus\Ucms\Label;
 
 
+use Drupal\Core\Session\AccountInterface;
+
 /**
  * Class to abstract functions of the taxonomy module.
  */
@@ -169,10 +171,10 @@ final class LabelManager
      * Is the user allowed to edit the given label?
      *
      * @param stdClass $label
-     * @param stdClass $account
+     * @param AccountInterface $account
      * @return boolean
      */
-    public function canEditLabel(\stdClass $label, \stdClass $account = null)
+    public function canEditLabel(\stdClass $label, AccountInterface $account = null)
     {
         if ($account === null) {
             global $user;
@@ -188,10 +190,10 @@ final class LabelManager
     /**
      * Is the user allowed to edit all labels (i.e. locked and non locked labels)?
      *
-     * @param stdClass $account
+     * @param AccountInterface $account
      * @return boolean
      */
-    public function canEditAllLabels(\stdClass $account = null)
+    public function canEditAllLabels(AccountInterface $account = null)
     {
         if ($account === null) {
             global $user;
@@ -208,10 +210,10 @@ final class LabelManager
     /**
      * Is the user allowed to edit locked labels?
      *
-     * @param stdClass $account
+     * @param AccountInterface $account
      * @return boolean
      */
-    public function canEditLockedLabels(\stdClass $account = null)
+    public function canEditLockedLabels(AccountInterface $account = null)
     {
         if ($account === null) {
             global $user;
@@ -225,10 +227,10 @@ final class LabelManager
     /**
      * Is the user allowed to edit non locked labels?
      *
-     * @param stdClass $account
+     * @param AccountInterface $account
      * @return boolean
      */
-    public function canEditNonLockedLabels(\stdClass $account = null)
+    public function canEditNonLockedLabels(AccountInterface $account = null)
     {
         if ($account === null) {
             global $user;
