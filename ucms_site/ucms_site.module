@@ -76,7 +76,7 @@ function ucms_site_menu() {
     'type'              => MENU_LOCAL_TASK,
     'file'              => 'ucms_site.dashboard.inc',
   ];
-  $items['admin/dashboard/site/%ucms_site/webmasters'] = [
+  $items['admin/dashboard/site/%ucms_site/webmaster'] = [
     'title'             => "Webmasters",
     'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
     'page arguments'    => [3],
@@ -84,28 +84,41 @@ function ucms_site_menu() {
     'access arguments'  => [3],
     'type'              => MENU_LOCAL_TASK,
     'file'              => 'ucms_site.dashboard.inc',
+  ];
+  $items['admin/dashboard/site/%ucms_site/webmaster/add'] = [
+    'title'             => "Webmasters",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAdd', 3],
+    'access callback'   => 'ucms_site_menu_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK,
   ];
   /*
-  $items['admin/dashboard/site/%ucms_site/webmasters/add'] = [
+  $items['admin/dashboard/site/%ucms_site/webmaster/%user/promote'] = [
     'title'             => "Webmasters",
-    'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
-    'page arguments'    => [3],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterPromote', 3, 5],
     'access callback'   => 'ucms_site_menu_access_manage',
     'access arguments'  => [3],
-    'type'              => MENU_LOCAL_TASK,
-    'file'              => 'ucms_site.dashboard.inc',
+    'type'              => MENU_CALLBACK,
   ];
-  $items['admin/dashboard/site/%ucms_site/webmasters/remove/%'] = [
+  $items['admin/dashboard/site/%ucms_site/webmaster/%user/demote'] = [
     'title'             => "Webmasters",
-    'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
-    'page arguments'    => [3],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterDemote', 3, 5],
     'access callback'   => 'ucms_site_menu_access_manage',
     'access arguments'  => [3],
-    'type'              => MENU_LOCAL_TASK,
-    'file'              => 'ucms_site.dashboard.inc',
+    'type'              => MENU_CALLBACK,
   ];
-   */
-
+  $items['admin/dashboard/site/%ucms_site/webmaster/%user/delete'] = [
+    'title'             => "Webmasters",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterDelete', 3, 5],
+    'access callback'   => 'ucms_site_menu_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK,
+  ];
+  */
   $items['admin/dashboard/site/%ucms_site/edit'] = [
     'title'             => "Site edit",
     'page callback'     => 'sf_dic_page_form',
@@ -131,6 +144,13 @@ function ucms_site_menu() {
     'access callback'   => 'ucms_site_menu_access_switch',
     'access arguments'  => [3, 5],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/site/users-ac'] = [
+    'title'             => "Users autocompletion",
+    'page callback'     => 'ucms_site_dashboard_users_autocomplete',
+    'access callback'   => true,
+    'type'              => MENU_CALLBACK,
+    'file'              => 'ucms_site.dashboard.inc',
   ];
 
   $items['node/%node/reference'] = [

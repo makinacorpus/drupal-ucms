@@ -8,6 +8,7 @@ use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Page\SiteAdminDisplay;
+use MakinaCorpus\Ucms\Site\Page\WebmasterAdminDisplay;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -24,6 +25,7 @@ function ucms_site_dashboard_site_list_all() {
   ;
 }
 
+
 /**
  * My sites list page.
  */
@@ -38,6 +40,7 @@ function ucms_site_dashboard_site_list_mine() {
     ->render(drupal_get_query_parameters(), current_path())
   ;
 }
+
 
 /**
  * All sites list page.
@@ -58,6 +61,7 @@ function ucms_site_dashboard_site_list_archive() {
     ->render(drupal_get_query_parameters(), current_path())
   ;
 }
+
 
 /**
  * Site page details
@@ -113,6 +117,7 @@ function ucms_site_dashboard_site_page_view(Site $site) {
   return $ret;
 }
 
+
 function ucms_site_dashboard_site_page_log(Site $site) {
 
   try {
@@ -132,6 +137,44 @@ function ucms_site_dashboard_site_page_log(Site $site) {
   return [];
 }
 
+
+/**
+ * Site's webmasters (and contributors) listing page.
+ *
+ * @param Site $site
+ * @return []
+ */
 function ucms_site_dashboard_site_page_webmasters(Site $site) {
-  return [];
+  $datasource = \Drupal::service('ucms_site.admin.webmaster_datasource');
+  $display    = new WebmasterAdminDisplay(t("There is no webmaster or contributor yet."));
+
+  $page   = ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site', 'webmaster']);
+  $query  = ['site_id' => $site->id];
+
+  return $page->setBaseQuery($query)->render(drupal_get_query_parameters(), current_path());
+}
+
+
+/**
+ * Callback for autocompletion on users' names.
+ *
+ * @param string $input
+ * @return string[]
+ */
+function ucms_site_dashboard_users_autocomplete($input) {
+  $query = db_select('users', 'u')
+    ->fields('u', array('uid', 'name'))
+    ->condition('u.name', '%' . db_like($input) . '%', 'LIKE')
+    ->condition('u.uid', [0, 1], 'NOT IN')
+    ->range(0, 10);
+
+  $suggest = [];
+
+  foreach ($query->execute()->fetchAll() as $record) {
+    $key = $record->name . ' [' . $record->uid . ']';
+    $suggest[$key] = check_plain($record->name);
+  }
+
+  drupal_json_output($suggest);
+  exit();
 }

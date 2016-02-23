@@ -31,6 +31,10 @@ services:
     class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
     arguments: ["@database", "@ucms_site.manager"]
 
+  ucms_site.admin.webmaster_datasource:
+    class: MakinaCorpus\Ucms\Site\Page\WebmasterAdminDatasource
+    arguments: ["@database", "@ucms_site.manager"]
+
   ucms_site.site_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider
@@ -41,6 +45,12 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\NodeActionProvider
     arguments: ["@ucms_site.node_access_helper", "@current_user"]
+    tags: [{name: ucms_dashboard.action_provider}]
+
+  ucms_site.webmaster_action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\Site\Action\WebmasterActionProvider
+    arguments: ["@ucms_site.manager"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_site.context_pane_event_listener:

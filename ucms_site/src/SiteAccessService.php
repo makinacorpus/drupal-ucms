@@ -630,7 +630,7 @@ class SiteAccessService
      *
      * @return SiteAccessRecord[]
      */
-    private function listUsersWithRole(Site $site, $role = null, $limit = 100, $offset = 0)
+    public function listUsersWithRole(Site $site, $role = null, $limit = 100, $offset = 0)
     {
         $q = $this
             ->db
@@ -658,6 +658,34 @@ class SiteAccessService
         $r->setFetchMode(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\SiteAccessRecord');
 
         return $r->fetchAll();
+    }
+
+    /**
+     * Count users having a specific role.
+     * If role is null, count all users.
+     *
+     * @param Site $site
+     * @param int $role
+     *
+     * @return int
+     */
+    public function countUsersWithRole(Site $site, $role = null)
+    {
+        /* @var $q \SelectQuery */
+        $q = $this->db
+            ->select('ucms_site_access', 'u')
+            ->condition('u.site_id', $site->id);
+
+        if ($role) {
+            $q->condition('u.role', $role);
+        }
+
+        $q->addExpression('COUNT(*)');
+
+        /* @var $r \PDOStatement */
+        $r = $q->execute();
+
+        return $r->fetchField();
     }
 
     /**
