@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-use Monolog\Handler\MandrillHandler;
 
 /**
  * Drupal ACL builder for usage with node_access() related hooks
@@ -27,6 +26,11 @@ class NodeAccessService
     const REALM_READONLY = 'ucms_site_ro';
 
     /**
+     * Grants for content owner in local repositories
+     */
+    const REALM_SITE_SELF = 'ucms_site_self';
+
+    /**
      * Grants for people accessing the dashboard
      */
     const REALM_GLOBAL_VIEW = 'ucms_global_view';
@@ -40,6 +44,11 @@ class NodeAccessService
      * Grants for global non editable locked content
      */
     const REALM_GLOBAL_LOCKED = 'ucms_global_locked';
+
+    /**
+     * Grants for content owner in global repository
+     */
+    const REALM_GLOBAL_SELF = 'ucms_global_self';
 
     /**
      * Default group identifier for grants where it does not make sense
@@ -277,13 +286,14 @@ class NodeAccessService
      */
     public function canUserAccess($node, $op, $account)
     {
+        $access = $this->manager->getAccess();
+
         if (is_string($node)) {
             if ('create' === $op) {
 
                 // @todo
                 //   - check for "hidden" content types, like home pages
 
-                $access = $this->manager->getAccess();
                 $site   = $this->manager->getContext();
 
                 if ($site) {
@@ -311,6 +321,20 @@ class NodeAccessService
             foreach ($grants as $realm => $gids) {
                 if ($realm === $record['realm'] && in_array($record['gid'], $gids)) {
                     return NODE_ACCESS_ALLOW;
+                }
+            }
+        }
+
+        // For some reasons, and because we don't care about the 'update'
+        // operation in listings, we are going to hardcode a few behaviors
+        // in this method, which won't affect various listings
+        if ('update' === $op && $account->uid && $node->uid == $account->uid) {
+            if ($node->ucms_sites) {
+                // Site contributors can update their own content in sites
+                foreach ($access->getUserRoles($account->uid) as $grant) {
+                    if (in_array($grant->getSiteId(), $node->ucms_sites)) {
+                        return NODE_ACCESS_ALLOW;
+                    }
                 }
             }
         }

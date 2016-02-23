@@ -674,6 +674,23 @@ class NodeAccessTest extends AbstractDrupalTest
         ;
     }
 
+    public function testContributorCanEditHisOwnContent()
+    {
+        $this->whenIAm([], ['off' => Access::ROLE_CONTRIB]);
+        $contibutor = $this->contextualAccount;
+
+        // Site the user is into with content belonging to him
+        $this->getNode('site_off_unpublished')->setOwnerId($contibutor->id());
+        // Site the user is into, but belonging to another user
+        $this->getNode('site_off_published')->setOwnerId(1);
+        // Another site the user is not into, should not be able to edit
+        $this->getNode('site_on_published')->setOwnerId($contibutor->id());
+
+        $this->canEdit('site_off_unpublished');
+        $this->canNotEdit('site_off_published');
+        $this->canNotEdit('site_on_published');
+    }
+
     public function testAnonymousRights()
     {
         $this
