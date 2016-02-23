@@ -493,13 +493,14 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        return $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId);
+        return $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)
+            || $this->userIsWebmaster($site, $userId);
     }
 
     /**
      * Can the given user switch the given site to the given state
      *
-     * @param Site $iste
+     * @param Site $site
      * @param int $state
      * @param int $userId
      *
