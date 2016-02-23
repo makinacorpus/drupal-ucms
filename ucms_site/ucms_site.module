@@ -119,7 +119,6 @@ function ucms_site_menu() {
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK,
   ];
-  /*
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/promote'] = [
     'title'             => "Promote user as webmaster",
     'page callback'     => 'sf_dic_page_form',
@@ -144,7 +143,7 @@ function ucms_site_menu() {
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK,
   ];
-  */
+
   $items['admin/dashboard/site/users-ac'] = [
     'title'             => "Users autocompletion",
     'page callback'     => 'ucms_site_dashboard_users_autocomplete',
