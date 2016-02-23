@@ -10,7 +10,6 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\NodeAccessHelper;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
  * The site module will add node actions, corresponding to reference
@@ -21,11 +20,6 @@ class NodeActionProvider implements ActionProviderInterface
     use StringTranslationTrait;
 
     /**
-     * @var SiteManager
-     */
-    private $manager;
-
-    /**
      * @var NodeAccessHelper
      */
     private $nodeAccess;
@@ -33,11 +27,10 @@ class NodeActionProvider implements ActionProviderInterface
     /**
      * Default constructor
      *
-     * @param SiteManager $manager
+     * @param NodeAccessHelper $nodeAccess
      */
-    public function __construct(SiteManager $manager, NodeAccessHelper $nodeAccess)
+    public function __construct(NodeAccessHelper $nodeAccess)
     {
-        $this->manager = $manager;
         $this->nodeAccess = $nodeAccess;
     }
 
@@ -59,7 +52,7 @@ class NodeActionProvider implements ActionProviderInterface
         /* @var $item NodeInterface */
         $account = $this->getCurrentAccount();
 
-        if ($this->manager->getAccess()->userCanReference($item, $account->id())) {
+        if ($this->nodeAccess->userCanReference($item, $account)) {
             $ret[] = new Action($this->t("Reference it on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true);
         }
         if ($this->nodeAccess->canUserLock($item, $account)) {
@@ -69,6 +62,16 @@ class NodeActionProvider implements ActionProviderInterface
                 $ret[] = new Action($this->t("Unlock"), 'node/' . $item->nid . '/unlock', 'dialog', 'lock', 2, false, true);
             }
         }
+
+        /*
+         if ($item->access('clone')) {
+         $ret[] = new Action(t("Clone"), 'node/' . $item->nid . '/clone', null, 'dialog', 'save', 0, false, true);
+         }
+         if (!empty($item->is_clonable)) {
+         // ajouter au panier  permet d'ajouter le contenu au panier de l'utilisateur courant ;
+         // enlever du panier  permet d'enlever le contenu du panier de l'utilisateur courant ;
+         }
+         */
 
         return $ret;
     }

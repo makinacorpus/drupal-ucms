@@ -4,6 +4,8 @@
  * AJAX callbacks.
  */
 
+use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 
@@ -39,10 +41,11 @@ function ucms_layout_ajax_region_item_add($layout) {
   if (empty($query['nid'])) {
     return MENU_NOT_FOUND;
   }
+  /* @var $node NodeInterface */
   if (!$node = node_load($query['nid'])) {
     return MENU_NOT_FOUND;
   }
-  if (!node_access('view', $node)) {
+  if (!$node->access('view')) {
     return MENU_ACCESS_DENIED;
   }
   if (empty($query['view_mode'])) {
@@ -134,10 +137,11 @@ function ucms_layout_ajax_region_item_move($layout) {
   if (empty($query['nid'])) {
     return MENU_NOT_FOUND;
   }
+  /* @var $node NodeInterface */
   if (!$node = node_load($query['nid'])) {
     return MENU_NOT_FOUND;
   }
-  if (!node_access('view', $node)) {
+  if (!$node->access('view')) {
     return MENU_ACCESS_DENIED;
   }
   if (empty($query['view_mode'])) {

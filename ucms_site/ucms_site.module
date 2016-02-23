@@ -7,6 +7,8 @@
  *   - Implement variables overloading for site: name, home
  */
 
+use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessHelper;
 use MakinaCorpus\Ucms\Site\NodeDispatcher;
@@ -311,11 +313,11 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
 /**
  * Menu access check helper.
  */
-function ucms_site_menu_access_reference($node, $account = null) {
-  return node_access('view', $node, $account) && ucms_site_manager()
-    ->getAccess()
-    ->userCanReference($node, isset($account) ? $account->uid : null)
-  ;
+function ucms_site_menu_access_reference(NodeInterface $node, $account = null) {
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+  return $node->access('view', $account) && ucms_site_node_access_helper()->userCanReference($node, $account);
 }
 
 /**

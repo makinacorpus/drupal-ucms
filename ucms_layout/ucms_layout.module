@@ -19,6 +19,8 @@
  *   - unit testing (sorry should have done that earlier).
  */
 
+use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Layout\Context;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
@@ -292,8 +294,8 @@ function ucms_layout_page_build(&$page) {
     if ($nodeIdList) {
       $map = node_load_multiple($nodeIdList);
 
-      $map = array_filter($map, function ($node) {
-        return node_access('view', $node);
+      $map = array_filter($map, function (NodeInterface $node) {
+        return $node->access('view');
       });
 
       if (empty($map) && !$editMode) {

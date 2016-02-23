@@ -205,14 +205,14 @@ function ucms_contrib_menu_node_access_global() {
 /**
  * Menu access helper.
  */
-function ucms_contrib_menu_node_access_star($node) {
-  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED) && node_access('update', $node);
+function ucms_contrib_menu_node_access_star(NodeInterface $node) {
+  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED) && $node->access('update');
 }
 
 /**
  * Menu access helper.
  */
-function ucms_contrib_menu_node_access_lock($node) {
+function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
   return ucms_site_node_access_helper()->canUserLock($node, $GLOBALS['user']);
 }
 

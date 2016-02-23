@@ -301,6 +301,21 @@ class NodeAccessHelper
     }
 
     /**
+     * Can the user reference this node on one of his sites
+     *
+     * @param NodeInterface $node
+     * @param AccountInterface $account
+     *
+     * @return boolean
+     */
+    public function userCanReference(NodeInterface $node, AccountInterface $account)
+    {
+        // Let's say, from this very moment, that as long as the user can see
+        // the node he might want to add it on one of his sites
+        return true;
+    }
+
+    /**
      * Can user lock or unlock this node
      *
      * @param NodeInterface $node

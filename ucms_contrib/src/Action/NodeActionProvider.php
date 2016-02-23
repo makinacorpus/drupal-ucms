@@ -31,16 +31,6 @@ class NodeActionProvider implements ActionProviderInterface
             }
         }
 
-        /*
-        if (node_access('clone', $item)) {
-            $ret[] = new Action(t("Clone"), 'node/' . $item->nid . '/clone', null, 'dialog', 'save', 0, false, true);
-        }
-        if (!empty($item->is_clonable)) {
-            // ajouter au panier  permet d'ajouter le contenu au panier de l'utilisateur courant ;
-            // enlever du panier  permet d'enlever le contenu du panier de l'utilisateur courant ;
-        }
-         */
-
         if (empty($item->is_flagged)) {
             $ret[] = new Action(t("Flag as inappropriate"), 'node/' . $item->id() . '/report', 'dialog', 'flag', 0, false, true);
         } else {

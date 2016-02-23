@@ -366,21 +366,6 @@ class SiteAccessService
     }
 
     /**
-     * Can the user reference this node on one of his sites
-     *
-     * @param NodeInterface $node
-     * @param int $userId
-     *
-     * @return boolean
-     */
-    public function userCanReference(NodeInterface $node, $userId)
-    {
-        // Let's say, from this very moment, that as long as the user can see
-        // the node he might want to add it on one of his sites
-        return true;
-    }
-
-    /**
      * Can the given user view the given site
      *
      * @param Site $site
