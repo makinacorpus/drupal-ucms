@@ -88,10 +88,10 @@ class SitesPortlet extends AbstractPortlet
                 if ($item->state == SiteState::ON) {
                     // $this->t("Go to site")
                     $options += ['absolute' => true];
-                    $action = new Action("", $item->http_host, $options, 'share-alt');
+                    $action = new Action("", 'sso/goto/' . $item->id, $options, 'share-alt');
                 } else {
                     // $this->t("Go to request")
-                    $action = new Action("", 'admin/dashboard/site/'.$item->id, $options, 'edit');
+                    $action = new Action("", 'admin/dashboard/site/' . $item->id, $options, 'eye-open');
                 }
                 $rows[] = [
                     check_plain($item->title_admin),
