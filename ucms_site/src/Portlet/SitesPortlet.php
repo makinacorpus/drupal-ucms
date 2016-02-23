@@ -6,19 +6,14 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Portlet\Portlet;
+use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 
-/**
- * Class SitesPortlet
- *
- * @package MakinaCorpus\Ucms\Site\Dashboard
- */
-class SitesPortlet extends Portlet
+class SitesPortlet extends AbstractPortlet
 {
     use StringTranslationTrait;
 

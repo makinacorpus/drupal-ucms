@@ -6,13 +6,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Portlet\Portlet;
+use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
 
-/**
- * Class AccountPortlet
- * @package MakinaCorpus\Ucms\User\Dashboard
- */
-class AccountPortlet extends Portlet
+class AccountPortlet extends AbstractPortlet
 {
     use StringTranslationTrait;
 

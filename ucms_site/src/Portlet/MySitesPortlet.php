@@ -6,16 +6,11 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Portlet\Portlet;
+use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-/**
- * Class SitesPortlet
- *
- * @package MakinaCorpus\Ucms\Site\Dashboard
- */
-class MySitesPortlet extends Portlet
+class MySitesPortlet extends AbstractPortlet
 {
     use StringTranslationTrait;
 

@@ -2,12 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
-
-/**
- * Class DashboardPortlet
- * @package MakinaCorpus\Ucms\Dashboard\Dashboard
- */
-abstract class Portlet implements PortletInterface
+abstract class AbstractPortlet implements PortletInterface
 {
     /**
      * @return array Render array usable in twig
