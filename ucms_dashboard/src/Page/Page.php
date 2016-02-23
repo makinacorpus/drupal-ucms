@@ -111,6 +111,7 @@ class Page
     public function render($query = [], $route = '/')
     {
         $query = $this->buildQuery($query);
+        //$state = new PageState();
         $fixedQuery = LinksFilterDisplay::fixQuery($query); // @todo this is ugly
 
         $this->datasource->init($fixedQuery);

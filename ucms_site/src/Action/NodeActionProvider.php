@@ -48,7 +48,7 @@ class NodeActionProvider implements ActionProviderInterface
         $ret = [];
 
         /* @var $item NodeInterface */
-        $account = $this->currentUser();
+        $account = $this->currentUser;
 
         if ($this->nodeAccess->canUserReference($item, $account)) {
             $ret[] = new Action($this->t("Reference it on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true);
