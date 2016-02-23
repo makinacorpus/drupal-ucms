@@ -8,7 +8,10 @@
  */
 
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\NodeAccessHelper;
+use MakinaCorpus\Ucms\Site\NodeDispatcher;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
@@ -218,7 +221,7 @@ function ucms_site_theme() {
 /**
  * Get site manager service.
  *
- * @return \MakinaCorpus\Ucms\Site\SiteManager
+ * @return SiteManager
  */
 function ucms_site_manager() {
   return \Drupal::service('ucms_site.manager');
@@ -227,10 +230,19 @@ function ucms_site_manager() {
 /**
  * Get site manager service.
  *
- * @return \MakinaCorpus\Ucms\Site\NodeDispatcher
+ * @return NodeDispatcher
  */
 function ucms_site_node_dispatcher() {
   return \Drupal::service('ucms_site.node_dispatcher');
+}
+
+/**
+ * Get node access helper.
+ *
+ * @return NodeAccessHelper
+ */
+function ucms_site_node_access_helper() {
+  return \Drupal::service('ucms_site.node_access_helper');
 }
 
 /**
@@ -557,21 +569,21 @@ function ucms_site_node_delete($node) {
  * Implements hook_node_access().
  */
 function ucms_site_node_access($node, $op, $account) {
-  return \Drupal::service('ucms_site.node_access_helper')->canUserAccess($node, $op, $account);
+  return ucms_site_node_access_helper()->canUserAccess($node, $op, $account);
 }
 
 /**
  * Implements hook_node_access_records().
  */
 function ucms_site_node_access_records($node) {
-  return \Drupal::service('ucms_site.node_access_helper')->getNodeGrants($node);
+  return ucms_site_node_access_helper()->getNodeGrants($node);
 }
 
 /**
  * Implements hook_node_grants().
  */
 function ucms_site_node_grants($account, $op) {
-  return \Drupal::service('ucms_site.node_access_helper')->getUserGrants($account, $op);
+  return ucms_site_node_access_helper()->getUserGrants($account, $op);
 }
 
 /**

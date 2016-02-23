@@ -213,7 +213,7 @@ function ucms_contrib_menu_node_access_star($node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_lock($node) {
-  return \Drupal::service('ucms_site.node_access_helper')->canUserLock($node, $GLOBALS['user']);
+  return ucms_site_node_access_helper()->canUserLock($node, $GLOBALS['user']);
 }
 
 /**
