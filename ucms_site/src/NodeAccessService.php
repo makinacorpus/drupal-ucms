@@ -294,7 +294,7 @@ class NodeAccessService
                 // @todo
                 //   - check for "hidden" content types, like home pages
 
-                $site   = $this->manager->getContext();
+                $site = $this->manager->getContext();
 
                 if ($site) {
                     if ($access->userIsContributor($site, $account->uid) || $access->userIsWebmaster($site, $account->uid)) {

@@ -7,6 +7,7 @@ use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 
 class PrivateNodeDataSource extends AbstractDatasource
 {
@@ -103,19 +104,18 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC)
+    public function getItems($query, PageState $pageState)
     {
-        $limit = 24;
-
         $response = $this
             ->search
+            ->setPageParameter($pageState->getPageParameter())
             ->addField('_id')
-            ->setLimit($limit)
+            ->setLimit($pageState->getLimit())
             ->prepare($query)
             ->doSearch()
         ;
 
-        pager_default_initialize($response->getTotal(), $limit);
+        $pageState->setTotalItemCount($response->getTotal());
 
         return node_load_multiple($response->getAllNodeIdentifiers());
     }

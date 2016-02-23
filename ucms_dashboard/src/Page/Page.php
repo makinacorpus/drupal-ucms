@@ -111,7 +111,7 @@ class Page
     public function render($query = [], $route = '/')
     {
         $query = $this->buildQuery($query);
-        //$state = new PageState();
+        $state = new PageState();
         $fixedQuery = LinksFilterDisplay::fixQuery($query); // @todo this is ugly
 
         $this->datasource->init($fixedQuery);
@@ -133,14 +133,23 @@ class Page
             $this->display->setActionRegistry($this->actionRegistry);
         }
 
-        $items = $this
-            ->datasource
-            ->getItems(
-                $fixedQuery,
-                $sortManager->getCurrentField($fixedQuery),
-                $sortManager->getCurrentOrder($fixedQuery)
-            )
-        ;
+        // Build the page state gracefully, this uglyfies the code but it does
+        // help to reduce code within the datasources
+        $state->setSortField($sortManager->getCurrentField($fixedQuery));
+        $state->setSortOrder($sortManager->getCurrentOrder($fixedQuery));
+        if (empty($query[$state->getPageParameter()])) {
+            $state->setRange(24);
+        } else {
+            $state->setRange(24, $query[$state->getPageParameter()]);
+        }
+
+        $items = $this->datasource->getItems($fixedQuery, $state);
+ 
+        // Initialize pager only after the query has been run, datasource is
+        // responsible for setting the total count
+        if ($state->hasTotalItemCount()) {
+            pager_default_initialize($state->getTotalItemCount(), $state->getLimit());
+        }
 
         $build = [
             '#theme'      => $this->getThemeFunctionName('ucms_dashboard_page_list'),

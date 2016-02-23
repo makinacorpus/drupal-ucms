@@ -110,7 +110,7 @@ class QueryAlteredSearch extends Search
      */
     public function setPageParameter($parameterName)
     {
-        $this->pageParameterName = (float)$parameterName;
+        $this->pageParameterName = (string)$parameterName;
 
         return $this;
     }

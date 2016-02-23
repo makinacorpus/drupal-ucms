@@ -7,6 +7,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Label\LabelManager;
@@ -88,10 +89,8 @@ class LabelAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC)
+    public function getItems($query, PageState $pageState)
     {
-        $limit = 24;
-
         $q = $this->db->select('taxonomy_term_data', 't');
         $q->join('taxonomy_term_hierarchy', 'h', "h.tid = t.tid");
 
@@ -102,8 +101,8 @@ class LabelAdminDatasource extends AbstractDatasource
             $q->condition('t.is_locked', $query['status']);
         }
 
-        if ($sortField) {
-            $q->orderBy($sortField, SortManager::DESC === $sortOrder ? 'desc' : 'asc');
+        if ($pageState->hasSortField()) {
+            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
 
 //        $sParam = SearchForm::DEFAULT_PARAM_NAME;
@@ -115,9 +114,10 @@ class LabelAdminDatasource extends AbstractDatasource
             ->fields('t', ['tid'])
             ->condition('t.vid', $this->manager->getVocabularyId())
             ->extend('PagerDefault')
-            ->limit($limit)
+            ->limit($pageState->getLimit())
             ->execute()
-            ->fetchCol();
+            ->fetchCol()
+        ;
 
         return $this->manager->loadLabels($ids);
     }

@@ -6,6 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource;
@@ -69,9 +70,15 @@ class SitesPortlet extends AbstractPortlet
     public function getContent()
     {
         $datasource = new SiteAdminDatasource($this->db, $this->siteManager);
-        $items      = $datasource->getItems([], 'ts_changed');
+        $pageState  = new PageState();
         $states     = SiteState::getList();
         $rows       = [];
+
+        $pageState->setRange(6);
+        $pageState->setSortField('s.ts_changed');
+        $pageState->setSortOrder(PageState::SORT_DESC);
+
+        $items = $datasource->getItems([], $pageState);
 
         foreach ($items as $item) {
             /* @var $item Site */

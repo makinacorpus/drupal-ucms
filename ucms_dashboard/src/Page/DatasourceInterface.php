@@ -66,14 +66,12 @@ interface DatasourceInterface
      *
      * @param string[] $query
      *   Incomming query parameters
-     * @param string $sortField
-     *   Default sort field
-     * @param string $sortOrder
-     *   Default sort order
+     * @param PageState $pageState
+     *   Current page state
      *
      * @return mixed[]
      */
-    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC);
+    public function getItems($query, PageState $pageState);
 
     /**
      * Does this connector implements a full text search form

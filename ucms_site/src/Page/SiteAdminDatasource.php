@@ -6,6 +6,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -79,10 +80,8 @@ class SiteAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC)
+    public function getItems($query, PageState $pageState)
     {
-        $limit = 24;
-
         $q = $this->db->select('ucms_site', 's');
         $q->leftJoin('users', 'u', "u.uid = s.uid");
 
@@ -115,8 +114,8 @@ class SiteAdminDatasource extends AbstractDatasource
             }
         }
 
-        if ($sortField) {
-            $q->orderBy($sortField, SortManager::DESC === $sortOrder ? 'desc' : 'asc');
+        if ($pageState->hasSortField()) {
+            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
@@ -132,7 +131,7 @@ class SiteAdminDatasource extends AbstractDatasource
             ->fields('s', ['id'])
             ->groupBy('s.id')
             ->extend('PagerDefault')
-            ->limit($limit)
+            ->limit($pageState->getLimit())
             ->execute()
             ->fetchCol()
         ;

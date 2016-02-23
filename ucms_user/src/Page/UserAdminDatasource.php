@@ -8,6 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Site\SiteAccessService;
@@ -99,7 +100,7 @@ class UserAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, $sortField = null, $sortOrder = SortManager::DESC)
+    public function getItems($query, PageState $pageState)
     {
         $limit = 24;
 
@@ -113,8 +114,8 @@ class UserAdminDatasource extends AbstractDatasource
             $q->condition('ur.rid', $query['role']);
         }
 
-        if ($sortField) {
-            $q->orderBy($sortField, SortManager::DESC === $sortOrder ? 'desc' : 'asc');
+        if ($pageState->hasSortField()) {
+            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
@@ -127,7 +128,7 @@ class UserAdminDatasource extends AbstractDatasource
             ->condition('u.uid', 0, '!=')
             ->condition('u.uid', 1, '!=')
             ->extend('PagerDefault')
-            ->limit($limit)
+            ->limit($pageState->getLimit())
             ->execute()
             ->fetchCol();
 
