@@ -167,9 +167,9 @@ class DrupalStorage implements StorageInterface
             $row->site_id     = $layout->getSiteId();
             $row->nid         = $layout->getNodeId();
 
-            if (empty($row->nid)) {
+            /* if (empty($row->nid)) {
                 $row->nid = $GLOBALS['user']->nid;
-            }
+            } */
 
             if ($layout->getId()) {
                 drupal_write_record('ucms_layout', $row, ['id']);

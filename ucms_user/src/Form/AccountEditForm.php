@@ -27,8 +27,7 @@ class AccountEditForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        // @FIXME
-        $account = clone $GLOBALS['user'];
+        $account = $this->currentUser()->getAccount();
         $form_state->setTemporaryValue('account', $account);
 
         $form['name'] = array(

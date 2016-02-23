@@ -4,6 +4,7 @@
  * µCMS user management module.
  */
 
+use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\User\UserAccess;
@@ -163,15 +164,12 @@ function template_preprocess_ucms_user_profile(&$variables) {
     '#account' => $account,
   ];
 
-  // Details table
-  $manager = \Drupal::service('ucms_site.manager');
+  $manager = ucms_site_manager();
 
-  $roles = $account->roles;
-  if (isset($roles[DRUPAL_AUTHENTICATED_RID])) {
-    unset($roles[DRUPAL_AUTHENTICATED_RID]);
-  }
+  /* @var $account AccountInterface */
+  $roles = $account->getRoles(true);
 
-  $sites = $manager->loadWebmasterSites($account->uid);
+  $sites = $manager->loadWebmasterSites($account);
   $requests = [];
   foreach ($sites as $id => $site) {
     $uri = 'http://' . $site->http_host;

@@ -2,16 +2,12 @@
 
 namespace MakinaCorpus\Ucms\Notification\EventDispatcher;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\Context as LayoutContext;
 
-/**
- * Class ContextPaneEventListener
- *
- * @package MakinaCorpus\Ucms\Notification\EventDispatcher
- */
 class ContextPaneEventListener
 {
     use StringTranslationTrait;
@@ -22,13 +18,20 @@ class ContextPaneEventListener
     private $layoutContext;
 
     /**
+     * @var AccountInterface
+     */
+    private $currentUser;
+
+    /**
      * Default constructor
      *
      * @param LayoutContext $layoutContext
+     * @param AccountInterface $currentUser
      */
-    public function __construct(LayoutContext $layoutContext)
+    public function __construct(LayoutContext $layoutContext, AccountInterface $currentUser)
     {
         $this->layoutContext = $layoutContext;
+        $this->currentUser = $currentUser;
     }
 
     /**
@@ -42,7 +45,11 @@ class ContextPaneEventListener
 
         $contextPane
             ->addTab('notification', $this->t("Notifications"), 'bell')
-            ->add(notification_block_render($GLOBALS['user']), 'notification');
+            ->add(
+                notification_block_render($this->currentUser),
+                'notification'
+            )
+        ;
 
         // Set default tab on dashboard
         if (current_path() == 'admin/dashboard') {

@@ -25,21 +25,19 @@ class NodeActionProvider implements ActionProviderInterface
     private $nodeAccess;
 
     /**
+     * @var AccountInterface
+     */
+    private $currentUser;
+
+    /**
      * Default constructor
      *
      * @param NodeAccessService $nodeAccess
      */
-    public function __construct(NodeAccessService $nodeAccess)
+    public function __construct(NodeAccessService $nodeAccess, AccountInterface $currentUser)
     {
+        $this->currentUser = $currentUser;
         $this->nodeAccess = $nodeAccess;
-    }
-
-    /**
-     * @return AccountInterface
-     */
-    private function getCurrentAccount()
-    {
-        return $GLOBALS['user'];
     }
 
     /**
@@ -50,7 +48,7 @@ class NodeActionProvider implements ActionProviderInterface
         $ret = [];
 
         /* @var $item NodeInterface */
-        $account = $this->getCurrentAccount();
+        $account = $this->currentUser();
 
         if ($this->nodeAccess->canUserReference($item, $account)) {
             $ret[] = new Action($this->t("Reference it on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true);

@@ -10,10 +10,7 @@
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\NodeAccessService;
-use MakinaCorpus\Ucms\Site\NodeDispatcher;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
@@ -223,7 +220,7 @@ function ucms_site_theme() {
 /**
  * Get site manager service.
  *
- * @return SiteManager
+ * @return \MakinaCorpus\Ucms\Site\SiteManager
  */
 function ucms_site_manager() {
   return \Drupal::service('ucms_site.manager');
@@ -232,7 +229,7 @@ function ucms_site_manager() {
 /**
  * Get site manager service.
  *
- * @return NodeDispatcher
+ * @return \MakinaCorpus\Ucms\Site\NodeDispatcher
  */
 function ucms_site_node_dispatcher() {
   return \Drupal::service('ucms_site.node_dispatcher');
@@ -241,7 +238,7 @@ function ucms_site_node_dispatcher() {
 /**
  * Get node access helper.
  *
- * @return NodeAccessService
+ * @return \MakinaCorpus\Ucms\Site\NodeAccessService
  */
 function ucms_site_node_access_helper() {
   return \Drupal::service('ucms_site.node_access_helper');

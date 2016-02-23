@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\Session\AccountInterface;
+
 /**
  * Facade for using both site storage and site access helpers, that will also
  * carry the site wide configuration; this means to reduce the number of
@@ -40,17 +42,6 @@ final class SiteManager
         $this->storage = $storage;
         $this->access = $access;
         $this->db = $db;
-    }
-
-    /**
-     * Get current user identifier
-     *
-     * @return int
-     */
-    private function getCurrentUserId()
-    {
-        // FIXME: Inject it instead
-        return $GLOBALS['user']->uid;
     }
 
     /**
@@ -218,20 +209,16 @@ final class SiteManager
     /**
      * Load sites for which the user is webmaster
      *
-     * @param integer $userId
+     * @param AccountInterface $userId
      *
      * @return Site[]
      */
-    public function loadWebmasterSites($userId = null)
+    public function loadWebmasterSites(AccountInterface $account)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
         $roles = $this->getAccess()->getUserRoles($userId);
 
         foreach ($roles as $grant) {
-            if ($grant->getRole() != Access::ROLE_WEBMASTER) {
+            if ($grant->getRole() !== Access::ROLE_WEBMASTER) {
                 unset($roles[$grant->getSiteId()]);
             }
         }
