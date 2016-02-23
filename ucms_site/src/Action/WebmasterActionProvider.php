@@ -3,6 +3,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
@@ -22,35 +23,44 @@ class WebmasterActionProvider implements ActionProviderInterface
      */
     private $manager;
 
+    /**
+     * @var AccountInterface
+     */
+    private $currentUser;
+
 
     /**
      * Default constructor
      *
      * @param SiteManager $manager
      */
-    public function __construct(SiteManager $manager)
+    public function __construct(SiteManager $manager, AccountInterface $currentUser)
     {
         $this->manager = $manager;
+        $this->currentUser = $currentUser;
     }
 
 
     /**
      * {@inheritdoc}
+     * @param SiteAccessRecord $item
      */
     public function getActions($item)
     {
         $actions = [];
 
-        if ((int) $item->getRole() === Access::ROLE_WEBMASTER) {
-            $path = $this->buildWebmasterUri($item, 'demote');
-            $actions[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 10, true, true);
-        } else {
-            $path = $this->buildWebmasterUri($item, 'promote');
-            $actions[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 10, true, true);
-        }
+        if ($item->getUserId() != $this->currentUser->id()) {
+            if ((int) $item->getRole() === Access::ROLE_WEBMASTER) {
+                $path = $this->buildWebmasterUri($item, 'demote');
+                $actions[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 10, true, true);
+            } else {
+                $path = $this->buildWebmasterUri($item, 'promote');
+                $actions[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 10, true, true);
+            }
 
-        $path = $this->buildWebmasterUri($item, 'delete');
-        $actions[] = new Action($this->t("Delete from webmasters"), $path, 'dialog', 'trash', 20, true, true);
+            $path = $this->buildWebmasterUri($item, 'delete');
+            $actions[] = new Action($this->t("Delete from webmasters"), $path, 'dialog', 'trash', 20, true, true);
+        }
 
         return $actions;
     }
