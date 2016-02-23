@@ -424,6 +424,11 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
     UCMS_VIEW_MODE_FAVORITE     => UCMS_STYLE_FAVORITE,
   ];
 
+  // Only work on nodes.
+  if ($context['entity_type'] != 'node') {
+    return;
+  }
+
   // Force image style on content viewed in admin mode
   $image_found = FALSE;
   if (in_array($context['view_mode'], array_keys($mapping))) {
