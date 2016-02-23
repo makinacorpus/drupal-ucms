@@ -266,12 +266,12 @@ class NodeAccessService
                     if ($access->userCanView($site, $userId)) {
                         if (Access::ROLE_WEBMASTER == $grant->getRole()) {
                             if (SiteState::ARCHIVE === $site->state) {
-                                $ret[self::REALM_READONLY] = [$siteId];
+                                $ret[self::REALM_READONLY][] = $siteId;
                             } else {
-                                $ret[self::REALM_WEBMASTER] = [$siteId];
+                                $ret[self::REALM_WEBMASTER][] = $siteId;
                             }
                         } else {
-                            $ret[self::REALM_READONLY] = [$siteId];
+                            $ret[self::REALM_READONLY][] = $siteId;
                         }
                     }
                 }
