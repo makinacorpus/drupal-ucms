@@ -46,8 +46,6 @@ global_contrib:
     - access ucms content overview
     - content manage global
     - content view global
-    - labels dashboard access
-    - site dashboard access
 
 local_webmaster:
   name: Webmaster local
@@ -56,11 +54,9 @@ local_webmaster:
     - content view global
     - labels dashboard access
     - labels edit non locked
-    - site dashboard access
 
-# This role has nearly no permission, only content stuff will be delegated thus
+# This role has no permission, only content stuff will be delegated thus
 # it needs to be set in the business API layer
 local_contrib:
   name: Contributeur local
-  permission:
-    - site dashboard access
+  permission: []
