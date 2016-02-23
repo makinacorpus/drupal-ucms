@@ -490,3 +490,13 @@ function template_preprocess_ucms_contrib_content_result_grid(&$vars) {
     $vars['nodes'][$child_key] = $node_views['nodes'][$child_key];
   }
 }
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function ucms_contrib_field_widget_unoderef_form_alter(&$element, &$form_state, $context) {
+  // FIXME
+  \Drupal::service('ucms_dashboard.context')
+    ->addTab('cart', t("Cart"), 'shopping-cart')
+    ->add(ucms_contrib_favorite_render(), 'cart');
+}
