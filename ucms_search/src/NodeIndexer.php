@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Search;
 
 use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 use Elasticsearch\Client;
@@ -32,9 +33,9 @@ class NodeIndexer implements NodeIndexerInterface
     private $moduleHandler;
 
     /**
-     * @var \DrupalEntityControllerInterface
+     * @var EntityStorageInterface
      */
-    private $nodeController;
+    private $nodeStorage;
 
     /**
      * @var boolean
@@ -83,7 +84,7 @@ class NodeIndexer implements NodeIndexerInterface
         $this->index = $index;
         $this->client = $client;
         $this->db = $db;
-        $this->nodeController = $entityManager->getStorage('node');
+        $this->nodeStorage = $entityManager->getStorage('node');
         $this->moduleHandler = $moduleHandler;
         $this->indexRealname = ($indexRealname ? $indexRealname : $index);
         $this->preventBulkUsage = $preventBulkUsage;
@@ -134,7 +135,7 @@ class NodeIndexer implements NodeIndexerInterface
         ;
 
         // Preload all nodes for performance
-        $nodes = $this->nodeController->load($nodeIdList);
+        $nodes = $this->nodeStorage->loadMultiple($nodeIdList);
         if (!$nodes) {
             return 0;
         }

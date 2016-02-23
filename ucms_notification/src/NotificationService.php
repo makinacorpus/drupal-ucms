@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Notification;
 
 use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityStorageInterface;
 
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
@@ -19,9 +20,9 @@ class NotificationService
     private $notificationService;
 
     /**
-     * @var \DrupalEntityControllerInterface
+     * @var EntityStorageInterface
      */
-    private $userController;
+    private $userStorage;
 
     /**
      * Default constructor
@@ -32,7 +33,7 @@ class NotificationService
     public function __construct(BaseNotificationService $notificationService, EntityManager $entityManager)
     {
         $this->notificationService = $notificationService;
-        $this->userController = $entityManager->getStorage('user');
+        $this->userStorage = $entityManager->getStorage('user');
     }
 
     /**
@@ -44,10 +45,13 @@ class NotificationService
      */
     private function getUserAccount($userId)
     {
-        if ($users = $this->userController->load([$userId])) {
-            return reset($users);
+        $user = $this->userStorage->load($userId);
+
+        if (!$user) {
+            throw new \InvalidArgumentException(sprintf("User %d does not exist", $userId));
         }
-        throw new \InvalidArgumentException(sprintf("User %d does not exist", $userId));
+
+        return $user;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Handles site access
@@ -49,7 +51,7 @@ class SiteAccessService
      * This needs to be done this way because the entity subsystem might not
      * be initialized yet when this object is
      *
-     * @return \DrupalEntityControllerInterface
+     * @return EntityStorageInterface
      */
     private function getUserController()
     {
@@ -80,13 +82,14 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        $users = $this->getUserController()->load([$userId]);
+        /* @var $user AccountInterface */
+        $user = $this->getUserController()->load($userId);
 
-        if (!$users) {
+        if (!$user) {
             return [];
         }
 
-        return array_keys(reset($users)->roles);
+        return $user->getRoles();
     }
 
     /**
@@ -299,13 +302,10 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        $users = $this->getUserController()->load([$userId]);
+        $user = $this->getUserController()->load($userId);
 
-        if (!$users) {
-            return false;
-        }
-
-        return user_access($permission, reset($users));
+        /* @var $user AccountInterface */
+        return $user && $user->hasPermission($permission);
     }
 
     /**

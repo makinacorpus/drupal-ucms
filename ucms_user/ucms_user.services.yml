@@ -3,7 +3,7 @@ services:
   # Data source service for listing page
   ucms_user.admin.datasource:
     class: MakinaCorpus\Ucms\User\Page\UserAdminDatasource
-    arguments: ["@database", "@ucms_site.access"]
+    arguments: ["@database", "@ucms_site.access", "@entity.manager"]
 
   # Action provider for the listing page
   ucms_user.action_provider:

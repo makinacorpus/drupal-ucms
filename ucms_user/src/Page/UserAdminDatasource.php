@@ -3,6 +3,7 @@
 
 namespace MakinaCorpus\Ucms\User\Page;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
@@ -27,17 +28,23 @@ class UserAdminDatasource extends AbstractDatasource
      */
     private $access;
 
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
 
     /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
      * @param SiteAccessService $access
+     * @param EntityManager $entityManager
      */
-    public function __construct(\DatabaseConnection $db, SiteAccessService $access)
+    public function __construct(\DatabaseConnection $db, SiteAccessService $access, EntityManager $entityManager)
     {
         $this->db = $db;
         $this->access = $access;
+        $this->entityManager = $entityManager;
     }
 
 
@@ -124,7 +131,11 @@ class UserAdminDatasource extends AbstractDatasource
             ->execute()
             ->fetchCol();
 
-        return \Drupal::service('entity.manager')->getStorage('user')->load($idList);
+        return $this
+            ->entityManager
+            ->getStorage('user')
+            ->loadMultiple($idList)
+        ;
     }
 
 
