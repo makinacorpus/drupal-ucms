@@ -242,7 +242,7 @@ class NodeIndexer implements NodeIndexerInterface
             }
         }
 
-        return $grants;
+        return array_values($grants);
     }
 
     /**
