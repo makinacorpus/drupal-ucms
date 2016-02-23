@@ -51,16 +51,22 @@ class AccountPortlet extends AbstractPortlet
         $items    = [];
         $account  = $this->getAccount();
 
-        // Prevent any modification of the global object
         $items[] = [$this->t('Username'), $account->getDisplayName()];
         $items[] = [$this->t('E-mail'), $account->getEmail()];
 
-        $roles = $account->getRoles(true);
+        // Roles
+        $role_names = user_roles();
+        $account_roles = array_map(
+            function ($role_id) use ($role_names) {
+                return $role_names[$role_id];
+            },
+            $account->getRoles(true)
+        );
         $items[] = [
-            $this->formatPlural(count($roles), 'Role', 'Roles'),
+            $this->formatPlural(count($account->getRoles(true)), 'Role', 'Roles'),
             [
-                '#theme'      => 'item_list',
-                '#items'      => $roles,
+                '#theme' => 'item_list',
+                '#items' => $account_roles,
                 '#attributes' => ['class' => 'list-unstyled'],
             ],
         ];
@@ -80,9 +86,6 @@ class AccountPortlet extends AbstractPortlet
      */
     public function userIsAllowed(AccountInterface $account)
     {
-        // @TODO should be in a constructor
-        $this->account = $account;
-
         return true;
     }
 }
