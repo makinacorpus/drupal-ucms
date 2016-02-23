@@ -317,7 +317,7 @@ function ucms_site_menu_access_reference(NodeInterface $node, $account = null) {
   if (!$account) {
     $account = $GLOBALS['user'];
   }
-  return $node->access('view', $account) && ucms_site_node_access_helper()->userCanReference($node, $account);
+  return $node->access('view', $account) && ucms_site_node_access_helper()->canUserReference($node, $account);
 }
 
 /**

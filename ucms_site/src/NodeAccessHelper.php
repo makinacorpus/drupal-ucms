@@ -308,7 +308,7 @@ class NodeAccessHelper
      *
      * @return boolean
      */
-    public function userCanReference(NodeInterface $node, AccountInterface $account)
+    public function canUserReference(NodeInterface $node, AccountInterface $account)
     {
         // Let's say, from this very moment, that as long as the user can see
         // the node he might want to add it on one of his sites
