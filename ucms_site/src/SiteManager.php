@@ -230,9 +230,9 @@ final class SiteManager
 
         $roles = $this->getAccess()->getUserRoles($userId);
 
-        foreach ($roles as $siteId => $role) {
-            if ($role != Access::ROLE_WEBMASTER) {
-                unset($roles[$siteId]);
+        foreach ($roles as $grant) {
+            if ($grant->getRole() != Access::ROLE_WEBMASTER) {
+                unset($roles[$grant->getSiteId()]);
             }
         }
 

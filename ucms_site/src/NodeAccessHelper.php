@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+use Monolog\Handler\MandrillHandler;
 
 /**
  * Drupal ACL builder for usage with node_access() related hooks
@@ -211,12 +212,17 @@ class NodeAccessHelper
             if (user_access(Access::PERM_CONTENT_VIEW_ALL, $account)) {
                 $ret[self::REALM_READONLY] = [$site->id];
             }
-            if ($access->userCanView($site, $userId) && $access->userIsWebmaster($site, $userId)) {
-                // Special case for archive, user might see but not edit
-                if (SiteState::ARCHIVE == $site->state) {
+
+            if ($access->userCanView($site, $userId)) {
+                if ($access->userIsWebmaster($site, $userId)) {
+                    // Special case for archive, user might see but not edit
+                    if (SiteState::ARCHIVE == $site->state) {
+                        $ret[self::REALM_READONLY] = [$site->id];
+                    } else {
+                        $ret[self::REALM_WEBMASTER] = [$site->id];
+                    }
+                } else if ($access->userIsContributor($site, $userId)) {
                     $ret[self::REALM_READONLY] = [$site->id];
-                } else {
-                    $ret[self::REALM_WEBMASTER] = [$site->id];
                 }
             }
 
@@ -236,16 +242,28 @@ class NodeAccessHelper
             }
 
             // @todo this should be loadAllSitesForUser()
-            foreach ($this->manager->loadWebmasterSites($userId) as $site) {
-                if ($access->userCanView($site, $userId)) {
-                    if ($access->userIsWebmaster($site, $userId)) {
-                        if (SiteState::ARCHIVE === $site->state) {
-                            $ret[self::REALM_READONLY] = [$site->id];
+            $grants = $this->manager->getAccess()->getUserRoles($userId);
+
+            // Preload all sites
+            $siteIdList = [];
+            foreach ($grants as $grant) {
+                $siteIdList[] = $grant->getSiteId();
+            }
+            $sites = $this->manager->getStorage()->loadAll($siteIdList);
+
+            foreach ($grants as $grant) {
+                $siteId = $grant->getSiteId();
+                if ($site = $sites[$siteId]) {
+                    if ($access->userCanView($site, $userId)) {
+                        if (Access::ROLE_WEBMASTER == $grant->getRole()) {
+                            if (SiteState::ARCHIVE === $site->state) {
+                                $ret[self::REALM_READONLY] = [$siteId];
+                            } else {
+                                $ret[self::REALM_WEBMASTER] = [$siteId];
+                            }
                         } else {
-                            $ret[self::REALM_WEBMASTER] = [$site->id];
+                            $ret[self::REALM_READONLY] = [$siteId];
                         }
-                    } else {
-                        $ret[self::REALM_READONLY] = [$site->id];
                     }
                 }
             }

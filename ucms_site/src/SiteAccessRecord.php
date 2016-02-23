@@ -25,6 +25,11 @@ class SiteAccessRecord
     /**
      * @var int
      */
+    private $site_state;
+
+    /**
+     * @var int
+     */
     private $role;
 
     /**
@@ -34,7 +39,7 @@ class SiteAccessRecord
      */
     public function getUserId()
     {
-        return $this->uid;
+        return (int)$this->uid;
     }
 
     /**
@@ -44,7 +49,17 @@ class SiteAccessRecord
      */
     public function getSiteId()
     {
-        return $this->site_id;
+        return (int)$this->site_id;
+    }
+
+    /**
+     * Denormalized site state value
+     *
+     * @return int
+     */
+    public function getSiteState()
+    {
+        return (int)$this->site_state;
     }
 
     /**
@@ -55,6 +70,6 @@ class SiteAccessRecord
      */
     public function getRole()
     {
-        return $this->role;
+        return (int)$this->role;
     }
 }

@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Site;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\node\NodeInterface;
 
 /**
  * Handles site access
@@ -54,7 +53,7 @@ class SiteAccessService
      *
      * @return EntityStorageInterface
      */
-    private function getUserController()
+    private function getUserStorage()
     {
         return $this->entityManager->getStorage('user');
     }
@@ -84,7 +83,7 @@ class SiteAccessService
         }
 
         /* @var $user AccountInterface */
-        $user = $this->getUserController()->load($userId);
+        $user = $this->getUserStorage()->load($userId);
 
         if (!$user) {
             return [];
@@ -99,26 +98,34 @@ class SiteAccessService
      * @param int $userId
      * @param Site $site
      *
-     * @return int|int[]
-     *   An uniq Access:ROLE_* constant matching the given user and site,
-     *   or an array of Access:ROLE_* constants keyed by site identifiers
-     *   if no site is provided.
+     * @return SiteAccessRecord|SiteAccessRecord[]
      */
     private function getUserRoleCacheValue($userId, Site $site = null)
     {
         if (!isset($this->accessCache[$userId])) {
-            $this->accessCache[$userId] = $this
+            $r = $this
                 ->db
                 ->query(
-                    "SELECT site_id, role FROM {ucms_site_access} WHERE uid = :userId",
+                    "
+                        SELECT
+                            a.site_id, a.role, s.state AS site_state
+                        FROM {ucms_site_access} a
+                        JOIN {ucms_site} s
+                            ON s.id = a.site_id
+                        WHERE
+                            a.uid = :userId
+                    ",
                     [':userId' => $userId]
                 )
-                ->fetchAllKeyed();
             ;
 
-            array_walk($this->accessCache[$userId], function(&$val, $key) {
-                $val = (integer) $val;
-            });
+            $r->setFetchMode(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\SiteAccessRecord');
+
+            // Can't use fetchAllAssoc() because properties are private on the
+            // objects built by PDO
+            foreach ($r->fetchAll() as $record) {
+                $this->accessCache[$userId][$record->getSiteId()] = $record;
+            }
         }
 
         if (null !== $site) {
@@ -137,8 +144,7 @@ class SiteAccessService
      *
      * @param int $userId
      *
-     * @return int[]
-     *   The Access:ROLE_* constants keyed by site identifiers.
+     * @return SiteAccessRecord[]
      */
     public function getUserRoles($userId)
     {
@@ -151,8 +157,7 @@ class SiteAccessService
      * @param int $userId
      * @param Site $site
      *
-     * @return int
-     *   The Access:ROLE_* constants matching the given site.
+     * @return SiteAccessRecord
      */
     public function getUserRole($userId, Site $site)
     {
@@ -260,12 +265,12 @@ class SiteAccessService
         $ret = [];
 
         $relativeRoles  = $this->getRelativeRoles();
-        $userSiteRole   = $this->getUserRoleCacheValue($userId, $site);
+        $grant          = $this->getUserRoleCacheValue($userId, $site);
 
         // First check the user site roles if any
-        if ($userSiteRole) {
+        if ($grant) {
             foreach ($relativeRoles as $rid => $role) {
-                if ($userSiteRole === $role) {
+                if ($grant->getRole() === $role) {
                     $ret[] = $rid;
                 }
             }
@@ -303,7 +308,7 @@ class SiteAccessService
             $userId = $this->getCurrentUserId();
         }
 
-        $user = $this->getUserController()->load($userId);
+        $user = $this->getUserStorage()->load($userId);
 
         /* @var $user AccountInterface */
         return $user && $user->hasPermission($permission);
@@ -326,15 +331,19 @@ class SiteAccessService
         }
 
         if (null === $site) {
-            foreach ($this->getUserRoleCacheValue($userId) as $role) {
-                if (Access::ROLE_WEBMASTER === $role) {
+            foreach ($this->getUserRoleCacheValue($userId) as $grant) {
+                if (Access::ROLE_WEBMASTER === $grant->getRole()) {
                     return true;
                 }
             }
             return false;
         }
 
-        return Access::ROLE_WEBMASTER === $this->getUserRoleCacheValue($userId, $site);
+        if ($grant = $this->getUserRoleCacheValue($userId, $site)) {
+            return Access::ROLE_WEBMASTER === $grant->getRole();
+        }
+
+        return false;
     }
 
     /**
@@ -354,15 +363,19 @@ class SiteAccessService
         }
 
         if (null === $site) {
-            foreach ($this->getUserRoleCacheValue($userId) as $role) {
-                if (Access::ROLE_CONTRIB === $role) {
+            foreach ($this->getUserRoleCacheValue($userId) as $grant) {
+                if (Access::ROLE_CONTRIB === $grant->getRole()) {
                     return true;
                 }
             }
             return false;
         }
 
-        return Access::ROLE_CONTRIB === $this->getUserRoleCacheValue($userId, $site);
+        if ($grant = $this->getUserRoleCacheValue($userId, $site)) {
+            return Access::ROLE_CONTRIB === $grant->getRole();
+        }
+
+        return false;
     }
 
     /**

@@ -594,7 +594,84 @@ class NodeAccessTest extends AbstractDrupalTest
 
     public function testContributorRights()
     {
-        // @todo
+        $this
+            ->whenIAm([], ['on' => Access::ROLE_CONTRIB])
+
+                ->getOutSite()
+                    ->canSeeOnly([
+                        'site_on_published',
+                        'site_on_unpublished',
+                        'site_on_locked_published',
+                        'site_on_locked_unpublished',
+                        'in_on_global_locked_published',
+                        'in_on_global_locked_unpublished',
+                        'in_on_global_published',
+                        'in_on_global_unpublished',
+                    ])
+                    ->canEditNone()
+
+                ->inSite('on')
+                    ->canSeeOnly([
+                        'site_on_published',
+                        'site_on_unpublished',
+                        'site_on_locked_published',
+                        'site_on_locked_unpublished',
+                        'in_on_global_locked_published',
+                        'in_on_global_locked_unpublished',
+                        'in_on_global_published',
+                        'in_on_global_unpublished',
+                    ])
+                    ->canEditNone()
+
+                ->inSite('off')
+                    ->canSeeNone()
+                    ->canEditNone()
+
+            ->whenIAm([], ['off' => Access::ROLE_CONTRIB])
+
+                ->getOutSite()
+                    ->canSeeOnly([
+                        'site_off_published',
+                        'site_off_unpublished',
+                    ])
+                    ->canEditNone()
+
+                ->inSite('on')
+                    ->canSeeOnly([
+                        'site_on_published',
+                        'site_on_locked_published',
+                        'in_on_global_locked_published',
+                        'in_on_global_published',
+                    ])
+                    ->canEditNone()
+
+                ->inSite('off')
+                    ->canSeeOnly([
+                        'site_off_published',
+                        'site_off_unpublished',
+                    ])
+                    ->canEditNone()
+
+            ->whenIAm([], ['archive' => Access::ROLE_CONTRIB])
+
+                ->getOutSite()
+                    ->canSeeNone()
+                    ->canEditNone()
+
+                ->inSite('archive')
+                    ->canSeeNone()
+                    ->canEditNone()
+
+            ->whenIAm([], ['pending' => Access::ROLE_CONTRIB])
+
+                ->getOutSite()
+                    ->canSeeNone()
+                    ->canEditNone()
+
+                ->inSite('pending')
+                    ->canSeeNone()
+                    ->canEditNone()
+        ;
     }
 
     public function testAnonymousRights()
