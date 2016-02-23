@@ -2,10 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Form;
 
-use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-class NodeUnflag extends FormBase
+use MakinaCorpus\Ucms\Dashboard\Form\AbstractEntityActionForm;
+
+class NodeUnflag extends AbstractEntityActionForm
 {
     /**
      * {inheritdoc}
@@ -20,7 +21,7 @@ class NodeUnflag extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, $node = null)
     {
-        $form_state->setTemporaryValue('node', $node);
+        $this->setEntity($form_state, $node);
 
         return confirm_form([], $this->t("Un-flag %title ?", ['%title' => $node->title]), 'node/' . $node->nid);
     }
@@ -30,10 +31,11 @@ class NodeUnflag extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $node = $form_state->getTemporaryValue('node');
+        $node = $this->getEntity($form_state);
+
         $node->is_flagged = 0;
         $node->ucms_index_now = 1; // @todo find a better way
-        node_save($node);
+        $this->getEntityStorage('node')->save($node);
 
         drupal_set_message($this->t("%title has been un-flagged.", ['%title' => $node->title]));
         $form_state->setRedirect('node/' . $node->nid);

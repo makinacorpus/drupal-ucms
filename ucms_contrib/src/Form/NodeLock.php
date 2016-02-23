@@ -6,14 +6,14 @@ use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Form\AbstractEntityActionForm;
 
-class NodePublish extends AbstractEntityActionForm
+class NodeLock extends AbstractEntityActionForm
 {
     /**
      * {inheritdoc}
      */
     public function getFormId()
     {
-        return 'ucms_contrib_node_publish_form';
+        return 'ucms_contrib_node_lock_form';
     }
 
     /**
@@ -23,7 +23,7 @@ class NodePublish extends AbstractEntityActionForm
     {
         $this->setEntity($form_state, $node);
 
-        return confirm_form([], $this->t("Publish %title ?", ['%title' => $node->title]), 'node/' . $node->nid);
+        return confirm_form([], $this->t("Lock %title ?", ['%title' => $node->title]), 'node/' . $node->nid);
     }
 
     /**
@@ -33,11 +33,11 @@ class NodePublish extends AbstractEntityActionForm
     {
         $node = $this->getEntity($form_state);
 
-        $node->status = 1;
+        $node->is_clonable = 0;
         $node->ucms_index_now = 1; // @todo find a better way
         $this->getEntityStorage('node')->save($node);
 
-        drupal_set_message($this->t("%title has been published.", ['%title' => $node->title]));
+        drupal_set_message($this->t("%title has been locked.", ['%title' => $node->title]));
         $form_state->setRedirect('node/' . $node->nid);
     }
 }

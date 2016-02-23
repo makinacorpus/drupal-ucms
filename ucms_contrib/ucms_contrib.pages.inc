@@ -25,7 +25,11 @@ function ucms_contrib_admin_content_page_local($tab = null) {
 
 function ucms_contrib_admin_content_page_locked($tab = null) {
   $search = ucms_search_create('private');
-  $search->getFilterQuery()->matchTerm('is_locked', 1);
+  $search
+      ->getFilterQuery()
+      ->matchTerm('is_global', 1)
+      ->matchTerm('is_locked', 1)
+  ;
   return ucms_contrib_admin_content_page($search, $tab);
 }
 

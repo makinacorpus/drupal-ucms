@@ -2,6 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
+
 /**
  * Drupal ACL builder for usage with node_access() related hooks
  */
@@ -295,5 +298,36 @@ class NodeAccessHelper
         }
 
         return NODE_ACCESS_DENY;
+    }
+
+    /**
+     * Can user lock or unlock this node
+     *
+     * @param NodeInterface $node
+     * @param AccountInterface $account
+     *
+     * @return boolean
+     */
+    public function canUserLock(NodeInterface $node, AccountInterface $account)
+    {
+        if ($node->is_global) {
+            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED);
+        } else if ($node->site_id) {
+            // Got a site !
+            // @todo I must find a shortcut for this...
+            return $this
+                ->manager
+                ->getAccess()
+                ->userIsWebmaster(
+                    $this
+                        ->manager
+                        ->getStorage()
+                        ->findOne($node->site_id),
+                    $account->id()
+                )
+            ;
+        } else {
+            return false;
+        }
     }
 }

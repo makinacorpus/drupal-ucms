@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
+use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 
@@ -12,18 +14,20 @@ class NodeActionProvider implements ActionProviderInterface
      */
     public function getActions($item)
     {
-       $ret = [];
+        $ret = [];
 
-        $ret[] = new Action(t("View"), 'node/' . $item->nid, null, 'eye-open');
-        if (node_access('update', $item)) {
-            $ret[] = new Action(t("Edit"), 'node/' . $item->nid . '/edit', null, 'pencil', -100, false, true);
+        /* @var $item NodeInterface */
+
+        $ret[] = new Action(t("View"), 'node/' . $item->id(), null, 'eye-open');
+        if ($item->access('update')) {
+            $ret[] = new Action(t("Edit"), 'node/' . $item->id() . '/edit', null, 'pencil', -100, false, true);
             if ($item->status) {
-                $ret[] = new Action(t("Unpublish"), 'node/' . $item->nid . '/unpublish', 'dialog', 'remove-circle', 0, false, true);
+                $ret[] = new Action(t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', 0, false, true);
             } else {
-                $ret[] = new Action(t("Publish"), 'node/' . $item->nid . '/publish', 'dialog', 'ok-circle', 0, false, true);
+                $ret[] = new Action(t("Publish"), 'node/' . $item->id() . '/publish', 'dialog', 'ok-circle', 0, false, true);
             }
             if (_node_revision_access($item)) {
-                $ret[] = new Action(t("Revisions"), 'node/' . $item->nid . '/revisions', null, 'th-list', 0, false);
+                $ret[] = new Action(t("Revisions"), 'node/' . $item->id() . '/revisions', null, 'th-list', 0, false);
             }
         }
 
@@ -38,21 +42,18 @@ class NodeActionProvider implements ActionProviderInterface
          */
 
         if (empty($item->is_flagged)) {
-            $ret[] = new Action(t("Flag as inappropriate"), 'node/' . $item->nid . '/report', 'dialog', 'flag', 0, false, true);
+            $ret[] = new Action(t("Flag as inappropriate"), 'node/' . $item->id() . '/report', 'dialog', 'flag', 0, false, true);
         } else {
-            $ret[] = new Action(t("Un-flag as innappropriate"), 'node/' . $item->nid . '/unreport', 'dialog', 'flag', 0, false, true);
+            $ret[] = new Action(t("Un-flag as innappropriate"), 'node/' . $item->id() . '/unreport', 'dialog', 'flag', 0, false, true);
         }
-        if (node_access('delete', $item)) {
-            $ret[] = new Action(t("Delete"), 'node/' . $item->nid . '/delete', 'dialog', 'trash', 0, false, true);
+        if ($item->access('delete')) {
+            $ret[] = new Action(t("Delete"), 'node/' . $item->id() . '/delete', 'dialog', 'trash', 0, false, true);
         }
 
         if (empty($item->is_starred)) {
-            $ret[] = new Action(t("Star"), 'node/' . $item->nid . '/star', 'dialog', 'star', 0, false, true);
+            $ret[] = new Action(t("Star"), 'node/' . $item->id() . '/star', 'dialog', 'star', 0, false, true);
         } else {
-            $ret[] = new Action(t("Unstar"), 'node/' . $item->nid . '/unstar', 'dialog', 'star-empty', 0, false, true);
-        }
-        if (node_access('delete', $item)) {
-            $ret[] = new Action(t("Delete"), 'node/' . $item->nid . '/delete', 'dialog', 'trash', 0, false, true);
+            $ret[] = new Action(t("Unstar"), 'node/' . $item->id() . '/unstar', 'dialog', 'star-empty', 0, false, true);
         }
 
         return $ret;
@@ -63,7 +64,6 @@ class NodeActionProvider implements ActionProviderInterface
      */
     public function supports($item)
     {
-        // That should be enough
-        return is_object($item) && property_exists($item, 'nid') && property_exists($item, 'is_global');
+        return $item instanceof NodeInterface;
     }
 }

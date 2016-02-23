@@ -129,7 +129,7 @@ function ucms_contrib_menu() {
     'title'             => "Un-flag as innappropriate",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnflag', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_star',
+    'access callback'   => 'node_access',
     'access arguments'  => ['update', 1],
     'type'              => MENU_CALLBACK,
   ];
@@ -138,15 +138,31 @@ function ucms_contrib_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeStar', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_star',
-    'access arguments'  => ['view', 1],
+    'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/unstar'] = [
     'title'             => "Unstar",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnstar', 1],
-    'access callback'   => 'node_access',
-    'access arguments'  => ['update', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_star',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['node/%node/lock'] = [
+    'title'             => "Lock",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeLock', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_lock',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['node/%node/unlock'] = [
+    'title'             => "Unlock",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnlock', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_lock',
+    'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -191,6 +207,13 @@ function ucms_contrib_menu_node_access_global() {
  */
 function ucms_contrib_menu_node_access_star($node) {
   return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED) && node_access('update', $node);
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_lock($node) {
+  return \Drupal::service('ucms_site.node_access_helper')->canUserLock($node, $GLOBALS['user']);
 }
 
 /**
