@@ -123,6 +123,7 @@ class SiteAccessService
 
             // Can't use fetchAllAssoc() because properties are private on the
             // objects built by PDO
+            $this->accessCache[$userId] = [];
             foreach ($r->fetchAll() as $record) {
                 $this->accessCache[$userId][$record->getSiteId()] = $record;
             }
