@@ -237,6 +237,8 @@ class NodeIndexer implements NodeIndexerInterface
         foreach ($grants as $index => $grant) {
             if ($grant['grant_view']) {
                 $grants[$index] = $grant['realm'] . ':' . $grant['gid'];
+            } else {
+                unset($grants[$index]);
             }
         }
 
@@ -263,8 +265,6 @@ class NodeIndexer implements NodeIndexerInterface
         //   between the elastic index and the node field/properties.
         // @todo Note the right place for this todo but allow usync definition to
         //   also include basic matching rules whenever possible.
-
-
 
         return [
             'title'       => $node->getTitle(),
