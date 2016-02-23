@@ -3,9 +3,12 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Entity\EntityManager;
+use Drupal\node\NodeInterface;
 
 /**
  * Handles whatever needs to be done with nodes
+ *
+ * @todo unit test
  */
 class NodeDispatcher
 {
@@ -40,14 +43,14 @@ class NodeDispatcher
      * Reference node into a site
      *
      * @param Site $site
-     * @param stdClass $node
+     * @param NodeInterface $node
      */
-    public function createReference(Site $site, $node)
+    public function createReference(Site $site, NodeInterface $node)
     {
         $this
             ->db
             ->merge('ucms_site_node')
-            ->key(['nid' => $node->nid, 'site_id' => $site->id])
+            ->key(['nid' => $node->id(), 'site_id' => $site->id])
             ->execute()
         ;
 
@@ -60,7 +63,7 @@ class NodeDispatcher
      * Unreference node for a site
      *
      * @param Site $site
-     * @param stdClass $node
+     * @param int[] $nodeIdList
      */
     public function deleteReferenceBulk(Site $site, $nodeIdList)
     {
@@ -83,22 +86,22 @@ class NodeDispatcher
      * Considering the node as being a reference of another node, this function
      * will create a clone into database, and 
      *
-     * @param stdClass $node
+     * @param NodeInterface $node
      *   The node to clone
      * @param Site $site
      *   Node might be cloned as global, case in which it should be attached to
      *   any site, just pass null here and here it goes
      *
-     * @return stdClass
+     * @return NodeInterface
      */
-    public function copyOnWrite($node, Site $site = null, $keepOrigin = true)
+    public function copyOnWrite(NodeInterface $node, Site $site = null, $keepOrigin = true)
     {
         // This instead of the clone operator will actually drop all existing
         // references and pointers and give you raw values, all credits to
         //   https://stackoverflow.com/a/10831885/5826569
         $clone = serialize(unserialize($node));
         $clone->parent_nid = $node->nid;
-        $clone->origin_nid = empty($node->origin_nid) ? $node->nid : $node->origin_nid;
+        $clone->origin_nid = empty($node->origin_nid) ? $node->id() : $node->origin_nid;
 
         if (!$site) {
             // This explicitely prevents the onPreInsert() method to attach the
@@ -110,7 +113,7 @@ class NodeDispatcher
             $clone->is_global = 0;
         }
 
-        node_save($clone);
+        $this->entityManager->getStorage('node')->save($node);
 
         return $clone;
     }
@@ -118,18 +121,18 @@ class NodeDispatcher
     /**
      * Find candidate sites for referencing this node
      *
-     * @param string $node
+     * @param NodeInterface $node
      * @param int $userId
      *
      * @return Site[]
      */
-    public function findSiteCandidates($node, $userId)
+    public function findSiteCandidates(NodeInterface $node, $userId)
     {
         $ne = $this
             ->db
             ->select('ucms_site_node', 'sn')
             ->where("sn.site_id = sa.site_id")
-            ->condition('sn.nid', $node->nid)
+            ->condition('sn.nid', $node->id())
         ;
         $ne->addExpression('1');
 
@@ -176,7 +179,7 @@ class NodeDispatcher
         }
     }
 
-    public function onPreInsert($node)
+    public function onPreInsert(NodeInterface $node)
     {
         if (!property_exists($node, 'ucms_sites')) {
             $node->ucms_sites = [];
@@ -205,15 +208,15 @@ class NodeDispatcher
         }
     }
 
-    public function onPreUpdate($node)
+    public function onPreUpdate(NodeInterface $node)
     {
     }
 
-    public function onPreSave($node)
+    public function onPreSave(NodeInterface $node)
     {
     }
 
-    public function onInsert($node)
+    public function onInsert(NodeInterface $node)
     {
         if (!empty($node->site_id)) {
             $site = $this->manager->getStorage()->findOne($node->site_id);
@@ -230,11 +233,11 @@ class NodeDispatcher
         }
     }
 
-    public function onUpdate($node)
+    public function onUpdate(NodeInterface $node)
     {
     }
 
-    public function onSave($node)
+    public function onSave(NodeInterface $node)
     {
         $sites = $this->manager->getStorage()->loadAll($node->ucms_sites);
 
@@ -243,7 +246,7 @@ class NodeDispatcher
         }
     }
 
-    public function onDelete($node)
+    public function onDelete(NodeInterface $node)
     {
         // We do not need to delete from the {ucms_site_node} table since it's
         // being done by ON DELETE CASCADE deferred constraints

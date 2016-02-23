@@ -162,7 +162,7 @@ class DrupalStorage implements StorageInterface
             }
 
             // Value object that will get us the identifier then
-            $row = new \stdClass();
+            $row              = new \stdClass();
             $row->id          = $layout->getId();
             $row->site_id     = $layout->getSiteId();
             $row->nid         = $layout->getNodeId();

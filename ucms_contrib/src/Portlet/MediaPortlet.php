@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Portlet;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\Portlet\Portlet;
 
@@ -70,7 +72,7 @@ class MediaPortlet extends Portlet
     /**
      * {@inheritDoc}
      */
-    public function userIsAllowed(\stdClass $account)
+    public function userIsAllowed(AccountInterface $account)
     {
         return true;
     }

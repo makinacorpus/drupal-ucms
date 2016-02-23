@@ -3,8 +3,10 @@
 
 namespace MakinaCorpus\Ucms\User\Form;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
@@ -25,11 +27,17 @@ class UserEdit extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
+            $container->get('entity.manager'),
             $container->get('ucms_site.manager'),
             $container->get('event_dispatcher')
         );
     }
 
+
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
 
     /**
      * @var SiteManager
@@ -42,8 +50,9 @@ class UserEdit extends FormBase
     protected $dispatcher;
 
 
-    public function __construct(SiteManager $siteManager, EventDispatcherInterface $dispatcher)
+    public function __construct(EntityManager $entityManager, SiteManager $siteManager, EventDispatcherInterface $dispatcher)
     {
+        $this->entityManager = $entityManager;
         $this->siteManager = $siteManager;
         $this->dispatcher = $dispatcher;
     }
@@ -61,12 +70,12 @@ class UserEdit extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, \stdClass $user = null)
+    public function buildForm(array $form, FormStateInterface $form_state, UserInterface $user = null)
     {
         $form['#form_horizontal'] = true;
 
         if ($user === null) {
-            $user = new \stdClass();
+            $user = $this->entityManager->getStorage('user')->create();
         }
 
         $form_state->setTemporaryValue('user', $user);

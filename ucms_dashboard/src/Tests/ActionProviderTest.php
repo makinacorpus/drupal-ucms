@@ -43,7 +43,7 @@ class ActionProviderTest extends \PHPUnit_Framework_TestCase
         $registry->register($providerSupporting);
         $registry->register($providerNotSupporting);
 
-        $actions = $registry->getActions(new \stdClass());
+        $actions = $registry->getActions((object)[]);
         $this->assertCount(2, $actions);
     }
 }

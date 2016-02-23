@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Site\Portlet;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Portlet\Portlet;
 use MakinaCorpus\Ucms\Site\Access;
@@ -18,7 +20,7 @@ class MySitesPortlet extends Portlet
     use StringTranslationTrait;
 
     /**
-     * @var \stdClass
+     * @var AccountInterface
      */
     private $account;
 
@@ -85,9 +87,10 @@ class MySitesPortlet extends Portlet
      * @param $account
      * @return mixed
      */
-    public function userIsAllowed(\stdClass $account)
+    public function userIsAllowed(AccountInterface $account)
     {
         $this->account = $account;
-        return user_access(Access::PERM_SITE_REQUEST, $this->account);
+
+        return $this->account->hasPermission(Access::PERM_SITE_REQUEST);
     }
 }

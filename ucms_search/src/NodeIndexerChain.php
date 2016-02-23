@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Search;
 
+use Drupal\node\NodeInterface;
+
 class NodeIndexerChain implements NodeIndexerInterface
 {
     /**
@@ -107,7 +109,7 @@ class NodeIndexerChain implements NodeIndexerInterface
     /**
      * {inheritdoc}
      */
-    public function delete($node)
+    public function delete(NodeInterface $node)
     {
         foreach ($this->chain as $indexer) {
             $indexer->delete($node);
@@ -117,7 +119,7 @@ class NodeIndexerChain implements NodeIndexerInterface
     /**
      * {inheritdoc}
      */
-    public function matches($node)
+    public function matches(NodeInterface $node)
     {
         foreach ($this->chain as $indexer) {
             if ($indexer->matches($node)) {
@@ -141,7 +143,7 @@ class NodeIndexerChain implements NodeIndexerInterface
     /**
      * {inheritdoc}
      */
-    public function upsert($node, $force = false, $refresh = false)
+    public function upsert(NodeInterface $node, $force = false, $refresh = false)
     {
         $ret = false;
 

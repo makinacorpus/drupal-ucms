@@ -3,8 +3,10 @@
 
 namespace MakinaCorpus\Ucms\User\Form;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 
@@ -24,6 +26,7 @@ class UserResetPassword extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
+            $container->get('entity.manager'),
             $container->get('event_dispatcher')
         );
     }
@@ -34,9 +37,14 @@ class UserResetPassword extends FormBase
      */
     protected $dispatcher;
 
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
 
-    public function __construct(EventDispatcherInterface $dispatcher)
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $dispatcher)
     {
+        $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -53,14 +61,14 @@ class UserResetPassword extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, \stdClass $user = null)
+    public function buildForm(array $form, FormStateInterface $form_state, UserInterface $user = null)
     {
         if ($user === null) {
             return [];
         }
 
         $form_state->setTemporaryValue('user', $user);
-        $question = $this->t("Do you really want to reset the password of the user @name?", ['@name' => $user->name]);
+        $question = $this->t("Do you really want to reset the password of the user @name?", ['@name' => $user->getDisplayName()]);
 
         return confirm_form($form, $question, 'admin/dashboard/user');
     }
@@ -73,12 +81,15 @@ class UserResetPassword extends FormBase
     {
         require_once DRUPAL_ROOT . '/includes/password.inc';
 
+        /* @var $user UserInterface */
         $user = $form_state->getTemporaryValue('user');
         $user->pass = user_hash_password(user_password(20));
 
-        if (user_save($user)) {
-            drupal_set_message($this->t("@name's password has been resetted.", array('@name' => $user->name)));
-            $this->dispatcher->dispatch('user:reset_password', new UserEvent($user->uid, $this->currentUser()->uid));
+        $saved = $this->entityManager->getStorage('user')->save($user);
+
+        if ($saved) {
+            drupal_set_message($this->t("@name's password has been resetted.", array('@name' => $user->getDisplayName())));
+            $this->dispatcher->dispatch('user:reset_password', new UserEvent($user->uid, $this->currentUser()->id()));
         } else {
             drupal_set_message($this->t("An error occured. Please try again."), 'error');
         }

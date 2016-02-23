@@ -5,9 +5,13 @@ namespace MakinaCorpus\Ucms\Search;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\node\NodeInterface;
 
 use Elasticsearch\Client;
 
+/**
+ * @todo unit test me
+ */
 class NodeIndexer implements NodeIndexerInterface
 {
     /**
@@ -193,7 +197,7 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    protected function nodeToFulltext($node, $field_name)
+    protected function nodeToFulltext(NodeInterface $node, $field_name)
     {
         if (field_get_items('node', $node, $field_name)) {
             $build = field_view_field('node', $node, $field_name, 'full');
@@ -205,7 +209,7 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    protected function nodeExtractTagIdList($node, $field_name)
+    protected function nodeExtractTagIdList(NodeInterface $node, $field_name)
     {
         $ret = [];
 
@@ -220,7 +224,7 @@ class NodeIndexer implements NodeIndexerInterface
         return $ret;
     }
 
-    protected function nodeExtractGrants($node)
+    protected function nodeExtractGrants(NodeInterface $node)
     {
         // @todo Drupal is stupid, fix this
         $grants = module_invoke_all('node_access_records', $node);
@@ -242,16 +246,16 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    protected function nodeProcessfield($node)
+    protected function nodeProcessfield(NodeInterface $node)
     {
         $created  = null;
         $changed  = null;
 
         try {
-            $created = new \DateTime('@' . $node->created);
+            $created = new \DateTime('@' . $node->getCreatedTime());
         } catch (Exception $e) {}
         try {
-            $changed = new \DateTime('@' . $node->changed);
+            $changed = new \DateTime('@' . $node->getChangedTime());
         } catch (Exception $e) {}
 
         // @todo Use field mapping from the index definition.
@@ -263,14 +267,14 @@ class NodeIndexer implements NodeIndexerInterface
 
 
         return [
-            'title'       => $node->title,
-            'id'          => $node->nid,
-            'owner'       => $node->uid,
+            'title'       => $node->getTitle(),
+            'id'          => $node->id(),
+            'owner'       => $node->getOwnerId(),
             'created'     => $created ? $created->format(\DateTime::ISO8601) : null,
             'updated'     => $changed ? $changed->format(\DateTime::ISO8601) : null,
-            'type'        => $node->type,
+            'type'        => $node->getType(),
             'body'        => strip_tags($this->nodeToFulltext($node, 'body')),
-            'status'      => (int)$node->status,
+            'status'      => (int)$node->isPublished(),
             'tags'        => $this->nodeExtractTagIdList($node, 'tags'),
             'is_starred'  => (bool)$node->is_starred,
             'is_flagged'  => (bool)$node->is_flagged,
@@ -283,13 +287,13 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function delete($node)
+    public function delete(NodeInterface $node)
     {
         $this
             ->client
             ->delete([
                 'index' => $this->indexRealname,
-                'id'    => $node->nid,
+                'id'    => $node->id(),
                 'type'  => 'node',
             ])
         ;
@@ -297,7 +301,7 @@ class NodeIndexer implements NodeIndexerInterface
         $this
             ->db
             ->delete('ucms_search_status')
-            ->condition('nid', $node->nid)
+            ->condition('nid', $node->id())
             ->condition('index_key', $this->index)
             ->execute()
         ;
@@ -306,7 +310,7 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function matches($node)
+    public function matches(NodeInterface $node)
     {
         foreach ($this->moduleHandler->getImplementations(self::HOOK_NODE_INDEX) as $module) {
             if ($this->moduleHandler->invoke($module, self::HOOK_NODE_INDEX, [$this->index, $node])) {
@@ -345,7 +349,7 @@ class NodeIndexer implements NodeIndexerInterface
             $params['body'][] = [
                 'index' => [
                     '_index'   => $this->indexRealname,
-                    '_id'      => $node->nid,
+                    '_id'      => $node->id(),
                     '_type'    => 'node',
                     // @todo Refresh could be global.
                     // '_refresh' => (bool)$refresh,
@@ -354,7 +358,7 @@ class NodeIndexer implements NodeIndexerInterface
 
             $params['body'][] = $this->nodeProcessfield($node);
 
-            $nidList[] = $node->nid;
+            $nidList[] = $node->id();
         }
 
         $this->client->bulk($params);
@@ -372,7 +376,7 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function upsert($node, $force = false, $refresh = false)
+    public function upsert(NodeInterface $node, $force = false, $refresh = false)
     {
         if (!$force && !$this->matches($node)) {
             return false;
@@ -382,7 +386,7 @@ class NodeIndexer implements NodeIndexerInterface
             ->client
             ->index([
                 'index'   => $this->indexRealname,
-                'id'      => $node->nid,
+                'id'      => $node->id(),
                 'type'    => 'node',
                 'refresh' => (bool)$refresh,
                 'body'    => $this->nodeProcessfield($node),
@@ -393,7 +397,7 @@ class NodeIndexer implements NodeIndexerInterface
             ->db
             ->update('ucms_search_status')
             ->fields(['needs_reindex' => 0])
-            ->condition('nid', $node->nid)
+            ->condition('nid', $node->id())
             ->condition('index_key', $this->index)
             ->execute()
         ;

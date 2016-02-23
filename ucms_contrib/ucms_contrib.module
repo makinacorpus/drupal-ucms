@@ -13,6 +13,8 @@
  *   - Add UI sorting
  */
 
+use Drupal\Core\Session\AccountInterface;
+
 use MakinaCorpus\Ucms\Site\Access;
 
 /**
@@ -327,7 +329,7 @@ function ucms_contrib_preprocess_node(&$variables) {
 /**
  * Render one's favorite cart.
  *
- * @param int|stdClass $account
+ * @param int|AccountInterface $account
  *
  * @return []
  *   drupal_render() friendly structure.

@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
+use Drupal\Core\Session\AccountInterface;
+
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 
 /**
@@ -40,9 +42,10 @@ interface PortletInterface
     /**
      * Return true if portlet if visible for user.
      *
-     * @param \stdClass $account
-     * @return bool
+     * @param AccountInterface $account
+     *
+     * @return boolean
      */
-    public function userIsAllowed(\stdClass $account);
+    public function userIsAllowed(AccountInterface $account);
 
 }

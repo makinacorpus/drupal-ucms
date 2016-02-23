@@ -2,6 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Site\Tests;
 
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\Node;
+use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessHelper;
@@ -21,7 +25,7 @@ class NodeAccessTest extends AbstractDrupalTest
     protected $nidSeq = 1;
 
     /**
-     * @var \stdClass[]
+     * @var NodeInterface[]
      */
     protected $nodes = [];
 
@@ -31,7 +35,7 @@ class NodeAccessTest extends AbstractDrupalTest
     protected $sites = [];
 
     /**
-     * @var \stdClass
+     * @var AccountInterface
      */
     protected $contextualAccount;
 
@@ -63,7 +67,7 @@ class NodeAccessTest extends AbstractDrupalTest
      * @param string[] $siteMap
      *   Keys are site labels, values are Access::ROLE_* constants
      *
-     * @return \stdClass
+     * @return AccountInterface
      */
     protected function createDrupalUser($permissionList = [], $siteMap = [])
     {
@@ -87,7 +91,7 @@ class NodeAccessTest extends AbstractDrupalTest
 
     protected function createDrupalNode($status = 0, $site = null, $otherSites = [], $isGlobal = false, $isClonable = false)
     {
-        $node = new \stdClass();
+        $node = new Node();
         $node->nid = $this->nidSeq++;
         $node->status = (int)(bool)$status;
         $node->ucms_sites = [];

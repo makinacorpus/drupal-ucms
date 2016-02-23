@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Notification;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
@@ -41,7 +42,7 @@ class NotificationService
      *
      * @param int $userId
      *
-     * @return stdClass
+     * @return AccountInterface
      */
     private function getUserAccount($userId)
     {
@@ -82,19 +83,19 @@ class NotificationService
         $valid      = ['client:' . $userId];
         $account    = $this->getUserAccount($userId);
 
-        if (user_access(Access::PERM_NOTIF_CONTENT, $account)) {
+        if ($account->hasPermission(Access::PERM_NOTIF_CONTENT)) {
             $valid[] = 'admin:content';
         }
-        if (user_access(Access::PERM_NOTIF_LABEL, $account)) {
+        if ($account->hasPermission(Access::PERM_NOTIF_LABEL)) {
             $valid[] = 'admin:label';
         }
-        if (user_access(Access::PERM_NOTIF_SEO, $account)) {
+        if ($account->hasPermission(Access::PERM_NOTIF_SEO)) {
             $valid[] = 'admin:seo';
         }
-        if (user_access(Access::PERM_NOTIF_SITE, $account)) {
+        if ($account->hasPermission(Access::PERM_NOTIF_SITE)) {
             $valid[] = 'admin:site';
         }
-        if (user_access(Access::PERM_NOTIF_USER, $account)) {
+        if ($account->hasPermission(Access::PERM_NOTIF_USER)) {
             $valid[] = 'admin:client';
         }
 

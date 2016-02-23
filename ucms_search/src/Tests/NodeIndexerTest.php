@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Search\Tests;
 
+use Drupal\node\Node;
+
 use MakinaCorpus\Ucms\Search\NodeIndexer;
 
 class NodeIndexerTest extends AbstractElasticTest
@@ -58,10 +60,10 @@ class NodeIndexerTest extends AbstractElasticTest
         $indexer->addIndexer('b', $bIndexer);
         $indexer->addIndexer('c', $cIndexer);
 
-        $node42 = new \stdClass();
+        $node42 = new Node();
         $node42->nid = 42;
-        $node42->title = 'some title';
-        $node42->status = 1;
+        $node42->setTitle('some title');
+        $node42->setPublished(true);
 
         $this->assertTrue($indexer->matches($node42));
         $this->assertTrue($indexer->matches($node42));

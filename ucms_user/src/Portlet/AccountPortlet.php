@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\User\Portlet;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Portlet\Portlet;
 
@@ -15,7 +17,7 @@ class AccountPortlet extends Portlet
     use StringTranslationTrait;
 
     /**
-     * @var \stdClass
+     * @var AccountInterface
      */
     private $account;
 
@@ -95,13 +97,15 @@ class AccountPortlet extends Portlet
     /**
      * Return true if portlet if visible for user.
      *
-     * @param \stdClass $account
-     * @return bool
+     * @param AccountInterface $account
+     *
+     * @return boolean
      */
-    public function userIsAllowed(\stdClass $account)
+    public function userIsAllowed(AccountInterface $account)
     {
         // @TODO should be in a constructor
         $this->account = $account;
+
         return true;
     }
 }

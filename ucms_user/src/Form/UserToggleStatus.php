@@ -3,8 +3,10 @@
 
 namespace MakinaCorpus\Ucms\User\Form;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 
@@ -24,6 +26,7 @@ class UserToggleStatus extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
+            $container->get('entity.manager'),
             $container->get('event_dispatcher')
         );
     }
@@ -34,12 +37,16 @@ class UserToggleStatus extends FormBase
      */
     protected $dispatcher;
 
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
 
-    public function __construct(EventDispatcherInterface $dispatcher)
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $dispatcher)
     {
+        $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
     }
-
 
     /**
      * {@inheritdoc}
@@ -53,7 +60,7 @@ class UserToggleStatus extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, \stdClass $user = null)
+    public function buildForm(array $form, FormStateInterface $form_state, UserInterface $user = null)
     {
         if ($user === null) {
             return [];
@@ -76,16 +83,21 @@ class UserToggleStatus extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
+        /* @var $user UserInterface */
         $user = $form_state->getTemporaryValue('user');
-        $user->status = $user->status ? 0 : 1;
+        if ($user->isActive()) {
+            $user->status = 0;
+        } else {
+            $user->status = 1;
+        }
 
         if (user_save($user)) {
             if ($user->status) {
-                drupal_set_message($this->t("User @name has been enabled.", array('@name' => $user->name)));
-                $this->dispatcher->dispatch('user:enable', new UserEvent($user->uid, $this->currentUser()->uid));
+                drupal_set_message($this->t("User @name has been enabled.", array('@name' => $user->getDisplayName())));
+                $this->dispatcher->dispatch('user:enable', new UserEvent($user->id(), $this->currentUser()->id()));
             } else {
-                drupal_set_message($this->t("User @name has been disabled.", array('@name' => $user->name)));
-                $this->dispatcher->dispatch('user:disable', new UserEvent($user->uid, $this->currentUser()->uid));
+                drupal_set_message($this->t("User @name has been disabled.", array('@name' => $user->getDisplayName())));
+                $this->dispatcher->dispatch('user:disable', new UserEvent($user->id(), $this->currentUser()->id()));
             }
         } else {
             drupal_set_message($this->t("An error occured. Please try again."), 'error');

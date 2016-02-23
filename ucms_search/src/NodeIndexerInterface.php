@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Search;
 
+use Drupal\node\NodeInterface;
+
 interface NodeIndexerInterface
 {
     /**
@@ -10,7 +12,7 @@ interface NodeIndexerInterface
      * FIXME The queue should be persistent in order to avoid loosing data
      * in case of PHP crash or any other bugguy reason.
      *
-     * @param stdClass[] $nodes
+     * @param NodeInterface[] $nodes
      */
     public function enqueue(array $nodes);
 
@@ -38,19 +40,18 @@ interface NodeIndexerInterface
     /**
      * Remove a single node from index
      *
-     * @param string $index
-     * @param int $nid
+     * @param NodeInterface $node
      */
-    public function delete($node);
+    public function delete(NodeInterface $node);
 
     /**
      * Tell if the given node matches the given index.
      *
-     * @param stdClass $node
+     * @param NodeInterface $node
      *
      * @return boolean
      */
-    public function matches($node);
+    public function matches(NodeInterface $node);
 
     /**
      * Index or upsert given nodes using a bulk request
@@ -61,9 +62,7 @@ interface NodeIndexerInterface
      * don't have to check ourselves if the document exists in the index or not.
      * Elastic Search index operation is actually an upsert operation.
      *
-     * @param string $index
-     *   Index identifier
-     * @param stdClass[] $nodeList
+     * @param NodeInterface[] $nodeList
      *   Node object
      * @param boolean $force
      *   Internal boolean, skip match test, this should never be used
@@ -83,9 +82,7 @@ interface NodeIndexerInterface
      * don't have to check ourselves if the document exists in the index or not.
      * Elastic Search index operation is actually an upsert operation.
      *
-     * @param string $index
-     *   Index identifier
-     * @param stdClass $node
+     * @param NodeInterface $node
      *   Node object
      * @param boolean $force
      *   Internal boolean, skip match test, this should never be used
@@ -97,5 +94,5 @@ interface NodeIndexerInterface
      * @return boolean
      *   True if the index command has been sent or false if node was dropped
      */
-    public function upsert($node, $force = false, $refresh = false);
+    public function upsert(NodeInterface $node, $force = false, $refresh = false);
 }

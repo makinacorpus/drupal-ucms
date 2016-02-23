@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Portlet;
 
+use Drupal\Core\Session\AccountInterface;
+
 /**
  * Class Dashboard
  *
@@ -28,10 +30,11 @@ class PortletRegistry
     /**
      * Get the list of portlets.
      *
-     * @param \stdClass $account
+     * @param AccountInterface $account
+     *
      * @return PortletInterface[]
      */
-    public function getPortletsForAccount(\stdClass $account)
+    public function getPortletsForAccount(AccountInterface $account)
     {
         $portlets = [];
         foreach ($this->getPortlets() as $id => $portlet) {
