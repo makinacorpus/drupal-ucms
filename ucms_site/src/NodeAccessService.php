@@ -9,7 +9,7 @@ use Monolog\Handler\MandrillHandler;
 /**
  * Drupal ACL builder for usage with node_access() related hooks
  */
-class NodeAccessHelper
+class NodeAccessService
 {
     /**
      * Grants for anonymous users

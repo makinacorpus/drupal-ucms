@@ -8,7 +8,7 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Site\NodeAccessHelper;
+use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 
 /**
@@ -20,16 +20,16 @@ class NodeActionProvider implements ActionProviderInterface
     use StringTranslationTrait;
 
     /**
-     * @var NodeAccessHelper
+     * @var NodeAccessService
      */
     private $nodeAccess;
 
     /**
      * Default constructor
      *
-     * @param NodeAccessHelper $nodeAccess
+     * @param NodeAccessService $nodeAccess
      */
-    public function __construct(NodeAccessHelper $nodeAccess)
+    public function __construct(NodeAccessService $nodeAccess)
     {
         $this->nodeAccess = $nodeAccess;
     }

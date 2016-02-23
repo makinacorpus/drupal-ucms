@@ -8,7 +8,7 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\NodeAccessHelper;
+use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
@@ -52,7 +52,7 @@ class NodeAccessTest extends AbstractDrupalTest
     /**
      * Get node access helper
      *
-     * @return NodeAccessHelper
+     * @return NodeAccessService
      */
     protected function getNodeHelper()
     {
