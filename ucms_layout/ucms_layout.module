@@ -316,7 +316,7 @@ function ucms_layout_page_build(&$page) {
       }
     }
 
-    if ($editMode && empty($items)) {
+    if ($editMode && empty($items) && empty($page[$regionId])) {
       // Trick block.module so that it's not "empty"
       $items = ['#markup' => ''];
     }
