@@ -40,6 +40,10 @@ services:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserResetPassword
     tags: [{ name: apb.notification.formatter, event: "user:reset_password", auto: true, channels: "admin:client" }]
 
+  ucms_notification.user_delete:
+    class: MakinaCorpus\Ucms\Notification\Formatter\UserDelete
+    tags: [{ name: apb.notification.formatter, event: "user:delete", auto: true, channels: "admin:client" }]
+
   # Context pane event listener
   ucms_notification.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\ContextPaneEventListener

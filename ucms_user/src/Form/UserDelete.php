@@ -86,7 +86,7 @@ class UserDelete extends FormBase
         $this->entityManager->getStorage('user')->delete([$user]);
 
         drupal_set_message($this->t("User @name has been deleted.", array('@name' => $user->name)));
-        //$this->dispatcher->dispatch('user:delete', new UserEvent($user->uid, $this->currentUser()->uid));
+        $this->dispatcher->dispatch('user:delete', new UserEvent($user->uid, $this->currentUser()->uid, ['name' => $user->getDisplayName()]));
 
         $form_state->setRedirect('admin/dashboard/user');
     }
