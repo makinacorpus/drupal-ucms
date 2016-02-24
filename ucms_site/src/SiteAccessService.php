@@ -209,6 +209,19 @@ class SiteAccessService
     }
 
     /**
+     * Get a Relative role name, i.e. the name of the matching Drupal role
+     *
+     * @param int $rrid Relative role ID (Access::ROLE_* constant)
+     * @return string
+     */
+    public function getRelativeRoleName($rrid)
+    {
+        if ($rid = array_keys($this->getRelativeRoles(), $rrid)) {
+            return $this->getDrupalRoleName(reset($rid));
+        }
+    }
+
+    /**
      * Get user relative role list to site, including global roles
      *
      * @param AccountInterface $account

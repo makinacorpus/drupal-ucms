@@ -3,6 +3,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Form;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -27,6 +28,7 @@ class WebmasterAddExisting extends FormBase
     {
         return new self(
             $container->get('ucms_site.manager'),
+            $container->get('entity.manager'),
             $container->get('event_dispatcher')
         );
     }
@@ -35,7 +37,12 @@ class WebmasterAddExisting extends FormBase
     /**
      * @var SiteManager
      */
-    protected $manager;
+    protected $siteManager;
+
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
 
     /**
      * @var EventDispatcherInterface
@@ -43,9 +50,13 @@ class WebmasterAddExisting extends FormBase
     protected $dispatcher;
 
 
-    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher)
-    {
-        $this->manager = $manager;
+    public function __construct(
+        SiteManager $siteManager,
+        EntityManager $entityManager,
+        EventDispatcherInterface $dispatcher
+    ) {
+        $this->siteManager = $siteManager;
+        $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -78,13 +89,16 @@ class WebmasterAddExisting extends FormBase
             '#required' => true,
         ];
 
+        $roles = [];
+        $relativeRoles = $this->siteManager->getAccess()->getRelativeRoles();
+        foreach (array_keys($relativeRoles) as $rid) {
+            $roles[$rid] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
+        }
+
         $form['role'] = [
             '#type' => 'radios',
             '#title' => $this->t("Role"),
-            '#options' => [
-                Access::ROLE_WEBMASTER  => $this->t("Webmaster"),
-                Access::ROLE_CONTRIB    => $this->t("Contributor"),
-            ],
+            '#options' => $roles,
             '#required' => true,
         ];
 
@@ -111,9 +125,14 @@ class WebmasterAddExisting extends FormBase
         $user = $form_state->getValue('name');
 
         if (preg_match('/\[(\d+)\]$/', $user, $matches) !== 1 || $matches[1] < 2) {
-            $form_state->setErrorByName('name', $this->t("User not reconized."));
+            $form_state->setErrorByName('name', $this->t("The user can't be identified."));
         } else {
-            $form_state->setTemporaryValue('user_id', $matches[1]);
+            $user = $this->entityManager->getStorage('user')->load($matches[1]);
+            if (null === $user) {
+                $form_state->setErrorByName('name', $this->t("The user doesn't exist."));
+            } else {
+                $form_state->setTemporaryValue('user', $user);
+            }
         }
     }
 
@@ -124,13 +143,25 @@ class WebmasterAddExisting extends FormBase
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
         /* @var Site $site */
-        $site = $this->manager->getStorage()->findOne($form_state->getValue('site'));
+        $site = $this->siteManager->getStorage()->findOne($form_state->getValue('site'));
+        $user = $form_state->getTemporaryValue('user');
 
-        if ((int) $form_state->getValue('role') === Access::ROLE_WEBMASTER) {
-            $this->manager->getAccess()->addWebmasters($site, $form_state->getTemporaryValue('user_id'));
+        $rid = $form_state->getValue('role');
+        $relativeRoles = $this->siteManager->getAccess()->getRelativeRoles();
+
+        if ((int) $relativeRoles[$rid] === Access::ROLE_WEBMASTER) {
+            $this->siteManager->getAccess()->addWebmasters($site, $user->id());
         } else {
-            $this->manager->getAccess()->addContributors($site, $form_state->getTemporaryValue('user_id'));
+            $this->siteManager->getAccess()->addContributors($site, $user->id());
         }
+
+        drupal_set_message($this->t("!name has been added as %role.", [
+            '!name' => $user->getDisplayName(),
+            '%role' => $this->siteManager->getAccess()->getDrupalRoleName($rid),
+        ]));
+
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['uid' => $user->id()]);
+        $this->dispatcher->dispatch('site:add_existing_webmaster', $event);
     }
 }
 

@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -87,7 +88,14 @@ class WebmasterDemote extends FormBase
     {
         $site = $form_state->getTemporaryValue('site');
         $user = $form_state->getTemporaryValue('user');
-        $this->manager->getAccess()->addContributors($site, $user->uid);
+        $this->manager->getAccess()->addContributors($site, $user->id());
+
+        drupal_set_message($this->t("!name has been demoted as %role.", [
+            '!name' => $user->getDisplayName(),
+            '%role' => $this->manager->getAccess()->getRelativeRoleName(Access::ROLE_CONTRIB),
+        ]));
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['uid' => $user->id()]);
+        $this->dispatcher->dispatch('site:demote_webmaster', $event);
     }
 }
 

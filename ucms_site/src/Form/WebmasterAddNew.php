@@ -182,13 +182,22 @@ class WebmasterAddNew extends FormBase
 
         // Handles site access
         $site = $form_state->getTemporaryValue('site');
+        $rid = $form_state->getValue('role');
         $relativeRoles = $this->siteManager->getAccess()->getRelativeRoles();
 
-        if ((int) $relativeRoles[$form_state->getValue('role')] === Access::ROLE_WEBMASTER) {
+        if ((int) $relativeRoles[$rid] === Access::ROLE_WEBMASTER) {
             $this->siteManager->getAccess()->addWebmasters($site, $user->id());
         } else {
             $this->siteManager->getAccess()->addContributors($site, $user->id());
         }
+
+        drupal_set_message($this->t("!name has been created and added as %role.", [
+            '!name' => $user->getDisplayName(),
+            '%role' => $this->siteManager->getAccess()->getDrupalRoleName($rid),
+        ]));
+
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['uid' => $user->id()]);
+        $this->dispatcher->dispatch('site:add_new_webmaster', $event);
     }
 }
 
