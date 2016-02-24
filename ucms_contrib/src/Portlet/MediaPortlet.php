@@ -6,9 +6,11 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
+use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
+use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 
-class MediaPortlet extends AbstractPortlet
+class MediaPortlet extends AbstractAdminPortlet
 {
     use StringTranslationTrait;
 
@@ -17,8 +19,16 @@ class MediaPortlet extends AbstractPortlet
      */
     private $actionProvider;
 
-    public function __construct(ActionProviderInterface $actionProvider)
+    /**
+     * Default constructor
+     *
+     * @param DatasourceInterface $datasource
+     * @param ActionProviderInterface $actionProvider
+     */
+    public function __construct(DatasourceInterface $datasource, ActionProviderInterface $actionProvider)
     {
+        parent::__construct($datasource);
+
         $this->actionProvider = $actionProvider;
     }
 
@@ -60,9 +70,12 @@ class MediaPortlet extends AbstractPortlet
     /**
      * {@inheritDoc}
      */
-    public function getContent()
+    protected function getDisplay(&$query, PageState $pageState)
     {
-        return '@todo';
+        $query['type'] = variable_get('ucms_contrib_tab_media_type'); // FIXME;
+        $query['owner'] = $this->getAccount()->id();
+
+        return new NodePortletDisplay($this->t("You have no media yet."));
     }
 
     /**

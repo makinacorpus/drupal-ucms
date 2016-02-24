@@ -117,6 +117,7 @@ class SiteAdminDatasource extends AbstractDatasource
         if ($pageState->hasSortField()) {
             $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
+        $q->orderBy('s.id', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
         if (!empty($query[$sParam])) {

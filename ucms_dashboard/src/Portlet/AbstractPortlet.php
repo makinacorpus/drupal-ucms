@@ -30,13 +30,27 @@ abstract class AbstractPortlet implements PortletInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getActions()
+    {
+        return [];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function renderActions()
     {
+        $actions = $this->getActions();
+
+        if (!$actions) {
+            return '';
+        }
+
         return [
             '#theme'    => 'ucms_dashboard_actions',
-            '#actions'  => $this->getActions(),
+            '#actions'  => $actions,
         ];
     }
 }

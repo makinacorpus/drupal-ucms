@@ -6,9 +6,11 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
+use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
+use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 
-class ContentPortlet extends AbstractPortlet
+class ContentPortlet extends AbstractAdminPortlet
 {
     use StringTranslationTrait;
 
@@ -20,10 +22,13 @@ class ContentPortlet extends AbstractPortlet
     /**
      * Default constructor
      *
+     * @param DatasourceInterface $datasource
      * @param ActionProviderInterface $actionProvider
      */
-    public function __construct(ActionProviderInterface $actionProvider)
+    public function __construct(DatasourceInterface $datasource, ActionProviderInterface $actionProvider)
     {
+        parent::__construct($datasource);
+
         $this->actionProvider = $actionProvider;
     }
 
@@ -65,9 +70,12 @@ class ContentPortlet extends AbstractPortlet
     /**
      * {@inheritDoc}
      */
-    public function getContent()
+    protected function getDisplay(&$query, PageState $pageState)
     {
-        return '@todo';
+        $query['type'] = variable_get('ucms_contrib_tab_content_type'); // FIXME;
+        $query['owner'] = $this->getAccount()->id();
+
+        return new NodePortletDisplay($this->t("You have no content yet."));
     }
 
     /**

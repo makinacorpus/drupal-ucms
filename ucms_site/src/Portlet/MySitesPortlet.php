@@ -6,32 +6,13 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\SiteManager;
 
-class MySitesPortlet extends AbstractPortlet
+class MySitesPortlet extends AbstractAdminPortlet
 {
     use StringTranslationTrait;
-
-    /**
-     * @var AccountInterface
-     */
-    private $account;
-
-    /**
-     * @var SiteManager
-     */
-    private $siteManager;
-
-    /**
-     * SitePortlet constructor.
-     * @param SiteManager $siteManager
-     */
-    public function __construct(SiteManager $siteManager)
-    {
-        $this->siteManager = $siteManager;
-    }
 
     /**
      * Return the title of this portlet.
@@ -50,7 +31,7 @@ class MySitesPortlet extends AbstractPortlet
      */
     public function getPath()
     {
-        return 'admin/dashboard/site';
+        return 'admin/dashboard/site/mine';
     }
 
     /**
@@ -64,16 +45,15 @@ class MySitesPortlet extends AbstractPortlet
     }
 
     /**
-     * Render the content of this portlet.
-     *
-     * @TODO Could be rendered in an Ajax reqest someday
-     * @return mixed
+     * {inheritDoc}
      */
-    public function getContent()
+    protected function getDisplay(&$query, PageState $pageState)
     {
-        // TODO
-        // $sites = $this->siteManager->loadWebmasterSites($this->account);
-        return '@todo';
+        $pageState->setSortField('s.ts_changed');
+
+        $query['uid'] = $this->getAccount()->id();
+
+        return new SitePortletDisplay($this->t("No site created yet."));
     }
 
     /**
@@ -84,8 +64,6 @@ class MySitesPortlet extends AbstractPortlet
      */
     public function userIsAllowed(AccountInterface $account)
     {
-        $this->account = $account;
-
-        return $this->account->hasPermission(Access::PERM_SITE_REQUEST);
+        return $account->hasPermission(Access::PERM_SITE_REQUEST);
     }
 }

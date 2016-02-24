@@ -101,20 +101,6 @@ function ucms_search_client_get() {
 }
 
 /**
- * Create new search
- *
- * @param string $index
- *
- * @return QueryAlteredSearch
- *
- * @deprecated
- *   You should inject the 'ucms_search.search_factory' service
- */
-function ucms_search_create($index) {
-  return \Drupal::service('ucms_search.search_factory')->create($index);
-}
-
-/**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function ucms_search_form_node_form_alter(&$form, &$form_state) {

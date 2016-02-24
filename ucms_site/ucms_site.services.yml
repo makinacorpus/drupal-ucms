@@ -68,11 +68,11 @@ services:
   ucms_site.sites_portlet:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\SitesPortlet
-    arguments: ["@database", "@ucms_site.manager"]
+    arguments: ["@ucms_site.admin.datasource"]
     tags: [{ name: ucms_dashboard.portlet }]
 
   ucms_site.my_sites_portlet:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\MySitesPortlet
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@ucms_site.admin.datasource"]
     tags: [{ name: ucms_dashboard.portlet }]

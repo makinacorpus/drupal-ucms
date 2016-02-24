@@ -21,16 +21,22 @@ services:
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
 
+  # Datasource via elastic search
+  ucms_contrib.datasource.elastic:
+    shared: false
+    class: MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource
+    arguments: ["@ucms_search.search_factory"]
+
   # Content portlet
   ucms_contrib.content_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
-    arguments: ["@ucms_contrib.content_action_provider"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider"]
     tags: [{ name: ucms_dashboard.portlet }]
 
   # Media portlet
   ucms_contrib.media_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
-    arguments: ["@ucms_contrib.content_action_provider"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider"]
     tags: [{ name: ucms_dashboard.portlet }]

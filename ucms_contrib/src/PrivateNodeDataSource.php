@@ -4,10 +4,10 @@ namespace MakinaCorpus\Ucms\Contrib;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Ucms\Search\SearchFactory;
 
 class PrivateNodeDataSource extends AbstractDatasource
 {
@@ -19,11 +19,22 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * Default constructor
      *
-     * @param QueryAlteredSearch $search
+     * @param SearchFactory $searchFactory
+     * @param string $index
      */
-    public function __construct(QueryAlteredSearch $search)
+    public function __construct(SearchFactory $searchFactory, $index = 'private')
     {
-        $this->search = $search;
+        $this->search = $searchFactory->create($index);
+    }
+
+    /**
+     * Get datasource search object
+     *
+     * @return QueryAlteredSearch
+     */
+    public function getSearch()
+    {
+        return $this->search;
     }
 
     /**
@@ -34,14 +45,14 @@ class PrivateNodeDataSource extends AbstractDatasource
         $ret = [];
 
         $ret[] = $this
-            ->search
+            ->getSearch()
             ->createTermAggregation('type', null)
             ->setChoicesMap(node_type_get_names())
             ->setTitle(t("Type"))
         ;
 
         $ret[] = $this
-            ->search
+            ->getSearch()
             ->createTermAggregation('owner', null)
             ->setChoicesCallback(function ($values) {
                 if ($accounts = user_load_multiple($values)) {
@@ -55,7 +66,7 @@ class PrivateNodeDataSource extends AbstractDatasource
         ;
 
         $ret[] = $this
-            ->search
+            ->getSearch()
             ->createTermAggregation('tags', null)
             ->setChoicesCallback(function ($values) {
                 if ($terms = taxonomy_term_load_multiple($values)) {
@@ -69,7 +80,7 @@ class PrivateNodeDataSource extends AbstractDatasource
         ;
 
         $ret[] = $this
-            ->search
+            ->getSearch()
             ->createTermAggregation('status', null)
             ->setChoicesMap([0 => t("Unpublished"), 1 => t("Published")])
             ->setTitle(t("Status"))
@@ -86,7 +97,7 @@ class PrivateNodeDataSource extends AbstractDatasource
         $ret = [];
 
         // Apply rendering stuff for it to work
-        foreach ($this->search->getAggregations() as $facet) {
+        foreach ($this->getSearch()->getAggregations() as $facet) {
             $ret[] = (new LinksFilterDisplay($facet->getField(), $facet->getTitle(), true))->setChoicesMap($facet->getFormattedChoices());
         }
 
