@@ -282,9 +282,9 @@ function ucms_site_menu_access_view($site, $account = null) {
     return false;
   }
   if (!$account) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
-  return ucms_site_manager()->getAccess()->userCanView($site, $account->uid);
+  return ucms_site_manager()->getAccess()->userCanView($account, $site);
 }
 
 /**
@@ -295,9 +295,9 @@ function ucms_site_menu_access_overview($site, $account = null) {
     return false;
   }
   if (!$account) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
-  return ucms_site_manager()->getAccess()->userCanOverview($site, $account->uid);
+  return ucms_site_manager()->getAccess()->userCanOverview($account, $site);
 }
 
 /**
@@ -308,9 +308,9 @@ function ucms_site_menu_access_manage($site, $account = null) {
     return false;
   }
   if (!$account) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
-  return ucms_site_manager()->getAccess()->userCanManage($site, $account->uid);
+  return ucms_site_manager()->getAccess()->userCanManage($account, $site);
 }
 
 /**
@@ -321,9 +321,9 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
     return false;
   }
   if (!$account) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
-  return ucms_site_manager()->getAccess()->userCanSwitch($site, $state, $account->uid);
+  return ucms_site_manager()->getAccess()->userCanSwitch($account, $site, $state);
 }
 
 /**
@@ -331,9 +331,9 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
  */
 function ucms_site_menu_access_webmasters(Site $site, $account = null) {
   if (!$account) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
-  return ucms_site_manager()->getAccess()->userCanManageWebmasters($site, $account->uid);
+  return ucms_site_manager()->getAccess()->userCanManageWebmasters($account, $site);
 }
 
 /**
@@ -341,9 +341,9 @@ function ucms_site_menu_access_webmasters(Site $site, $account = null) {
  */
 function ucms_site_menu_access_reference(NodeInterface $node, $account = null) {
   if (!$account) {
-    $account = $GLOBALS['user'];
+    $account = \Drupal::currentUser();
   }
-  return $node->access('view', $account) && ucms_site_node_access_helper()->canUserReference($node, $account);
+  return $node->access('view', $account) && ucms_site_node_access_helper()->userCanReference($account, $node);
 }
 
 /**
@@ -405,7 +405,7 @@ function ucms_site_module_implements_alter(&$implementations, $hook) {
  */
 function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
 
-  global $user;
+  $account = \Drupal::currentUser();
 
   if (drupal_is_cli()) {
     return; // Make drush happy.
@@ -434,7 +434,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     return; // Normal runtime operation, nothing to do.
   }
 
-  if (!ucms_site_manager()->getAccess()->userCanView($site, $user->uid)) {
+  if (!ucms_site_manager()->getAccess()->userCanView($account, $site)) {
     $menu_site_status = MENU_SITE_OFFLINE;
     // State off means that the site is valid and up, but in maintainance mode,
     // case in which we should just set the maintainance mode and leave,
@@ -597,7 +597,7 @@ function ucms_site_node_delete($node) {
  * Implements hook_node_access().
  */
 function ucms_site_node_access($node, $op, $account) {
-  return ucms_site_node_access_helper()->canUserAccess($node, $op, $account);
+  return ucms_site_node_access_helper()->userCanAccess($account, $node, $op);
 }
 
 /**

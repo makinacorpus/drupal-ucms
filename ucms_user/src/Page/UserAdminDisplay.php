@@ -3,6 +3,7 @@
 
 namespace MakinaCorpus\Ucms\User\Page;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
@@ -37,13 +38,14 @@ class UserAdminDisplay extends AbstractDisplay
         $rows = [];
 
         foreach ($users as $user) {
+            /* @var $user AccountInterface */
             $rows[] = [
                 check_plain($user->mail),
-                filter_xss(format_username($user)),
+                $user->getDisplayName(),
                 ($user->status == 0) ? $this->t("Disabled") : $this->t("Enabled"),
-                $manager->getAccess()->userIsWebmaster(null, $user->uid) ? $this->t("Yes") : $this->t("No"),
+                $manager->getAccess()->userIsWebmaster($user) ? $this->t("Yes") : $this->t("No"),
                 format_interval(time() - $user->created),
-                ($user->login > 0) ? format_interval(time() - $user->login) : $this->t("Never"),
+                ($user->login > 0) ? format_interval(time() - $user->getLastAccessedTime()) : $this->t("Never"),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($user), 'mode' => 'icon']),
             ];
         }

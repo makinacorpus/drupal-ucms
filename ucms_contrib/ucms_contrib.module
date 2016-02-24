@@ -213,7 +213,7 @@ function ucms_contrib_menu_node_access_star(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
-  return ucms_site_node_access_helper()->canUserLock($node, $GLOBALS['user']);
+  return ucms_site_node_access_helper()->userCanLock(\Drupal::currentUser(), $node);
 }
 
 /**

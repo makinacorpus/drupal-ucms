@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
-use Drupal\Core\Entity\EntityManager;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -15,11 +13,6 @@ class SiteAccessService
      * @var \DatabaseConnection
      */
     private $db;
-
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
 
     /**
      * User access cache
@@ -37,71 +30,24 @@ class SiteAccessService
      * Default constructor
      *
      * @param \DatabaseConnection $db
-     * @param EntityManager $entityManager
      */
-    public function __construct(\DatabaseConnection $db, EntityManager $entityManager)
+    public function __construct(\DatabaseConnection $db)
     {
         $this->db = $db;
-        $this->entityManager = $entityManager;
-    }
-
-    /**
-     * Get user controller
-     *
-     * This needs to be done this way because the entity subsystem might not
-     * be initialized yet when this object is
-     *
-     * @return EntityStorageInterface
-     */
-    private function getUserStorage()
-    {
-        return $this->entityManager->getStorage('user');
-    }
-
-    /**
-     * Get current user identifier
-     *
-     * @return int
-     */
-    private function getCurrentUserId()
-    {
-        // FIXME: Inject it instead
-        return $GLOBALS['user']->uid;
-    }
-
-    /**
-     * Get user role identifiers
-     *
-     * @param int $userId
-     *
-     * @return int[]
-     */
-    private function getUserRoleList($userId = null)
-    {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        /* @var $user AccountInterface */
-        $user = $this->getUserStorage()->load($userId);
-
-        if (!$user) {
-            return [];
-        }
-
-        return $user->getRoles();
     }
 
     /**
      * Get user role in site
      *
-     * @param int $userId
+     * @param AccountInterface $account
      * @param Site $site
      *
      * @return SiteAccessRecord|SiteAccessRecord[]
      */
-    private function getUserRoleCacheValue($userId, Site $site = null)
+    private function getUserRoleCacheValue(AccountInterface $account, Site $site = null)
     {
+        $userId = $account->id();
+
         if (!isset($this->accessCache[$userId])) {
             $r = $this
                 ->db
@@ -143,26 +89,26 @@ class SiteAccessService
     /**
      * Get the user roles for all sites
      *
-     * @param int $userId
+     * @param AccountInterface $account
      *
      * @return SiteAccessRecord[]
      */
-    public function getUserRoles($userId)
+    public function getUserRoles(AccountInterface $account)
     {
-        return $this->getUserRoleCacheValue($userId);
+        return $this->getUserRoleCacheValue($account);
     }
 
     /**
      * Get the user role for a given site
      *
-     * @param int $userId
+     * @param AccountInterface $account
      * @param Site $site
      *
      * @return SiteAccessRecord
      */
-    public function getUserRole($userId, Site $site)
+    public function getUserRole(AccountInterface $account, Site $site)
     {
-        return $this->getUserRoleCacheValue($userId, $site);
+        return $this->getUserRoleCacheValue($account, $site);
     }
 
     /**
@@ -253,20 +199,17 @@ class SiteAccessService
     /**
      * Get user relative role list to site, including global roles
      *
-     * @param int $userId
+     * @param AccountInterface $account
+     * @param Site $site
      *
      * @return int[]
      */
-    public function getRelativeUserRoleList(Site $site, $userId = null)
+    public function getRelativeUserRoleList(AccountInterface $account, Site $site)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
         $ret = [];
 
         $relativeRoles  = $this->getRelativeRoles();
-        $grant          = $this->getUserRoleCacheValue($userId, $site);
+        $grant          = $this->getUserRoleCacheValue($account, $site);
 
         // First check the user site roles if any
         if ($grant) {
@@ -277,7 +220,7 @@ class SiteAccessService
             }
         }
 
-        foreach ($this->getUserRoleList($userId) as $rid) {
+        foreach ($account->getRoles() as $rid) {
             // Exlude relative role, they are not global but relative, the fact
             // we set the role onto the Drupal user only means that it has this
             // role only once
@@ -292,47 +235,18 @@ class SiteAccessService
     }
 
     /**
-     * Does the given user has the given permission
-     *
-     * This is a proxy to Drupal native user_access() method
-     *
-     * @param string $permission
-     *   One of the Access::PERM_* constant
-     * @param int $userId
-     *   User account identifier, if none given use the current user from context
-     *
-     * @return boolean
-     */
-    public function userHasPermission($permission, $userId = null)
-    {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        $user = $this->getUserStorage()->load($userId);
-
-        /* @var $user AccountInterface */
-        return $user && $user->hasPermission($permission);
-    }
-
-    /**
      * Is the given user a webmaster.
      * If a site is given, is the given user webmaster of this site.
      *
+     * @param AccountInterface $account
      * @param Site $site
-     * @param int $userId
-     *  The current user ID by default
      *
      * @return boolean
      */
-    public function userIsWebmaster(Site $site = null, $userId = null)
+    public function userIsWebmaster(AccountInterface $account, Site $site = null)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
         if (null === $site) {
-            foreach ($this->getUserRoleCacheValue($userId) as $grant) {
+            foreach ($this->getUserRoleCacheValue($account) as $grant) {
                 if (Access::ROLE_WEBMASTER === $grant->getRole()) {
                     return true;
                 }
@@ -340,7 +254,7 @@ class SiteAccessService
             return false;
         }
 
-        if ($grant = $this->getUserRoleCacheValue($userId, $site)) {
+        if ($grant = $this->getUserRoleCacheValue($account, $site)) {
             return Access::ROLE_WEBMASTER === $grant->getRole();
         }
 
@@ -351,20 +265,15 @@ class SiteAccessService
      * Is the given user a contributor.
      * If a site is given, the given user contributor of this site.
      *
+     * @param AccountInterface $account
      * @param Site $site
-     * @param int $userId
-     *  The current user ID by default
      *
      * @return boolean
      */
-    public function userIsContributor(Site $site = null, $userId = null)
+    public function userIsContributor(AccountInterface $account, Site $site = null)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
         if (null === $site) {
-            foreach ($this->getUserRoleCacheValue($userId) as $grant) {
+            foreach ($this->getUserRoleCacheValue($account) as $grant) {
                 if (Access::ROLE_CONTRIB === $grant->getRole()) {
                     return true;
                 }
@@ -372,7 +281,7 @@ class SiteAccessService
             return false;
         }
 
-        if ($grant = $this->getUserRoleCacheValue($userId, $site)) {
+        if ($grant = $this->getUserRoleCacheValue($account, $site)) {
             return Access::ROLE_CONTRIB === $grant->getRole();
         }
 
@@ -387,12 +296,8 @@ class SiteAccessService
      *
      * @return boolean
      */
-    public function userCanView(Site $site, $userId = null)
+    public function userCanView(AccountInterface $account, Site $site)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
         if (SiteState::ON == $site->state) {
             return true;
         }
@@ -403,16 +308,16 @@ class SiteAccessService
 
             case SiteState::INIT:
             case SiteState::ARCHIVE:
-                return $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)
-                    || $this->userHasPermission(Access::PERM_SITE_VIEW_ALL, $userId)
-                    || $this->userIsWebmaster($site, $userId)
+                return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
+                    || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)
+                    || $this->userIsWebmaster($account, $site)
                 ;
 
             case SiteState::OFF:
-                return $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)
-                    || $this->userHasPermission(Access::PERM_SITE_VIEW_ALL, $userId)
-                    || $this->userIsWebmaster($site, $userId)
-                    || $this->userIsContributor($site, $userId)
+                return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
+                    || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)
+                    || $this->userIsWebmaster($account, $site)
+                    || $this->userIsContributor($account, $site)
                 ;
         }
 
@@ -422,16 +327,12 @@ class SiteAccessService
     /**
      * Can the given user see administrative information about the site
      *
+     * @param AccountInterface $account
      * @param Site $site
-     * @param int $userId
      */
-    public function userCanOverview(Site $site, $userId = null)
+    public function userCanOverview(AccountInterface $account, Site $site)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        if ($this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)) {
+        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL)) {
             return true;
         }
 
@@ -440,11 +341,11 @@ class SiteAccessService
             case SiteState::INIT:
             case SiteState::OFF:
             case SiteState::ON:
-                return $this->userIsContributor($site, $userId)
-                    || $this->userIsWebmaster($site, $userId);
+                return $this->userIsContributor($account, $site)
+                    || $this->userIsWebmaster($account, $site);
 
             default:
-                return $this->userIsWebmaster($site, $userId);
+                return $this->userIsWebmaster($account, $site);
         }
 
         return false;
@@ -453,18 +354,14 @@ class SiteAccessService
     /**
      * Can the given user manage the given site
      *
+     * @param AccountInterface $account
      * @param Site $site
-     * @param int $userId
      *
      * @return boolean
      */
-    public function userCanManage(Site $site, $userId = null)
+    public function userCanManage(AccountInterface $account, Site $site)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        if ($this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)) {
+        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL)) {
             return true;
         }
 
@@ -473,7 +370,7 @@ class SiteAccessService
             case SiteState::INIT:
             case SiteState::OFF:
             case SiteState::ON:
-                return $this->userIsWebmaster($site, $userId);
+                return $this->userIsWebmaster($account, $site);
         }
 
         return false;
@@ -482,37 +379,29 @@ class SiteAccessService
     /**
      * Can the given user manage the given site webmasters
      *
+     * @param AccountInterface $account
      * @param Site $site
-     * @param int $userId
      *
      * @return boolean
      */
-    public function userCanManageWebmasters(Site $site, $userId = null)
+    public function userCanManageWebmasters(AccountInterface $account, Site $site)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        return $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId)
-            || $this->userIsWebmaster($site, $userId);
+        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
+            || $this->userIsWebmaster($account, $site);
     }
 
     /**
      * Can the given user switch the given site to the given state
      *
+     * @param AccountInterface $account
      * @param Site $site
      * @param int $state
-     * @param int $userId
      *
      * @return boolean
      */
-    public function userCanSwitch($site, $state, $userId = null)
+    public function userCanSwitch(AccountInterface $account, $site, $state)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        $allowed = $this->getAllowedTransitions($site, $userId);
+        $allowed = $this->getAllowedTransitions($account, $site);
 
         return isset($allowed[$state]);
     }
@@ -520,39 +409,31 @@ class SiteAccessService
     /**
      * Can the given user delete the given site
      *
+     * @param AccountInterface $account
      * @param Site $site
-     * @param int $userId
      *
      * @return boolean
      */
-    public function userCanDelete(Site $site, $userId = null)
+    public function userCanDelete(AccountInterface $account, Site $site)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
-        return SiteState::ARCHIVE == $site->state && $this->userHasPermission(Access::PERM_SITE_MANAGE_ALL, $userId);
+        return SiteState::ARCHIVE == $site->state && $account->hasPermission(Access::PERM_SITE_MANAGE_ALL);
     }
 
     /**
      * Get allow transition list for the given site and user
      *
+     * @param AccountInterface $account
      * @param Site $site
-     * @param int $userId
      *
      * @return string[]
      *   Keys are state identifiers and values are states names
      */
-    public function getAllowedTransitions(Site $site, $userId = null)
+    public function getAllowedTransitions(AccountInterface $account, Site $site)
     {
-        if (null === $userId) {
-            $userId = $this->getCurrentUserId();
-        }
-
         $ret = [];
         $states = SiteState::getList();
         $matrix = $this->getStateTransitionMatrix();
-        $roles  = $this->getRelativeUserRoleList($site, $userId);
+        $roles  = $this->getRelativeUserRoleList($account, $site);
 
         foreach ($states as $state => $name) {
             foreach ($roles as $rid) {

@@ -215,7 +215,7 @@ final class SiteManager
      */
     public function loadWebmasterSites(AccountInterface $account)
     {
-        $roles = $this->getAccess()->getUserRoles($userId);
+        $roles = $this->getAccess()->getUserRoles($account);
 
         foreach ($roles as $grant) {
             if ($grant->getRole() !== Access::ROLE_WEBMASTER) {

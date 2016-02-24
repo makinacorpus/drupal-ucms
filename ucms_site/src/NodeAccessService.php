@@ -204,7 +204,6 @@ class NodeAccessService
         }
 
         $ret  = [];
-        $userId = $account->uid;
         $access = $this->manager->getAccess();
         $site   = $this->manager->getContext();
 
@@ -222,15 +221,15 @@ class NodeAccessService
                 $ret[self::REALM_READONLY] = [$site->id];
             }
 
-            if ($access->userCanView($site, $userId)) {
-                if ($access->userIsWebmaster($site, $userId)) {
+            if ($access->userCanView($account, $site)) {
+                if ($access->userIsWebmaster($account, $site)) {
                     // Special case for archive, user might see but not edit
                     if (SiteState::ARCHIVE == $site->state) {
                         $ret[self::REALM_READONLY] = [$site->id];
                     } else {
                         $ret[self::REALM_WEBMASTER] = [$site->id];
                     }
-                } else if ($access->userIsContributor($site, $userId)) {
+                } else if ($access->userIsContributor($account, $site)) {
                     $ret[self::REALM_READONLY] = [$site->id];
                 }
             }
@@ -251,7 +250,7 @@ class NodeAccessService
             }
 
             // @todo this should be loadAllSitesForUser()
-            $grants = $this->manager->getAccess()->getUserRoles($userId);
+            $grants = $this->manager->getAccess()->getUserRoles($account);
 
             // Preload all sites
             $siteIdList = [];
@@ -263,7 +262,7 @@ class NodeAccessService
             foreach ($grants as $grant) {
                 $siteId = $grant->getSiteId();
                 if ($site = $sites[$siteId]) {
-                    if ($access->userCanView($site, $userId)) {
+                    if ($access->userCanView($account, $site)) {
                         if (Access::ROLE_WEBMASTER == $grant->getRole()) {
                             if (SiteState::ARCHIVE === $site->state) {
                                 $ret[self::REALM_READONLY][] = $siteId;
@@ -278,13 +277,13 @@ class NodeAccessService
             }
         }
 
-        return $this->userGrantCache[$userId][$op] = $ret;
+        return $this->userGrantCache[$account->uid][$op] = $ret;
     }
 
     /**
      * Alter-ego of hook_node_access().
      */
-    public function canUserAccess($node, $op, $account)
+    public function userCanAccess($account, $node, $op)
     {
         $access = $this->manager->getAccess();
 
@@ -297,7 +296,7 @@ class NodeAccessService
                 $site = $this->manager->getContext();
 
                 if ($site) {
-                    if ($access->userIsContributor($site, $account->uid) || $access->userIsWebmaster($site, $account->uid)) {
+                    if ($access->userIsContributor($account, $site) || $access->userIsWebmaster($account, $site)) {
                         return NODE_ACCESS_ALLOW;
                     }
                 } else if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL, $account) || user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED, $account)) {
@@ -331,7 +330,7 @@ class NodeAccessService
         if ('update' === $op && $account->uid && $node->uid == $account->uid) {
             if ($node->ucms_sites) {
                 // Site contributors can update their own content in sites
-                foreach ($access->getUserRoles($account->uid) as $grant) {
+                foreach ($access->getUserRoles($account) as $grant) {
                     if (in_array($grant->getSiteId(), $node->ucms_sites)) {
                         return NODE_ACCESS_ALLOW;
                     }
@@ -350,7 +349,7 @@ class NodeAccessService
      *
      * @return boolean
      */
-    public function canUserReference(NodeInterface $node, AccountInterface $account)
+    public function userCanReference(AccountInterface $account, NodeInterface $node)
     {
         // Let's say, from this very moment, that as long as the user can see
         // the node he might want to add it on one of his sites
@@ -365,7 +364,7 @@ class NodeAccessService
      *
      * @return boolean
      */
-    public function canUserLock(NodeInterface $node, AccountInterface $account)
+    public function userCanLock(AccountInterface $account, NodeInterface $node)
     {
         if ($node->is_global) {
             return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED);
@@ -376,11 +375,12 @@ class NodeAccessService
                 ->manager
                 ->getAccess()
                 ->userIsWebmaster(
+                    $account,
                     $this
                         ->manager
                         ->getStorage()
                         ->findOne($node->site_id),
-                    $account->id()
+                    $account
                 )
             ;
         } else {

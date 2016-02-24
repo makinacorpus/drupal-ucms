@@ -179,10 +179,10 @@ class NodeAccessTest extends AbstractDrupalTest
                 NODE_ACCESS_ALLOW,
                 $this
                     ->getNodeHelper()
-                    ->canUserAccess(
+                    ->userCanAccess(
+                        $this->contextualAccount,
                         $this->getNode($label),
-                        Access::OP_VIEW,
-                        $this->contextualAccount
+                        Access::OP_VIEW
                     ),
                 sprintf("Can see %s", $label)
             )
@@ -198,10 +198,10 @@ class NodeAccessTest extends AbstractDrupalTest
                 NODE_ACCESS_DENY,
                 $this
                     ->getNodeHelper()
-                    ->canUserAccess(
+                    ->userCanAccess(
+                        $this->contextualAccount,
                         $this->getNode($label),
-                        Access::OP_VIEW,
-                        $this->contextualAccount
+                        Access::OP_VIEW
                     ),
                 sprintf("Can not see %s", $label)
             )
@@ -250,10 +250,10 @@ class NodeAccessTest extends AbstractDrupalTest
                 NODE_ACCESS_ALLOW,
                 $this
                     ->getNodeHelper()
-                    ->canUserAccess(
+                    ->userCanAccess(
+                        $this->contextualAccount,
                         $this->getNode($label),
-                        Access::OP_UPDATE,
-                        $this->contextualAccount
+                        Access::OP_UPDATE
                     ),
                 sprintf("Can edit %s", $label)
             )
@@ -269,10 +269,10 @@ class NodeAccessTest extends AbstractDrupalTest
                 NODE_ACCESS_DENY,
                 $this
                     ->getNodeHelper()
-                    ->canUserAccess(
+                    ->userCanAccess(
+                        $this->contextualAccount,
                         $this->getNode($label),
-                        Access::OP_UPDATE,
-                        $this->contextualAccount
+                        Access::OP_UPDATE
                     ),
                 sprintf("Can not edit %s", $label)
             )

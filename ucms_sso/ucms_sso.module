@@ -112,7 +112,7 @@ function ucms_sso_origin_get() {
   if (!empty($_SERVER['HTTP_ORIGIN'])) {
     $manager = ucms_site_manager();
     $site = $manager->getStorage()->findByHostname($_SERVER['HTTP_ORIGIN']);
-    if ($site && $manager->getAccess()->userCanView($site)) {
+    if ($site && $manager->getAccess()->userCanView(\Drupal::currentUser(), $site)) {
       return $site->http_host;
     }
   }
