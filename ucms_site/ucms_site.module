@@ -111,10 +111,18 @@ function ucms_site_menu() {
     'type'              => MENU_LOCAL_TASK,
     'file'              => 'ucms_site.dashboard.inc',
   ];
-  $items['admin/dashboard/site/%ucms_site/webmaster/add'] = [
-    'title'             => "Add new webmaster or contributor",
+  $items['admin/dashboard/site/%ucms_site/webmaster/add-existing'] = [
+    'title'             => "Add existing webmaster or contributor",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAdd', 3],
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddExisting', 3],
+    'access callback'   => 'ucms_site_menu_access_webmasters',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['admin/dashboard/site/%ucms_site/webmaster/add-new'] = [
+    'title'             => "Create new webmaster or contributor",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddNew', 3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK,

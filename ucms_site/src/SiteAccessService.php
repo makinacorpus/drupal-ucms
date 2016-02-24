@@ -197,6 +197,18 @@ class SiteAccessService
     }
 
     /**
+     * Get a Drupal role name
+     *
+     * @param int $rid
+     * @return string
+     */
+    public function getDrupalRoleName($rid)
+    {
+        $roles = $this->getDrupalRoleList();
+        return $roles[(string) $rid];
+    }
+
+    /**
      * Get user relative role list to site, including global roles
      *
      * @param AccountInterface $account

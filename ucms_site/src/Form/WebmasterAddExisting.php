@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Form to assign a webmaster/contributor to a site.
  */
-class WebmasterAdd extends FormBase
+class WebmasterAddExisting extends FormBase
 {
     /**
      * {inheritdoc}
@@ -55,7 +55,7 @@ class WebmasterAdd extends FormBase
      */
     public function getFormId()
     {
-        return 'ucms_webmaster_add';
+        return 'ucms_webmaster_add_existing';
     }
 
 
@@ -68,35 +68,35 @@ class WebmasterAdd extends FormBase
             return [];
         }
 
-        $roles = [
-            Access::ROLE_WEBMASTER  => $this->t("Webmaster"),
-            Access::ROLE_CONTRIB    => $this->t("Contributor"),
-        ];
+        $form['#form_horizontal'] = true;
 
         $form['name'] = [
-            '#type'               => 'textfield',
-            '#title'              => $this->t("Name"),
-            '#description'        => $this->t("Thanks to make your choice in the suggestions list."),
-            '#autocomplete_path'  => 'admin/dashboard/site/users-ac',
-            '#required'           => true,
+            '#type' => 'textfield',
+            '#title' => $this->t("Name"),
+            '#description' => $this->t("Thanks to make your choice in the suggestions list."),
+            '#autocomplete_path' => 'admin/dashboard/site/users-ac',
+            '#required' => true,
         ];
 
         $form['role'] = [
-            '#type'               => 'radios',
-            '#title'              => $this->t("Role"),
-            '#options'            => $roles,
-            '#required'           => true,
+            '#type' => 'radios',
+            '#title' => $this->t("Role"),
+            '#options' => [
+                Access::ROLE_WEBMASTER  => $this->t("Webmaster"),
+                Access::ROLE_CONTRIB    => $this->t("Contributor"),
+            ],
+            '#required' => true,
         ];
 
         $form['site'] = [
-            '#type'               => 'value',
-            '#value'              => $site->id,
+            '#type' => 'value',
+            '#value' => $site->id,
         ];
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
-            '#type'               => 'submit',
-            '#value'              => $this->t("Add"),
+            '#type' => 'submit',
+            '#value' => $this->t("Add"),
         ];
 
         return $form;
@@ -109,7 +109,7 @@ class WebmasterAdd extends FormBase
     public function validateForm(array &$form, FormStateInterface $form_state)
     {
         $user = $form_state->getValue('name');
-        
+
         if (preg_match('/\[(\d+)\]$/', $user, $matches) !== 1 || $matches[1] < 2) {
             $form_state->setErrorByName('name', $this->t("User not reconized."));
         } else {
