@@ -168,6 +168,13 @@ function template_preprocess_ucms_user_profile(&$variables) {
 
   /* @var $account AccountInterface */
   $roles = $account->getRoles(true);
+  $role_names = user_roles();
+  $roles = array_map(
+    function ($role_id) use ($role_names) {
+      return $role_names[$role_id];
+    },
+    $account->getRoles(true)
+  );
 
   $sites = $manager->loadWebmasterSites($account);
   $requests = [];
