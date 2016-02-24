@@ -73,7 +73,7 @@ class WebmasterAddExisting extends FormBase
         $form['name'] = [
             '#type' => 'textfield',
             '#title' => $this->t("Name"),
-            '#description' => $this->t("Thanks to make your choice in the suggestions list."),
+            '#description' => $this->t("Please make your choice in the suggestions list."),
             '#autocomplete_path' => 'admin/dashboard/site/users-ac',
             '#required' => true,
         ];
