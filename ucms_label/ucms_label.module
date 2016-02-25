@@ -205,6 +205,10 @@ function ucms_label_library() {
         'type' => 'file',
         'media' => 'screen',
       ),
+      drupal_get_path('module', 'ucms_label') . '/js/select2-bootstrap.min.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
     ),
   );
   return $libraries;
@@ -226,7 +230,7 @@ function ucms_label_field_widget_options_select_form_alter(&$element, &$form_sta
   if ($field['type'] == "taxonomy_term_reference" && $field['settings']['allowed_values'][0]['vocabulary'] == "labels") {
     $element['#attached']['library'][] = ['ucms_label', 'select2'];
     $element['#attached']['js'][] = [
-      'data' => "jQuery(function(){jQuery('#edit-labels select').select2()})",
+      'data' => "jQuery(function(){jQuery('#edit-labels select').select2({theme:'bootstrap'})})",
       'type' => 'inline'
     ];
   }
