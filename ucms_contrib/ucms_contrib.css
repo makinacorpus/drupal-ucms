@@ -176,17 +176,22 @@ body [data-region].drop-highlighted-over {
 
 .ui-draggable.ui-draggable-dragging,
 .ui-sortable-helper {
-  max-width: 100px;
-  max-height: 100px;
+  width: 120px;
+  height: 120px;
   overflow: hidden;
   background: #fff;
-  border-radius: 50px;
+  border-radius: 6px;
   -ms-animation: pulse 1s linear infinite;
   -moz-animation: pulse 1s linear infinite;
   -webkit-animation: pulse 1s linear infinite;
   animation: pulse 1s linear infinite;
   border: solid 1px #018fe2;
   z-index: 120;
+}
+
+.ui-draggable.ui-draggable-dragging > .node,
+.ui-sortable-helper > .node {
+  margin: 0;
 }
 
 .ui-sortable-placeholder {
