@@ -154,14 +154,22 @@ class UserEdit extends FormBase
         if ($error = user_validate_mail($mail)) {
             $form_state->setErrorByName('mail', $error);
         }
-        elseif ((bool) db_select('users')
-            ->fields('users', array('uid'))
-            ->condition('mail', db_like($mail), 'LIKE')
-            ->range(0, 1)
-            ->execute()
-            ->fetchField()
-        ) {
-            form_set_error('mail', $this->t('The e-mail address %email is already taken.', array('%email' => $mail)));
+        else {
+            /* @var UserInterface $user */
+            $user = $form_state->getTemporaryValue('user');
+
+            $q = db_select('users')
+                ->fields('users', array('uid'))
+                ->condition('mail', db_like($mail), 'LIKE')
+                ->range(0, 1);
+
+            if (!$user->isNew()) {
+                $q->condition('uid', $user->id(), '<>');
+            }
+
+            if ((bool) $q->execute()->fetchField()) {
+                form_set_error('mail', $this->t('The e-mail address %email is already taken.', array('%email' => $mail)));
+            }
         }
     }
 

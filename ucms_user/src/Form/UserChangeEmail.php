@@ -92,9 +92,29 @@ class UserChangeEmail extends FormBase
      */
     public function validateForm(array &$form, FormStateInterface $form_state)
     {
+        // Trim whitespace from mail, to prevent confusing 'e-mail not valid'
+        // warnings often caused by cutting and pasting.
         $mail = $form_state->getValue('mail');
-        if (!valid_email_address($mail)) {
-            $form_state->setErrorByName('mail', $this->t('The email address %mail is not valid.', array('%mail' => $mail)));
+        $mail = trim($mail);
+        $form_state->setValue('mail', $mail);
+
+        // Validate the e-mail address, and check if it is taken by an existing user.
+        if ($error = user_validate_mail($mail)) {
+            $form_state->setErrorByName('mail', $error);
+        }
+        else {
+            /* @var UserInterface $user */
+            $user = $form_state->getTemporaryValue('user');
+
+            $q = db_select('users')
+                ->fields('users', array('uid'))
+                ->condition('mail', db_like($mail), 'LIKE')
+                ->condition('uid', $user->id(), '<>')
+                ->range(0, 1);
+
+            if ((bool) $q->execute()->fetchField()) {
+                form_set_error('mail', $this->t('The e-mail address %email is already taken.', array('%email' => $mail)));
+            }
         }
     }
 
