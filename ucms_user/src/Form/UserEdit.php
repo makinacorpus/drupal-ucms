@@ -98,6 +98,13 @@ class UserEdit extends FormBase
             '#weight' => -5,
         );
 
+        if ($user->id() === $this->currentUser()->id()) {
+            $form['mail']['#disabled'] = true;
+            $form['mail']['#description'] = $this->t("Please use this form to edit your e-mail: !link", [
+                '!link' => l($this->t("change my e-mail"), 'admin/dashboard/user/my-account'),
+            ]);
+        }
+
         if ((boolean) variable_get('user_pictures', 0)) {
             $form['current_picture'] = array(
                 '#type' => 'item',
@@ -128,12 +135,12 @@ class UserEdit extends FormBase
             '#default_value' => isset($user->roles) ? array_keys($user->roles) : array(),
         ];
 
-        $form['actions'] = array('#type' => 'actions');
-        $form['actions']['submit'] = array(
+        $form['actions'] = ['#type' => 'actions'];
+        $form['actions']['submit'] = [
             '#type' => 'submit',
             '#value' => $this->t('Save'),
             '#weight' => 100,
-        );
+        ];
 
         return $form;
     }
