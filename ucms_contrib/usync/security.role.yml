@@ -28,6 +28,7 @@ admin_func:
     - labels dashboard access
     - labels edit locked
     - labels edit non locked
+    - use favorites
 
 admin_tech:
   name: Administrateur technique
@@ -39,6 +40,7 @@ admin_tech:
     - site dashboard access
     - site manage all
     - site view all
+    - use favorites
 
 global_contrib:
   name: Contributeur du référentiel global
@@ -46,6 +48,9 @@ global_contrib:
     - access ucms content overview
     - content manage global
     - content view global
+    - labels dashboard access
+    - site dashboard access
+    - use favorites
 
 local_webmaster:
   name: Webmaster local
@@ -54,9 +59,14 @@ local_webmaster:
     - content view global
     - labels dashboard access
     - labels edit non locked
+    - site dashboard access
+    - use favorites
 
 # This role has no permission, only content stuff will be delegated thus
 # it needs to be set in the business API layer
 local_contrib:
   name: Contributeur local
-  permission: []
+  permission:
+    - site dashboard access
+    - use favorites
+
