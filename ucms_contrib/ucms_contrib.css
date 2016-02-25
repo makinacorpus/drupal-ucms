@@ -64,6 +64,10 @@
   z-index: 1;
 }
 
+.ucms-cart-item .content h2 {
+  display: none;
+}
+
 .ucms-cart-item > form {
   display: none;
 }
@@ -310,4 +314,8 @@ body [data-region].drop-highlighted-over {
 }
 .ucms-default-icon span.glyphicon {
   font-size: 72px;
+}
+
+.ucms-contrib-result .node h2 {
+  display: none;
 }

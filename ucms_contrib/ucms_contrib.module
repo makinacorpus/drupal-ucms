@@ -423,6 +423,7 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
     UCMS_VIEW_MODE_CONTENTADMIN => UCMS_STYLE_CONTENTADMIN,
     UCMS_VIEW_MODE_FAVORITE     => UCMS_STYLE_FAVORITE,
   ];
+  $view_mode = $mapping[$context['view_mode']];
 
   // Only work on nodes.
   if ($context['entity_type'] != 'node') {
@@ -434,22 +435,9 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
   if (in_array($context['view_mode'], array_keys($mapping))) {
     foreach (element_children($output) as $field_name) {
       $element = &$output[$field_name];
-      if ($element['#field_type'] == 'image' && $element['#formatter'] == 'image') {
-        foreach (element_children($element) as $delta) {
-          if ($delta === 0) {
-            $image_found = TRUE;
-            // Force image style related to view mode.
-            $element[$delta]['#image_style'] = $mapping[$context['view_mode']];
-            $element[$delta]['#item']['attributes']['class'] = 'img-responsive img-rounded';
-          }
-          else {
-            // Hide other image for slideshows.
-            $element[$delta]['#access'] = FALSE;
-          }
-        }
-      }
-      else {
-        $element['#access'] = FALSE;
+      $image_found = _ucms_contrib_find_image_recursive($element, $view_mode);
+      if ($image_found) {
+        break;
       }
     }
   }
@@ -480,6 +468,41 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
       '#markup' => $markup,
     ];
   }
+}
+
+/**
+ * @param $element
+ * @param $view_mode
+ * @return bool
+ */
+function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
+  $image_found = FALSE;
+  if (isset($element['#field_type']) && $element['#field_type'] == 'image' && $element['#formatter'] == 'image') {
+    foreach (element_children($element) as $delta) {
+      if ($delta === 0) {
+        $image_found = TRUE;
+        // Force image style related to view mode.
+        $element[$delta]['#image_style'] = $view_mode;
+        $element[$delta]['#item']['attributes']['class'] = 'img-responsive img-rounded';
+      }
+      else {
+        // Hide other image for slideshows.
+        $element[$delta]['#access'] = FALSE;
+      }
+    }
+  }
+  elseif (count(element_children($element))) {
+    foreach (element_children($element) as $key) {
+      $image_found = _ucms_contrib_find_image_recursive($element[$key], $view_mode);
+      if ($image_found) {
+        return TRUE;
+      }
+    }
+  }
+  else {
+    $element['#access'] = FALSE;
+  }
+  return $image_found;
 }
 
 
