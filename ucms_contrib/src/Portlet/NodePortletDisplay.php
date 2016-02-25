@@ -35,7 +35,7 @@ class NodePortletDisplay extends AbstractDisplay
             /* @var $item NodeInterface */
             $rows[] = [
                 check_plain($item->getTitle()),
-                $item->getEntityTypeId(), // @todo type name
+                $item->bundle(),
                 '', // @todo sites
                 format_interval(time() - $item->getChangedTime()),
                 $item->isPublished() ? t("published") : '',
