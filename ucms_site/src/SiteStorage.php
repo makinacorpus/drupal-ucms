@@ -151,6 +151,7 @@ class SiteStorage
         $q = $this
             ->db
             ->select('ucms_site', 's')
+            ->addTag('ucms_site_access')
             ->fields('s')
         ;
 
@@ -212,6 +213,7 @@ class SiteStorage
         $sites = $this
             ->db
             ->select('ucms_site', 's')
+            ->addTag('ucms_site_access')
             ->fields('s')
             ->condition('s.id', $idList)
             ->execute()

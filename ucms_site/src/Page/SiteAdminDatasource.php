@@ -82,7 +82,11 @@ class SiteAdminDatasource extends AbstractDatasource
      */
     public function getItems($query, PageState $pageState)
     {
-        $q = $this->db->select('ucms_site', 's');
+        $q = $this
+            ->db
+            ->select('ucms_site', 's')
+            ->addTag('ucms_site_access')
+        ;
         $q->leftJoin('users', 'u', "u.uid = s.uid");
 
         if (isset($query['state'])) {
