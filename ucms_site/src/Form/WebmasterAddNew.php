@@ -81,7 +81,7 @@ class WebmasterAddNew extends FormBase
 
         $form['name'] = array(
             '#type' => 'textfield',
-            '#title' => $this->t('Full name'),
+            '#title' => $this->t('Lastname / Firstname'),
             '#maxlength' => 60,
             '#required' => true,
             '#weight' => -10,

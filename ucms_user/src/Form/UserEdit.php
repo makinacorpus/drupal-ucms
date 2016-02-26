@@ -82,8 +82,8 @@ class UserEdit extends FormBase
 
         $form['name'] = array(
             '#type' => 'textfield',
-            '#title' => $this->t('Full name'),
-            '#default_value' => $user->isAnonymous() ? '' : $user->getAccountName(),
+            '#title' => $this->t('Lastname / Firstname'),
+            '#default_value' => !$user->isNew() ? $user->getAccountName() : '',
             '#maxlength' => 60,
             '#required' => true,
             '#weight' => -10,
