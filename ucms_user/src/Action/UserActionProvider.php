@@ -3,6 +3,7 @@
 
 namespace MakinaCorpus\Ucms\User\Action;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
@@ -15,9 +16,20 @@ class UserActionProvider implements ActionProviderInterface
 
 
     /**
-     * Default constructor
+     * @var AccountInterface
      */
-    public function __construct() {}
+    private $currentUser;
+
+
+    /**
+     * Default constructor
+     *
+     * @param AccountInterface $currentUser
+     */
+    public function __construct(AccountInterface $currentUser)
+    {
+        $this->currentUser = $currentUser;
+    }
 
 
     /**
@@ -29,9 +41,18 @@ class UserActionProvider implements ActionProviderInterface
 
         $actions[] = new Action($this->t("View"), 'admin/dashboard/user/' . $item->uid, null, 'eye-open', 1, true, true);
 
-        $status_action  = ($item->status == 0) ? $this->t("Enable") : $this->t("Disable");
-        $status_icon    = ($item->status == 0) ? 'ok-circle' : 'ban-circle';
-        $actions[] = new Action($status_action, 'admin/dashboard/user/' . $item->uid . '/toggle', 'dialog', $status_icon, 2, true, true);
+        if ($item->status == 0) {
+            $action_title = $this->t("Enable");
+            $action_path  = 'admin/dashboard/user/' . $item->uid . '/enable';
+            $action_icon  = 'ok-circle';
+        } else {
+            $action_title = $this->t("Disable");
+            $action_path  = 'admin/dashboard/user/' . $item->uid . '/disable';
+            $action_icon  = 'ban-circle';
+        }
+
+        $action_disabled  = ($item->uid === $this->currentUser->id());
+        $actions[] = new Action($action_title, $action_path, 'dialog', $action_icon, 2, true, true, $action_disabled);
 
         $actions[] = new Action($this->t("Edit"), 'admin/dashboard/user/' . $item->uid . '/edit', null, 'pencil', 3, false, true);
         $actions[] = new Action($this->t("Change email"), 'admin/dashboard/user/' . $item->uid . '/change-email', 'dialog', 'pencil', 4, false, true);

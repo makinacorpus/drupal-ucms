@@ -82,10 +82,18 @@ function ucms_user_menu() {
     'weight'            => 100,
   ];
 
-  $items['admin/dashboard/user/%user/toggle'] = [
-    'title'             => 'Toggle status',
+  $items['admin/dashboard/user/%user/enable'] = [
+    'title'             => 'Enable the user',
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserToggleStatus', 3],
+    'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserEnable', 3],
+    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'type'              => MENU_CALLBACK,
+  ];
+
+  $items['admin/dashboard/user/%user/disable'] = [
+    'title'             => 'Disable the user',
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserDisable', 3],
     'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
     'type'              => MENU_CALLBACK,
   ];
@@ -109,23 +117,6 @@ function ucms_user_menu_item_title($user) {
   return t("User @name", ['@name' => $user->name]);
 }
 
-
-
-/**
- * Access callback for edit account form.
- *
- * @param $perm
- * @param $account
- * @return bool
- */
-function ucms_user_access_manage($perm, $account) {
-  global $user;
-
-  if ($user->uid == $account->uid) {
-    return TRUE;
-  }
-  return user_access($perm);
-}
 
 /**
  * Implements hook_permission().
