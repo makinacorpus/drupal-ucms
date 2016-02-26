@@ -53,7 +53,7 @@ class MySitesPortlet extends AbstractAdminPortlet
 
         $query['uid'] = $this->getAccount()->id();
 
-        return new SitePortletDisplay($this->t("No site created yet."));
+        return new SitePortletDisplay($this->t("No attached site yet."));
     }
 
     /**
