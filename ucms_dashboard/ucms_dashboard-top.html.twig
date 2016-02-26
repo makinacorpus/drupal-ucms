@@ -8,8 +8,10 @@
         <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
         <span class="sr-only">{{ "Administration"|t }}</span>
       </a>
+      <span class="navbar-text">
+        {{ "Welcome @user"|t({'@user':user.displayName}) }}
+      </span>
     </div>
-
     <div class="collapse navbar-collapse" id="nav-collapse">
       {{ links }}
     </div>
