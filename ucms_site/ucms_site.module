@@ -104,7 +104,7 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster'] = [
-    'title'             => "Webmasters",
+    'title'             => "Users",
     'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
     'page arguments'    => [3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
@@ -113,7 +113,7 @@ function ucms_site_menu() {
     'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/add-existing'] = [
-    'title'             => "Add existing webmaster or contributor",
+    'title'             => "Add an existing user",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddExisting', 3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
@@ -121,7 +121,7 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/add-new'] = [
-    'title'             => "Create new webmaster or contributor",
+    'title'             => "Create a new webmaster or contributor",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddNew', 3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
@@ -129,7 +129,7 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/promote'] = [
-    'title'             => "Promote user as webmaster",
+    'title'             => "Promote as webmaster",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterPromote', 3, 5],
     'access callback'   => 'ucms_site_menu_access_webmasters',
@@ -137,7 +137,7 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/demote'] = [
-    'title'             => "Demote user as contributor",
+    'title'             => "Demote as contributor",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterDemote', 3, 5],
     'access callback'   => 'ucms_site_menu_access_webmasters',
@@ -145,7 +145,7 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/delete'] = [
-    'title'             => "Delete webmaster or contributor",
+    'title'             => "Delete the user from this site",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterDelete', 3, 5],
     'access callback'   => 'ucms_site_menu_access_webmasters',

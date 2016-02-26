@@ -59,7 +59,7 @@ class WebmasterActionProvider implements ActionProviderInterface
             }
 
             $path = $this->buildWebmasterUri($item, 'delete');
-            $actions[] = new Action($this->t("Delete from webmasters"), $path, 'dialog', 'remove', 20, true, true);
+            $actions[] = new Action($this->t("Delete from this site"), $path, 'dialog', 'remove', 20, true, true);
         }
 
         return $actions;

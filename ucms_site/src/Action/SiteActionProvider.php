@@ -77,9 +77,9 @@ class SiteActionProvider implements ActionProviderInterface
         // @todo Consider delete as a state
         if ($access->userCanManageWebmasters($account, $item)) {
             // 100 as priority is enough to be number of states there is ($i)
-            $ret[] = new Action($this->t("Add existing webmaster"), 'admin/dashboard/site/' . $item->id . '/webmaster/add-existing', 'dialog', 'user', 100, false, true);
-            $ret[] = new Action($this->t("Create new webmaster"), 'admin/dashboard/site/' . $item->id . '/webmaster/add-new', null, 'user', 101, false, true);
-            $ret[] = new Action($this->t("Manage webmasters"), 'admin/dashboard/site/' . $item->id . '/webmaster', null, 'user', 102, false, false);
+            $ret[] = new Action($this->t("Add existing user"), 'admin/dashboard/site/' . $item->id . '/webmaster/add-existing', 'dialog', 'user', 100, false, true);
+            $ret[] = new Action($this->t("Create new user"), 'admin/dashboard/site/' . $item->id . '/webmaster/add-new', null, 'user', 101, false, true);
+            $ret[] = new Action($this->t("Manage users"), 'admin/dashboard/site/' . $item->id . '/webmaster', null, 'user', 102, false, false);
         }
 
         return $ret;
