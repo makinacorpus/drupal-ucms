@@ -119,7 +119,7 @@
           $toggle.find('a[href=#tab-' + settings.ucms_dashboard.defaultPane + ']').click();
         }
 
-        $(window).resize(this.resizeTabs);
+        $(window).resize(Drupal.behaviors.ucmsDashboardPane.resizeTabs);
       });
     }
   };
