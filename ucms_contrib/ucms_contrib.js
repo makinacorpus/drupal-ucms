@@ -68,7 +68,7 @@
             })
             .fail(function (xhr) {
               // display error and revert
-              var err_elem = '<div class="error">' + xhr.responseJSON.error + '</div>';
+              var err_elem = '<div class="alert alert-danger">' + xhr.responseJSON.error + '</div>';
               var $errElem = $(err_elem).appendTo('#ucms-cart-list');
               setTimeout(function () {
                 $errElem.fadeOut(function () {

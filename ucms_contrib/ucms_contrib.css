@@ -18,11 +18,9 @@
   min-height: 100px; /* Prevents empty zone */
 }
 
-#ucms-cart .error {
+#ucms-cart .alert-danger {
   clear: both;
-  padding: 5px;
   font-weight: bold;
-  color: #f00;
 }
 
 #ucms-cart .item-list ul {
@@ -87,7 +85,6 @@
 
 #ucms-cart-trash {
   position: absolute;
-  background: #600;
   color: #fff;
   bottom: 0;
   text-align: center;
@@ -313,6 +310,20 @@ body [data-region].drop-highlighted-over {
 }
 .ucms-default-icon span.glyphicon {
   font-size: 72px;
+}
+
+.node .content .ucms-type-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  top: auto;
+  background: #333;
+  padding: 3px 1px 1px 3px;
+  border-top-left-radius: 4px;
+  color: #fff;
+}
+.node .content  .content .ucms-type-icon {
+  display: none;
 }
 
 .ucms-contrib-result .node h2 {

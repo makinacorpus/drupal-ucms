@@ -474,6 +474,23 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
       '#markup' => $markup,
     ];
   }
+
+  // Add icon relative to meta content type
+  $icon_mapping = [
+    'content' => 'file',
+    'media'   => 'picture',
+  ];
+  $meta_type = NULL;
+  foreach (ucms_contrib_tab_list() as $tab => $label) {
+    if (in_array($output['#bundle'], variable_get('ucms_contrib_tab_' . $tab . '_type', []))) {
+      $meta_type = $tab;
+    }
+  }
+  if ($meta_type && isset($icon_mapping[$meta_type])) {
+    $output['type_icon'] = [
+      '#markup' => '<span class="ucms-type-icon glyphicon glyphicon-' . $icon_mapping[$meta_type] . '"></span>',
+    ];
+  }
 }
 
 /**
