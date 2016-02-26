@@ -179,7 +179,7 @@ function ucms_label_allowed_values($field) {
             $parents[$term->tid] = $term->name;
           }
           else {
-            $options[$parents[$term->parents[0]]][] = $term->name;
+            $options[$parents[$term->parents[0]]][$term->tid] = $term->name;
           }
         }
       }
