@@ -52,7 +52,7 @@ class WebmasterAdminDisplay extends AbstractDisplay
             '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
             '#suffix' => '</div>',                  // FIXME should be in theme
             '#theme'  => 'table',
-            '#header' => [t("Name"), t("Email"), t("Role"), t("Status"), ''],
+            '#header' => [t("Name"), t("Email"), t("Role"), t("Global status"), ''],
             '#empty'  => $this->emptyMessage,
             '#rows'   => $rows,
         ];
