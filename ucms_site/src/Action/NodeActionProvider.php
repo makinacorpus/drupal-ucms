@@ -51,7 +51,7 @@ class NodeActionProvider implements ActionProviderInterface
         $account = $this->currentUser;
 
         if ($this->nodeAccess->userCanReference($account, $item)) {
-            $ret[] = new Action($this->t("Reference it on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true);
+            $ret[] = new Action($this->t("Use it on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true);
         }
         if ($this->nodeAccess->userCanLock($account, $item)) {
             if ($item->is_clonable) {
