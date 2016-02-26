@@ -4,6 +4,13 @@
    * @type {{attach: Drupal.behaviors.ucmsDashboardPane.attach}}
    */
   Drupal.behaviors.ucmsDashboardPane = {
+    /**
+     * Handle tab height
+     */
+    resizeTabs: function () {
+      var $contextualPane = $('#contextual-pane');
+      $contextualPane.find('.tabs').height($contextualPane.find('.inner').height() - $contextualPane.find('.actions').height());
+    },
     attach: function (context, settings) {
       $(context).find('#contextual-pane').once('ucmsDashboardPane', function () {
         var $contextualPane = $('#contextual-pane', context);
@@ -37,14 +44,11 @@
          * @returns {string}
          */
         function panePosition() {
-          if ($contextualPane.hasClass('pane-right')) {
-            return 'right';
-          } else if ($contextualPane.hasClass('pane-down')) {
-            return 'down';
-          } else if ($contextualPane.hasClass('pane-left')) {
-            return 'left';
-          } else if ($contextualPane.hasClass('pane-up')) {
-            return 'up';
+          var positions = ['right', 'down', 'left', 'up'];
+          for (var x in positions) {
+            if ($contextualPane.hasClass('pane-' + positions[x])) {
+              return positions[x];
+            }
           }
         }
 
@@ -115,14 +119,7 @@
           $toggle.find('a[href=#tab-' + settings.ucms_dashboard.defaultPane + ']').click();
         }
 
-        // Handle tab height
-        function resizeTabs() {
-          $contextualPane.find('.tabs').height($contextualPane.find('.inner').height() - $contextualPane.find('.actions').height());
-        }
-
-        resizeTabs();
-
-        $(window).resize(resizeTabs);
+        $(window).resize(this.resizeTabs);
       });
     }
   };
@@ -148,6 +145,7 @@
           });
           $contextualPane.find('.inner .actions').append($clonedButton);
         });
+        Drupal.behaviors.ucmsDashboardPane.resizeTabs();
       });
     },
     detach: function (context) {

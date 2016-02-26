@@ -2,7 +2,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  overflow: scroll;
 }
 .pane-right #ucms-cart {
   bottom: 6em;
