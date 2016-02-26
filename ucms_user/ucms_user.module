@@ -167,11 +167,10 @@ function template_preprocess_ucms_user_profile(&$variables) {
   $manager = ucms_site_manager();
 
   /* @var $account AccountInterface */
-  $roles = $account->getRoles(true);
-  $role_names = user_roles();
+  $access = $manager->getAccess();
   $roles = array_map(
-    function ($role_id) use ($role_names) {
-      return $role_names[$role_id];
+    function ($role_id) use ($access) {
+      return $access->getDrupalRoleName($role_id);
     },
     $account->getRoles(true)
   );
@@ -179,20 +178,37 @@ function template_preprocess_ucms_user_profile(&$variables) {
   $sites = $manager->loadWebmasterSites($account);
   $requests = [];
   foreach ($sites as $id => $site) {
-    $uri = 'http://' . $site->http_host;
-    $item = check_plain($site->title_admin) . ' (' . l($uri, $uri) . ')';
+    $site_name = l(check_plain($site->title_admin), 'admin/dashboard/site/' . $site->id);
 
     if ($site->state == SiteState::REQUESTED) {
-      $requests[] = $item;
+      $requests[] = $site_name;
       unset($sites[$id]);
-    } else {
-      $sites[$id] = $item;
+    }
+    else {
+      $role_name = $access->getRelativeRoleName($access->getUserRole($account, $site)
+                                                       ->getRole());
+      $sites[$id] = $site_name . ' (' . $role_name . ')';
     }
   }
 
-  $roles    = empty($roles) ? t("No role") : implode('<br/>', $roles);
-  $sites    = empty($sites) ? t("No site") : implode('<br/>', $sites);
-  $requests = empty($requests) ? t("No pending request") : implode('<br/>', $requests);
+  $roles = [
+    '#theme'      => 'item_list',
+    '#items'      => $roles,
+    '#attributes' => ['class' => ['list-unstyled']],
+    '#empty_list' => t("No role"),
+  ];
+  $sites = [
+    '#theme'      => 'item_list',
+    '#items'      => $sites,
+    '#attributes' => ['class' => ['list-unstyled']],
+    '#empty_list' => t("No site"),
+  ];
+  $requests = [
+    '#theme'      => 'item_list',
+    '#items'      => $requests,
+    '#attributes' => ['class' => ['list-unstyled']],
+    '#empty_list' => t("No pending request"),
+  ];
   $last_connection = ($account->login > 0) ? format_date($account->login) : t("Never");
 
   $variables['details_table'] = [
