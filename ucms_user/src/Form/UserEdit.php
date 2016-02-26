@@ -83,7 +83,7 @@ class UserEdit extends FormBase
         $form['name'] = array(
             '#type' => 'textfield',
             '#title' => $this->t('Full name'),
-            '#default_value' => isset($user->name) ? $user->name : '',
+            '#default_value' => $user->isAnonymous() ? '' : $user->getAccountName(),
             '#maxlength' => 60,
             '#required' => true,
             '#weight' => -10,
@@ -92,7 +92,7 @@ class UserEdit extends FormBase
         $form['mail'] = array(
             '#type' => 'textfield',
             '#title' => $this->t('Email'),
-            '#default_value' => isset($user->mail) ? $user->mail : '',
+            '#default_value' => $user->getEmail(),
             '#maxlength' => 254,
             '#required' => true,
             '#weight' => -5,
@@ -132,7 +132,7 @@ class UserEdit extends FormBase
             '#type' => 'checkboxes',
             '#title' => $this->t('Roles'),
             '#options' => $availableRoles,
-            '#default_value' => isset($user->roles) ? array_keys($user->roles) : array(),
+            '#default_value' => $user->getRoles(),
         ];
 
         $form['actions'] = ['#type' => 'actions'];
