@@ -20,6 +20,7 @@ class SiteEventListener
      */
     private $entityManager;
 
+
     /**
      * Default constructor
      *
@@ -30,6 +31,7 @@ class SiteEventListener
         $this->manager = $manager;
         $this->entityManager = $entityManager;
     }
+
 
     public function onSiteCreate(SiteEvent $event)
     {
@@ -60,8 +62,126 @@ class SiteEventListener
         }
     }
 
+
     public function onSiteSave(SiteEvent $event)
     {
         // @todo ?
+    }
+
+
+    public function onSiteWebmasterAddNew(SiteEvent $event)
+    {
+        $userStorage = $this->entityManager->getStorage('user');
+
+        /* @var UserInterface $webmaster */
+        $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
+        $access     = $this->manager->getAccess()->getUserRole($webmaster, $event->getSite());
+        $roles      = $this->manager->getAccess()->getRelativeRoles();
+
+        // Relative roles might not be set (this would an error thought)
+        if ($rid = array_search($access->getRole(), $roles)) {
+            $webmaster->addRole($rid);
+            $userStorage->save($webmaster);
+        }
+    }
+
+
+    public function onSiteWebmasterAddExisting(SiteEvent $event)
+    {
+        $userStorage = $this->entityManager->getStorage('user');
+
+        /* @var UserInterface $webmaster */
+        $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
+        $access     = $this->manager->getAccess()->getUserRole($webmaster, $event->getSite());
+        $roles      = $this->manager->getAccess()->getRelativeRoles();
+
+        // Relative roles might not be set (this would an error thought)
+        if (($rid = array_search($access->getRole(), $roles)) && !$webmaster->hasRole($rid)) {
+            $webmaster->addRole($rid);
+            $userStorage->save($webmaster);
+        }
+    }
+
+
+    public function onSiteWebmasterPromote(SiteEvent $event)
+    {
+        $userStorage = $this->entityManager->getStorage('user');
+
+        /* @var UserInterface $webmaster */
+        $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
+        $roles      = $this->manager->getAccess()->getRelativeRoles();
+
+        if (($rid = array_search(Access::ROLE_WEBMASTER, $roles)) && !$webmaster->hasRole($rid)) {
+            $webmaster->addRole($rid);
+        }
+
+        $deleteContributorRole = true;
+        
+        foreach ($this->manager->getAccess()->getUserRoles($webmaster) as $access) {
+            if ($access->getRole() == Access::ROLE_CONTRIB && $access->getSiteId() != $event->getSite()->id) {
+                $deleteContributorRole = false;
+                break;
+            }
+        }
+
+        if ($deleteContributorRole && ($rid = array_search(Access::ROLE_CONTRIB, $roles))) {
+            $webmaster->removeRole($rid);
+        }
+
+        $userStorage->save($webmaster);
+    }
+
+
+    public function onSiteWebmasterDemote(SiteEvent $event)
+    {
+        $userStorage = $this->entityManager->getStorage('user');
+
+        /* @var UserInterface $webmaster */
+        $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
+        $roles      = $this->manager->getAccess()->getRelativeRoles();
+
+        if (($rid = array_search(Access::ROLE_CONTRIB, $roles)) && !$webmaster->hasRole($rid)) {
+            $webmaster->addRole($rid);
+        }
+
+        $deleteWebmasterRole = true;
+
+        foreach ($this->manager->getAccess()->getUserRoles($webmaster) as $access) {
+            if ($access->getRole() == Access::ROLE_WEBMASTER && $access->getSiteId() != $event->getSite()->id) {
+                $deleteWebmasterRole = false;
+                break;
+            }
+        }
+
+        if ($deleteWebmasterRole && ($rid = array_search(Access::ROLE_WEBMASTER, $roles))) {
+            $webmaster->removeRole($rid);
+        }
+
+        $userStorage->save($webmaster);
+    }
+
+
+    public function onSiteWebmasterDelete(SiteEvent $event)
+    {
+        $userStorage = $this->entityManager->getStorage('user');
+
+        /* @var UserInterface $webmaster */
+        $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
+        $roles      = $this->manager->getAccess()->getRelativeRoles();
+        $role       = $event->getArgument('role');
+
+        $deleteOldRole = true;
+
+        foreach ($this->manager->getAccess()->getUserRoles($webmaster) as $access) {
+            if ($access->getRole() == $role && $access->getSiteId() != $event->getSite()->id) {
+                $deleteOldRole = false;
+                break;
+            }
+        }
+
+        if ($deleteOldRole && ($rid = array_search($role, $roles))) {
+            $webmaster->removeRole($rid);
+            $userStorage->save($webmaster);
+        }
     }
 }

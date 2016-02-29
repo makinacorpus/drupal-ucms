@@ -166,7 +166,6 @@ class WebmasterAddNew extends FormBase
         // Sets name and role
         $user->setUsername($form_state->getValue('name'));
         $user->setEmail($form_state->getValue('mail'));
-        $user->addRole((int) $form_state->getValue('role'));
         // Sets a password
         require_once DRUPAL_ROOT . '/includes/password.inc';
         $user->pass = user_hash_password(user_password(20));
@@ -196,8 +195,8 @@ class WebmasterAddNew extends FormBase
             '%role' => $this->siteManager->getAccess()->getDrupalRoleName($rid),
         ]));
 
-        $event = new SiteEvent($site, $this->currentUser()->id(), ['uid' => $user->id()]);
-        $this->dispatcher->dispatch('site:add_new_webmaster', $event);
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
+        $this->dispatcher->dispatch('site:webmaster_add_new', $event);
     }
 }
 

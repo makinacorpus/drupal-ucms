@@ -85,14 +85,15 @@ class WebmasterDelete extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $site = $form_state->getTemporaryValue('site');
-        $user = $form_state->getTemporaryValue('user');
+        $site   = $form_state->getTemporaryValue('site');
+        $user   = $form_state->getTemporaryValue('user');
+        $access = $this->manager->getAccess()->getUserRole($user, $site);
         $this->manager->getAccess()->removeUsers($site, $user->id());
 
         drupal_set_message($this->t("!name has been removed from the webmasters / contributors.", ['!name' => $user->getDisplayName()]));
 
-        $event = new SiteEvent($site, $this->currentUser()->id(), ['uid' => $user->id()]);
-        $this->dispatcher->dispatch('site:delete_webmaster', $event);
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id(), 'role' => $access->getRole()]);
+        $this->dispatcher->dispatch('site:webmaster_delete', $event);
     }
 }
 

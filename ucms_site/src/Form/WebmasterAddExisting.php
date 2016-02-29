@@ -160,8 +160,8 @@ class WebmasterAddExisting extends FormBase
             '%role' => $this->siteManager->getAccess()->getDrupalRoleName($rid),
         ]));
 
-        $event = new SiteEvent($site, $this->currentUser()->id(), ['uid' => $user->id()]);
-        $this->dispatcher->dispatch('site:add_existing_webmaster', $event);
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
+        $this->dispatcher->dispatch('site:webmaster_add_existing', $event);
     }
 }
 

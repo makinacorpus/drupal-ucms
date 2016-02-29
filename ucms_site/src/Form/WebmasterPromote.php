@@ -95,8 +95,8 @@ class WebmasterPromote extends FormBase
             '%role' => $this->manager->getAccess()->getRelativeRoleName(Access::ROLE_WEBMASTER),
         ]));
 
-        $event = new SiteEvent($site, $this->currentUser()->id(), ['uid' => $user->id()]);
-        $this->dispatcher->dispatch('site:promote_webmaster', $event);
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
+        $this->dispatcher->dispatch('site:webmaster_promote', $event);
     }
 }
 
