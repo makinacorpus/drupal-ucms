@@ -9,14 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 
 abstract class AbstractEntityActionForm extends FormBase
 {
-    /**
-     * {inheritdoc}
-     */
-    public function getFormId()
-    {
-        return 'ucms_contrib_node_unlock_form';
-    }
-
     protected function setEntity(FormStateInterface $form_state, $entity)
     {
         $form_state->setTemporaryValue('entity', $entity);
