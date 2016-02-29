@@ -4,13 +4,21 @@
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse" aria-expanded="false">
         <span class="sr-only">{{ "Toggle navigation"|t }}</span>
       </button>
-      <a class="navbar-brand" href="{{ url('admin') }}">
-        <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
-        <span class="sr-only">{{ "Administration"|t }}</span>
-      </a>
-      <span class="navbar-text">
-        {{ "Welcome @user"|t({'@user':user.displayName}) }}
-      </span>
+      <ul class="nav navbar-nav">
+        <li>
+          <a class="navbar-brand" href="{{ url('admin') }}">
+            <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
+            <span class="sr-only">{{ "Administration"|t }}</span>
+          </a>
+        </li>
+        {% if user.authenticated %}
+          <li>
+            <a href="{{ url('admin/dashboard') }}">
+              {{ "Welcome @user"|t({'@user':user.displayName}) }}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
     </div>
     <div class="collapse navbar-collapse" id="nav-collapse">
       {{ links }}
