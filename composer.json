@@ -26,6 +26,7 @@
             "MakinaCorpus\\Ucms\\Layout\\" : "ucms_layout/src",
             "MakinaCorpus\\Ucms\\Notification\\" : "ucms_notification/src",
             "MakinaCorpus\\Ucms\\Search\\" : "ucms_search/src",
+            "MakinaCorpus\\Ucms\\Seo\\" : "ucms_seo/src",
             "MakinaCorpus\\Ucms\\Site\\" : "ucms_site/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src"
         }

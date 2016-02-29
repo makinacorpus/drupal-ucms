@@ -1,0 +1,148 @@
+<?php
+/**
+ * @file
+ * Install and field stuff, mostly...
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function ucms_seo_field_schema($field) {
+  switch ($field['type']) {
+
+    case 'ucms_seo':
+      return array(
+        'columns' => array(
+          'meta_title' => array(
+            'type'        => 'varchar',
+            'length'      => 255,
+            'not null'    => false,
+            'default'     => null,
+          ),
+          'meta_description' => array(
+            'type'        => 'text',
+            'not null'    => false,
+            'default'     => null,
+          ),
+        ),
+        'indexes' => array(
+          'alias' => array('alias'),
+        ),
+      );
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_seo_schema() {
+  $schema = [];
+
+  // Provide a remplacement for the alias table, since Drupal 8 has not
+  // the hook_schema_alter() anymore, we'll also provide a replacement
+  // AliasStorageInterface to come up with.
+  $aliasTable = drupal_get_schema_unprocessed('system', 'url_alias');
+  $aliasTable['fields']['is_canonical'] = [
+    'description' => "Is this alias the canonical alias for the source path",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => true,
+    'default'     => 0,
+  ];
+  $aliasTable['fields']['expires'] = [
+    'description' => "When this alias expires",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => false,
+    'default'     => null,
+  ];
+  $schema['ucms_seo_alias'] = $aliasTable;
+
+  // Same statement as upper, any performance critical meta information must
+  // live in a database table we keep the ownership on, any field API usage
+  // here would forces us to proceed to heavy recursive processing over
+  // nodes, while a decent SGBD can do proper aggregates on any queries.
+  $schema['ucms_seo_node'] = [
+    'description' => 'Node performance critical SEO information',
+    'fields' => [
+      'nid' => [
+        'description' => "Node identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'alias_segment' => [
+        'description' => "Node URL segment for building menu aliases",
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => false,
+        'default'     => null,
+      ],
+    ],
+    'foreign keys' => [
+      'nid' => [
+        'table'   => 'node', 
+        'columns' => ['node' => 'nid'],
+      ],
+    ],
+    'primary key' => ['nid'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Get constraints.
+ */
+function ucms_seo_install_constraints() {
+  // Hopefully, this syntax should work on both PostgreSQL and MySQL although
+  // this is pure coincidence, this is great for us.
+  return [
+    'ucms_seo_node' => [
+      'ucms_seo_node_fk' => "ALTER TABLE {ucms_seo_node} ADD CONSTRAINT {ucms_seo_node_fk} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
+    ],
+  ];
+}
+
+/**
+ * Adds database constraints.
+ */
+function ucms_seo_install_schema_fix() {
+  foreach (ucms_seo_install_constraints() as $table => $statements) {
+    if (db_table_exists($table)) {
+      foreach ($statements as $statement) {
+        db_query($statement);
+      }
+    }
+  }
+}
+
+/**
+ * Removes database constraints.
+ */
+function ucms_seo_uninstall_schema_fix() {
+  /*
+  foreach (ucms_seo_install_constraints() as $table => $statements) {
+    if (db_condition($table)) {
+      foreach ($statements as $statement) {
+        // @todo should rmeove contraint db_query($statement);
+      }
+    }
+  }
+   */
+}
+
+/**
+ * Implements hook_install().
+ */
+function ucms_seo_install() {
+  ucms_seo_install_schema_fix();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function ucms_seo_uninstall() {
+  ucms_seo_uninstall_schema_fix();
+}
+

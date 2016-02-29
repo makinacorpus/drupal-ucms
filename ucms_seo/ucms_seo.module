@@ -1,0 +1,159 @@
+<?php
+/**
+ * @file
+ * Ho, ho, µSEO, Santiano.
+ *   - Tribute to Hugues Aufray.
+ *
+ * @todo
+ *   - Widget form
+ *       -> also needs a standalone form
+ *   - hook_field_access()
+ *   - global permissions
+ *   - menu tree building
+ *       -> in a service
+ *   - url_alias table handling (is_canonical)
+ *       -> in a service
+ *   - hook_field_load() to add the canonical into field data
+ *   - hook_page_build() to add canonical and meta information
+ *     (also could be on node view when mode full, formatter?)
+ *       -> in a service
+ *   - global configuration (administer path, canonicals)
+ *   - node tab with all redirects and aliases
+ *   - none of this can be D8 friendly ?
+ */
+
+use MakinaCorpus\Ucms\Seo\SeoService;
+
+/**
+ * Field API will always (not) be in my heart.
+ */
+require_once __DIR__ . '/ucms_seo.field.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_seo_menu() {
+  $items = [];
+
+  $items['node/%node/seo-edit'] = [
+    'title'             => t("Edit SEO parameters"),
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => 'MakinaCorpus\Ucms\Seo\Form\SeoNodeForm',
+    'access callback'   => 'ucms_seo_menu_access_node_edit',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['node/%node/seo-aliases'] = [
+    'title'             => t("Node path aliases"),
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => 'MakinaCorpus\Ucms\Seo\Form\AliasesNodeForm',
+    'access callback'   => 'ucms_seo_menu_access_node_edit',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+
+  return $items;
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_seo_menu_access_node_edit($node) {
+  $account = \Drupal::currentUser();
+  return
+    ($account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN) && node_access($node, 'update', $account)) ||
+    ($account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) && node_access($node, 'view', $account))
+  ;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_seo_permission() {
+  return [
+    SeoService::PERM_SEO_CONTENT_ALL => [
+      'title' => t("Access platform wide SEO data"),
+    ],
+    SeoService::PERM_SEO_CONTENT_OWN => [
+      'title' => t("Manage SEO data for own content"),
+    ],
+    SeoService::PERM_SEO_GLOBAL => [
+      'title' => t("Manage SEO data for all content"),
+    ],
+  ];
+}
+
+/**
+ * @return \MakinaCorpus\Ucms\Seo\SeoService
+ */
+function ucms_seo_service() {
+  return \Drupal::service('ucms_seo.seo_service');
+}
+
+/**
+ * Element validate for segment.
+ */
+function ucms_seo_element_validate_segment($element, &$form_state) {
+  $value = trim($element['#value']);
+  if (empty($value)) {
+    return;
+  }
+  if (false !== strpos($value, '/')) {
+    form_error($element, t("SEO node alias cannot contain the / character"));
+  }
+  if (!preg_match('/^[a-z0-9_-]+$/', $value)) {
+    form_error($element, t("SEO node alias can only contain non capital letters, numbers, _ and - characters"));
+  }
+  form_set_value($element, $value, $form_state);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ucms_seo_form_node_form_alter(&$form, &$form_state) {
+
+  $account = \Drupal::currentUser();
+  $service = ucms_seo_service();
+
+  $form['ucms_seo'] = [
+    '#type'         => 'fieldset',
+    '#title'        => t('SEO'),
+    '#access'       => $account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) || $account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN),
+    '#collapsible'  => true,
+    '#collapsed'    => false,
+    '#group'        => 'additional_settings',
+    '#weight'       => -3,
+  ];
+
+  $form['ucms_seo']['ucms_seo_segment'] = [
+    '#type'           => 'textfield',
+    '#maxlength'      => variable_get('ucms_seo.segment_max_length', 255),
+    '#title'          => t("Node alias"),
+    '#description'    => t("This alias must not contain the / character"),
+    '#default_value'  => $service->getNodeSegment($form['#node']),
+    '#attributes'     => ['placeholder' => 'welcome-to-my-site'],
+    '#element_validate' => ['ucms_seo_element_validate_segment'],
+  ];
+}
+
+
+/**
+ * Implements hook_node_insert().
+ */
+function ucms_seo_node_insert($node) {
+  ucms_seo_service()->onNodeSave($node);
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function ucms_seo_node_update($node) {
+  ucms_seo_service()->onNodeSave($node);
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function ucms_seo_node_delete($node) {
+  ucms_seo_service()->onNodeDelete($node);
+}

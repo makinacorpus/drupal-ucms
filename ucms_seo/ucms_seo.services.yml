@@ -1,0 +1,7 @@
+services:
+  ucms_seo.seo_service:
+    class: MakinaCorpus\Ucms\Seo\SeoService
+    arguments: ["@entity.manager", "@path.alias_manager", "@path.alias_storage", "@database"]
+  path.alias_storage:
+    class: MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage
+    arguments: ['@database', '@module_handler']
