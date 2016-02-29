@@ -120,6 +120,10 @@
   min-height: 225px
 }
 
+#dashboard .with-actions .scrolling {
+  max-height: 195px;
+}
+
 #dashboard #porlet-ucms_site_sites_portlet table td:nth-of-type(2) {
   white-space: nowrap
 }
