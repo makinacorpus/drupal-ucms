@@ -28,7 +28,7 @@
     </filter>
 
     <php>
-        <var name="DRUPAL_PATH" value="/var/www/monsite/public" />
-        <var name="ELASTIC_HOST" value="localhost:9200" />
+        <env name="DRUPAL_PATH" value="/var/www/monsite/public" />
+        <env name="ELASTIC_HOST" value="localhost:9200" />
     </php>
 </phpunit>

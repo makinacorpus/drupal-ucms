@@ -32,9 +32,7 @@ abstract class AbstractElasticTest extends AbstractDrupalTest
      */
     final private function getElasticHost()
     {
-        if (isset($GLOBALS['ELASTIC_HOST'])) {
-            return $GLOBALS['ELASTIC_HOST'];
-        }
+        return getenv('ELASTIC_HOST');
     }
 
     /**
