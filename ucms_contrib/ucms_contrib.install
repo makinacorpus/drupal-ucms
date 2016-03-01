@@ -62,3 +62,10 @@ function ucms_contrib_update_7002() {
   variable_set('ucms_contrib_tab_content_type', variable_get('ucms_contrib_tab_text_type', []));
   variable_del('ucms_contrib_tab_text_type');
 }
+
+/**
+ * Flush favorite image style
+ */
+function ucms_contrib_update_7003() {
+  image_style_flush('favorite');
+}

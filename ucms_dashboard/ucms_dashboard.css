@@ -34,7 +34,7 @@
   padding-top: 10px;
 }
 #contextual-pane.pane-right .inner {
-  padding-top: 60px;
+  padding-top: 50px;
 }
 
 #contextual-pane .tabs {
@@ -93,6 +93,16 @@
 
 #contextual-pane-switch-position {
   font-size: 110%;
+}
+
+#contextual-pane > .inner > .actions {
+  padding: 0 5px;
+}
+#contextual-pane > .inner > .actions input {
+  margin-right: 5px;
+}
+#contextual-pane > .inner > .actions .btn {
+  margin-top: 5px;
 }
 
 /**

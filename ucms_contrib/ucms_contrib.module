@@ -292,7 +292,7 @@ function ucms_contrib_image_default_styles() {
       'effects' => [[
         'name' => 'image_scale_and_crop',
         'data' => [
-          'width'   => 285, // grid3
+          'width'   => 285, // ~ col-md-3
           'height'  => 285,
           'upscale' => 1,
         ],
@@ -303,8 +303,8 @@ function ucms_contrib_image_default_styles() {
       'effects' => [[
         'name' => 'image_scale_and_crop',
         'data' => [
-          'width'   => 42, // small
-          'height'  => 42,
+          'width'   => 120, // ~ col-md-6 in cart
+          'height'  => 120,
           'upscale' => 1,
         ],
         'weight' => 0,
