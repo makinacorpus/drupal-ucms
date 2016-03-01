@@ -287,8 +287,8 @@ class NodeAccessService
     {
         $access = $this->manager->getAccess();
 
-        if (is_string($node)) {
-            if ('create' === $op) {
+        if ('create' === $op) {
+            if (is_string($node) || $node instanceof NodeInterface && $node->getType()) {
 
                 // @todo
                 //   - check for "hidden" content types, like home pages
