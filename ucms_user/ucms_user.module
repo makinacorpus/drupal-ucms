@@ -45,8 +45,8 @@ function ucms_user_menu() {
   $items['admin/dashboard/user/my-account'] = [
     'title'            => 'Edit my account information',
     'page callback'    => 'sf_dic_page_form',
-    'page arguments'   => ['MakinaCorpus\Ucms\User\Form\AccountEditForm', 3],
-    'access callback'  => TRUE,
+    'page arguments'   => ['MakinaCorpus\Ucms\User\Form\MyAccountEdit'],
+    'access callback'  => true,
     'type'             => MENU_CALLBACK,
   ];
 

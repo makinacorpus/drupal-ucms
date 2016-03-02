@@ -10,10 +10,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class AccountEditForm
+ * Class MyAccountEdit
  * @package MakinaCorpus\Ucms\User\Form
  */
-class AccountEditForm extends FormBase
+class MyAccountEdit extends FormBase
 {
     use StringTranslationTrait;
 
@@ -42,7 +42,7 @@ class AccountEditForm extends FormBase
      */
     public function getFormId()
     {
-        return 'account_edit_form';
+        return 'ucms_user_my_account_edit';
     }
 
     /**
