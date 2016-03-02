@@ -10,6 +10,7 @@ use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
+use MakinaCorpus\Ucms\User\TokenManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -29,6 +30,7 @@ class UserEdit extends FormBase
         return new self(
             $container->get('entity.manager'),
             $container->get('ucms_site.manager'),
+            $container->get('ucms_user.token_manager'),
             $container->get('event_dispatcher')
         );
     }
@@ -45,15 +47,25 @@ class UserEdit extends FormBase
     protected $siteManager;
 
     /**
+     * @var TokenManager
+     */
+    protected $tokenManager;
+
+    /**
      * @var EventDispatcherInterface
      */
     protected $dispatcher;
 
 
-    public function __construct(EntityManager $entityManager, SiteManager $siteManager, EventDispatcherInterface $dispatcher)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        SiteManager $siteManager,
+        TokenManager $tokenManager,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->entityManager = $entityManager;
         $this->siteManager = $siteManager;
+        $this->tokenManager = $tokenManager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -228,6 +240,7 @@ class UserEdit extends FormBase
         if (user_save($user, $form_state->getValues())) {
             if ($is_new) {
                 drupal_set_message($this->t("The new user @name has been created.", array('@name' => $user->name)));
+                $this->tokenManager->sendTokenMail($user, 'new-account');
                 $this->dispatcher->dispatch('user:add', new UserEvent($user->uid, $this->currentUser()->uid));
             } else {
                 drupal_set_message($this->t("The user @name has been updated.", array('@name' => $user->name)));

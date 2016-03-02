@@ -1,0 +1,72 @@
+<?php
+
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_user_schema() {
+  $schema = [];
+
+  $schema['ucms_user_token'] = [
+    'description' => 'Access tokens for some users operations',
+    'fields' => [
+      'uid' => [
+        'description' => "Identifier of the user concerned by the token",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'token' => [
+        'description' => "The token itself",
+        'type'        => 'varchar',
+        'length'      => 128,
+        'not null'    => true,
+      ],
+      'expiration_date' => [
+        'description' => "Expiration date of the token",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => true,
+      ],
+    ],
+    'primary key' => ['uid'],
+  ];
+
+  return $schema;
+}
+
+
+/**
+ * Adds missing constraints
+ */
+function ucms_user_install_schema_fix() {
+  // Add a few constraints.
+  // Hopefully, this syntax should work on both PostgreSQL and MySQL although
+  // this is pure coincidence, this is great for us.
+  $constraints = [
+    'ucms_user_token' => [
+      "ALTER TABLE {ucms_user_token} ADD CONSTRAINT FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
+    ],
+  ];
+
+  foreach ($constraints as $table => $statements) {
+    if (db_table_exists($table)) {
+      foreach ($statements as $statement) {
+        db_query($statement);
+      }
+    }
+  }
+}
+
+
+/**
+ * Creates the module's schema.
+ */
+function ucms_user_update_7001() {
+  // Creates the schema
+  drupal_install_schema('ucms_user');
+  // Fixes it
+  ucms_user_install_schema_fix();
+}

@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
+use MakinaCorpus\Ucms\User\TokenManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -27,6 +28,7 @@ class UserResetPassword extends FormBase
     {
         return new self(
             $container->get('entity.manager'),
+            $container->get('ucms_user.token_manager'),
             $container->get('event_dispatcher')
         );
     }
@@ -42,9 +44,19 @@ class UserResetPassword extends FormBase
      */
     protected $entityManager;
 
-    public function __construct(EntityManager $entityManager, EventDispatcherInterface $dispatcher)
-    {
+    /**
+     * @var TokenManager
+     */
+    protected $tokenManager;
+
+
+    public function __construct(
+        EntityManager $entityManager,
+        TokenManager $tokenManager,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->entityManager = $entityManager;
+        $this->tokenManager = $tokenManager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -89,6 +101,7 @@ class UserResetPassword extends FormBase
 
         if ($saved) {
             drupal_set_message($this->t("@name's password has been resetted.", array('@name' => $user->getDisplayName())));
+            $this->tokenManager->sendTokenMail($user, 'password-reset');
             $this->dispatcher->dispatch('user:reset_password', new UserEvent($user->uid, $this->currentUser()->id()));
         } else {
             drupal_set_message($this->t("An error occured. Please try again."), 'error');

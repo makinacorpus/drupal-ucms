@@ -38,7 +38,8 @@ class AccountPortlet extends AbstractPortlet
     public function getActions()
     {
         return [
-            new Action('Edit my information', 'admin/dashboard/user/my-account', 'dialog', 'edit'),
+            new Action($this->t('Edit my information'), 'admin/dashboard/user/my-account', 'dialog', 'edit'),
+            new Action($this->t('Edit my password'), 'admin/dashboard/user/my-password', 'dialog', 'edit'),
         ];
     }
 

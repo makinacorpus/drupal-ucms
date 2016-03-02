@@ -1,5 +1,16 @@
 services:
 
+  # Token manager
+  ucms_user.token_manager:
+    class: MakinaCorpus\Ucms\User\TokenManager
+    arguments: ["@database"]
+
+  ucms_user.user_event_listener:
+    class: MakinaCorpus\Ucms\User\EventDispatcher\UserEventListener
+    arguments: ["@entity.manager", "@ucms_user.token_manager"]
+    tags:
+      - {name: event_listener, event: "site:webmaster_add_new"}
+
   # Data source service for listing page
   ucms_user.admin.datasource:
     class: MakinaCorpus\Ucms\User\Page\UserAdminDatasource
