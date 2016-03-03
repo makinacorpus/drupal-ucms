@@ -7,6 +7,7 @@ use Elasticsearch\Client;
 use MakinaCorpus\Ucms\Search\Aggs\AbstractFacet;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\Lucene\Query;
+use MakinaCorpus\Ucms\Search\Sort\Sort;
 
 class Search
 {
@@ -44,6 +45,11 @@ class Search
      * @var string[]
      */
     protected $fields = [];
+
+    /**
+     * @var Sort[]
+     */
+    protected $sortFields = [];
 
     /**
      * @var Aggs\AbstractFacet[]
@@ -257,6 +263,30 @@ class Search
         return $this->aggregations;
     }
 
+
+    /**
+     * Add sort
+     *
+     * @param string $sortField
+     * @param string $sortOrder
+     *      'asc' or 'desc'
+     */
+    public function addSort($sortField, $sortOrder = 'asc')
+    {
+        $this->sortFields[] = new Sort($sortField, $sortOrder);
+    }
+
+    /**
+     * @param \array[] $sortFields
+     * @return Search
+     */
+    public function setSortFields($sortFields)
+    {
+        $this->sortFields = $sortFields;
+
+        return $this;
+    }
+
     /**
      * Run the search and return the response
      */
@@ -342,6 +372,12 @@ class Search
         if ($this->fields) {
             $body['fields'] = $this->fields;
         }*/
+
+        if (count($this->sortFields)) {
+            foreach ($this->sortFields as $sort) {
+                $body['sort'][] = $sort->getSortStructure();
+            }
+        }
 
         $data = [
             'index' => $this->index,

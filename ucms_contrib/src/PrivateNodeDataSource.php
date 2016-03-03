@@ -2,15 +2,20 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
 use MakinaCorpus\Ucms\Search\SearchFactory;
 
 class PrivateNodeDataSource extends AbstractDatasource
 {
+    use StringTranslationTrait;
+
     /**
      * @var QueryAlteredSearch
      */
@@ -48,7 +53,7 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->getSearch()
             ->createTermAggregation('type', null)
             ->setChoicesMap(node_type_get_names())
-            ->setTitle(t("Type"))
+            ->setTitle($this->t("Type"))
         ;
 
         $ret[] = $this
@@ -62,7 +67,7 @@ class PrivateNodeDataSource extends AbstractDatasource
                     return $accounts;
                 }
             })
-            ->setTitle(t("Owner"))
+            ->setTitle($this->t("Owner"))
         ;
 
         $ret[] = $this
@@ -76,14 +81,14 @@ class PrivateNodeDataSource extends AbstractDatasource
                     return $terms;
                 }
             })
-            ->setTitle(t("Tags"))
+            ->setTitle($this->t("Tags"))
         ;
 
         $ret[] = $this
             ->getSearch()
             ->createTermAggregation('status', null)
-            ->setChoicesMap([0 => t("Unpublished"), 1 => t("Published")])
-            ->setTitle(t("Status"))
+            ->setChoicesMap([0 => $this->t("Unpublished"), 1 => $this->t("Published")])
+            ->setTitle($this->t("Status"))
         ;
 
         return $ret;
@@ -107,6 +112,29 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
+    public function getSortFields($query)
+    {
+        return [
+            'created'     => $this->t("creation date"),
+            'updated'     => $this->t("lastest update date"),
+            'status'      => $this->t("status"),
+            'owner'       => $this->t("owner"),
+            'title'       => $this->t("title"),
+            'is_flagged'  => $this->t("flag"),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultSort()
+    {
+        return ['updated', SortManager::DESC];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function init($query)
     {
         $this->createTermFacets();
@@ -117,6 +145,10 @@ class PrivateNodeDataSource extends AbstractDatasource
      */
     public function getItems($query, PageState $pageState)
     {
+        if ($pageState->hasSortField()) {
+            $this->search->addSort($pageState->getSortField(), $pageState->getSortOrder());
+        }
+
         $response = $this
             ->search
             ->setPageParameter($pageState->getPageParameter())
