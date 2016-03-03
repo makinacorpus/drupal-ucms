@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Tests;
 
-use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractDrupalTest;
+use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\Access;

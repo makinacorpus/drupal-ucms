@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Seo\Tests;
 
-use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractPathAliasStorageTest;
+use MakinaCorpus\Drupal\Sf\Tests\AbstractPathAliasStorageTest;
 use MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage;
 
 class PathAliasStorageTest extends AbstractPathAliasStorageTest

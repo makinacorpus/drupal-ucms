@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Search\Tests;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 
-use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractDrupalTest;
+use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Search\IndexStorage;
 
 abstract class AbstractElasticTest extends AbstractDrupalTest

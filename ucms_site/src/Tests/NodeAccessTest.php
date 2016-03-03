@@ -6,7 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Node;
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractDrupalTest;
+use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;

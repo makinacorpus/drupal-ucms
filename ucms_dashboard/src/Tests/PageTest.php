@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Tests;
 
-use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractDrupalTest;
+use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;

@@ -7,7 +7,7 @@ use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\node\Node;
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Drupal\Sf\Container\Tests\AbstractDrupalTest;
+use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Seo\SeoService;
 
 /**
