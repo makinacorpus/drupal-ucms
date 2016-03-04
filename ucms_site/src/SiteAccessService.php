@@ -54,7 +54,7 @@ class SiteAccessService
                 ->query(
                     "
                         SELECT
-                            a.site_id, a.role, s.state AS site_state
+                            a.uid, a.site_id, a.role, s.state AS site_state
                         FROM {ucms_site_access} a
                         JOIN {ucms_site} s
                             ON s.id = a.site_id
@@ -411,8 +411,7 @@ class SiteAccessService
      */
     public function userCanManageWebmasters(AccountInterface $account, Site $site)
     {
-        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
-            || $this->userIsWebmaster($account, $site);
+        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $this->userIsWebmaster($account, $site);
     }
 
     /**
@@ -498,6 +497,8 @@ class SiteAccessService
             // Let any exception pass, any exception would mean garbage has
             // been given to this method
         }
+
+        $this->resetCache();
     }
 
     /**
@@ -524,6 +525,8 @@ class SiteAccessService
         }
 
         $q->execute();
+
+        $this->resetCache();
     }
 
     /**

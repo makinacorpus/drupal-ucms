@@ -199,10 +199,11 @@ class SiteStorage
      * Load all sites from the given identifiers
      *
      * @param array $idList
+     * @param string $withAccess
      *
      * @return Site[]
      */
-    public function loadAll($idList = [])
+    public function loadAll($idList = [], $withAccess = true)
     {
         $ret = [];
 
@@ -210,10 +211,16 @@ class SiteStorage
             return $ret;
         }
 
-        $sites = $this
+        $q = $this
             ->db
             ->select('ucms_site', 's')
-            ->addTag('ucms_site_access')
+        ;
+
+        if ($withAccess) {
+            $q->addTag('ucms_site_access');
+        }
+
+        $sites = $q
             ->fields('s')
             ->condition('s.id', $idList)
             ->execute()

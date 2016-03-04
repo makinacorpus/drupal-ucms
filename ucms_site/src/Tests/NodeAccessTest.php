@@ -86,6 +86,8 @@ class NodeAccessTest extends AbstractDrupalTest
             }
         }
 
+        $this->getNodeHelper()->resetCache();
+
         return $account;
     }
 
@@ -418,8 +420,12 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_unpublished',
                     ])
                     ->canEditOnly([
+                        'global_locked_published',
+                        'global_locked_unpublished',
                         'global_published',
                         'global_unpublished',
+                        'in_on_global_locked_published',
+                        'in_on_global_locked_unpublished',
                         'in_on_global_published',
                         'in_on_global_unpublished',
                     ])
@@ -484,15 +490,8 @@ class NodeAccessTest extends AbstractDrupalTest
                     ->canSeeOnly([
                         'global_locked_published',
                         'global_published',
-                        'site_on_published',
-                        'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
-                        // @todo This should not be true:
-                        'site_off_published',
-                        'site_init_published',
-                        'site_archive_published',
-                        'site_pending_published',
                     ])
                     ->canEditNone()
 
@@ -502,6 +501,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
                     ])
                     ->canEditNone()
 
@@ -513,17 +514,10 @@ class NodeAccessTest extends AbstractDrupalTest
 
                 ->getOutSite()
                     ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
                         'group_locked_published',
                         'group_published',
                         'in_on_group_locked_published',
                         'in_on_group_published',
-                        // @todo This should not be true:
-                        'site_off_published',
-                        'site_init_published',
-                        'site_archive_published',
-                        'site_pending_published',
                     ])
                     ->canEditNone()
 
@@ -548,7 +542,6 @@ class NodeAccessTest extends AbstractDrupalTest
     {
         $this
             ->whenIAm([], ['on' => Access::ROLE_WEBMASTER])
-
                 ->getOutSite()
                     ->canSeeOnly([
                         'site_on_published',
@@ -669,6 +662,14 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_unpublished',
                         'site_on_locked_published',
                         'site_on_locked_unpublished',
+                        'in_on_global_locked_published',
+                        'in_on_global_locked_unpublished',
+                        'in_on_global_published',
+                        'in_on_global_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
                     ])
                     ->canEditNone()
 

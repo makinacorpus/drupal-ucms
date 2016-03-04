@@ -43,6 +43,11 @@ class NodeAccessService
     /**
      * Grants for group content
      */
+    const REALM_GROUP_VIEW = 'ucms_group_view';
+
+    /**
+     * Grants for group content
+     */
     const REALM_GROUP = 'ucms_group';
 
     /**
@@ -89,6 +94,10 @@ class NodeAccessService
     public function resetCache()
     {
         drupal_static_reset('ucms_site_node_grants');
+
+        $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
+
+        $this->manager->getAccess()->resetCache();
     }
 
     /**
@@ -101,7 +110,6 @@ class NodeAccessService
         // This is where it gets complicated.
         $isGlobal   = $node->is_global;
         $isGroup    = $node->is_group;
-        $isClonable = $node->is_clonable;
 
         // People with "view all" permissions should view it
         $ret[] = [
@@ -116,14 +124,6 @@ class NodeAccessService
         // This handles two grants in one:
         //  - Webmasters can browse along published content of other sites
         //  - People with global repository access may see this content
-        $ret[] = [
-            'realm'         => self::REALM_GLOBAL_VIEW,
-            'gid'           => self::GID_DEFAULT,
-            'grant_view'    => $node->status,
-            'grant_update'  => 0,
-            'grant_delete'  => 0,
-            'priority'      => self::PRIORITY_DEFAULT,
-        ];
 
         if ($isGroup) {
             $ret[] = [
@@ -134,14 +134,29 @@ class NodeAccessService
                 'grant_delete'  => 1,
                 'priority'      => self::PRIORITY_DEFAULT,
             ];
-        }
-        else if ($isGlobal) {
+            $ret[] = [
+                'realm'         => self::REALM_GROUP_VIEW,
+                'gid'           => self::GID_DEFAULT,
+                'grant_view'    => $node->status,
+                'grant_update'  => 0,
+                'grant_delete'  => 0,
+                'priority'      => self::PRIORITY_DEFAULT,
+            ];
+        } else if ($isGlobal) {
             $ret[] = [
                 'realm'         => self::REALM_GLOBAL,
                 'gid'           => self::GID_DEFAULT,
                 'grant_view'    => 1,
                 'grant_update'  => 1,
                 'grant_delete'  => 1,
+                'priority'      => self::PRIORITY_DEFAULT,
+            ];
+            $ret[] = [
+                'realm'         => self::REALM_GLOBAL_VIEW,
+                'gid'           => self::GID_DEFAULT,
+                'grant_view'    => $node->status,
+                'grant_update'  => 0,
+                'grant_delete'  => 0,
                 'priority'      => self::PRIORITY_DEFAULT,
             ];
         }
@@ -246,11 +261,15 @@ class NodeAccessService
 
             if (user_access(Access::PERM_CONTENT_VIEW_ALL, $account)) {
                 $ret[self::REALM_READONLY] = [self::GID_DEFAULT];
-            } else if (user_access(Access::PERM_CONTENT_VIEW_GLOBAL, $account)) {
-                $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
+            } else {
+                if (user_access(Access::PERM_CONTENT_VIEW_GLOBAL, $account)) {
+                    $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
+                }
+                if (user_access(Access::PERM_CONTENT_VIEW_GROUP, $account)) {
+                    $ret[self::REALM_GROUP_VIEW] = [self::GID_DEFAULT];
+                }
             }
 
-            // @todo this should be loadAllSitesForUser()
             $grants = $this->manager->getAccess()->getUserRoles($account);
 
             // Preload all sites
@@ -258,7 +277,7 @@ class NodeAccessService
             foreach ($grants as $grant) {
                 $siteIdList[] = $grant->getSiteId();
             }
-            $sites = $this->manager->getStorage()->loadAll($siteIdList);
+            $sites = $this->manager->getStorage()->loadAll($siteIdList, false);
 
             foreach ($grants as $grant) {
                 $siteId = $grant->getSiteId();
@@ -289,7 +308,7 @@ class NodeAccessService
         $access = $this->manager->getAccess();
 
         if ('create' === $op) {
-            if (is_string($node) || $node instanceof NodeInterface && $node->getType()) {
+            if (is_string($node) || $node instanceof NodeInterface) {
 
                 // @todo
                 //   - check for "hidden" content types, like home pages
@@ -358,10 +377,23 @@ class NodeAccessService
     }
 
     /**
+     * Can user promote or unpromote this node as a group node
+     *
+     * @param AccountInterface $account
+     * @param NodeInterface $node
+     *
+     * @return boolean
+     */
+    public function userCanPromoteToGroup(AccountInterface $account, NodeInterface $node)
+    {
+        return ($node->is_group || $node->is_group) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+    }
+
+    /**
      * Can user lock or unlock this node
      *
-     * @param NodeInterface $node
      * @param AccountInterface $account
+     * @param NodeInterface $node
      *
      * @return boolean
      */

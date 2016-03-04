@@ -228,7 +228,7 @@ function ucms_contrib_menu_node_access_global() {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_group(NodeInterface $node) {
-  return $node->is_global && user_access(Access::PERM_CONTENT_MANAGE_GROUP);
+  return ucms_site_node_access_helper()->userCanPromoteToGroup(\Drupal::currentUser(), $node);
 }
 
 /**
