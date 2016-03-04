@@ -83,4 +83,9 @@ class Site
      * @var int
      */
     public $home_nid = null;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 }
