@@ -23,14 +23,14 @@ final class Access
     const OP_DELETE = 'delete';
 
     /**
-     * Manage global content, view global locked content
+     * Manage global content
      */
     const PERM_CONTENT_MANAGE_GLOBAL = 'content manage global';
 
     /**
-     * Manage global locked and non locked content
+     * Manage group content
      */
-    const PERM_CONTENT_MANAGE_GLOBAL_LOCKED = 'content manage global locked';
+    const PERM_CONTENT_MANAGE_GROUP = 'content manage group';
 
     /**
      * View all content in all circumstances
@@ -41,6 +41,11 @@ final class Access
      * View published global content
      */
     const PERM_CONTENT_VIEW_GLOBAL = 'content view global';
+
+    /**
+     * View published group content
+     */
+    const PERM_CONTENT_VIEW_GROUP = 'content view group';
 
     /**
      * Access the site dashboard

@@ -16,7 +16,20 @@ function ucms_contrib_admin_content_page_global($tab = null) {
   /* @var $datasource PrivateNodeDataSource */
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
-  $search->getFilterQuery()->matchTerm('is_global', 1);
+  $search
+    ->getFilterQuery()
+    ->matchTerm('is_global', 1)
+    ->matchTerm('is_group', 0);
+  return ucms_contrib_admin_content_page($datasource, $tab);
+}
+
+function ucms_contrib_admin_content_page_group($tab = null) {
+  /* @var $datasource PrivateNodeDataSource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  $search = $datasource->getSearch();
+  $search
+    ->getFilterQuery()
+    ->matchTerm('is_group', 1);
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 
@@ -25,18 +38,6 @@ function ucms_contrib_admin_content_page_local($tab = null) {
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_global', 0);
-  return ucms_contrib_admin_content_page($datasource, $tab);
-}
-
-function ucms_contrib_admin_content_page_locked($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
-  $search = $datasource->getSearch();
-  $search
-      ->getFilterQuery()
-      ->matchTerm('is_global', 1)
-      ->matchTerm('is_locked', 1)
-  ;
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 

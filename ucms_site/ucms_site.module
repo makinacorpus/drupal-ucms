@@ -201,14 +201,17 @@ function ucms_site_permission() {
     Access::PERM_CONTENT_MANAGE_GLOBAL => [
       'title' => t("Manage global content"),
     ],
-    Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED => [
-      'title' => t("Manage global locked content"),
+    Access::PERM_CONTENT_MANAGE_GROUP => [
+      'title' => t("Manage group content"),
     ],
     Access::PERM_CONTENT_VIEW_ALL => [
       'title' => t("View all content no matter where it stands"),
     ],
     Access::PERM_CONTENT_VIEW_GLOBAL => [
       'title' => t("View global published content"),
+    ],
+    Access::PERM_CONTENT_VIEW_GROUP => [
+      'title' => t("View group published content"),
     ],
     Access::PERM_SITE_REQUEST => [
       'title' => t("Request new site"),
