@@ -135,7 +135,6 @@ class UserSetPassword extends FormBase
 
                 $form['actions'] = [
                     '#type' => 'actions',
-                    '#weight' => 100,
                     'submit' => [
                         '#type' => 'submit',
                         '#value' => $this->t('Save my password'),

@@ -87,7 +87,6 @@ class MyAccountEdit extends FormBase
         $form['actions']['submit'] = array(
             '#type' => 'submit',
             '#value' => $this->t('Save'),
-            '#weight' => 5,
         );
 
         return $form;

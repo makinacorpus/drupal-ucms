@@ -105,7 +105,7 @@ class UserEdit extends FormBase
             '#type' => 'textfield',
             '#title' => $this->t('Email'),
             '#default_value' => $user->getEmail(),
-            '#maxlength' => 254,
+            '#maxlength' => EMAIL_MAX_LENGTH,
             '#required' => true,
             '#weight' => -5,
         );
@@ -151,7 +151,6 @@ class UserEdit extends FormBase
         $form['actions']['submit'] = [
             '#type' => 'submit',
             '#value' => $this->t('Save'),
-            '#weight' => 100,
         ];
 
         return $form;

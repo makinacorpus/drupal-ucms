@@ -136,11 +136,12 @@ class LabelEdit extends FormBase
             }
         }
 
-        $form['actions'] = array('#type' => 'actions');
+        $form['actions'] = array(
+            '#type' => 'actions',
+        );
         $form['actions']['submit'] = array(
             '#type' => 'submit',
             '#value' => $this->t('Save'),
-            '#weight' => 5,
         );
 
         return $form;

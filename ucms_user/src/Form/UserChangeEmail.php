@@ -73,7 +73,7 @@ class UserChangeEmail extends FormBase
             '#type' => 'textfield',
             '#title' => $this->t('Email'),
             '#default_value' => $user->getEmail(),
-            '#maxlength' => 254,
+            '#maxlength' => EMAIL_MAX_LENGTH,
             '#required' => true,
         );
 

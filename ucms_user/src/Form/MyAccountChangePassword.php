@@ -74,7 +74,6 @@ class MyAccountChangePassword extends FormBase
 
         $form['actions'] = [
             '#type' => 'actions',
-            '#weight' => 5,
             'submit' => [
                 '#type' => 'submit',
                 '#value' => $this->t('Save'),
