@@ -41,9 +41,9 @@ class NodeAccessService
     const REALM_GLOBAL = 'ucms_global';
 
     /**
-     * Grants for global non editable locked content
+     * Grants for group content
      */
-    const REALM_GLOBAL_LOCKED = 'ucms_global_locked';
+    const REALM_GROUP = 'ucms_group';
 
     /**
      * Grants for content owner in global repository
@@ -100,6 +100,7 @@ class NodeAccessService
 
         // This is where it gets complicated.
         $isGlobal   = $node->is_global;
+        $isGroup    = $node->is_group;
         $isClonable = $node->is_clonable;
 
         // People with "view all" permissions should view it
@@ -124,23 +125,23 @@ class NodeAccessService
             'priority'      => self::PRIORITY_DEFAULT,
         ];
 
-        if ($isGlobal) {
-
+        if ($isGroup) {
             $ret[] = [
-                'realm'         => self::REALM_GLOBAL_LOCKED,
+                'realm'         => self::REALM_GROUP,
                 'gid'           => self::GID_DEFAULT,
                 'grant_view'    => 1,
                 'grant_update'  => 1,
                 'grant_delete'  => 1,
                 'priority'      => self::PRIORITY_DEFAULT,
             ];
-
+        }
+        else if ($isGlobal) {
             $ret[] = [
                 'realm'         => self::REALM_GLOBAL,
                 'gid'           => self::GID_DEFAULT,
                 'grant_view'    => 1,
-                'grant_update'  => (int)$isClonable,
-                'grant_delete'  => (int)$isClonable,
+                'grant_update'  => 1,
+                'grant_delete'  => 1,
                 'priority'      => self::PRIORITY_DEFAULT,
             ];
         }
@@ -184,8 +185,8 @@ class NodeAccessService
                     'realm'         => self::REALM_WEBMASTER,
                     'gid'           => $siteId,
                     'grant_view'    => 1,
-                    'grant_update'  => (int)(!$isGlobal && $siteId === $node->site_id),
-                    'grant_delete'  => (int)(!$isGlobal && $siteId === $node->site_id),
+                    'grant_update'  => (int)(!$isGlobal && !$isGroup && $siteId === $node->site_id),
+                    'grant_delete'  => (int)(!$isGlobal && !$isGroup && $siteId === $node->site_id),
                     'priority'      => self::PRIORITY_DEFAULT,
                 ];
             }
@@ -239,8 +240,8 @@ class NodeAccessService
             if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL, $account)) {
                 $ret[self::REALM_GLOBAL] = [self::GID_DEFAULT];
             }
-            if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED, $account)) {
-                $ret[self::REALM_GLOBAL_LOCKED] = [self::GID_DEFAULT];
+            if (user_access(Access::PERM_CONTENT_MANAGE_GROUP, $account)) {
+                $ret[self::REALM_GROUP] = [self::GID_DEFAULT];
             }
 
             if (user_access(Access::PERM_CONTENT_VIEW_ALL, $account)) {
@@ -299,7 +300,7 @@ class NodeAccessService
                     if ($access->userIsContributor($account, $site) || $access->userIsWebmaster($account, $site)) {
                         return NODE_ACCESS_ALLOW;
                     }
-                } else if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL, $account) || user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED, $account)) {
+                } else if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL, $account) || user_access(Access::PERM_CONTENT_MANAGE_GROUP, $account)) {
                     return NODE_ACCESS_ALLOW;
                 }
             }
@@ -366,9 +367,15 @@ class NodeAccessService
      */
     public function userCanLock(AccountInterface $account, NodeInterface $node)
     {
+        if ($node->is_group) {
+            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+        }
+
         if ($node->is_global) {
-            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED);
-        } else if ($node->site_id) {
+            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL);
+        }
+
+        if ($node->site_id) {
             // Got a site !
             // @todo I must find a shortcut for this...
             return $this
@@ -383,8 +390,8 @@ class NodeAccessService
                     $account
                 )
             ;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

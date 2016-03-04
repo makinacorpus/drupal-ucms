@@ -89,7 +89,7 @@ class NodeAccessTest extends AbstractDrupalTest
         return $account;
     }
 
-    protected function createDrupalNode($status = 0, $site = null, $otherSites = [], $isGlobal = false, $isClonable = false)
+    protected function createDrupalNode($status = 0, $site = null, $otherSites = [], $isGlobal = false, $isGroup = false, $isClonable = false)
     {
         $node = new Node();
         $node->nid = $this->nidSeq++;
@@ -104,6 +104,7 @@ class NodeAccessTest extends AbstractDrupalTest
             $node->ucms_sites = [];
         }
         $node->is_global = (int)(bool)$isGlobal;
+        $node->is_group = (int)(bool)$isGroup;
         $node->is_clonable = (int)(bool)$isClonable;
         foreach ($otherSites as $label) {
             $node->ucms_sites[] = $this->getSite($label)->id;
@@ -145,6 +146,7 @@ class NodeAccessTest extends AbstractDrupalTest
     protected function whenIAm($permissionList = [], $siteMap = [])
     {
         $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap);
+        $this->getNodeHelper()->resetCache();
 
         return $this;
     }
@@ -152,6 +154,7 @@ class NodeAccessTest extends AbstractDrupalTest
     protected function whenIAmAnonymous()
     {
         $this->contextualAccount = $this->getAnonymousUser();
+        $this->getNodeHelper()->resetCache();
 
         return $this;
     }
@@ -319,26 +322,38 @@ class NodeAccessTest extends AbstractDrupalTest
         $this->sites['pending']   = $this->createDrupalSite(SiteState::PENDING);
 
         // Create false set of nodes, a lot of them.
-        $this->nodes['global_locked_published']         = $this->createDrupalNode(1, null, [], true, false);
-        $this->nodes['global_locked_invisible']         = $this->createDrupalNode(0, null, [], true, false);
-        $this->nodes['global_published']                = $this->createDrupalNode(1, null, [], true, true);
-        $this->nodes['global_invisible']                = $this->createDrupalNode(0, null, [], true, true);
-        $this->nodes['site_on_published']               = $this->createDrupalNode(1, 'on', [], false, true);
-        $this->nodes['site_on_unpublished']             = $this->createDrupalNode(0, 'on', [], false, true);
-        $this->nodes['site_on_locked_published']        = $this->createDrupalNode(1, 'on', [], false, false);
-        $this->nodes['site_on_locked_unpublished']      = $this->createDrupalNode(0, 'on', [], false, false);
-        $this->nodes['in_on_global_locked_published']   = $this->createDrupalNode(1, null, ['on'], true, false);
-        $this->nodes['in_on_global_locked_unpublished'] = $this->createDrupalNode(0, null, ['on'], true, false);
-        $this->nodes['in_on_global_published']          = $this->createDrupalNode(1, null, ['on'], true, true);
-        $this->nodes['in_on_global_unpublished']        = $this->createDrupalNode(0, null, ['on'], true, true);
-        $this->nodes['site_off_published']              = $this->createDrupalNode(1, 'off', [], false, true);
-        $this->nodes['site_off_unpublished']            = $this->createDrupalNode(0, 'off', [], false, true);
-        $this->nodes['site_init_published']             = $this->createDrupalNode(1, 'init', [], false, true);
-        $this->nodes['site_init_unpublished']           = $this->createDrupalNode(0, 'init', [], false, true);
-        $this->nodes['site_archive_published']          = $this->createDrupalNode(1, 'archive', [], false, true);
-        $this->nodes['site_archive_unpublished']        = $this->createDrupalNode(0, 'archive', [], false, true);
-        $this->nodes['site_pending_published']          = $this->createDrupalNode(1, 'pending', [], false, true);
-        $this->nodes['site_pending_unpublished']        = $this->createDrupalNode(0, 'pending', [], false, true);
+        $this->nodes['global_locked_published']         = $this->createDrupalNode(1, null, [], true, false, false);
+        $this->nodes['global_locked_unpublished']       = $this->createDrupalNode(0, null, [], true, false, false);
+        $this->nodes['global_published']                = $this->createDrupalNode(1, null, [], true, false, true);
+        $this->nodes['global_unpublished']              = $this->createDrupalNode(0, null, [], true, false, true);
+
+        $this->nodes['group_locked_published']          = $this->createDrupalNode(1, null, [], true, true, false);
+        $this->nodes['group_locked_unpublished']        = $this->createDrupalNode(0, null, [], true, true, false);
+        $this->nodes['group_published']                 = $this->createDrupalNode(1, null, [], true, true, true);
+        $this->nodes['group_unpublished']               = $this->createDrupalNode(0, null, [], true, true, true);
+
+        $this->nodes['in_on_global_locked_published']   = $this->createDrupalNode(1, null, ['on'], true, false, false);
+        $this->nodes['in_on_global_locked_unpublished'] = $this->createDrupalNode(0, null, ['on'], true, false, false);
+        $this->nodes['in_on_global_published']          = $this->createDrupalNode(1, null, ['on'], true, false, true);
+        $this->nodes['in_on_global_unpublished']        = $this->createDrupalNode(0, null, ['on'], true, false, true);
+
+        $this->nodes['in_on_group_locked_published']    = $this->createDrupalNode(1, null, ['on'], true, true, false);
+        $this->nodes['in_on_group_locked_unpublished']  = $this->createDrupalNode(0, null, ['on'], true, true, false);
+        $this->nodes['in_on_group_published']           = $this->createDrupalNode(1, null, ['on'], true, true, true);
+        $this->nodes['in_on_group_unpublished']         = $this->createDrupalNode(0, null, ['on'], true, true, true);
+
+        $this->nodes['site_on_locked_published']        = $this->createDrupalNode(1, 'on', [], false, false, false);
+        $this->nodes['site_on_locked_unpublished']      = $this->createDrupalNode(0, 'on', [], false, false, false);
+        $this->nodes['site_on_published']               = $this->createDrupalNode(1, 'on', [], false, false, true);
+        $this->nodes['site_on_unpublished']             = $this->createDrupalNode(0, 'on', [], false, false, true);
+        $this->nodes['site_off_published']              = $this->createDrupalNode(1, 'off', [], false, false, true);
+        $this->nodes['site_off_unpublished']            = $this->createDrupalNode(0, 'off', [], false, false, true);
+        $this->nodes['site_init_published']             = $this->createDrupalNode(1, 'init', [], false, false, true);
+        $this->nodes['site_init_unpublished']           = $this->createDrupalNode(0, 'init', [], false, false, true);
+        $this->nodes['site_archive_published']          = $this->createDrupalNode(1, 'archive', [], false, false, true);
+        $this->nodes['site_archive_unpublished']        = $this->createDrupalNode(0, 'archive', [], false, false, true);
+        $this->nodes['site_pending_published']          = $this->createDrupalNode(1, 'pending', [], false, false, true);
+        $this->nodes['site_pending_unpublished']        = $this->createDrupalNode(0, 'pending', [], false, false, true);
     }
 
     /**
@@ -382,6 +397,10 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_locked_unpublished',
                         'in_on_global_published',
                         'in_on_global_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
                     ])
                     ->canEditNone()
 
@@ -390,9 +409,9 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->getOutSite()
                     ->canSeeOnly([
                         'global_locked_published',
-                        'global_locked_invisible',
+                        'global_locked_unpublished',
                         'global_published',
-                        'global_invisible',
+                        'global_unpublished',
                         'in_on_global_locked_published',
                         'in_on_global_locked_unpublished',
                         'in_on_global_published',
@@ -400,7 +419,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     ])
                     ->canEditOnly([
                         'global_published',
-                        'global_invisible',
+                        'global_unpublished',
                         'in_on_global_published',
                         'in_on_global_unpublished',
                     ])
@@ -411,6 +430,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
                     ])
                     ->canEditNone()
 
@@ -418,28 +439,28 @@ class NodeAccessTest extends AbstractDrupalTest
                     ->canSeeNone()
                     ->canEditNone()
 
-           ->whenIAm([Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED])
+           ->whenIAm([Access::PERM_CONTENT_MANAGE_GROUP])
 
                 ->getOutSite()
                     ->canSeeOnly([
-                        'global_locked_published',
-                        'global_locked_invisible',
-                        'global_published',
-                        'global_invisible',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
+                        'group_locked_published',
+                        'group_locked_unpublished',
+                        'group_published',
+                        'group_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
                     ])
                     ->canEditOnly([
-                        'global_locked_published',
-                        'global_locked_invisible',
-                        'global_published',
-                        'global_invisible',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
+                        'group_locked_published',
+                        'group_locked_unpublished',
+                        'group_published',
+                        'group_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
                     ])
 
                 ->inSite('on')
@@ -448,6 +469,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
                     ])
                     ->canEditNone()
 
@@ -485,6 +508,39 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+
+            ->whenIAm([Access::PERM_CONTENT_VIEW_GROUP])
+
+                ->getOutSite()
+                    ->canSeeOnly([
+                        'site_on_published',
+                        'site_on_locked_published',
+                        'group_locked_published',
+                        'group_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
+                        // @todo This should not be true:
+                        'site_off_published',
+                        'site_init_published',
+                        'site_archive_published',
+                        'site_pending_published',
+                    ])
+                    ->canEditNone()
+
+                ->inSite('on')
+                    ->canSeeOnly([
+                        'site_on_published',
+                        'site_on_locked_published',
+                        'in_on_global_locked_published',
+                        'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
+                    ])
+                    ->canEditNone()
+
+                ->inSite('off')
+                    ->canSeeNone()
+                    ->canEditNone()
         ;
     }
 
@@ -503,6 +559,10 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_locked_unpublished',
                         'in_on_global_published',
                         'in_on_global_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
                     ])
                     ->canEditOnly([
                         'site_on_published',
@@ -521,6 +581,10 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_locked_unpublished',
                         'in_on_global_published',
                         'in_on_global_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
                     ])
                     ->canEditOnly([
                         'site_on_published',
@@ -551,6 +615,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
                     ])
                     ->canEditNone()
 
@@ -603,10 +669,6 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_unpublished',
                         'site_on_locked_published',
                         'site_on_locked_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
                     ])
                     ->canEditNone()
 
@@ -620,6 +682,10 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_locked_unpublished',
                         'in_on_global_published',
                         'in_on_global_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
                     ])
                     ->canEditNone()
 
@@ -642,6 +708,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
                     ])
                     ->canEditNone()
 
@@ -710,6 +778,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
                     ])
                     ->canEditNone()
         ;
@@ -734,6 +804,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'in_on_global_locked_published',
                         'in_on_global_published',
+                        'in_on_group_locked_published',
+                        'in_on_group_published',
                     ])
                     ->canEditNone()
         ;

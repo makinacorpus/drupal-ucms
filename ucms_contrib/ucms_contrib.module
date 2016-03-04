@@ -63,10 +63,19 @@ function ucms_contrib_menu() {
       'title'             => "Global",
       'page callback'     => 'ucms_contrib_admin_content_page_global',
       'page arguments'    => [$key],
-      'access callback'   => 'ucms_contrib_menu_node_access_global',
+      'access arguments'  => [Access::PERM_CONTENT_VIEW_GLOBAL],
       'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 90,
+    ];
+    $items['admin/dashboard/' . $key . '/group'] = [
+      'title'             => "Group",
+      'page callback'     => 'ucms_contrib_admin_content_page_group',
+      'page arguments'    => [$key],
+      'access arguments'  => [Access::PERM_CONTENT_VIEW_GROUP],
+      'file'              => 'ucms_contrib.pages.inc',
+      'type'              => MENU_LOCAL_TASK,
+      'weight'            => 100,
     ];
     $items['admin/dashboard/' . $key . '/local'] = [
       'title'             => "Local",
@@ -76,15 +85,6 @@ function ucms_contrib_menu() {
       'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 80,
-    ];
-    $items['admin/dashboard/' . $key . '/group'] = [
-      'title'             => "Group",
-      'page callback'     => 'ucms_contrib_admin_content_page_locked',
-      'page arguments'    => [$key],
-      'access arguments'  => [Access::PERM_CONTENT_VIEW_GLOBAL],
-      'file'              => 'ucms_contrib.pages.inc',
-      'type'              => MENU_LOCAL_TASK,
-      'weight'            => 100,
     ];
     $items['admin/dashboard/' . $key . '/flagged'] = [
       'title'             => "Flagged",
@@ -99,7 +99,7 @@ function ucms_contrib_menu() {
       'title'             => "Starred",
       'page callback'     => 'ucms_contrib_admin_content_page_starred',
       'page arguments'    => [$key],
-      'access arguments'  => [Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED],
+      'access arguments'  => [Access::PERM_CONTENT_MANAGE_GLOBAL],
       'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 210,
@@ -171,6 +171,22 @@ function ucms_contrib_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
+  $items['node/%node/make-group'] = [
+    'title'             => "Define as group content",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeMakeGroup', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_group',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['node/%node/unmake-group'] = [
+    'title'             => "Remove from group contents",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeGroup', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_group',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
 
   // Site configuration.
   $items['admin/structure/content'] = [
@@ -205,14 +221,21 @@ function ucms_contrib_menu() {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_global() {
-  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL) || user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED);
+  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL);
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_group(NodeInterface $node) {
+  return $node->is_global && user_access(Access::PERM_CONTENT_MANAGE_GROUP);
 }
 
 /**
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_star(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL_LOCKED) && $node->access('update');
+  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL) && $node->access('update');
 }
 
 /**

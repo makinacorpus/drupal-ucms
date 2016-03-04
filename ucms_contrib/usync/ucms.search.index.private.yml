@@ -55,5 +55,8 @@ mapping:
       is_global:
         type:         boolean
 
+      is_group:
+        type:         boolean
+
       is_locked:
         type:         boolean
