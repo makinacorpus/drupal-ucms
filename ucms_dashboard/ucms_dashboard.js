@@ -25,7 +25,7 @@
           position = panePosition();
           $.cookie('contextual-pane-position', position, {path: '/'});
           $panePositionSwitch.find('span').toggleClass('glyphicon-collapse-down glyphicon-expand');
-          resizeTabs();
+          Drupal.behaviors.ucmsDashboardPane.resizeTabs();
           $page.css('padding-right', position == 'right' ? initial_size : '15ppx');
         });
         if ($.cookie('contextual-pane-position') && $.cookie('contextual-pane-position') !== 'right') {
