@@ -83,7 +83,7 @@ class ContentPortlet extends AbstractAdminPortlet
      */
     protected function getDisplay(&$query, PageState $pageState)
     {
-        $query['type'] = $this->typeHandler->getEditorialTypes();
+        $query['type'] = $this->typeHandler->getEditorialContentTypes();
         $query['owner'] = $this->getAccount()->id();
 
         return new NodePortletDisplay($this->t("You have no content yet."));

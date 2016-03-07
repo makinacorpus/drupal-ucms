@@ -7,7 +7,11 @@ use Exception;
 
 class TypeHandler
 {
-
+    /**
+     * Get tab list.
+     *
+     * @return array
+     */
     public function getTabs()
     {
         return [
@@ -35,6 +39,27 @@ class TypeHandler
         }
     }
 
+
+    /**
+     * Get all editorial (media + editorial content) types.
+     *
+     * @return string[]
+     */
+    public function getEditorialTypes()
+    {
+        return array_merge($this->getEditorialContentTypes(), $this->getMediaTypes());
+    }
+
+    /**
+     * Get all  types.
+     *
+     * @return string[]
+     */
+    public function getAllTypes()
+    {
+        return array_merge($this->getContentTypes(), $this->getMediaTypes());
+    }
+
     /**
      * Get all media types.
      *
@@ -60,7 +85,7 @@ class TypeHandler
      *
      * @return string[]
      */
-    public function getEditorialTypes()
+    public function getEditorialContentTypes()
     {
         return variable_get('ucms_contrib_editorial_types', []);
     }

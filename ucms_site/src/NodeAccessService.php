@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 
 /**
  * Drupal ACL builder for usage with node_access() related hooks
@@ -74,18 +75,24 @@ class NodeAccessService
      * @var mixed[]
      */
     private $userGrantCache;
+    /**
+     * @var TypeHandler
+     */
+    private $typeHandler;
 
     /**
      * Default constructor
      *
      * @param SiteManager $manager
+     * @param TypeHandler $typeHandler
      */
-    public function __construct(SiteManager $manager)
+    public function __construct(SiteManager $manager, TypeHandler $typeHandler)
     {
         $this->manager = $manager;
 
         // Sorry for this, but we do need it to behave with Drupal internals
         $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
+        $this->typeHandler = $typeHandler;
     }
 
     /**
@@ -302,24 +309,44 @@ class NodeAccessService
 
     /**
      * Alter-ego of hook_node_access().
+     *
+     * @param AccountInterface $account
+     * @param NodeInterface|string $node
+     * @param string $op
+     * @return string
      */
-    public function userCanAccess($account, $node, $op)
+    public function userCanAccess(AccountInterface $account, $node, $op)
     {
         $access = $this->manager->getAccess();
 
         if ('create' === $op) {
             if (is_string($node) || $node instanceof NodeInterface) {
 
-                // @todo
-                //   - check for "hidden" content types, like home pages
+                $handler = $this->typeHandler;
+                $type = is_string($node) ? $node : $node->bundle();
+
+                // Check for "hidden" content types, like home pages
+                if (!in_array($type, $handler->getAllTypes()) && $account->hasPermission('godmode')) {
+                    return NODE_ACCESS_DENY;
+                }
 
                 $site = $this->manager->getContext();
-
                 if ($site) {
-                    if ($access->userIsContributor($account, $site) || $access->userIsWebmaster($account, $site)) {
+
+                    // Contributor can only create editorial content
+                    if ($access->userIsContributor($account, $site) && in_array($type, $handler->getEditorialTypes())) {
                         return NODE_ACCESS_ALLOW;
                     }
-                } else if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL, $account) || user_access(Access::PERM_CONTENT_MANAGE_GROUP, $account)) {
+
+                    // Webmasters can create anything
+                    if ($access->userIsWebmaster($account, $site) && in_array($type, $handler->getAllTypes())) {
+                        return NODE_ACCESS_ALLOW;
+                    }
+
+                } elseif (
+                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)
+                    || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)
+                ) {
                     return NODE_ACCESS_ALLOW;
                 }
             }
