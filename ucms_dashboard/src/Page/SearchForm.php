@@ -45,13 +45,13 @@ class SearchForm extends FormBase
 
         $form['query'] = [
             '#type'           => 'textfield',
-            '#attributes'     => ['placeholder' => t("Search")],
+            '#attributes'     => ['placeholder' => $this->t("Search")],
             '#default_value'  => isset($query[$parameterName]) ? $query[$parameterName] : null,
         ];
 
         $form['submit'] = [
             '#type'   => 'submit',
-            '#value'  => t("Search"),
+            '#value'  => $this->t("Search"),
         ];
 
         return $form;

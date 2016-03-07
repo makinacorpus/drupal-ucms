@@ -2,11 +2,14 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Page;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 
 abstract class AbstractDisplay implements DisplayInterface
 {
+    use StringTranslationTrait;
+    
     /**
      * @var string
      */
@@ -169,7 +172,7 @@ abstract class AbstractDisplay implements DisplayInterface
 
             $links[$name] = [
                 'href'        => $route,
-                'title'       => t("Display as @mode", ['@mode' => $title]),
+                'title'       => $this->t("Display as @mode", ['@mode' => $title]),
                 'query'       => $query,
                 'attributes'  => $attributes,
                 // Forces the l() function to skip the 'active' class by adding empty

@@ -60,14 +60,14 @@ class MyAccountChangePassword extends FormBase
 
         $form['current_password'] = [
             '#type' => 'password',
-            '#title' => t('Current password'),
+            '#title' => $this->t('Current password'),
             '#size' => 20,
             '#required' => true,
         ];
 
         $form['new_password'] = [
             '#type' => 'password_confirm',
-            //'#title' => t('New password'),
+            //'#title' => $this->t('New password'),
             '#size' => 20,
             '#required' => true,
         ];

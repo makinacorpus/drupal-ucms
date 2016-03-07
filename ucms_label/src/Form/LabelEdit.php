@@ -18,7 +18,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class LabelEdit extends FormBase
 {
-
     /**
      * {@inheritdoc}
      */
@@ -82,7 +81,7 @@ class LabelEdit extends FormBase
 
 //        $form['description'] = array(
 //            '#type' => 'text_format',
-//            '#title' => t('Description'),
+//            '#title' => $this->t('Description'),
 //            '#default_value' => isset($label->description) ? $label->description : '',
 //            '#format' => isset($label->format) ? $label->format : '',
 //            '#weight' => 0,

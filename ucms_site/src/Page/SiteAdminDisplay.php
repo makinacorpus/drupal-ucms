@@ -53,7 +53,16 @@ class SiteAdminDisplay extends AbstractDisplay
             '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
             '#suffix' => '</div>', // FIXME should be in theme
             '#theme'  => 'table',
-            '#header' => [t("Type"), t("Hostname"), t("Title"), t("State"), t("Created"), t("Last update"), t("Owner"), ''],
+            '#header' => [
+                $this->t("Type"),
+                $this->t("Hostname"),
+                $this->t("Title"),
+                $this->t("State"),
+                $this->t("Created"),
+                $this->t("Last update"),
+                $this->t("Owner"),
+                '',
+            ],
             '#empty'  => $this->emptyMessage,
             '#rows'   => $rows,
         ];

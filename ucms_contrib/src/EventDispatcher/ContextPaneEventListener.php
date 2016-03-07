@@ -68,7 +68,7 @@ class ContextPaneEventListener
                 || $this->layoutContext->isTemporary()
             ) {
                 $contextPane
-                    ->addTab('cart', t("Cart"), 'shopping-cart')
+                    ->addTab('cart', $this->t("Cart"), 'shopping-cart')
                     ->add(ucms_contrib_favorite_render(), 'cart')
                 ;
             }
@@ -78,12 +78,12 @@ class ContextPaneEventListener
         //   @todo find a solution for path_is_admin() and current_path()
         //     maybe bring in the RequestStack
         if (!path_is_admin(current_path())) {
-            $backlink = new Action(t("Go to dashboard"), 'admin/dashboard', null, 'dashboard');
+            $backlink = new Action($this->t("Go to dashboard"), 'admin/dashboard', null, 'dashboard');
             $contextPane->addActions([$backlink]);
         }
         /*else {
             // @Todo possibly store the last site visited in the session to provide a backlink
-            $backlink = new Action(t("Go to site"), '<front>', null, 'globe');
+            $backlink = new Action($this->t("Go to site"), '<front>', null, 'globe');
         }*/
 
         // Add node creation link on dashboard

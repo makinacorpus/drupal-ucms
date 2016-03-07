@@ -63,7 +63,7 @@ class NodeActionProvider implements ActionProviderInterface
 
         /*
          if ($item->access('clone')) {
-         $ret[] = new Action(t("Clone"), 'node/' . $item->nid . '/clone', null, 'dialog', 'save', 0, false, true);
+         $ret[] = new Action($this->t("Clone"), 'node/' . $item->nid . '/clone', null, 'dialog', 'save', 0, false, true);
          }
          if (!empty($item->is_clonable)) {
          // ajouter au panier  permet d'ajouter le contenu au panier de l'utilisateur courant ;

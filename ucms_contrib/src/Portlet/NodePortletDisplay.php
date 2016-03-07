@@ -9,8 +9,6 @@ use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 
 class NodePortletDisplay extends AbstractDisplay
 {
-    use StringTranslationTrait;
-
     /**
      * @var string
      */
@@ -38,7 +36,7 @@ class NodePortletDisplay extends AbstractDisplay
                 $item->bundle(),
                 '', // @todo sites
                 format_interval(time() - $item->getChangedTime()),
-                $item->isPublished() ? t("published") : '',
+                $item->isPublished() ? $this->t("published") : '',
             ];
         }
 

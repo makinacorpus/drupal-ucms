@@ -35,11 +35,11 @@ class NodeTabsForm extends FormBase
 
         foreach (ucms_contrib_tab_list() as $tab => $name) {
             $form['tab'][$tab] = [
-                '#title'  => t("%tab tab", ['%tab' => t($name)]),
+                '#title'  => $this->t("%tab tab", ['%tab' => $this->t($name)]),
                 '#type'   => 'fieldset',
             ];
             $form['tab'][$tab]['types'] = [
-                '#title'          => t("Content types"),
+                '#title'          => $this->t("Content types"),
                 '#type'           => 'checkboxes',
                 '#options'        => node_type_get_names(),
                 '#default_value'  => variable_get('ucms_contrib_tab_' . $tab .  '_type', []),
@@ -49,7 +49,7 @@ class NodeTabsForm extends FormBase
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'   => 'submit',
-            '#value'  => t('Save configuration')
+            '#value'  => $this->t('Save configuration')
         ];
 
         return $form;
@@ -78,6 +78,6 @@ class NodeTabsForm extends FormBase
             variable_set('ucms_contrib_tab_' . $tab . '_type', $enabled);
         }
 
-        drupal_set_message(t('The configuration options have been saved.'));
+        drupal_set_message($this->t('The configuration options have been saved.'));
     }
 }

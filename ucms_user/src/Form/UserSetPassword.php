@@ -83,7 +83,8 @@ class UserSetPassword extends FormBase
         /* @var Token $token */
         $token = $this->tokenManager->loadToken($token);
         if ($token === null) {
-            drupal_set_message(t('You have tried to use a one-time login link that has either been used or is no longer valid. Please request a new one using the form below.'), 'error');
+            drupal_set_message(
+                $this->t('You have tried to use a one-time login link that has either been used or is no longer valid. Please request a new one using the form below.'), 'error');
             return [];
         }
 
@@ -142,7 +143,8 @@ class UserSetPassword extends FormBase
                 ];
             }
             else {
-                drupal_set_message(t('You have tried to use a one-time login link that has either been used or is no longer valid. Please request a new one using the form below.'), 'error');
+                drupal_set_message(
+                    $this->t('You have tried to use a one-time login link that has either been used or is no longer valid. Please request a new one using the form below.'), 'error');
                 drupal_goto('user/password');
             }
         }

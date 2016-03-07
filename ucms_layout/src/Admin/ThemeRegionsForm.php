@@ -30,17 +30,17 @@ class ThemeRegionsForm extends FormBase
         $enabled  = ucms_layout_theme_region_list($theme);
 
         $form['regions'] = [
-            '#title'          => t("Enabled regions"),
+            '#title'          => $this->t("Enabled regions"),
             '#type'           => 'checkboxes',
             '#options'        => $all,
             '#default_value'  => $enabled,
-            '#description'    => t("Uncheck all regions if you do not with layouts to be usable with this theme."),
+            '#description'    => $this->t("Uncheck all regions if you do not with layouts to be usable with this theme."),
         ];
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'   => 'submit',
-            '#value'  => t('Save configuration')
+            '#value'  => $this->t('Save configuration')
         ];
 
         return $form;
@@ -60,6 +60,6 @@ class ThemeRegionsForm extends FormBase
         }
         variable_set('ucms_layout_regions_' . $form['#theme_key'], $enabled);
 
-        drupal_set_message(t('The configuration options have been saved.'));
+        drupal_set_message($this->t('The configuration options have been saved.'));
     }
 }

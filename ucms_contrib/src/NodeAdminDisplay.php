@@ -2,19 +2,22 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 
 class NodeAdminDisplay extends AbstractDisplay
 {
+    use StringTranslationTrait;
+
     /**
      * {@inheritdoc}
      */
     protected function getSupportedModes()
     {
         return [
-            'table' => t("table"),
-            'grid'  => t("thumbnail grid"),
-            'list'  => t("teaser list"),
+            'table' => $this->t("table"),
+            'grid'  => $this->t("thumbnail grid"),
+            'list'  => $this->t("teaser list"),
         ];
     }
 
@@ -53,7 +56,7 @@ class NodeAdminDisplay extends AbstractDisplay
                     $rows[] = [
                         $names[$node->type],
                         '<div class="ucms-contrib-result" data-nid="' . $node->nid . '">' . l($node->title, 'node/' . $node->nid) . '</div>',
-                        $node->status ? t("published") : t("unpublished"),
+                        $node->status ? $this->t("published") : $this->t("unpublished"),
                         format_date($node->created),
                         isset($accountMap[$node->uid])
                             ? filter_xss(format_username($accountMap[$node->uid]))
@@ -65,9 +68,16 @@ class NodeAdminDisplay extends AbstractDisplay
                 return [
                     '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
                     '#suffix' => '</div>', // FIXME should be in theme
-                    '#theme'  => 'table',
-                    '#header' => [t("Type"), t("Title"), t("Status"), t("Date"), t("Owner"), ''],
-                    '#rows'   => $rows,
+                    '#theme' => 'table',
+                    '#header' => [
+                        $this->t("Type"),
+                        $this->t("Title"),
+                        $this->t("Status"),
+                        $this->t("Date"),
+                        $this->t("Owner"),
+                        '',
+                    ],
+                    '#rows' => $rows,
                 ];
         }
     }

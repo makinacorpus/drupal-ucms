@@ -56,12 +56,12 @@ class LayoutContextEditForm extends FormBase
                 $form['actions']['#type'] = 'actions';
                 $form['actions']['save'] = [
                     '#type'   => 'submit',
-                    '#value'  => t("Save"),
+                    '#value'  => $this->t("Save"),
                     '#submit' => ['::saveSubmit']
                 ];
                 $form['actions']['cancel'] = [
                     '#type'   => 'submit',
-                    '#value'  => t("Cancel"),
+                    '#value'  => $this->t("Cancel"),
                     '#submit' => ['::cancelSubmit']
                 ];
 
@@ -69,7 +69,7 @@ class LayoutContextEditForm extends FormBase
                   $form['actions']['#type'] = 'actions';
                   $form['actions']['edit'] = [
                       '#type'   => 'submit',
-                      '#value'  => t("Edit"),
+                      '#value'  => $this->t("Edit"),
                       '#submit' => ['::editSubmit']
                   ];
             }
@@ -86,7 +86,7 @@ class LayoutContextEditForm extends FormBase
         if ($this->context->isTemporary()) {
             $this->context->commit();
 
-            drupal_set_message(t("Changed have been saved"));
+            drupal_set_message($this->t("Changed have been saved"));
 
             $form_state->setRedirect(
                 current_path(),
@@ -103,7 +103,7 @@ class LayoutContextEditForm extends FormBase
         if ($this->context->isTemporary()) {
             $this->context->rollback();
 
-            drupal_set_message(t("Changes have been dropped"), 'error');
+            drupal_set_message($this->t("Changes have been dropped"), 'error');
 
             $form_state->setRedirect(
                 current_path(),

@@ -11,9 +11,6 @@ use MakinaCorpus\Ucms\Site\Access;
 
 class WebmasterAdminDisplay extends AbstractDisplay
 {
-    use StringTranslationTrait;
-
-
     /**
      * @var string
      */
@@ -52,7 +49,13 @@ class WebmasterAdminDisplay extends AbstractDisplay
             '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
             '#suffix' => '</div>',                  // FIXME should be in theme
             '#theme'  => 'table',
-            '#header' => [t("Name"), t("Email"), t("Role"), t("Global status"), ''],
+            '#header' => [
+                $this->t("Name"),
+                $this->t("Email"),
+                $this->t("Role"),
+                $this->t("Global status"),
+                '',
+            ],
             '#empty'  => $this->emptyMessage,
             '#rows'   => $rows,
         ];

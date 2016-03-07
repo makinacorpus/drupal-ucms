@@ -55,9 +55,9 @@ class MyAccountEdit extends FormBase
 
         $form['name'] = array(
             '#type' => 'textfield',
-            '#title' => t('Username'),
+            '#title' => $this->t('Username'),
             '#maxlength' => USERNAME_MAX_LENGTH,
-            '#description' => t(
+            '#description' => $this->t(
                 'Spaces are allowed; punctuation is not allowed except for periods, hyphens, apostrophes, and underscores.'
             ),
             '#required' => true,
@@ -68,16 +68,16 @@ class MyAccountEdit extends FormBase
 
         $form['mail'] = array(
             '#type' => 'textfield',
-            '#title' => t('E-mail address'),
+            '#title' => $this->t('E-mail address'),
             '#maxlength' => EMAIL_MAX_LENGTH,
             '#attributes' => ['placeholder' => $account->mail],
         );
 
         $form['mail_confirmation'] = array(
             '#type' => 'textfield',
-            '#title' => t('E-mail address confirmation'),
+            '#title' => $this->t('E-mail address confirmation'),
             '#maxlength' => EMAIL_MAX_LENGTH,
-            '#description' => t(
+            '#description' => $this->t(
                 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'
             ),
             '#attributes' => ['placeholder' => 'Confirm the new e-mail address'],
@@ -131,12 +131,12 @@ class MyAccountEdit extends FormBase
             if (!valid_email_address($new_mail)) {
                 form_set_error(
                     'mail',
-                    t('The e-mail address %mail is not valid.', array('%mail' => $new_mail))
+                    $this->t('The e-mail address %mail is not valid.', array('%mail' => $new_mail))
                 );
             } elseif ($new_mail !== $mail_confirmation) {
                 form_set_error(
                     'mail_confirmation',
-                    t("The e-mail's confirmation doesn't match with the first supplied e-mail.")
+                    $this->t("The e-mail's confirmation doesn't match with the first supplied e-mail.")
                 );
             } elseif ((bool)db_select('users')
                 ->fields('users', array('uid'))
@@ -148,7 +148,7 @@ class MyAccountEdit extends FormBase
             ) {
                 form_set_error(
                     'mail',
-                    t('The e-mail address %email is already taken.', array('%email' => $new_mail))
+                    $this->t('The e-mail address %email is already taken.', array('%email' => $new_mail))
                 );
             }
         }
