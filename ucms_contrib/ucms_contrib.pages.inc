@@ -69,7 +69,7 @@ function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab
 
   $search = $datasource->getSearch();
 
-  $types = variable_get('ucms_contrib_tab_' . $tab . '_type');
+  $types = ucms_contrib_type_handler_get()->getTabTypes($tab);
   if (!empty($types)) {
     $search->getFilterQuery()->matchTermCollection('type', $types);
   }

@@ -12,12 +12,13 @@ services:
 
   ucms_contrib.content_action_provider:
     public: false
+    arguments: ["@ucms_contrib.type_handler"]
     class: MakinaCorpus\Ucms\Contrib\Action\ContentActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_contrib.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
-    arguments: ["@ucms_layout.context", "@ucms_contrib.content_action_provider", "@ucms_site.manager"]
+    arguments: ["@ucms_layout.context", "@ucms_contrib.content_action_provider", "@ucms_site.manager", "@ucms_contrib.type_handler"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
 
@@ -31,12 +32,16 @@ services:
   ucms_contrib.content_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler"]
     tags: [{ name: ucms_dashboard.portlet }]
 
   # Media portlet
   ucms_contrib.media_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler"]
     tags: [{ name: ucms_dashboard.portlet }]
+
+  # Component responsible for providing content type context
+  ucms_contrib.type_handler:
+    class: MakinaCorpus\Ucms\Contrib\TypeHandler

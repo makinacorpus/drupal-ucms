@@ -45,7 +45,7 @@ function ucms_contrib_menu() {
   $items = [];
 
   // Main administration pages.
-  foreach (ucms_contrib_tab_list() as $key => $label) {
+  foreach (ucms_contrib_type_handler_get()->getTabs() as $key => $label) {
     $items['admin/dashboard/' . $key] = [
       'title'             => $label,
       'page callback'     => 'ucms_contrib_admin_content_page_mine',
@@ -246,6 +246,13 @@ function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
 }
 
 /**
+ * @return \MakinaCorpus\Ucms\Contrib\TypeHandler
+ */
+function ucms_contrib_type_handler_get() {
+  return \Drupal::service('ucms_contrib.type_handler');
+}
+
+/**
  * Implements hook_permission().
  */
 function ucms_contrib_permission() {
@@ -333,18 +340,6 @@ function ucms_contrib_image_default_styles() {
         'weight' => 0,
       ]],
     ],
-  ];
-}
-
-/**
- * Get contribution interface tab list.
- *
- * @return string[]
- */
-function ucms_contrib_tab_list() {
-  return [
-    'content' => "Content",
-    'media'   => "Media",
   ];
 }
 
@@ -504,8 +499,9 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
     'media'   => 'picture',
   ];
   $meta_type = NULL;
-  foreach (ucms_contrib_tab_list() as $tab => $label) {
-    if (in_array($output['#bundle'], variable_get('ucms_contrib_tab_' . $tab . '_type', []))) {
+  $typeHandler = ucms_contrib_type_handler_get();
+  foreach ($typeHandler->getTabs() as $tab => $label) {
+    if (in_array($output['#bundle'], $typeHandler->getTabTypes($tab))) {
       $meta_type = $tab;
     }
   }

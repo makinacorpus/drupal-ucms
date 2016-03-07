@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
@@ -27,10 +28,16 @@ class ContextPaneEventListener
      * @var ActionProviderInterface
      */
     private $actionProvider;
+
     /**
      * @var SiteManager
      */
     private $siteManager;
+
+    /**
+     * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
+     */
+    private $typeHandler;
 
     /**
      * Default constructor
@@ -38,12 +45,19 @@ class ContextPaneEventListener
      * @param LayoutContext $layoutContext
      * @param ActionProviderInterface $actionProvider
      * @param SiteManager $siteManager
+     * @param TypeHandler $typeHandler
      */
-    public function __construct(LayoutContext $layoutContext, ActionProviderInterface $actionProvider, SiteManager $siteManager)
+    public function __construct(
+        LayoutContext $layoutContext,
+        ActionProviderInterface $actionProvider,
+        SiteManager $siteManager,
+        TypeHandler $typeHandler
+    )
     {
         $this->layoutContext = $layoutContext;
         $this->actionProvider = $actionProvider;
         $this->siteManager = $siteManager;
+        $this->typeHandler = $typeHandler;
     }
 
     /**
@@ -93,7 +107,7 @@ class ContextPaneEventListener
 
         // Add node creation link on site
         if ($this->siteManager->hasContext()) {
-            foreach (ucms_contrib_tab_list() as $tab => $label) {
+            foreach ($this->typeHandler->getTabs() as $tab => $label) {
                 $title = $this->t("Create @tab_label", ['@tab_label' => $label]);
                 $contextPane->addActions($this->actionProvider->getActions($tab), $title);
             }

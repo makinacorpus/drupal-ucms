@@ -4,9 +4,16 @@ namespace MakinaCorpus\Ucms\Contrib\Admin;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class NodeTabsForm extends FormBase
 {
+    /**
+     * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
+     */
+    private $typeHandler;
+
     /**
      * Returns a unique string identifying the form.
      *
@@ -16,6 +23,23 @@ class NodeTabsForm extends FormBase
     public function getFormId()
     {
         return 'ucms_contrib_admin_structure_form';
+    }
+
+    /**
+     * {inheritdoc}
+     */
+    static public function create(ContainerInterface $container)
+    {
+        return new self($container->get('ucms_contrib.type_handler'));
+    }
+
+    /**
+     * NodeTabsForm constructor.
+     *
+     * @param TypeHandler $typeHandler
+     */
+    public function __construct(TypeHandler $typeHandler) {
+        $this->typeHandler = $typeHandler;
     }
 
     /**
@@ -33,7 +57,7 @@ class NodeTabsForm extends FormBase
     {
         $form['#tree'] = true;
 
-        foreach (ucms_contrib_tab_list() as $tab => $name) {
+        foreach ($this->typeHandler->getTabs() as $tab => $name) {
             $form['tab'][$tab] = [
                 '#title'  => $this->t("%tab tab", ['%tab' => $this->t($name)]),
                 '#type'   => 'fieldset',
@@ -42,7 +66,7 @@ class NodeTabsForm extends FormBase
                 '#title'          => $this->t("Content types"),
                 '#type'           => 'checkboxes',
                 '#options'        => node_type_get_names(),
-                '#default_value'  => variable_get('ucms_contrib_tab_' . $tab .  '_type', []),
+                '#default_value'  => $this->typeHandler->getTabTypes($tab),
             ];
         }
 
@@ -75,7 +99,7 @@ class NodeTabsForm extends FormBase
                 }
             }
 
-            variable_set('ucms_contrib_tab_' . $tab . '_type', $enabled);
+            $this->typeHandler->setTabTypes($tab, $enabled);
         }
 
         drupal_set_message($this->t('The configuration options have been saved.'));
