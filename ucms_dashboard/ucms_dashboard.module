@@ -221,6 +221,10 @@ function ucms_dashboard_theme() {
       'variables' => ['links' => []],
       'template'  => 'ucms_dashboard-top',
     ],
+    'description_list' => [
+      'variables' => ['items' => []],
+      'template'  => 'templates/description-list',
+    ],
   ];
 }
 
