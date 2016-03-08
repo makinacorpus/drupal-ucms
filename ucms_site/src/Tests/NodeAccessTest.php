@@ -7,6 +7,7 @@ use Drupal\node\Node;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
@@ -57,6 +58,16 @@ class NodeAccessTest extends AbstractDrupalTest
     protected function getNodeHelper()
     {
         return $this->getDrupalContainer()->get('ucms_site.node_access_helper');
+    }
+
+    /**
+     * Get type handler
+     *
+     * @return TypeHandler
+     */
+    protected function getTypeHandler()
+    {
+        return $this->getDrupalContainer()->get('ucms_contrib.type_handler');
     }
 
     /**
@@ -310,6 +321,71 @@ class NodeAccessTest extends AbstractDrupalTest
         return $this;
     }
 
+
+    protected function canCreate($label)
+    {
+        $site = $this->getSiteManager()
+                     ->getContext();
+        $this
+            ->assertSame(
+                NODE_ACCESS_ALLOW,
+                $this
+                    ->getNodeHelper()
+                    ->userCanAccess(
+                        $this->contextualAccount,
+                        $label,
+                        Access::OP_CREATE
+                    ),
+                sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+            );
+
+        return $this;
+    }
+
+    protected function canNotCreate($label)
+    {
+        $site = $this->getSiteManager()
+                     ->getContext();
+        $this
+            ->assertSame(
+                NODE_ACCESS_DENY,
+                $this
+                    ->getNodeHelper()
+                    ->userCanAccess(
+                        $this->contextualAccount,
+                        $label,
+                        Access::OP_CREATE
+                    ),
+                sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>' )
+            );
+
+        return $this;
+    }
+
+    protected function canCreateOnly($labelList)
+    {
+        if (!is_array($labelList)) {
+            $labelList = [$labelList];
+        }
+
+        foreach (array_keys(node_type_get_names()) as $id) {
+            if (in_array($id, $labelList)) {
+                $this->canCreate($id);
+            } else {
+                $this->canNotCreate($id);
+            }
+        }
+
+        return $this;
+    }
+
+    protected function canCreateNone()
+    {
+        $this->canCreateOnly([]);
+
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -388,6 +464,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_off_unpublished',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -405,6 +482,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_unpublished',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
             ->whenIAm([Access::PERM_CONTENT_MANAGE_GLOBAL])
 
@@ -429,6 +507,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_published',
                         'in_on_global_unpublished',
                     ])
+                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -440,10 +519,12 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
            ->whenIAm([Access::PERM_CONTENT_MANAGE_GROUP])
 
@@ -468,6 +549,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                         'in_on_group_unpublished',
                     ])
+                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -479,10 +561,12 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
             ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL])
 
@@ -494,6 +578,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -505,10 +590,12 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
             ->whenIAm([Access::PERM_CONTENT_VIEW_GROUP])
 
@@ -520,6 +607,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -531,10 +619,12 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
         ;
     }
 
@@ -563,6 +653,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'site_on_locked_unpublished',
                     ])
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -585,10 +676,12 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_published',
                         'site_on_locked_unpublished',
                     ])
+                    ->canCreateOnly($this->getTypeHandler()->getAllTypes())
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
             ->whenIAm([], ['off' => Access::ROLE_WEBMASTER])
 
@@ -601,6 +694,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_off_published',
                         'site_off_unpublished',
                     ])
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -612,6 +706,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeOnly([
@@ -622,6 +717,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_off_published',
                         'site_off_unpublished',
                     ])
+                    ->canCreateOnly($this->getTypeHandler()->getAllTypes())
 
             ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER])
 
@@ -631,6 +727,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_archive_unpublished',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('archive')
                     ->canSeeOnly([
@@ -638,16 +735,19 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_archive_unpublished',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
             ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER])
 
                 ->getOutSite()
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('pending')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
         ;
     }
 
@@ -672,6 +772,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_unpublished',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -689,10 +790,12 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_unpublished',
                     ])
                     ->canEditNone()
+                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
             ->whenIAm([], ['off' => Access::ROLE_CONTRIB])
 
@@ -713,6 +816,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeOnly([
@@ -720,26 +824,31 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_off_unpublished',
                     ])
                     ->canEditNone()
+                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
 
             ->whenIAm([], ['archive' => Access::ROLE_CONTRIB])
 
                 ->getOutSite()
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('archive')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
             ->whenIAm([], ['pending' => Access::ROLE_CONTRIB])
 
                 ->getOutSite()
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('pending')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
         ;
     }
 
@@ -768,10 +877,12 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->getOutSite()
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -783,6 +894,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
         ;
     }
 
@@ -794,10 +906,12 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->getOutSite()
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('off')
                     ->canSeeNone()
                     ->canEditNone()
+                    ->canCreateNone()
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -809,6 +923,7 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_published',
                     ])
                     ->canEditNone()
+                    ->canCreateNone()
         ;
     }
 }

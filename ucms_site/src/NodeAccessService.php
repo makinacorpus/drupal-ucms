@@ -220,7 +220,7 @@ class NodeAccessService
     /**
      * Alter-ego of hook_node_grants().
      */
-    public function getUserGrants($account, $op)
+    public function getUserGrants(AccountInterface $account, $op)
     {
         if (isset($this->userGrantCache[$account->uid][$op])) {
             return $this->userGrantCache[$account->uid][$op];
@@ -240,7 +240,7 @@ class NodeAccessService
             }
 
             // User can manager includes webmasters, so we're good to go
-            if (user_access(Access::PERM_CONTENT_VIEW_ALL, $account)) {
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
                 $ret[self::REALM_READONLY] = [$site->id];
             }
 
@@ -259,20 +259,20 @@ class NodeAccessService
 
         } else {
 
-            if (user_access(Access::PERM_CONTENT_MANAGE_GLOBAL, $account)) {
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
                 $ret[self::REALM_GLOBAL] = [self::GID_DEFAULT];
             }
-            if (user_access(Access::PERM_CONTENT_MANAGE_GROUP, $account)) {
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
                 $ret[self::REALM_GROUP] = [self::GID_DEFAULT];
             }
 
-            if (user_access(Access::PERM_CONTENT_VIEW_ALL, $account)) {
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
                 $ret[self::REALM_READONLY] = [self::GID_DEFAULT];
             } else {
-                if (user_access(Access::PERM_CONTENT_VIEW_GLOBAL, $account)) {
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
                     $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
                 }
-                if (user_access(Access::PERM_CONTENT_VIEW_GROUP, $account)) {
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
                     $ret[self::REALM_GROUP_VIEW] = [self::GID_DEFAULT];
                 }
             }
@@ -319,7 +319,7 @@ class NodeAccessService
     {
         $access = $this->manager->getAccess();
 
-        if ('create' === $op) {
+        if (Access::OP_CREATE === $op) {
             if (is_string($node) || $node instanceof NodeInterface) {
 
                 $handler = $this->typeHandler;
@@ -333,6 +333,11 @@ class NodeAccessService
                 $site = $this->manager->getContext();
                 if ($site) {
 
+                    // Prevent creating content on disabled or pending sites
+                    if (!in_array($site->state, [SiteState::OFF, SiteState::ON])) {
+                        return NODE_ACCESS_DENY;
+                    }
+
                     // Contributor can only create editorial content
                     if ($access->userIsContributor($account, $site) && in_array($type, $handler->getEditorialTypes())) {
                         return NODE_ACCESS_ALLOW;
@@ -343,11 +348,12 @@ class NodeAccessService
                         return NODE_ACCESS_ALLOW;
                     }
 
-                } elseif (
-                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)
-                    || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)
-                ) {
-                    return NODE_ACCESS_ALLOW;
+                } else {
+                    $canManage = $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)
+                        || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+                    if ($canManage && in_array($type, $handler->getEditorialTypes())) {
+                        return NODE_ACCESS_ALLOW;
+                    }
                 }
             }
 

@@ -15,6 +15,11 @@ final class Access
     /**
      * Update operation
      */
+    const OP_CREATE = 'create';
+
+    /**
+     * Update operation
+     */
     const OP_UPDATE = 'update';
 
     /**
