@@ -101,16 +101,23 @@ class ContextPaneEventListener
         }*/
 
         // Add node creation link on dashboard
+        // FIXME kill it with fire!
         if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), ['content', 'media'])) {
-            $contextPane->addActions($this->actionProvider->getActions(arg(2)), $this->t("Create item"));
+            if (arg(2) == 'content') {
+                $contextPane->addActions($this->actionProvider->getActions('editorial'), $this->t("Create editorial content"));
+                $contextPane->addActions($this->actionProvider->getActions('component'), $this->t("Create component"));
+            }
+            else {
+                $contextPane->addActions($this->actionProvider->getActions('media'), $this->t("Create media"));
+            }
         }
 
         // Add node creation link on site
+        // FIXME kill it with acid!
         if ($this->siteManager->hasContext()) {
-            foreach ($this->typeHandler->getTabs() as $tab => $label) {
-                $title = $this->t("Create @tab_label", ['@tab_label' => $label]);
-                $contextPane->addActions($this->actionProvider->getActions($tab), $title);
-            }
+            $contextPane->addActions($this->actionProvider->getActions('editorial'), $this->t("Create editorial content"));
+            $contextPane->addActions($this->actionProvider->getActions('component'), $this->t("Create component"));
+            $contextPane->addActions($this->actionProvider->getActions('media'), $this->t("Create media"));
         }
     }
 }
