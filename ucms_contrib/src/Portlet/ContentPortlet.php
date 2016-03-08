@@ -64,7 +64,7 @@ class ContentPortlet extends AbstractAdminPortlet
      */
     public function getActions()
     {
-        return $this->actionProvider->getActions('content');
+        return true;
     }
 
     /**
@@ -72,8 +72,17 @@ class ContentPortlet extends AbstractAdminPortlet
      */
     public function renderActions()
     {
-        $build = parent::renderActions();
-        $build['#title'] = $this->t("Create content");
+        // FIXME, allow to have multiple action groups
+        $build['editorial'] = [
+          '#theme'   => 'ucms_dashboard_actions',
+          '#actions' => $this->actionProvider->getActions('editorial'),
+          '#title'   => $this->t("Create content"),
+        ];
+        $build['component'] = [
+          '#theme'   => 'ucms_dashboard_actions',
+          '#actions' => $this->actionProvider->getActions('component'),
+          '#title'   => $this->t("Create component"),
+        ];
 
         return $build;
     }
