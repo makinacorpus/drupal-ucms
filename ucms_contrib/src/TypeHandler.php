@@ -8,6 +8,17 @@ use Exception;
 class TypeHandler
 {
     /**
+     * Cleans variable value
+     *
+     * @param $name
+     * @return mixed
+     */
+    protected function filterVariable($name)
+    {
+        return array_filter(variable_get($name, []));
+    }
+
+    /**
      * Get tab list.
      *
      * @return array
@@ -16,7 +27,7 @@ class TypeHandler
     {
         return [
             'content' => "Content",
-            'media' => "Media",
+            'media'   => "Media",
         ];
     }
 
@@ -41,13 +52,33 @@ class TypeHandler
 
 
     /**
-     * Get all editorial (media + editorial content) types.
+     * Get all media types.
      *
      * @return string[]
      */
-    public function getEditorialTypes()
+    public function getMediaTypes()
     {
-        return array_merge($this->getEditorialContentTypes(), $this->getMediaTypes());
+        return $this->filterVariable('ucms_contrib_tab_media_type');
+    }
+
+    /**
+     * Get editorial content types.
+     *
+     * @return string[]
+     */
+    public function getEditorialContentTypes()
+    {
+        return $this->filterVariable('ucms_contrib_editorial_types');
+    }
+
+    /**
+     * Get component types.
+     *
+     * @return string[]
+     */
+    public function getComponentTypes()
+    {
+        return $this->filterVariable('ucms_contrib_component_types');
     }
 
     /**
@@ -61,13 +92,13 @@ class TypeHandler
     }
 
     /**
-     * Get all media types.
+     * Get all editorial (media + editorial content) types.
      *
      * @return string[]
      */
-    public function getMediaTypes()
+    public function getEditorialTypes()
     {
-        return variable_get('ucms_contrib_tab_media_type', []);
+        return array_merge($this->getEditorialContentTypes(), $this->getMediaTypes());
     }
 
     /**
@@ -77,36 +108,16 @@ class TypeHandler
      */
     public function getContentTypes()
     {
-        return variable_get('ucms_contrib_tab_content_type', []);
-    }
-
-    /**
-     * Get editorial content types.
-     *
-     * @return string[]
-     */
-    public function getEditorialContentTypes()
-    {
-        return variable_get('ucms_contrib_editorial_types', []);
-    }
-
-    /**
-     * Get component types.
-     *
-     * @return string[]
-     */
-    public function getComponentTypes()
-    {
-        return variable_get('ucms_contrib_component_types', []);
+        return array_merge($this->getComponentTypes(), $this->getEditorialContentTypes());
     }
 
     /**
      * Set all media types.
      * @param array $types
      */
-    public function setTabTypes($tab, array $types)
+    public function setMediaTypes(array $types)
     {
-        variable_set('ucms_contrib_tab_' .$tab . '_type', $types);
+        variable_set('ucms_contrib_tab_media_type', $types);
     }
 
     /**
@@ -114,7 +125,7 @@ class TypeHandler
      *
      * @param array $types
      */
-    public function setEditorialTypes(array $types)
+    public function setEditorialContentTypes(array $types)
     {
         variable_set('ucms_contrib_editorial_types', $types);
     }

@@ -15,10 +15,7 @@ class NodeTabsForm extends FormBase
     private $typeHandler;
 
     /**
-     * Returns a unique string identifying the form.
-     *
-     * @return string
-     *   The unique string identifying the form.
+     * {@inheritDoc}
      */
     public function getFormId()
     {
@@ -38,69 +35,82 @@ class NodeTabsForm extends FormBase
      *
      * @param TypeHandler $typeHandler
      */
-    public function __construct(TypeHandler $typeHandler) {
+    public function __construct(TypeHandler $typeHandler)
+    {
         $this->typeHandler = $typeHandler;
     }
 
     /**
-     * Form constructor.
-     *
-     * @param array $form
-     *   An associative array containing the structure of the form.
-     * @param \Drupal\Core\Form\FormStateInterface $form_state
-     *   The current state of the form.
-     *
-     * @return array
-     *   The form structure.
+     * {@inheritDoc}
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        $form['#tree'] = true;
+        $form['media'] = [
+            '#title' => $this->t("Media tab"),
+            '#type'  => 'fieldset',
+        ];
+        $form['media']['media_types'] = [
+            '#type'          => 'checkboxes',
+            '#options'       => node_type_get_names(),
+            '#default_value' => $this->typeHandler->getMediaTypes(),
+        ];
 
-        foreach ($this->typeHandler->getTabs() as $tab => $name) {
-            $form['tab'][$tab] = [
-                '#title'  => $this->t("%tab tab", ['%tab' => $this->t($name)]),
-                '#type'   => 'fieldset',
-            ];
-            $form['tab'][$tab]['types'] = [
-                '#title'          => $this->t("Content types"),
-                '#type'           => 'checkboxes',
-                '#options'        => node_type_get_names(),
-                '#default_value'  => $this->typeHandler->getTabTypes($tab),
-            ];
-        }
+        $form['content'] = [
+            '#title' => $this->t("Content tab"),
+            '#type'  => 'fieldset',
+        ];
+        $form['content']['editorial'] = [
+            '#title'         => $this->t("Editorial content types"),
+            '#type'          => 'checkboxes',
+            '#options'       => node_type_get_names(),
+            '#default_value' => $this->typeHandler->getEditorialContentTypes(),
+        ];
+
+        $form['content']['component'] = [
+            '#title'         => $this->t("Component content types"),
+            '#type'          => 'checkboxes',
+            '#options'       => node_type_get_names(),
+            '#default_value' => $this->typeHandler->getComponentTypes(),
+        ];
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
-            '#type'   => 'submit',
-            '#value'  => $this->t('Save configuration')
+            '#type'  => 'submit',
+            '#value' => $this->t('Save configuration'),
         ];
 
         return $form;
     }
 
     /**
-     * Form submission handler.
-     *
-     * @param array $form
-     *   An associative array containing the structure of the form.
-     * @param \Drupal\Core\Form\FormStateInterface $form_state
-     *   The current state of the form.
+     * {@inheritDoc}
+     */
+    public function validateForm(array &$form, FormStateInterface $form_state)
+    {
+        $components = array_filter($form_state->getValue('component'));
+        $editorial = array_filter($form_state->getValue('editorial'));
+        $media = array_filter($form_state->getValue('media_types'));
+
+        // Media and content can't be both
+        if (count(array_diff($media, $components, $editorial)) != count($media)) {
+            $form_state->setErrorByName('component_types', $this->t("Media can't be content as well."));
+        }
+
+        // Editorial and components can't be both
+        if (count(array_diff($components, $editorial)) != count($components)) {
+            $form_state->setErrorByName('component_types', $this->t("Editorial content can't be components as well."));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        foreach ($form_state->getValue('tab') as $tab => $data) {
 
-            // First process content types.
-            $enabled = [];
-            foreach ($data['types'] as $type => $status) {
-                if ($status && $status === $type) {
-                    $enabled[] = $type;
-                }
-            }
-
-            $this->typeHandler->setTabTypes($tab, $enabled);
-        }
+        $this->typeHandler->setMediaTypes($form_state->getValue('media_types'));
+        $this->typeHandler->setEditorialContentTypes($form_state->getValue('editorial'));
+        $this->typeHandler->setComponentTypes($form_state->getValue('component'));
 
         drupal_set_message($this->t('The configuration options have been saved.'));
     }
