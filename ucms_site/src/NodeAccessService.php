@@ -325,11 +325,6 @@ class NodeAccessService
                 $handler = $this->typeHandler;
                 $type = is_string($node) ? $node : $node->bundle();
 
-                // Check for "hidden" content types, like home pages
-                if (!in_array($type, $handler->getAllTypes()) && $account->hasPermission('godmode')) {
-                    return NODE_ACCESS_DENY;
-                }
-
                 $site = $this->manager->getContext();
                 if ($site) {
 
