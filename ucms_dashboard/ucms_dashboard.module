@@ -295,6 +295,11 @@ function template_preprocess_ucms_dashboard_page_list(&$variables) {
  * @param array $variables
  */
 function template_preprocess_ucms_dashboard_actions(&$variables) {
+  // Clean title that may be === 0
+  if (empty($variables['title'])) {
+    $variables['title'] = '';
+  }
+
   foreach ($variables['actions'] as $key => $action) {
     /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action */
     // Remove actions for which the path is the same.
