@@ -11,3 +11,8 @@ services:
   ucms_layout.site_context:
     class: MakinaCorpus\Ucms\Layout\Context
     arguments: ["@ucms_layout.storage"]
+
+  ucms_layout.site_event_listener:
+    class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteEventListener
+    arguments: ["@database"]
+    tags: [{name: event_listener, event: "site:clone"}]

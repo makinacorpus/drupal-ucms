@@ -59,7 +59,7 @@ SELECT
 -- tells us where to fetch the layout
 FROM {ucms_layout} source_ul
 JOIN {ucms_layout_data} uld ON
-    source_ul.nid = uld.nid
+    source_ul.id = uld.layout_id
     AND source_ul.site_id = :source
 -- for the same reason as above, do not reference unpublished global content
 -- only populate existing layouts on target
@@ -69,7 +69,7 @@ JOIN {ucms_layout} target_ul ON
     target_ul.nid = uld.nid
     AND target_ul.site_id = :target
 WHERE
-    n.status = 1
+    (n.status = 1 OR n.is_global = 0)
 ;
 
 -- @todo

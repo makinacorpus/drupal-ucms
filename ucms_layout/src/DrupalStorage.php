@@ -157,13 +157,8 @@ class DrupalStorage implements StorageInterface
         try {
             $tx = db_transaction();
 
-            foreach ($layout->getAllRegions() as $region) {
-                $this->regionUpdate($layout, $region);
-            }
-
             // Value object that will get us the identifier then
             $row              = new \stdClass();
-            $row->id          = $layout->getId();
             $row->site_id     = $layout->getSiteId();
             $row->nid         = $layout->getNodeId();
 
@@ -172,12 +167,17 @@ class DrupalStorage implements StorageInterface
             } */
 
             if ($layout->getId()) {
+                $row->id = $layout->getId();
                 drupal_write_record('ucms_layout', $row, ['id']);
             } else {
                 drupal_write_record('ucms_layout', $row);
+                $layout->setId((int)$row->id);
             }
 
-            $layout->setId((int)$row->id);
+            // Update region
+            foreach ($layout->getAllRegions() as $region) {
+                $this->regionUpdate($layout, $region);
+            }
 
             cache_clear_all('layout:' . $layout->getId(), 'cache_layout');
 
