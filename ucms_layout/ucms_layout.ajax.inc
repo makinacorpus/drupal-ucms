@@ -52,11 +52,16 @@ function ucms_layout_ajax_region_item_add($layout) {
     $query['view_mode'] = 'teaser';
   }
 
+  $site = ucms_site_manager()->getContext();
   $item = new Item($query['nid'], $query['view_mode']);
 
   $layout->getRegion($query['region'])->addAt($item, $query['position']);
 
-  ucms_layout_context_get()->getStorage()->save($layout);
+  if (ucms_layout_is_page_context_region($query['region'], $site->theme)) {
+    ucms_layout_page_context_get()->getStorage()->save($layout);
+  } else {
+    ucms_layout_site_context_get()->getStorage()->save($layout);
+  }
 
   $node_view = node_view($node, $query['view_mode']);
   drupal_json_output([
@@ -97,9 +102,14 @@ function ucms_layout_ajax_region_item_remove($layout) {
     $query['position'] = 0;
   }
 
+  $site = ucms_site_manager()->getContext();
   $layout->getRegion($query['region'])->removeAt($query['position']);
 
-  ucms_layout_context_get()->getStorage()->save($layout);
+  if (ucms_layout_is_page_context_region($query['region'], $site->theme)) {
+    ucms_layout_page_context_get()->getStorage()->save($layout);
+  } else {
+    ucms_layout_site_context_get()->getStorage()->save($layout);
+  }
 
   drupal_json_output(['success' => true]);
 }
@@ -148,6 +158,7 @@ function ucms_layout_ajax_region_item_move($layout) {
     $query['view_mode'] = 'teaser';
   }
 
+  $site = ucms_site_manager()->getContext();
   $item = new Item($query['nid'], $query['view_mode']);
 
   if (!empty($query['prevRegion'])) {
@@ -158,7 +169,11 @@ function ucms_layout_ajax_region_item_move($layout) {
   }
   $layout->getRegion($query['region'])->addAt($item, $query['position']);
 
-  ucms_layout_context_get()->getStorage()->save($layout);
+  if (ucms_layout_is_page_context_region($query['region'], $site->theme)) {
+    ucms_layout_page_context_get()->getStorage()->save($layout);
+  } else {
+    ucms_layout_site_context_get()->getStorage()->save($layout);
+  }
 
   $node_view = node_view($node, $query['view_mode']);
   drupal_json_output([

@@ -15,14 +15,22 @@ class LayoutContextEditForm extends FormBase
     /**
      * @var Context
      */
-    private $context;
+    private $pageContext;
+
+    /**
+     * @var Context
+     */
+    private $siteContext;
 
     /**
      * {inheritdoc}
      */
     static public function create(ContainerInterface $container)
     {
-        return new self($container->get('ucms_layout.context'));
+        return new self(
+            $container->get('ucms_layout.page_context'),
+            $container->get('ucms_layout.site_context')
+        );
     }
 
     /**
@@ -30,9 +38,10 @@ class LayoutContextEditForm extends FormBase
      *
      * @param Context $context
      */
-    public function __construct(Context $context)
+    public function __construct(Context $pageContext, Context $siteContext)
     {
-        $this->context = $context;
+        $this->pageContext = $pageContext;
+        $this->siteContext = $siteContext;
     }
 
     /**
@@ -48,30 +57,47 @@ class LayoutContextEditForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        $layout = $this->context->getCurrentLayout();
+        $pageLayout = $this->pageContext->getCurrentLayout();
+        $siteLayout = $this->siteContext->getCurrentLayout();
 
-        if ($layout instanceof Layout) {
-            if ($this->context->isTemporary()) {
+        if ($pageLayout instanceof Layout || $siteLayout instanceof Layout) {
+            $form['actions']['#type'] = 'actions';
 
-                $form['actions']['#type'] = 'actions';
-                $form['actions']['save'] = [
+            if ($this->pageContext->isTemporary()) {
+                $form['actions']['save_page'] = [
                     '#type'   => 'submit',
                     '#value'  => $this->t("Save"),
                     '#submit' => ['::saveSubmit']
                 ];
-                $form['actions']['cancel'] = [
+                $form['actions']['cancel_page'] = [
                     '#type'   => 'submit',
                     '#value'  => $this->t("Cancel"),
                     '#submit' => ['::cancelSubmit']
                 ];
-
-            } else {
-                  $form['actions']['#type'] = 'actions';
-                  $form['actions']['edit'] = [
-                      '#type'   => 'submit',
-                      '#value'  => $this->t("Edit"),
-                      '#submit' => ['::editSubmit']
-                  ];
+            }
+            elseif ($this->siteContext->isTemporary()) {
+                $form['actions']['save_site'] = [
+                    '#type'   => 'submit',
+                    '#value'  => $this->t("Save"),
+                    '#submit' => ['::saveTransversalSubmit']
+                ];
+                $form['actions']['cancel_site'] = [
+                    '#type'   => 'submit',
+                    '#value'  => $this->t("Cancel"),
+                    '#submit' => ['::cancelTransversalSubmit']
+                ];
+            }
+            else {
+                $form['actions']['edit_page'] = [
+                    '#type'   => 'submit',
+                    '#value'  => $this->t("Edit"),
+                    '#submit' => ['::editSubmit']
+                ];
+                $form['actions']['edit_site'] = [
+                    '#type'   => 'submit',
+                    '#value'  => $this->t("Edit transversal regions"),
+                    '#submit' => ['::editTransversalSubmit']
+                ];
             }
         }
 
@@ -83,8 +109,8 @@ class LayoutContextEditForm extends FormBase
      */
     public function saveSubmit(array &$form, FormStateInterface $form_state)
     {
-        if ($this->context->isTemporary()) {
-            $this->context->commit();
+        if ($this->pageContext->isTemporary()) {
+            $this->pageContext->commit();
 
             drupal_set_message($this->t("Changed have been saved"));
 
@@ -100,8 +126,8 @@ class LayoutContextEditForm extends FormBase
      */
     public function cancelSubmit(array &$form, FormStateInterface $form_state)
     {
-        if ($this->context->isTemporary()) {
-            $this->context->rollback();
+        if ($this->pageContext->isTemporary()) {
+            $this->pageContext->rollback();
 
             drupal_set_message($this->t("Changes have been dropped"), 'error');
 
@@ -117,19 +143,75 @@ class LayoutContextEditForm extends FormBase
      */
     public function editSubmit(array &$form, FormStateInterface $form_state)
     {
-        if (!$this->context->isTemporary()) {
+        if (!$this->pageContext->isTemporary()) {
 
             // @todo Generate a better token (random).
             $token  = drupal_get_token();
-            $layout = $this->context->getCurrentLayout();
-            $this->context->setToken($token);
+            $layout = $this->pageContext->getCurrentLayout();
+            $this->pageContext->setToken($token);
 
             // Saving the layout will force it be saved in the temporary storage.
-            $this->context->getStorage()->save($layout);
+            $this->pageContext->getStorage()->save($layout);
 
             $form_state->setRedirect(
                 current_path(),
                 ['query' => ['edit' => $token] + drupal_get_query_parameters()]
+            );
+        }
+    }
+
+    /**
+     * Save form submit
+     */
+    public function saveTransversalSubmit(array &$form, FormStateInterface $form_state)
+    {
+        if ($this->siteContext->isTemporary()) {
+            $this->siteContext->commit();
+
+            drupal_set_message(t("Changed have been saved"));
+
+            $form_state->setRedirect(
+                current_path(),
+                ['query' => drupal_get_query_parameters(null, ['q', 'site_edit'])]
+            );
+        }
+    }
+
+    /**
+     * Cancel form submit
+     */
+    public function cancelTransversalSubmit(array &$form, FormStateInterface $form_state)
+    {
+        if ($this->siteContext->isTemporary()) {
+            $this->siteContext->rollback();
+
+            drupal_set_message(t("Changes have been dropped"), 'error');
+
+            $form_state->setRedirect(
+                current_path(),
+                ['query' => drupal_get_query_parameters(null, ['q', 'site_edit'])]
+            );
+        }
+    }
+
+    /**
+     * Edit form submit
+     */
+    public function editTransversalSubmit(array &$form, FormStateInterface $form_state)
+    {
+        if (!$this->siteContext->isTemporary()) {
+
+            // @todo Generate a better token (random).
+            $token  = drupal_get_token();
+            $layout = $this->siteContext->getCurrentLayout();
+            $this->siteContext->setToken($token);
+
+            // Saving the layout will force it be saved in the temporary storage.
+            $this->siteContext->getStorage()->save($layout);
+
+            $form_state->setRedirect(
+                current_path(),
+                ['query' => ['site_edit' => $token] + drupal_get_query_parameters()]
             );
         }
     }

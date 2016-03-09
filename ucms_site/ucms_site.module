@@ -384,6 +384,7 @@ function ucms_site_boot() {
         // We do need a fallback, else the dashboard module will hit us.
         $GLOBALS['conf']['site_frontpage'] = 'node';
       }
+
       // We have to fake menu_load_all() because Drupal attemps to load
       // everything no matter what happens, and this is the single and only
       // non-scalable function in the whole core menu handling, so let's just
@@ -504,11 +505,13 @@ function ucms_site_init() {
   // for frontend anyway), but we have a chance right now to fix admin paths
   // and remove the site information right now.
   if ($manager->hasContext()) {
-    if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8)  && path_is_admin(current_path())) {
-      if (user_is_logged_in()) {
-        // Logged-in users should not 403 on sites, but go to dashboard instead.
-        ucms_site_redirect_to_master();
-      }
+    // We avoid redirections on dashboard in case of POST requests
+    // to allow layout management requests (AJAX)
+    if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8)  && path_is_admin(current_path())) {// && 'POST' !== $_SERVER['REQUEST_METHOD']) {
+//      if (user_is_logged_in()) {
+//        // Logged-in users should not 403 on sites, but go to dashboard instead.
+//        ucms_site_redirect_to_master();
+//      }
     } else {
 
       // Normal runtime, there is a context, and path is not admin.

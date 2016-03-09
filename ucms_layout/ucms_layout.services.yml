@@ -4,6 +4,10 @@ services:
     class: MakinaCorpus\Ucms\Layout\DrupalStorage
     arguments: ["@database"]
 
-  ucms_layout.context:
+  ucms_layout.page_context:
+    class: MakinaCorpus\Ucms\Layout\Context
+    arguments: ["@ucms_layout.storage"]
+
+  ucms_layout.site_context:
     class: MakinaCorpus\Ucms\Layout\Context
     arguments: ["@ucms_layout.storage"]
