@@ -4,6 +4,9 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Handles whatever needs to be done with nodes
@@ -26,17 +29,25 @@ class NodeDispatcher
      * @var EntityManager
      */
     private $entityManager;
+    /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
 
     /**
      * Default constructor
      *
+     * @param \DatabaseConnection $db
      * @param SiteManager $manager
+     * @param EntityManager $entityManager
+     * @param EventDispatcher $eventDispatcher
      */
-    public function __construct(\DatabaseConnection $db, SiteManager $manager, EntityManager $entityManager)
+    public function __construct(\DatabaseConnection $db, SiteManager $manager, EntityManager $entityManager, EventDispatcher $eventDispatcher)
     {
         $this->db = $db;
         $this->manager = $manager;
         $this->entityManager = $entityManager;
+        $this->eventDispatcher= $eventDispatcher;
     }
 
     /**
@@ -175,10 +186,10 @@ class NodeDispatcher
                 SELECT
                     :target, usn.nid
                 FROM {ucms_site_node} usn
-                JOIN {node} n
+                JOIN {node} n ON n.nid = usn.nid
                 WHERE
                     usn.site_id = :source
-                    AND n.status = 1
+                    AND (n.status = 1 OR n.is_global = 0)
                     AND NOT EXISTS (
                         SELECT 1
                         FROM {ucms_site_node} s_usn
@@ -248,6 +259,19 @@ class NodeDispatcher
                 ':target'   => $target->getId(),
             ])
         ;
+
+        // Update node access rights
+        $nidList = $this->db
+            ->select('ucms_site_node', 'usn')
+            ->fields('usn', ['nid'])
+            ->condition('site_id', $target->getId())
+            ->execute()
+            ->fetchCol();
+        $this->eventDispatcher->dispatch('node:access_change', new ResourceEvent('node', $nidList));
+
+        // Dispatch event for others.
+        $this->eventDispatcher->dispatch('site:clone', new GenericEvent($target, ['source' => $source]));
+
 
         // @todo
         //   - duplicate menus

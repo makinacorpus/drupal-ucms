@@ -2,6 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Search\EventDispatcher;
 
+use Drupal\Core\Entity\EntityManager;
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Search\IndexStorage;
 use MakinaCorpus\Ucms\Search\Lucene\Query;
 use MakinaCorpus\Ucms\Search\Lucene\TermCollectionQuery;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
@@ -10,6 +13,28 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SearchAccessEventListener
 {
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+    /**
+     * @var IndexStorage
+     */
+    private $storage;
+
+    /**
+     * SearchAccessEventListener constructor.
+     *
+     * @param IndexStorage $storage
+     * @param EntityManager $entityManager
+     */
+    public function __construct(IndexStorage $storage, EntityManager $entityManager)
+    {
+        $this->storage = $storage;
+        $this->entityManager = $entityManager;
+    }
+
     public function onUcmsSearchsearchCreate(GenericEvent $event)
     {
         $search = $event->getSubject();
@@ -38,5 +63,11 @@ class SearchAccessEventListener
                 }
             }
         }
+    }
+
+    public function onNodeAccessChange(ResourceEvent $event)
+    {
+        $nodes = $this->entityManager->getStorage('node')->loadMultiple($event->getResourceIdList());
+        $this->storage->indexer()->enqueue($nodes);
     }
 }

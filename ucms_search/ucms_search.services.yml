@@ -82,4 +82,7 @@ services:
 
   ucms_search.node_access_event_listener:
     class: MakinaCorpus\Ucms\Search\EventDispatcher\SearchAccessEventListener
-    tags: [{ name: event_listener, event: ucms_search.search_create }]
+    arguments: ["@ucms_search.index_storage", "@entity.manager"]
+    tags:
+      - { name: event_listener, event: ucms_search.search_create }
+      - { name: event_listener, event: "node:access_change" }

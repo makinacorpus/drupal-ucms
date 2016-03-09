@@ -93,7 +93,7 @@ class SiteStorage
      */
     public function findTemplates()
     {
-        return $this->loadWithConditions(['is_template' => 1]);
+        return $this->loadWithConditions(['is_template' => 1], 'title', 'asc', 0, FALSE);
     }
 
     /**
@@ -138,9 +138,10 @@ class SiteStorage
      *   'asc' or 'desc'
      * @param int $limit
      *
+     * @param bool $withAccess
      * @return Site[]
      */
-    private function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100)
+    private function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100, $withAccess = TRUE)
     {
         $ret = [];
 
@@ -151,9 +152,12 @@ class SiteStorage
         $q = $this
             ->db
             ->select('ucms_site', 's')
-            ->addTag('ucms_site_access')
             ->fields('s')
         ;
+
+        if ($withAccess) {
+            $q->addTag('ucms_site_access');
+        }
 
         foreach ($conditions as $field => $values) {
             // @todo handle date types

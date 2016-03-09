@@ -83,15 +83,51 @@ class SiteSwitch extends FormBase
         $data = ['from' => $site->state, 'to' => $state];
         $list = SiteState::getList();
 
-        $site->state = $state;
-        $this->manager->getStorage()->save($site, ['state']);
-        drupal_set_message($this->t("Site @site has been switched from @from to @to", [
-            '@site' => $site->title,
-            '@from' => $list[$data['from']],
-            '@to'   => $list[$data['to']],
-        ]));
 
-        $this->dispatcher->dispatch('site:switch', new SiteEvent($site, $this->currentUser()->uid, $data));
+        $tx = null;
+
+        try {
+            $tx = $this->db->startTransaction();
+
+            $site->state = $state;
+            $this->manager->getStorage()->save($site, ['state']);
+            $this->dispatcher->dispatch('site:switch', new SiteEvent($site, $this->currentUser()->uid, $data));
+
+            unset($tx);
+
+            drupal_set_message(
+                $this->t(
+                    "Site @site has been switched from @from to @to",
+                    [
+                        '@site' => $site->title,
+                        '@from' => $list[$data['from']],
+                        '@to'   => $list[$data['to']],
+                    ]
+                )
+            );
+
+        } catch (\Exception $e) {
+            if ($tx) {
+                try {
+                    $tx->rollback();
+                } catch (\Exception $e2) {
+                    watchdog_exception('ucms_site', $e2);
+                }
+                watchdog_exception('ucms_site', $e);
+
+                drupal_set_message(
+                    $this->t(
+                        "Site @site has been switched from @from to @to",
+                        [
+                            '@site' => $site->title,
+                            '@from' => $list[$data['from']],
+                            '@to'   => $list[$data['to']],
+                        ]
+                    ),
+                    'error'
+                );
+            }
+        }
 
         $form_state->setRedirect('admin/dashboard/site');
     }

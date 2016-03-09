@@ -104,10 +104,12 @@ function ucms_site_dashboard_site_page_view(Site $site) {
       [t("Replaces"), check_markup($site->replacement_of)],
       [t("HTTP redirections"), check_markup($site->http_redirects)],
       [['data' => '<strong>' . t("Display information") . '</strong>', 'colspan' => 2]],
-      [t("Is a template"), $site->is_template ? '<strong>' . t("yes") . '</strong>' : t("No")],
-      [t("Site template"), $template],
       [t("Theme"), check_plain($site->theme)],
+      [t("Is a template"), $site->is_template ? '<strong>' . t("yes") . '</strong>' : t("No")],
   ];
+  if ($template) {
+    $rows[] = [t("Site template"), $template];
+  }
 
   $ret[] = [
       '#theme'    => 'table__ucms_site_details',

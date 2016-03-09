@@ -117,9 +117,12 @@ final class SiteManager
      */
     public function getTemplateList()
     {
+        $templates = [];
         foreach ($this->storage->findTemplates() as $site) {
-            yield $site->id => $site->title;
+            $templates[$site->id] = $site->title;
         }
+
+        return $templates;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Site\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -78,10 +79,12 @@ class SiteRequest extends FormBase
         switch ($step) {
 
           case 'a':
+              // Basic information about site
               return $this->buildStepA($form, $form_state, $site);
               break;
 
           case 'b':
+              // Information about template and theme
               return $this->buildStepB($form, $form_state, $site);
               break;
         }
@@ -250,22 +253,42 @@ class SiteRequest extends FormBase
         }
 
         $form['theme'] = [
-            '#title'          => $this->t("Theme"),
-            '#type'           => 'radios',
-            '#options'        => $options,
-            '#default_value'  => $site->theme,
-            '#description'    => $this->t("This will be used for the whole site and cannot be changed once set")
+            '#title'         => $this->t("Theme"),
+            '#type'          => 'radios',
+            '#options'       => $options,
+            '#default_value' => $site->theme,
+            '#required'      => true,
+            '#description'   => $this->t("This will be used for the whole site and cannot be changed once set"),
+        ];
+
+        // Is template site
+        $canManage = $this->currentUser()->hasPermission(Access::PERM_SITE_MANAGE_ALL);
+        $form['is_template'] = [
+            '#title'         => $this->t("Is template site?"),
+            '#type'          => 'radios',
+            '#options'       => [1 => $this->t("Yes"), 0 => $this->t("No")],
+            '#access'        => $canManage,
+            '#default_value' => $site->is_template,
         ];
 
         // Template site (which will be duplicated)
-        // Need to create the site cloning operation first
-        $form['template'] = [
-            '#title'          => $this->t("Template site"),
-            '#type'           => 'radios',
-            '#options'        => [$this->t("Not implemented yet")],
-            '#default_value'  => $site->template_id,
-            '#disabled'       => true,
+        $templateList = $this->manager->getTemplateList();
+        if ($canManage) {
+            array_unshift($templateList, $this->t('- None -'));
+        }
+        $form['template_id'] = [
+            '#title'         => $this->t("Template site"),
+            '#type'          => 'radios',
+            '#options'       => $templateList,
+            '#required'      => !$canManage,
+            '#default_value' => $site->template_id ?: '',
         ];
+
+        if ($form['is_template']['#access']) {
+            $form['template_id']['#states'] = [
+                'visible' => [':input[name="is_template"]' => ['value' => 0]],
+            ];
+        }
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
@@ -293,7 +316,8 @@ class SiteRequest extends FormBase
         $site->state = SiteState::REQUESTED;
         $site->theme = $form_state->getValue('theme');
         $site->ts_created = $site->ts_changed = new \DateTime();
-        // $site->template = $form_state->getValue('template');
+        $site->template_id = $form_state->getValue('is_template') ? 0 : $form_state->getValue('template_id');
+        $site->is_template = $form_state->getValue('is_template');
 
         $formData['step'] = 'a';
         $form_state->setRebuild(true);
@@ -310,7 +334,8 @@ class SiteRequest extends FormBase
         $site = $formData['site'];
         $site->state = SiteState::REQUESTED;
         $site->theme = $form_state->getValue('theme');
-        // $site->template = $form_state->getValue('template');
+        $site->template_id = $form_state->getValue('is_template') ? 0 : $form_state->getValue('template_id');
+        $site->is_template = $form_state->getValue('is_template');
 
         $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));

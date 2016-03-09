@@ -5,8 +5,10 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\user\UserInterface;
 
+use MakinaCorpus\Ucms\Site\NodeDispatcher;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 class SiteEventListener
 {
@@ -20,16 +22,24 @@ class SiteEventListener
      */
     private $entityManager;
 
+    /**
+     * @var NodeDispatcher
+     */
+    private $nodeDispatcher;
+
 
     /**
      * Default constructor
      *
      * @param SiteManager $manager
+     * @param EntityManager $entityManager
+     * @param NodeDispatcher $nodeDispatcher
      */
-    public function __construct(SiteManager $manager, EntityManager $entityManager)
+    public function __construct(SiteManager $manager, EntityManager $entityManager, NodeDispatcher $nodeDispatcher)
     {
         $this->manager = $manager;
         $this->entityManager = $entityManager;
+        $this->nodeDispatcher = $nodeDispatcher;
     }
 
 
@@ -66,6 +76,21 @@ class SiteEventListener
     public function onSiteSave(SiteEvent $event)
     {
         // @todo ?
+    }
+
+
+    public function onSiteSwitch(SiteEvent $event)
+    {
+        // If site is switching from PENDING to INIT and has a template
+        if (
+          $event->getArgument('from') == SiteState::PENDING && $event->getArgument('to') == SiteState::INIT
+          && !$event->getSite()->is_template && $event->getSite()->template_id
+        ) {
+            $template = $this->manager->getStorage()->findOne($event->getSite()->template_id);
+
+            // Clone the template site into the site
+            $this->nodeDispatcher->cloneSite($template, $event->getSite());
+        }
     }
 
 

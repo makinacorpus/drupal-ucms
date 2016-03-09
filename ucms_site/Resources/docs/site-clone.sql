@@ -6,11 +6,11 @@ INSERT INTO {ucms_site_node} (site_id, nid)
 SELECT
     :target, usn.nid
 FROM {ucms_site_node} usn
-JOIN {node} n
+JOIN {node} n ON usn.nid = usn.nid
 WHERE
     usn.site_id = :source
     -- do not reference unpublished global content
-    AND n.status = 1
+    AND (n.status = 1 OR n.is_global = 0)
     -- and avoid duplicates
     AND NOT EXISTS (
         SELECT 1
