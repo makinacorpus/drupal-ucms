@@ -5,4 +5,3 @@ package = UCMS
 php = 5.5
 dependencies[] = sf_dic
 dependencies[] = ucms_dashboard
-usync[] = usync/
