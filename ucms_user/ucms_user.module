@@ -175,12 +175,6 @@ function ucms_user_theme($existing, $type, $theme, $path) {
 function template_preprocess_ucms_user_profile(&$variables) {
   $account = $variables['account'];
 
-  // User picture
-  $variables['picture'] = [
-    '#theme' => 'user_picture',
-    '#account' => $account,
-  ];
-
   $manager = ucms_site_manager();
 
   /* @var $account AccountInterface */
@@ -202,8 +196,7 @@ function template_preprocess_ucms_user_profile(&$variables) {
       unset($sites[$id]);
     }
     else {
-      $role_name = $access->getRelativeRoleName($access->getUserRole($account, $site)
-                                                       ->getRole());
+      $role_name = $access->getRelativeRoleName($access->getUserRole($account, $site)->getRole());
       $sites[$id] = $site_name . ' (' . $role_name . ')';
     }
   }

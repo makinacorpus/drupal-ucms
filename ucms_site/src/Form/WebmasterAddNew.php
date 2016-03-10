@@ -95,15 +95,6 @@ class WebmasterAddNew extends FormBase
             '#weight' => -5,
         );
 
-        if ((boolean) variable_get('user_pictures', 0)) {
-            $form['picture'] = array(
-                '#type' => 'file_chunked',
-                '#title' => $this->t('Picture'),
-                '#upload_location' => file_build_uri(variable_get('user_picture_path', '')),
-                '#description' => $this->t('The user picture. Pictures larger than @dimensions pixels will be scaled down.', array('@dimensions' => variable_get('user_picture_dimensions', '85x85'))) . ' ' . filter_xss_admin(variable_get('user_picture_guidelines', '')),
-            );
-        }
-
         $roles = [];
         $relativeRoles = $this->siteManager->getAccess()->getRelativeRoles();
         foreach (array_keys($relativeRoles) as $rid) {
@@ -171,11 +162,6 @@ class WebmasterAddNew extends FormBase
         $user->pass = user_hash_password(user_password(20));
         // Ensures the user is disabled
         $user->status = 0;
-        // Handles user's picture
-        $picture = reset($form_state->getValue('picture'));
-        if (!empty($picture->fid)) {
-            $user->picture = $picture->fid;
-        }
 
         $this->entityManager->getStorage('user')->save($user);
 

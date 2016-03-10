@@ -117,23 +117,6 @@ class UserEdit extends FormBase
             ]);
         }
 
-        if ((boolean) variable_get('user_pictures', 0)) {
-            $form['current_picture'] = array(
-                '#type' => 'item',
-                '#title' => $this->t('Current picture'),
-                '#title_display' => 'invisible',
-                '#markup' => theme('user_picture', array('account' => $user)),
-            );
-
-            $form['picture'] = array(
-                '#type' => 'file_chunked',
-                '#title' => $this->t('Picture'),
-                '#default_value' => isset($user->picture) ? $user->picture : null,
-                '#upload_location' => file_build_uri(variable_get('user_picture_path', '')),
-                '#description' => $this->t('The user picture. Pictures larger than @dimensions pixels will be scaled down.', array('@dimensions' => variable_get('user_picture_dimensions', '85x85'))) . ' ' . filter_xss_admin(variable_get('user_picture_guidelines', '')),
-            );
-        }
-
         $allRoles = $this->siteManager->getAccess()->getDrupalRoleList();
         unset($allRoles[DRUPAL_ANONYMOUS_RID]);
         unset($allRoles[DRUPAL_AUTHENTICATED_RID]);
@@ -207,20 +190,6 @@ class UserEdit extends FormBase
             $user->pass = user_hash_password(user_password(20));
             // Ensure the user is disabled
             $user->status = 0;
-        }
-
-        // Prepares user picture
-        $picture = reset($form_state->getValue('picture'));
-
-        if (!empty($picture->fid)) {
-            if ($is_new) {
-                $form_state->setValue('picture', $picture->fid);
-            } else {
-                $form_state->setValue('picture', $picture);
-            }
-        }
-        elseif (!empty($user->picture->fid)) {
-            $form_state->setValue('picture_delete', 1);
         }
 
         // Prepares user roles

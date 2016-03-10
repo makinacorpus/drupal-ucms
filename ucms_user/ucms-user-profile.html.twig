@@ -1,15 +1,3 @@
-{% if account.picture %}
-  <div class="media">
-    <div class="media-left">
-      {{ picture }}
-    </div>
-    <div class="media-body">
-      <h1 class="media-heading">{{ account.name|check_plain }}</h1>
-      <a href="mailto:{{ account.mail }}">{{ account.mail|check_plain }}</a>
-    </div>
-  </div>
-{% else %}
-  <h1 class="media-heading">{{ account.name|check_plain }}</h1>
-  <a href="mailto:{{ account.mail }}">{{ account.mail|check_plain }}</a>
-{% endif %}
+<h1 class="media-heading">{{ account.name|check_plain }}</h1>
+<a href="mailto:{{ account.mail }}">{{ account.mail|check_plain }}</a>
 {{ details_table }}
