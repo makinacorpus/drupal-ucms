@@ -26,7 +26,7 @@ services:
   ucms_contrib.datasource.elastic:
     shared: false
     class: MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource
-    arguments: ["@ucms_search.search_factory"]
+    arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@current_user"]
 
   # Content portlet
   ucms_contrib.content_portlet:

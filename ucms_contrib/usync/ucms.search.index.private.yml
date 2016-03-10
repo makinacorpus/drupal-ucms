@@ -60,3 +60,6 @@ mapping:
 
       is_locked:
         type:         boolean
+
+      site_id:
+        type:         integer

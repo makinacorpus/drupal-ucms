@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
@@ -11,6 +12,7 @@ use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
 use MakinaCorpus\Ucms\Search\SearchFactory;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 class PrivateNodeDataSource extends AbstractDatasource
 {
@@ -22,14 +24,28 @@ class PrivateNodeDataSource extends AbstractDatasource
     private $search;
 
     /**
+     * @var SiteManager
+     */
+    private $manager;
+
+    /**
+     * @var AccountInterface
+     */
+    private $account;
+
+    /**
      * Default constructor
      *
      * @param SearchFactory $searchFactory
+     * @param SiteManager $manager
+     * @param AccountInterface $account
      * @param string $index
      */
-    public function __construct(SearchFactory $searchFactory, $index = 'private')
+    public function __construct(SearchFactory $searchFactory, SiteManager $manager, AccountInterface $account, $index = 'private')
     {
         $this->search = $searchFactory->create($index);
+        $this->manager = $manager;
+        $this->account = $account;
     }
 
     /**
@@ -89,6 +105,20 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->createTermAggregation('status', null)
             ->setChoicesMap([0 => $this->t("Unpublished"), 1 => $this->t("Published")])
             ->setTitle($this->t("Status"))
+        ;
+
+
+        $sites = [];
+        foreach ($this->manager->loadWebmasterSites($this->account) as $site) {
+            $sites[$site->getId()] = $site->title;
+        }
+
+        $ret[] = $this
+            ->getSearch()
+            ->createTermAggregation('site_id', null)
+            ->setChoicesMap($sites)
+            ->setExclusive(true)
+            ->setTitle($this->t("My sites"))
         ;
 
         return $ret;

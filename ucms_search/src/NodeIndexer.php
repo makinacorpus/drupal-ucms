@@ -282,6 +282,7 @@ class NodeIndexer implements NodeIndexerInterface
             'is_group'    => (bool)$node->is_group,
             'is_locked'   => !(bool)$node->is_clonable,
             'node_access' => $this->nodeExtractGrants($node),
+            'site_id'     => $node->ucms_sites,
         ];
     }
 

@@ -30,6 +30,12 @@ class TermFacet extends AbstractFacet
     private $choicesCallback;
 
     /**
+     * @var bool
+     */
+    private $exclusiveMode = false;
+
+
+    /**
      * Default constructor
      *
      * @param string $field
@@ -179,11 +185,25 @@ class TermFacet extends AbstractFacet
             $append = ' <span class="badge">' . $count . '</span>';
             if (isset($loaded[$value])) {
                 $ret[$value] = $loaded[$value] . $append;
-            } else {
+            } elseif(!$this->exclusiveMode) {
                 $ret[$value] .= $append;
+            }
+            else {
+                unset($ret[$value]);
             }
         }
 
         return $ret;
+    }
+
+    /**
+     * @param boolean $exclusiveMode
+     * @return $this
+     */
+    public function setExclusive($exclusiveMode)
+    {
+        $this->exclusiveMode = $exclusiveMode;
+
+        return $this;
     }
 }
