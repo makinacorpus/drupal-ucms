@@ -2,7 +2,7 @@ services:
 
   ucms_label.manager:
     class: MakinaCorpus\Ucms\Label\LabelManager
-    arguments: ["@database"]
+    arguments: ["@database", "@entity.manager"]
 
   ucms_label.admin.datasource:
     class: MakinaCorpus\Ucms\Label\Page\LabelAdminDatasource

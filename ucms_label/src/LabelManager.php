@@ -3,8 +3,9 @@
 
 namespace MakinaCorpus\Ucms\Label;
 
-
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
+
 
 /**
  * Class to abstract functions of the taxonomy module.
@@ -21,7 +22,12 @@ final class LabelManager
     /**
      * @var \DatabaseConnection
      */
-    protected $db;
+    private $db;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
 
 
     /**
@@ -29,9 +35,10 @@ final class LabelManager
      *
      * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(\DatabaseConnection $db, EntityManager $entityManager)
     {
         $this->db = $db;
+        $this->entityManager = $entityManager;
     }
 
 
@@ -42,7 +49,11 @@ final class LabelManager
      */
     public function loadVocabulary()
     {
-        return taxonomy_vocabulary_machine_name_load(self::VOCABULARY_MACHINE_NAME);
+        $entities = $this->entityManager
+            ->getStorage('taxonomy_vocabulary')
+            ->loadByProperties(['machine_name' => self::VOCABULARY_MACHINE_NAME]);
+
+        return reset($entities);
     }
 
 
@@ -76,7 +87,7 @@ final class LabelManager
      */
     public function loadLabels(array $ids)
     {
-        return taxonomy_term_load_multiple($ids);
+        return $this->entityManager->getStorage('taxonomy_term')->loadMultiple($ids);
     }
 
 
@@ -136,7 +147,7 @@ final class LabelManager
             // Prevents to save a label with a parent if it has children.
             // The labels vocabulary must have only two levels.
             if (!isset($label->original)) {
-                $label->original = entity_load_unchanged('taxonomy_term', $label->tid);
+                $label->original = $this->entityManager->getStorage('taxonomy_term')->loadUnchanged($label->tid);
             }
             if (!isset($label->original->parent)) {
                 $label->original->parent = 0;
