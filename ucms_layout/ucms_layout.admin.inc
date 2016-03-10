@@ -19,7 +19,7 @@ function ucms_layout_admin_structure() {
     }
 
     $all      = system_region_list($theme);
-    $enabled  = ucms_layout_theme_region_list($theme);
+    $enabled  = ucms_layout_context_manager()->getThemeRegionConfig($theme);
     $links    = [];
 
     $links[] = l(t("Edit"), 'admin/structure/layout/' . $theme, ['query' => drupal_get_destination()]);

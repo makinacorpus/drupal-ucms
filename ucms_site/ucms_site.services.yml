@@ -15,7 +15,7 @@ services:
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:
     class: MakinaCorpus\Ucms\Site\SiteManager
-    arguments: ["@ucms_site.storage", "@ucms_site.access", "@database"]
+    arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher"]
 
   # Node access helper
   ucms_site.node_access_helper:

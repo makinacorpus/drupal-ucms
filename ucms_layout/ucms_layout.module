@@ -20,17 +20,14 @@
  */
 
 use Drupal\node\NodeInterface;
+use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\Layout\Context;
+use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
-/**
- * Region statuses.
- */
-define('UCMS_REGION_DISABLED', 0);
-define('UCMS_REGION_PAGE_CONTEXT', 1);
-define('UCMS_REGION_SITE_CONTEXT', 2);
 
 /**
  * Implements hook_menu().
@@ -120,246 +117,54 @@ function ucms_layout_theme_title($theme) {
 }
 
 /**
- * Get enabled regions for the given theme.
+ * Access callback for operations on layouts.
  *
- * @param string $theme
- *   Theme name.
- *
- * @return int[]
- *   Keys are region names, values are context keys.
- */
-function ucms_layout_theme_region_list($theme) {
-  static $themes = [];
-
-  if (!isset($themes[$theme])) {
-    $regions = variable_get('ucms_layout_regions_' . $theme);
-
-    if (null === $regions) {
-      $regions = array_keys(system_region_list($theme));
-      $regions = array_fill_keys($regions, UCMS_REGION_PAGE_CONTEXT);
-    }
-
-    $regions = array_map('intval', $regions);
-    $themes[$theme] = $regions;
-  }
-
-  return $themes[$theme];
-}
-
-/**
- * Get enabled regions for the current theme.
- *
- * @return int[]
- *   Keys are region names, values are context keys.
- */
-function ucms_layout_current_theme_region_list() {
-  $manager = ucms_site_manager();
-
-  if ($manager->hasContext()) {
-    $theme = $manager->getContext()->theme;
-  } else {
-    global $theme;
-  }
-
-  return ucms_layout_theme_region_list($theme);
-}
-
-/**
- * Is the given region enabled for the page context?
- *
- * @param string $region Region key
- * @param string $theme Theme name (current theme name by default)
+ * @param string $op
+ * @param Layout $layout
  *
  * @return boolean
  */
-function ucms_layout_is_page_context_region($region, $theme = null) {
-  if (null === $theme) {
-    $regions = ucms_layout_current_theme_region_list();
-  } else {
-    $regions = ucms_layout_theme_region_list($theme);
-  }
+function ucms_layout_access($op, Layout $layout) {
+  /* @var UserInterface $currentUser */
+  $currentUser = \Drupal::service('current_user');
+  /* @var SiteManager $siteManager */
+  $siteManager = ucms_site_manager();
 
-  return (isset($regions[$region]) && ($regions[$region] === UCMS_REGION_PAGE_CONTEXT));
+  $site = $siteManager->getStorage()->findOne($layout->getSiteId());
+  return $siteManager->getAccess()->userIsWebmaster($currentUser, $site);
 }
 
 /**
- * Is the given region enabled for the site context?
+ * Get the layout context manager.
  *
- * @param string $region Region key
- * @param string $theme Theme name (current theme name by default)
- *
- * @return boolean
+ * @return ContextManager
  */
-function ucms_layout_is_site_context_region($region, $theme = null) {
-  if (null === $theme) {
-    $regions = ucms_layout_current_theme_region_list();
-  } else {
-    $regions = ucms_layout_theme_region_list($theme);
-  }
-
-  return (isset($regions[$region]) && ($regions[$region] === UCMS_REGION_SITE_CONTEXT));
-}
-
-/**
- * Is the given region editable, i.e. currently in edit mode.
- *
- * @param string $region
- *
- * @return boolean
- */
-function ucms_layout_is_region_editable($region) {
-  $pageContext = ucms_layout_page_context_get();
-  $siteContext = ucms_layout_site_context_get();
-
-  return
-    ($pageContext->isTemporary() && ucms_layout_is_page_context_region($region)) ||
-    ($siteContext->isTemporary() && ucms_layout_is_site_context_region($region))
-  ;
+function ucms_layout_context_manager() {
+  return \Drupal::service('ucms_layout.context_manager');
 }
 
 /**
  * Menu helper: load layout instance in potential temporary context.
  */
 function ucms_layout_temporary_load($id) {
-  $site = ucms_site_manager()->getContext();
+  $contextManager = ucms_layout_context_manager();
 
-  if (ucms_layout_is_page_context_region($_POST['region'], $site->theme)) {
-    $context = ucms_layout_page_context_get();
+  if ($contextManager->getPageContext()->isTemporary()) {
+    $layout = $contextManager->getPageContext()->getStorage()->load($id);
+    if ($layout) {
+      $contextManager->getPageContext()->setCurrentLayout($layout);
+      return $layout;
+    }
   }
-  elseif (ucms_layout_is_site_context_region($_POST['region'], $site->theme)) {
-    $context = ucms_layout_site_context_get();
-  }
-  else {
-    return false;
-  }
-
-  if ($context->isTemporary()) {
-    $layout = $context->getCurrentLayout();
-    if ($layout instanceof Layout) {
+  elseif ($contextManager->getTransversalContext()->isTemporary()) {
+    $layout = $contextManager->getTransversalContext()->getStorage()->load($id);
+    if ($layout) {
+      $contextManager->getTransversalContext()->setCurrentLayout($layout);
       return $layout;
     }
   }
 
-  return false; // Strict false because null passes, phoque.
-}
-
-/**
- * Get contextual layout of the current page.
- *
- * @return Context
- */
-function ucms_layout_page_context_get() {
-  static $init = false;
-
-  $context = \Drupal::service('ucms_layout.page_context');
-
-  // @todo Find a better way.
-  if (!$init) {
-    ucms_layout_page_context_init($context);
-    $init = true;
-  }
-
-  return $context;
-}
-
-/**
- * Get contextual layout of the current site.
- * This context concerns transversal regions.
- *
- * @return Context
- */
-function ucms_layout_site_context_get() {
-  static $init = false;
-
-  $context = \Drupal::service('ucms_layout.site_context');
-
-  // @todo Find a better way.
-  if (!$init) {
-    ucms_layout_site_context_init($context);
-    $init = true;
-  }
-
-  return $context;
-}
-
-/**
- * Initialize page context.
- */
-function ucms_layout_page_context_init(Context $context) {
-  // We don't have any choice but loading it this moment since a few other
-  // modules might need to check whether the current context is temporary
-  // or not, so do it at init.
-  // @todo
-  //   Later on, fix this.
-  if (
-    'admin/ucms/layout' === substr(current_path(), 0, 17) ||
-    (
-      !path_is_admin(current_path()) &&
-      !arg(2) &&
-      ($node = menu_get_object()) && !empty($node->layout_id)
-    )
-  ) {
-    if (isset($_GET['edit']) && drupal_valid_token($_GET['edit'])) {
-      $context->setToken($_GET['edit']);
-    }
-    elseif (
-      'POST' === $_SERVER['REQUEST_METHOD'] &&
-      isset($_POST['token']) &&
-      drupal_valid_token($_POST['token']) &&
-      isset($_POST['region'])
-    ) {
-      $site = ucms_site_manager()->getContext();
-
-      if (ucms_layout_is_page_context_region($_POST['region'], $site->theme)) {
-        $context->setToken($_POST['token']);
-      }
-
-      if (isset($_POST['nid'])) {
-        $node = \Drupal::service('entity.manager')->getStorage('node')->load($_POST['nid']);
-      }
-    }
-
-    if ($layout = $context->getStorage()->load($node->layout_id)) {
-      $context->setCurrentLayout($layout);
-    } else {
-      $context->setToken(null);
-    }
-  }
-}
-
-/**
- * Initialize site context.
- */
-function ucms_layout_site_context_init(Context $context) {
-  // We don't have any choice but loading it this moment since a few other
-  // modules might need to check whether the current context is temporary
-  // or not, so do it at init.
-  // @todo
-  //   Later on, fix this.
-  $site = ucms_site_manager()->getContext();
-
-  if (('admin/ucms/layout' === substr(current_path(), 0, 17) || !path_is_admin(current_path())) && $site) {
-    if (isset($_GET['site_edit']) && drupal_valid_token($_GET['site_edit'])) {
-      $context->setToken($_GET['site_edit']);
-    }
-    elseif (
-      'POST' === $_SERVER['REQUEST_METHOD'] &&
-      isset($_POST['token']) &&
-      drupal_valid_token($_POST['token']) &&
-      isset($_POST['region']) &&
-      ucms_layout_is_site_context_region($_POST['region'], $site->theme)
-    ) {
-      $context->setToken($_POST['token']);
-    }
-
-    $homepage = \Drupal::service('entity.manager')->getStorage('node')->load($site->home_nid);
-
-    if ($layout = $context->getStorage()->load($homepage->layout_id)) {
-      $context->setCurrentLayout($layout);
-    } else {
-      $context->setToken(null);
-    }
-  }
+  return false;
 }
 
 /**
@@ -443,18 +248,26 @@ function ucms_layout_node_load($nodes, $type) {
  * Implements hook_page_build().
  */
 function ucms_layout_page_build(&$page) {
-  global $theme;
 
-  $pageContext  = ucms_layout_page_context_get();
-  $siteContext  = ucms_layout_site_context_get();
+  $site = ucms_site_manager()->getContext();
 
-  $pageLayout   = $pageContext->getCurrentLayout();
-  $siteLayout   = $siteContext->getCurrentLayout();
+  // Only the case of a node's full page in a site context
+  if (!$site || !($node = menu_get_object()) || arg(2)) {
+    return;
+  }
+
+  $manager = ucms_layout_context_manager();
+
+  $pageContext = $manager->getPageContext();
+  $transversalContext = $manager->getTransversalContext();
+
+  $pageLayout = $pageContext->getCurrentLayout();
+  $transversalLayout = $transversalContext->getCurrentLayout();
 
   $pageEditMode = $pageContext->isTemporary();
-  $siteEditMode = $siteContext->isTemporary();
+  $transversalEditMode = $transversalContext->isTemporary();
 
-  if (!($pageLayout instanceof Layout || $siteLayout instanceof Layout)) {
+  if (!($pageLayout instanceof Layout || $transversalLayout instanceof Layout)) {
     return; // No layout on page.
   }
 
@@ -464,24 +277,28 @@ function ucms_layout_page_build(&$page) {
       'layoutId' => $pageLayout->getId(),
     ]], 'setting');
   }
-  elseif ($siteEditMode) {
+  elseif ($transversalEditMode) {
     drupal_add_js(['ucmsLayout' => [
-      'editToken' => $siteContext->getToken(),
-      'layoutId' => $siteLayout->getId(),
+      'editToken' => $transversalContext->getToken(),
+      'layoutId' => $transversalLayout->getId(),
     ]], 'setting');
   }
 
-  foreach (ucms_layout_theme_region_list($theme) as $regionId => $regionStatus) {
+  foreach ($manager->getThemeRegionConfig($site->theme) as $regionId => $regionStatus) {
 
     $items = [];
     $regionEditMode = false;
 
-    if ($regionStatus == UCMS_REGION_PAGE_CONTEXT) {
+    if ($regionStatus == ContextManager::PAGE_CONTEXT) {
       $region = $pageLayout->getRegion($regionId);
       $regionEditMode = $pageEditMode;
-    } else {
-      $region = $siteLayout->getRegion($regionId);
-      $regionEditMode = $siteEditMode;
+    }
+    elseif ($regionStatus == ContextManager::TRANSVERSAL_CONTEXT) {
+      $region = $transversalLayout->getRegion($regionId);
+      $regionEditMode = $transversalEditMode;
+    }
+    else {
+      continue;
     }
 
     // Preload all nodes for performance.
@@ -527,8 +344,9 @@ function ucms_layout_page_build(&$page) {
  * Implements hook_preprocess_region().
  */
 function ucms_layout_preprocess_region(&$vars) {
+  $manager = ucms_layout_context_manager();
 
-  if (ucms_layout_is_region_editable($vars['region'])) {
+  if ($manager->isRegionInEditMode($vars['region'])) {
     $vars['attributes_array']['data-region'] = $vars['region'];
   }
 

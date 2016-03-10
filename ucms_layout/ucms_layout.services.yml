@@ -4,15 +4,13 @@ services:
     class: MakinaCorpus\Ucms\Layout\DrupalStorage
     arguments: ["@database"]
 
-  ucms_layout.page_context:
-    class: MakinaCorpus\Ucms\Layout\Context
-    arguments: ["@ucms_layout.storage"]
-
-  ucms_layout.site_context:
-    class: MakinaCorpus\Ucms\Layout\Context
-    arguments: ["@ucms_layout.storage"]
+  ucms_layout.context_manager:
+    class: MakinaCorpus\Ucms\Layout\ContextManager
+    arguments: ["@ucms_layout.storage", "@ucms_site.manager", "@entity.manager"]
 
   ucms_layout.site_event_listener:
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteEventListener
-    arguments: ["@database"]
-    tags: [{name: event_listener, event: "site:clone"}]
+    arguments: ["@database", "@ucms_layout.context_manager", "@ucms_site.manager", "@request_stack"]
+    tags:
+      - {name: event_listener, event: "site:init"}
+      - {name: event_listener, event: "site:clone"}

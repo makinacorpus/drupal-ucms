@@ -16,7 +16,7 @@ use MakinaCorpus\Ucms\Layout\Layout;
  * @return int
  */
 function ucms_layout_ajax_region_item_add($layout) {
-
+  
   if ('POST' !== $_SERVER['REQUEST_METHOD']) {
     return MENU_NOT_FOUND;
   }
@@ -52,15 +52,20 @@ function ucms_layout_ajax_region_item_add($layout) {
     $query['view_mode'] = 'teaser';
   }
 
+  $manager = ucms_layout_context_manager();
   $site = ucms_site_manager()->getContext();
   $item = new Item($query['nid'], $query['view_mode']);
 
   $layout->getRegion($query['region'])->addAt($item, $query['position']);
 
-  if (ucms_layout_is_page_context_region($query['region'], $site->theme)) {
-    ucms_layout_page_context_get()->getStorage()->save($layout);
-  } else {
-    ucms_layout_site_context_get()->getStorage()->save($layout);
+  if ($manager->isPageContextRegion($query['region'], $site->theme)) {
+    $manager->getPageContext()->getStorage()->save($layout);
+  }
+  elseif ($manager->isTransversalContextRegion($query['region'], $site->theme)) {
+    $manager->getTransversalContext()->getStorage()->save($layout);
+  }
+  else {
+    return MENU_ACCESS_DENIED;
   }
 
   $node_view = node_view($node, $query['view_mode']);
@@ -102,13 +107,18 @@ function ucms_layout_ajax_region_item_remove($layout) {
     $query['position'] = 0;
   }
 
+  $manager = ucms_layout_context_manager();
   $site = ucms_site_manager()->getContext();
   $layout->getRegion($query['region'])->removeAt($query['position']);
 
-  if (ucms_layout_is_page_context_region($query['region'], $site->theme)) {
-    ucms_layout_page_context_get()->getStorage()->save($layout);
-  } else {
-    ucms_layout_site_context_get()->getStorage()->save($layout);
+  if ($manager->isPageContextRegion($query['region'], $site->theme)) {
+    $manager->getPageContext()->getStorage()->save($layout);
+  }
+  elseif ($manager->isTransversalContextRegion($query['region'], $site->theme)) {
+    $manager->getTransversalContext()->getStorage()->save($layout);
+  }
+  else {
+    return MENU_ACCESS_DENIED;
   }
 
   drupal_json_output(['success' => true]);
@@ -158,21 +168,26 @@ function ucms_layout_ajax_region_item_move($layout) {
     $query['view_mode'] = 'teaser';
   }
 
+  $manager = ucms_layout_context_manager();
   $site = ucms_site_manager()->getContext();
   $item = new Item($query['nid'], $query['view_mode']);
 
   if (!empty($query['prevRegion'])) {
     $layout->getRegion($query['prevRegion'])->removeAt($query['prevPosition']);
-  }
-  else {
+  } else {
     $layout->getRegion($query['region'])->removeAt($query['prevPosition']);
   }
+
   $layout->getRegion($query['region'])->addAt($item, $query['position']);
 
-  if (ucms_layout_is_page_context_region($query['region'], $site->theme)) {
-    ucms_layout_page_context_get()->getStorage()->save($layout);
-  } else {
-    ucms_layout_site_context_get()->getStorage()->save($layout);
+  if ($manager->isPageContextRegion($query['region'], $site->theme)) {
+    $manager->getPageContext()->getStorage()->save($layout);
+  }
+  elseif ($manager->isTransversalContextRegion($query['region'], $site->theme)) {
+    $manager->getTransversalContext()->getStorage()->save($layout);
+  }
+  else {
+    return MENU_ACCESS_DENIED;
   }
 
   $node_view = node_view($node, $query['view_mode']);

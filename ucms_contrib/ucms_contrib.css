@@ -129,7 +129,7 @@
   margin: .4em;
 }
 
-body [data-region].drop-highlighted {
+body [data-region].ui-sortable {
   border: dashed .2em #018fe2;
   min-height: 2em;
   transition: .5s linear;

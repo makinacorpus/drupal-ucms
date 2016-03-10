@@ -6,16 +6,16 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
-use MakinaCorpus\Ucms\Layout\Context as LayoutContext;
+use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
 
 class ContextPaneEventListener
 {
     use StringTranslationTrait;
 
     /**
-     * @var LayoutContext
+     * @var LayoutContextManager
      */
-    private $layoutContext;
+    private $layoutContextManager;
 
     /**
      * @var AccountInterface
@@ -25,12 +25,12 @@ class ContextPaneEventListener
     /**
      * Default constructor
      *
-     * @param LayoutContext $layoutContext
+     * @param LayoutContextManager $layoutContextManager
      * @param AccountInterface $currentUser
      */
-    public function __construct(LayoutContext $layoutContext, AccountInterface $currentUser)
+    public function __construct(LayoutContextManager $layoutContextManager, AccountInterface $currentUser)
     {
-        $this->layoutContext = $layoutContext;
+        $this->layoutContextManager = $layoutContextManager;
         $this->currentUser = $currentUser;
     }
 

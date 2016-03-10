@@ -19,7 +19,7 @@ services:
 
   ucms_contrib.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
-    arguments: ["@ucms_layout.page_context", "@ucms_contrib.content_action_provider", "@ucms_site.manager", "@ucms_contrib.type_handler"]
+    arguments: ["@ucms_layout.context_manager", "@ucms_contrib.content_action_provider", "@ucms_site.manager", "@ucms_contrib.type_handler"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
 

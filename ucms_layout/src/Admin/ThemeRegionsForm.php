@@ -6,12 +6,36 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Ucms\Layout\ContextManager;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 class ThemeRegionsForm extends FormBase
 {
     use StringTranslationTrait;
 
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
+     */
+    static public function create(ContainerInterface $container)
+    {
+        return new self($container->get('ucms_layout.context_manager'));
+    }
+
+
+    /**
+     * @var ContextManager $contextManager
+     */
+    private $contextManager;
+
+
+    public function __construct(ContextManager $contextManager)
+    {
+        $this->contextManager = $contextManager;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getFormId()
     {
@@ -19,7 +43,7 @@ class ThemeRegionsForm extends FormBase
     }
 
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     public function buildForm(array $form, FormStateInterface $form_state, $theme = null)
     {
@@ -30,7 +54,7 @@ class ThemeRegionsForm extends FormBase
         $form['#theme_key'] = $theme;
 
         $all      = system_region_list($theme);
-        $enabled  = ucms_layout_theme_region_list($theme);
+        $enabled  = $this->contextManager->getThemeRegionConfig($theme);
 
         $form['regions'] = [
             '#type' => 'item',
@@ -45,11 +69,11 @@ class ThemeRegionsForm extends FormBase
                 '#type' => 'select',
                 '#title' => $label,
                 '#options' => [
-                    UCMS_REGION_DISABLED => $this->t("Disabled"),
-                    UCMS_REGION_PAGE_CONTEXT => $this->t("Page context"),
-                    UCMS_REGION_SITE_CONTEXT => $this->t("Site context"),
+                    ContextManager::NO_CONTEXT => $this->t("Disabled"),
+                    ContextManager::PAGE_CONTEXT => $this->t("Page context"),
+                    ContextManager::TRANSVERSAL_CONTEXT => $this->t("Site context"),
                 ],
-                '#default_value' => isset($enabled[$key]) ? $enabled[$key] : UCMS_REGION_DISABLED,
+                '#default_value' => isset($enabled[$key]) ? $enabled[$key] : ContextManager::NO_CONTEXT,
             ];
         }
 
@@ -63,7 +87,7 @@ class ThemeRegionsForm extends FormBase
     }
 
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {

@@ -4,6 +4,10 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+
 /**
  * Facade for using both site storage and site access helpers, that will also
  * carry the site wide configuration; this means to reduce the number of
@@ -32,16 +36,28 @@ final class SiteManager
     private $db;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * Default constructor
      *
      * @param SiteStorage $storage
      * @param SiteAccessService $access
+     * @param \DatabaseConnection $db
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(SiteStorage $storage, SiteAccessService $access, \DatabaseConnection $db)
-    {
+    public function __construct(
+        SiteStorage $storage,
+        SiteAccessService $access,
+        \DatabaseConnection $db,
+        EventDispatcherInterface $dispatcher
+    ) {
         $this->storage = $storage;
         $this->access = $access;
         $this->db = $db;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -52,6 +68,7 @@ final class SiteManager
     public function setContext(Site $site)
     {
         $this->context = $site;
+        $this->dispatcher->dispatch('site:init', new SiteEvent($site));
     }
 
     /**

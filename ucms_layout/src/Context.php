@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Layout;
 
+use Drupal\Core\Entity\EntityManager;
+
 class Context
 {
     use TokenAwareTrait;
@@ -22,18 +24,29 @@ class Context
     private $temporaryStorage;
 
     /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
      * @var Layout
      */
     private $layout;
+
+    /**
+     * @var int
+     */
+    private $layoutNodeId;
 
     /**
      * Default constructor
      *
      * @param StorageInterface $storage
      */
-    public function __construct(StorageInterface $storage)
+    public function __construct(StorageInterface $storage, EntityManager $entityManager)
     {
         $this->storage = $storage;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -105,7 +118,27 @@ class Context
      */
     public function getCurrentLayout()
     {
+        if (!$this->layout && $this->layoutNodeId) {
+            $node = $this->entityManager->getStorage('node')->load($this->layoutNodeId);
+            if ($node && isset($node->layout_id)) {
+                $this->layout = $this->getStorage()->load($node->layout_id);
+            }
+        }
+
         return $this->layout;
+    }
+
+    /**
+     * Set current layout node ID
+     *
+     * @param int $nid
+     */
+    public function setCurrentLayoutNodeId($nid)
+    {
+        if ($this->layoutNodeId) {
+            throw new \LogicException("You can't change the current layout node ID.");
+        }
+        $this->layoutNodeId = $nid;
     }
 
     /**
@@ -115,7 +148,7 @@ class Context
      */
     public function isTemporary()
     {
-        return $this->hasToken() && $this->layout instanceof Layout;
+        return $this->hasToken();
     }
 
     /**
@@ -127,7 +160,7 @@ class Context
     {
         if ($this->hasToken()) {
             if (!$this->temporaryStorage) {
-                $this->temporaryStorage = new TemporaryStorage($this->token);
+                $this->temporaryStorage = new TemporaryStorage();
                 $this->temporaryStorage->setToken($this->getToken());
             }
 

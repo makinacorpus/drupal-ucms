@@ -8,7 +8,7 @@ use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
-use MakinaCorpus\Ucms\Layout\Context as LayoutContext;
+use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
@@ -20,9 +20,9 @@ class ContextPaneEventListener
     use StringTranslationTrait;
 
     /**
-     * @var LayoutContext
+     * @var LayoutContextManager
      */
-    private $layoutContext;
+    private $layoutContextManager;
 
     /**
      * @var ActionProviderInterface
@@ -42,19 +42,19 @@ class ContextPaneEventListener
     /**
      * Default constructor
      *
-     * @param LayoutContext $layoutContext
+     * @param LayoutContextManager $layoutContextManager
      * @param ActionProviderInterface $actionProvider
      * @param SiteManager $siteManager
      * @param TypeHandler $typeHandler
      */
     public function __construct(
-        LayoutContext $layoutContext,
+        LayoutContextManager $layoutContextManager,
         ActionProviderInterface $actionProvider,
         SiteManager $siteManager,
         TypeHandler $typeHandler
     )
     {
-        $this->layoutContext = $layoutContext;
+        $this->layoutContextManager = $layoutContextManager;
         $this->actionProvider = $actionProvider;
         $this->siteManager = $siteManager;
         $this->typeHandler = $typeHandler;
@@ -77,9 +77,10 @@ class ContextPaneEventListener
                 'admin/dashboard/media',
             ];
             // @todo Inject services
-            if (in_array($router_item['path'], $allowed_routes)
-                || in_array($router_item['tab_parent'], $allowed_routes)
-                || $this->layoutContext->isTemporary()
+            if (
+                in_array($router_item['path'], $allowed_routes) ||
+                in_array($router_item['tab_parent'], $allowed_routes) ||
+                $this->layoutContextManager->isInEditMode()
             ) {
                 $contextPane
                     ->addTab('cart', $this->t("Cart"), 'shopping-cart')
