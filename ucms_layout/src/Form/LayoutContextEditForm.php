@@ -108,7 +108,7 @@ class LayoutContextEditForm extends FormBase
 
             $form_state->setRedirect(
                 current_path(),
-                ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
+                ['query' => drupal_get_query_parameters(null, ['q', ContextManager::PARAM_PAGE_TOKEN])]
             );
         }
     }
@@ -125,7 +125,7 @@ class LayoutContextEditForm extends FormBase
 
             $form_state->setRedirect(
                 current_path(),
-                ['query' => drupal_get_query_parameters(null, ['q', 'edit'])]
+                ['query' => drupal_get_query_parameters(null, ['q', ContextManager::PARAM_PAGE_TOKEN])]
             );
         }
     }
@@ -147,7 +147,7 @@ class LayoutContextEditForm extends FormBase
 
             $form_state->setRedirect(
                 current_path(),
-                ['query' => ['edit' => $token] + drupal_get_query_parameters()]
+                ['query' => [ContextManager::PARAM_PAGE_TOKEN => $token] + drupal_get_query_parameters()]
             );
         }
     }
@@ -164,7 +164,7 @@ class LayoutContextEditForm extends FormBase
 
             $form_state->setRedirect(
                 current_path(),
-                ['query' => drupal_get_query_parameters(null, ['q', 'site_edit'])]
+                ['query' => drupal_get_query_parameters(null, ['q', ContextManager::PARAM_SITE_TOKEN])]
             );
         }
     }
@@ -181,7 +181,7 @@ class LayoutContextEditForm extends FormBase
 
             $form_state->setRedirect(
                 current_path(),
-                ['query' => drupal_get_query_parameters(null, ['q', 'site_edit'])]
+                ['query' => drupal_get_query_parameters(null, ['q', ContextManager::PARAM_SITE_TOKEN])]
             );
         }
     }
@@ -203,7 +203,7 @@ class LayoutContextEditForm extends FormBase
 
             $form_state->setRedirect(
                 current_path(),
-                ['query' => ['site_edit' => $token] + drupal_get_query_parameters()]
+                ['query' => [ContextManager::PARAM_SITE_TOKEN => $token] + drupal_get_query_parameters()]
             );
         }
     }

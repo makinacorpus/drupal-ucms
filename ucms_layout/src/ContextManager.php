@@ -14,6 +14,9 @@ class ContextManager
     const NO_CONTEXT          = 0;
     const PAGE_CONTEXT        = 1;
     const TRANSVERSAL_CONTEXT = 2;
+    const PARAM_AJAX_TOKEN    = 'token';
+    const PARAM_PAGE_TOKEN    = 'edit';
+    const PARAM_SITE_TOKEN    = 'edit';
 
     /**
      * @var SiteManager $siteManager

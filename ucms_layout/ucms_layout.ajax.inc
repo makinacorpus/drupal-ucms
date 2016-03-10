@@ -6,6 +6,7 @@
 
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 
@@ -24,10 +25,10 @@ function ucms_layout_ajax_region_item_add($layout) {
   $query = $_POST;
 
   // CSRF protection.
-  if (empty($query['token'])) {
+  if (empty($query[ContextManager::PARAM_AJAX_TOKEN])) {
     return MENU_ACCESS_DENIED; // No CSRF token.
   }
-  if (!drupal_valid_token($query['token'])) {
+  if (!drupal_valid_token($query[ContextManager::PARAM_AJAX_TOKEN])) {
     return MENU_ACCESS_DENIED; // Invalid CSRF token.
   }
 
@@ -89,10 +90,10 @@ function ucms_layout_ajax_region_item_remove($layout) {
   $query = $_POST;
 
   // CSRF protection.
-  if (empty($query['token'])) {
+  if (empty($query[ContextManager::PARAM_AJAX_TOKEN])) {
     return MENU_ACCESS_DENIED; // No CSRF token.
   }
-  if (!drupal_valid_token($query['token'])) {
+  if (!drupal_valid_token($query[ContextManager::PARAM_AJAX_TOKEN])) {
     return MENU_ACCESS_DENIED; // Invalid CSRF token.
   }
 
@@ -140,10 +141,10 @@ function ucms_layout_ajax_region_item_move($layout) {
   $query = $_POST;
 
   // CSRF protection.
-  if (empty($query['token'])) {
+  if (empty($query[ContextManager::PARAM_AJAX_TOKEN])) {
     return MENU_ACCESS_DENIED; // No CSRF token.
   }
-  if (!drupal_valid_token($query['token'])) {
+  if (!drupal_valid_token($query[ContextManager::PARAM_AJAX_TOKEN])) {
     return MENU_ACCESS_DENIED; // Invalid CSRF token.
   }
 

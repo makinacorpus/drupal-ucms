@@ -28,7 +28,6 @@ use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-
 /**
  * Implements hook_menu().
  */
@@ -252,7 +251,7 @@ function ucms_layout_page_build(&$page) {
   $site = ucms_site_manager()->getContext();
 
   // Only the case of a node's full page in a site context
-  if (!$site || !($node = menu_get_object()) || arg(2)) {
+  if (!$site || !menu_get_object() || arg(2)) {
     return;
   }
 

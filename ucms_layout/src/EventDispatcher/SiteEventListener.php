@@ -1,10 +1,6 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Layout\EventDispatcher;
-
-use Drupal\Core\Entity\EntityManager;
-use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
@@ -14,7 +10,6 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
 
 class SiteEventListener
 {
@@ -37,7 +32,6 @@ class SiteEventListener
      * @var RequestStack
      */
     private $requestStack;
-
 
     /**
      * Default constructor
@@ -65,31 +59,28 @@ class SiteEventListener
         // @todo Ugly... The best would be to not use drupal_valid_token()
         require_once DRUPAL_ROOT . '/includes/common.inc';
 
-        $request = $this->requestStack->getCurrentRequest();
-        $token = null;
+        $request      = $this->requestStack->getCurrentRequest();
+        $pageContext  = $this->contextManager->getPageContext();
+        $transContext = $this->contextManager->getTransversalContext();
+        $site         = $event->getSite();
+        $token        = null;
+        $matches      = [];
 
         if (preg_match('/^node\/([0-9]+)$/', $request->get('q'), $matches) === 1) {
-            if (($token = $request->get('edit')) && drupal_valid_token($token)) {
-                $this->contextManager->getPageContext()->setToken($token);
+            if (($token = $request->get(ContextManager::PARAM_PAGE_TOKEN)) && drupal_valid_token($token)) {
+                $pageContext->setToken($token);
+            } else if (($token = $request->get(ContextManager::PARAM_SITE_TOKEN)) && drupal_valid_token($token)) {
+                $transContext->setToken($token);
             }
-            elseif (($token = $request->get('site_edit')) && drupal_valid_token($token)) {
-                $this->contextManager->getTransversalContext()->setToken($token);
-            }
-
-            $this->contextManager->getPageContext()->setCurrentLayoutNodeId((int) $matches[1]);
-
-            $site = $event->getSite();
-            $this->contextManager->getTransversalContext()->setCurrentLayoutNodeId($site->home_nid);
+            $pageContext->setCurrentLayoutNodeId((int)$matches[1]);
+            $transContext->setCurrentLayoutNodeId($site->home_nid);
         }
 
-        if (($token = $request->get('token')) && drupal_valid_token($token) && ($region = $request->get('region'))) {
-            $site = $event->getSite();
-
+        if (($token = $request->get(ContextManager::PARAM_AJAX_TOKEN)) && drupal_valid_token($token) && ($region = $request->get('region'))) {
             if ($this->contextManager->isPageContextRegion($region, $site->theme)) {
-                $this->contextManager->getPageContext()->setToken($token);
-            }
-            elseif ($this->contextManager->isTransversalContextRegion($region, $site->theme)) {
-                $this->contextManager->getTransversalContext()->setToken($token);
+                $pageContext->setToken($token);
+            } else if ($this->contextManager->isTransversalContextRegion($region, $site->theme)) {
+                $transContext->setToken($token);
             }
         }
     }
