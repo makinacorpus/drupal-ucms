@@ -415,7 +415,7 @@ class NodeAccessService
      */
     public function userCanPromoteToGroup(AccountInterface $account, NodeInterface $node)
     {
-        return ($node->is_group || $node->is_group) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+        return ($node->is_group || $node->is_global) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
     }
 
     /**
@@ -447,8 +447,7 @@ class NodeAccessService
                     $this
                         ->manager
                         ->getStorage()
-                        ->findOne($node->site_id),
-                    $account
+                        ->findOne($node->site_id)
                 )
             ;
         }
@@ -466,17 +465,22 @@ class NodeAccessService
      */
     public function userCanCopyOnEdit(AccountInterface $account, NodeInterface $node)
     {
-        if ($node->is_group) {
-            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
-        }
-
-        if ($node->is_global) {
-            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL);
+        if ($node->is_locked) {
+            return false;
         }
 
         if ($node->site_id) {
-            // Check that this content origins from a site that is not ours.
-            return !in_array($node->site_id, array_keys($this->manager->loadOwnSites($account)));
+            return $this
+                ->manager
+                ->getAccess()
+                ->userIsWebmaster(
+                    $account,
+                    $this
+                        ->manager
+                        ->getStorage()
+                        ->findOne($node->site_id)
+                )
+            ;
         }
 
         return false;

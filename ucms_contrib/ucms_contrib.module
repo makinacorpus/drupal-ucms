@@ -183,7 +183,7 @@ function ucms_contrib_menu() {
     'title'             => "Edit",
     'page callback'     => 'ucms_contrib_node_clone',
     'page arguments'    => [1],
-    'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit', // FIXME, it may not be enough
+    'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];

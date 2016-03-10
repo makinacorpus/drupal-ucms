@@ -256,6 +256,7 @@ final class SiteManager
     public function loadOwnSites(AccountInterface $account)
     {
         $roles = $this->getAccess()->getUserRoles($account);
+
         return $this->getStorage()->loadAll(array_keys($roles));
     }
 }

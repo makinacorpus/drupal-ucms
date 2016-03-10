@@ -171,9 +171,9 @@ function ucms_sso_write_token($origin, $destination = null) {
   $query = ['s' => $token];
   if ($destination) {
     $query['destination'] = $destination;
-  }
-  elseif(isset($_GET['destination'])) {
-    // Reuse destination
+  } else if(isset($_GET['destination'])) {
+    // Reuse destination that was given to us through the whole process, since
+    // it's probably where the user really wants to go in the end.
     $query['destination'] = $_GET['destination'];
   }
 

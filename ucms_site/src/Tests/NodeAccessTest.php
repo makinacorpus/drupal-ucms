@@ -321,7 +321,6 @@ class NodeAccessTest extends AbstractDrupalTest
         return $this;
     }
 
-
     protected function canCreate($label)
     {
         $site = $this->getSiteManager()
@@ -382,6 +381,78 @@ class NodeAccessTest extends AbstractDrupalTest
     protected function canCreateNone()
     {
         $this->canCreateOnly([]);
+
+        return $this;
+    }
+
+    protected function canDoReally($op, $label)
+    {
+        $node = $this->getNode($label);
+        $account = $this->contextualAccount;
+
+        switch ($op) {
+
+            case 'clone':
+                $success = $this->getNodeHelper()->userCanCopyOnEdit($account, $node);
+                break;
+
+            case 'lock':
+                $success = $this->getNodeHelper()->userCanLock($account, $node);
+                break;
+
+            case 'promote':
+                $success = $this->getNodeHelper()->userCanPromoteToGroup($account, $node);
+                break;
+
+            case 'reference':
+                $success = $this->getNodeHelper()->userCanReference($account, $node);
+                break;
+
+            default:
+                throw new \InvalidArgumentException("\$op can be only one of 'lock', 'clone', 'promote', 'reference'");
+        }
+
+        return $success;
+    }
+
+    protected function canDo($op, $label)
+    {
+        $site = $this->getSiteManager()->getContext();
+
+        $this->assertTrue($this->canDoReally($op, $label), sprintf("Can %s %s on site %s", $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+
+        return $this;
+    }
+
+    protected function canNotDo($op, $label)
+    {
+        $site = $this->getSiteManager()->getContext();
+
+        $this->assertFalse($this->canDoReally($op, $label), sprintf("Cannot %s %s on site %s", $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+
+        return $this;
+    }
+
+    protected function canDoOnly($op, $labelList)
+    {
+        if (!is_array($labelList)) {
+            $labelList = [$labelList];
+        }
+
+        foreach (array_keys($this->nodes) as $id) {
+            if (in_array($id, $labelList)) {
+                $this->canDo($op, $id);
+            } else {
+                $this->canNotDo($op, $id);
+            }
+        }
+
+        return $this;
+    }
+
+    protected function canDoNone($op)
+    {
+        $this->canDoOnly($op, []);
 
         return $this;
     }
@@ -457,6 +528,17 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->getOutSite()
                     ->canSeeAll()
                     ->canEditNone()
+                    // Please note, and this is IMPORTANT, that the canDo*
+                    // methods are not affected by the site context, because
+                    // the NodeAccessService won't use the context to check
+                    // those, either you can do stuff with that node, either
+                    // you cannot.
+                    // THIS IS TRUE FOR ALL OTHER TEST CASES. NO NEED TO REPEAT
+                    // THOSE TESTS IN EACH SITE CONTEXT, IT WONT CHANGE A THING!
+                    ->canDoNone('clone')
+                    ->canDoNone('lock')
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('off')
                     ->canSeeOnly([
@@ -508,6 +590,19 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_global_unpublished',
                     ])
                     ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
+                    ->canDoNone('clone')
+                    ->canDoOnly('lock', [
+                        'global_locked_published',
+                        'global_locked_unpublished',
+                        'global_published',
+                        'global_unpublished',
+                        'in_on_global_locked_published',
+                        'in_on_global_locked_unpublished',
+                        'in_on_global_published',
+                        'in_on_global_unpublished',
+                    ])
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -550,6 +645,36 @@ class NodeAccessTest extends AbstractDrupalTest
                         'in_on_group_unpublished',
                     ])
                     ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
+                    ->canDoNone('clone')
+                    ->canDoOnly('lock', [
+                        'group_locked_published',
+                        'group_locked_unpublished',
+                        'group_published',
+                        'group_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
+                    ])
+                    ->canDoOnly('promote', [
+                        'global_locked_published',
+                        'global_locked_unpublished',
+                        'global_published',
+                        'global_unpublished',
+                        'in_on_global_locked_published',
+                        'in_on_global_locked_unpublished',
+                        'in_on_global_published',
+                        'in_on_global_unpublished',
+                        'group_locked_published',
+                        'group_locked_unpublished',
+                        'group_published',
+                        'group_unpublished',
+                        'in_on_group_locked_published',
+                        'in_on_group_locked_unpublished',
+                        'in_on_group_published',
+                        'in_on_group_unpublished',
+                    ])
+                    //->canDoNone('reference')
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -579,6 +704,10 @@ class NodeAccessTest extends AbstractDrupalTest
                     ])
                     ->canEditNone()
                     ->canCreateNone()
+                    ->canDoNone('clone')
+                    ->canDoNone('lock')
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -608,6 +737,10 @@ class NodeAccessTest extends AbstractDrupalTest
                     ])
                     ->canEditNone()
                     ->canCreateNone()
+                    ->canDoNone('clone')
+                    ->canDoNone('lock')
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -654,6 +787,16 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_on_locked_unpublished',
                     ])
                     ->canCreateNone()
+                    // FIXME: I need some referenced nodes
+                    // ->canDoOnly('clone')
+                    ->canDoOnly('lock', [
+                        'site_on_published',
+                        'site_on_unpublished',
+                        'site_on_locked_published',
+                        'site_on_locked_unpublished',
+                    ])
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -695,6 +838,14 @@ class NodeAccessTest extends AbstractDrupalTest
                         'site_off_unpublished',
                     ])
                     ->canCreateNone()
+                    // FIXME: I need some referenced nodes
+                    // ->canDoOnly('clone')
+                    ->canDoOnly('lock', [
+                        'site_off_published',
+                        'site_off_unpublished',
+                    ])
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -728,6 +879,14 @@ class NodeAccessTest extends AbstractDrupalTest
                     ])
                     ->canEditNone()
                     ->canCreateNone()
+                    // FIXME: I need some referenced nodes
+                    // ->canDoOnly('clone')
+                    ->canDoOnly('lock', [
+                        'site_archive_published',
+                        'site_archive_unpublished',
+                    ])
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('archive')
                     ->canSeeOnly([
@@ -743,6 +902,13 @@ class NodeAccessTest extends AbstractDrupalTest
                     ->canSeeNone()
                     ->canEditNone()
                     ->canCreateNone()
+                    // FIXME: I need some referenced nodes
+                    // ->canDoOnly('clone')
+                    // FIXME: Node site target should be checked for
+                    // [init, off, on] states upon those methods
+                    // ->canDoNone('lock')
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('pending')
                     ->canSeeNone()
@@ -773,6 +939,10 @@ class NodeAccessTest extends AbstractDrupalTest
                     ])
                     ->canEditNone()
                     ->canCreateNone()
+                    ->canDoNone('clone')
+                    ->canDoNone('lock')
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('on')
                     ->canSeeOnly([
@@ -878,6 +1048,10 @@ class NodeAccessTest extends AbstractDrupalTest
                     ->canSeeNone()
                     ->canEditNone()
                     ->canCreateNone()
+                    ->canDoNone('clone')
+                    ->canDoNone('lock')
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('off')
                     ->canSeeNone()
@@ -907,6 +1081,10 @@ class NodeAccessTest extends AbstractDrupalTest
                     ->canSeeNone()
                     ->canEditNone()
                     ->canCreateNone()
+                    ->canDoNone('clone')
+                    ->canDoNone('lock')
+                    ->canDoNone('promote')
+                    //->canDoNone('reference')
 
                 ->inSite('off')
                     ->canSeeNone()

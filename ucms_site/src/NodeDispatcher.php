@@ -303,10 +303,13 @@ class NodeDispatcher
         if (!empty($node->site_id)) {
             $node->ucms_sites[] = $node->site_id;
             $node->is_global = 0;
+
         } else if (false !== $node->site_id) {
             if ($site = $this->manager->getContext()) {
+
                 $node->site_id = $site->id;
-                // This will happen in cas a node is cloned.
+
+                // This will happen in case a node is cloned.
                 if (!in_array($site->id, $node->ucms_sites)) {
                     $node->ucms_sites[] = $site->id;
                 }
