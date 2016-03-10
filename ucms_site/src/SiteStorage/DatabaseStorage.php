@@ -1,15 +1,16 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site;
+namespace MakinaCorpus\Ucms\Site\SiteStorage;
 
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\Site;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Site storage service
  */
-class SiteStorage
+class DatabaseStorage implements StorageInterface
 {
     /**
      * @var \DatabaseConnection
@@ -25,6 +26,7 @@ class SiteStorage
      * Default constructor
      *
      * @param \DatabaseConnection $db
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(\DatabaseConnection $db, EventDispatcherInterface $dispatcher = null)
     {
@@ -37,7 +39,7 @@ class SiteStorage
      *
      * @param Site $site
      */
-    public function prepareInstance(Site $site)
+    private function prepareInstance(Site $site)
     {
         $site->state = (int)$site->state;
 
@@ -55,13 +57,7 @@ class SiteStorage
     }
 
     /**
-     * Find by hostname
-     *
-     * @param string $hostname
-     * @param boolean $setAsContext
-     *
-     * @return Site
-     *   Site instance, or null if not found
+     * {@inheritdoc}
      */
     public function findByHostname($hostname)
     {
@@ -87,9 +83,7 @@ class SiteStorage
     }
 
     /**
-     * Find template sites
-     *
-     * @return Site[] $site
+     * {@inheritdoc}
      */
     public function findTemplates()
     {
@@ -97,13 +91,7 @@ class SiteStorage
     }
 
     /**
-     * Load site by identifier
-     *
-     * @param int $id
-     *
-     * @return Site
-     *
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function findOne($id)
     {
@@ -196,12 +184,7 @@ class SiteStorage
     }
 
     /**
-     * Load all sites from the given identifiers
-     *
-     * @param array $idList
-     * @param string $withAccess
-     *
-     * @return Site[]
+     * {@inheritdoc}
      */
     public function loadAll($idList = [], $withAccess = true)
     {
@@ -244,15 +227,7 @@ class SiteStorage
     }
 
     /**
-     * Save given site
-     *
-     * If the given site has no identifier, its identifier will be set
-     *
-     * @param Site $site
-     * @param array $fields
-     *   If set, update only the given fields
-     * @param int $userId
-     *   Who did this!
+     * {@inheritdoc}
      */
     public function save(Site $site, array $fields = null, $userId = null)
     {
@@ -315,11 +290,7 @@ class SiteStorage
     }
 
     /**
-     * Delete the given sites
-     *
-     * @param Site $site
-     * @param int $userId
-     *   Who did this!
+     * {@inheritdoc}
      */
     public function delete(Site $site, $userId = null)
     {
@@ -328,5 +299,12 @@ class SiteStorage
         $this->db->delete('ucms_site')->condition('id', $site->id)->execute();
 
         $this->dispatch($site, 'delete', [], $userId);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetCache()
+    {
     }
 }

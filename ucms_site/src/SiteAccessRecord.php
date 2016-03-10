@@ -33,6 +33,24 @@ class SiteAccessRecord
     private $role;
 
     /**
+     * Default constructor
+     *
+     * @param int $uid
+     * @param int $siteId
+     * @param int $role
+     * @param int $siteState
+     */
+    public function __construct($uid = null, $siteId = null, $role = null, $siteState = null)
+    {
+        if (null !== $uid) { // null means we are building this via PDO.
+            $this->uid = $uid;
+            $this->site_id = $siteId;
+            $this->role = $role;
+            $this->site_state = $siteState;
+        }
+    }
+
+    /**
      * Get user identifier
      *
      * @return int
@@ -59,7 +77,7 @@ class SiteAccessRecord
      */
     public function getSiteState()
     {
-        return (int)$this->site_state;
+        return null === $this->site_state ? null : (int)$this->site_state;
     }
 
     /**

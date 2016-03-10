@@ -40,7 +40,7 @@ class SiteRequest extends AbstractNotificationFormatter
     protected function getTitles($idList)
     {
         $ret = [];
-        foreach ($this->manager->getStorage()->loadAll($idList) as $site) {
+        foreach ($this->manager->getStorage()->loadAll($idList, false) as $site) {
             $ret[$site->id] = $site->title;
         }
         return $ret;

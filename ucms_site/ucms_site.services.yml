@@ -1,16 +1,36 @@
 services:
 
   # Site storage responsible for loading and updating site data
+  ucms_site.storage.database:
+    public: false
+    class: MakinaCorpus\Ucms\Site\SiteStorage\DatabaseStorage
+    arguments: ["@database", "@event_dispatcher"]
+  ucms_site.storage.redis:
+    public: false
+    class: MakinaCorpus\Ucms\Site\SiteStorage\RedisStorage
+    arguments: ["@redis.client.default", "@ucms_site.storage.database"]
   ucms_site.storage:
     public: false
-    class: MakinaCorpus\Ucms\Site\SiteStorage
-    arguments: ["@database", "@event_dispatcher"]
+    alias: ucms_site.storage.redis
 
   # Site access helper
+  # Note: 'database' remains a dependency for a single method that
+  # does stuff with Drupal roles
+  ucms_site.access.storage.database:
+    public: false
+    class: MakinaCorpus\Ucms\Site\AccessStorage\DatabaseStorage
+    arguments: ["@database"]
+  ucms_site.access.storage.redis:
+    public: false
+    class: MakinaCorpus\Ucms\Site\AccessStorage\RedisStorage
+    arguments: ["@redis.client.default", "@ucms_site.access.storage.database"]
+  ucms_site.access.storage:
+    alias: ucms_site.access.storage.redis
+
   ucms_site.access:
     public: false
     class: MakinaCorpus\Ucms\Site\SiteAccessService
-    arguments: ["@database"]
+    arguments: ["@ucms_site.access.storage", "@database"]
 
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:

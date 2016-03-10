@@ -4,6 +4,8 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Ucms\Site\SiteStorage\StorageInterface as SiteStorageInterface;
+
 /**
  * Facade for using both site storage and site access helpers, that will also
  * carry the site wide configuration; this means to reduce the number of
@@ -17,7 +19,7 @@ final class SiteManager
     private $access;
 
     /**
-     * @var SiteStorage
+     * @var SiteStorageInterface
      */
     private $storage;
 
@@ -34,10 +36,10 @@ final class SiteManager
     /**
      * Default constructor
      *
-     * @param SiteStorage $storage
+     * @param SiteStorageInterface $storage
      * @param SiteAccessService $access
      */
-    public function __construct(SiteStorage $storage, SiteAccessService $access, \DatabaseConnection $db)
+    public function __construct(SiteStorageInterface $storage, SiteAccessService $access, \DatabaseConnection $db)
     {
         $this->storage = $storage;
         $this->access = $access;
@@ -85,7 +87,7 @@ final class SiteManager
     /**
      * Get storage service
      *
-     * @return SiteStorage
+     * @return SiteStorageInterface
      */
     public function getStorage()
     {
@@ -223,6 +225,6 @@ final class SiteManager
             }
         }
 
-        return $this->getStorage()->loadAll(array_keys($roles));
+        return $this->getStorage()->loadAll(array_keys($roles), false);
     }
 }

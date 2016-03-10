@@ -4,11 +4,18 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Ucms\Site\AccessStorage\StorageInterface;
+
 /**
  * Handles site access
  */
 class SiteAccessService
 {
+    /**
+     * @var StorageInterface
+     */
+    private $storage;
+
     /**
      * @var \DatabaseConnection
      */
@@ -29,10 +36,12 @@ class SiteAccessService
     /**
      * Default constructor
      *
+     * @param StorageInterface $storage
      * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(StorageInterface $storage, \DatabaseConnection $db)
     {
+        $this->storage = $storage;
         $this->db = $db;
     }
 
@@ -49,28 +58,8 @@ class SiteAccessService
         $userId = $account->id();
 
         if (!isset($this->accessCache[$userId])) {
-            $r = $this
-                ->db
-                ->query(
-                    "
-                        SELECT
-                            a.uid, a.site_id, a.role, s.state AS site_state
-                        FROM {ucms_site_access} a
-                        JOIN {ucms_site} s
-                            ON s.id = a.site_id
-                        WHERE
-                            a.uid = :userId
-                    ",
-                    [':userId' => $userId]
-                )
-            ;
-
-            $r->setFetchMode(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\SiteAccessRecord');
-
-            // Can't use fetchAllAssoc() because properties are private on the
-            // objects built by PDO
             $this->accessCache[$userId] = [];
-            foreach ($r->fetchAll() as $record) {
+            foreach ($this->storage->getUserAccessRecords($account) as $record) {
                 $this->accessCache[$userId][$record->getSiteId()] = $record;
             }
         }
@@ -480,23 +469,7 @@ class SiteAccessService
      */
     private function mergeUsersWithRole(Site $site, $userIdList, $role)
     {
-        if (!is_array($userIdList) && !$userIdList instanceof \Traversable) {
-            $userIdList = [$userIdList];
-        }
-
-        foreach ($userIdList as $userId) {
-            // Could be better with a load before and a single bulk insert
-            // and a single bulk update, but right now let's go with simple,
-            $this
-                ->db
-                ->merge('ucms_site_access')
-                ->key(['site_id' => $site->id, 'uid' => $userId])
-                ->fields(['role' => $role])
-                ->execute()
-            ;
-            // Let any exception pass, any exception would mean garbage has
-            // been given to this method
-        }
+        $this->storage->mergeUsersWithRole($site, $userIdList, $role);
 
         $this->resetCache();
     }
@@ -513,18 +486,7 @@ class SiteAccessService
      */
     private function removeUsersWithRole(Site $site, $userIdList, $role = null)
     {
-        $q = $this
-            ->db
-            ->delete('ucms_site_access')
-            ->condition('site_id', $site->id)
-            ->condition('uid', $userIdList)
-        ;
-
-        if ($role) {
-            $q->condition('role', $role);
-        }
-
-        $q->execute();
+        $this->storage->removeUsersWithRole($site, $userIdList, $role);
 
         $this->resetCache();
     }
@@ -543,32 +505,7 @@ class SiteAccessService
      */
     public function listUsersWithRole(Site $site, $role = null, $limit = 100, $offset = 0)
     {
-        $q = $this
-            ->db
-            ->select('ucms_site_access', 'u')
-            ->fields('u')
-            ->condition('u.site_id', $site->id)
-        ;
-
-        // @todo
-        //  - should we add an added date in the access table?
-        //  - return a cursor instead ? with a count() method for paging
-
-        if ($role) {
-            $q->condition('u.role', $role);
-        }
-
-        /* @var $q \SelectQuery */
-        $r = $q
-            ->range($offset, $limit)
-            ->orderBy('u.uid')
-            ->execute()
-        ;
-
-        /* @var $r \PDOStatement */
-        $r->setFetchMode(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\SiteAccessRecord');
-
-        return $r->fetchAll();
+        return $this->storage->listUsersWithRole($site, $role, $limit, $offset);
     }
 
     /**
@@ -582,21 +519,7 @@ class SiteAccessService
      */
     public function countUsersWithRole(Site $site, $role = null)
     {
-        /* @var $q \SelectQuery */
-        $q = $this->db
-            ->select('ucms_site_access', 'u')
-            ->condition('u.site_id', $site->id);
-
-        if ($role) {
-            $q->condition('u.role', $role);
-        }
-
-        $q->addExpression('COUNT(*)');
-
-        /* @var $r \PDOStatement */
-        $r = $q->execute();
-
-        return $r->fetchField();
+        return $this->storage->countUsersWithRole($site, $role);
     }
 
     /**
