@@ -109,7 +109,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
 
         $sites = [];
-        foreach ($this->manager->loadWebmasterSites($this->account) as $site) {
+        foreach ($this->manager->loadOwnSites($this->account) as $site) {
             $sites[$site->getId()] = $site->title;
         }
 

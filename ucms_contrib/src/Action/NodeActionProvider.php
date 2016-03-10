@@ -2,16 +2,33 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\NodeAccessService;
 
 class NodeActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
+
+    /**
+     * @var NodeAccessService
+     */
+    private $access;
+    /**
+     * @var AccountInterface
+     */
+    private $account;
+
+    public function __construct(NodeAccessService $access, AccountInterface $account)
+    {
+        $this->access = $access;
+        $this->account = $account;
+    }
 
     /**
      * {inheritdoc}
@@ -24,7 +41,7 @@ class NodeActionProvider implements ActionProviderInterface
 
         $ret[] = new Action($this->t("View"), 'node/' . $item->id(), null, 'eye-open');
 
-        if ($item->access('update')) {
+        if ($item->access(Access::OP_UPDATE)) {
             $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/edit', null, 'pencil', -100, false, true);
             if ($item->status) {
                 $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', -50, false, true);
@@ -34,6 +51,15 @@ class NodeActionProvider implements ActionProviderInterface
             if (_node_revision_access($item)) {
                 $ret[] = new Action($this->t("Revisions"), 'node/' . $item->id() . '/revisions', null, 'th-list', -40, false);
             }
+        }
+
+        if ($this->access->userCanCopyOnEdit($this->account, $item)) {
+            // Edge case, we rewrite all options so that we don't add destination, it will be handled by the form.
+            $options = [
+                'attributes' => ['class' => ['use-ajax', 'minidialog']],
+                'query'      => ['minidialog'  => 1],
+            ];
+            $ret[] = new Action($this->t("Edit"), 'node/'.$item->id().'/copy-on-edit', $options, 'pencil', -100, false);
         }
 
         if ($item->is_global && user_access(Access::PERM_CONTENT_MANAGE_GROUP)) {

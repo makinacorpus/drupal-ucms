@@ -171,6 +171,22 @@ function ucms_contrib_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
+  $items['node/%node/copy-on-edit'] = [
+    'title'             => "Copy on site",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeCopyOnEdit', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['node/%node/clone'] = [
+    'title'             => "Edit",
+    'page callback'     => 'ucms_contrib_node_clone',
+    'page arguments'    => [1],
+    'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit', // FIXME, it may not be enough
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
   $items['node/%node/make-group'] = [
     'title'             => "Define as group content",
     'page callback'     => 'sf_dic_page_form',
@@ -243,6 +259,13 @@ function ucms_contrib_menu_node_access_star(NodeInterface $node) {
  */
 function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
   return ucms_site_node_access_helper()->userCanLock(\Drupal::currentUser(), $node);
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
+  return ucms_site_node_access_helper()->userCanCopyOnEdit(\Drupal::currentUser(), $node);
 }
 
 /**
@@ -569,4 +592,82 @@ function ucms_contrib_field_widget_unoderef_form_alter(&$element, &$form_state, 
   \Drupal::service('ucms_dashboard.context')
     ->addTab('cart', t("Cart"), 'shopping-cart')
     ->add(ucms_contrib_favorite_render(), 'cart');
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function ucms_contrib_node_insert($node) {
+  if (isset($node->cloning_from_original_nid)) {
+    // Menu path is handled by menu_node_insert().
+
+    // Update layout
+    db_update('ucms_layout')
+      ->fields(['nid' => $node->nid])
+      ->condition('site_id', $node->site_id)
+      ->condition('id', $node->clone_from_original_nid)
+      ->execute()
+    ;
+
+    // Dereference original node
+    db_delete('ucms_site_node')
+      ->condition('site_id', $node->site_id)
+      ->condition('id', $node->clone_from_original_nid)
+      ->execute()
+    ;
+  }
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function ucms_contrib_admin_paths() {
+  $paths = [
+    'node/*/clone' => TRUE,
+  ];
+  return $paths;
+}
+
+/**
+ * Clone form callback
+ *
+ * @param $originalNode
+ * @return array|mixed
+ */
+function ucms_contrib_node_clone($originalNode) {
+  global $user;
+
+  $node = clone $originalNode;
+
+  $node->nid = NULL;
+  $node->vid = NULL;
+  $node->tnid = NULL;
+  $node->log = NULL;
+
+  $node->name = isset($user->name) ? $user->name : NULL;
+  $node->uid = $user->uid;
+
+  $node->created = NULL;
+  $node->path = NULL;
+  $node->files = [];
+  // Add an extra property as a flag for form_alter.
+  $node->clone_from_original_nid = $originalNode->nid;
+
+  // Fill in the default values.
+  $node->status = 0;
+  $node->promote = 0;
+  $node->sticky = 0;
+  $node->revision = 1;
+
+  $node->site_id = NULL;
+  // Set the origin_id and parent_id.
+  $node->parent_nid = $originalNode->nid;
+  $node->origin_nid = $originalNode->nid;
+
+  // Make sure the file defining the node form is loaded.
+  $form_state = [];
+  $form_state['build_info']['args'] = [$node];
+  form_load_include($form_state, 'inc', 'node', 'node.pages');
+
+  return drupal_build_form($node->type . '_node_form', $form_state);
 }

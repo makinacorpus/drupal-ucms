@@ -172,6 +172,10 @@ function ucms_sso_write_token($origin, $destination = null) {
   if ($destination) {
     $query['destination'] = $destination;
   }
+  elseif(isset($_GET['destination'])) {
+    // Reuse destination
+    $query['destination'] = $_GET['destination'];
+  }
 
   return url(ucms_sso_scheme_get() . '://' . $origin . '/sso/login/', ['query' => $query, 'absolute' => true]);
 }
@@ -180,7 +184,10 @@ function ucms_sso_write_token($origin, $destination = null) {
  * Goto site forcing user to log in.
  */
 function ucms_sso_callback_goto(Site $site) {
-  drupal_goto(ucms_sso_write_token($site->http_host, '/'));
+  $url = ucms_sso_write_token($site->http_host);
+  // Thanks, we used you, now go.
+  unset($_GET['destination']);
+  drupal_goto($url);
 }
 
 /**

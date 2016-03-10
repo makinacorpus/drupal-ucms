@@ -124,8 +124,6 @@ class NodeDispatcher
             $clone->is_global = 0;
         }
 
-        $this->entityManager->getStorage('node')->save($node);
-
         return $clone;
     }
 
@@ -137,7 +135,7 @@ class NodeDispatcher
      *
      * @return Site[]
      */
-    public function findSiteCandidates(NodeInterface $node, $userId)
+    public function findSiteCandidatesForReference(NodeInterface $node, $userId)
     {
         $ne = $this
             ->db
@@ -151,6 +149,43 @@ class NodeDispatcher
             ->db
             ->select('ucms_site_access', 'sa')
             ->fields('sa', ['site_id'])
+            ->condition('sa.uid', $userId)
+            ->notExists($ne)
+            ->groupBy('sa.site_id')
+            ->execute()
+            ->fetchCol()
+        ;
+
+        return $this->manager->getStorage()->loadAll($idList);
+    }
+
+    /**
+     * Find candidate sites for cloning this node
+     *
+     * @param NodeInterface $node
+     * @param int $userId
+     *
+     * @return Site[]
+     */
+    public function findSiteCandidatesForCloning(NodeInterface $node, $userId)
+    {
+        // Find all node on sites taht originate from this node
+        $query = $this
+            ->db
+            ->select('ucms_site_node', 'sn');
+        $query->join('node', 'n', 'n.nid = sn.nid');
+        $ne = $query
+            ->where("sn.site_id = sa.site_id")
+            ->condition('n.origin_nid', $node->id())
+        ;
+        $ne->addExpression('1');
+
+        // That is not present in sites we have access
+        $idList = $this
+            ->db
+            ->select('ucms_site_access', 'sa')
+            ->fields('sa', ['site_id'])
+            ->condition('sa.uid', $userId)
             ->notExists($ne)
             ->groupBy('sa.site_id')
             ->execute()
@@ -271,7 +306,10 @@ class NodeDispatcher
         } else if (false !== $node->site_id) {
             if ($site = $this->manager->getContext()) {
                 $node->site_id = $site->id;
-                $node->ucms_sites[] = $site->id;
+                // This will happen in cas a node is cloned.
+                if (!in_array($site->id, $node->ucms_sites)) {
+                    $node->ucms_sites[] = $site->id;
+                }
                 $node->is_global = 0;
             } else {
                 $node->is_global = 1;

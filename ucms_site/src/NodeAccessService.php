@@ -175,7 +175,8 @@ class NodeAccessService
         // you change a site state, you would need to rebuild all its nodes grants
         // and this would not be tolerable.
         if (property_exists($node, 'ucms_sites') && !empty($node->ucms_sites)) {
-            foreach ($node->ucms_sites as $siteId) {
+            // Ensure uniquess.
+            foreach (array_unique($node->ucms_sites) as $siteId) {
 
                 // Grant that reprensents the node in the site for anonymous
                 // as long as it exists, not may show up anytime when the site
@@ -450,6 +451,32 @@ class NodeAccessService
                     $account
                 )
             ;
+        }
+
+        return false;
+    }
+
+    /**
+     * Can user copy this node
+     *
+     * @param AccountInterface $account
+     * @param NodeInterface $node
+     *
+     * @return boolean
+     */
+    public function userCanCopyOnEdit(AccountInterface $account, NodeInterface $node)
+    {
+        if ($node->is_group) {
+            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+        }
+
+        if ($node->is_global) {
+            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL);
+        }
+
+        if ($node->site_id) {
+            // Check that this content origins from a site that is not ours.
+            return !in_array($node->site_id, array_keys($this->manager->loadOwnSites($account)));
         }
 
         return false;

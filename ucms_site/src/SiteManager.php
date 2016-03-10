@@ -212,7 +212,7 @@ final class SiteManager
     /**
      * Load sites for which the user is webmaster
      *
-     * @param AccountInterface $userId
+     * @param AccountInterface $account
      *
      * @return Site[]
      */
@@ -226,6 +226,19 @@ final class SiteManager
             }
         }
 
+        return $this->getStorage()->loadAll(array_keys($roles));
+    }
+
+    /**
+     * Load sites for which the user is a part of
+     *
+     * @param AccountInterface $account
+     *
+     * @return Site[]
+     */
+    public function loadOwnSites(AccountInterface $account)
+    {
+        $roles = $this->getAccess()->getUserRoles($account);
         return $this->getStorage()->loadAll(array_keys($roles));
     }
 }
