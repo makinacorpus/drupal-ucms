@@ -25,7 +25,8 @@ class SiteSwitch extends FormBase
     {
         return new self(
             $container->get('ucms_site.manager'),
-            $container->get('event_dispatcher')
+            $container->get('event_dispatcher'),
+            $container->get('database')
         );
     }
 
@@ -40,15 +41,22 @@ class SiteSwitch extends FormBase
     private $dispatcher;
 
     /**
+     * @var \DatabaseConnection
+     */
+    private $db;
+
+    /**
      * Default constructor
      *
      * @param SiteManager $manager
      * @param EventDispatcherInterface $dispatcher
+     * @param \DatabaseConnection $db
      */
-    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher)
+    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher, \DatabaseConnection $db)
     {
         $this->manager = $manager;
         $this->dispatcher = $dispatcher;
+        $this->db = $db;
     }
 
     /**
