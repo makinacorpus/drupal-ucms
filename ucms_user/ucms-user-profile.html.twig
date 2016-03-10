@@ -4,12 +4,12 @@
       {{ picture }}
     </div>
     <div class="media-body">
-      <h1 class="media-heading">{{ account.name }}</h1>
-      <a href="mailto:{{ account.mail }}">{{ account.mail }}</a>
+      <h1 class="media-heading">{{ account.name|check_plain }}</h1>
+      <a href="mailto:{{ account.mail }}">{{ account.mail|check_plain }}</a>
     </div>
   </div>
 {% else %}
-  <h1 class="media-heading">{{ account.name }}</h1>
-  <a href="mailto:{{ account.mail }}">{{ account.mail }}</a>
+  <h1 class="media-heading">{{ account.name|check_plain }}</h1>
+  <a href="mailto:{{ account.mail }}">{{ account.mail|check_plain }}</a>
 {% endif %}
 {{ details_table }}
