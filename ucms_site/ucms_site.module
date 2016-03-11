@@ -11,6 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -552,6 +553,11 @@ function ucms_site_custom_theme() {
   if (!$site->theme) {
     return;
   }
+
+  // This hook is actually the only one being called just after the path
+  // initialization, and before any menu item is loaded, it's the right place
+  // for finishing up our initialization.
+  \Drupal::service('event_dispatcher')->dispatch('site:init', new SiteEvent($site));
 
   // Ensure the theme is enabled for security, Drupal won't do it for
   // you, you might experience surprises. There is sadly no shortcut

@@ -68,7 +68,11 @@ final class SiteManager
     public function setContext(Site $site)
     {
         $this->context = $site;
-        $this->dispatcher->dispatch('site:init', new SiteEvent($site));
+
+        // @todo
+        //   dispatch init has beeing delegated to hook_custom_theme()
+        //   see ucms_site_custom_theme() code documentation to know why
+        // $this->dispatcher->dispatch('site:init', new SiteEvent($site));
     }
 
     /**
