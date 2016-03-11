@@ -70,6 +70,7 @@ class MyAccountChangePassword extends FormBase
             //'#title' => $this->t('New password'),
             '#size' => 20,
             '#required' => true,
+            '#description' => $this->t("!count characters at least. Mix letters, digits and special characters for a better password.", ['!count' => UCMS_USER_PWD_MIN_LENGTH]),
         ];
 
         $form['actions'] = [
@@ -97,6 +98,12 @@ class MyAccountChangePassword extends FormBase
         if (!user_check_password($password, $account)) {
             $form_state->setErrorByName('current_password', $this->t("Your current password is incorrect."));
         }
+
+        $new_password = $form_state->getValue('new_password');
+        if (strlen($new_password) < UCMS_USER_PWD_MIN_LENGTH) {
+            $form_state->setErrorByName('new_password', $this->t("Your new password must contain !count characters at least.",  ['!count' => UCMS_USER_PWD_MIN_LENGTH]));
+        }
+
     }
 
 

@@ -10,6 +10,9 @@ use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\User\UserAccess;
 
 
+define('UCMS_USER_PWD_MIN_LENGTH', 8);
+
+
 /**
  * Implements hook_menu().
  */

@@ -132,6 +132,7 @@ class UserSetPassword extends FormBase
                     '#type' => 'password_confirm',
                     '#size' => 20,
                     '#required' => true,
+                    '#description' => $this->t("!count characters at least. Mix letters, digits and special characters for a better password.", ['!count' => UCMS_USER_PWD_MIN_LENGTH]),
                 ];
 
                 $form['actions'] = [
@@ -150,6 +151,25 @@ class UserSetPassword extends FormBase
         }
 
         return $form;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateForm(array &$form, FormStateInterface $form_state)
+    {
+        $password = $form_state->getValue('password');
+
+        if (strlen($password) < UCMS_USER_PWD_MIN_LENGTH) {
+            $form_state->setErrorByName('password', $this->t("Your password must contain at least !count characters.",  ['!count' => UCMS_USER_PWD_MIN_LENGTH]));
+        }
+
+        /* @var UserInterface $user */
+//        $user = $form_state->getTemporaryValue('user');
+//        if (user_check_password($password, $user)) {
+//            $form_state->setErrorByName('password', $this->t("Please choose a password different than the previous one."));
+//        }
     }
 
 
