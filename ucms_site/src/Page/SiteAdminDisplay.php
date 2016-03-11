@@ -44,7 +44,7 @@ class SiteAdminDisplay extends AbstractDisplay
                 check_plain($states[$site->state]),
                 format_interval(time() - $site->ts_created->getTimestamp()),
                 format_interval(time() - $site->ts_changed->getTimestamp()),
-                isset($accountMap[$site->uid]) ? format_username($accountMap[$site->uid]) : '',
+                isset($accountMap[$site->uid]) ? check_plain(format_username($accountMap[$site->uid])) : '',
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($site), 'mode' => 'icon']),
             ];
         }
