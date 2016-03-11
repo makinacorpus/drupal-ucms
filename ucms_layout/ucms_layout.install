@@ -93,6 +93,7 @@ function ucms_layout_schema() {
     'indexes' => [
       'ucms_layout_sort_idx' => ['layout_id', 'region', 'weight'],
     ],
+    'primary key' => ['layout_id', 'region', 'nid', 'weight'],
   ];
 
   $schema['cache_layout'] = drupal_get_schema_unprocessed('system', 'cache');
@@ -157,4 +158,13 @@ function ucms_layout_update_7002() {
   db_create_table('ucms_layout_data', drupal_get_schema_unprocessed('ucms_layout', 'ucms_layout_data'));
 
   ucms_layout_install_schema_fix();
+}
+
+/**
+ * Add primary key.
+ */
+function ucms_layout_update_7003() {
+  if (db_table_exists('ucms_layout_data')) {
+    db_query("ALTER TABLE {ucms_layout_data} ADD PRIMARY KEY (layout_id, region, nid, weight)");
+  }
 }
