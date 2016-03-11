@@ -9,12 +9,12 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 
 class ContextManager
 {
-    const NO_CONTEXT          = 0;
-    const PAGE_CONTEXT        = 1;
-    const TRANSVERSAL_CONTEXT = 2;
-    const PARAM_AJAX_TOKEN    = 'token';
-    const PARAM_PAGE_TOKEN    = 'edit';
-    const PARAM_SITE_TOKEN    = 'site_edit';
+    const CONTEXT_NONE      = 0;
+    const CONTEXT_PAGE      = 1;
+    const CONTEXT_SITE      = 2;
+    const PARAM_AJAX_TOKEN  = 'token';
+    const PARAM_PAGE_TOKEN  = 'edit';
+    const PARAM_SITE_TOKEN  = 'site_edit';
 
     /**
      * @var SiteManager $siteManager
@@ -62,7 +62,7 @@ class ContextManager
      *
      * @return Context
      */
-    public function getTransversalContext()
+    public function getSiteContext()
     {
         return $this->transversalContext;
     }
@@ -78,7 +78,7 @@ class ContextManager
     public function isPageContextRegion($region, $theme)
     {
         $regions = $this->getThemeRegionConfig($theme);
-        return (isset($regions[$region]) && ($regions[$region] === self::PAGE_CONTEXT));
+        return (isset($regions[$region]) && ($regions[$region] === self::CONTEXT_PAGE));
     }
 
     /**
@@ -92,7 +92,7 @@ class ContextManager
     public function isTransversalContextRegion($region, $theme)
     {
         $regions = $this->getThemeRegionConfig($theme);
-        return (isset($regions[$region]) && ($regions[$region] === self::TRANSVERSAL_CONTEXT));
+        return (isset($regions[$region]) && ($regions[$region] === self::CONTEXT_SITE));
     }
 
     /**
@@ -107,7 +107,7 @@ class ContextManager
         if ($site = $this->siteManager->getContext()) {
             return
                 ($this->getPageContext()->isTemporary() && $this->isPageContextRegion($region, $site->theme)) ||
-                ($this->getTransversalContext()->isTemporary() && $this->isTransversalContextRegion($region, $site->theme))
+                ($this->getSiteContext()->isTemporary() && $this->isTransversalContextRegion($region, $site->theme))
             ;
         }
         return false;
@@ -124,6 +124,23 @@ class ContextManager
     }
 
     /**
+     * Get the enabled regions of the given theme for the given context type
+     *
+     * @param string $theme
+     * @param int $contextType
+     *   One the ::CONTEXT_* constants of this class
+     */
+    public function getThemeRegionConfigFor($theme, $contextType)
+    {
+        return array_filter(
+            variable_get('ucms_layout_regions_' . $theme),
+            function ($value) use ($contextType) {
+                return $value == $contextType;
+            }
+        );
+    }
+
+    /**
      * Get the enabled regions of the given theme.
      *
      * @param string $theme Theme key
@@ -136,7 +153,7 @@ class ContextManager
 
         if (null === $regions) {
             $regions = array_keys(system_region_list($theme));
-            $regions = array_fill_keys($regions, self::PAGE_CONTEXT);
+            $regions = array_fill_keys($regions, self::CONTEXT_PAGE);
         }
 
         return array_map('intval', $regions);

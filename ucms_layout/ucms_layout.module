@@ -27,6 +27,7 @@ use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Layout\DrupalPageInjector;
 
 /**
  * Implements hook_menu().
@@ -155,10 +156,10 @@ function ucms_layout_temporary_load($id) {
       return $layout;
     }
   }
-  elseif ($contextManager->getTransversalContext()->isTemporary()) {
-    $layout = $contextManager->getTransversalContext()->getStorage()->load($id);
+  elseif ($contextManager->getSiteContext()->isTemporary()) {
+    $layout = $contextManager->getSiteContext()->getStorage()->load($id);
     if ($layout) {
-      $contextManager->getTransversalContext()->setCurrentLayout($layout);
+      $contextManager->getSiteContext()->setCurrentLayout($layout);
       return $layout;
     }
   }
@@ -194,89 +195,7 @@ function ucms_layout_page_build(&$page) {
     return;
   }
 
-  $manager = ucms_layout_context_manager();
-
-  $pageContext = $manager->getPageContext();
-  $transversalContext = $manager->getTransversalContext();
-
-  $pageLayout = $pageContext->getCurrentLayout();
-  $transversalLayout = $transversalContext->getCurrentLayout();
-
-  $pageEditMode = $pageContext->isTemporary();
-  $transversalEditMode = $transversalContext->isTemporary();
-
-  if (!($pageLayout instanceof Layout || $transversalLayout instanceof Layout)) {
-    return; // No layout on page.
-  }
-
-  if ($pageEditMode) {
-    drupal_add_js(['ucmsLayout' => [
-      'editToken' => $pageContext->getToken(),
-      'layoutId' => $pageLayout->getId(),
-    ]], 'setting');
-  }
-  elseif ($transversalEditMode) {
-    drupal_add_js(['ucmsLayout' => [
-      'editToken' => $transversalContext->getToken(),
-      'layoutId' => $transversalLayout->getId(),
-    ]], 'setting');
-  }
-
-  // This needs to be optimized drastically
-  foreach ($manager->getThemeRegionConfig($site->theme) as $regionId => $regionStatus) {
-
-    $items = [];
-    $regionEditMode = false;
-
-    if ($regionStatus == ContextManager::PAGE_CONTEXT) {
-      $region = $pageLayout->getRegion($regionId);
-      $regionEditMode = $pageEditMode;
-    }
-    elseif ($regionStatus == ContextManager::TRANSVERSAL_CONTEXT) {
-      $region = $transversalLayout->getRegion($regionId);
-      $regionEditMode = $transversalEditMode;
-    }
-    else {
-      continue;
-    }
-
-    // Preload all nodes for performance.
-    $nodeIdList = $region->getAllNodeIds();
-
-    if ($nodeIdList) {
-      $map = node_load_multiple($nodeIdList);
-
-      $map = array_filter($map, function (NodeInterface $node) {
-        return $node->access('view');
-      });
-
-      if (empty($map) && !$regionEditMode) {
-        continue;
-      }
-
-      /* @var $item Item */
-      foreach ($region as $item) {
-        $nid = $item->getNodeId();
-        if (isset($map[$nid])) {
-          $items[] = [
-            '#theme'      => 'ucms_layout_item',
-            '#nid'        => $item->getNodeId(),
-            '#node'       => $map[$nid],
-            '#view_mode'  => $item->getViewMode(),
-          ];
-        }
-      }
-    }
-
-    if ($regionEditMode && empty($items) && empty($page[$regionId])) {
-      // Trick block.module so that it's not "empty"
-      $items = ['#markup' => ''];
-    }
-
-    if ($items) {
-      $page[$regionId] = $items;
-    }
-  }
+  (new DrupalPageInjector(ucms_layout_context_manager(), \Drupal::service('entity.manager')))->inject($page, $site->getTheme());
 }
 
 /**

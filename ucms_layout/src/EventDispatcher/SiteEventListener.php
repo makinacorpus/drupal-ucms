@@ -61,7 +61,7 @@ class SiteEventListener
 
         $request      = $this->requestStack->getCurrentRequest();
         $pageContext  = $this->contextManager->getPageContext();
-        $transContext = $this->contextManager->getTransversalContext();
+        $transContext = $this->contextManager->getSiteContext();
         $site         = $event->getSite();
         $token        = null;
         $matches      = [];

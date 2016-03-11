@@ -69,11 +69,11 @@ class ThemeRegionsForm extends FormBase
                 '#type' => 'select',
                 '#title' => $label,
                 '#options' => [
-                    ContextManager::NO_CONTEXT => $this->t("Disabled"),
-                    ContextManager::PAGE_CONTEXT => $this->t("Page context"),
-                    ContextManager::TRANSVERSAL_CONTEXT => $this->t("Site context"),
+                    ContextManager::CONTEXT_NONE => $this->t("Disabled"),
+                    ContextManager::CONTEXT_PAGE => $this->t("Page context"),
+                    ContextManager::CONTEXT_SITE => $this->t("Site context"),
                 ],
-                '#default_value' => isset($enabled[$key]) ? $enabled[$key] : ContextManager::NO_CONTEXT,
+                '#default_value' => isset($enabled[$key]) ? $enabled[$key] : ContextManager::CONTEXT_NONE,
             ];
         }
 

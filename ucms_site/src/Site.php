@@ -89,6 +89,11 @@ class Site
         return $this->id;
     }
 
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
     public function getHomeNodeId()
     {
         return $this->home_nid;

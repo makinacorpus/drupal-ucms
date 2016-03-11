@@ -50,7 +50,7 @@ class LayoutContextEditForm extends FormBase
     public function buildForm(array $form, FormStateInterface $form_state)
     {
         $pageLayout = $this->manager->getPageContext()->getCurrentLayout();
-        $transversalLayout = $this->manager->getTransversalContext()->getCurrentLayout();
+        $transversalLayout = $this->manager->getSiteContext()->getCurrentLayout();
 
         if ($pageLayout instanceof Layout || $transversalLayout instanceof Layout) {
             $form['actions']['#type'] = 'actions';
@@ -67,7 +67,7 @@ class LayoutContextEditForm extends FormBase
                     '#submit' => ['::cancelSubmit']
                 ];
             }
-            elseif ($this->manager->getTransversalContext()->isTemporary()) {
+            elseif ($this->manager->getSiteContext()->isTemporary()) {
                 $form['actions']['save_site'] = [
                     '#type'   => 'submit',
                     '#value'  => $this->t("Save"),
@@ -157,8 +157,8 @@ class LayoutContextEditForm extends FormBase
      */
     public function saveTransversalSubmit(array &$form, FormStateInterface $form_state)
     {
-        if ($this->manager->getTransversalContext()->isTemporary()) {
-            $this->manager->getTransversalContext()->commit();
+        if ($this->manager->getSiteContext()->isTemporary()) {
+            $this->manager->getSiteContext()->commit();
 
             drupal_set_message(t("Changed have been saved"));
 
@@ -174,8 +174,8 @@ class LayoutContextEditForm extends FormBase
      */
     public function cancelTransversalSubmit(array &$form, FormStateInterface $form_state)
     {
-        if ($this->manager->getTransversalContext()->isTemporary()) {
-            $this->manager->getTransversalContext()->rollback();
+        if ($this->manager->getSiteContext()->isTemporary()) {
+            $this->manager->getSiteContext()->rollback();
 
             drupal_set_message(t("Changes have been dropped"), 'error');
 
@@ -191,15 +191,15 @@ class LayoutContextEditForm extends FormBase
      */
     public function editTransversalSubmit(array &$form, FormStateInterface $form_state)
     {
-        if (!$this->manager->getTransversalContext()->isTemporary()) {
+        if (!$this->manager->getSiteContext()->isTemporary()) {
 
             // @todo Generate a better token (random).
             $token  = drupal_get_token();
-            $layout = $this->manager->getTransversalContext()->getCurrentLayout();
-            $this->manager->getTransversalContext()->setToken($token);
+            $layout = $this->manager->getSiteContext()->getCurrentLayout();
+            $this->manager->getSiteContext()->setToken($token);
 
             // Saving the layout will force it be saved in the temporary storage.
-            $this->manager->getTransversalContext()->getStorage()->save($layout);
+            $this->manager->getSiteContext()->getStorage()->save($layout);
 
             $form_state->setRedirect(
                 current_path(),

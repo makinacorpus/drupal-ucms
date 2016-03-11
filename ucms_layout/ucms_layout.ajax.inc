@@ -63,7 +63,7 @@ function ucms_layout_ajax_region_item_add($layout) {
     $manager->getPageContext()->getStorage()->save($layout);
   }
   elseif ($manager->isTransversalContextRegion($query['region'], $site->theme)) {
-    $manager->getTransversalContext()->getStorage()->save($layout);
+    $manager->getSiteContext()->getStorage()->save($layout);
   }
   else {
     return MENU_ACCESS_DENIED;
@@ -116,7 +116,7 @@ function ucms_layout_ajax_region_item_remove($layout) {
     $manager->getPageContext()->getStorage()->save($layout);
   }
   elseif ($manager->isTransversalContextRegion($query['region'], $site->theme)) {
-    $manager->getTransversalContext()->getStorage()->save($layout);
+    $manager->getSiteContext()->getStorage()->save($layout);
   }
   else {
     return MENU_ACCESS_DENIED;
@@ -185,7 +185,7 @@ function ucms_layout_ajax_region_item_move($layout) {
     $manager->getPageContext()->getStorage()->save($layout);
   }
   elseif ($manager->isTransversalContextRegion($query['region'], $site->theme)) {
-    $manager->getTransversalContext()->getStorage()->save($layout);
+    $manager->getSiteContext()->getStorage()->save($layout);
   }
   else {
     return MENU_ACCESS_DENIED;
