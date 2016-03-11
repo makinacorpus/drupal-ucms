@@ -67,7 +67,8 @@ function ucms_notification_user_login(&$edit, $account) {
  * Implements hook_user_update().
  */
 function ucms_notification_user_update(&$edit, $account, $category) {
-  if ($account->original && array_intersect_key($account->roles, $account->original->roles)) {
+  // This is called late at install, so filter out superadmin.
+  if ($account->uid > 1 && $account->original && array_intersect_key($account->roles, $account->original->roles)) {
     ucms_notification_service()->refreshSubscriptionsFor($account->uid);
   }
 }
