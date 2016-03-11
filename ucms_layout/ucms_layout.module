@@ -13,9 +13,7 @@
  *   - better AJAX/REST requests handling
  *   - more detailed data structure (options, status)
  *   - alteration for access checks
- *   - preview mode (display unauthorized or unpublished content)
  *   - non AJAX edit forms for accessibility
- *   - regions filtering (per-theme global configuration) and checks
  *   - unit testing (sorry should have done that earlier).
  */
 
@@ -131,7 +129,7 @@ function ucms_layout_access($op, Layout $layout) {
   $siteManager = ucms_site_manager();
 
   $site = $siteManager->getStorage()->findOne($layout->getSiteId());
-  // @todo fix should be a permission like canUpdateLayout()
+
   return $siteManager->getAccess()->userIsWebmaster($currentUser, $site);
 }
 
@@ -210,10 +208,6 @@ function ucms_layout_preprocess_region(&$vars) {
   }
 
   // Lookup for all blocks, if these are only ucms empty block, add class
-  // @todo Remove handling of blocks, the module is no longer used
-//  if (!empty($vars['elements']['#type'])) {
-//    $vars['classes_array'][] = 'ucms-layout-empty-block';
-//  }
   if (!element_children($vars['elements'])) {
     $vars['classes_array'][] = 'ucms-layout-empty-region';
   }

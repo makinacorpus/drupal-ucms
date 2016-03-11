@@ -262,19 +262,21 @@ class NodeAccessService
      */
     public function getUserGrants(AccountInterface $account, $op)
     {
-        if (isset($this->userGrantCache[$account->uid][$op])) {
-            return $this->userGrantCache[$account->uid][$op];
+        $userId = $account->id();
+
+        if (isset($this->userGrantCache[$userId][$op])) {
+            return $this->userGrantCache[$userId][$op];
         }
 
         $ret = [];
 
         // This should always be true anyway.
         if (($site = $this->manager->getContext()) && SiteState::ON === $site->state) {
-            return [self::REALM_PUBLIC => [$site->getId()]];
+            $ret[self::REALM_PUBLIC] = [$site->getId()];
         }
 
         // Shortcut for anonymous users, or users with no specific roles
-        if (!$account->id()) {
+        if ($account->isAnonymous()) {
             return $ret;
         }
 
@@ -490,7 +492,7 @@ class NodeAccessService
      */
     public function userCanCopyOnEdit(AccountInterface $account, NodeInterface $node)
     {
-        if ($node->is_locked) {
+        if (!$node->is_clonable) {
             return false;
         }
 

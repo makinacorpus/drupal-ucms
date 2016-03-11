@@ -46,11 +46,9 @@ function ucms_layout_ajax_region_item_add($layout) {
   if (!$node = node_load($query['nid'])) {
     return MENU_NOT_FOUND;
   }
-// @todo temporary deactivating it because in site context users can't
-// see global content
-//   if (!$node->access('view')) {
-//     return MENU_ACCESS_DENIED;
-//   }
+  if (!$node->access('view')) {
+    return MENU_ACCESS_DENIED;
+  }
   if (empty($query['view_mode'])) {
     $query['view_mode'] = 'teaser';
   }
