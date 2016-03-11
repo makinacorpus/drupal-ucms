@@ -96,7 +96,7 @@
           }
           else {
             // Remove from region
-            $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
+            $.post(settings.basePath + 'ajax/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
               region: $(ui.draggable.originRegion).data('region'),
               position: ui.draggable.startPos,
               token: settings.ucmsLayout.editToken
@@ -181,7 +181,7 @@
 
           if (ui.sender && ui.sender.data('region')) {
             // Move from previous region if there is a sender
-            $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
+            $.post(settings.basePath + 'ajax/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
               region: $(this).data('region'),
               prevRegion: ui.sender.data('region'),
               nid: ui.item.data('nid'),
@@ -195,7 +195,7 @@
           }
           else {
             // Add to region from cart
-            $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/add', {
+            $.post(settings.basePath + 'ajax/ucms/layout/' + settings.ucmsLayout.layoutId + '/add', {
               region: $(this).data('region'),
               nid: ui.item.data('nid'),
               position: position, // Don't ask me why
@@ -224,7 +224,7 @@
             return;
           }
           // Add the new element to the layout
-          $.post(settings.basePath + 'admin/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
+          $.post(settings.basePath + 'ajax/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
             region: $(this).data('region'),
             nid: ui.item.data('nid'),
             prevPosition: ui.item.startPos,

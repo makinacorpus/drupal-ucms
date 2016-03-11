@@ -508,7 +508,7 @@ function ucms_site_init() {
   if ($manager->hasContext()) {
     // We avoid redirections on dashboard in case of POST requests
     // to allow layout management requests (AJAX)
-    if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8)  && path_is_admin(current_path())) {// && 'POST' !== $_SERVER['REQUEST_METHOD']) {
+    if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8) && path_is_admin(current_path())) {// && 'POST' !== $_SERVER['REQUEST_METHOD']) {
 //      if (user_is_logged_in()) {
 //        // Logged-in users should not 403 on sites, but go to dashboard instead.
 //        ucms_site_redirect_to_master();

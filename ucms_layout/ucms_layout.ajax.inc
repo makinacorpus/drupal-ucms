@@ -17,7 +17,7 @@ use MakinaCorpus\Ucms\Layout\Layout;
  * @return int
  */
 function ucms_layout_ajax_region_item_add($layout) {
-  
+
   if ('POST' !== $_SERVER['REQUEST_METHOD']) {
     return MENU_NOT_FOUND;
   }
@@ -46,9 +46,11 @@ function ucms_layout_ajax_region_item_add($layout) {
   if (!$node = node_load($query['nid'])) {
     return MENU_NOT_FOUND;
   }
-  if (!$node->access('view')) {
-    return MENU_ACCESS_DENIED;
-  }
+// @todo temporary deactivating it because in site context users can't
+// see global content
+//   if (!$node->access('view')) {
+//     return MENU_ACCESS_DENIED;
+//   }
   if (empty($query['view_mode'])) {
     $query['view_mode'] = 'teaser';
   }

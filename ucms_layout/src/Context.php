@@ -118,12 +118,7 @@ class Context
     public function getCurrentLayout()
     {
         if (!$this->layout && $this->layoutNodeId) {
-            $this->layout = $this
-                ->getStorage()
-                ->findForNodeOnSite(
-                    $this->layoutNodeId, $this->layoutSiteId
-                )
-            ;
+            $this->layout = $this->getStorage()->findForNodeOnSite($this->layoutNodeId, $this->layoutSiteId, true);
         }
 
         return $this->layout;
