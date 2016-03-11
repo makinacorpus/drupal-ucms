@@ -19,15 +19,14 @@
  *   - unit testing (sorry should have done that earlier).
  */
 
-use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\Layout\Context;
 use MakinaCorpus\Ucms\Layout\ContextManager;
+use MakinaCorpus\Ucms\Layout\DrupalPageInjector;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\SiteManager;
-use MakinaCorpus\Ucms\Layout\DrupalPageInjector;
 
 /**
  * Implements hook_menu().
