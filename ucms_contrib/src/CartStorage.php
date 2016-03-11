@@ -96,7 +96,8 @@ class CartStorage
         return $q
             //->extend('PagerDefault')
             //->limit(12)
-            ->addTag('node_access')
+            // @todo Restore me!
+            //->addTag('node_access')
             ->addTag(Access::QUERY_TAG_CONTEXT_OPT_OUT)
             ->execute()
             ->fetchCol()
