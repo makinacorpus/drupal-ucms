@@ -27,9 +27,9 @@ class NodeAccessService
     const REALM_READONLY = 'ucms_site_ro';
 
     /**
-     * Grants for content owner in local repositories
+     * Grants for other sites
      */
-    const REALM_SITE_SELF = 'ucms_site_self';
+    const REALM_OTHER = 'ucms_site_other';
 
     /**
      * Grants for people accessing the dashboard
@@ -117,6 +117,7 @@ class NodeAccessService
         // This is where it gets complicated.
         $isGlobal   = $node->is_global;
         $isGroup    = $node->is_group;
+        $isNotLocal = $isGlobal || $isGroup;
 
         // People with "view all" permissions should view it
         $ret[] = [
@@ -168,6 +169,24 @@ class NodeAccessService
             ];
         }
 
+        // This allows other webmasters to see other site content, but please
+        // beware that it drops out the site's state from the equation, there
+        // is no easy way of doing this except by rewriting all site content
+        // node access rights on each site status change, and that's sadly a
+        // no-go.
+        if (!$isNotLocal) {
+            if ($node->status) {
+                $ret[] = [
+                    'realm'         => self::REALM_OTHER,
+                    'gid'           => self::GID_DEFAULT,
+                    'grant_view'    => 1,
+                    'grant_update'  => 0,
+                    'grant_delete'  => 0,
+                    'priority'      => self::PRIORITY_DEFAULT,
+                ];
+            }
+        }
+
         // Inject an entry for each site, even when the node is a global node, this
         // will tell the Drupal API system if the node is visible or not inside a
         // local site. Please note that we will never add the site state as a node
@@ -175,43 +194,63 @@ class NodeAccessService
         // you change a site state, you would need to rebuild all its nodes grants
         // and this would not be tolerable.
         if (property_exists($node, 'ucms_sites') && !empty($node->ucms_sites)) {
-            // Ensure uniquess.
             foreach (array_unique($node->ucms_sites) as $siteId) {
 
                 // Grant that reprensents the node in the site for anonymous
                 // as long as it exists, not may show up anytime when the site
                 // state is on
-                $ret[] = [
-                    'realm'         => self::REALM_PUBLIC,
-                    'gid'           => $siteId,
-                    'grant_view'    => $node->status,
-                    'grant_update'  => 0,
-                    'grant_delete'  => 0,
-                    'priority'      => self::PRIORITY_DEFAULT,
-                ];
+                if ($node->status) {
+                    $ret[] = [
+                        'realm'         => self::REALM_PUBLIC,
+                        'gid'           => $siteId,
+                        'grant_view'    => 1,
+                        'grant_update'  => 0,
+                        'grant_delete'  => 0,
+                        'priority'      => self::PRIORITY_DEFAULT,
+                    ];
+                }
 
                 // This grand allows multiple business use cases:
                 //   - user is a global administrator and can see everything
                 //   - user is a contributor on a specific site
                 //   - user is a webmaster on a readonly site
-                $ret[] = [
-                    'realm'         => self::REALM_READONLY,
-                    'gid'           => $siteId,
-                    'grant_view'    => 1,
-                    'grant_update'  => 0,
-                    'grant_delete'  => 0,
-                    'priority'      => self::PRIORITY_DEFAULT,
-                ];
-
-                // Grant that reprensents the node in the site for webmasters
-                $ret[] = [
-                    'realm'         => self::REALM_WEBMASTER,
-                    'gid'           => $siteId,
-                    'grant_view'    => 1,
-                    'grant_update'  => (int)(!$isGlobal && !$isGroup && $siteId === $node->site_id),
-                    'grant_delete'  => (int)(!$isGlobal && !$isGroup && $siteId === $node->site_id),
-                    'priority'      => self::PRIORITY_DEFAULT,
-                ];
+                if ($isNotLocal) {
+                    if ($node->status) {
+                        $ret[] = [
+                            'realm'         => self::REALM_READONLY,
+                            'gid'           => $siteId,
+                            'grant_view'    => 1,
+                            'grant_update'  => 0,
+                            'grant_delete'  => 0,
+                            'priority'      => self::PRIORITY_DEFAULT,
+                        ];
+                        $ret[] = [
+                            'realm'         => self::REALM_WEBMASTER,
+                            'gid'           => $siteId,
+                            'grant_view'    => 1,
+                            'grant_update'  => 0,
+                            'grant_delete'  => 0,
+                            'priority'      => self::PRIORITY_DEFAULT,
+                        ];
+                    }
+                } else  {
+                    $ret[] = [
+                        'realm'         => self::REALM_READONLY,
+                        'gid'           => $siteId,
+                        'grant_view'    => 1,
+                        'grant_update'  => 0,
+                        'grant_delete'  => 0,
+                        'priority'      => self::PRIORITY_DEFAULT,
+                    ];
+                    $ret[] = [
+                        'realm'         => self::REALM_WEBMASTER,
+                        'gid'           => $siteId,
+                        'grant_view'    => 1,
+                        'grant_update'  => $siteId === $node->site_id ? 1 : 0,
+                        'grant_delete'  => $siteId === $node->site_id ? 1 : 0,
+                        'priority'      => self::PRIORITY_DEFAULT,
+                    ];
+                }
             }
         }
 
@@ -227,80 +266,60 @@ class NodeAccessService
             return $this->userGrantCache[$account->uid][$op];
         }
 
-        $ret  = [];
-        $access = $this->manager->getAccess();
-        $site   = $this->manager->getContext();
+        $ret = [];
 
-        if ($site) {
+        // This should always be true anyway.
+        if (($site = $this->manager->getContext()) && SiteState::ON === $site->state) {
+            return [self::REALM_PUBLIC => [$site->getId()]];
+        }
 
-            if (SiteState::ON == $site->state) {
-                // We are in a site context, user access rights must be tied to
-                // this site, and everything global must be dropped from access
-                // checks, thus ensuring sites isolation
-                $ret[self::REALM_PUBLIC] = [$site->id];
-            }
+        // Shortcut for anonymous users, or users with no specific roles
+        if (!$account->id()) {
+            return $ret;
+        }
 
-            // User can manager includes webmasters, so we're good to go
-            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
-                $ret[self::REALM_READONLY] = [$site->id];
-            }
+        if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
+            $ret[self::REALM_GLOBAL] = [self::GID_DEFAULT];
+        }
+        if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
+            $ret[self::REALM_GROUP] = [self::GID_DEFAULT];
+        }
 
-            if ($access->userCanView($account, $site)) {
-                if ($access->userIsWebmaster($account, $site)) {
-                    // Special case for archive, user might see but not edit
-                    if (SiteState::ARCHIVE == $site->state) {
-                        $ret[self::REALM_READONLY] = [$site->id];
-                    } else {
-                        $ret[self::REALM_WEBMASTER] = [$site->id];
-                    }
-                } else if ($access->userIsContributor($account, $site)) {
-                    $ret[self::REALM_READONLY] = [$site->id];
-                }
-            }
-
+        if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
+            $ret[self::REALM_READONLY] = [self::GID_DEFAULT];
         } else {
-
-            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
-                $ret[self::REALM_GLOBAL] = [self::GID_DEFAULT];
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
+                $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
             }
-            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
-                $ret[self::REALM_GROUP] = [self::GID_DEFAULT];
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
+                $ret[self::REALM_GROUP_VIEW] = [self::GID_DEFAULT];
             }
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
+                $ret[self::REALM_OTHER] = [self::GID_DEFAULT];
+            }
+        }
 
-            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
-                $ret[self::REALM_READONLY] = [self::GID_DEFAULT];
+        $grants = $this->manager->getAccess()->getUserRoles($account);
+
+        foreach ($grants as $grant) {
+            $siteId = $grant->getSiteId();
+            if (Access::ROLE_WEBMASTER == $grant->getRole()) {
+                switch ($grant->getSiteState()) {
+                    case SiteState::ON:
+                    case SiteState::OFF:
+                    case SiteState::INIT:
+                        $ret[self::REALM_WEBMASTER][] = $siteId;
+                        break;
+                    case SiteState::ARCHIVE:
+                        $ret[self::REALM_READONLY][] = $siteId;
+                        break;
+                }
             } else {
-                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
-                    $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
-                }
-                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
-                    $ret[self::REALM_GROUP_VIEW] = [self::GID_DEFAULT];
-                }
-            }
-
-            $grants = $this->manager->getAccess()->getUserRoles($account);
-
-            // Preload all sites
-            $siteIdList = [];
-            foreach ($grants as $grant) {
-                $siteIdList[] = $grant->getSiteId();
-            }
-            $sites = $this->manager->getStorage()->loadAll($siteIdList, false);
-
-            foreach ($grants as $grant) {
-                $siteId = $grant->getSiteId();
-                if ($site = $sites[$siteId]) {
-                    if ($access->userCanView($account, $site)) {
-                        if (Access::ROLE_WEBMASTER == $grant->getRole()) {
-                            if (SiteState::ARCHIVE === $site->state) {
-                                $ret[self::REALM_READONLY][] = $siteId;
-                            } else {
-                                $ret[self::REALM_WEBMASTER][] = $siteId;
-                            }
-                        } else {
-                            $ret[self::REALM_READONLY][] = $siteId;
-                        }
-                    }
+                switch ($grant->getSiteState()) {
+                    case SiteState::ON:
+                    case SiteState::OFF:
+                        $ret[self::REALM_READONLY][] = $siteId;
+                        break;
                 }
             }
         }
@@ -356,9 +375,15 @@ class NodeAccessService
             return NODE_ACCESS_DENY;
         }
 
-        $grants   = $this->getUserGrants($account, $op);
-        $records  = $this->getNodeGrants($node);
-        $prop     = 'grant_' . $op;
+        $grants = $this->getUserGrants($account, $op);
+
+        // Simple shortcut, if you have no roles, just get out.
+        if (empty($grants)) {
+            return NODE_ACCESS_DENY;
+        }
+
+        $records = $this->getNodeGrants($node);
+        $prop = 'grant_' . $op;
 
         foreach ($records as $record) {
 

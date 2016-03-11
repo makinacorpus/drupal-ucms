@@ -13,6 +13,7 @@ use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
+use function WebDriver\accept_alert;
 
 /**
  * @todo
@@ -172,22 +173,6 @@ class NodeAccessTest extends AbstractDrupalTest
         return $this;
     }
 
-    protected function inSite($label)
-    {
-        $this->getSiteManager()->setContext($this->getSite($label));
-        $this->getNodeHelper()->resetCache();
-
-        return $this;
-    }
-
-    protected function getOutSite()
-    {
-        $this->getSiteManager()->dropContext();
-        $this->getNodeHelper()->resetCache();
-
-        return $this;
-    }
-
     protected function canSee($label)
     {
         $this
@@ -323,8 +308,8 @@ class NodeAccessTest extends AbstractDrupalTest
 
     protected function canCreate($label)
     {
-        $site = $this->getSiteManager()
-                     ->getContext();
+        $site = $this->getSiteManager()->getContext();
+
         $this
             ->assertSame(
                 NODE_ACCESS_ALLOW,
@@ -336,15 +321,16 @@ class NodeAccessTest extends AbstractDrupalTest
                         Access::OP_CREATE
                     ),
                 sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
-            );
+            )
+        ;
 
         return $this;
     }
 
     protected function canNotCreate($label)
     {
-        $site = $this->getSiteManager()
-                     ->getContext();
+        $site = $this->getSiteManager()->getContext();
+
         $this
             ->assertSame(
                 NODE_ACCESS_DENY,
@@ -356,7 +342,8 @@ class NodeAccessTest extends AbstractDrupalTest
                         Access::OP_CREATE
                     ),
                 sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>' )
-            );
+            )
+        ;
 
         return $this;
     }
@@ -525,239 +512,140 @@ class NodeAccessTest extends AbstractDrupalTest
         $this
             ->whenIAm([Access::PERM_CONTENT_VIEW_ALL])
 
-                ->getOutSite()
-                    ->canSeeAll()
-                    ->canEditNone()
-                    // Please note, and this is IMPORTANT, that the canDo*
-                    // methods are not affected by the site context, because
-                    // the NodeAccessService won't use the context to check
-                    // those, either you can do stuff with that node, either
-                    // you cannot.
-                    // THIS IS TRUE FOR ALL OTHER TEST CASES. NO NEED TO REPEAT
-                    // THOSE TESTS IN EACH SITE CONTEXT, IT WONT CHANGE A THING!
-                    ->canDoNone('clone')
-                    ->canDoNone('lock')
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('off')
-                    ->canSeeOnly([
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeAll()
+                ->canEditNone()
+                // Please note, and this is IMPORTANT, that the canDo*
+                // methods are not affected by the site context, because
+                // the NodeAccessService won't use the context to check
+                // those, either you can do stuff with that node, either
+                // you cannot.
+                // THIS IS TRUE FOR ALL OTHER TEST CASES. NO NEED TO REPEAT
+                // THOSE TESTS IN EACH SITE CONTEXT, IT WONT CHANGE A THING!
+                ->canDoNone('clone')
+                ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
 
             ->whenIAm([Access::PERM_CONTENT_MANAGE_GLOBAL])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'global_locked_published',
-                        'global_locked_unpublished',
-                        'global_published',
-                        'global_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                    ])
-                    ->canEditOnly([
-                        'global_locked_published',
-                        'global_locked_unpublished',
-                        'global_published',
-                        'global_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                    ])
-                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
-                    ->canDoNone('clone')
-                    ->canDoOnly('lock', [
-                        'global_locked_published',
-                        'global_locked_unpublished',
-                        'global_published',
-                        'global_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                    ])
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'global_locked_published',
+                    'global_locked_unpublished',
+                    'global_published',
+                    'global_unpublished',
+                    'in_on_global_locked_published',
+                    'in_on_global_locked_unpublished',
+                    'in_on_global_published',
+                    'in_on_global_unpublished',
+                ])
+                ->canEditOnly([
+                    'global_locked_published',
+                    'global_locked_unpublished',
+                    'global_published',
+                    'global_unpublished',
+                    'in_on_global_locked_published',
+                    'in_on_global_locked_unpublished',
+                    'in_on_global_published',
+                    'in_on_global_unpublished',
+                ])
+                ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
+                ->canDoNone('clone')
+                ->canDoOnly('lock', [
+                    'global_locked_published',
+                    'global_locked_unpublished',
+                    'global_published',
+                    'global_unpublished',
+                    'in_on_global_locked_published',
+                    'in_on_global_locked_unpublished',
+                    'in_on_global_published',
+                    'in_on_global_unpublished',
+                ])
+                ->canDoNone('promote')
+                //->canDoNone('reference')
 
            ->whenIAm([Access::PERM_CONTENT_MANAGE_GROUP])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'group_locked_published',
-                        'group_locked_unpublished',
-                        'group_published',
-                        'group_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canEditOnly([
-                        'group_locked_published',
-                        'group_locked_unpublished',
-                        'group_published',
-                        'group_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
-                    ->canDoNone('clone')
-                    ->canDoOnly('lock', [
-                        'group_locked_published',
-                        'group_locked_unpublished',
-                        'group_published',
-                        'group_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canDoOnly('promote', [
-                        'global_locked_published',
-                        'global_locked_unpublished',
-                        'global_published',
-                        'global_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                        'group_locked_published',
-                        'group_locked_unpublished',
-                        'group_published',
-                        'group_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    //->canDoNone('reference')
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'group_locked_published',
+                    'group_locked_unpublished',
+                    'group_published',
+                    'group_unpublished',
+                    'in_on_group_locked_published',
+                    'in_on_group_locked_unpublished',
+                    'in_on_group_published',
+                    'in_on_group_unpublished',
+                ])
+                ->canEditOnly([
+                    'group_locked_published',
+                    'group_locked_unpublished',
+                    'group_published',
+                    'group_unpublished',
+                    'in_on_group_locked_published',
+                    'in_on_group_locked_unpublished',
+                    'in_on_group_published',
+                    'in_on_group_unpublished',
+                ])
+                ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
+                ->canDoNone('clone')
+                ->canDoOnly('lock', [
+                    'group_locked_published',
+                    'group_locked_unpublished',
+                    'group_published',
+                    'group_unpublished',
+                    'in_on_group_locked_published',
+                    'in_on_group_locked_unpublished',
+                    'in_on_group_published',
+                    'in_on_group_unpublished',
+                ])
+                ->canDoOnly('promote', [
+                    'global_locked_published',
+                    'global_locked_unpublished',
+                    'global_published',
+                    'global_unpublished',
+                    'in_on_global_locked_published',
+                    'in_on_global_locked_unpublished',
+                    'in_on_global_published',
+                    'in_on_global_unpublished',
+                    'group_locked_published',
+                    'group_locked_unpublished',
+                    'group_published',
+                    'group_unpublished',
+                    'in_on_group_locked_published',
+                    'in_on_group_locked_unpublished',
+                    'in_on_group_published',
+                    'in_on_group_unpublished',
+                ])
+                //->canDoNone('reference')
 
             ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'global_locked_published',
-                        'global_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-                    ->canDoNone('clone')
-                    ->canDoNone('lock')
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'global_locked_published',
+                    'global_published',
+                    'in_on_global_locked_published',
+                    'in_on_global_published',
+                ])
+                ->canEditNone()
+                ->canCreateNone()
+                ->canDoNone('clone')
+                ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
 
             ->whenIAm([Access::PERM_CONTENT_VIEW_GROUP])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'group_locked_published',
-                        'group_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-                    ->canDoNone('clone')
-                    ->canDoNone('lock')
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'group_locked_published',
+                    'group_published',
+                    'in_on_group_locked_published',
+                    'in_on_group_published',
+                ])
+                ->canEditNone()
+                ->canCreateNone()
+                ->canDoNone('clone')
+                ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
         ;
     }
 
@@ -765,155 +653,134 @@ class NodeAccessTest extends AbstractDrupalTest
     {
         $this
             ->whenIAm([], ['on' => Access::ROLE_WEBMASTER])
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canEditOnly([
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                    ])
-                    ->canCreateNone()
-                    // FIXME: I need some referenced nodes
-                    // ->canDoOnly('clone')
-                    ->canDoOnly('lock', [
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                    ])
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
+                ->canSeeOnly([
+                    'site_on_published',
+                    'site_on_unpublished',
+                    'site_on_locked_published',
+                    'site_on_locked_unpublished',
+                    'in_on_global_locked_published',
+                    'in_on_global_published',
+                    'in_on_group_locked_published',
+                    'in_on_group_published',
+                ])
+                ->canEditOnly([
+                    'site_on_published',
+                    'site_on_unpublished',
+                    'site_on_locked_published',
+                    'site_on_locked_unpublished',
+                ])
+                ->canCreateNone()
+                // FIXME: I need some referenced nodes
+                // ->canDoOnly('clone')
+                ->canDoOnly('lock', [
+                    'site_on_published',
+                    'site_on_unpublished',
+                    'site_on_locked_published',
+                    'site_on_locked_unpublished',
+                ])
+                ->canDoNone('promote')
+                //->canDoNone('reference')
+        ;
 
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canEditOnly([
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                    ])
-                    ->canCreateOnly($this->getTypeHandler()->getAllTypes())
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-
+        // Another site's webmaster may only see his content
+        $this
             ->whenIAm([], ['off' => Access::ROLE_WEBMASTER])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canEditOnly([
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canCreateNone()
-                    // FIXME: I need some referenced nodes
-                    // ->canDoOnly('clone')
-                    ->canDoOnly('lock', [
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
+                ->canSeeOnly([
+                    'site_off_published',
+                    'site_off_unpublished',
+                ])
+                ->canEditOnly([
+                    'site_off_published',
+                    'site_off_unpublished',
+                ])
+                ->canCreateNone()
+                // FIXME: I need some referenced nodes
+                // ->canDoOnly('clone')
+                ->canDoOnly('lock', [
+                    'site_off_published',
+                    'site_off_unpublished',
+                ])
+                ->canDoNone('promote')
+                //->canDoNone('reference')
+        ;
 
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
+        // But the same with the permission of seeing global content might see
+        // other's sites global content, as readonly, and also see other sites
+        // content
+        $this
+            ->whenIAm([
+                Access::PERM_CONTENT_VIEW_GLOBAL,
+                Access::PERM_CONTENT_VIEW_GROUP,
+                Access::PERM_CONTENT_VIEW_OTHER
+            ], ['off' => Access::ROLE_WEBMASTER])
+                ->canSeeOnly([
+                    'site_on_published',
+                    'site_on_locked_published',
+                    'global_locked_published',
+                    'global_published',
+                    'group_locked_published',
+                    'group_published',
+                    'in_on_global_locked_published',
+                    'in_on_global_published',
+                    'in_on_group_locked_published',
+                    'in_on_group_published',
+                    'site_off_published',
+                    'site_off_unpublished',
+                    // As a side effect of the 'view other' permission, the user
+                    // may see content from sites which are archived or in other
+                    // states, there is no easy way to fix this. Please refer to
+                    // the NodeAccessService::getNodeGrants() inline code
+                    // documentation for details.
+                    'site_init_published',
+                    'site_archive_published',
+                    'site_pending_published',
+                ])
+                ->canEditOnly([
+                    'site_off_published',
+                    'site_off_unpublished',
+                ])
+                ->canCreateNone()
+                // FIXME: I need some referenced nodes
+                // ->canDoOnly('clone')
+                ->canDoOnly('lock', [
+                    'site_off_published',
+                    'site_off_unpublished',
+                ])
+                ->canDoNone('promote')
+                //->canDoNone('reference')
+        ;
 
-                ->inSite('off')
-                    ->canSeeOnly([
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canEditOnly([
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canCreateOnly($this->getTypeHandler()->getAllTypes())
-
+        $this
             ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'site_archive_published',
-                        'site_archive_unpublished',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-                    // FIXME: I need some referenced nodes
-                    // ->canDoOnly('clone')
-                    ->canDoOnly('lock', [
-                        'site_archive_published',
-                        'site_archive_unpublished',
-                    ])
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('archive')
-                    ->canSeeOnly([
-                        'site_archive_published',
-                        'site_archive_unpublished',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'site_archive_published',
+                    'site_archive_unpublished',
+                ])
+                ->canEditNone()
+                ->canCreateNone()
+                // FIXME: I need some referenced nodes
+                // ->canDoOnly('clone')
+                ->canDoOnly('lock', [
+                    'site_archive_published',
+                    'site_archive_unpublished',
+                ])
+                ->canDoNone('promote')
+                //->canDoNone('reference')
 
             ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER])
 
-                ->getOutSite()
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-                    // FIXME: I need some referenced nodes
-                    // ->canDoOnly('clone')
-                    // FIXME: Node site target should be checked for
-                    // [init, off, on] states upon those methods
-                    // ->canDoNone('lock')
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('pending')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeNone()
+                ->canEditNone()
+                ->canCreateNone()
+                // FIXME: I need some referenced nodes
+                // ->canDoOnly('clone')
+                // FIXME: Node site target should be checked for
+                // [init, off, on] states upon those methods
+                // ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
         ;
     }
 
@@ -922,103 +789,42 @@ class NodeAccessTest extends AbstractDrupalTest
         $this
             ->whenIAm([], ['on' => Access::ROLE_CONTRIB])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-                    ->canDoNone('clone')
-                    ->canDoNone('lock')
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_unpublished',
-                        'site_on_locked_published',
-                        'site_on_locked_unpublished',
-                        'in_on_global_locked_published',
-                        'in_on_global_locked_unpublished',
-                        'in_on_global_published',
-                        'in_on_global_unpublished',
-                        'in_on_group_locked_published',
-                        'in_on_group_locked_unpublished',
-                        'in_on_group_published',
-                        'in_on_group_unpublished',
-                    ])
-                    ->canEditNone()
-                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'site_on_published',
+                    'site_on_unpublished',
+                    'site_on_locked_published',
+                    'site_on_locked_unpublished',
+                    'in_on_global_locked_published',
+                    'in_on_global_published',
+                    'in_on_group_locked_published',
+                    'in_on_group_published',
+                ])
+                ->canEditNone()
+                ->canCreateNone()
+                ->canDoNone('clone')
+                ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
 
             ->whenIAm([], ['off' => Access::ROLE_CONTRIB])
 
-                ->getOutSite()
-                    ->canSeeOnly([
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canEditNone()
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('off')
-                    ->canSeeOnly([
-                        'site_off_published',
-                        'site_off_unpublished',
-                    ])
-                    ->canEditNone()
-                    ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
+                ->canSeeOnly([
+                    'site_off_published',
+                    'site_off_unpublished',
+                ])
+                ->canEditNone()
 
             ->whenIAm([], ['archive' => Access::ROLE_CONTRIB])
 
-                ->getOutSite()
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('archive')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeNone()
+                ->canEditNone()
+                ->canCreateNone()
 
             ->whenIAm([], ['pending' => Access::ROLE_CONTRIB])
 
-                ->getOutSite()
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('pending')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeNone()
+                ->canEditNone()
+                ->canCreateNone()
         ;
     }
 
@@ -1041,67 +847,77 @@ class NodeAccessTest extends AbstractDrupalTest
 
     public function testAnonymousRights()
     {
+        $this->getSiteManager()->setContext($this->getSite('on'));
+
         $this
             ->whenIAmAnonymous()
-
-                ->getOutSite()
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-                    ->canDoNone('clone')
-                    ->canDoNone('lock')
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'site_on_published',
+                    'site_on_locked_published',
+                    'in_on_global_locked_published',
+                    'in_on_global_published',
+                    'in_on_group_locked_published',
+                    'in_on_group_published',
+                ])
+                ->canEditNone()
+                ->canCreateNone()
+                ->canDoNone('clone')
+                ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
         ;
+
+        $this->getSiteManager()->setContext($this->getSite('off'));
+
+        $this
+            ->whenIAmAnonymous()
+            ->canSeeNone()
+            ->canEditNone()
+            ->canCreateNone()
+            ->canDoNone('clone')
+            ->canDoNone('lock')
+            ->canDoNone('promote')
+            //->canDoNone('reference')
+        ;
+
+        $this->getSiteManager()->dropContext();
     }
 
     public function testNoRoleAuthRights()
     {
+        $this->getSiteManager()->setContext($this->getSite('on'));
+
         $this
             ->whenIAm([])
-
-                ->getOutSite()
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-                    ->canDoNone('clone')
-                    ->canDoNone('lock')
-                    ->canDoNone('promote')
-                    //->canDoNone('reference')
-
-                ->inSite('off')
-                    ->canSeeNone()
-                    ->canEditNone()
-                    ->canCreateNone()
-
-                ->inSite('on')
-                    ->canSeeOnly([
-                        'site_on_published',
-                        'site_on_locked_published',
-                        'in_on_global_locked_published',
-                        'in_on_global_published',
-                        'in_on_group_locked_published',
-                        'in_on_group_published',
-                    ])
-                    ->canEditNone()
-                    ->canCreateNone()
+                ->canSeeOnly([
+                    'site_on_published',
+                    'site_on_locked_published',
+                    'in_on_global_locked_published',
+                    'in_on_global_published',
+                    'in_on_group_locked_published',
+                    'in_on_group_published',
+                ])
+                ->canEditNone()
+                ->canCreateNone()
+                ->canDoNone('clone')
+                ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
         ;
+
+        $this->getSiteManager()->setContext($this->getSite('off'));
+
+        $this
+            ->whenIAm([])
+                ->canSeeNone()
+                ->canEditNone()
+                ->canCreateNone()
+                ->canDoNone('clone')
+                ->canDoNone('lock')
+                ->canDoNone('promote')
+                //->canDoNone('reference')
+        ;
+
+        $this->getSiteManager()->dropContext();
     }
 }

@@ -53,6 +53,11 @@ final class Access
     const PERM_CONTENT_VIEW_GROUP = 'content view group';
 
     /**
+     * View published other sites content
+     */
+    const PERM_CONTENT_VIEW_OTHER = 'content view other';
+
+    /**
      * Access the site dashboard
      */
     const PERM_SITE_DASHBOARD_ACCESS = 'site dashboard access';
