@@ -60,7 +60,10 @@ function ucms_notification_service() {
  * Implements hook_user_login().
  */
 function ucms_notification_user_login(&$edit, $account) {
-  ucms_notification_service()->refreshSubscriptionsFor($account->uid);
+  // This is called late at install, so filter out superadmin.
+  if ($account->uid > 1) {
+    ucms_notification_service()->refreshSubscriptionsFor($account->uid);
+  }
 }
 
 /**
