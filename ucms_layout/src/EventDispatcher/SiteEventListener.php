@@ -53,7 +53,6 @@ class SiteEventListener
         $this->requestStack = $requestStack;
     }
 
-
     public function onSiteInit(SiteEvent $event)
     {
         // @todo Ugly... The best would be to not use drupal_valid_token()
@@ -74,7 +73,9 @@ class SiteEventListener
             $transContext->setCurrentLayoutNodeId($siteHomeNid, $site->getId());
         }
 
-        if (preg_match('/^node\/([0-9]+)$/', $request->get('q'), $matches) === 1) {
+        // @todo $_GET['q']: cannot use Request::get() here since Drupal
+        // alters the 'q' variable directly in the $_GET array
+        if (preg_match('/^node\/([0-9]+)$/', $_GET['q'], $matches) === 1) {
             if (($token = $request->get(ContextManager::PARAM_PAGE_TOKEN)) && drupal_valid_token($token)) {
                 $pageContext->setToken($token);
             } 
