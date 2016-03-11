@@ -109,7 +109,7 @@ function ucms_site_menu() {
     'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
     'page arguments'    => [3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => [3],
+    'access arguments'  => ['list', 3],
     'type'              => MENU_LOCAL_TASK,
     'file'              => 'ucms_site.dashboard.inc',
   ];
@@ -118,7 +118,7 @@ function ucms_site_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddExisting', 3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => [3],
+    'access arguments'  => ['add-existing', 3],
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/add-new'] = [
@@ -126,7 +126,7 @@ function ucms_site_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddNew', 3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => [3],
+    'access arguments'  => ['add-new', 3],
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/promote'] = [
@@ -134,7 +134,7 @@ function ucms_site_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterPromote', 3, 5],
     'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => [3],
+    'access arguments'  => ['promote', 3, 5],
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/demote'] = [
@@ -142,7 +142,7 @@ function ucms_site_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterDemote', 3, 5],
     'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => [3],
+    'access arguments'  => ['demote', 3, 5],
     'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/delete'] = [
@@ -150,7 +150,7 @@ function ucms_site_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterDelete', 3, 5],
     'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => [3],
+    'access arguments'  => ['delete', 3, 5],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -344,12 +344,40 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
 
 /**
  * Menu access check helper.
+ *
+ * @param string $op The operation the user wanna perform
+ * @param Site $site
+ * @param AccountInterface $webmaster
+ * @param AccountInterface $account
+ *
+ * @return boolean
  */
-function ucms_site_menu_access_webmasters(Site $site, $account = null) {
+function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $webmaster = null, AccountInterface $account = null) {
   if (!$account) {
     $account = \Drupal::currentUser();
   }
-  return ucms_site_manager()->getAccess()->userCanManageWebmasters($account, $site);
+
+  $manager = ucms_site_manager();
+
+  if ($manager->getAccess()->userCanManageWebmasters($account, $site)) {
+    switch ($op) {
+      case 'promote':
+        // Prevents to promote a user which is not a contributor of the site
+        if (!$manager->getAccess()->userIsContributor($webmaster, $site)) {
+          return false;
+        }
+
+      case 'demote':
+        // Prevents to demote a user which is not a webmaster of the site
+        if (!$manager->getAccess()->userIsWebmaster($webmaster, $site)) {
+          return false;
+        }
+    }
+
+    return true;
+  }
+
+  return false;
 }
 
 /**
