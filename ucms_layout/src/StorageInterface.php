@@ -44,4 +44,15 @@ interface StorageInterface
      * @return Layout
      */
     public function load($id);
+
+    /**
+     * Load a single layout instance by node identifier
+     *
+     * @param int $nodeId
+     * @param int $siteId
+     * @param boolean $createOnMiss
+     *
+     * @return Layout
+     */
+    public function findForNodeOnSite($nodeId, $siteId, $createOnMiss = false);
 }

@@ -3,8 +3,6 @@
 
 namespace MakinaCorpus\Ucms\Layout;
 
-use Drupal\Core\Entity\EntityManager;
-
 use MakinaCorpus\Ucms\Layout\Context;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -37,14 +35,14 @@ class ContextManager
      * Constructor
      *
      * @param StorageInterface $storage
+     * @param StorageInterface $temporaryStorage
      * @param SiteManager $siteManager
-     * @param EntityManager $entityManager
      */
-    public function __construct(StorageInterface $storage, SiteManager $siteManager, EntityManager $entityManager)
+    public function __construct(StorageInterface $storage, StorageInterface $temporaryStorage, SiteManager $siteManager)
     {
         $this->siteManager = $siteManager;
-        $this->pageContext = new Context($storage, $entityManager);
-        $this->transversalContext = new Context($storage, $entityManager);
+        $this->pageContext = new Context($storage, $temporaryStorage);
+        $this->transversalContext = new Context($storage, $temporaryStorage);
     }
 
     /**

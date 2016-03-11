@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Layout;
 
-use Drupal\Core\Entity\EntityManager;
-
 class Context
 {
     use TokenAwareTrait;
@@ -24,11 +22,6 @@ class Context
     private $temporaryStorage;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @var Layout
      */
     private $layout;
@@ -39,14 +32,20 @@ class Context
     private $layoutNodeId;
 
     /**
+     * @var int
+     */
+    private $layoutSiteId;
+
+    /**
      * Default constructor
      *
      * @param StorageInterface $storage
+     * @param StorageInterface $temporaryStorage
      */
-    public function __construct(StorageInterface $storage, EntityManager $entityManager)
+    public function __construct(StorageInterface $storage, StorageInterface $temporaryStorage)
     {
         $this->storage = $storage;
-        $this->entityManager = $entityManager;
+        $this->temporaryStorage = $temporaryStorage;
     }
 
     /**
@@ -119,10 +118,12 @@ class Context
     public function getCurrentLayout()
     {
         if (!$this->layout && $this->layoutNodeId) {
-            $node = $this->entityManager->getStorage('node')->load($this->layoutNodeId);
-            if ($node && isset($node->layout_id)) {
-                $this->layout = $this->getStorage()->load($node->layout_id);
-            }
+            $this->layout = $this
+                ->getStorage()
+                ->findForNodeOnSite(
+                    $this->layoutNodeId, $this->layoutSiteId
+                )
+            ;
         }
 
         return $this->layout;
@@ -132,13 +133,16 @@ class Context
      * Set current layout node ID
      *
      * @param int $nid
+     * @param int $siteId
      */
-    public function setCurrentLayoutNodeId($nid)
+    public function setCurrentLayoutNodeId($nid, $siteId)
     {
         if ($this->layoutNodeId) {
             throw new \LogicException("You can't change the current layout node ID.");
         }
+
         $this->layoutNodeId = $nid;
+        $this->layoutSiteId = $siteId;
     }
 
     /**
@@ -159,12 +163,7 @@ class Context
     public function getStorage()
     {
         if ($this->hasToken()) {
-            if (!$this->temporaryStorage) {
-                $this->temporaryStorage = new TemporaryStorage();
-                $this->temporaryStorage->setToken($this->getToken());
-            }
-
-            return $this->temporaryStorage;
+            return $this->temporaryStorage->setToken($this->getToken());
         }
 
         return $this->storage;

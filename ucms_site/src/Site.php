@@ -88,4 +88,9 @@ class Site
     {
         return $this->id;
     }
+
+    public function getHomeNodeId()
+    {
+        return $this->home_nid;
+    }
 }

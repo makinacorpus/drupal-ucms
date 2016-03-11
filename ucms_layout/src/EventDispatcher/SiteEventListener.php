@@ -66,14 +66,19 @@ class SiteEventListener
         $token        = null;
         $matches      = [];
 
+        // Column is nullable, so this is possible
+        if ($siteHomeNid = $site->getHomeNodeId()) {
+            if (($token = $request->get(ContextManager::PARAM_SITE_TOKEN)) && drupal_valid_token($token)) {
+                $transContext->setToken($token);
+            }
+            $transContext->setCurrentLayoutNodeId($siteHomeNid, $site->getId());
+        }
+
         if (preg_match('/^node\/([0-9]+)$/', $request->get('q'), $matches) === 1) {
             if (($token = $request->get(ContextManager::PARAM_PAGE_TOKEN)) && drupal_valid_token($token)) {
                 $pageContext->setToken($token);
-            } else if (($token = $request->get(ContextManager::PARAM_SITE_TOKEN)) && drupal_valid_token($token)) {
-                $transContext->setToken($token);
-            }
-            $pageContext->setCurrentLayoutNodeId((int)$matches[1]);
-            $transContext->setCurrentLayoutNodeId($site->home_nid);
+            } 
+            $pageContext->setCurrentLayoutNodeId((int)$matches[1], $site->getId());
         }
 
         if (($token = $request->get(ContextManager::PARAM_AJAX_TOKEN)) && drupal_valid_token($token) && ($region = $request->get('region'))) {

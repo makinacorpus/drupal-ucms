@@ -243,4 +243,42 @@ class DrupalStorage implements StorageInterface
             return reset($layoutList);
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findForNodeOnSite($nodeId, $siteId, $createOnMiss = false)
+    {
+        // @todo Find a more performant way, this is still better than do it
+        // once per loaded node in the hook_node_load()...
+        $id = (int)$this
+            ->db
+            ->query(
+                "SELECT id FROM {ucms_layout} WHERE nid = ? AND site_id = ?",
+                [$nodeId, $siteId]
+            )
+            ->fetchField()
+        ;
+
+        if ($id) {
+            return $this->load($id);
+        }
+
+        if ($createOnMiss) {
+
+            $id = (int)db_insert('ucms_layout')
+                ->fields([
+                    'nid'     => $nodeId,
+                    'site_id' => $siteId
+                ])
+                ->execute()
+            ;
+
+            return (new Layout())
+                ->setId($id)
+                ->setSiteId($siteId)
+                ->setNodeId($nodeId)
+            ;
+        }
+    }
 }

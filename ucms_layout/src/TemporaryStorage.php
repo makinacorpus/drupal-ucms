@@ -6,7 +6,7 @@ namespace MakinaCorpus\Ucms\Layout;
  * Layout storage using Drupal cache system for temporarily being edited
  * instances (user is editing)
  */
-class TemporaryStorage
+class TemporaryStorage implements StorageInterface
 {
     use TokenAwareTrait;
 
@@ -16,10 +16,20 @@ class TemporaryStorage
     private $lifetime;
 
     /**
-     * Default constructor
+     * @var \DatabaseConnection
      */
-    public function __construct()
+    private $db;
+
+    /**
+     * Default constructor
+     *
+     * @param \DatabaseConnection $db
+     */
+    public function __construct(\DatabaseConnection $db)
     {
+        $this->db = $db;
+
+        // FIXME inject me
         // Default to 6 hours, just like form API, even though we know
         // it's one of the stupidest thing ever
         $this->lifetime = variable_get('ucms_layout_temporary_lifetime', 21600);
@@ -92,5 +102,26 @@ class TemporaryStorage
                 return $cached->data;
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findForNodeOnSite($nodeId, $siteId, $createOnMiss = false)
+    {
+        $id = (int)$this
+            ->db
+            ->query(
+                "SELECT id FROM {ucms_layout} WHERE nid = ? AND site_id = ?",
+                [$nodeId, $siteId]
+            )
+            ->fetchField()
+        ;
+
+        if (!$id) {
+            throw new \LogicException("Temporary storage points to a non existing layout");
+        }
+
+        return $this->load($id);
     }
 }

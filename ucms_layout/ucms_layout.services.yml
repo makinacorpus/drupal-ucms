@@ -1,12 +1,19 @@
 services:
 
   ucms_layout.storage:
+    # public: false
+    # FIXME This is being used by a few unit tests, but this should be private
     class: MakinaCorpus\Ucms\Layout\DrupalStorage
+    arguments: ["@database"]
+
+  ucms_layout.storage.temporary:
+    public: false
+    class: MakinaCorpus\Ucms\Layout\TemporaryStorage
     arguments: ["@database"]
 
   ucms_layout.context_manager:
     class: MakinaCorpus\Ucms\Layout\ContextManager
-    arguments: ["@ucms_layout.storage", "@ucms_site.manager", "@entity.manager"]
+    arguments: ["@ucms_layout.storage", "@ucms_layout.storage.temporary", "@ucms_site.manager"]
 
   ucms_layout.site_event_listener:
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteEventListener
