@@ -631,6 +631,58 @@ function ucms_site_node_grants($account, $op) {
 
 /**
  * Implements hook_query_TAG_alter().
+ *
+ * This is required in order for users that may bypass node access (UID 1 is
+ * one of them) to have site content correctly isolated depending on context.
+ */
+function ucms_site_query_node_access_alter(QueryAlterableInterface $query) {
+
+  $site = ucms_site_manager()->getContext();
+
+  if (!$site) {
+    return;
+  }
+  if (!$query instanceof SelectQueryInterface) {
+    return;
+  }
+  if ($query->hasTag(Access::QUERY_TAG_CONTEXT_OPT_OUT)) {
+    return;
+  }
+
+  /* @var $account AccountInterface */
+  if (!$account = $query->getMetaData('account')) {
+    $account = \Drupal::currentUser();
+  }
+
+
+  // If no base table is specified explicitly, search for one.
+  $nodeAlias = null;
+  foreach ($query->getTables() as $alias => $table_info) {
+    if (!($table_info instanceof SelectQueryInterface)) {
+      // If the node table is in the query, it wins immediately.
+      if ('node' === $table_info['table']) {
+        $nodeAlias = $alias;
+      }
+    }
+  }
+  if (!$nodeAlias) {
+    return;
+  }
+
+  // Where the magic happens.
+  $query->join(
+    'ucms_site_node',
+    'access_sn',
+    "access_sn.nid = " . $nodeAlias . ".nid AND access_sn.site_id = :access_sn_site_id",
+    [':access_sn_site_id' => $site->getId()]
+  );
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Implement site visibility access control for the admin UI, this is the only
+ * query alteration for business purpose this module will ever do.
  */
 function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) {
 

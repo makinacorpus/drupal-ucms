@@ -222,6 +222,7 @@ function ucms_layout_page_build(&$page) {
     ]], 'setting');
   }
 
+  // This needs to be optimized drastically
   foreach ($manager->getThemeRegionConfig($site->theme) as $regionId => $regionStatus) {
 
     $items = [];

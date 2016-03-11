@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
+use MakinaCorpus\Ucms\Site\Access;
+
 class CartStorage
 {
     /**
@@ -95,6 +97,7 @@ class CartStorage
             //->extend('PagerDefault')
             //->limit(12)
             ->addTag('node_access')
+            ->addTag(Access::QUERY_TAG_CONTEXT_OPT_OUT)
             ->execute()
             ->fetchCol()
         ;

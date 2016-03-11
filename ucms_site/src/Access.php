@@ -86,4 +86,11 @@ final class Access
      * Site relative role: contributor
      */
     const ROLE_CONTRIB = 2;
+
+    /**
+     * Explicitely tell that the query should not filter out nodes that don't
+     * elong to the current site context. This site filtering is only done
+     * whenever the query is tagged with 'node_access'.
+     */
+    const QUERY_TAG_CONTEXT_OPT_OUT = 'ucms_site_access_opt_out';
 }
