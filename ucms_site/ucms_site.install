@@ -429,38 +429,35 @@ function ucms_site_install_schema_fix() {
   // Hopefully, this syntax should work on both PostgreSQL and MySQL although
   // this is pure coincidence, this is great for us.
   $constraints = [
-    'ucms_site_node' => [
-      "ALTER TABLE {ucms_site_node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-    ],
     'ucms_site_access' => [
-      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      'fk_ucms_site_access_site' => "ALTER TABLE {ucms_site_access} ADD CONSTRAINT {fk_ucms_site_access_site} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      'fk_ucms_site_access_user' => "ALTER TABLE {ucms_site_access} ADD CONSTRAINT {fk_ucms_site_access_user} FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
+    ],
+    'ucms_site_node' => [
+      'fk_ucms_site_node_site' => "ALTER TABLE {ucms_site_node} ADD CONSTRAINT {fk_ucms_site_node_site} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      'fk_ucms_site_node_node' => "ALTER TABLE {ucms_site_node} ADD CONSTRAINT {fk_ucms_site_node_node} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
     ],
     // Also, add some core ones.
     'menu_custom' => [
-      "ALTER TABLE {menu_custom} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      'fk_menu_custom_site' => "ALTER TABLE {menu_custom} ADD CONSTRAINT {fk_menu_custom_site} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
     ],
     'menu_links' => [
-      "ALTER TABLE {menu_links} ADD CONSTRAINT FOREIGN KEY (menu_name) REFERENCES {menu_custom} (menu_name) ON DELETE CASCADE",
+      'fk_menu_links_menu' => "ALTER TABLE {menu_links} ADD CONSTRAINT {fk_menu_links_menu} FOREIGN KEY (menu_name) REFERENCES {menu_custom} (menu_name) ON DELETE CASCADE",
     ],
     'node' => [
-      "ALTER TABLE {node} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE SET NULL ON UPDATE CASCADE",
-      "ALTER TABLE {node} ADD FOREIGN KEY (origin_nid) REFERENCES node (nid) ON DELETE SET NULL ON UPDATE CASCADE",
-      "ALTER TABLE {node} ADD FOREIGN KEY (parent_nid) REFERENCES node (nid) ON DELETE SET NULL ON UPDATE CASCADE",
-    ],
-    'ucms_site_access' => [
-      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-      "ALTER TABLE {ucms_site_access} ADD CONSTRAINT FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
+      'fk_node_site' => "ALTER TABLE {node} ADD CONSTRAINT {fk_node_site} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE SET NULL ON UPDATE CASCADE",
+      'fk_node_origin' => "ALTER TABLE {node} ADD CONSTRAINT {fk_node_origin} FOREIGN KEY (origin_nid) REFERENCES node (nid) ON DELETE SET NULL ON UPDATE CASCADE",
+      'fk_node_parent' => "ALTER TABLE {node} ADD CONSTRAINT {fk_node_parent} FOREIGN KEY (parent_nid) REFERENCES node (nid) ON DELETE SET NULL ON UPDATE CASCADE",
     ],
     'role_permission' => [
-      "ALTER TABLE {role_permission} ADD CONSTRAINT FOREIGN KEY (rid) REFERENCES {role} (rid) ON DELETE CASCADE",
+      'fk_role_permission' => "ALTER TABLE {role_permission} ADD CONSTRAINT {fk_role_permission} FOREIGN KEY (rid) REFERENCES {role} (rid) ON DELETE CASCADE",
     ],
     'url_alias' => [
-      "ALTER TABLE {url_alias} ADD CONSTRAINT FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
+      'fk_url_alias_site' => "ALTER TABLE {url_alias} ADD CONSTRAINT {fk_url_alias_site} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
     ],
     'users_roles' => [
-      "ALTER TABLE {users_roles} ADD CONSTRAINT FOREIGN KEY (rid) REFERENCES {role} (rid) ON DELETE CASCADE",
-      "ALTER TABLE {users_roles} ADD CONSTRAINT FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
+      'fk_user_role_role' => "ALTER TABLE {users_roles} ADD CONSTRAINT {fk_user_role_role} FOREIGN KEY (rid) REFERENCES {role} (rid) ON DELETE CASCADE",
+      'fk_user_role_user' => "ALTER TABLE {users_roles} ADD CONSTRAINT {fk_user_role_user} FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
     ],
   ];
   foreach ($constraints as $table => $statements) {
