@@ -86,7 +86,7 @@ class NodeAccessService
      * @param SiteManager $manager
      * @param TypeHandler $typeHandler
      */
-    public function __construct(SiteManager $manager, TypeHandler $typeHandler)
+    public function __construct(SiteManager $manager, TypeHandler $typeHandler = null)
     {
         $this->manager = $manager;
 
@@ -355,14 +355,16 @@ class NodeAccessService
                         return NODE_ACCESS_DENY;
                     }
 
-                    // Contributor can only create editorial content
-                    if ($access->userIsContributor($account, $site) && in_array($type, $handler->getEditorialTypes())) {
-                        return NODE_ACCESS_ALLOW;
-                    }
+                    if ($this->typeHandler) {
+                        // Contributor can only create editorial content
+                        if ($access->userIsContributor($account, $site) && in_array($type, $handler->getEditorialTypes())) {
+                            return NODE_ACCESS_ALLOW;
+                        }
 
-                    // Webmasters can create anything
-                    if ($access->userIsWebmaster($account, $site) && in_array($type, $handler->getAllTypes())) {
-                        return NODE_ACCESS_ALLOW;
+                        // Webmasters can create anything
+                        if ($access->userIsWebmaster($account, $site) && in_array($type, $handler->getAllTypes())) {
+                            return NODE_ACCESS_ALLOW;
+                        }
                     }
 
                 } else {
