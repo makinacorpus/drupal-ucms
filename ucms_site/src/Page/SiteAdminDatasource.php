@@ -85,6 +85,7 @@ class SiteAdminDatasource extends AbstractDatasource
         $q = $this
             ->db
             ->select('ucms_site', 's')
+            ->fields('s', ['id'])
             ->addTag('ucms_site_access')
         ;
         $q->leftJoin('users', 'u', "u.uid = s.uid");
@@ -133,7 +134,6 @@ class SiteAdminDatasource extends AbstractDatasource
         }
 
         $idList = $q
-            ->fields('s', ['id'])
             ->groupBy('s.id')
             ->extend('PagerDefault')
             ->limit($pageState->getLimit())
