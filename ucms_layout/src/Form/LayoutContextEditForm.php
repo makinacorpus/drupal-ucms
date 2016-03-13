@@ -50,9 +50,9 @@ class LayoutContextEditForm extends FormBase
     public function buildForm(array $form, FormStateInterface $form_state)
     {
         $pageLayout = $this->manager->getPageContext()->getCurrentLayout();
-        $transversalLayout = $this->manager->getSiteContext()->getCurrentLayout();
+        $siteLayout = $this->manager->getSiteContext()->getCurrentLayout();
 
-        if ($pageLayout instanceof Layout || $transversalLayout instanceof Layout) {
+        if ($pageLayout instanceof Layout || $siteLayout instanceof Layout) {
             $form['actions']['#type'] = 'actions';
 
             if ($this->manager->getPageContext()->isTemporary()) {
