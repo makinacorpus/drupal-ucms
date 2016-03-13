@@ -448,9 +448,6 @@ function ucms_site_boot() {
   } else {
     $manager->dropContext();
   }
-
-  // @todo Else attempt to find another contextual information (GET parameter?)
-  // in order to determine preview mode or not.
 }
 
 /**
