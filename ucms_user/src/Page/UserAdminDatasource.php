@@ -102,9 +102,11 @@ class UserAdminDatasource extends AbstractDatasource
      */
     public function getItems($query, PageState $pageState)
     {
-        $limit = 24;
-
-        $q = $this->db->select('users', 'u');
+        $q = $this
+            ->db
+            ->select('users', 'u')
+            ->fields('u', ['uid'])
+        ;
 
         if (isset($query['status'])) {
             $q->condition('u.status', $query['status']);
@@ -124,7 +126,6 @@ class UserAdminDatasource extends AbstractDatasource
         }
 
         $idList = $q
-            ->fields('u', ['uid'])
             ->condition('u.uid', 0, '!=')
             ->condition('u.uid', 1, '!=')
             ->extend('PagerDefault')
