@@ -34,6 +34,7 @@
     "require" : {
         "elasticsearch/elasticsearch" : "^2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
+        "makinacorpus/drupal-umenu" : "*",
         "makinacorpus/drupal-sf-dic" : "^3.0"
     },
     "minimum-stability" : "dev"
