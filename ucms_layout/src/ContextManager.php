@@ -133,7 +133,7 @@ class ContextManager
     public function getThemeRegionConfigFor($theme, $contextType)
     {
         return array_filter(
-            variable_get('ucms_layout_regions_' . $theme),
+            variable_get('ucms_layout_regions_' . $theme, []),
             function ($value) use ($contextType) {
                 return $value == $contextType;
             }
@@ -149,7 +149,7 @@ class ContextManager
      */
     public function getThemeRegionConfig($theme)
     {
-        $regions = variable_get('ucms_layout_regions_' . $theme);
+        $regions = variable_get('ucms_layout_regions_' . $theme, []);
 
         if (null === $regions) {
             $regions = array_keys(system_region_list($theme));
