@@ -233,6 +233,31 @@ function ucms_site_permission() {
 }
 
 /**
+ * Is the given path allowed on sites.
+ *
+ * @return $path
+ */
+function ucms_site_admin_path_is_allowed($path) {
+  if (path_is_admin($path)) {
+    // Allow node/add
+    if ('node/add' === substr(current_path(), 0, 8)) {
+      return true;
+    }
+    if (arg(0) === 'node') {
+      if (menu_get_object() && ($action = arg(2))) {
+        switch ($action) {
+          case 'edit':
+          case 'clone':
+            return true;
+        }
+      }
+    }
+    return false;
+  }
+  return true;
+}
+
+/**
  * Title callback for menu items.
  *
  * @param Site $site
@@ -533,11 +558,11 @@ function ucms_site_init() {
   if ($manager->hasContext()) {
     // We avoid redirections on dashboard in case of POST requests
     // to allow layout management requests (AJAX)
-    if ('node' !== arg(0) && 'node/add' !== substr(current_path(), 0, 8) && path_is_admin(current_path())) {// && 'POST' !== $_SERVER['REQUEST_METHOD']) {
-//      if (user_is_logged_in()) {
-//        // Logged-in users should not 403 on sites, but go to dashboard instead.
-//        ucms_site_redirect_to_master();
-//      }
+    if (!ucms_site_admin_path_is_allowed(current_path())) {
+      if (user_is_logged_in()) {
+        // Logged-in users should not 403 on sites, but go to dashboard instead.
+        ucms_site_redirect_to_master();
+      }
     } else {
 
       // Normal runtime, there is a context, and path is not admin.
