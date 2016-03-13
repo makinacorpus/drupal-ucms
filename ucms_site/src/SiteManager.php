@@ -209,28 +209,6 @@ final class SiteManager
     }
 
     /**
-     * Create site menu
-     *
-     * @param Site $site
-     * @param string $name
-     *   Drupal menu_name suffix (will be prefixed by something technical)
-     */
-    public function createMenu(Site $site, $name)
-    {
-        throw new \Exception("Not implemented yet");
-    }
-
-    /**
-     * Get site menus
-     *
-     * @param Site $site
-     */
-    public function getMenus(Site $site)
-    {
-        return $this->db->query('SELECT * FROM {menu_custom} WHERE site_id = ?', [$site->id])->fetchAllAssoc('menu_name', \PDO::FETCH_ASSOC);
-    }
-
-    /**
      * Load sites for which the user is webmaster
      *
      * @param AccountInterface $account

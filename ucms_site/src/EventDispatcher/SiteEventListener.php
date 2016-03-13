@@ -9,6 +9,7 @@ use MakinaCorpus\Ucms\Site\NodeDispatcher;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Umenu\MenuStorageInterface;
 
 class SiteEventListener
 {
@@ -27,6 +28,10 @@ class SiteEventListener
      */
     private $nodeDispatcher;
 
+    /**
+     * @var MenuStorageInterface
+     */
+    private $menuStorage;
 
     /**
      * Default constructor
@@ -34,20 +39,43 @@ class SiteEventListener
      * @param SiteManager $manager
      * @param EntityManager $entityManager
      * @param NodeDispatcher $nodeDispatcher
+     * @param MenuStorageInterface $menuStorage
      */
-    public function __construct(SiteManager $manager, EntityManager $entityManager, NodeDispatcher $nodeDispatcher)
+    public function __construct(SiteManager $manager, EntityManager $entityManager, NodeDispatcher $nodeDispatcher, MenuStorageInterface $menuStorage)
     {
         $this->manager = $manager;
         $this->entityManager = $entityManager;
         $this->nodeDispatcher = $nodeDispatcher;
+        $this->menuStorage = $menuStorage;
     }
 
+    public function onSiteInit(SiteEvent $event)
+    {
+        $site = $event->getSite();
+
+        // Reset menus.
+        $activeMenus = [];
+        $menuList = $this->menuStorage->loadWithConditions(['site_id' => $site->getId()]);
+        if ($menuList) {
+            foreach ($menuList as $menu) {
+                $activeMenus[] = $menu['name'];
+            }
+        }
+        $activeMenus[] = 'navigation';
+        $activeMenus[] = 'management';
+        $GLOBALS['conf']['menu_default_active_menus'] = $activeMenus;
+    }
 
     public function onSiteCreate(SiteEvent $event)
     {
         $site = $event->getSite();
 
-        if ($site->uid) { // Skips anonymous
+        // Create the site defalt menu
+        $this->menuStorage->create('site-main-' . $site->getId(), ['title' => "Main menu", 'site_id' => $site->getId()]);
+
+        // Register the person that asked for the site as a webmaster while
+        // skipping anonymous user
+        if ($site->uid) {
             $this
                 ->manager
                 ->getAccess()
