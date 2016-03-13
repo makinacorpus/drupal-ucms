@@ -319,7 +319,7 @@ function ucms_contrib_theme() {
 function ucms_contrib_preprocess_page(&$variables) {
   // @todo this should check for any layout at all being here
   if (!path_is_admin(current_path()) && ($site = ucms_site_manager()->getContext()) && ucms_site_manager()->getAccess()->userIsWebmaster(\Drupal::currentUser(), $site)) {
-    $variables['title_prefix']['layout_edit'] = \Drupal::formBuilder()->getForm('MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm');
+    $variables['page']['content'][] = \Drupal::formBuilder()->getForm('MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm');
   }
 }
 
