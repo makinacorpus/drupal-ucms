@@ -62,7 +62,6 @@ class SiteEventListener
             }
         }
         $activeMenus[] = 'navigation';
-        $activeMenus[] = 'management';
         $GLOBALS['conf']['menu_default_active_menus'] = $activeMenus;
     }
 
