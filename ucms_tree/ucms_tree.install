@@ -1,0 +1,29 @@
+<?php
+
+
+/**
+ * Implements hook_install().
+ */
+function ucms_tree_install() {
+  ucms_tree_update_7001();
+}
+
+/**
+ * Populate the default menus.
+ */
+function ucms_tree_update_7001() {
+  $site_ids = db_select('ucms_site')->fields('ucms_site', ['id']);
+  $storage = umenu_get_storage();
+  foreach ($site_ids as $sid) {
+    $storage->create('site-main-' . $sid, [
+        'title'   => "Main menu",
+        'site_id' => $sid,
+      ]
+    );
+    $storage->create('site-footer-' . $sid, [
+        'title'   => "Footer menu",
+        'site_id' => $sid,
+      ]
+    );
+  }
+}
