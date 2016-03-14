@@ -96,6 +96,14 @@ class NodeAccessService
     }
 
     /**
+     * @param TypeHandler $typeHandler
+     */
+    public function setTypeHandler($typeHandler)
+    {
+        $this->typeHandler = $typeHandler;
+    }
+
+    /**
      * Reset internal cache
      */
     public function resetCache()

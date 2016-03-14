@@ -20,7 +20,6 @@ services:
   # Node access helper
   ucms_site.node_access_helper:
     class: MakinaCorpus\Ucms\Site\NodeAccessService
-    #arguments: ["@ucms_site.manager", "@ucms_contrib.type_handler"]
     arguments: ["@ucms_site.manager"]
 
   # Node dispatcher, handles node attach/detach/clone to sites
