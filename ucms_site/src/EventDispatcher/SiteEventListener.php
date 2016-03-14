@@ -34,6 +34,14 @@ class SiteEventListener
     private $menuStorage;
 
     /**
+     * @param MenuStorageInterface $menuStorage
+     */
+    public function setMenuStorage($menuStorage)
+    {
+        $this->menuStorage = $menuStorage;
+    }
+
+    /**
      * Default constructor
      *
      * @param SiteManager $manager
@@ -41,12 +49,11 @@ class SiteEventListener
      * @param NodeDispatcher $nodeDispatcher
      * @param MenuStorageInterface $menuStorage
      */
-    public function __construct(SiteManager $manager, EntityManager $entityManager, NodeDispatcher $nodeDispatcher, MenuStorageInterface $menuStorage)
+    public function __construct(SiteManager $manager, EntityManager $entityManager, NodeDispatcher $nodeDispatcher)
     {
         $this->manager = $manager;
         $this->entityManager = $entityManager;
         $this->nodeDispatcher = $nodeDispatcher;
-        $this->menuStorage = $menuStorage;
     }
 
     public function onSiteInit(SiteEvent $event)
@@ -55,10 +62,12 @@ class SiteEventListener
 
         // Reset menus.
         $activeMenus = [];
-        $menuList = $this->menuStorage->loadWithConditions(['site_id' => $site->getId()]);
-        if ($menuList) {
-            foreach ($menuList as $menu) {
-                $activeMenus[] = $menu['name'];
+        if ($this->menuStorage) {
+            $menuList = $this->menuStorage->loadWithConditions(['site_id' => $site->getId()]);
+            if ($menuList) {
+                foreach ($menuList as $menu) {
+                    $activeMenus[] = $menu['name'];
+                }
             }
         }
         $activeMenus[] = 'navigation';
@@ -70,7 +79,12 @@ class SiteEventListener
         $site = $event->getSite();
 
         // Create the site defalt menu
-        $this->menuStorage->create('site-main-' . $site->getId(), ['title' => "Main menu", 'site_id' => $site->getId()]);
+        if ($this->menuStorage) {
+            $this->menuStorage->create(
+                'site-main-'.$site->getId(),
+                ['title' => "Main menu", 'site_id' => $site->getId()]
+            );
+        }
 
         // Register the person that asked for the site as a webmaster while
         // skipping anonymous user
