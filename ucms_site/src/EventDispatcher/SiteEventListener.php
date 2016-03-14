@@ -78,11 +78,15 @@ class SiteEventListener
     {
         $site = $event->getSite();
 
-        // Create the site defalt menu
+        // Create the site default menus
         if ($this->menuStorage) {
             $this->menuStorage->create(
                 'site-main-'.$site->getId(),
                 ['title' => "Main menu", 'site_id' => $site->getId()]
+            );
+            $this->menuStorage->create(
+                'site-footer-'.$site->getId(),
+                ['title' => "Footer menu", 'site_id' => $site->getId()]
             );
         }
 
