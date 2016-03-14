@@ -1,0 +1,6 @@
+name = "µCMS Tree"
+description = Handles menu trees
+core = 7.x
+dependencies[] = sf_dic
+dependencies[] = umenu
+dependencies[] = ucms_site

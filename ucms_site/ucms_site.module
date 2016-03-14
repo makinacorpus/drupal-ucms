@@ -243,6 +243,9 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('node/add' === substr(current_path(), 0, 8)) {
       return true;
     }
+    if ('admin/dashboard/tree' === current_path()) {
+      return true;
+    }
     if (arg(0) === 'node') {
       if (menu_get_object() && ($action = arg(2))) {
         switch ($action) {
@@ -522,7 +525,11 @@ function ucms_site_is_master() {
  * Redirect to mater
  */
 function ucms_site_redirect_to_master() {
-  drupal_goto(($GLOBALS['is_https'] ? 'https' : 'http') . '://' .variable_get('ucms_site_master_hostname') . '/admin/dashboard');
+  $path = 'admin/dashboard';
+  if (path_is_admin(current_path())) {
+    $path = current_path();
+  }
+  drupal_goto(($GLOBALS['is_https'] ? 'https' : 'http') . '://' . variable_get('ucms_site_master_hostname') . '/' . $path);
 }
 
 /**

@@ -705,4 +705,15 @@ class SiteAccessService
     {
         $this->accessCache = [];
     }
+
+    /**
+     * Check if user can edit tree
+     *
+     * @param \Drupal\Core\Session\AccountInterface $account
+     * @param \MakinaCorpus\Ucms\Site\Site $site
+     * @return bool
+     */
+    public function userCanEditTree(AccountInterface $account, Site $site) {
+        return $this->userIsWebmaster($account, $site);
+    }
 }

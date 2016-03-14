@@ -52,6 +52,12 @@ item:
     options:
       icon: 'globe'
   -
+    name: "Arborescence"
+    path: "admin/dashboard/tree"
+    expanded: true
+    options:
+      icon: 'tree-conifer'
+  -
     name: "Déconnexion"
     path: "user/logout"
     expanded: true
