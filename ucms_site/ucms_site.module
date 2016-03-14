@@ -819,3 +819,13 @@ function theme_ucms_site_state_transition_form($variables) {
 
   return theme('table', ['header' => $header, 'rows' => $rows]) . drupal_render_children($form);
 }
+
+
+/**
+ * Preprocess dashboard top bar.
+ *
+ * @param $vars
+ */
+function ucms_site_preprocess_ucms_dashboard_top(&$vars) {
+  $vars['site'] = ucms_site_manager()->getContext();
+}

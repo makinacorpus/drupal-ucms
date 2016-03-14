@@ -17,6 +17,13 @@
               {{ "Welcome @user"|t({'@user':user.displayName}) }}
             </a>
           </li>
+          {% if site %}
+            <li>
+              <a href="{{ url('') }}">
+                {{ site.title_admin }}
+              </a>
+            </li>
+          {% endif %}
         {% endif %}
       </ul>
     </div>
