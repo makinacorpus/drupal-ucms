@@ -42,8 +42,12 @@ const UCMS_STYLE_FAVORITE = 'favorite';
  * Implements hook_menu().
  */
 function ucms_contrib_menu() {
-  $items = [];
+  // Prevent using service during install.
+  if (defined('MAINTENANCE_MODE')) {
+    return [];
+  }
 
+  $items = [];
   // Main administration pages.
   foreach (ucms_contrib_type_handler_get()->getTabs() as $key => $label) {
     $items['admin/dashboard/' . $key] = [

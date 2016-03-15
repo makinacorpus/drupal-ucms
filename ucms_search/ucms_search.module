@@ -190,5 +190,9 @@ function ucms_search_ucms_search_index_node($index, $node) {
  * Implements hook_cron().
  */
 function ucms_search_cron() {
-  ucms_search_index()->indexer()->bulkDequeue();
+  // This will happen when install and enable happens during the same PHP
+  // runtime, we don't care about clearing the indexes on install.
+  if (\Drupal::getContainer()->has('ucms_search.index_storage')) {
+    ucms_search_index()->indexer()->bulkDequeue();
+  }
 }
