@@ -10,7 +10,7 @@ function ucms_tree_menu() {
     'page callback'   => 'sf_dic_page_form',
     'page arguments'  => ['MakinaCorpus\Ucms\Tree\Form\TreeForm'],
     'access callback' => ['ucms_tree_check_access'],
-    'type'            => MENU_NORMAL_ITEM,
+    'type'            => MENU_CALLBACK,
   ];
 
   return $items;

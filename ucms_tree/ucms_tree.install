@@ -12,7 +12,11 @@ function ucms_tree_install() {
  * Populate the default menus.
  */
 function ucms_tree_update_7001() {
-  $site_ids = db_select('ucms_site')->fields('ucms_site', ['id']);
+  $site_ids = db_select('ucms_site')
+    ->fields('ucms_site', ['id'])
+    ->execute()
+    ->fetchCol()
+  ;
   $storage = umenu_get_storage();
   foreach ($site_ids as $sid) {
     $storage->create('site-main-' . $sid, [

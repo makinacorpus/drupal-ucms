@@ -75,6 +75,7 @@ class ContextPaneEventListener
                 'node/%',
                 'admin/dashboard/content',
                 'admin/dashboard/media',
+                'admin/dashboard/tree',
             ];
             // @todo Inject services
             if (

@@ -16,7 +16,7 @@ class SiteCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('umenu.storage')) {
+        if ($container->hasDefinition('umenu.storage') || $container->hasAlias('umenu.storage')) {
             $eventListener = $container->getDefinition('ucms_site.site_event_listener');
 
             $eventListener->addMethodCall(
