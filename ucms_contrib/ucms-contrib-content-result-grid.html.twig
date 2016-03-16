@@ -1,13 +1,15 @@
-{% for nid, node in nodes %}
-  {% if constant('UCMS_VIEW_MODE_CONTENTADMIN') == view_mode %}
-    <div class="ucms-contrib-result col-md-3" data-nid="{{ nid }}">
-      <div class="ucms-contrib-result-inner">
+<div data-mode="{{ mode }}">
+  {% for nid, node in nodes %}
+    {% if constant('UCMS_VIEW_MODE_CONTENTADMIN') == view_mode %}
+      <div class="ucms-contrib-result col-md-3" data-nid="{{ nid }}">
+        <div class="ucms-contrib-result-inner">
+          {{ node }}
+        </div>
+      </div>
+    {% else %}
+      <div class="ucms-contrib-result" data-nid="{{ nid }}">
         {{ node }}
       </div>
-    </div>
-  {% else %}
-    <div class="ucms-contrib-result" data-nid="{{ nid }}">
-      {{ node }}
-    </div>
-  {% endif %}
-{% endfor %}
+    {% endif %}
+  {% endfor %}
+</div>

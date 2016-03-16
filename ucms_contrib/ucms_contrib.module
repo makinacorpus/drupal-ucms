@@ -311,6 +311,7 @@ function ucms_contrib_theme() {
       'variables' => [
         'nodes'     => [],
         'view_mode' => UCMS_VIEW_MODE_CONTENTADMIN,
+        'mode'      => '',
       ],
       'template'  => 'ucms-contrib-content-result-grid',
     ],

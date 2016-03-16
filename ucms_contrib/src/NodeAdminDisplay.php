@@ -32,18 +32,20 @@ class NodeAdminDisplay extends AbstractDisplay
                 return [
                     '#theme' => 'ucms_contrib_content_result_grid',
                     '#nodes' => $nodes,
+                    '#mode'  => $mode,
                 ];
 
             case 'list':
                 return [
-                    '#theme'      => 'ucms_contrib_content_result_grid',
-                    '#nodes'      => $nodes,
-                    '#view_mode'  => 'teaser',
+                    '#theme' => 'ucms_contrib_content_result_grid',
+                    '#nodes' => $nodes,
+                    '#mode' => $mode,
+                    '#view_mode' => 'teaser',
                 ];
 
             case 'table':
-                $rows   = [];
-                $names  = node_type_get_names();
+                $rows = [];
+                $names = node_type_get_names();
 
                 $accountMap = [];
                 foreach ($nodes as $node) {
@@ -55,7 +57,10 @@ class NodeAdminDisplay extends AbstractDisplay
                 foreach ($nodes as $node) {
                     $rows[] = [
                         $names[$node->type],
-                        '<div class="ucms-contrib-result" data-nid="' . $node->nid . '">' . l($node->title, 'node/' . $node->nid) . '</div>',
+                        '<div class="ucms-contrib-result" data-nid="'.$node->nid.'">'.l(
+                            $node->title,
+                            'node/'.$node->nid
+                        ).'</div>',
                         $node->status ? $this->t("published") : $this->t("unpublished"),
                         format_date($node->created),
                         isset($accountMap[$node->uid])
@@ -66,9 +71,9 @@ class NodeAdminDisplay extends AbstractDisplay
                 }
 
                 return [
-                    '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
+                    '#prefix' => '<div class="col-md-12" data-mode="table">', // FIXME should be in theme
                     '#suffix' => '</div>', // FIXME should be in theme
-                    '#theme' => 'table',
+                    '#theme'  => 'table',
                     '#header' => [
                         $this->t("Type"),
                         $this->t("Title"),
@@ -77,7 +82,7 @@ class NodeAdminDisplay extends AbstractDisplay
                         $this->t("Owner"),
                         '',
                     ],
-                    '#rows' => $rows,
+                    '#rows'   => $rows,
                 ];
         }
     }
