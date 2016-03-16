@@ -467,8 +467,9 @@ function ucms_site_install_schema_fix() {
           db_query($statement);
         } catch (\PDOException $e) {
           switch ($e->getCode()) {
-            // @todo Add MySQL error code
             case 42710: // PostgreSQL constraint already exists
+              continue;
+            case 23000: // MySQL duplicate key in table
               continue;
             default:
               throw $e;
@@ -647,6 +648,8 @@ function ucms_site_update_7015() {
     drupal_uninstall_modules(['menu'], false);
   }
   if (!module_exists('umenu')) {
+    // This is necessary because umenu will set foreign key constraints.
+    db_query("DELETE FROM {menu_links}");
     module_enable(['umenu']);
   }
   ucms_site_install_schema_fix();
