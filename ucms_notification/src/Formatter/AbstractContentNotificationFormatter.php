@@ -37,6 +37,6 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
      */
     protected function getTypeLabelVariations($count)
     {
-        return ["@count content", "@count content"];
+        return ["@count content", "@count contents"];
     }
 }
