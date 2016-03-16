@@ -110,5 +110,5 @@ function ucms_notification_node_update($node) {
  * Implements hook_node_delete().
  */
 function ucms_notification_node_delete($node) {
-  notification_service_get()->notify('node', $node->nid, 'delete');
+  notification_service_get()->notify('node', $node->nid, 'delete', array('title' => $node->title));
 }
