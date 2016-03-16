@@ -44,6 +44,15 @@ services:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserDelete
     tags: [{ name: apb.notification.formatter, event: "user:delete", auto: true, channels: "admin:client" }]
 
+  # Content notifications
+  ucms_notification.content_edit:
+    class: MakinaCorpus\Ucms\Notification\Formatter\ContentEdit
+    tags: [{ name: apb.notification.formatter, event: "node:edit", auto: true}]
+
+  ucms_notification.content_delete:
+    class: MakinaCorpus\Ucms\Notification\Formatter\ContentDelete
+    tags: [{ name: apb.notification.formatter, event: "node:delete", auto: true}]
+
   # Context pane event listener
   ucms_notification.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\ContextPaneEventListener

@@ -148,4 +148,20 @@ class NotificationService
             ->delete()
         ;
     }
+
+    /**
+     * Add a new subscription.
+     *
+     * @param int $userId
+     * @param string $chanId
+     */
+    public function subscribe($userId, $chanId) {
+        $suber = $this->notificationService->getSubscriber($userId);
+        try {
+            $suber->subscribe($chanId);
+        } catch (ChannelDoesNotExistException $e) {
+            $this->notificationService->getBackend()->createChannel($chanId);
+            $suber->subscribe($chanId);
+        }
+    }
 }
