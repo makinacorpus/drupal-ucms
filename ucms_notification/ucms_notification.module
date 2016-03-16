@@ -103,7 +103,7 @@ function ucms_notification_node_insert($node) {
  * Implements hook_node_udpate().
  */
 function ucms_notification_node_update($node) {
-  notification_service_get()->notify('node', $node->nid, 'edit');
+  notification_service_get()->notify('node', $node->nid, 'edit', array('title' => $node->title));
 }
 
 /**
