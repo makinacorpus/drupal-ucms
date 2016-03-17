@@ -44,6 +44,11 @@ class UserEventListener
     {
         /* @var UserInterface $user */
         $user = $this->entityManager->getStorage('user')->load($event->getArgument('webmaster_id'));
-        $this->tokenManager->sendTokenMail($user, 'new-account');
+        
+        if ($user->status == 0) {
+            $this->tokenManager->sendTokenMail($user, 'new-account-disabled');
+        } else {
+            $this->tokenManager->sendTokenMail($user, 'new-account-enabled');
+        }
     }
 }
