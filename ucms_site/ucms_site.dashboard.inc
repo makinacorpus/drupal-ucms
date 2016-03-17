@@ -98,7 +98,7 @@ function ucms_site_dashboard_site_page_view(Site $site) {
       [t("Title"), check_plain($site->title)],
       [t("Created at"), format_date($site->ts_created->getTimestamp())],
       [t("Lastest update"), format_date($site->ts_changed->getTimestamp())],
-      [t("Requester"), format_username($requester)],
+      [t("Requester"), check_plain(format_username($requester))],
       [['data' => '<strong>' . t("Description") . '</strong>', 'colspan' => 2]],
       [t("Description"), check_markup($site->title_admin)],
       [t("Replaces"), check_markup($site->replacement_of)],

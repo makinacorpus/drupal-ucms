@@ -53,7 +53,7 @@ class AccountPortlet extends AbstractPortlet
         $account  = $this->getAccount();
 
         $items[] = [$this->t('Username'), $account->getDisplayName()];
-        $items[] = [$this->t('E-mail'), $account->getEmail()];
+        $items[] = [$this->t('E-mail'), check_plain($account->getEmail())];
 
         // Roles
         $role_names = user_roles();

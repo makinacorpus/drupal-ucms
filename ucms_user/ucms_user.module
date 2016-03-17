@@ -192,7 +192,7 @@ function template_preprocess_ucms_user_profile(&$variables) {
   $sites = $manager->loadWebmasterSites($account);
   $requests = [];
   foreach ($sites as $id => $site) {
-    $site_name = l(check_plain($site->title_admin), 'admin/dashboard/site/' . $site->id);
+    $site_name = l($site->title_admin, 'admin/dashboard/site/' . $site->id);
 
     if ($site->state == SiteState::REQUESTED) {
       $requests[] = $site_name;
