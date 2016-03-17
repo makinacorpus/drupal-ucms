@@ -20,12 +20,12 @@ function ucms_tree_update_7001() {
   $storage = umenu_get_storage();
   foreach ($site_ids as $sid) {
     $storage->create('site-main-' . $sid, [
-        'title'   => "Main menu",
+        'title'   => t("Main menu"),
         'site_id' => $sid,
       ]
     );
     $storage->create('site-footer-' . $sid, [
-        'title'   => "Footer menu",
+        'title'   => t("Footer menu"),
         'site_id' => $sid,
       ]
     );

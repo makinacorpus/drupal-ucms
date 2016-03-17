@@ -33,3 +33,29 @@ function ucms_tree_check_access($account = NULL) {
   }
   return FALSE;
 }
+
+/**
+ * Implements hook_library().
+ */
+function ucms_tree_library() {
+  $path = drupal_get_path('module', 'ucms_tree');
+  $libraries['nested-sortable'] = [
+    'title'        => 'Nested Sortable',
+    'website'      => 'https://github.com/ilikenwf/nestedSortable',
+    'version'      => '2.0-alpha',
+    'js'           => [
+      $path . '/js/jquery.nestedSortable.js' => [],
+      $path . '/js/ucms_tree.js'             => [],
+    ],
+    'css'          => [
+      $path . '/ucms_tree.css' => [
+        'type'  => 'file',
+        'media' => 'screen',
+      ],
+    ],
+    'dependencies' => [
+      ['system', 'ui.sortable'],
+    ],
+  ];
+  return $libraries;
+}

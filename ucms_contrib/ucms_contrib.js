@@ -1,4 +1,9 @@
 (function ($) {
+  // This variable is used because of this bug https://bugs.jqueryui.com/ticket/4303
+  // so as workaround, we save the helper and its position before it's removed
+  Drupal.ucmsTempReceivedPos = 0;
+  Drupal.ucmsIsSameContainer = false;
+
   /**
    * Some general behaviors
    */
@@ -42,10 +47,6 @@
    */
   Drupal.behaviors.ucmsCart = {
     attach: function (context, settings) {
-      // This variable is used because of this bug https://bugs.jqueryui.com/ticket/4303
-      // so as workaround, we save the helper and its position before it's removed
-      var tempReceivedPos, isSameContainer;
-
       /**
        * Admin items: can be dropped on cart, always reverted
        */
@@ -67,9 +68,9 @@
         connectWith: '[data-can-receive], #ucms-cart-trash',
 
         beforeStop: function (event, ui) {
-          tempReceivedPos = ui.helper.index();
+          Drupal.ucmsTempReceivedPos = ui.helper.index();
           // Need to save the fact that we are receiving or not for update()
-          isSameContainer = !!$(ui.placeholder).closest(this).length;
+          Drupal.ucmsIsSameContainer = !!$(ui.placeholder).closest(this).length;
         },
 
         receive: function (event, ui) {
@@ -92,7 +93,7 @@
                   $(this).remove();
                 });
               }, 3000);
-              event.preventDefault()
+              event.preventDefault();
             });
         },
 
@@ -117,9 +118,9 @@
           },
 
           beforeStop: function (event, ui) {
-            tempReceivedPos = ui.helper.index();
+            Drupal.ucmsTempReceivedPos = ui.helper.index();
             // Need to save the fact that we are receiving or not for update()
-            isSameContainer = !!$(ui.placeholder).closest(this).length;
+            Drupal.ucmsIsSameContainer = !!$(ui.placeholder).closest(this).length;
           },
 
           receive: function (event, ui) {
@@ -129,13 +130,13 @@
               replaceElementWithData = function (data) {
                 var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
                 if (ui.item.justReceived) {
-                  var olderBrother = $(sortable).find("> *:nth-child(" + (tempReceivedPos + 1) + ")");
+                  var olderBrother = $(sortable).find("> *:nth-child(" + (Drupal.ucmsTempReceivedPos + 1) + ")");
                   if (olderBrother.length) {
                     olderBrother.before(elem);
                   } else {
-                    $(sortable).append(elem)
+                    $(sortable).append(elem);
                   }
-                  $(sortable).sortable('refresh')
+                  $(sortable).sortable('refresh');
                 } else {
                   $(ui.item).replaceWith(elem);
                 }
@@ -143,14 +144,14 @@
               opts = {
                 region: $(this).data('region'),
                 nid: ui.item.data('nid'),
-                position: tempReceivedPos, // Don't ask me why
+                position: Drupal.ucmsDrupal.ucmsTempReceivedPos, // Don't ask me why
                 token: settings.ucmsLayout.editToken
               },
               action = 'add';
             if (ui.item.originRegion) {
               // Move from previous region
-              opts['prevRegion'] = ui.sender.data('region');
-              opts['prevPosition'] = ui.item.index();
+              opts.prevRegion = ui.sender.data('region');
+              opts.prevPosition = ui.item.index();
               action = 'move';
             }
             else {
@@ -161,17 +162,17 @@
 
           update: function (event, ui) {
             // Do nothing if we are not in the same container
-            if (!isSameContainer) {
+            if (!Drupal.ucmsIsSameContainer) {
               return;
             }
 
             $.post(settings.basePath + 'ajax/ucms/layout/' + settings.ucmsLayout.layoutId + '/move', {
-                region: $(this).data('region'),
-                nid: ui.item.data('nid'),
-                position: ui.item.index(),
-                prevPosition: ui.item.startPos,
-                token: settings.ucmsLayout.editToken
-              });
+              region: $(this).data('region'),
+              nid: ui.item.data('nid'),
+              position: ui.item.index(),
+              prevPosition: ui.item.startPos,
+              token: settings.ucmsLayout.editToken
+            });
           }
         }));
       }
@@ -186,7 +187,7 @@
             // Remove form cart
             $.get(settings.basePath + 'admin/cart/' + nid + '/remove/nojs')
               .done(function () {
-                ui.item.remove()
+                ui.item.remove();
               });
           }
           else {
@@ -196,7 +197,7 @@
               position: ui.item.startPos,
               token: settings.ucmsLayout.editToken
             }).done(function () {
-              ui.item.remove()
+              ui.item.remove();
             });
           }
         },

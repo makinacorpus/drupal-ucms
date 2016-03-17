@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\Site\NodeDispatcher;
@@ -13,6 +14,8 @@ use MakinaCorpus\Umenu\MenuStorageInterface;
 
 class SiteEventListener
 {
+    use StringTranslationTrait;
+    
     /**
      * @var SiteManager
      */
@@ -82,7 +85,7 @@ class SiteEventListener
         if ($this->menuStorage) {
             $this->menuStorage->create(
                 'site-main-'.$site->getId(),
-                ['title' => "Main menu", 'site_id' => $site->getId()]
+                ['title' => $this->t("Main menu"), 'site_id' => $site->getId()]
             );
             $this->menuStorage->create(
                 'site-footer-'.$site->getId(),
