@@ -17,17 +17,21 @@ function ucms_tree_update_7001() {
     ->execute()
     ->fetchCol()
   ;
-  $storage = umenu_get_storage();
   foreach ($site_ids as $sid) {
-    $storage->create('site-main-' . $sid, [
+    // Can't use service here, so raw queries...
+    db_insert('umenu')
+      ->fields(['name', 'title', 'site_id'])
+      ->values([
+        'name'    => 'site-main-' . $sid,
         'title'   => t("Main menu"),
         'site_id' => $sid,
-      ]
-    );
-    $storage->create('site-footer-' . $sid, [
+      ])
+      ->values([
+        'name'    => 'site-footer-' . $sid,
         'title'   => t("Footer menu"),
         'site_id' => $sid,
-      ]
-    );
+      ])
+      ->execute()
+    ;
   }
 }
