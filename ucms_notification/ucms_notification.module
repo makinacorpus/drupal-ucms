@@ -20,7 +20,6 @@
  */
 
 use MakinaCorpus\Ucms\Notification\Access;
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 
 /**
  * Implements hook_permission().
@@ -75,6 +74,29 @@ function ucms_notification_user_update(&$edit, $account, $category) {
   if ($account->uid > 1 && $account->original && array_intersect_key($account->roles, $account->original->roles)) {
     ucms_notification_service()->refreshSubscriptionsFor($account->uid);
   }
+  if ($account->uid > 1 && $account->original) {
+    // Change email
+    if ($account->mail !== $account->original->mail) {
+      notification_service_get()->notify('user', $account->uid, 'change_email', array('title' => $account->name));
+    }
+    // Change status
+    if ($account->status !== $account->original->status) {
+      if ($account->status){
+        notification_service_get()->notify('user', $account->uid, 'enable', array('title' => $account->name));
+      } else {
+        notification_service_get()->notify('user', $account->uid, 'disable', array('title' => $account->name));
+      }
+    }
+    // In any case, it's an update.
+    notification_service_get()->notify('user', $account->uid, 'edit', array('title' => $account->name));
+  }
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function ucms_notification_user_insert(&$edit, $account, $category) {
+  notification_service_get()->notify('user', $account->uid, 'add', array('title' => $account->name));
 }
 
 /**
@@ -82,6 +104,7 @@ function ucms_notification_user_update(&$edit, $account, $category) {
  */
 function ucms_notification_user_cancel($edit, $account, $method) {
   ucms_notification_service()->deleteSubscriptionsFor($account->uid);
+  notification_service_get()->notify('user', $account->uid, 'delete', array('title' => $account->name));
 }
 
 /**
@@ -89,6 +112,7 @@ function ucms_notification_user_cancel($edit, $account, $method) {
  */
 function ucms_notification_user_delete($account) {
   ucms_notification_service()->deleteSubscriptionsFor($account->uid);
+  notification_service_get()->notify('user', $account->uid, 'delete', array('title' => $account->name));
 }
 
 /**
