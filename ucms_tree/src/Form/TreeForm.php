@@ -151,6 +151,8 @@ class TreeForm extends FormBase
         foreach ($form_state->getValue('menus') as $menu_name => $items) {
             $this->saveMenuItems($menu_name, drupal_json_decode($items));
         }
+
+        drupal_set_message($this->t("Tree modifications have been saved"));
     }
 
     /**

@@ -9,7 +9,8 @@ ol.ucms-highlighted-over {
 ol.sortable, ol.sortable ol {
   list-style-type: none;
 }
-.sortable li div {
+.sortable li div,
+.sortable .ucms-placeholder {
   border: 1px solid #d4d4d4;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -18,6 +19,8 @@ ol.sortable, ol.sortable ol {
   border-color: #D4D4D4 #D4D4D4 #BCBCBC;
   margin: 0;
   padding: 10px;
+  width: 400px;
+  min-height: 42px;
 }
 .sortable li div span {
   float: right;

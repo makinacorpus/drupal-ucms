@@ -23,6 +23,7 @@
         startCollapsed: false,
         items: 'li',
         toleranceElement: '> div',
+        forcePlaceholderSize: false,
         attribute: 'data-mlid',
         excludeRoot: true,
         expression: /()([new_\d]+)/,
