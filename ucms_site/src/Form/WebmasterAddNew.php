@@ -109,31 +109,31 @@ class WebmasterAddNew extends FormBase
             '#required' => true,
         ];
 
-        $form['password'] = [
-            '#type' => 'password_confirm',
-            //'#title' => $this->t('Password'),
-            '#size' => 20,
-            '#description' => $this->t("!count characters at least. Mix letters, digits and special characters for a better password.", ['!count' => 8]),
+        $form['enable'] = array(
+            '#type' => 'checkbox',
+            '#title' => $this->t('Enable the user'),
+            '#default_value' => 0,
+            '#description' => $this->t("You will have to define a password and pass it on to the user by yourself."),
+        );
+
+        $form['password_container'] = [
+            // Yes, a container... because password_confirm elements seem to not support #states property.
+            '#type' => 'container',
+            '#states' => [
+                'visible' => [':input[name="enable"]' => ['checked' => true]],
+                'enabled' => [':input[name="enable"]' => ['checked' => true]], // This one to avoid non matching values at submit...
+            ],
+            'password' => [
+                '#type' => 'password_confirm',
+                '#size' => 20,
+                '#description' => $this->t("!count characters at least. Mix letters, digits and special characters for a better password.", ['!count' => 8]),
+            ],
         ];
 
         $form['actions'] = array('#type' => 'actions');
         $form['actions']['submit'] = array(
             '#type' => 'submit',
             '#value' => $this->t('Create'),
-            '#weight' => 10,
-        );
-        $form['actions']['submit_enable'] = array(
-            '#type' => 'submit',
-            '#value' => $this->t('Create & enable'),
-            '#validate' => ['::validateFormWithEnabling'],
-            '#submit' => ['::submitFormWithEnabling'],
-//            '#states' => [
-//                'enabled' => [
-//                    ':input[name="password[pass1]"]' => ['filled' => true],
-//                    ':input[name="password[pass2]"]' => ['filled' => true],
-//                ],
-//            ],
-            '#weight' => 20,
         );
 
         return $form;
@@ -164,19 +164,14 @@ class WebmasterAddNew extends FormBase
         ) {
             form_set_error('mail', $this->t('The e-mail address %email is already taken.', array('%email' => $mail)));
         }
-    }
 
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validateFormWithEnabling(array &$form, FormStateInterface $form_state)
-    {
-        $this->validateForm($form, $form_state);
-
-        $password = $form_state->getValue('password');
-        if (strlen($password) < 8) {
-            $form_state->setErrorByName('password', $this->t("The password must contain !count characters at least.",  ['!count' => 8]));
+        if ((int) $form_state->getValue('enable') === 1) {
+            if (strlen($form_state->getValue('password')) === 0) {
+                $form_state->setErrorByName('password', $this->t("You must define a password to enable the user."));
+            }
+            elseif (strlen($form_state->getValue('password')) < 8) {
+                $form_state->setErrorByName('password', $this->t("The password must contain !count characters at least.",  ['!count' => 8]));
+            }
         }
     }
 
@@ -192,62 +187,18 @@ class WebmasterAddNew extends FormBase
         $user->setUsername($form_state->getValue('name'));
         $user->setEmail($form_state->getValue('mail'));
 
-        // Sets a random password
         require_once DRUPAL_ROOT . '/includes/password.inc';
-        $user->pass = user_hash_password(user_password(20));
-        // Ensures the user is disabled by default
-        $user->status = 0;
+
+        if ((int) $form_state->getValue('enable') === 1) {
+            $user->pass = user_hash_password($form_state->getValue('password'));
+            $user->status = 1;
+        } else {
+            $user->pass = user_hash_password(user_password(20));
+            $user->status = 0; // Ensures the user is disabled by default
+        }
 
         $this->entityManager->getStorage('user')->save($user);
-        $this->saveAccessRights($user, $form_state);
 
-        drupal_set_message($this->t("!name has been created and added as %role.", [
-            '!name' => $user->getDisplayName(),
-            '%role' => $this->siteManager->getAccess()->getDrupalRoleName($form_state->getValue('role')),
-        ]));
-
-        $event = new SiteEvent($form_state->getTemporaryValue('site'), $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
-        $this->dispatcher->dispatch('site:webmaster_add_new', $event);
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function submitFormWithEnabling(array &$form, FormStateInterface $form_state)
-    {
-        /* @var \Drupal\user\UserInterface $user */
-        $user = $this->entityManager->getStorage('user')->create();
-
-        $user->setUsername($form_state->getValue('name'));
-        $user->setEmail($form_state->getValue('mail'));
-
-        // Sets the password
-        require_once DRUPAL_ROOT . '/includes/password.inc';
-        $user->pass = user_hash_password($form_state->getValue('password'));
-        // Enables the user
-        $user->status = 1;
-
-        $this->entityManager->getStorage('user')->save($user);
-        $this->saveAccessRights($user, $form_state);
-
-        drupal_set_message($this->t("!name has been created, enabled and added as %role.", [
-            '!name' => $user->getDisplayName(),
-            '%role' => $this->siteManager->getAccess()->getDrupalRoleName($form_state->getValue('role')),
-        ]));
-
-        $event = new SiteEvent($form_state->getTemporaryValue('site'), $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
-        $this->dispatcher->dispatch('site:webmaster_add_new', $event);
-    }
-
-
-    /**
-     * Creates a new user and sets the common properties of all the operations.
-     * @param UserInterface $user
-     * @param FormStateInterface $form_state
-     */
-    protected function saveAccessRights(UserInterface $user, FormStateInterface $form_state)
-    {
         $site = $form_state->getTemporaryValue('site');
         $rid = $form_state->getValue('role');
         $relativeRoles = $this->siteManager->getAccess()->getRelativeRoles();
@@ -257,6 +208,14 @@ class WebmasterAddNew extends FormBase
         } else {
             $this->siteManager->getAccess()->addContributors($site, $user->id());
         }
+
+        drupal_set_message($this->t("!name has been created and added as %role.", [
+            '!name' => $user->getDisplayName(),
+            '%role' => $this->siteManager->getAccess()->getDrupalRoleName($rid),
+        ]));
+
+        $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
+        $this->dispatcher->dispatch('site:webmaster_add_new', $event);
     }
 }
 
