@@ -34,16 +34,17 @@
   right: 10em;
   bottom: 0;
 }
-#ucms-cart .ucms-highlighted {
-  border: dashed 5px #fff;
-  transition: .5s;
-  min-height: 100px; /* Prevents empty zone */
-}
 #ucms-cart .alert-danger {
   clear: both;
   font-weight: bold;
 }
-
+#ucms-cart-list {
+  min-height: 100px; /* Prevents empty zone */
+}
+#ucms-cart-list.ucms-highlighted {
+  border: dashed 5px #fff;
+  transition: .5s;
+}
 
 /**
  * Cart items
