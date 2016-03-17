@@ -277,7 +277,7 @@ After setting your password, you will be able to log in at [site:login-url] in t
 
 An account has been created for you at [site:name].
 
-This account is already activated, you will be able to log in at [site:login-url] using the password that we will provide you soon.
+This account is already active, you will be able to log in at [site:login-url] using the password that we will provide you soon.
 
 --  [site:name] team", [], ['langcode' => $langcode]);
       break;

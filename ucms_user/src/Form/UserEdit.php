@@ -130,10 +130,33 @@ class UserEdit extends FormBase
             '#default_value' => $user->getRoles(),
         ];
 
+        if ($user->isNew()) {
+            $form['enable'] = array(
+                '#type' => 'checkbox',
+                '#title' => $this->t('Enable the user'),
+                '#default_value' => 0,
+                '#description' => $this->t("You will have to define a password and pass it on to the user by yourself."),
+            );
+
+            $form['password_container'] = [
+                // Yes, a container... because password_confirm elements seem to not support #states property.
+                '#type' => 'container',
+                '#states' => [
+                    'visible' => [':input[name="enable"]' => ['checked' => true]],
+                    'enabled' => [':input[name="enable"]' => ['checked' => true]], // This one to avoid non matching values at submit...
+                ],
+                'password' => [
+                    '#type' => 'password_confirm',
+                    '#size' => 20,
+                    '#description' => $this->t("!count characters at least. Mix letters, digits and special characters for a better password.", ['!count' => UCMS_USER_PWD_MIN_LENGTH]),
+                ],
+            ];
+        }
+
         $form['actions'] = ['#type' => 'actions'];
         $form['actions']['submit'] = [
             '#type' => 'submit',
-            '#value' => $this->t('Save'),
+            '#value' => $user->isNew() ? $this->t('Create') : $this->t('Save'),
         ];
 
         return $form;
@@ -172,6 +195,15 @@ class UserEdit extends FormBase
                 form_set_error('mail', $this->t('The e-mail address %email is already taken.', array('%email' => $mail)));
             }
         }
+
+        if ((int) $form_state->getValue('enable') === 1) {
+            if (strlen($form_state->getValue('password')) === 0) {
+                $form_state->setErrorByName('password', $this->t("You must define a password to enable the user."));
+            }
+            elseif (strlen($form_state->getValue('password')) < UCMS_USER_PWD_MIN_LENGTH) {
+                $form_state->setErrorByName('password', $this->t("The password must contain !count characters at least.",  ['!count' => UCMS_USER_PWD_MIN_LENGTH]));
+            }
+        }
     }
 
 
@@ -181,19 +213,26 @@ class UserEdit extends FormBase
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
         $user = $form_state->getTemporaryValue('user');
-        $is_new = empty($user->uid);
+        $is_new = $user->isNew(); // Stores this information to use it after save.
+
+        $user->setUsername($form_state->getValue('name'));
+        $user->setEmail($form_state->getValue('mail'));
 
         // New user
         if ($is_new) {
-            // Sets a password
             require_once DRUPAL_ROOT . '/includes/password.inc';
-            $user->pass = user_hash_password(user_password(20));
-            // Ensure the user is disabled
-            $user->status = 0;
+
+            if ((int) $form_state->getValue('enable') === 1) {
+                $user->pass = user_hash_password($form_state->getValue('password'));
+                $user->status = 1;
+            } else {
+                $user->pass = user_hash_password(user_password(20));
+                $user->status = 0;
+            }
         }
 
         // Prepares user roles
-        $userRoles  = $form_state->getValue('roles', []);
+        $userRoles  = array_filter($form_state->getValue('roles', []));
         $siteRoles  = $this->siteManager->getAccess()->getRelativeRoles();
 
         foreach (array_keys($siteRoles) as $rid) {
@@ -202,13 +241,19 @@ class UserEdit extends FormBase
             }
         }
 
-        $form_state->setValue('roles', $userRoles);
+        $user->roles = $userRoles;
 
         // Saves the user
-        if (user_save($user, $form_state->getValues())) {
+        if ($this->entityManager->getStorage('user')->save($user)) {
             if ($is_new) {
                 drupal_set_message($this->t("The new user @name has been created.", array('@name' => $user->name)));
-                $this->tokenManager->sendTokenMail($user, 'new-account');
+
+                if ($user->isActive()) {
+                    $this->tokenManager->sendTokenMail($user, 'new-account-enabled');
+                } else {
+                    $this->tokenManager->sendTokenMail($user, 'new-account-disabled');
+                }
+
                 $this->dispatcher->dispatch('user:add', new UserEvent($user->uid, $this->currentUser()->uid));
             } else {
                 drupal_set_message($this->t("The user @name has been updated.", array('@name' => $user->name)));
