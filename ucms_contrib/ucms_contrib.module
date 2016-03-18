@@ -403,6 +403,27 @@ function ucms_contrib_preprocess_node(&$variables) {
 }
 
 /**
+ * Implements hook_form_node_form_alter().
+ */
+function ucms_contrib_form_node_form_alter(&$form, &$form_state, $form_id) {
+  $node = $form_state['node'];
+
+  $form['locked'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Lock this content'),
+    '#default_value' => isset($node->is_clonable) ? !((bool) $node->is_clonable) : 0,
+    '#weight' => 100,
+  ];
+}
+
+/**
+ * Implements hook_node_submit().
+ */
+function ucms_contrib_node_submit($node, $form, &$form_state) {
+  $node->is_clonable = ((bool) $form_state['values']['locked']) ? 0 : 1;
+}
+
+/**
  * Render one's favorite cart.
  *
  * @param int|AccountInterface $account
