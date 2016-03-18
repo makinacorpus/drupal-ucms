@@ -505,19 +505,16 @@ class NodeAccessService
         if (!$node->is_clonable) {
             return false;
         }
+        if (empty($node->ucms_sites)) {
+            return false;
+        }
 
-        if ($node->site_id) {
-            return $this
-                ->manager
-                ->getAccess()
-                ->userIsWebmaster(
-                    $account,
-                    $this
-                        ->manager
-                        ->getStorage()
-                        ->findOne($node->site_id)
-                )
-            ;
+        $roles = $this->manager->getAccess()->getUserRoles($account);
+
+        foreach (array_intersect_key($roles, array_flip($node->ucms_sites)) as $role) {
+            if ($role->getRole() == Access::ROLE_WEBMASTER) {
+                return true;
+            }
         }
 
         return false;
