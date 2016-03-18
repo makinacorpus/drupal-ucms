@@ -40,7 +40,8 @@ function ucms_user_menu() {
     'title arguments'   => [3],
     'page callback'     => 'ucms_user_dashboard_user_view',
     'page arguments'    => [3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3],
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_user.dashboard.inc',
   ];
@@ -71,7 +72,8 @@ function ucms_user_menu() {
     'title'             => 'Edit',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserEdit', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3],
     'type'              => MENU_LOCAL_TASK,
     'weight'            => -10
   ];
@@ -80,7 +82,8 @@ function ucms_user_menu() {
     'title'             => 'Reset password',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserResetPassword', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3],
     'type'              => MENU_LOCAL_TASK,
   ];
 
@@ -88,7 +91,8 @@ function ucms_user_menu() {
     'title'             => 'Delete',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserDelete', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3],
     'type'              => MENU_LOCAL_TASK,
     'weight'            => 100,
   ];
@@ -97,7 +101,8 @@ function ucms_user_menu() {
     'title'             => 'Enable the user',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserEnable', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -105,7 +110,8 @@ function ucms_user_menu() {
     'title'             => 'Disable the user',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserDisable', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -113,7 +119,8 @@ function ucms_user_menu() {
     'title'             => 'Change email',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserChangeEmail', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -156,6 +163,22 @@ function ucms_user_permission() {
       'title' => t("Manage all users"),
     ],
   ];
+}
+
+
+/**
+ * Access control callback for menu items related to users.
+ */
+function ucms_user_access($user, $controledUser = null) {
+  if (null === $controledUser) {
+    $controledUser = $GLOBALS['user'];
+  }
+
+  if (user_access(UserAccess::PERM_MANAGE_ALL)) {
+    return true;
+  }
+
+  return ucms_site_manager()->getAccess()->userCanManageUser($controledUser, $user);
 }
 
 

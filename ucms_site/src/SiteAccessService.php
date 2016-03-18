@@ -313,6 +313,30 @@ class SiteAccessService
         return false;
     }
 
+
+    /**
+     * Is the first user allowed to manage the second one.
+     *
+     * @param AccountInterface $controledUser
+     * @param AccountInterface $managedUser
+     *
+     * @return boolean
+     */
+    public function userCanManageUser(AccountInterface $controledUser, AccountInterface $managedUser)
+    {
+        $query = $this->db->select('ucms_site_access', 'sac');
+        $query->addExpression('COUNT(*)');
+        $query->join('ucms_site_access', 'sam', "sam.site_id = sac.site_id");
+        $query->join('ucms_site', 's', "s.id = sac.site_id");
+        $query->condition('sac.uid', $controledUser->id());
+        $query->condition('sac.role', Access::ROLE_WEBMASTER);
+        $query->condition('sam.uid', $managedUser->id());
+        $query->condition('s.uid', $managedUser->id(), '<>');
+
+        return (bool) $query->execute()->fetchField();
+    }
+
+
     /**
      * Can the given user view the given site
      *
