@@ -14,8 +14,6 @@ class ContentEdit extends AbstractContentNotificationFormatter
      */
     protected function getVariations(NotificationInterface $notification, array &$args = [])
     {
-        $data = $notification->getData();
-        $args['@title'] = $data['title'];
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
             return [

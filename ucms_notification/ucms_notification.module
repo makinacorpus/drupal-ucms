@@ -105,7 +105,7 @@ function ucms_notification_node_insert($node) {
 function ucms_notification_node_update($node) {
   global $user;
   $dispatcher = \Drupal::service('event_dispatcher');
-  $dispatcher->dispatch('node:edit', new ResourceEvent('node', $node->nid, $user->uid, array('title' => $node->title)));
+  $dispatcher->dispatch('node:edit', new ResourceEvent('node', $node->nid, $user->uid));
 }
 
 /**
@@ -114,5 +114,5 @@ function ucms_notification_node_update($node) {
 function ucms_notification_node_delete($node) {
   global $user;
   $dispatcher = \Drupal::service('event_dispatcher');
-  $dispatcher->dispatch('node:delete', new ResourceEvent('node', $node->nid, $user->uid, array('title' => $node->title)));
+  $dispatcher->dispatch('node:delete', new ResourceEvent('node', $node->nid, $user->uid));
 }
