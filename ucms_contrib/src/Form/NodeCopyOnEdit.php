@@ -60,7 +60,6 @@ class NodeCopyOnEdit extends FormBase
 
         if (!$node) {
             $this->logger('form')->critical("There is no node to reference!");
-
             return $form;
         }
 
@@ -70,13 +69,12 @@ class NodeCopyOnEdit extends FormBase
 
         if (!$sites) {
             drupal_set_message($this->t("This content is already in all your sites"));
-
             return $form;
         }
 
         $options = [];
         foreach ($sites as $site) {
-            $options[$site->id] = $site->title;
+            $options[$site->id] = check_plain($site->title);
         }
 
         $form_state->setTemporaryValue('node', $node);

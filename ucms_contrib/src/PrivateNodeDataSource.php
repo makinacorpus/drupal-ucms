@@ -107,10 +107,9 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->setTitle($this->t("Status"))
         ;
 
-
         $sites = [];
         foreach ($this->manager->loadOwnSites($this->account) as $site) {
-            $sites[$site->getId()] = $site->title;
+            $sites[$site->getId()] = check_plain($site->title);
         }
 
         $ret[] = $this
