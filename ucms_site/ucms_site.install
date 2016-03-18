@@ -529,19 +529,6 @@ function ucms_site_uninstall() {
 }
 
 /**
- * Implements hook_update_dependencies().
- */
-function ucms_site_update_dependencies() {
-  return [
-    'ucms_site' => [
-      7015 => [
-        'umenu' => 7001,
-      ],
-    ]
-  ];
-}
-
-/**
  * Adds the {ucms_site_access}.role column.
  */
 function ucms_site_update_7005() {
@@ -643,14 +630,17 @@ function ucms_site_update_7013() {
  * Removes 'menu' module and add the 'umenu' module instead.
  */
 function ucms_site_update_7015() {
+  // This is necessary because umenu will set foreign key constraints.
+  db_query("DELETE FROM {menu_links}");
+
   if (module_exists('menu')) {
     module_disable(['menu']);
     drupal_uninstall_modules(['menu'], false);
   }
+
   if (!module_exists('umenu')) {
-    // This is necessary because umenu will set foreign key constraints.
-    db_query("DELETE FROM {menu_links}");
     module_enable(['umenu']);
   }
+  
   ucms_site_install_schema_fix();
 }
