@@ -5,11 +5,13 @@
  * Implements hook_menu().
  */
 function ucms_tree_menu() {
+  $items = [];
+
   $items['admin/dashboard/tree'] = [
     'title'           => 'Tree',
     'page callback'   => 'sf_dic_page_form',
     'page arguments'  => ['MakinaCorpus\Ucms\Tree\Form\TreeForm'],
-    'access callback' => ['ucms_tree_check_access'],
+    'access callback' => 'ucms_tree_check_access',
     'type'            => MENU_CALLBACK,
   ];
 
@@ -39,23 +41,24 @@ function ucms_tree_check_access($account = NULL) {
  */
 function ucms_tree_library() {
   $path = drupal_get_path('module', 'ucms_tree');
-  $libraries['nested-sortable'] = [
-    'title'        => 'Nested Sortable',
-    'website'      => 'https://github.com/ilikenwf/nestedSortable',
-    'version'      => '2.0-alpha',
-    'js'           => [
-      $path . '/js/jquery.nestedSortable.js' => [],
-      $path . '/js/ucms_tree.js'             => [],
-    ],
-    'css'          => [
-      $path . '/ucms_tree.css' => [
-        'type'  => 'file',
-        'media' => 'screen',
+  return [
+    'nested-sortable' => [
+      'title'        => 'Nested Sortable',
+      'website'      => 'https://github.com/ilikenwf/nestedSortable',
+      'version'      => '2.0-alpha',
+      'js'           => [
+        $path . '/js/jquery.nestedSortable.js' => [],
+        $path . '/js/ucms_tree.js'             => [],
+      ],
+      'css'          => [
+        $path . '/ucms_tree.css' => [
+          'type'  => 'file',
+          'media' => 'screen',
+        ],
+      ],
+      'dependencies' => [
+        ['system', 'ui.sortable'],
       ],
     ],
-    'dependencies' => [
-      ['system', 'ui.sortable'],
-    ],
   ];
-  return $libraries;
 }
