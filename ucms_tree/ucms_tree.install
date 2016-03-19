@@ -12,12 +12,15 @@ function ucms_tree_install() {
  * Populate the default menus.
  */
 function ucms_tree_update_7001() {
+
   $site_ids = db_select('ucms_site')
     ->fields('ucms_site', ['id'])
     ->execute()
     ->fetchCol()
   ;
+
   foreach ($site_ids as $sid) {
+
     // Can't use service here, so raw queries...
     db_insert('umenu')
       ->fields(['name', 'title', 'site_id'])

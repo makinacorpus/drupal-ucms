@@ -179,6 +179,7 @@ class TreeForm extends FormBase
         $items = [];
         if (!empty($tree)) {
             foreach ($tree as $i => $data) {
+                $element = [];
                 $element['data'] = '<div class="tree-item">'.$data['link']['link_title'].'<span class="glyphicon glyphicon-remove"></span></div>';
                 $element['data-name'] = substr($data['link']['link_path'], 5); // node/123
                 $element['data-mlid'] = $data['link']['mlid'];

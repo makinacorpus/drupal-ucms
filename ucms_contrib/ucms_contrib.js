@@ -144,7 +144,7 @@
               opts = {
                 region: $(this).data('region'),
                 nid: ui.item.data('nid'),
-                position: Drupal.ucmsDrupal.ucmsTempReceivedPos, // Don't ask me why
+                position: Drupal.ucmsTempReceivedPos, // Don't ask me why
                 token: settings.ucmsLayout.editToken
               },
               action = 'add';
