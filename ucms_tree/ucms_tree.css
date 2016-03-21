@@ -9,6 +9,9 @@ ol.ucms-highlighted-over {
 ol.sortable, ol.sortable ol {
   list-style-type: none;
 }
+ol.sortable li {
+  position: relative;
+}
 .sortable li div,
 .sortable .ucms-placeholder {
   border: 1px solid #d4d4d4;
@@ -16,22 +19,31 @@ ol.sortable, ol.sortable ol {
   -moz-border-radius: 3px;
   border-radius: 3px;
   cursor: move;
-  border-color: #D4D4D4 #D4D4D4 #BCBCBC;
-  margin: 0;
+  margin: 1px;
   padding: 10px;
   width: 400px;
   min-height: 42px;
 }
+.sortable li div .add-here {
+  display: block;
+  position: absolute;
+  text-align: right;
+  border: dashed 1px red;
+  color: red;
+  font-weight: bold;
+  height: 0;
+  width: 600px;
+  top: -2px;
+  cursor: pointer;
+}
+.sortable li div .add-here span {
+  margin-top: -17px;
+}
+.sortable li div .add-after {
+  top: auto;
+  bottom: -2px;
+}
 .sortable li div span {
   float: right;
   cursor: pointer;
-}
-li.mjs-nestedSortable-collapsed.mjs-nestedSortable-hovering div {
-  border-color: #999;
-}
-.sortable li.mjs-nestedSortable-collapsed > ol {
-  display: none;
-}
-.sortable li.mjs-nestedSortable-branch > div > .disclose {
-  display: inline-block;
 }

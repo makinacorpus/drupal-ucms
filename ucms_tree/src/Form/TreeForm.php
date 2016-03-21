@@ -20,6 +20,10 @@ class TreeForm extends FormBase
      * @var \MakinaCorpus\Ucms\Site\SiteManager
      */
     private $manager;
+    /**
+     * @var \DatabaseConnection
+     */
+    private $db;
 
     /**
      * {@inheritdoc}
@@ -28,7 +32,8 @@ class TreeForm extends FormBase
     {
         return new static(
             $container->get('umenu.storage'),
-            $container->get('ucms_site.manager')
+            $container->get('ucms_site.manager'),
+            $container->get('database')
         );
     }
 
@@ -37,11 +42,13 @@ class TreeForm extends FormBase
      *
      * @param \MakinaCorpus\Umenu\DrupalMenuStorage $storage
      * @param \MakinaCorpus\Ucms\Site\SiteManager $manager
+     * @param \DatabaseConnection $db
      */
-    public function __construct(DrupalMenuStorage $storage, SiteManager $manager)
+    public function __construct(DrupalMenuStorage $storage, SiteManager $manager, \DatabaseConnection $db)
     {
         $this->storage = $storage;
         $this->manager = $manager;
+        $this->db = $db;
     }
 
 
@@ -73,7 +80,7 @@ class TreeForm extends FormBase
             // We give all access to nodes, even unpublished
             foreach (array_keys($tree['node_links']) as $nid) {
                 foreach ($tree['node_links'][$nid] as $mlid => &$link) {
-                    $link['access'] = TRUE;
+                    $link['access'] = true;
                 }
             }
             // This sorts the menu items
@@ -148,11 +155,25 @@ class TreeForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        foreach ($form_state->getValue('menus') as $menu_name => $items) {
-            $this->saveMenuItems($menu_name, drupal_json_decode($items));
+        try {
+            $tx = $this->db->startTransaction();
+
+            foreach ($form_state->getValue('menus') as $menu_name => $items) {
+                $this->saveMenuItems($menu_name, drupal_json_decode($items));
+            }
+        } catch (\Exception $e) {
+            if ($tx) {
+                try {
+                    $tx->rollback();
+                } catch (\Exception $e2) {
+                    watchdog_exception('ucms_tree', $e2);
+                }
+                watchdog_exception('ucms_tree', $e);
+
+                drupal_set_message($this->t("Tree modifications have been saved"));
+            }
         }
 
-        drupal_set_message($this->t("Tree modifications have been saved"));
     }
 
     /**
@@ -179,8 +200,9 @@ class TreeForm extends FormBase
         $items = [];
         if (!empty($tree)) {
             foreach ($tree as $i => $data) {
-                $element = [];
-                $element['data'] = '<div class="tree-item">'.$data['link']['link_title'].'<span class="glyphicon glyphicon-remove"></span></div>';
+                $element['data'] = '<div class="tree-item">'.
+                    check_plain($data['link']['link_title']).
+                    '<span class="glyphicon glyphicon-remove"></span></div>';
                 $element['data-name'] = substr($data['link']['link_path'], 5); // node/123
                 $element['data-mlid'] = $data['link']['mlid'];
                 if ($data['below']) {
