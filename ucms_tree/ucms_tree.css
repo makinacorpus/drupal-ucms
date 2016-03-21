@@ -47,3 +47,18 @@ ol.sortable li {
   float: right;
   cursor: pointer;
 }
+
+#tab-tree ol {
+  list-style: none;
+}
+#tab-tree div.tree-item {
+  padding: 5px;
+  border-radius: 6px;
+  color: #000;
+  background: #fff;
+  margin: 2px 0;
+}
+#tab-tree div.tree-item.active {
+  color: #F00;
+  font-weight: bold;
+}
