@@ -69,7 +69,11 @@ class NodeReference extends FormBase
         $sites = $this->nodeDispatcher->findSiteCandidatesForReference($node, $this->currentUser()->uid);
 
         if (!$sites) {
-            drupal_set_message($this->t("This content is already in all your sites"));
+            $form['message'] = [
+              '#type' => 'item',
+              '#title' => $this->t("Select a site"),
+              '#markup' => $this->t("This content is already in all your sites"),
+            ];
             return $form;
         }
 
