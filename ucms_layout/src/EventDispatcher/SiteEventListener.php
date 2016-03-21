@@ -1,7 +1,11 @@
 <?php
 
+
 namespace MakinaCorpus\Ucms\Layout\EventDispatcher;
 
+use Drupal\Core\Entity\EntityManager;
+
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
@@ -10,6 +14,7 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+
 
 class SiteEventListener
 {
@@ -29,9 +34,15 @@ class SiteEventListener
     private $siteManager;
 
     /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
      * @var RequestStack
      */
     private $requestStack;
+
 
     /**
      * Default constructor
@@ -45,13 +56,16 @@ class SiteEventListener
         \DatabaseConnection $db,
         ContextManager $contextManager,
         SiteManager $siteManager,
+        EntityManager $entityManager,
         RequestStack $requestStack
     ) {
         $this->db = $db;
         $this->contextManager = $contextManager;
         $this->siteManager = $siteManager;
+        $this->entityManager = $entityManager;
         $this->requestStack = $requestStack;
     }
+
 
     public function onSiteInit(SiteEvent $event)
     {
@@ -78,7 +92,7 @@ class SiteEventListener
         if (preg_match('/^node\/([0-9]+)$/', $_GET['q'], $matches) === 1) {
             if (($token = $request->get(ContextManager::PARAM_PAGE_TOKEN)) && drupal_valid_token($token)) {
                 $pageContext->setToken($token);
-            } 
+            }
             $pageContext->setCurrentLayoutNodeId((int)$matches[1], $site->getId());
         }
 
@@ -158,5 +172,30 @@ class SiteEventListener
                     ':target' => $target->getId(),
                 ]
             );
+    }
+
+
+    public function onSiteRef(ResourceEvent $event)
+    {
+        $siteId = $event->getResourceIdList()[0];
+        /* @var \Drupal\node\NodeInterface $node */
+        $node = $this->entityManager->getStorage('node')->load($event->getArgument('nid'));
+
+        $layout = $this->contextManager
+            ->getPageContext()
+            ->getStorage()
+            ->findForNodeOnSite($node->id(), $node->site_id);
+
+        if ($layout) {
+            $clone = clone $layout;
+            $clone->setId(null);
+            $clone->setSiteId($siteId);
+
+            foreach ($clone->getAllRegions() as $region) {
+                $region->toggleUpdateStatus(true);
+            }
+
+            $this->contextManager->getPageContext()->getStorage()->save($clone);
+        }
     }
 }
