@@ -176,7 +176,7 @@ function ucms_contrib_menu() {
     'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/copy-on-edit'] = [
-    'title'             => "Copy on site",
+    'title'             => "Edit for my site",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeCopyOnEdit', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
@@ -625,21 +625,21 @@ function ucms_contrib_field_widget_unoderef_form_alter(&$element, &$form_state, 
  * Implements hook_node_insert().
  */
 function ucms_contrib_node_insert($node) {
-  if (isset($node->cloning_from_original_nid)) {
+  if (isset($node->parent_nid)) {
     // Menu path is handled by menu_node_insert().
 
     // Update layout
     db_update('ucms_layout')
       ->fields(['nid' => $node->nid])
       ->condition('site_id', $node->site_id)
-      ->condition('id', $node->clone_from_original_nid)
+      ->condition('nid', $node->parent_nid)
       ->execute()
     ;
 
     // Dereference original node
     db_delete('ucms_site_node')
       ->condition('site_id', $node->site_id)
-      ->condition('id', $node->clone_from_original_nid)
+      ->condition('nid', $node->parent_nid)
       ->execute()
     ;
   }
@@ -677,8 +677,6 @@ function ucms_contrib_node_clone($originalNode) {
   $node->created = NULL;
   $node->path = NULL;
   $node->files = [];
-  // Add an extra property as a flag for form_alter.
-  $node->clone_from_original_nid = $originalNode->nid;
 
   // Fill in the default values.
   $node->status = 0;
@@ -686,10 +684,17 @@ function ucms_contrib_node_clone($originalNode) {
   $node->sticky = 0;
   $node->revision = 1;
 
+  // Reset sites information
   $node->site_id = NULL;
+  $node->ucms_sites = [];
+
   // Set the origin_id and parent_id.
   $node->parent_nid = $originalNode->nid;
-  $node->origin_nid = $originalNode->nid;
+  if (isset($originalNode->origin_nid)) {
+    $node->origin_nid = $originalNode->origin_nid;
+  } else {
+    $node->origin_nid = $originalNode->nid;
+  }
 
   // Make sure the file defining the node form is loaded.
   $form_state = [];

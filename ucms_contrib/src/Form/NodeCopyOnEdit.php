@@ -56,10 +56,8 @@ class NodeCopyOnEdit extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, $node = null)
     {
-        $form['#form_horizontal'] = true;
-
         if (!$node) {
-            $this->logger('form')->critical("There is no node to reference!");
+            $this->logger('form')->critical("There is no node to clone!");
             return $form;
         }
 
@@ -68,13 +66,15 @@ class NodeCopyOnEdit extends FormBase
         $sites = $this->nodeDispatcher->findSiteCandidatesForCloning($node, $this->currentUser()->uid);
 
         if (!$sites) {
-            $form['message'] = [
-              '#type'   => 'item',
-              '#title'  => $this->t("Select a site"),
-              '#markup' => $this->t("This content is already in all your sites"),
+            $form['notice'] = [
+                '#type' => 'item',
+                '#markup' => $this->t("This content has already been edited on all your sites using it."),
             ];
+
             return $form;
         }
+
+        $form['#form_horizontal'] = true;
 
         $options = [];
         foreach ($sites as $site) {
@@ -95,7 +95,7 @@ class NodeCopyOnEdit extends FormBase
         $form['actions']['#type'] = 'actions';
         $form['actions']['continue'] = [
             '#type'  => 'submit',
-            '#value' => $this->t("Add it to my site"),
+            '#value' => $this->t("Save"),
         ];
         if (isset($_GET['destination'])) {
             $form['actions']['cancel'] = [
@@ -124,12 +124,13 @@ class NodeCopyOnEdit extends FormBase
         drupal_set_message($this->t("You can now edit this node on this site, it will be automatically duplicated."));
 
         if ($this->ssoEnabled) {
-            $uri = url('sso/goto/'.$site->id);
+            $uri = url('sso/goto/' . $site->id);
         } else {
-            $uri = url('http://'.$site->http_host);
+            $uri = url('http://' . $site->http_host);
         }
 
-        $options = ['query' => ['destination' => 'node/'.$node->id().'/clone']];
+        $options = ['query' => ['destination' => 'node/' . $node->id() . '/clone']];
+
         $form_state->setRedirect($uri, $options);
     }
 }

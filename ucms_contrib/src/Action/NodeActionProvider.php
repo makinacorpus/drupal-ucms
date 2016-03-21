@@ -43,11 +43,13 @@ class NodeActionProvider implements ActionProviderInterface
 
         if ($item->access(Access::OP_UPDATE)) {
             $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/edit', null, 'pencil', -100, false, true);
+
             if ($item->status) {
                 $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', -50, false, true);
             } else {
                 $ret[] = new Action($this->t("Publish"), 'node/' . $item->id() . '/publish', 'dialog', 'ok-circle', -50, false, true);
             }
+
             if (_node_revision_access($item)) {
                 $ret[] = new Action($this->t("Revisions"), 'node/' . $item->id() . '/revisions', null, 'th-list', -40, false);
             }
@@ -59,7 +61,7 @@ class NodeActionProvider implements ActionProviderInterface
                 'attributes' => ['class' => ['use-ajax', 'minidialog']],
                 'query'      => ['minidialog'  => 1],
             ];
-            $ret[] = new Action($this->t("Edit"), 'node/'.$item->id().'/copy-on-edit', $options, 'pencil', -100, false);
+            $ret[] = new Action($this->t("Edit for my site"), 'node/' . $item->id() . '/copy-on-edit', $options, 'pencil', -90, false);
         }
 
         if ($item->is_global && user_access(Access::PERM_CONTENT_MANAGE_GROUP)) {

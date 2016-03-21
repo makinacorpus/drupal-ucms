@@ -95,7 +95,7 @@ class NodeDispatcher
 
     /**
      * Considering the node as being a reference of another node, this function
-     * will create a clone into database, and 
+     * will create a clone into database, and
      *
      * @param NodeInterface $node
      *   The node to clone
@@ -169,30 +169,17 @@ class NodeDispatcher
      */
     public function findSiteCandidatesForCloning(NodeInterface $node, $userId)
     {
-        // Find all node on sites taht originate from this node
-        $query = $this
-            ->db
-            ->select('ucms_site_node', 'sn');
-        $query->join('node', 'n', 'n.nid = sn.nid');
-        $ne = $query
-            ->where("sn.site_id = sa.site_id")
-            ->condition('n.origin_nid', $node->id())
-        ;
-        $ne->addExpression('1');
+        $query = $this->db->select('ucms_site_node', 'sn');
+        $query->fields('sn', ['site_id']);
+        $query->join('ucms_site_access', 'sa', 'sa.site_id = sn.site_id');
+        $query->leftJoin('node', 'n', 'n.parent_nid = sn.nid');
+        $query->isNull('n.nid');
+        $query->condition('sa.uid', $userId);
+        $query->condition('sa.role', Access::ROLE_WEBMASTER);
+        $query->condition('sn.nid', $node->id());
+        $query->condition('sn.site_id', $node->site_id, '!=');
 
-        // That is not present in sites we have access
-        $idList = $this
-            ->db
-            ->select('ucms_site_access', 'sa')
-            ->fields('sa', ['site_id'])
-            ->condition('sa.uid', $userId)
-            ->notExists($ne)
-            ->groupBy('sa.site_id')
-            ->execute()
-            ->fetchCol()
-        ;
-
-        return $this->manager->getStorage()->loadAll($idList);
+        return $this->manager->getStorage()->loadAll($query->execute()->fetchCol());
     }
 
     /**

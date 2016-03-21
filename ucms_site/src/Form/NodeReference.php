@@ -57,8 +57,6 @@ class NodeReference extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, $node = null)
     {
-        $form['#form_horizontal'] = true;
-
         if (!$node) {
             $this->logger('form')->critical("There is no node to reference!");
             return $form;
@@ -69,13 +67,15 @@ class NodeReference extends FormBase
         $sites = $this->nodeDispatcher->findSiteCandidatesForReference($node, $this->currentUser()->uid);
 
         if (!$sites) {
-            $form['message'] = [
-              '#type' => 'item',
-              '#title' => $this->t("Select a site"),
-              '#markup' => $this->t("This content is already in all your sites"),
+            $form['notice'] = [
+                '#type' => 'item',
+                '#markup' => $this->t("This content is already used by all your sites."),
             ];
+
             return $form;
         }
+
+        $form['#form_horizontal'] = true;
 
         $options = [];
         foreach ($sites as $site) {
@@ -96,7 +96,7 @@ class NodeReference extends FormBase
         $form['actions']['#type'] = 'actions';
         $form['actions']['continue'] = [
             '#type'   => 'submit',
-            '#value'  => $this->t("Add it to my site"),
+            '#value'  => $this->t("Use on my site"),
         ];
         if (isset($_GET['destination'])) {
             $form['actions']['cancel'] = [
