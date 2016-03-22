@@ -64,6 +64,10 @@ class NodeActionProvider implements ActionProviderInterface
             $ret[] = new Action($this->t("Edit for my site"), 'node/' . $item->id() . '/copy-on-edit', $options, 'pencil', -90, false);
         }
 
+        if (!$item->is_global && user_access(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
+            $ret[] = new Action($this->t("Add to global contents"), 'node/' . $item->id() . '/make-global', 'dialog', 'globe', -30, false, true);
+        }
+
         if ($item->is_global && user_access(Access::PERM_CONTENT_MANAGE_GROUP)) {
             if (empty($item->is_group)) {
                 $ret[] = new Action($this->t("Define as group content"), 'node/' . $item->id() . '/make-group', 'dialog', 'briefcase', -30, false, true);

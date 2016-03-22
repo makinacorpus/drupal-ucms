@@ -191,6 +191,14 @@ function ucms_contrib_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
+  $items['node/%node/make-global'] = [
+    'title'             => "Add to global contents",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeMakeGlobal', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_global',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
   $items['node/%node/make-group'] = [
     'title'             => "Define as group content",
     'page callback'     => 'sf_dic_page_form',
