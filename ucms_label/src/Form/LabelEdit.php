@@ -62,13 +62,13 @@ class LabelEdit extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, \stdClass $label = null)
     {
-        $form['#form_horizontal'] = true;
-
         if ($label === null) {
             $label = new \stdClass();
         }
 
         $form_state->setTemporaryValue('label', $label);
+
+        $form['#form_horizontal'] = true;
 
         $form['name'] = array(
             '#type' => 'textfield',
@@ -122,15 +122,15 @@ class LabelEdit extends FormBase
             }
         }
 
-        $form['locked'] = array(
-            '#type' => 'checkbox',
-            '#title' => $this->t('Non editable label'),
-            '#default_value' => isset($label->is_locked) ? $label->is_locked : 0,
-        );
+        if ($this->manager->canEditLockedLabels()) {
+            $form['locked'] = array(
+                '#type' => 'checkbox',
+                '#title' => $this->t('Non editable label'),
+                '#default_value' => isset($label->is_locked) ? $label->is_locked : 0,
+            );
 
-        if (!$this->manager->canEditAllLabels()) {
-            $form['locked']['#disabled'] = true;
-            if ($this->manager->canEditLockedLabels()) {
+            if (!$this->manager->canEditNonLockedLabels()) {
+                $form['locked']['#disabled'] = true;
                 $form['locked']['#default_value'] = 1;
             }
         }
@@ -155,7 +155,7 @@ class LabelEdit extends FormBase
         try {
             $label = $form_state->getTemporaryValue('label');
             $label->name = $form_state->getValue('name');
-            $label->is_locked = $form_state->getValue('locked');
+            $label->is_locked = ($form_state->getValue('locked') === null) ? 0 : $form_state->getValue('locked');
             $label->parent = ($parent = $form_state->getValue('parent')) ? $parent : 0;
             $label->vid = $this->manager->getVocabularyId();
             $label->vocabulary_machine_name = $this->manager->getVocabularyMachineName();
