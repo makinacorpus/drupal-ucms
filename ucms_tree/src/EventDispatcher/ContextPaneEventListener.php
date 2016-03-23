@@ -40,7 +40,7 @@ class ContextPaneEventListener
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)
     {
         $menu_item = menu_get_item();
-        if ($menu_item['path'] !== 'node/%') {
+        if ($menu_item['path'] !== 'node/%' || !$this->manager->hasContext()) {
             return;
         }
 
