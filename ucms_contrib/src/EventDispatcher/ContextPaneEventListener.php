@@ -52,8 +52,7 @@ class ContextPaneEventListener
         ActionProviderInterface $actionProvider,
         SiteManager $siteManager,
         TypeHandler $typeHandler
-    )
-    {
+    ) {
         $this->layoutContextManager = $layoutContextManager;
         $this->actionProvider = $actionProvider;
         $this->siteManager = $siteManager;

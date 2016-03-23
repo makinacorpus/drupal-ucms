@@ -111,6 +111,20 @@ function ucms_contrib_menu() {
   }
 
   // Node actions.
+  node_type_cache_reset();
+  foreach (node_type_get_types() as $type) {
+    $typeUrlKey = str_replace('_', '-', $type->type);
+
+    $items['node/add-to-site/' . $typeUrlKey] = [
+      'title'             => "New " . strtolower($type->name) . " for my site",
+      'title callback'    => 'check_plain',
+      'page callback'     => 'sf_dic_page_form',
+      'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite', $type->type],
+      'access callback'   => 'ucms_contrib_menu_node_access_add_to_site',
+      'access arguments'  => [$type->type],
+      'type'              => MENU_CALLBACK,
+    ];
+  }
   $items['node/%node/publish'] = [
     'title'             => "Publish content",
     'page callback'     => 'sf_dic_page_form',
@@ -243,6 +257,26 @@ function ucms_contrib_menu() {
   ];
 
   return $items;
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_add_to_site($type) {
+  $user = \Drupal::service('current_user');
+  $typeHandler = ucms_contrib_type_handler_get();
+  $siteAccess = ucms_site_manager()->getAccess();
+
+  // Webmasters can create anything
+  if ($siteAccess->userIsWebmaster($user) && in_array($type, $typeHandler->getAllTypes())) {
+    return true;
+  }
+  // Contributors can only create editorial content
+  elseif ($siteAccess->userIsContributor($user) && in_array($type, $typeHandler->getEditorialTypes())) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
