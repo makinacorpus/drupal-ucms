@@ -162,7 +162,7 @@ class SiteEventListener
                     AND source_ul.site_id = :source
                 JOIN {node} n ON n.nid = uld.nid
                 JOIN {ucms_layout} target_ul ON
-                    target_ul.nid = uld.nid
+                    target_ul.nid = source_ul.nid
                     AND target_ul.site_id = :target
                 WHERE
                     (n.status = 1 OR n.is_global = 0)

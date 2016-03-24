@@ -122,10 +122,33 @@ class CloningSiteTest extends AbstractDrupalTest
 
         // Create a fully function template site
         $this->sites['template'] = $this->createDrupalSite(SiteState::ON, true);
+        $this->sites['not_relevant'] = $this->createDrupalSite(SiteState::ON, true);
 
         // Create some content on it
         $this->nodes['ref_homepage'] = $this->createDrupalNode('homepage', 'template');
         $this->nodes['ref_news'] = $this->createDrupalNode('news', 'template');
+        $this->nodes['not_relevant_homepage'] = $this->createDrupalNode('homepage', 'not_relevant');
+        $this->nodes['not_relevant_news'] = $this->createDrupalNode('news', 'not_relevant');
+
+        // Add some menu links
+        $item = [
+            'menu_name'  => 'site-main-'.$this->sites['template']->getId(),
+            'link_path'  => 'node/'.$this->nodes['ref_homepage']->id(),
+            'link_title' => 'node/'.$this->nodes['ref_homepage']->getTitle(),
+        ];
+        menu_link_save($item);
+        $item = [
+            'menu_name'  => 'site-main-'.$this->sites['template']->getId(),
+            'link_path'  => 'node/'.$this->nodes['ref_news']->id(),
+            'link_title' => 'node/'.$this->nodes['ref_news']->getTitle(),
+        ];
+        menu_link_save($item);
+        $item = [
+            'menu_name'  => 'site-main-'.$this->sites['not_relevant']->getId(),
+            'link_path'  => 'node/'.$this->nodes['ref_news']->id(),
+            'link_title' => 'node/'.$this->nodes['ref_news']->getTitle(),
+        ];
+        menu_link_save($item);
 
         // Create some layout on it
         $layout = new Layout();
@@ -138,8 +161,18 @@ class CloningSiteTest extends AbstractDrupalTest
 
         $this->layout = $layout;
 
+        $layout = new Layout();
+        $layout->setNodeId($this->nodes['not_relevant_homepage']->id());
+        $layout->setSiteId($this->sites['not_relevant']->getId());
+        $layout->getRegion('content')->addAt(new Item($this->nodes['not_relevant_news']->id()));
+        $this->getLayoutStorage()->save($layout);
+
         // Create a pending site
         $this->sites['pending'] = $this->createDrupalSite(
+            SiteState::PENDING,
+            $this->sites['template']->getId()
+        );
+        $this->sites['another'] = $this->createDrupalSite(
             SiteState::PENDING,
             $this->sites['template']->getId()
         );
@@ -148,47 +181,15 @@ class CloningSiteTest extends AbstractDrupalTest
     public function testCloningSite()
     {
         $nodeDispatcher = $this->getNodeDispatcher();
-        $nodeDispatcher->cloneSite($this->sites['template'], $this->sites['pending']);
+        $pending = $this->sites['pending'];
+        $template = $this->sites['template'];
+        $nodeDispatcher->cloneSite($template, $pending);
 
-        // The 2 nodes from source should be referenced in target
-        $nids = $this
-            ->getDb()
-            ->select('ucms_site_node', 'n')
-            ->fields('n')
-            ->condition('site_id', $this->sites['pending']->getId())
-            ->execute()
-            ->fetchCol();
-        $this->assertCount(2, $nids);
+        $this->assertAllTheThings($template, $pending);
 
-        // We should have nodes grants in node_access table, for viewing in admin.
-        $grants = $this
-            ->getDb()
-            ->select('node_access', 'n')
-            ->fields('n')
-            ->condition('gid', $this->sites['pending']->getId())
-            ->execute()
-            ->fetchCol();
-        $this->assertCount(6, $grants);
-
-        // We should have layout
-        $layout_ids = $this
-            ->getDb()
-            ->select('ucms_layout', 'u')
-            ->fields('u', ['id'])
-            ->condition('site_id', $this->sites['pending']->getId())
-            ->execute()
-            ->fetchCol();
-        $this->assertGreaterThan(0, count($layout_ids));
-
-        // And layout data
-        $layout_data = $this
-            ->getDb()
-            ->select('ucms_layout_data', 'u')
-            ->fields('u')
-            ->condition('layout_id', $layout_ids)
-            ->execute()
-            ->fetchCol();
-        $this->assertCount(1, $layout_data);
+        // Create another site
+        $nodeDispatcher->cloneSite($template, $this->sites['another']);
+        $this->assertAllTheThings($template, $pending);
     }
 
     protected function tearDown()
@@ -205,5 +206,68 @@ class CloningSiteTest extends AbstractDrupalTest
         parent::tearDown();
     }
 
+    /**
+     * @param $template
+     * @param $pending
+     */
+    protected function assertAllTheThings($template, $pending)
+    {
+        // The 2 nodes from source should be referenced in target
+        $nids = $this
+            ->getDb()
+            ->select('ucms_site_node', 'n')
+            ->condition('site_id', $pending->getId())
+            ->countQuery()
+            ->execute()
+            ->fetchField()
+        ;
+        $this->assertEquals(2, $nids);
 
+        // Home should have been copied to site and referenced
+        $this->assertEquals($template->getHomeNodeId(), $pending->getHomeNodeId());
+
+        // We should have nodes grants in node_access table, for viewing in admin.
+        $grants = $this
+            ->getDb()
+            ->select('node_access', 'n')
+            ->condition('gid', $pending->getId())
+            ->countQuery()
+            ->execute()
+            ->fetchField()
+        ;
+        $this->assertEquals(6, $grants);
+
+        // We should have layout
+        $layout_ids = $this
+            ->getDb()
+            ->select('ucms_layout', 'u')
+            ->fields('u', ['id'])
+            ->condition('site_id', $pending->getId())
+            ->execute()
+            ->fetchCol()
+        ;
+        $this->assertEquals(1, count($layout_ids));
+
+        // And layout data
+        $layout_data = $this
+            ->getDb()
+            ->select('ucms_layout_data', 'u')
+            ->condition('layout_id', $layout_ids)
+            ->countQuery()
+            ->execute()
+            ->fetchField()
+        ;
+        $this->assertEquals(1, $layout_data);
+
+        // And menu links too
+        $links = $this
+            ->getDb()
+            ->select('menu_links', 'm')
+            ->condition('menu_name', 'site-main-'.$pending->getId())
+            ->countQuery()
+            ->execute()
+            ->fetchField()
+        ;
+        $this->assertEquals(2, $links);
+    }
 }
