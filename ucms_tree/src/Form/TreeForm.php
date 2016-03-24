@@ -161,6 +161,11 @@ class TreeForm extends FormBase
             foreach ($form_state->getValue('menus') as $menu_name => $items) {
                 $this->saveMenuItems($menu_name, drupal_json_decode($items));
             }
+
+            unset($tx);
+
+            drupal_set_message($this->t("Tree modifications have been saved"));
+
         } catch (\Exception $e) {
             if ($tx) {
                 try {
@@ -170,7 +175,7 @@ class TreeForm extends FormBase
                 }
                 watchdog_exception('ucms_tree', $e);
 
-                drupal_set_message($this->t("Tree modifications have been saved"));
+                drupal_set_message($this->t("Could not save tree modifications"), 'error');
             }
         }
 
