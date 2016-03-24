@@ -273,6 +273,7 @@ class SiteStorage
             'is_template',
             'type',
             'home_nid',
+            'attributes',
         ];
 
         if (null === $fields) {
@@ -283,7 +284,20 @@ class SiteStorage
 
         $values = [];
         foreach ($fields as $field) {
-            $values[$field] = $site->{$field};
+            switch ($field) {
+
+                case 'attributes':
+                    $attributes = $site->getAttributes();
+                    if (empty($attributes)) {
+                        $values[$field] = null;
+                    } else {
+                        $values[$field] = serialize($attributes);
+                    }
+                    break;
+
+                default:
+                    $values[$field] = $site->{$field};
+            }
         }
 
         $values['ts_changed'] = (new \DateTime())->format('Y-m-d H:i:s');

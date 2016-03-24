@@ -108,6 +108,12 @@ function ucms_site_schema() {
         'not null'    => false,
         'default'     => 0,
       ],
+      'attributes' => [
+        'description' => "Arbitrary site attributes, that other modules may use, this module will ignore it",
+        'type'        => 'text',
+        'not null'    => false,
+        'default'     => null,
+      ],
     ],
     'foreign keys' => [
       'uid' => [
@@ -641,6 +647,20 @@ function ucms_site_update_7015() {
   if (!module_exists('umenu')) {
     module_enable(['umenu']);
   }
-  
+
   ucms_site_install_schema_fix();
+}
+
+/**
+ * Adds the {ucms_site}.attributes column.
+ */
+function ucms_site_update_7016() {
+  if (!db_field_exists('ucms_site', 'attributes')) {
+    db_add_field('ucms_site', 'attributes', [
+      'description' => "Arbitrary site attributes, that other modules may use, this module will ignore it",
+      'type'        => 'text',
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
 }
