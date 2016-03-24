@@ -5,20 +5,6 @@
   Drupal.ucmsIsSameContainer = false;
 
   /**
-   * Some general behaviors
-   */
-  Drupal.behaviors.ucmsContrib = {
-    attach: function (context) {
-
-      // Prevent chrome bug with inputs inside anchors
-      $('#ucms-contrib-facets', context).find('a input').click(function () {
-        location.href = $(this).parents('a').attr('href');
-      });
-
-    }
-  };
-
-  /**
    * Default settings for droppables and sortables
    */
   Drupal.ucmsSortableDefaults = {

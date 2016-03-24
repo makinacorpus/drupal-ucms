@@ -1,5 +1,18 @@
 (function ($) {
   /**
+   * Some general behaviors
+   */
+  Drupal.behaviors.ucmsDashboard = {
+    attach: function (context) {
+      // Prevent chrome bug with inputs inside anchors
+      $('#ucms-contrib-facets', context).find('a input').click(function () {
+        location.href = $(this).parents('a').attr('href');
+      });
+
+    }
+  };
+
+  /**
    * Behavior for handling contextual pane and its tabs
    * @type {{attach: Drupal.behaviors.ucmsDashboardPane.attach}}
    */
