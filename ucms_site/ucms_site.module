@@ -127,7 +127,7 @@ function ucms_site_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddNew', 3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
     'access arguments'  => ['add-new', 3],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/promote'] = [
     'title'             => "Promote as webmaster",
