@@ -13,7 +13,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
  * carry the site wide configuration; this means to reduce the number of
  * services dependencies for other components
  */
-final class SiteManager
+class SiteManager
 {
     /**
      * @var SiteAccessService

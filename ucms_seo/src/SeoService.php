@@ -10,6 +10,8 @@ use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Ucms\Site\SiteManager;
+
 /**
  * Main access point for SEO information, all Drupal-7-ish stuff will be
  * masked behind this implementation (except the field itself) making it
@@ -53,6 +55,11 @@ class SeoService
     private $aliasStorage;
 
     /**
+     * @var SiteManager
+     */
+    private $siteManager;
+
+    /**
      * @var \DatabaseConnection
      */
     private $db;
@@ -63,17 +70,20 @@ class SeoService
      * @param EntityManager $entiyManager
      * @param AliasManagerInterface $aliasManager
      * @param AliasStorageInterface $aliasStorage
+     * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
      */
     public function __construct(
         EntityManager $entiyManager,
         AliasManagerInterface $aliasManager,
         AliasStorageInterface $aliasStorage,
+        SiteManager $siteManager,
         \DatabaseConnection $db)
     {
         $this->entityManager = $entiyManager;
         $this->aliasManager = $aliasManager;
         $this->aliasStorage = $aliasStorage;
+        $this->siteManager = $siteManager;
         $this->db = $db;
     }
 
@@ -168,6 +178,36 @@ class SeoService
     }
 
     /**
+     * Normalize given URL segment
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    public function normalizeSegment($value)
+    {
+        // Transliterate first
+        if (class_exists('URLify')) {
+            $value = \URLify::filter($value, 255);
+        }
+
+        // Only lowercase characters
+        $value = strtolower($value);
+
+        // All special characters to be replaced by '-' and doubles stripped
+        // to only one occurence
+        $value = preg_replace('/[^a-z0-9\-]+/', '-', $value);
+        $value = preg_replace('/-+/', '-', $value);
+
+        // Trim leading and trailing '-' characters
+        $value = trim($value, '-');
+
+        // @todo stopwords
+
+        return $value;
+    }
+
+    /**
      * Change the node segment
      *
      * @param NodeInterface $node
@@ -199,9 +239,9 @@ class SeoService
         ;
 
         if (empty($segment)) {
-            $this->onAliasChange($node);
-        } else {
             $this->onAliasRemove($node);
+        } else {
+            $this->onAliasChange($node);
         }
     }
 
@@ -356,7 +396,7 @@ class SeoService
      *   First dimension keys are node identifiers, and values are
      *   arrays of actual node aliases
      */
-    public function nodeAliasesMerge($nodeAliases, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
+    public function nodeAliasesMerge($nodeAliases, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $siteId = null)
     {
         // We hope doing that in only 3 SQL queries, we can't do less than
         // that, first one load existing aliases, second insert missing,
@@ -378,6 +418,7 @@ class SeoService
             ->fields('u', ['pid', 'source', 'alias', 'expires'])
             ->condition('u.source', array_keys($sourceMap))
             ->condition('u.language', $langcode)
+            ->condition('u.site_id', $siteId)
             ->execute()
         ;
 
@@ -415,14 +456,53 @@ class SeoService
             $q = $this
                 ->db
                 ->insert('ucms_seo_alias')
-                ->fields(['source', 'alias', 'language'])
+                ->fields(['source', 'alias', 'language', 'site_id'])
             ;
             foreach ($nodeAliases as $nodeId => $aliases) {
                 foreach ($aliases as $alias) {
-                    $q->values(['node/' . $nodeId, $alias, $langcode]);
+                    $q->values(['node/' . $nodeId, $alias, $langcode, $siteId]);
                 }
             }
             $q->execute();
+        }
+    }
+
+    /**
+     * Find and update the canonical link for node
+     *
+     * It won't return anything because it will just update the alias table and
+     * Drupal magic will do the rest
+     *
+     * @param NodeInterface $node
+     */
+    public function updateCanonicalForNode(NodeInterface $node)
+    {
+        $changed = false;
+
+        //
+        // The rules are tricky here, we mostly have two problems:
+        //
+        //  - first one is that a node might have multiple aliases, case in
+        //    which the most recent must win
+        //
+        //  - second one is that the node might be present on more than one
+        //    site, case in which aliases on each site might be different too
+        //    and the most ancient site the node is in, considering it must
+        //    be publicly visible, will win over and get the canonical
+        //
+        // Besides all this, a few other notes:
+        //
+        //  - we don't have a "per-site" canonical (so no redirect will ever
+        //    happen actually within the same site)
+        //
+        //  - I actually have nothing more to say
+        //
+
+        
+
+        if ($changed) {
+            // Sorry, but this is really necessary
+            $this->aliasManager->cacheClear();
         }
     }
 
@@ -474,6 +554,11 @@ class SeoService
     {
         $nodeRoute  = 'node/' . $node->id();
         $langcode   = $node->language()->getId();
+        $siteId     = null;
+
+        if ($this->siteManager->hasContext()) {
+            $siteId = $this->siteManager->getContext()->getId();
+        }
 
         $idList = $this
             ->db
@@ -489,22 +574,31 @@ class SeoService
             // Fetch all associated node aliases from the given menu link
             $nodeAliases = [];
             foreach ($idList as $id) {
-                $nodeAliases = NestedArray::mergeDeep(
-                    $nodeAliases,
-                    $this->getLinkChildrenAliases($id)
+                $nodeAliases = NestedArray::mergeDeepArray(
+                    [
+                        $nodeAliases,
+                        $this->getLinkChildrenAliases($id),
+                    ],
+                    true
                 );
             }
 
             // Once merge, bulk update everything in there
-            $this->nodeAliasesMerge($nodeAliases, $langcode);
+            $this->nodeAliasesMerge($nodeAliases, $langcode, $siteId);
 
         } else {
             $segment = $this->getNodeSegment($node);
 
             // Node has no attached menus, so just add the segment alias
             // as full alias if none exists
-            if ($segment && !$this->aliasStorage->load(['langcode' => $langcode, 'source' => $nodeRoute])) {
-                $this->aliasStorage->save($nodeRoute, $segment, $langcode);
+            if ($segment && !$this->aliasStorage->load(['langcode' => $langcode, 'source' => $nodeRoute, 'site_id' => null])) {
+                $newAlias = $this->aliasStorage->save($nodeRoute, $segment, $langcode);
+
+                // Because the node needs an alias for everyone, let's add the
+                // default one for all sites
+                if ($newAlias['site_id']) {
+                    $this->db->query("UPDATE {ucms_seo_alias} SET site_id = ? WHERE pid = ?", [null, $newAlias['pid']]);
+                }
             }
         }
 

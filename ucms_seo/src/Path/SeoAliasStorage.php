@@ -6,6 +6,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 
+use MakinaCorpus\Ucms\Site\SiteManager;
+
 /**
  * Implementation that will hit a custom table instead of use the {url_alias}
  * table, please note this will only work if all modules uses the alias manager
@@ -25,15 +27,22 @@ class SeoAliasStorage implements AliasStorageInterface
     protected $moduleHandler;
 
     /**
+     * @var SiteManager
+     */
+    protected $siteManager;
+
+    /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
      * @param ModuleHandlerInterface $moduleHandler
+     * @param SiteManager $siteManager
      */
-    public function __construct(\DatabaseConnection $db, ModuleHandlerInterface $moduleHandler)
+    public function __construct(\DatabaseConnection $db, ModuleHandlerInterface $moduleHandler, SiteManager $siteManager)
     {
         $this->db = $db;
         $this->moduleHandler = $moduleHandler;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -45,6 +54,7 @@ class SeoAliasStorage implements AliasStorageInterface
             'source'    => $source,
             'alias'     => $alias,
             'language'  => $langcode,
+            'site_id'   => null,
         ];
 
         if ($pid) {
@@ -158,6 +168,22 @@ class SeoAliasStorage implements AliasStorageInterface
             }
         }
 
+        // BEWARE: HERE BE DRAGONS (probably, anyway).
+        // When looking up aliases, we need to filter using the current site
+        // this would have no use otherwise to set the site_id on the node
+        // information
+        if ($this->siteManager->hasContext()) {
+            $query->condition(
+                db_or()
+                    ->condition('u.site_id', $this->siteManager->getContext()->getId())
+                    ->isNotNull('u.site_id')
+            );
+            // https://stackoverflow.com/questions/9307613/mysql-order-by-null-first-and-desc-after
+            $query->orderBy('u.site_id IS NULL', 'desc');
+        } else {
+            $query->isNull('u.site_id');
+        }
+
         return $query
             ->orderBy('u.pid', 'DESC')
             ->condition('u.language', $langcodeList)
@@ -173,6 +199,8 @@ class SeoAliasStorage implements AliasStorageInterface
     {
         // See the queries above. Use LIKE for case-insensitive matching.
         $alias = $this->db->escapeLike($path);
+
+        // Source has no use of being restricted by the site identifier.
 
         $query = $this
             ->db
@@ -274,5 +302,13 @@ class SeoAliasStorage implements AliasStorageInterface
             ->execute()
             ->fetchField()
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWhitelist()
+    {
+        return $this->db->query("SELECT DISTINCT SUBSTRING_INDEX(source, '/', 1) AS path FROM {ucms_seo_alias}")->fetchCol();
     }
 }

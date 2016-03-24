@@ -42,6 +42,13 @@ function ucms_seo_schema() {
   // the hook_schema_alter() anymore, we'll also provide a replacement
   // AliasStorageInterface to come up with.
   $aliasTable = drupal_get_schema_unprocessed('system', 'url_alias');
+  $aliasTable['fields']['site_id'] = [
+    'description' => "Site identifier this alias belongs to",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => true,
+    'default'     => null,
+  ];
   $aliasTable['fields']['is_canonical'] = [
     'description' => "Is this alias the canonical alias for the source path",
     'type'        => 'int',
@@ -100,6 +107,7 @@ function ucms_seo_install_constraints() {
   return [
     'ucms_seo_node' => [
       'ucms_seo_node_fk' => "ALTER TABLE {ucms_seo_node} ADD CONSTRAINT {ucms_seo_node_fk} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
+      'ucms_seo_alias_site_fk' => "ALTER TABLE {ucms_seo_alias} ADD CONSTRAINT {ucms_seo_alias_site_fk} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
     ],
   ];
 }
@@ -111,7 +119,18 @@ function ucms_seo_install_schema_fix() {
   foreach (ucms_seo_install_constraints() as $table => $statements) {
     if (db_table_exists($table)) {
       foreach ($statements as $statement) {
-        db_query($statement);
+        try {
+          db_query($statement);
+        } catch (\PDOException $e) {
+          switch ($e->getCode()) {
+            case 42710: // PostgreSQL constraint already exists
+              continue;
+            case 23000: // MySQL duplicate key in table
+              continue;
+            default:
+              throw $e;
+          }
+        }
       }
     }
   }
@@ -144,5 +163,31 @@ function ucms_seo_install() {
  */
 function ucms_seo_uninstall() {
   ucms_seo_uninstall_schema_fix();
+}
+
+/**
+ * Adds the missing {ucms_seo_alias}.site_id column.
+ */
+function ucms_seo_update_7001() {
+  if (!db_field_exists('ucms_seo_alias', 'site_id')) {
+    db_add_field('ucms_seo_alias', 'site_id', [
+      'description' => "Site identifier this alias belongs to",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => null,
+    ]);
+  }
+}
+
+/**
+ * Adds missing database contraints.
+ *
+ * Weird thing is, with MySQL, when adding the field and settings contraints
+ * during the same transaction, it seems to fail due to failing constraint, but
+ * if you do it in two transactions, it works.
+ */
+function ucms_seo_update_7002() {
+  ucms_seo_install_schema_fix();
 }
 

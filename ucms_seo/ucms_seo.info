@@ -5,3 +5,4 @@ package = UCMS
 php = 5.5
 dependencies[] = sf_dic
 dependencies[] = ucms_dashboard
+dependencies[] = ucms_site

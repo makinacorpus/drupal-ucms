@@ -11,7 +11,11 @@ class PathAliasStorageTest extends AbstractPathAliasStorageTest
     {
         return new SeoAliasStorage(
             $this->getDatabaseConnection(),
-            $this->getNullModuleHandler()
+            $this->getNullModuleHandler(),
+            $this
+                ->getMockBuilder('MakinaCorpus\Ucms\Site\SiteManager')
+                ->disableOriginalConstructor()
+                ->getMock()
         );
     }
 }
