@@ -9,6 +9,7 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Seo\SeoService;
+use MakinaCorpus\Umenu\DrupalMenuStorage;
 
 /**
  * Now, how aliases are built: for example, lets say you have nodes,
@@ -79,6 +80,14 @@ class SeoServiceTest extends AbstractDrupalTest
     }
 
     /**
+     * @return DrupalMenuStorage
+     */
+    protected function getMenuStorage()
+    {
+        return $this->getDrupalContainer()->get('umenu.storage');
+    }
+
+    /**
      * @return AliasStorageInterface
      */
     protected function getAliasStorage()
@@ -102,9 +111,8 @@ class SeoServiceTest extends AbstractDrupalTest
 
         // And now create the associated menu
         $this->menuName = uniqid('phpunit-seo-');
-        menu_save([
+        $this->getMenuStorage()->create($this->menuName, [
             'title'       => $this->menuName,
-            'menu_name'   => $this->menuName,
             'description' => $this->menuName,
         ]);
 
@@ -172,7 +180,7 @@ class SeoServiceTest extends AbstractDrupalTest
             ->delete($this->nodes)
         ;
 
-        menu_delete(['menu_name' => $this->menuName]);
+        $this->getMenuStorage()->delete($this->menuName);
     }
 
     public function testMenuLinkAliasBuild()
