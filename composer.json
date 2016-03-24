@@ -40,6 +40,6 @@
     },
     "suggests" : {
         "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs"
-    }
+    },
     "minimum-stability" : "dev"
 }
