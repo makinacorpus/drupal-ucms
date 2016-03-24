@@ -125,7 +125,7 @@ class SiteSwitch extends FormBase
 
                 drupal_set_message(
                     $this->t(
-                        "Site @site has been switched from @from to @to",
+                        "There was an error switching site @site from @from to @to",
                         [
                             '@site' => $site->title,
                             '@from' => $list[$data['from']],

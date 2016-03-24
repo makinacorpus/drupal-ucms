@@ -123,7 +123,7 @@ class SiteEventListener
                     :target, usn.nid
                 FROM {ucms_layout} ul
                 JOIN {ucms_site_node} usn ON
-                    usn.nid = usn.nid
+                    ul.nid = usn.nid
                     AND usn.site_id = :target
                 WHERE
                     ul.site_id = :source

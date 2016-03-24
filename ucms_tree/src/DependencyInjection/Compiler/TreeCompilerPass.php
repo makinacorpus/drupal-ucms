@@ -1,12 +1,12 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\DependencyInjection\Compiler;
+namespace MakinaCorpus\Ucms\Tree\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class SiteCompilerPass implements CompilerPassInterface
+class TreeCompilerPass implements CompilerPassInterface
 {
 
     /**
@@ -16,12 +16,12 @@ class SiteCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('ucms_contrib.type_handler')) {
-            $eventListener = $container->getDefinition('ucms_site.node_access_helper');
+        if ($container->hasDefinition('umenu.storage') || $container->hasAlias('umenu.storage')) {
+            $eventListener = $container->getDefinition('ucms_tree.site_event_listener');
 
             $eventListener->addMethodCall(
-                'setTypeHandler',
-                [new Reference('ucms_contrib.type_handler')]
+                'setMenuStorage',
+                [new Reference('umenu.storage')]
             );
         }
     }

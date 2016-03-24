@@ -32,19 +32,6 @@ class SiteEventListener
     private $nodeDispatcher;
 
     /**
-     * @var MenuStorageInterface
-     */
-    private $menuStorage;
-
-    /**
-     * @param MenuStorageInterface $menuStorage
-     */
-    public function setMenuStorage($menuStorage)
-    {
-        $this->menuStorage = $menuStorage;
-    }
-
-    /**
      * Default constructor
      *
      * @param SiteManager $manager
@@ -59,39 +46,9 @@ class SiteEventListener
         $this->nodeDispatcher = $nodeDispatcher;
     }
 
-    public function onSiteInit(SiteEvent $event)
-    {
-        $site = $event->getSite();
-
-        // Reset menus.
-        $activeMenus = [];
-        if ($this->menuStorage) {
-            $menuList = $this->menuStorage->loadWithConditions(['site_id' => $site->getId()]);
-            if ($menuList) {
-                foreach ($menuList as $menu) {
-                    $activeMenus[] = $menu['name'];
-                }
-            }
-        }
-        $activeMenus[] = 'navigation';
-        $GLOBALS['conf']['menu_default_active_menus'] = $activeMenus;
-    }
-
     public function onSiteCreate(SiteEvent $event)
     {
         $site = $event->getSite();
-
-        // Create the site default menus
-        if ($this->menuStorage) {
-            $this->menuStorage->create(
-                'site-main-'.$site->getId(),
-                ['title' => $this->t("Main menu"), 'site_id' => $site->getId()]
-            );
-            $this->menuStorage->create(
-                'site-footer-'.$site->getId(),
-                ['title' => "Footer menu", 'site_id' => $site->getId()]
-            );
-        }
 
         // Register the person that asked for the site as a webmaster while
         // skipping anonymous user

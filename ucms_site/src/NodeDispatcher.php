@@ -226,6 +226,21 @@ class NodeDispatcher
             ])
         ;
 
+        // Update the homepage of the target site
+        $this
+            ->db
+            ->query(
+                "
+                UPDATE {ucms_site}
+                SET home_nid = :home_nid
+                WHERE id = :target
+            ",
+                [
+                    ':target' => $target->getId(),
+                    ':home_nid' => $source->getHomeNodeId(),
+                ]
+            );
+
         // Update node access rights
         $nidList = $this->db
             ->select('ucms_site_node', 'usn')

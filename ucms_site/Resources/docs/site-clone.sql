@@ -30,7 +30,7 @@ SELECT
 FROM {ucms_layout} ul
 -- only create layouts when node is referenced on site
 JOIN {ucms_site_node} usn ON
-    usn.nid = usn.nid
+    ul.nid = usn.nid
     AND usn.site_id = :target
 WHERE
     ul.site_id = :source

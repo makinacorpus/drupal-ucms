@@ -63,7 +63,6 @@ services:
     arguments: ["@ucms_site.manager", "@entity.manager", "@ucms_site.node_dispatcher"]
     tags:
       - {name: event_listener, event: "site:create"}
-      - {name: event_listener, event: "site:init"}
       - {name: event_listener, event: "site:save"}
       - {name: event_listener, event: "site:switch"}
       - {name: event_listener, event: "site:webmaster_add_new"}
