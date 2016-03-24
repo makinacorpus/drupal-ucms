@@ -56,7 +56,7 @@ class IndexLoader extends AbstractLoader
         if (!$param) {
             $context->logCritical(sprintf("%s: index definition is empty", $node->getPath()));
         }
-        if (empty($param['mapping'])) {
+        if (empty($param['mappings'])) {
             $context->logCritical(sprintf("%s: index definition has no mapping structure", $node->getPath()));
         }
         if (empty($param['name'])) {

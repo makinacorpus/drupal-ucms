@@ -148,7 +148,7 @@ class PrivateNodeDataSource extends AbstractDatasource
             'updated'     => $this->t("lastest update date"),
             'status'      => $this->t("status"),
             'owner'       => $this->t("owner"),
-            'title'       => $this->t("title"),
+            'title.raw'   => $this->t("title"),
             'is_flagged'  => $this->t("flag"),
         ];
     }

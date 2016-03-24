@@ -111,16 +111,16 @@ class Sort
      */
     public function getSortStructure()
     {
-        $sort = [$this->getField() => ['order' => $this->getOrder()]];
+        $sort = [$this->getField() => (object)['order' => $this->getOrder()]];
 
         if ($this->getMode()) {
-            $sort[$this->getField()]['mode'] = $this->getMode();
+            $sort[$this->getField()]->mode = $this->getMode();
         }
         if ($this->getMissing()) {
-            $sort[$this->getField()]['missing'] = $this->getMissing();
+            $sort[$this->getField()]->missing = $this->getMissing();
         }
 
-        return $sort;
+        return (object)$sort;
     }
 
 }

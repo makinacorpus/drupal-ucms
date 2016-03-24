@@ -7,7 +7,7 @@ settings:
   number_of_shards:   1
   number_of_replicas: 0
 
-mapping:
+mappings:
   node:
     properties:
 
@@ -16,6 +16,10 @@ mapping:
         analyzer:     standard
         term_vector:  yes
         copy_to:      combined
+        fields:
+          raw:
+            type:     string
+            index:    not_analyzed
 
       body:
         type:         string
