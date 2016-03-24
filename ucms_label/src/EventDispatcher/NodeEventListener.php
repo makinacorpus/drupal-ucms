@@ -75,8 +75,10 @@ class NodeEventListener
         $node   = $this->entityManager->getStorage('node')->load($nodeId);
         $items  = field_get_items('node', $node, 'labels');
 
-        foreach ($items as $item) {
-            $event->addResourceChanId('label', $item['tid']);
+        if ($items) {
+            foreach ($items as $item) {
+                $event->addResourceChanId('label', $item['tid']);
+            }
         }
     }
 }
