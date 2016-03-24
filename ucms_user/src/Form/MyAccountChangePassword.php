@@ -67,10 +67,12 @@ class MyAccountChangePassword extends FormBase
 
         $form['new_password'] = [
             '#type' => 'password_confirm',
-            //'#title' => $this->t('New password'),
             '#size' => 20,
             '#required' => true,
             '#description' => $this->t("!count characters at least. Mix letters, digits and special characters for a better password.", ['!count' => UCMS_USER_PWD_MIN_LENGTH]),
+            // Fix display
+            '#form_horizontal' => false,
+            '#nowrapper' => true,
         ];
 
         $form['actions'] = [
