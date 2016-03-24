@@ -101,6 +101,27 @@ function ucms_seo_permission() {
 }
 
 /**
+ * Implements hook_page_build().
+ */
+function ucms_seo_page_build(&$page) {
+  // This be better to be listener onResponse but hey, what Drupal can and
+  // cannot do is way beyond the human comprehension level...
+  $manager = ucms_site_manager();
+  if ($manager->hasContext()) {
+    $site = $manager->getContext();
+    if ($site->hasAttribute('seo.google.site_verification')) {
+      drupal_add_html_head([
+        '#tag' => 'meta',
+        '#attributes' => [
+          'name' => 'google-site-verification',
+          'content' => $site->getAttribute('seo.google.site_verification'),
+        ],
+      ], 'seo.google.site_verification');
+    }
+  }
+}
+
+/**
  * @return \MakinaCorpus\Ucms\Seo\SeoService
  */
 function ucms_seo_service() {

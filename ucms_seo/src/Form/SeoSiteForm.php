@@ -72,6 +72,12 @@ class SeoSiteForm extends FormBase
             '#attributes'       => ['placeholder' => 'UA-123456'],
             '#default_value'    => $site->getAttribute('seo.google.ga_id'),
         ];
+        $form['site_verification'] = [
+            '#title'            => t("Google webmaster tools verification code"),
+            '#type'             => 'textfield',
+            '#attributes'       => ['placeholder' => '+nxGUDJ4QpAZ5l9Bsjdi102tLVC21AIh5d1Nl23908vVuFHs34='],
+            '#default_value'    => $site->getAttribute('seo.google.site_verification'),
+        ];
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
@@ -91,6 +97,12 @@ class SeoSiteForm extends FormBase
             $site->setAttribute('seo.google.ga_id', $gaId);
         } else {
             $site->deleteAttribute('seo.google.ga_id');
+        }
+
+        if ($siteVerif = $formState->getValue('site_verification')) {
+            $site->setAttribute('seo.google.site_verification', $siteVerif);
+        } else {
+            $site->deleteAttribute('seo.google.site_verification');
         }
 
         $this->siteManager->getStorage()->save($site, ['attributes']);
