@@ -11,7 +11,7 @@ services:
   ucms_label.label_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Label\Action\LabelActionProvider
-    arguments: ["@ucms_label.manager"]
+    arguments: ["@ucms_label.manager", "@ucms_notification.service", "@current_user"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_label.context_pane_event_listener:
@@ -19,3 +19,19 @@ services:
     arguments: ["@ucms_label.manager"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
+
+  ucms_label.label_event_listener:
+    class: MakinaCorpus\Ucms\Label\EventDispatcher\LabelEventListener
+    arguments: ["@ucms_label.manager", "@apb.notification"]
+    tags:
+      - { name: event_listener, event: "label:add" }
+      - { name: event_listener, event: "label:edit" }
+      - { name: event_listener, event: "label:delete" }
+
+  ucms_label.node_event_listener:
+    class: MakinaCorpus\Ucms\Label\EventDispatcher\NodeEventListener
+    arguments: ["@entity.manager"]
+    tags:
+      - { name: event_listener, event: "node:add" }
+      #- { name: event_listener, event: "node:edit" }
+      #- { name: event_listener, event: "node:delete" }

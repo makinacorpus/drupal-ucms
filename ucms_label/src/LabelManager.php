@@ -135,6 +135,26 @@ final class LabelManager
 
 
     /**
+     * Is the label a root term?
+     *
+     * @param stdClass $label
+     * @return boolean
+     */
+    public function isRootLabel(\stdClass $label)
+    {
+        $q = $this->db
+            ->select('taxonomy_term_hierarchy', 'h')
+            ->condition('h.parent', 0)
+            ->condition('h.tid', $label->tid)
+            ->fields('h', array('tid'))
+            ->range(0, 1)
+            ->execute();
+
+        return !empty($q->fetch());
+    }
+
+
+    /**
      * Save the label.
      *
      * @return integer Constant SAVED_NEW or SAVED_UPDATED.

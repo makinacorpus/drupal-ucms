@@ -7,7 +7,7 @@ use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Ucms\Notification\Formatter\AbstractContentNotificationFormatter;
 
 
-class ContentEdit extends AbstractContentNotificationFormatter
+class ContentAdd extends AbstractContentNotificationFormatter
 {
     /**
      * {@inheritdoc}
@@ -17,13 +17,13 @@ class ContentEdit extends AbstractContentNotificationFormatter
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
             return [
-                "@title has been updated by @name",
-                "@title have been updated by @name",
+                "@title has been created by @name",
+                "@title have been created by @name",
             ];
         } else {
             return [
-                "@title has been updated",
-                "@title have been updated",
+                "@title has been created",
+                "@title have been created",
             ];
         }
     }

@@ -7,34 +7,33 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
-use MakinaCorpus\Ucms\Label\LabelManager;
+use MakinaCorpus\Ucms\Notification\NotificationService;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 
 /**
- * Label creation and edition form
+ * Unsubscription to the labels notifications
  */
-class LabelDelete extends FormBase
+class LabelUnsubscribe extends FormBase
 {
-
     /**
      * {@inheritdoc}
      */
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_label.manager'),
+            $container->get('ucms_notification.service'),
             $container->get('event_dispatcher')
         );
     }
 
 
     /**
-     * @var LabelManager
+     * @var NotificationService
      */
-    protected $manager;
+    protected $notifService;
 
     /**
      * @var EventDispatcherInterface
@@ -42,9 +41,15 @@ class LabelDelete extends FormBase
     protected $dispatcher;
 
 
-    public function __construct(LabelManager $manager, EventDispatcherInterface $dispatcher)
+    /**
+     * Constructor
+     *
+     * @param NotificationService $notifService
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(NotificationService $notifService, EventDispatcherInterface $dispatcher)
     {
-        $this->manager = $manager;
+        $this->notifService = $notifService;
         $this->dispatcher = $dispatcher;
     }
 
@@ -54,7 +59,7 @@ class LabelDelete extends FormBase
      */
     public function getFormId()
     {
-        return 'ucms_label_delete';
+        return 'ucms_label_unsubscribe';
     }
 
 
@@ -68,8 +73,8 @@ class LabelDelete extends FormBase
         }
 
         $form_state->setTemporaryValue('label', $label);
-        $question = $this->t("Do you really want to delete the \"@name\" label?", ['@name' => $label->name]);
-        return confirm_form($form, $question, 'admin/dashboard/label');
+        $question = $this->t("Unsubscribe from the %name label notifications?", ['%name' => $label->name]);
+        return confirm_form($form, $question, 'admin/dashboard/label', '');
     }
 
 
@@ -78,15 +83,8 @@ class LabelDelete extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        try {
-            $label = $form_state->getTemporaryValue('label');
-            $this->manager->deleteLabel($label);
-            drupal_set_message($this->t("\"@name\" label has been deleted.", array('@name' => $label->name)));
-            $this->dispatcher->dispatch('label:delete', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
-        }
-        catch (\Exception $e) {
-            drupal_set_message($this->t("An error occured during the deletion of the \"@name\" label. Please try again.", array('@name' => $label->name)), 'error');
-        }
+        $label = $form_state->getTemporaryValue('label');
+        $this->notifService->deleteSubscriptionsFor($this->currentUser()->id(), ['label:' . $label->tid]);
+        drupal_set_message($this->t("You unsubscribed from the %name label notifications.", array('%name' => $label->name)));
     }
-
 }

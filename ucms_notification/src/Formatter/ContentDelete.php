@@ -10,7 +10,7 @@ use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
 class ContentDelete extends AbstractNotificationFormatter
 {
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     protected function getTypeLabelVariations($count)
     {
@@ -19,7 +19,7 @@ class ContentDelete extends AbstractNotificationFormatter
 
 
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     protected function getVariations(NotificationInterface $notification, array &$args = [])
     {

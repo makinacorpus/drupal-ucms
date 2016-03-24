@@ -8,3 +8,4 @@ usync[] = usync/vocabulary.yml
 
 dependencies[] = sf_dic
 dependencies[] = ucms_dashboard
+dependencies[] = ucms_notification

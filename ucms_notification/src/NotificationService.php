@@ -155,7 +155,8 @@ class NotificationService
      * @param int $userId
      * @param string $chanId
      */
-    public function subscribe($userId, $chanId) {
+    public function subscribe($userId, $chanId)
+    {
         $suber = $this->notificationService->getSubscriber($userId);
         try {
             $suber->subscribe($chanId);
@@ -163,5 +164,16 @@ class NotificationService
             $this->notificationService->getBackend()->createChannel($chanId);
             $suber->subscribe($chanId);
         }
+    }
+
+    /**
+     * Is the user subscribed to this channel?
+     *
+     * @param int $userId
+     * @param string $chanId
+     */
+    public function isSubscribedTo($userId, $chanId)
+    {
+        return $this->notificationService->getSubscriber($userId)->hasSubscriptionFor($chanId);
     }
 }

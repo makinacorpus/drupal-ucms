@@ -164,10 +164,10 @@ class LabelEdit extends FormBase
 
             if ($op == SAVED_NEW) {
                 drupal_set_message($this->t("The new \"@name\" label has been created.", array('@name' => $label->name)));
-                //$this->dispatcher->dispatch('label:add', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+                $this->dispatcher->dispatch('label:add', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
             } else {
                 drupal_set_message($this->t("The \"@name\" label has been updated.", array('@name' => $label->name)));
-                //$this->dispatcher->dispatch('label:edit', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
+                $this->dispatcher->dispatch('label:edit', new ResourceEvent('label', $label->tid, $this->currentUser()->uid));
             }
         }
         catch (\Exception $e) {

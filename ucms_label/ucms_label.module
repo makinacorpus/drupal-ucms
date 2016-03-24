@@ -41,6 +41,22 @@ function ucms_label_menu() {
     'type'              => MENU_CALLBACK,
   ];
 
+  $items['admin/dashboard/label/%taxonomy_term/subscribe'] = [
+    'title'             => "Subscribe to the notifications",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelSubscribe', 3],
+    'access arguments'  => [LabelAccess::PERM_ACCESS_DASHBOARD],
+    'type'              => MENU_CALLBACK,
+  ];
+
+  $items['admin/dashboard/label/%taxonomy_term/unsubscribe'] = [
+    'title'             => "Unsubscribe from the notifications",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelUnsubscribe', 3],
+    'access arguments'  => [LabelAccess::PERM_ACCESS_DASHBOARD],
+    'type'              => MENU_CALLBACK,
+  ];
+
   $items['admin/dashboard/label/%taxonomy_term/delete'] = [
     'title callback'    => 'ucms_label_menu_item_title',
     'title arguments'   => [LabelAccess::OP_DELETE, 3],
@@ -82,7 +98,7 @@ function ucms_label_access_manage($op, $label = null, $account = null) {
     $account = $user;
   }
 
-  $manager = \Drupal::service('ucms_label.manager');
+  $manager = ucms_label_manager();
 
   switch ($op) {
     case LabelAccess::OP_ADD:
@@ -102,7 +118,7 @@ function ucms_label_access_manage($op, $label = null, $account = null) {
 
 
 /**
- * Checks the user's permissions for operations on labels.
+ * Callback for menu items titles.
  */
 function ucms_label_menu_item_title($op, $label) {
   switch ($op) {
@@ -127,7 +143,7 @@ function ucms_label_menu_item_title($op, $label) {
  * @throws \LogicException
  */
 function ucms_label_taxonomy_term_presave($term) {
-  $manager = \Drupal::service('ucms_label.manager');
+  $manager = ucms_label_manager();
 
   if (!empty($term->tid) && $term->vocabulary_machine_name == $manager->getVocabularyMachineName()) {
     if (!isset($term->original->parent)) {
@@ -153,7 +169,7 @@ function ucms_label_taxonomy_term_presave($term) {
  * @throws \LogicException
  */
 function ucms_label_taxonomy_term_delete($term) {
-  $manager = \Drupal::service('ucms_label.manager');
+  $manager = ucms_label_manager();
 
   if ($manager->hasChildren($term)) {
     throw new \LogicException("Can't delete a label which has children.");
@@ -216,12 +232,6 @@ function ucms_label_library() {
 
 
 /**
- * Implements hook_field_attach_form().
- */
-function ucms_label_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
-}
-
-/**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function ucms_label_field_widget_options_select_form_alter(&$element, &$form_state, $context) {
@@ -234,4 +244,14 @@ function ucms_label_field_widget_options_select_form_alter(&$element, &$form_sta
       'type' => 'inline'
     ];
   }
+}
+
+
+/**
+ * Provides the labels manager service.
+ *
+ * @return MakinaCorpus\Ucms\Label\LabelManager
+ */
+function ucms_label_manager() {
+  return \Drupal::service('ucms_label.manager');
 }

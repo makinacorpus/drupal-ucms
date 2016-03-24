@@ -97,6 +97,10 @@ function ucms_notification_user_delete($account) {
  */
 function ucms_notification_node_insert($node) {
   ucms_notification_service()->subscribe($node->uid, 'node:' . $node->nid);
+  
+  global $user;
+  $dispatcher = \Drupal::service('event_dispatcher');
+  $dispatcher->dispatch('node:add', new ResourceEvent('node', $node->nid, $user->uid));
 }
 
 /**

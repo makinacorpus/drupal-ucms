@@ -1,0 +1,31 @@
+<?php
+
+
+/**
+ * Creates notification channels for existing labels.
+ */
+function ucms_label_update_7001() {
+  /**
+   * @todo Removes this temporary fix
+   */
+  \Drupal::_getKernel()->boot();
+
+  $manager = ucms_label_manager();
+  $notifService = \Drupal::service('apb.notification');
+
+  $query = db_select('taxonomy_term_hierarchy', 'h');
+  $query->join('taxonomy_term_data', 'd', 'd.tid = h.tid');
+  $query->join('taxonomy_vocabulary', 'v', 'v.vid = d.vid');
+  $query->fields('h', array('tid'))
+    ->condition('v.machine_name', $manager->getVocabularyMachineName())
+    ->condition('h.parent', 0, '!=');
+
+  $channels = [];
+  foreach ($query->execute()->fetchCol() as $id) {
+    $channels[] = 'label:' . $id;
+  }
+
+  if (!empty($channels)) {
+    $notifService->getBackend()->createChannels($channels, true);
+  }
+}

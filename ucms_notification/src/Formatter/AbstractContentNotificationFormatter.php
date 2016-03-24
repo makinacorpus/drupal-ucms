@@ -21,7 +21,7 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     }
 
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     protected function getTitles($idList)
     {
@@ -33,7 +33,7 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     }
 
     /**
-     * {inheritdoc}
+     * {@inheritdoc}
      */
     protected function getTypeLabelVariations($count)
     {
