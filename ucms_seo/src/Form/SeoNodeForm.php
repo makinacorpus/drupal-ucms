@@ -27,6 +27,9 @@ class SeoNodeForm extends FormBase
      */
     private $seoService;
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFormId()
     {
         return 'ucms_seo_node_form';

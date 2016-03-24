@@ -23,6 +23,8 @@
  */
 
 use MakinaCorpus\Ucms\Seo\SeoService;
+use MakinaCorpus\Ucms\Site\Site;
+use Drupal\node\NodeInterface;
 
 /**
  * Field API will always (not) be in my heart.
@@ -36,7 +38,7 @@ function ucms_seo_menu() {
   $items = [];
 
   $items['node/%node/seo-edit'] = [
-    'title'             => t("Edit SEO parameters"),
+    'title'             => "Edit SEO parameters",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Seo\Form\SeoNodeForm', 1],
     'access callback'   => 'ucms_seo_menu_access_node_edit',
@@ -44,11 +46,20 @@ function ucms_seo_menu() {
     'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/seo-aliases'] = [
-    'title'             => t("Node path aliases"),
+    'title'             => "Node path aliases",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Seo\Form\AliasesNodeForm', 1],
     'access callback'   => 'ucms_seo_menu_access_node_edit',
     'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+
+  $items['admin/dashboard/site/%ucms_site/seo'] = [
+    'title'             => "Edit SEO parameters",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Form\SeoSiteForm', 3],
+    'access callback'   => 'ucms_seo_menu_access_site_edit',
+    'access arguments'  => [3],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -58,13 +69,18 @@ function ucms_seo_menu() {
 /**
  * Menu access helper.
  */
+function ucms_seo_menu_access_site_edit(Site $site) {
+  return ucms_seo_service()->userCanEditSiteSeo(\Drupal::currentUser(), $site);
+}
+
+/**
+ * Menu access helper.
+ */
 function ucms_seo_menu_access_node_edit($node) {
-  $account = \Drupal::currentUser();
-  return true;
-  return
-    ($account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN) && node_access($node, 'update', $account)) ||
-    ($account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) && node_access($node, 'view', $account))
-  ;
+  if ($node instanceof NodeInterface) {
+    return ucms_seo_service()->userCanEditNodeSeo(\Drupal::currentUser(), $node);
+  }
+  return false;
 }
 
 /**

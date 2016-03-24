@@ -8,8 +8,10 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\AliasStorageInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
@@ -154,6 +156,39 @@ class SeoService
             ->condition('n.nid', $nodeIdList)
             ->execute()
             ->fetchAllKeyed()
+        ;
+    }
+
+    /**
+     * Can user edit SEO parameters for site
+     *
+     * @param AccountInterface $account
+     * @param Site $site
+     */
+    public function userCanEditSiteSeo(AccountInterface $account, Site $site)
+    {
+        $access = $this->siteManager->getAccess();
+
+        return
+            $access->userCanView($account, $site) && (
+                $account->hasPermission(SeoService::PERM_SEO_GLOBAL) ||
+                $account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) ||
+                $access->userIsWebmaster($account, $site)
+            )
+        ;
+    }
+
+    /**
+     * Can user edit SEO parameters for node
+     *
+     * @param AccountInterface $account
+     * @param NodeInterface $node
+     */
+    public function userCanEditNodeSeo(AccountInterface $account, NodeInterface $node)
+    {
+        return
+            ($account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN) && $node->access('update', $account)) ||
+            ($account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) && $node->access('view', $account))
         ;
     }
 

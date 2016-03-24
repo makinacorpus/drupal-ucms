@@ -1,7 +1,28 @@
 services:
+
   ucms_seo.seo_service:
     class: MakinaCorpus\Ucms\Seo\SeoService
     arguments: ["@entity.manager", "@path.alias_manager", "@path.alias_storage", "@ucms_site.manager", "@database"]
+
+  # This overrides the global one
   path.alias_storage:
     class: MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
+
+  ucms_seo.node_action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Action\NodeActionProvider
+    arguments: ["@ucms_seo.seo_service", "@current_user"]
+    tags: [{name: ucms_dashboard.action_provider}]
+
+  ucms_seo.site_action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Action\SiteActionProvider
+    arguments: ["@ucms_seo.seo_service", "@current_user"]
+    tags: [{name: ucms_dashboard.action_provider}]
+
+  twig.extension.ucms_seo:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Twig\SeoExtension
+    arguments: ["@ucms_seo.seo_service", "@ucms_site.manager"]
+    tags: [{name: twig.extension}]
