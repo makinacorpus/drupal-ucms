@@ -4,7 +4,6 @@
 namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
-use MakinaCorpus\Ucms\Notification\Formatter\AbstractContentNotificationFormatter;
 
 
 class ContentAdd extends AbstractContentNotificationFormatter
@@ -16,6 +15,7 @@ class ContentAdd extends AbstractContentNotificationFormatter
     {
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
+
             return [
                 "@title has been created by @name",
                 "@title have been created by @name",
@@ -26,6 +26,14 @@ class ContentAdd extends AbstractContentNotificationFormatter
                 "@title have been created",
             ];
         }
+    }
+
+    function getTranslations()
+    {
+        $this->t("@title has been created by @name");
+        $this->t("@title have been created by @name");
+        $this->t("@title has been created");
+        $this->t("@title have been created");
     }
 }
 

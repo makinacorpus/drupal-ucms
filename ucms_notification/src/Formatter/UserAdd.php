@@ -27,6 +27,14 @@ class UserAdd extends AbstractUserNotificationFormatter
             ];
         }
     }
+
+    function getTranslations()
+    {
+        $this->t("@title has been registered by @name");
+        $this->t("@title have been registered by @name");
+        $this->t("@title has been registered");
+        $this->t("@title have been registered");
+    }
 }
 
 

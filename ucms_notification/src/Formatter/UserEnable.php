@@ -27,6 +27,14 @@ class UserEnable extends AbstractUserNotificationFormatter
             ];
         }
     }
+
+    function getTranslations()
+    {
+        $this->t("@title has been enabled by @name");
+        $this->t("@title have been enabled by @name");
+        $this->t("@title has been enabled");
+        $this->t("@title have been enabled");
+    }
 }
 
 

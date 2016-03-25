@@ -28,6 +28,7 @@ class UserDelete extends AbstractNotificationFormatter
 
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
+
             return [
                 "@title has been deleted by @name",
                 "@title have been deleted by @name",
@@ -38,6 +39,14 @@ class UserDelete extends AbstractNotificationFormatter
                 "@title have been deleted",
             ];
         }
+    }
+
+    private function getTranslations()
+    {
+        $this->t("@title has been deleted by @name");
+        $this->t("@title have been deleted by @name");
+        $this->t("@title has been deleted");
+        $this->t("@title have been deleted");
     }
 }
 

@@ -39,4 +39,6 @@ abstract class AbstractUserNotificationFormatter extends AbstractNotificationFor
     {
         return ["@count user", "@count users"];
     }
+
+    abstract function getTranslations();
 }

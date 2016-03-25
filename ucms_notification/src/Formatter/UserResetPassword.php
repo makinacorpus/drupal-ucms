@@ -17,15 +17,23 @@ class UserResetPassword extends AbstractUserNotificationFormatter
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
             return [
-                "@title's password has been resetted by @name",
-                "Passwords of @title have been resetted by @name",
+                "@title's password has been reset by @name",
+                "Passwords of @title have been reset by @name",
             ];
         } else {
             return [
-                "@title's password has been resetted",
-                "Passwords of @title have been resetted",
+                "@title's password has been reset",
+                "Passwords of @title have been reset",
             ];
         }
+    }
+
+    function getTranslations()
+    {
+        $this->t("@title's password has been reset by @name");
+        $this->t("Passwords of @title have been reset by @name");
+        $this->t("@title's password has been reset");
+        $this->t("Passwords of @title have been reset");
     }
 }
 

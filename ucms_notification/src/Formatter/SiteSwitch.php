@@ -84,4 +84,10 @@ class SiteSwitch extends AbstractNotificationFormatter
             ];
         }
     }
+
+    public function getTranslations()
+    {
+        $this->t("@name switched @title from @from to @to");
+        $this->t("@title switched from @from to @to");
+    }
 }

@@ -39,4 +39,6 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     {
         return ["@count content", "@count contents"];
     }
+
+    abstract function getTranslations();
 }

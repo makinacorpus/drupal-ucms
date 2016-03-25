@@ -36,7 +36,12 @@ class ContentDelete extends AbstractNotificationFormatter
             ];
         }
     }
+
+    public function getTranslations()
+    {
+        $this->t("@title has been deleted by @name");
+        $this->t("@title have been deleted by @name");
+        $this->t("@title has been deleted");
+        $this->t("@title have been deleted");
+    }
 }
-
-
-

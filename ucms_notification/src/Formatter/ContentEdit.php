@@ -27,6 +27,12 @@ class ContentEdit extends AbstractContentNotificationFormatter
             ];
         }
     }
+
+    public function getTranslations()
+    {
+        $this->t("@title has been updated by @name");
+        $this->t("@title have been updated by @name");
+        $this->t("@title has been updated");
+        $this->t("@title have been updated");
+    }
 }
-
-

@@ -27,5 +27,13 @@ class UserChangeEmail extends AbstractUserNotificationFormatter
             ];
         }
     }
+
+    function getTranslations()
+    {
+        $this->t("@title's email has been changed by @name");
+        $this->t("Emails of @title have been changed by @name");
+        $this->t("@title's email has been changed by");
+        $this->t("Emails of @title have been changed");
+    }
 }
 

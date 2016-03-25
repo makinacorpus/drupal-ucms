@@ -27,6 +27,14 @@ class UserDisable extends AbstractUserNotificationFormatter
             ];
         }
     }
+
+    function getTranslations()
+    {
+        $this->t("@title has been disabled by @name");
+        $this->t("@title have been disabled by @name");
+        $this->t("@title has been disabled");
+        $this->t("@title have been disabled");
+    }
 }
 
 

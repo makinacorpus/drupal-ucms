@@ -72,4 +72,12 @@ class SiteRequest extends AbstractNotificationFormatter
             ];
         }
     }
+
+    public function getTranslations()
+    {
+        $this->t("Site @title has been requested by @name");
+        $this->t("Site @title have been requested by @name");
+        $this->t("Site @title has been requested");
+        $this->t("Site @title have been requested");
+    }
 }

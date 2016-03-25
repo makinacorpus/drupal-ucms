@@ -27,6 +27,14 @@ class UserEdit extends AbstractUserNotificationFormatter
             ];
         }
     }
+
+    function getTranslations()
+    {
+        $this->t("@title's account has been updated by @name");
+        $this->t("Accounts of @title have been updated by @name");
+        $this->t("@title's account has been updated");
+        $this->t("Accounts of @title have been updated");
+    }
 }
 
 
