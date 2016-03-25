@@ -32,7 +32,7 @@ class UserChangeEmail extends AbstractUserNotificationFormatter
     {
         $this->t("@title's email has been changed by @name");
         $this->t("Emails of @title have been changed by @name");
-        $this->t("@title's email has been changed by");
+        $this->t("@title's email has been changed");
         $this->t("Emails of @title have been changed");
     }
 }
