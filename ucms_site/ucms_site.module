@@ -23,21 +23,21 @@ function ucms_site_menu() {
 
   $items['admin/dashboard/site'] = [
     'title'             => "Sites",
-    'page callback'     => 'ucms_site_dashboard_site_list_all',
+    'page callback'     => 'ucms_site_dashboard_site_list_mine',
     'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/all'] = [
     'title'             => "All sites",
-    'type'              => MENU_DEFAULT_LOCAL_TASK,
+    'page callback'     => 'ucms_site_dashboard_site_list_all',
+    'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
+    'file'              => 'ucms_site.dashboard.inc',
+    'type'              => MENU_LOCAL_TASK,
   ];
   $items['admin/dashboard/site/mine'] = [
     'title'             => "My sites",
-    'page callback'     => 'ucms_site_dashboard_site_list_mine',
-    'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
-    'type'              => MENU_LOCAL_TASK,
-    'file'              => 'ucms_site.dashboard.inc',
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
   ];
   $items['admin/dashboard/site/archive'] = [
     'title'             => "Archives",
