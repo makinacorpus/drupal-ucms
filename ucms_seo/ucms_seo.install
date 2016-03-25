@@ -47,7 +47,6 @@ function ucms_seo_schema() {
     'type'        => 'int',
     'unsigned'    => true,
     'not null'    => true,
-    'default'     => null,
   ];
   $aliasTable['fields']['is_canonical'] = [
     'description' => "Is this alias the canonical alias for the source path",
