@@ -46,7 +46,8 @@ function ucms_seo_schema() {
     'description' => "Site identifier this alias belongs to",
     'type'        => 'int',
     'unsigned'    => true,
-    'not null'    => true,
+    'not null'    => false,
+    'default'     => null,
   ];
   $aliasTable['fields']['is_canonical'] = [
     'description' => "Is this alias the canonical alias for the source path",
@@ -87,7 +88,7 @@ function ucms_seo_schema() {
     ],
     'foreign keys' => [
       'nid' => [
-        'table'   => 'node', 
+        'table'   => 'node',
         'columns' => ['node' => 'nid'],
       ],
     ],
@@ -190,3 +191,30 @@ function ucms_seo_update_7002() {
   ucms_seo_install_schema_fix();
 }
 
+/**
+ * Sets the ucms_seo_alias.site_id column as nullable.
+ */
+function ucms_seo_update_7003() {
+  db_query("ALTER TABLE {ucms_seo_alias} DROP FOREIGN KEY {ucms_seo_alias_site_fk};");
+  db_drop_field('ucms_seo_alias', 'site_id');
+
+  db_add_field('ucms_seo_alias', 'site_id', [
+    'description' => "Site identifier this alias belongs to",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => false,
+    'default'     => null,
+  ]);
+}
+
+
+/**
+ * Restablishes the database contraints.
+ *
+ * Weird thing is, with MySQL, when adding the field and settings contraints
+ * during the same transaction, it seems to fail due to failing constraint, but
+ * if you do it in two transactions, it works.
+ */
+function ucms_seo_update_7004() {
+  ucms_seo_install_schema_fix();
+}
