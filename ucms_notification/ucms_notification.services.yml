@@ -63,3 +63,13 @@ services:
     arguments: ["@ucms_layout.context_manager", "@current_user"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
+
+  # Site event listener
+  ucms_notification.site_event_listener:
+    class: MakinaCorpus\Ucms\Notification\EventDispatcher\SiteEventListener
+    arguments: ["@ucms_notification.service"]
+    tags:
+      - { name: event_listener, event: "site:create" }
+      - { name: event_listener, event: "site:webmaster_add_new" }
+      - { name: event_listener, event: "site:webmaster_add_existing" }
+      - { name: event_listener, event: "site:webmaster_delete" }
