@@ -437,9 +437,7 @@ class NodeAccessService
      */
     public function userCanReference(AccountInterface $account, NodeInterface $node)
     {
-        // Let's say, from this very moment, that as long as the user can see
-        // the node he might want to add it on one of his sites
-        return true;
+        return $node->access(Access::OP_VIEW) && ucms_site_manager()->getAccess()->userIsWebmaster($account);
     }
 
     /**
