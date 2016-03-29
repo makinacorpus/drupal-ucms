@@ -118,4 +118,12 @@ class Action
     {
         return $this->disabled;
     }
+
+    /**
+     * @param boolean $primary
+     */
+    public function setPrimary($primary)
+    {
+        $this->primary = $primary;
+    }
 }

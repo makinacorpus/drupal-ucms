@@ -260,6 +260,15 @@ function ucms_contrib_menu() {
 }
 
 /**
+ * Implements hook_menu_alter().
+ */
+function ucms_contrib_menu_alter(&$items) {
+  // No tabs but real callback now
+  $items['node/%node/edit']['type'] = MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB;
+  $items['node/%node/revisions']['type'] = MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB;
+}
+
+/**
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_add_to_site($type) {

@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
@@ -27,7 +28,7 @@ class ContextPaneEventListener
     /**
      * @var ActionProviderInterface
      */
-    private $actionProvider;
+    private $contentActionProvider;
 
     /**
      * @var SiteManager
@@ -38,23 +39,30 @@ class ContextPaneEventListener
      * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
      */
     private $typeHandler;
+    /**
+     * @var ActionProviderInterface
+     */
+    private $nodeActionProvider;
 
     /**
      * Default constructor
      *
      * @param LayoutContextManager $layoutContextManager
-     * @param ActionProviderInterface $actionProvider
+     * @param ActionProviderInterface $contentActionProvider
+     * @param ActionProviderInterface $nodeActionProvider
      * @param SiteManager $siteManager
      * @param TypeHandler $typeHandler
      */
     public function __construct(
         LayoutContextManager $layoutContextManager,
-        ActionProviderInterface $actionProvider,
+        ActionProviderInterface $contentActionProvider,
+        ActionProviderInterface $nodeActionProvider,
         SiteManager $siteManager,
         TypeHandler $typeHandler
     ) {
         $this->layoutContextManager = $layoutContextManager;
-        $this->actionProvider = $actionProvider;
+        $this->contentActionProvider = $contentActionProvider;
+        $this->nodeActionProvider = $nodeActionProvider;
         $this->siteManager = $siteManager;
         $this->typeHandler = $typeHandler;
     }
@@ -65,11 +73,11 @@ class ContextPaneEventListener
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
+        $router_item = menu_get_item();
 
         // Add the shopping cart
         if (user_access('use favorites')) {
             // On admin lists, on content creation or on layout edit
-            $router_item = menu_get_item();
             $allowed_routes = [
                 'node/%',
                 'admin/dashboard/content',
@@ -105,20 +113,29 @@ class ContextPaneEventListener
         // FIXME kill it with fire!
         if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), ['content', 'media'])) {
             if (arg(2) == 'content') {
-                $contextPane->addActions($this->actionProvider->getActions('editorial'), $this->t("Create editorial content"));
-                $contextPane->addActions($this->actionProvider->getActions('component'), $this->t("Create component"));
+                $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"));
+                $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"));
             }
             else {
-                $contextPane->addActions($this->actionProvider->getActions('media'), $this->t("Create media"));
+                $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"));
             }
         }
 
         // Add node creation link on site
         // FIXME kill it with acid!
         if ($this->siteManager->hasContext()) {
-            $contextPane->addActions($this->actionProvider->getActions('editorial'), $this->t("Create editorial content"));
-            $contextPane->addActions($this->actionProvider->getActions('component'), $this->t("Create component"));
-            $contextPane->addActions($this->actionProvider->getActions('media'), $this->t("Create media"));
+            $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"));
+            $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"));
+            $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"));
+        }
+
+        // Add node link on node view
+        // FIXME kill it with lasers!
+        if ($router_item['path'] == 'node/%') {
+            $node = $router_item['map'][1];
+            $actions = $this->nodeActionProvider->getActions($node);
+            $actions[1]->setPrimary(true); // this... this is sorcery...
+            $contextPane->addActions($actions);
         }
     }
 }
