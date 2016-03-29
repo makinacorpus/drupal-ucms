@@ -103,13 +103,12 @@ class ContextPaneEventListener
         $items = [];
         if (!empty($tree)) {
             foreach ($tree as $i => $data) {
-                $classes = ['tree-item'];
+                $options['attributes']['class'] = ['tree-item'];
                 // FIXME use Request object?
                 if (current_path() == $data['link']['link_path']) {
-                    $classes[] = 'active';
+                    $options['attributes']['class'][] = 'active';
                 }
-                $element['data'] = '<div class="'.implode(' ', $classes).'">';
-                $element['data'] .= check_plain($data['link']['link_title']).'</div>';
+                $element['data'] = l($data['link']['link_title'], $data['link']['link_path'], $options);
                 if ($data['below']) {
                     $elements = $this->treeOutput($data['below']);
                     $element['data'] .= drupal_render($elements);

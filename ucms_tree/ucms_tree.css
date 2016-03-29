@@ -51,14 +51,15 @@ ol.sortable li {
 #tab-tree ol {
   list-style: none;
 }
-#tab-tree div.tree-item {
+#tab-tree .tree-item {
+  display: block;
   padding: 5px;
   border-radius: 6px;
   color: #000;
   background: #fff;
   margin: 2px 0;
 }
-#tab-tree div.tree-item.active {
+#tab-tree .tree-item.active {
   color: #F00;
   font-weight: bold;
 }
