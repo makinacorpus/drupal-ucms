@@ -38,6 +38,21 @@ final class Access
     const PERM_CONTENT_MANAGE_GROUP = 'content manage group';
 
     /**
+     * Star content
+     */
+    const PERM_CONTENT_MANAGE_STARRED = 'content manage starred';
+
+    /**
+     * Flag content
+     */
+    const PERM_CONTENT_FLAG = 'content flag';
+
+    /**
+     * Flag content
+     */
+    const PERM_CONTENT_UNFLAG = 'content unflag';
+
+    /**
      * View all content in all circumstances
      */
     const PERM_CONTENT_VIEW_ALL = 'content view all';

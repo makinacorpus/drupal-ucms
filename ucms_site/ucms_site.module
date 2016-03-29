@@ -205,6 +205,15 @@ function ucms_site_permission() {
     Access::PERM_CONTENT_MANAGE_GROUP => [
       'title' => t("Manage group content"),
     ],
+    Access::PERM_CONTENT_MANAGE_STARRED => [
+      'title' => t("Manage starred content"),
+    ],
+    Access::PERM_CONTENT_FLAG => [
+      'title' => t("Flag content as inappropriate"),
+    ],
+    Access::PERM_CONTENT_UNFLAG => [
+      'title' => t("Unflag content flagged as inappropriate"),
+    ],
     Access::PERM_CONTENT_VIEW_ALL => [
       'title' => t("View all content no matter where it stands"),
     ],

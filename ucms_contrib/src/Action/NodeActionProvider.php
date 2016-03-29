@@ -76,15 +76,18 @@ class NodeActionProvider implements ActionProviderInterface
             }
         }
 
-        if (empty($item->is_starred)) {
-            $ret[] = new Action($this->t("Star"), 'node/' . $item->id() . '/star', 'dialog', 'star', -20, false, true);
-        } else {
-            $ret[] = new Action($this->t("Unstar"), 'node/' . $item->id() . '/unstar', 'dialog', 'star-empty', -20, false, true);
+        if ($this->account->hasPermission(Access::PERM_CONTENT_MANAGE_STARRED)) {
+            if (empty($item->is_starred)) {
+                $ret[] = new Action($this->t("Star"), 'node/' . $item->id() . '/star', 'dialog', 'star', -20, false, true);
+            } else {
+                $ret[] = new Action($this->t("Unstar"), 'node/' . $item->id() . '/unstar', 'dialog', 'star-empty', -20, false, true);
+            }
         }
 
-        if (empty($item->is_flagged)) {
+        if (empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_FLAG)) {
             $ret[] = new Action($this->t("Flag as inappropriate"), 'node/' . $item->id() . '/report', 'dialog', 'flag', -10, false, true);
-        } else {
+        }
+        elseif (!empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_UNFLAG) && $item->access(Access::OP_UPDATE))  {
             $ret[] = new Action($this->t("Un-flag as innappropriate"), 'node/' . $item->id() . '/unreport', 'dialog', 'flag', -10, false, true);
         }
 

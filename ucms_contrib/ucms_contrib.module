@@ -145,16 +145,16 @@ function ucms_contrib_menu() {
     'title'             => "Flag as inappropriate",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeFlag', 1],
-    'access callback'   => 'node_access',
-    'access arguments'  => ['view', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_flag',
+    'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/unreport'] = [
     'title'             => "Un-flag as innappropriate",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnflag', 1],
-    'access callback'   => 'node_access',
-    'access arguments'  => ['update', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_unflag',
+    'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/star'] = [
@@ -297,7 +297,21 @@ function ucms_contrib_menu_node_access_group(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_star(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL) && $node->access('update');
+  return user_access(Access::PERM_CONTENT_MANAGE_STARRED);
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_flag(NodeInterface $node) {
+  return user_access(Access::PERM_CONTENT_FLAG);
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
+  return user_access(Access::PERM_CONTENT_UNFLAG) && $node->access(Access::OP_UPDATE);
 }
 
 /**
