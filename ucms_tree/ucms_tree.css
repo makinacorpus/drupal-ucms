@@ -63,3 +63,8 @@ ol.sortable li {
   color: #F00;
   font-weight: bold;
 }
+
+/* Disable animation */
+#ucms-tree-tree-form .ui-sortable-helper {
+  animation: none;
+}
