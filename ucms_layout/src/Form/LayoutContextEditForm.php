@@ -58,7 +58,7 @@ class LayoutContextEditForm extends FormBase
             if ($this->manager->getPageContext()->isTemporary()) {
                 $form['actions']['save_page'] = [
                     '#type'   => 'submit',
-                    '#value'  => $this->t("Save"),
+                    '#value'  => $this->t("Save composition"),
                     '#submit' => ['::saveSubmit']
                 ];
                 $form['actions']['cancel_page'] = [
@@ -70,7 +70,7 @@ class LayoutContextEditForm extends FormBase
             elseif ($this->manager->getSiteContext()->isTemporary()) {
                 $form['actions']['save_site'] = [
                     '#type'   => 'submit',
-                    '#value'  => $this->t("Save"),
+                    '#value'  => $this->t("Save transversal composition"),
                     '#submit' => ['::saveTransversalSubmit']
                 ];
                 $form['actions']['cancel_site'] = [
@@ -82,12 +82,12 @@ class LayoutContextEditForm extends FormBase
             else {
                 $form['actions']['edit_page'] = [
                     '#type'   => 'submit',
-                    '#value'  => $this->t("Edit"),
+                    '#value'  => $this->t("Edit composition"),
                     '#submit' => ['::editSubmit']
                 ];
                 $form['actions']['edit_site'] = [
                     '#type'   => 'submit',
-                    '#value'  => $this->t("Edit transversal regions"),
+                    '#value'  => $this->t("Edit transversal composition"),
                     '#submit' => ['::editTransversalSubmit']
                 ];
             }

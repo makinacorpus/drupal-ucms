@@ -98,7 +98,7 @@
 #contextual-pane > .inner > .actions {
   padding: 0 5px;
 }
-#contextual-pane > .inner > .actions input {
+#contextual-pane > .inner > .actions > input {
   margin-right: 5px;
 }
 #contextual-pane > .inner > .actions .btn {
@@ -136,4 +136,27 @@
 
 #dashboard #porlet-ucms_site_sites_portlet table td:nth-of-type(2) {
   white-space: nowrap
+}
+.dropdown-menu > input,
+.dropdown-menu > button {
+  display: block;
+  padding: 0 20px;
+  line-height: 1.42857143;
+  white-space: nowrap;
+  clear: both;
+  font-weight: 400;
+  color: #333;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+.dropdown-menu > button:focus,
+.dropdown-menu > button:hover,
+.dropdown-menu > input:focus,
+.dropdown-menu > input:hover {
+  text-decoration: none;
+  color: #262626;
+  background-color: #f5f5f5;
+  border: none;
 }

@@ -39,7 +39,7 @@
           $.cookie('contextual-pane-position', position, {path: '/'});
           $panePositionSwitch.find('span').toggleClass('glyphicon-collapse-down glyphicon-expand');
           Drupal.behaviors.ucmsDashboardPane.resizeTabs();
-          $page.css('padding-right', position == 'right' ? initial_size : '15ppx');
+          $page.css('padding-right', position === 'right' ? initial_size : '15ppx');
         });
         if ($.cookie('contextual-pane-position') && $.cookie('contextual-pane-position') !== 'right') {
           // Second toggle if pane must be hidden
@@ -47,8 +47,8 @@
         }
 
         var position = panePosition();
-        var initial_size = position == 'right' ? $contextualPane.css('width') : $contextualPane.css('height');
-        if (position == 'right') {
+        var initial_size = position === 'right' ? $contextualPane.css('width') : $contextualPane.css('height');
+        if (position === 'right') {
           $page.css('padding-right', initial_size);
         }
 
@@ -70,8 +70,8 @@
          * @returns {boolean}
          */
         function paneIsHidden() {
-          var propName = (position == 'right' ? 'margin-right' : 'margin-bottom');
-          return $contextualPane.css(propName) && $contextualPane.css(propName) != '0px';
+          var propName = (position === 'right' ? 'margin-right' : 'margin-bottom');
+          return $contextualPane.css(propName) && $contextualPane.css(propName) !== '0px';
         }
 
         /**
@@ -80,16 +80,16 @@
         function togglePane(shown, fast) {
           $.cookie('contextual-pane-hidden', !shown, {path: '/'});
           var prop = {};
-          prop[position == 'right' ? 'marginRight' : 'marginBottom'] = shown ? '0px' : '-' + initial_size;
+          prop[position === 'right' ? 'marginRight' : 'marginBottom'] = shown ? '0px' : '-' + initial_size;
           if (fast) {
             $contextualPane.css(prop);
-            if (position == 'right') {
+            if (position === 'right') {
               $page.css('padding-right', shown ? initial_size : '15px');
             }
           }
           else {
             $contextualPane.animate(prop);
-            if (position == 'right') {
+            if (position === 'right') {
               $page.animate({paddingRight: shown ? initial_size : '15px'});
             }
           }
@@ -146,17 +146,33 @@
       $(context).find('#page').once('ucmsDashboardPaneActions', function () {
         var $contextualPane = $('#contextual-pane');
         // Get all buttons (link or input) in form-actions
-        var $buttons = $('#page .form-actions', context).find('input[type=submit], button, a.btn');
+        var $buttons = $('#page .form-actions', context).children('.btn-group, input[type=submit], button, a.btn');
         // Iterate in reverse as they are floated right
         $($buttons.get().reverse()).each(function () {
-          var $originalButton = $(this);
-          var $clonedButton = $originalButton.clone().click(function () {
-            // Simulate click on original button
-            if (!$(this).is('a')) {
-              $originalButton.click();
-            }
-          });
-          $contextualPane.find('.inner .actions').append($clonedButton);
+
+          $(this).find('input[type=submit], button, a.btn')
+            .add($(this).filter('input[type=submit], button, a.btn'))
+            .each(function () {
+              // Do not hack click if there are events
+              if (!$.isEmptyObject($(this).data()) || $(this).is('a')) {
+                return;
+              }
+
+              // Catch click event and delegate to original
+              var originalElem = this;
+              $(this).click(function (evt) {
+                console.log('old', originalElem);
+                console.log('clicked', evt);
+                // Simulate click on original element
+                if (originalElem !== evt.currentTarget) {
+                  $(originalElem).click();
+                  return false;
+                }
+              });
+            });
+
+          var $clonedElement = $(this).clone(true);
+          $contextualPane.find('.inner .actions').append($clonedElement);
         });
         Drupal.behaviors.ucmsDashboardPane.resizeTabs();
       });
