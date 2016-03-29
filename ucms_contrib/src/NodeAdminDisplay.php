@@ -55,12 +55,16 @@ class NodeAdminDisplay extends AbstractDisplay
                 $anonymous = drupal_anonymous_user();
 
                 foreach ($nodes as $node) {
-                    $rows[] = [
-                        $names[$node->type],
-                        '<div class="ucms-contrib-result" data-nid="'.$node->nid.'">'.l(
+                    // FIXME should be in theme
+                    $title = '<div class="ucms-contrib-result" data-nid="'.$node->nid.'">'.
+                        (!(bool)$node->is_clonable ? '<span class="glyphicon glyphicon-lock"></span>&nbsp;' : '').
+                        l(
                             $node->title,
                             'node/'.$node->nid
-                        ).'</div>',
+                        ).'</div>';
+                    $rows[] = [
+                        $names[$node->type],
+                        $title,
                         $node->status ? $this->t("published") : $this->t("unpublished"),
                         format_date($node->created),
                         isset($accountMap[$node->uid])
