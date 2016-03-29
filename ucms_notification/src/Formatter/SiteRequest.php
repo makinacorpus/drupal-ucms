@@ -80,4 +80,12 @@ class SiteRequest extends AbstractNotificationFormatter
         $this->t("Site @title has been requested");
         $this->t("Site @title have been requested");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getImageURI(NotificationInterface $notification)
+    {
+        return "cloud";
+    }
 }

@@ -5,10 +5,16 @@ namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 
 
 abstract class AbstractContentNotificationFormatter extends AbstractNotificationFormatter
 {
+    /**
+     * @var TypeHandler
+     */
+    private $typeHandler;
+
     /**
      * {@inheritdoc}
      */
@@ -16,8 +22,16 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     {
         $contentIdList = $interface->getResourceIdList();
         if (count($contentIdList) === 1) {
-            return 'node/' . reset($contentIdList);
+            return 'node/'.reset($contentIdList);
         }
+    }
+
+    /**
+     * @param TypeHandler $typeHandler
+     */
+    public function setTypeHandler($typeHandler)
+    {
+        $this->typeHandler = $typeHandler;
     }
 
     /**
@@ -29,6 +43,7 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
         foreach (node_load_multiple($idList) as $node) {
             $titles[$node->nid] = $node->title;
         }
+
         return $titles;
     }
 
@@ -40,5 +55,15 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
         return ["@count content", "@count contents"];
     }
 
-    abstract function getTranslations();
+    /**
+     * {@inheritDoc}
+     */
+    public function getImageURI(NotificationInterface $notification)
+    {
+        $contentIdList = $notification->getResourceIdList();
+        if (count($contentIdList) === 1) {
+            $node = node_load(reset($contentIdList));
+            return in_array($node->type, $this->typeHandler->getContentTypes()) ? "file" : "picture";
+        }
+    }
 }

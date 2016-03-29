@@ -105,6 +105,10 @@
   margin-top: 5px;
 }
 
+#tab-notification {
+  overflow-y: auto;
+}
+
 /**
  * Dashboard
  */

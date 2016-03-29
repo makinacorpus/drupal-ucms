@@ -40,5 +40,11 @@ abstract class AbstractUserNotificationFormatter extends AbstractNotificationFor
         return ["@count user", "@count users"];
     }
 
-    abstract function getTranslations();
+    /**
+     * {@inheritDoc}
+     */
+    public function getImageURI(NotificationInterface $notification)
+    {
+        return "user";
+    }
 }

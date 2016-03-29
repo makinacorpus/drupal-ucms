@@ -90,4 +90,12 @@ class SiteSwitch extends AbstractNotificationFormatter
         $this->t("@name switched @title from @from to @to");
         $this->t("@title switched from @from to @to");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getImageURI(NotificationInterface $notification)
+    {
+        return "cloud";
+    }
 }
