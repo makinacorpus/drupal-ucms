@@ -428,10 +428,36 @@ class NodeAccessService
     }
 
     /**
+     * Can the user publish (and unpublish) this node
+     *
+     * @param AccountInterface $account
+     * @param NodeInterface $node
+     *
+     * @return boolean
+     */
+    public function userCanPublish(AccountInterface $account, NodeInterface $node)
+    {
+        if ($node->is_global && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
+            return true;
+        }
+        if ($node->is_group && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
+            return true;
+        }
+        if (!empty($node->site_id) && ($userSites = ucms_site_manager()->loadWebmasterSites($account))) {
+            foreach ($userSites as $site) {
+                if ($node->site_id == $site->id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Can the user reference this node on one of his sites
      *
-     * @param NodeInterface $node
      * @param AccountInterface $account
+     * @param NodeInterface $node
      *
      * @return boolean
      */

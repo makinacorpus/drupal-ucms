@@ -129,16 +129,16 @@ function ucms_contrib_menu() {
     'title'             => "Publish content",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodePublish', 1],
-    'access callback'   => 'node_access',
-    'access arguments'  => ['update', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_publish',
+    'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/unpublish'] = [
     'title'             => "Unpublish content",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish', 1],
-    'access callback'   => 'node_access',
-    'access arguments'  => ['update', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_publish',
+    'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
   $items['node/%node/report'] = [
@@ -291,6 +291,13 @@ function ucms_contrib_menu_node_access_global() {
  */
 function ucms_contrib_menu_node_access_group(NodeInterface $node) {
   return ucms_site_node_access_helper()->userCanPromoteToGroup(\Drupal::currentUser(), $node);
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_publish(NodeInterface $node) {
+  return ucms_site_node_access_helper()->userCanPublish(\Drupal::currentUser(), $node);
 }
 
 /**

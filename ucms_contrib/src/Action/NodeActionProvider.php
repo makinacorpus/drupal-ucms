@@ -44,10 +44,12 @@ class NodeActionProvider implements ActionProviderInterface
         if ($item->access(Access::OP_UPDATE)) {
             $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/edit', null, 'pencil', -100, false, true);
 
-            if ($item->status) {
-                $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', -50, false, true);
-            } else {
-                $ret[] = new Action($this->t("Publish"), 'node/' . $item->id() . '/publish', 'dialog', 'ok-circle', -50, false, true);
+            if ($this->access->userCanPublish($this->account, $item)) {
+                if ($item->status) {
+                    $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', -50, false, true);
+                } else {
+                    $ret[] = new Action($this->t("Publish"), 'node/' . $item->id() . '/publish', 'dialog', 'ok-circle', -50, false, true);
+                }
             }
 
             if (_node_revision_access($item)) {
