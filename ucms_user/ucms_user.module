@@ -6,6 +6,7 @@
 
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\User\UserAccess;
 
@@ -230,10 +231,14 @@ function template_preprocess_ucms_user_profile(&$variables) {
       [['data' => t("Created at"), 'header' => true], format_date($account->created)],
       [['data' => t("Last connection at"), 'header' => true], $last_connection],
       [['data' => t("Roles"), 'header' => true], $roles],
-      [['data' => t("Pending requests"), 'header' => true], $requests],
-      [['data' => t("Sites"), 'header' => true], $sites],
     ],
   ];
+
+  if ($account->hasPermission(Access::PERM_SITE_REQUEST)) {
+    $variables['details_table']['#rows'][] = [['data' => t("Pending requests"), 'header' => true], $requests];
+  }
+
+  $variables['details_table']['#rows'][] = [['data' => t("Sites"), 'header' => true], $sites];
 }
 
 
