@@ -19,7 +19,7 @@ class MediaPortlet extends AbstractAdminPortlet
      * @var ActionProviderInterface
      */
     private $actionProvider;
-    
+
     /**
      * @var TypeHandler
      */

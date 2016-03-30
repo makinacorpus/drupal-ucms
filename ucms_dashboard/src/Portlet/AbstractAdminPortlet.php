@@ -38,17 +38,29 @@ abstract class AbstractAdminPortlet extends AbstractPortlet
      */
     public function getContent()
     {
-        $pageState = new PageState();
-        $query = [];
+        try {
+            $pageState = new PageState();
+            $query = [];
 
-        $pageState->setRange(6);
-        $pageState->setSortOrder(PageState::SORT_DESC);
+            $pageState->setRange(6);
+            $pageState->setSortOrder(PageState::SORT_DESC);
 
-        $this->datasource->init($query);
+            $this->datasource->init($query);
 
-        $display = $this->getDisplay($query, $pageState);
-        $display->prepareFromQuery($query);
+            $display = $this->getDisplay($query, $pageState);
+            $display->prepareFromQuery($query);
 
-        return $display->render($this->datasource->getItems($query, $pageState));
+            return $display->render($this->datasource->getItems($query, $pageState));
+
+        } catch (\Exception $e) {
+
+            // @todo log me !!!!
+
+            // Régis doesn't like when Elastic is down. Elastic does business
+            // stuff therefore any business-critical component failing should
+            // never be caught, but without this main dashboard page might
+            // not be reachable at all
+            return $e->getMessage() . '<br/><pre>' . $e->getTraceAsString() . '</pre>';
+        }
     }
 }

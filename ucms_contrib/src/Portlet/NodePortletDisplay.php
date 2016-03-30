@@ -2,7 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Portlet;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
@@ -30,7 +29,7 @@ class NodePortletDisplay extends AbstractDisplay
         $rows = [];
 
         foreach ($items as $item) {
-            /* @var $item NodeInterface */
+            /** @var $item NodeInterface */
             $rows[] = [
                 check_plain($item->getTitle()),
                 $item->bundle(),

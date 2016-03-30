@@ -19,7 +19,7 @@ class ContentPortlet extends AbstractAdminPortlet
      * @var ActionProviderInterface
      */
     private $actionProvider;
-    
+
     /**
      * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
      */
@@ -72,6 +72,8 @@ class ContentPortlet extends AbstractAdminPortlet
      */
     public function renderActions()
     {
+        $build = [];
+
         // FIXME, allow to have multiple action groups
         $build['editorial'] = [
           '#theme'   => 'ucms_dashboard_actions',
