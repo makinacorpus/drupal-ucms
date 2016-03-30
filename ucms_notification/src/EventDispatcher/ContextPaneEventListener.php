@@ -46,7 +46,7 @@ class ContextPaneEventListener
         $contextPane
             ->addTab('notification', $this->t("Notifications"), 'bell')
             ->add(
-                notification_block_render($this->currentUser),
+                notification_block_render($this->currentUser, true),
                 'notification'
             )
         ;
