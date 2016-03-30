@@ -47,23 +47,33 @@ services:
   # Content notifications
   ucms_notification.content_add:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentAdd
-    tags: [{ name: apb.notification.formatter, event: "node:add", auto: true, channels: "admin:content" }]
+    tags:
+      - { name: apb.notification.formatter, event: "node:add", auto: true, channels: "admin:content" }
+      - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_edit:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentEdit
-    tags: [{ name: apb.notification.formatter, event: "node:edit", auto: true, channels: "admin:content" }]
+    tags:
+      - { name: apb.notification.formatter, event: "node:edit", auto: true, channels: "admin:content" }
+      - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_publish:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentPublish
-    tags: [{ name: apb.notification.formatter, event: "node:publish", auto: true, channels: "admin:content" }]
+    tags:
+      - { name: apb.notification.formatter, event: "node:publish", auto: true, channels: "admin:content" }
+      - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_unpublish:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentUnpublish
-    tags: [{ name: apb.notification.formatter, event: "node:unpublish", auto: true, channels: "admin:content" }]
+    tags:
+      - { name: apb.notification.formatter, event: "node:unpublish", auto: true, channels: "admin:content" }
+      - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_delete:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentDelete
-    tags: [{ name: apb.notification.formatter, event: "node:delete", auto: true, channels: "admin:content" }]
+    tags:
+      - { name: apb.notification.formatter, event: "node:delete", auto: true, channels: "admin:content" }
+      - { name: ucms_contrib.type_handler }
 
   # Context pane event listener
   ucms_notification.context_pane_event_listener:
