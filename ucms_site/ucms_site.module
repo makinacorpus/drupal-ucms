@@ -14,6 +14,7 @@ use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\UCPublicStreamWrapper;
 
 /**
  * Implements hook_menu().
@@ -532,6 +533,15 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
       ucms_site_redirect_to_default();
     }
   }
+}
+
+/**
+ * Implements hook_stream_wrappers_alter().
+ */
+function ucms_site_stream_wrappers_alter(&$wrappers) {
+    // Connect our override of the public:// stream wrapper for
+    // static file CDN redirection (if any)
+    $wrappers['public']['class'] = 'UCPublicStreamWrapper';
 }
 
 /**
