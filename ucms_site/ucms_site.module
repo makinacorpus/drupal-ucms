@@ -270,6 +270,19 @@ function ucms_site_admin_path_is_allowed($path) {
 }
 
 /**
+ * Implements hook_url_outbound_alter().
+ */
+function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
+  if ($path && !$options['absolute'] && ucms_site_manager()->hasContext()) {
+    if (!ucms_site_admin_path_is_allowed($path)) {
+      $options['absolute'] = true;
+      $options['external'] = true;
+      $path = ucms_site_master_absolute_url() . '/' . $path;
+    }
+  }
+}
+
+/**
  * Title callback for menu items.
  *
  * @param Site $site
@@ -531,6 +544,15 @@ function ucms_site_is_master() {
 }
 
 /**
+ * Get master absolute URL
+ *
+ * @return string
+ */
+function ucms_site_master_absolute_url() {
+  return ($GLOBALS['is_https'] ? 'https' : 'http') . '://' . variable_get('ucms_site_master_hostname');
+}
+
+/**
  * Redirect to mater
  */
 function ucms_site_redirect_to_master() {
@@ -538,7 +560,7 @@ function ucms_site_redirect_to_master() {
   if (path_is_admin(current_path())) {
     $path = current_path();
   }
-  drupal_goto(($GLOBALS['is_https'] ? 'https' : 'http') . '://' . variable_get('ucms_site_master_hostname') . '/' . $path);
+  drupal_goto(ucms_site_master_absolute_url() . '/' . $path);
 }
 
 /**
