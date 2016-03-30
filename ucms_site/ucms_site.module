@@ -541,7 +541,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
 function ucms_site_stream_wrappers_alter(&$wrappers) {
     // Connect our override of the public:// stream wrapper for
     // static file CDN redirection (if any)
-    $wrappers['public']['class'] = 'UCPublicStreamWrapper';
+    $wrappers['public']['class'] = '\MakinaCorpus\Ucms\Site\UCPublicStreamWrapper';
 }
 
 /**

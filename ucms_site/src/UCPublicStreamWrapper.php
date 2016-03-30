@@ -6,7 +6,7 @@ namespace MakinaCorpus\Ucms\Site;
  * Handles public static files domain rewrite on a dedicated domain
  *
  */
-class UCPublicStreamWrapper extends DrupalPublicStreamWrapper
+class UCPublicStreamWrapper extends \DrupalPublicStreamWrapper
 {
 
     
@@ -42,6 +42,4 @@ class UCPublicStreamWrapper extends DrupalPublicStreamWrapper
             return parent::getExternalUrl();
         }
     }
-}
-
 }
