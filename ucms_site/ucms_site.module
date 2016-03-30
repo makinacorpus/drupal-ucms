@@ -31,7 +31,7 @@ function ucms_site_menu() {
   $items['admin/dashboard/site/all'] = [
     'title'             => "All sites",
     'page callback'     => 'ucms_site_dashboard_site_list_all',
-    'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
+    'access arguments'  => [Access::PERM_SITE_VIEW_ALL],
     'file'              => 'ucms_site.dashboard.inc',
     'type'              => MENU_LOCAL_TASK,
   ];
