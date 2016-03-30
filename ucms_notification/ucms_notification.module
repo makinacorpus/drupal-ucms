@@ -97,7 +97,7 @@ function ucms_notification_user_delete($account) {
  */
 function ucms_notification_node_insert($node) {
   ucms_notification_service()->subscribe($node->uid, 'node:' . $node->nid);
-  
+
   global $user;
   $dispatcher = \Drupal::service('event_dispatcher');
   $dispatcher->dispatch('node:add', new ResourceEvent('node', $node->nid, $user->uid));
@@ -108,8 +108,19 @@ function ucms_notification_node_insert($node) {
  */
 function ucms_notification_node_update($node) {
   global $user;
+
   $dispatcher = \Drupal::service('event_dispatcher');
-  $dispatcher->dispatch('node:edit', new ResourceEvent('node', $node->nid, $user->uid));
+  $event = new ResourceEvent('node', $node->nid, $user->uid);
+
+  if ($node->status != $node->original->status) {
+    if ($node->status) {
+      $dispatcher->dispatch('node:publish', $event);
+    } else {
+      $dispatcher->dispatch('node:unpublish', $event);
+    }
+  } else {
+    $dispatcher->dispatch('node:edit', $event);
+  }
 }
 
 /**
