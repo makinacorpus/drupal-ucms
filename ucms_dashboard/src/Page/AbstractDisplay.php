@@ -3,13 +3,14 @@
 namespace MakinaCorpus\Ucms\Dashboard\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 
 abstract class AbstractDisplay implements DisplayInterface
 {
     use StringTranslationTrait;
-    
+
     /**
      * @var string
      */
