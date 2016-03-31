@@ -27,7 +27,7 @@ class UCPublicStreamWrapper extends \DrupalPublicStreamWrapper
 
             $cdn =& drupal_static('UCPublicStreamWrapper_cdn');
             if (!isset($cdn)) {
-                $cdn = variable_get('ucms_site_cdn_hostname', $GLOBALS['base_url']);
+                $cdn = variable_get('ucms_site_cdn_uri', $GLOBALS['base_url']);
             }
 
             $path = str_replace('\\', '/', $this->getTarget());

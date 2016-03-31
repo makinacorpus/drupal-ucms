@@ -537,11 +537,76 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
 
 /**
  * Implements hook_stream_wrappers_alter().
+ * For CDN static domain replacement on public:// stream wrapper
  */
 function ucms_site_stream_wrappers_alter(&$wrappers) {
-    // Connect our override of the public:// stream wrapper for
-    // static file CDN redirection (if any)
-    $wrappers['public']['class'] = '\MakinaCorpus\Ucms\Site\UCPublicStreamWrapper';
+  // Connect our override of the public:// stream wrapper for
+  // static file CDN redirection (if any)
+  $wrappers['public']['class'] = '\MakinaCorpus\Ucms\Site\UCPublicStreamWrapper';
+}
+
+/**
+ * Implements hook_file_url_alter
+ * For CDN static domain replacement on all file related urls
+ */
+function ucms_site_file_url_alter(&$original_uri) {
+  $scheme = file_uri_scheme($original_uri);
+
+  $use_cdn_here =& drupal_static('UCPublicStreamWrapper_use_cdn_for_all');
+  if (!isset($use_cdn_here)) {
+    $use_cdn_here = variable_get('ucms_site_use_cdn', False);
+  }
+
+  // local CDN Not activated?
+  if (!$use_cdn_here) {
+ //   return;
+  }
+
+  $cdn =& drupal_static('UCPublicStreamWrapper_cdn');
+  if (!isset($cdn)) {
+    $cdn = variable_get('ucms_site_cdn_uri', $GLOBALS['base_url']);
+  }
+
+  // If the current URI is an absolute or protocol-relative URI, return
+  // immediately.
+  // it may be an already altered public:// url
+  // we do not also alter the favicon sitemap or robots files which should be
+  // managed by all real domain-related sites
+  if (($scheme && ($scheme == 'http' || $scheme == 'https'))
+      || (drupal_substr($original_uri, 0, 2) == '//')
+      || (in_array(drupal_substr($original_uri, -11), array('favicon.ico', 'sitemap.xml')))
+      || (drupal_substr($original_uri, -10) == 'robots.txt')
+     )
+  {
+    return;
+  }
+  elseif ($scheme) {
+
+      // Explicitly exclude the local private:// stream wrapper.
+      // as we do not want it managed like public files
+      // And also remove the public:// stream wrapper as it is managed by
+      // ucms_site_stream_wrappers_alter
+      if ($scheme === 'private' || $scheme === 'public') {
+        return;
+      }
+
+      // We work only on file delivered locally (not rewriting imgur things, for example)
+      $local_schemes = array_keys(file_get_stream_wrappers(STREAM_WRAPPERS_LOCAL));
+      if (!in_array($scheme, $local_schemes)) {
+        return;
+      }
+
+      // Attempt to get an external URL using the appropriate wrapper.
+      if ($wrapper = file_stream_wrapper_get_instance_by_uri($original_uri)) {
+        $original_uri = str_replace($GLOBALS['base_url'] . '/', $cdn, $wrapper->getExternalUrl());
+      }
+      else {
+        return;
+      }
+  } else {
+    // classical file paths like '/foo/css/toto.css'
+    $original_uri = $cdn . '/' . $original_uri;
+  }
 }
 
 /**
