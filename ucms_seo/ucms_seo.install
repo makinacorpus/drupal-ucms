@@ -5,34 +5,6 @@
  */
 
 /**
- * Implements hook_field_schema().
- */
-function ucms_seo_field_schema($field) {
-  switch ($field['type']) {
-
-    case 'ucms_seo':
-      return array(
-        'columns' => array(
-          'meta_title' => array(
-            'type'        => 'varchar',
-            'length'      => 255,
-            'not null'    => false,
-            'default'     => null,
-          ),
-          'meta_description' => array(
-            'type'        => 'text',
-            'not null'    => false,
-            'default'     => null,
-          ),
-        ),
-        'indexes' => array(
-          'alias' => array('alias'),
-        ),
-      );
-  }
-}
-
-/**
  * Implements hook_schema().
  */
 function ucms_seo_schema() {
@@ -85,6 +57,19 @@ function ucms_seo_schema() {
         'not null'    => false,
         'default'     => null,
       ],
+      'meta_title' => array(
+        'description' => "Page meta title page",
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => false,
+        'default'     => null,
+      ),
+      'meta_description' => array(
+        'description' => "Page meta description",
+        'type'        => 'text',
+        'not null'    => false,
+        'default'     => null,
+      ),
     ],
     'foreign keys' => [
       'nid' => [
@@ -195,8 +180,14 @@ function ucms_seo_update_7002() {
  * Sets the ucms_seo_alias.site_id column as nullable.
  */
 function ucms_seo_update_7003() {
-  db_query("ALTER TABLE {ucms_seo_alias} DROP FOREIGN KEY {ucms_seo_alias_site_fk};");
-  db_drop_field('ucms_seo_alias', 'site_id');
+
+  try {
+    db_query("ALTER TABLE {ucms_seo_alias} DROP FOREIGN KEY {ucms_seo_alias_site_fk};");
+  } catch (PDOException $e) {}
+
+  if (db_field_exists('ucms_seo_alias', 'site_id')) {
+    db_drop_field('ucms_seo_alias', 'site_id');
+  }
 
   db_add_field('ucms_seo_alias', 'site_id', [
     'description' => "Site identifier this alias belongs to",
@@ -207,6 +198,28 @@ function ucms_seo_update_7003() {
   ]);
 }
 
+/**
+ * Adds missing database columns.
+ */
+function ucms_seo_update_7005() {
+  if (!db_field_exists('ucms_seo_node', 'meta_title')) {
+    db_add_field('ucms_seo_node', 'meta_title', [
+      'description' => "Page meta title page",
+      'type'        => 'varchar',
+      'length'      => 255,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+  if (!db_field_exists('ucms_seo_node', 'meta_description')) {
+    db_add_field('ucms_seo_node', 'meta_description', [
+      'description' => "Page meta description",
+      'type'        => 'text',
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+}
 
 /**
  * Restablishes the database contraints.
@@ -215,6 +228,6 @@ function ucms_seo_update_7003() {
  * during the same transaction, it seems to fail due to failing constraint, but
  * if you do it in two transactions, it works.
  */
-function ucms_seo_update_7004() {
+function ucms_seo_update_7006() {
   ucms_seo_install_schema_fix();
 }

@@ -24,12 +24,8 @@
 
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
-use Drupal\node\NodeInterface;
 
-/**
- * Field API will always (not) be in my heart.
- */
-require_once __DIR__ . '/ucms_seo.field.inc';
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_menu().
@@ -119,6 +115,17 @@ function ucms_seo_page_build(&$page) {
       ], 'seo.google.site_verification');
     }
   }
+
+  if (!ucms_site_is_master() && !path_is_admin(current_path())) {
+    if ($node = menu_get_object()) {
+      $meta = ucms_seo_service()->getNodeMeta($node);
+      foreach ($meta as $name => $content) {
+        drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => check_plain($content)]], 'meta-' . $name);
+      }
+    }
+    // Always add robots directives.
+    drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => 'robots', 'content' => 'index,follow,all']], 'robots');
+  }
 }
 
 /**
@@ -174,7 +181,6 @@ function ucms_seo_form_node_form_alter(&$form, &$form_state) {
   ];
 }
 
-
 /**
  * Implements hook_node_insert().
  */
@@ -195,3 +201,4 @@ function ucms_seo_node_update($node) {
 function ucms_seo_node_delete($node) {
   ucms_seo_service()->onNodeDelete($node);
 }
+

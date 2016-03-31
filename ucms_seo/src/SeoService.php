@@ -193,6 +193,63 @@ class SeoService
     }
 
     /**
+     * Set node meta information
+     *
+     * @param NodeInterface $node
+     * @param string[] $values
+     *   Keys are meta tag title, values are meta tag content
+     */
+    public function setNodeMeta(NodeInterface $node, $values = [])
+    {
+        $sqlValues = [];
+
+        foreach ($values as $key => $value) {
+
+            if (empty($value)) {
+                $value = null;
+            }
+
+            switch ($key) {
+
+                case 'title':
+                case 'description':
+                    $sqlValues['meta_' . $key] = $value;
+                    break;
+
+                default:
+                    continue;
+            }
+        }
+
+        if (empty($values)) {
+            return;
+        }
+
+        $this
+            ->db
+            ->update('ucms_seo_node')
+            ->fields($sqlValues)
+            ->condition('nid', $node->id())
+            ->execute()
+        ;
+
+        // @todo clear page cache
+    }
+
+    /**
+     * Get node meta information
+     *
+     * @param NodeInterface $node
+     *
+     * @return string[] $values
+     *   Keys are meta tag title, values are meta tag content
+     */
+    public function getNodeMeta(NodeInterface $node)
+    {
+        return $this->db->query("SELECT meta_title AS title, meta_description AS description FROM {ucms_seo_node} WHERE nid = ?", [$node->id()])->fetchAssoc();
+    }
+
+    /**
      * Get node alias segment
      *
      * @param NodeInterface $node
