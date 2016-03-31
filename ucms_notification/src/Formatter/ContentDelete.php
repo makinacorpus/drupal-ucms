@@ -44,4 +44,12 @@ class ContentDelete extends AbstractNotificationFormatter
         $this->t("@title has been deleted");
         $this->t("@title have been deleted");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getImageURI(NotificationInterface $notification)
+    {
+        return "file";
+    }
 }
