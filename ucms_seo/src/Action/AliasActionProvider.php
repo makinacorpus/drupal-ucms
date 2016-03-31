@@ -10,7 +10,7 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Seo\SeoService;
 
-class NodeActionProvider implements ActionProviderInterface
+class AliasActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
 
@@ -43,12 +43,8 @@ class NodeActionProvider implements ActionProviderInterface
     {
         $ret = [];
 
-        if ($this->service->userCanEditNodeSeo($this->currentUser, $item)) {
-            $ret[] = new Action($this->t("SEO parameters"), 'node/' . $item->id() . '/seo-edit', null, 'globe', -2, false, true);
-        }
-        if ($this->service->userCanEditNodeSeo($this->currentUser, $item)) {
-            $ret[] = new Action($this->t("SEO aliases"), 'node/' . $item->id() . '/seo-aliases', null, 'globe', -2, false, true);
-        }
+//        $ret[] = new Action($this->t("SEO parameters"), 'node/' . $item->pid . '/seo-edit', null, 'globe', -2, false, true);
+//        $ret[] = new Action($this->t("SEO aliases"), 'node/' . $item->pid . '/seo-aliases', null, 'globe', -2, false, true);
 
         return $ret;
     }
@@ -58,6 +54,6 @@ class NodeActionProvider implements ActionProviderInterface
      */
     public function supports($item)
     {
-        return $item instanceof NodeInterface;
+        return $item instanceof \stdClass && property_exists($item, 'alias') && property_exists($item, 'source');
     }
 }

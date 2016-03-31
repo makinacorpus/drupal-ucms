@@ -38,8 +38,8 @@ function ucms_seo_menu() {
   ];
   $items['node/%node/seo-aliases'] = [
     'title'             => "Node path aliases",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Form\AliasesNodeForm', 1],
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\NodeSeoController::aliasesList', 1],
     'access callback'   => 'ucms_seo_menu_access_node_edit',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
