@@ -241,11 +241,15 @@ function ucms_dashboard_page_build(&$page) {
 
     $actions = [];
     foreach ($context->getActions() as $title => $list) {
-      $actions[] = [
-        '#theme'   => 'ucms_dashboard_actions',
-        '#actions' => $list,
-        '#title'   => $title,
-      ];
+      if (is_array($list) && count($list) && reset($list) instanceof \MakinaCorpus\Ucms\Dashboard\Action\Action) {
+        $actions[] = [
+            '#theme'   => 'ucms_dashboard_actions',
+            '#actions' => $list,
+            '#title'   => $title,
+        ];
+      } else {
+        $actions[] = $list;
+      }
     }
     $js_setting = [
       'type' => 'setting',

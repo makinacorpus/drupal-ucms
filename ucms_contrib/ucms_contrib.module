@@ -391,16 +391,6 @@ function ucms_contrib_theme() {
 }
 
 /**
- * Implements hook_preprocess_page().
- */
-function ucms_contrib_preprocess_page(&$variables) {
-  // @todo this should check for any layout at all being here
-  if (!path_is_admin(current_path()) && ($site = ucms_site_manager()->getContext()) && ucms_site_manager()->getAccess()->userIsWebmaster(\Drupal::currentUser(), $site)) {
-    $variables['page']['content'][] = \Drupal::formBuilder()->getForm('MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm');
-  }
-}
-
-/**
  * Implements hook_entity_info_alter().
  */
 function ucms_contrib_entity_info_alter(&$entity_info) {

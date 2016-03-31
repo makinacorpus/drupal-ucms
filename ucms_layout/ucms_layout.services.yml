@@ -22,3 +22,9 @@ services:
       - {name: event_listener, event: "site:init"}
       - {name: event_listener, event: "site:clone"}
       - {name: event_listener, event: "site:ref"}
+
+  ucms_layout.context_pane_event_listener:
+    class: MakinaCorpus\Ucms\Layout\EventDispatcher\ContextPaneEventListener
+    arguments: ["@ucms_site.manager"]
+    tags:
+      - {name: event_listener, event: ucms_dashboard.context_init }
