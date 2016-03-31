@@ -66,7 +66,8 @@ class NodeAdminDisplay extends AbstractDisplay
                         $names[$node->type],
                         $title,
                         $node->status ? $this->t("published") : $this->t("unpublished"),
-                        format_date($node->created),
+                        format_interval(time() - $node->created),
+                        format_interval(time() - $node->changed),
                         isset($accountMap[$node->uid])
                             ? filter_xss(format_username($accountMap[$node->uid]))
                             : filter_xss(format_username($anonymous)),
@@ -82,7 +83,8 @@ class NodeAdminDisplay extends AbstractDisplay
                         $this->t("Type"),
                         $this->t("Title"),
                         $this->t("Status"),
-                        $this->t("Date"),
+                        $this->t("Created"),
+                        $this->t("Last update"),
                         $this->t("Owner"),
                         '',
                     ],
