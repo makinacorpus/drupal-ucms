@@ -65,6 +65,20 @@ class NodeEventListener
 
 
     /**
+     * node:new_labels events handler method.
+     *
+     * @param ResourceEvent $event
+     */
+    public function onNodeNewLabels(ResourceEvent $event)
+    {
+        $event->ignoreDefaultChan();
+        foreach ($event->getArgument('new_labels') as $labelId) {
+            $event->addResourceChanId('label', $labelId);
+        }
+    }
+
+
+    /**
      * Adds specific channels of the node's labels to the event.
      *
      * @param ResourceEvent $event

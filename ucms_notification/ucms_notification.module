@@ -120,6 +120,22 @@ function ucms_notification_node_update($node) {
     }
   } else {
     $dispatcher->dispatch('node:edit', $event);
+
+    if ($oldLabels = field_get_items('node', $node->original, 'labels')) {
+      $oldLabels = array_column($oldLabels, 'tid');
+    } else {
+      $oldLabels = [];
+    }
+    
+    if ($currentLabels = field_get_items('node', $node, 'labels')) {
+      $currentLabels = array_column($currentLabels, 'tid');
+    }
+
+    if ($currentLabels && ($newLabels = array_diff($currentLabels, $oldLabels))) {
+      $event = new ResourceEvent('node', $node->nid, $user->uid);
+      $event->setArgument('new_labels', $newLabels);
+      $dispatcher->dispatch('node:new_labels', $event);
+    }
   }
 }
 

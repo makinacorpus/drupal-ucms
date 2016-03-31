@@ -35,3 +35,4 @@ services:
       - { name: event_listener, event: "node:add" }
       #- { name: event_listener, event: "node:edit" }
       #- { name: event_listener, event: "node:delete" }
+      - { name: event_listener, event: "node:new_labels" }
