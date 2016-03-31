@@ -7,19 +7,14 @@
  * @todo
  *   - Widget form
  *       -> also needs a standalone form
- *   - hook_field_access()
- *   - global permissions
  *   - menu tree building
  *       -> in a service
  *   - url_alias table handling (is_canonical)
  *       -> in a service
- *   - hook_field_load() to add the canonical into field data
  *   - hook_page_build() to add canonical and meta information
  *     (also could be on node view when mode full, formatter?)
  *       -> in a service
  *   - global configuration (administer path, canonicals)
- *   - node tab with all redirects and aliases
- *   - none of this can be D8 friendly ?
  */
 
 use MakinaCorpus\Ucms\Seo\SeoService;

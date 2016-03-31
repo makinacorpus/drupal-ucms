@@ -172,6 +172,15 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
+  $items['node/%node/site-list'] = [
+    'title'             => "Sites",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Controller\NodeInfoController::siteList', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['view', 1],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
   $items['admin/structure/site'] = [
     'title'             => "Site factory configuration",
     'description'       => "Global site configuration, such as allowed themes for sites",

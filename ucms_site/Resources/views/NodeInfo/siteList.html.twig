@@ -1,0 +1,9 @@
+<ul>
+  {% for site in sites %}
+    <li>
+      <a href="{{ url('admin/dashboard/site/' ~ site.id) }}">
+        {{ site.title }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>

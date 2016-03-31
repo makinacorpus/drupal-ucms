@@ -55,11 +55,13 @@ class NodeActionProvider implements ActionProviderInterface
         }
         if ($this->nodeAccess->userCanLock($account, $item)) {
             if ($item->is_clonable) {
-                $ret[] = new Action($this->t("Lock"), 'node/' . $item->nid . '/lock', 'dialog', 'lock', 2, false, true);
+                $ret[] = new Action($this->t("Lock"), 'node/' . $item->id() . '/lock', 'dialog', 'lock', 2, false, true);
             } else {
-                $ret[] = new Action($this->t("Unlock"), 'node/' . $item->nid . '/unlock', 'dialog', 'lock', 2, false, true);
+                $ret[] = new Action($this->t("Unlock"), 'node/' . $item->id() . '/unlock', 'dialog', 'lock', 2, false, true);
             }
         }
+
+        $ret[] = new Action($this->t("Sites"), 'node/' . $item->id() . '/site-list', 'dialog', 'search', 100, false, true);
 
         /*
          if ($item->access('clone')) {
