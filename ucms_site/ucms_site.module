@@ -259,10 +259,10 @@ function ucms_site_permission() {
 function ucms_site_admin_path_is_allowed($path) {
   if (path_is_admin($path)) {
     // Allow node/add
-    if ('node/add' === substr(current_path(), 0, 8)) {
+    if ('node/add' === substr($path, 0, 8)) {
       return true;
     }
-    if ('admin/dashboard/tree' === current_path()) {
+    if ('admin/dashboard/tree' === $path) {
       return true;
     }
     if (arg(0) === 'node') {
