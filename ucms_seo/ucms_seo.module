@@ -113,10 +113,17 @@ function ucms_seo_page_build(&$page) {
 
   if (!ucms_site_is_master() && !path_is_admin(current_path())) {
     if ($node = menu_get_object()) {
-      $meta = ucms_seo_service()->getNodeMeta($node);
-      foreach ($meta as $name => $content) {
+
+      foreach (ucms_seo_service()->getNodeMeta($node) as $name => $content) {
         drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => check_plain($content)]], 'meta-' . $name);
       }
+
+      $canonical = ucms_seo_service()->getNodeCanonical($node);
+      if (!$canonical) {
+        $canonical = url('node/' . $node->nid, ['absolute' => true]);
+      }
+      drupal_add_html_head(['#tag' => 'link', '#attributes' => ['rel' => 'canonical', 'href' => $canonical]], 'canonical');
+
     }
     // Always add robots directives.
     drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => 'robots', 'content' => 'index,follow,all']], 'robots');

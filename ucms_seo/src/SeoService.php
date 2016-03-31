@@ -246,7 +246,50 @@ class SeoService
      */
     public function getNodeMeta(NodeInterface $node)
     {
-        return $this->db->query("SELECT meta_title AS title, meta_description AS description FROM {ucms_seo_node} WHERE nid = ?", [$node->id()])->fetchAssoc();
+        return (array)$this->db->query("SELECT meta_title AS title, meta_description AS description FROM {ucms_seo_node} WHERE nid = ?", [$node->id()])->fetchAssoc();
+    }
+
+    /**
+     * Get node canonical URL
+     *
+     * @param NodeInterface $node
+     */
+    public function getNodeCanonical(NodeInterface $node)
+    {
+        $source = 'node/' . $node->id();
+
+        // @todo language
+        $alias = $this
+            ->db
+            ->query(
+                "
+                    SELECT alias, site_id
+                    FROM {ucms_seo_alias} u
+                    WHERE u.source = ? AND u.expires IS NULL
+                    ORDER BY
+                        u.is_canonical DESC,
+                        u.site_id IS NULL DESC,
+                        u.pid DESC
+                    LIMIT 1 OFFSET 0
+                ",
+                [$source]
+            )
+            ->fetch()
+        ;
+
+        if ($alias) {
+            if ($alias->site_id) {
+                $site = $this->siteManager->getStorage()->loadAll($alias->site_id);
+
+                return $site->http_host . '/' . $alias->alias;
+            }
+
+            if ($this->siteManager->hasContext()) {
+                $site = $this->siteManager->getContext();
+
+                return $site->http_host . '/' . $alias->alias;
+            }
+        }
     }
 
     /**
