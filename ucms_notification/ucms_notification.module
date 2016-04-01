@@ -128,7 +128,12 @@ function ucms_notification_node_update($node) {
     }
     
     if ($currentLabels = field_get_items('node', $node, 'labels')) {
-      $currentLabels = array_column($currentLabels, 'tid');
+      if (is_array($currentLabels)) {
+        $currentLabels = array_column($currentLabels, 'tid');
+      }
+      else {
+        $currentLabels = (array) $currentLabels;
+      }
     }
 
     if ($currentLabels && ($newLabels = array_diff($currentLabels, $oldLabels))) {

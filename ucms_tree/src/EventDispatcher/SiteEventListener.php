@@ -82,17 +82,25 @@ class SiteEventListener
     public function onSiteCreate(SiteEvent $event)
     {
         $site = $event->getSite();
+        $menus = [
+            'site-main'   => $this->t("Main menu"),
+            'site-footer' => $this->t("Footer menu"),
+        ];
 
         // Create the site default menus
         if ($this->menuStorage) {
-            $this->menuStorage->create(
-                'site-main-'.$site->getId(),
-                ['title' => $this->t("Main menu"), 'site_id' => $site->getId()]
-            );
-            $this->menuStorage->create(
-                'site-footer-'.$site->getId(),
-                ['title' => $this->t("Footer menu"), 'site_id' => $site->getId()]
-            );
+            foreach ($menus as $prefix => $title) {
+                $name = $prefix.'-'.$site->getId();
+                if (!$this->menuStorage->exists($name)) {
+                    $this->menuStorage->create(
+                        $name,
+                        [
+                            'title'   => $title,
+                            'site_id' => $site->getId(),
+                        ]
+                    );
+                }
+            }
         }
 
     }
