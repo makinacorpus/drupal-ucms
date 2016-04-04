@@ -28,6 +28,17 @@ use Drupal\node\NodeInterface;
 function ucms_seo_menu() {
   $items = [];
 
+  $items['sitemap'] = [
+    'title'             => "Sitemap",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SitemapController::display', 'html'],
+    'access callback'   => TRUE,
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['sitemap.xml'] = array(
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SitemapController::display', 'xml'],
+  ) + $items['sitemap'];
+
   $items['node/%node/seo-edit'] = [
     'title'             => "Edit SEO parameters",
     'page callback'     => 'sf_dic_page_form',
@@ -204,3 +215,14 @@ function ucms_seo_node_delete($node) {
   ucms_seo_service()->onNodeDelete($node);
 }
 
+/**
+ * Implements hook_theme().
+ */
+function ucms_seo_theme() {
+  return [
+    'ucms_seo_sitemap' => [
+      'variables' => ['menus' => array()],
+      'template'  => 'views/ucms-seo-sitemap',
+    ],
+  ];
+}

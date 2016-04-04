@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {% import _self as xmlsitemap %}
+  {% for tree in menus_tree %}
+  {{ xmlsitemap.menu_tree(tree) }}
+  {% endfor %}
+</urlset>
+
+{% macro menu_tree(tree) %}
+  {% import _self as xmlsitemap %}
+  {% for link in tree %}
+
+    <url>
+      <loc>{{ url(link.link.href, {'absolute': true}) }}</loc>
+    </url>
+
+    {% if link.below %}
+      {{ xmlsitemap.menu_tree(link.below) }}
+    {% endif %}
+
+  {% endfor %}
+{% endmacro %}
