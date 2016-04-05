@@ -272,13 +272,15 @@ function ucms_dashboard_page_build(&$page) {
     ];
   }
 
-  $page['page_top']['ucms_dashboard_top'] = [
-    '#theme' => 'ucms_dashboard_top',
-    '#links' => [
-      '#theme' => 'links__main_menu',
-      '#links' => menu_navigation_links('main-menu'),
-    ],
-  ];
+  if (user_is_logged_in() || path_is_admin(current_path())) {
+    $page['page_top']['ucms_dashboard_top'] = [
+      '#theme' => 'ucms_dashboard_top',
+      '#links' => [
+        '#theme' => 'links__main_menu',
+        '#links' => menu_navigation_links('main-menu'),
+      ],
+    ];
+  }
 }
 
 /**
