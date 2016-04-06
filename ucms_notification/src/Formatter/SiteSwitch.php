@@ -94,7 +94,7 @@ class SiteSwitch extends AbstractNotificationFormatter
     /**
      * {@inheritDoc}
      */
-    public function getImageURI(NotificationInterface $notification)
+    protected function prepareImageURI(NotificationInterface $notification)
     {
         return "cloud";
     }

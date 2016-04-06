@@ -1,12 +1,10 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-
 
 abstract class AbstractContentNotificationFormatter extends AbstractNotificationFormatter
 {
@@ -58,12 +56,13 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     /**
      * {@inheritDoc}
      */
-    public function getImageURI(NotificationInterface $notification)
+    protected function prepareImageURI(NotificationInterface $notification)
     {
         $contentIdList = $notification->getResourceIdList();
         if (count($contentIdList) === 1) {
-            $node = node_load(reset($contentIdList));
-            return in_array($node->type, $this->typeHandler->getContentTypes()) ? "file" : "picture";
+            if ($node = node_load(reset($contentIdList))) {
+                return in_array($node->type, $this->typeHandler->getContentTypes()) ? "file" : "picture";
+            }
         }
     }
 }

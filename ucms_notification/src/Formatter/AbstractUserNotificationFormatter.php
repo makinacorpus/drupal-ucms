@@ -6,7 +6,6 @@ namespace MakinaCorpus\Ucms\Notification\Formatter;
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
 
-
 abstract class AbstractUserNotificationFormatter extends AbstractNotificationFormatter
 {
     /**
@@ -43,7 +42,7 @@ abstract class AbstractUserNotificationFormatter extends AbstractNotificationFor
     /**
      * {@inheritDoc}
      */
-    public function getImageURI(NotificationInterface $notification)
+    protected function prepareImageURI(NotificationInterface $notification)
     {
         return "user";
     }
