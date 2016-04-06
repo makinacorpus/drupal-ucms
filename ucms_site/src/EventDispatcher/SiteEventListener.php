@@ -146,7 +146,7 @@ class SiteEventListener
         }
 
         $deleteContributorRole = true;
-        
+
         foreach ($this->manager->getAccess()->getUserRoles($webmaster) as $access) {
             if ($access->getRole() == Access::ROLE_CONTRIB && $access->getSiteId() != $event->getSite()->id) {
                 $deleteContributorRole = false;
