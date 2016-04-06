@@ -79,7 +79,7 @@ class TreeForm extends FormBase
             $tree = _menu_build_tree($menu['name']);
             // We give all access to nodes, even unpublished
             foreach (array_keys($tree['node_links']) as $nid) {
-                foreach ($tree['node_links'][$nid] as $mlid => &$link) {
+                foreach ($tree['node_links'][$nid] as &$link) {
                     $link['access'] = true;
                 }
             }
@@ -104,17 +104,17 @@ class TreeForm extends FormBase
     /**
      * Save the items in the menus, converting from JS structure to real menu links.
      *
-     * @param $menu_name
-     * @param $items
+     * @param string $menuName
+     * @param mixed[] $items
      */
-    protected function saveMenuItems($menu_name, $items)
+    protected function saveMenuItems($menuName, $items)
     {
         // First, get all elements so that we can delete those that are removed
         $old = array_map(
             function ($link) {
                 return $link['mlid'];
             },
-            menu_load_links($menu_name)
+            menu_load_links($menuName)
         );
 
         // FIXME, this is coming from javascript, we should really check access on nodes
@@ -128,7 +128,7 @@ class TreeForm extends FormBase
                 $nid = $item['name'];
                 $isNew = substr($item['id'], 0, 4) == 'new_';
                 $link = [
-                    'menu_name'  => $menu_name,
+                    'menu_name'  => $menuName,
                     'link_path'  => 'node/'.$nid,
                     'link_title' => $this->getNodeTitle($nid),
                     'weight'     => $weight++,
@@ -158,8 +158,8 @@ class TreeForm extends FormBase
         try {
             $tx = $this->db->startTransaction();
 
-            foreach ($form_state->getValue('menus') as $menu_name => $items) {
-                $this->saveMenuItems($menu_name, drupal_json_decode($items));
+            foreach ($form_state->getValue('menus') as $menuName => $items) {
+                $this->saveMenuItems($menuName, drupal_json_decode($items));
             }
 
             unset($tx);
@@ -203,20 +203,26 @@ class TreeForm extends FormBase
     private function treeOutput($tree, $menu = null)
     {
         $items = [];
+
         if (!empty($tree)) {
-            foreach ($tree as $i => $data) {
+            foreach ($tree as $data) {
+                $element = [];
+
                 $element['data'] = '<div class="tree-item">'.
                     check_plain($data['link']['link_title']).
                     '<span class="glyphicon glyphicon-remove"></span></div>';
                 $element['data-name'] = substr($data['link']['link_path'], 5); // node/123
                 $element['data-mlid'] = $data['link']['mlid'];
+
                 if ($data['below']) {
                     $elements = $this->treeOutput($data['below']);
                     $element['data'] .= drupal_render($elements);
                 }
+
                 $items[] = $element;
             }
         }
+
         $build = [
             '#theme' => 'item_list',
             '#type'  => 'ol',
