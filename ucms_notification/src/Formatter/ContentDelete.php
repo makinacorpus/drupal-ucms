@@ -1,11 +1,9 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
-
 
 class ContentDelete extends AbstractNotificationFormatter
 {
@@ -16,7 +14,6 @@ class ContentDelete extends AbstractNotificationFormatter
     {
         return ["@count content", "@count contents"];
     }
-
 
     /**
      * {@inheritdoc}

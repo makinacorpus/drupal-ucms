@@ -73,7 +73,6 @@ services:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentDelete
     tags:
       - { name: apb.notification.formatter, event: "node:delete", auto: true, channels: "admin:content" }
-      - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_new_labels:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentNewLabels
