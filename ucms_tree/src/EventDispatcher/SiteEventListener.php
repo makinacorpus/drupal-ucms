@@ -64,7 +64,15 @@ class SiteEventListener
         $activeMenus = [];
         if ($this->menuStorage) {
             $menuList = $this->menuStorage->loadWithConditions(['site_id' => $site->getId()]);
-            if ($menuList) {
+
+            if (empty($menuList)) {
+                $this->onSiteCreate(new SiteEvent($site));
+            }
+
+            // @todo
+            //   pri: keeping this code in case it happens again, on my env
+            //   all menus have been droppped for an obscure reason...
+            if (false && $menuList) {
                 foreach ($menuList as $menu) {
                     $activeMenus[] = $menu['name'];
                 }
