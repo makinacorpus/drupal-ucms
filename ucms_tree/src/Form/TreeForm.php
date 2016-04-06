@@ -2,12 +2,15 @@
 
 namespace MakinaCorpus\Ucms\Tree\Form;
 
-
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
 use MakinaCorpus\Umenu\DrupalMenuStorage;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class TreeForm extends FormBase
 {
@@ -20,10 +23,16 @@ class TreeForm extends FormBase
      * @var \MakinaCorpus\Ucms\Site\SiteManager
      */
     private $manager;
+
     /**
      * @var \DatabaseConnection
      */
     private $db;
+
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
 
     /**
      * {@inheritdoc}
@@ -33,7 +42,8 @@ class TreeForm extends FormBase
         return new static(
             $container->get('umenu.storage'),
             $container->get('ucms_site.manager'),
-            $container->get('database')
+            $container->get('database'),
+            $container->get('event_dispatcher')
         );
     }
 
@@ -44,13 +54,13 @@ class TreeForm extends FormBase
      * @param \MakinaCorpus\Ucms\Site\SiteManager $manager
      * @param \DatabaseConnection $db
      */
-    public function __construct(DrupalMenuStorage $storage, SiteManager $manager, \DatabaseConnection $db)
+    public function __construct(DrupalMenuStorage $storage, SiteManager $manager, \DatabaseConnection $db, EventDispatcher $dispatcher)
     {
         $this->storage = $storage;
         $this->manager = $manager;
         $this->db = $db;
+        $this->dispatcher = $dispatcher;
     }
-
 
     /**
      * {@inheritDoc}
@@ -110,44 +120,55 @@ class TreeForm extends FormBase
     protected function saveMenuItems($menuName, $items)
     {
         // First, get all elements so that we can delete those that are removed
-        $old = array_map(
-            function ($link) {
-                return $link['mlid'];
-            },
-            menu_load_links($menuName)
-        );
+        // @todo pri: sorry this is inneficient, but I need it
+        $old = [];
+        foreach (menu_load_links($menuName) as $item) {
+            $old[$item['mlid']] = $item;
+        }
 
         // FIXME, this is coming from javascript, we should really check access on nodes
 
         // Keep a list of processed elements
         $processed = [];
+        $rootItems = [];
+        $deleteItems = [];
 
         $weight = -50;
         if (!empty($items)) {
             foreach ($items as $item) {
                 $nid = $item['name'];
                 $isNew = substr($item['id'], 0, 4) == 'new_';
+
                 $link = [
                     'menu_name'  => $menuName,
                     'link_path'  => 'node/'.$nid,
                     'link_title' => $this->getNodeTitle($nid),
                     'weight'     => $weight++,
                 ];
+
                 if (!$isNew) {
                     $link['mlid'] = $item['id'];
                 }
                 if ($item['parent_id']) {
-                    $link['plid'] = $processed[$item['parent_id']];
+                    $link['plid'] = $processed[$item['parent_id']]['mlid'];
                 }
-                menu_link_save($link);
-                $processed[$item['id']] = $link['mlid'];
+
+                $id = menu_link_save($link);
+
+                $processed[$id] = $link;
+                if (empty($link['plid'])) {
+                    $rootItems[$id] = $link;
+                }
             }
         }
 
         // Remove elements not in the original array
-        foreach (array_diff($old, $processed) as $deleted) {
-            menu_link_delete($deleted);
+        foreach (array_diff_key($old, $processed) as $id => $deleted) {
+            menu_link_delete($id);
+            $deleteItems[$id] = $deleted;
         }
+
+        $this->dispatcher->dispatch('menu:tree', new MenuEvent($menuName, $rootItems, $deleteItems));
     }
 
     /**

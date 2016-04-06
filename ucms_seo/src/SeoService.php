@@ -253,43 +253,84 @@ class SeoService
      * Get node canonical URL
      *
      * @param NodeInterface $node
+     * @param string $langcode
      */
-    public function getNodeCanonical(NodeInterface $node)
+    public function getNodeCanonical(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
     {
-        $source = 'node/' . $node->id();
+        $route  = 'node/' . $node->id();
+        $source = $this->db->escapeLike($route);
 
-        // @todo language
-        $alias = $this
+        // We need to directly query the path alias table from here.
+        $query = $this
             ->db
-            ->query(
-                "
-                    SELECT alias, site_id
-                    FROM {ucms_seo_alias} u
-                    WHERE u.source = ? AND u.expires IS NULL
-                    ORDER BY
-                        u.is_canonical DESC,
-                        u.site_id IS NULL DESC,
-                        u.pid DESC
-                    LIMIT 1 OFFSET 0
-                ",
-                [$source]
-            )
+            ->select('ucms_seo_alias', 'u')
+            ->fields('u', ['alias', 'site_id'])
+            ->condition('u.source', $source, 'LIKE')
+        ;
+
+        // Where the magic happens, if no canonical is present, this query
+        // actually does reproduce the SeoAliasStorage::lookupPathAlias() order
+        // and ensure we have consistent aliases and canonicals all over the
+        // place. The only thing that's different is that we won't filter by
+        // site since we will fetch it from the result itself, or from the
+        // node if no site found.
+        $query->orderBy('u.is_canonical', 'DESC');
+
+        // https://stackoverflow.com/questions/9307613/mysql-order-by-null-first-and-desc-after
+        // We do need a site to display the node into, in case no canonical
+        // is explicitly told.
+        $query->orderBy('u.site_id IS NULL', 'desc');
+
+        // Language order is less important than site itself.
+        if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
+            $langcodeList = [$langcode];
+        } else {
+            $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
+            if (LanguageInterface::LANGCODE_NOT_SPECIFIED < $langcode) {
+                $query->orderBy('u.language', 'DESC');
+            } else {
+                $query->orderBy('u.language', 'ASC');
+            }
+        }
+
+        $row = $query
+            ->orderBy('u.pid', 'DESC')
+            ->range(0, 1)
+            ->condition('u.language', $langcodeList)
+            ->execute()
             ->fetch()
         ;
 
-        if ($alias) {
-            if ($alias->site_id) {
-                $site = $this->siteManager->getStorage()->loadAll($alias->site_id);
+        if (!$row) {
+            // No alias at all means that the canonical is the node URL in the
+            // current site, I am sorry I can't provide more any magic here...
+            return url($route, ['absolute' => true]);
+        }
 
-                return $site->http_host . '/' . $alias->alias;
-            }
+        $site = null;
+        $storage = $this->siteManager->getStorage();
 
-            if ($this->siteManager->hasContext()) {
+        if ($row->site_id) {
+            $site = $storage->findOne($row->siteId);
+        } else {
+            // There is no site, let's fetch the node one, the first, original
+            // one deserves to actually be the canonical.
+            if ($node->site_id) {
+                $storage->findOne($node->site_id);
+            } else if ($this->siteManager->hasContext()) {
                 $site = $this->siteManager->getContext();
-
-                return $site->http_host . '/' . $alias->alias;
+            } else {
+                // Attempt to find the very first site the node was in and just
+                // use that one.
+                // @todo DO IT BITCH !
             }
         }
+
+        if (!$site) {
+            return url($row->alias, ['absolute' => true]);
+        }
+
+        return $site->http_host . '/' . $row->alias;
     }
 
     /**
@@ -597,6 +638,10 @@ class SeoService
                 foreach ($aliases as $alias) {
                     $q->values(['node/' . $nodeId, $alias, $langcode, $siteId]);
                 }
+
+                // Bad thing here, we need to manually clear the path cache for
+                // each node one by one
+                $this->aliasManager->cacheClear('node/' . $nodeId);
             }
             $q->execute();
         }
@@ -609,36 +654,39 @@ class SeoService
      * Drupal magic will do the rest
      *
      * @param NodeInterface $node
+     * @param Site $site
+     * @param string $alias
+     * @param string $langcode
      */
-    public function updateCanonicalForNode(NodeInterface $node)
+    public function updateCanonicalForNode(NodeInterface $node, $alias, Site $site = null, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
     {
-        $changed = false;
+        $route  = 'node/' . $node->id();
+        $source = $this->db->escapeLike($route);
 
-        //
-        // The rules are tricky here, we mostly have two problems:
-        //
-        //  - first one is that a node might have multiple aliases, case in
-        //    which the most recent must win
-        //
-        //  - second one is that the node might be present on more than one
-        //    site, case in which aliases on each site might be different too
-        //    and the most ancient site the node is in, considering it must
-        //    be publicly visible, will win over and get the canonical
-        //
-        // Besides all this, a few other notes:
-        //
-        //  - we don't have a "per-site" canonical (so no redirect will ever
-        //    happen actually within the same site)
-        //
-        //  - I actually have nothing more to say
-        //
+        $this
+            ->db
+            ->update('ucms_seo_alias')
+            ->fields(['is_canonical' => 0])
+            ->condition('source', $source, 'LIKE')
+            ->condition('language', $langcode)
+            ->execute()
+        ;
 
-        
-
-        if ($changed) {
-            // Sorry, but this is really necessary
-            $this->aliasManager->cacheClear();
-        }
+        // Use MERGE here to ensure the alias will be correctly created
+        $this
+            ->db
+            ->merge('ucms_seo_alias')
+            ->key([
+                'source'    => $route,
+                'alias'     => $alias,
+                'language'  => $langcode,
+                'site_id'   => $site ? $site->getId() : null
+            ])
+            ->fields([
+                'is_canonical' => true,
+            ])
+            ->execute()
+        ;
     }
 
     /**
@@ -684,8 +732,10 @@ class SeoService
      * over time in order to avoid the url_alias table to grow too much.
      *
      * @param NodeInterface $node
+     * @param string $menuName
+     *   To restrict to a single menu
      */
-    public function onAliasChange(NodeInterface $node)
+    public function onAliasChange(NodeInterface $node, $menuName = null)
     {
         $nodeRoute  = 'node/' . $node->id();
         $langcode   = $node->language()->getId();
@@ -695,14 +745,13 @@ class SeoService
             $siteId = $this->siteManager->getContext()->getId();
         }
 
-        $idList = $this
-            ->db
-            ->select('menu_links', 'l')
-            ->fields('l', ['mlid'])
-            ->condition('link_path', $nodeRoute)
-            ->execute()
-            ->fetchCol()
-        ;
+        // Fetch all menu links associated to this node in order to rebuild
+        // their parenting tree with the new alias, if any changed
+        $q = $this->db->select('menu_links', 'l')->fields('l', ['mlid']);
+        if ($menuName) {
+            $q->condition('l.menu_name', $menuName);
+        }
+        $idList = $q->condition('l.link_path', $nodeRoute)->execute()->fetchCol();
 
         if ($idList) {
 
@@ -748,10 +797,13 @@ class SeoService
      * all aliases of the node
      *
      * @param NodeInterface $node
+     * @param string $menuName
+     *   To restrict to a single menu
      */
-    public function onAliasRemove(NodeInterface $node)
+    public function onAliasRemove(NodeInterface $node, $menuName = null)
     {
-        $this->onAliasChange($node);
+        // FIXME: THIS WILL NOT WORK...
+        $this->onAliasChange($node, $menuName = null);
     }
 
     /**

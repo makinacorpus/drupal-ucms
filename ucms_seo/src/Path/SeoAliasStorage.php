@@ -115,6 +115,25 @@ class SeoAliasStorage implements AliasStorageInterface
         ;
     }
 
+    protected function ensureSiteContext(\SelectQuery $query)
+    {
+        // BEWARE: HERE BE DRAGONS (probably, anyway).
+        // When looking up aliases, we need to filter using the current site
+        // this would have no use otherwise to set the site_id on the node
+        // information
+        if ($this->siteManager->hasContext()) {
+            $query->condition(
+                db_or()
+                    ->condition('u.site_id', $this->siteManager->getContext()->getId())
+                    ->isNotNull('u.site_id')
+            );
+            // https://stackoverflow.com/questions/9307613/mysql-order-by-null-first-and-desc-after
+            $query->orderBy('u.site_id IS NULL', 'desc');
+        } else {
+            $query->isNull('u.site_id');
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -168,21 +187,12 @@ class SeoAliasStorage implements AliasStorageInterface
             }
         }
 
-        // BEWARE: HERE BE DRAGONS (probably, anyway).
-        // When looking up aliases, we need to filter using the current site
-        // this would have no use otherwise to set the site_id on the node
-        // information
-        if ($this->siteManager->hasContext()) {
-            $query->condition(
-                db_or()
-                    ->condition('u.site_id', $this->siteManager->getContext()->getId())
-                    ->isNotNull('u.site_id')
-            );
-            // https://stackoverflow.com/questions/9307613/mysql-order-by-null-first-and-desc-after
-            $query->orderBy('u.site_id IS NULL', 'desc');
-        } else {
-            $query->isNull('u.site_id');
-        }
+        // Canonical property will never be set automatically sus ensuring that
+        // what the user tells is what the user gets, so caninonical is *always*
+        // the alias we need to fetch to deambiguate
+        $query->orderBy('u.is_canonical', 'DESC');
+
+        $this->ensureSiteContext($query);
 
         return $query
             ->orderBy('u.pid', 'DESC')
@@ -219,6 +229,8 @@ class SeoAliasStorage implements AliasStorageInterface
                 $query->orderBy('u.language', 'ASC');
             }
         }
+
+        $this->ensureSiteContext($query);
 
         return $query
             ->orderBy('u.pid', 'DESC')
@@ -257,6 +269,62 @@ class SeoAliasStorage implements AliasStorageInterface
     /**
      * {@inheritdoc}
      */
+    public function preloadPathAlias($sources, $langcode)
+    {
+        // VERY IMPORTANT PIECE OF DOCUMENTATION, BECAUSE CORE DOES NOT
+        // DOCUMENT IT VERY WELL:
+        //  - the query inverse all the orders 'pid' and 'language' compared
+        //    to the original ::lookupPathAlias() method
+        //  - smart little bitches, it seems they didn't know how to write it
+        //    correctly in SQL (and neither do I actually) - so they rely on
+        //    the fetchAllKeyed() method, which iterates in order on the rows
+        //    making them squashing the previously fetched one
+
+        $query = $this
+            ->db
+            ->select('ucms_seo_alias', 'u')
+            ->fields('u', ['source', 'alias'])
+        ;
+
+        $condition = new \DatabaseCondition('OR');
+        foreach ($sources as $source) {
+            // See the queries above. Use LIKE for case-insensitive matching.
+            $condition->condition('u.source', $this->db->escapeLike($source), 'LIKE');
+        }
+        $query->condition($condition);
+
+        if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
+            $langcodeList = [$langcode];
+        } else {
+            $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
+            // !!! condition here is inversed from the lookupPathAlias() method
+            if (LanguageInterface::LANGCODE_NOT_SPECIFIED > $langcode) {
+                $query->orderBy('u.language', 'DESC');
+            } else {
+                $query->orderBy('u.language', 'ASC');
+            }
+        }
+
+        // Canonical property will never be set automatically sus ensuring that
+        // what the user tells is what the user gets, so caninonical is *always*
+        // the alias we need to fetch to deambiguate
+        // !!! condition here is inversed from the lookupPathAlias() method
+        $query->orderBy('u.is_canonical', 'ASC');
+
+        $this->ensureSiteContext($query);
+
+        return $query
+            // !!! condition here is inversed from the lookupPathAlias() method
+            ->orderBy('u.pid', 'ASC')
+            ->condition('u.language', $langcodeList)
+            ->execute()
+            ->fetchAllKeyed()
+        ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAliasesForAdminListing($header, $keys = NULL)
     {
         $query = $this
@@ -272,7 +340,7 @@ class SeoAliasStorage implements AliasStorageInterface
 
             $query
                 ->condition(
-                    db_or()
+                    (new \DatabaseCondition('OR'))
                         ->condition('u.alias', $values, 'LIKE')
                         ->condition('u.source', $values, 'LIKE')
                 )

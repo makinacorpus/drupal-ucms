@@ -36,3 +36,9 @@ services:
     class: MakinaCorpus\Ucms\Seo\Twig\SeoExtension
     arguments: ["@ucms_seo.seo_service", "@ucms_site.manager"]
     tags: [{name: twig.extension}]
+
+  ucms_seo.menu_event_listener:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventListener
+    arguments: ["@ucms_seo.seo_service", "@entity.manager"]
+    tags:
+      - {name: event_listener, event: "menu:tree"}
