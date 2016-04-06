@@ -63,7 +63,7 @@ class SeoNodeForm extends FormBase
         //   fetch menu links for this node, in site context, in order to prefix the form field
 
         $currentAlias = $this->seoService->getNodeSegment($node);
-        $meta = $this->seoService->getNodeMeta($node);
+        $meta = $this->seoService->getNodeMeta($node) + ['title' => null, 'description' => null];
 
         $form['segment'] = [
             '#title'            => t("Alias"),
