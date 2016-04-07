@@ -49,12 +49,32 @@ class SearchForm extends FormBase
             '#default_value'  => isset($query[$parameterName]) ? $query[$parameterName] : null,
         ];
 
+        if (!empty($form['query']['#default_value'])) {
+            $form['clear'] = [
+                '#type'   => 'submit',
+                '#value'  => $this->t("Clear"),
+                '#submit' => ['::clearSubmit']
+            ];
+        }
+
         $form['submit'] = [
             '#type'   => 'submit',
             '#value'  => $this->t("Search"),
         ];
 
         return $form;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clearSubmit(array &$form, FormStateInterface $form_state)
+    {
+        $parameterName = $form_state->getTemporaryValue(self::TEMP_PARAM);
+
+        $query = drupal_get_query_parameters(null, ['q', $parameterName]);
+
+        $form_state->setRedirect(current_path(), ['query' => $query]);
     }
 
     /**
