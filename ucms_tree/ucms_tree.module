@@ -78,6 +78,7 @@ function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
   if (!empty($_GET['menu_name'])) {
 
     // Verify access to menu
+    $matches = [];
     preg_match('@.*-(\d+)@', $_GET['menu_name'], $matches);
     $manager = ucms_site_manager();
     $site = $manager->getContext();

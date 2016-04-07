@@ -606,7 +606,7 @@ class SeoService
                     $expiring[] = $row->pid;
                 }
                 $nodeId = $sourceMap[$row->source];
-                if (false !== ($index = array_search($row->alias, $nodeAliases[$nodeId]))) {
+                if (!empty($nodeAliases[$nodeId]) && false !== ($index = array_search($row->alias, $nodeAliases[$nodeId]))) {
                     // Unmark the alias for insertion
                     unset($nodeAliases[$nodeId][$index]);
                     if (empty($nodeAliases[$nodeId])) {
