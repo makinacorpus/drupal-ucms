@@ -17,6 +17,8 @@ interface ActionProviderInterface
     /**
      * Does this provider supports the given item
      *
+     * @todo we need a type instead for performances
+     *
      * @param mixed $item
      *
      * @return boolean

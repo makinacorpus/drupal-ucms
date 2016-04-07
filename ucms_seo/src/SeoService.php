@@ -90,6 +90,16 @@ class SeoService
     }
 
     /**
+     * Get alias storage
+     *
+     * @return AliasStorageInterface
+     */
+    public function getAliasStorage()
+    {
+        return $this->aliasStorage;
+    }
+
+    /**
      * Get node storage
      *
      * @return EntityStorageInterface

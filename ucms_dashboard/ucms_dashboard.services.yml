@@ -8,6 +8,10 @@ services:
     class: MakinaCorpus\Ucms\Dashboard\Page\PageFactory
     arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry"]
 
+  ucms_dashboard.processor_registry:
+    class: MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider
+    tags: [{name: ucms_dashboard.action_provider}]
+
   ucms_dashboard.action_provider_registry:
     public: false
     class: MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry

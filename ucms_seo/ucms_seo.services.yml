@@ -9,12 +9,6 @@ services:
     class: MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
 
-  ucms_seo.alias_action_provider:
-    public: false
-    class: MakinaCorpus\Ucms\Seo\Action\AliasActionProvider
-    arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
-
   ucms_seo.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\NodeActionProvider
@@ -26,6 +20,12 @@ services:
     class: MakinaCorpus\Ucms\Seo\Action\SiteActionProvider
     arguments: ["@ucms_seo.seo_service", "@current_user"]
     tags: [{name: ucms_dashboard.action_provider}]
+
+  ucms_seo.action.alias_canonical:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Action\AliasCanonicalProcessor
+    arguments: ["@ucms_seo.seo_service", "@current_user"]
+    tags: [{name: ucms_dashboard.action}]
 
   ucms_seo.admin.node_alias_datasource:
     class: MakinaCorpus\Ucms\Seo\Page\NodeAliasDatasource
