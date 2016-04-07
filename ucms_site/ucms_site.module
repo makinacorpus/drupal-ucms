@@ -257,6 +257,9 @@ function ucms_site_permission() {
  * @return $path
  */
 function ucms_site_admin_path_is_allowed($path) {
+  if ('system/ajax' === $path) {
+    return true;
+  }
   if (path_is_admin($path)) {
     // Allow node/add
     if ('node/add' === substr($path, 0, 8)) {
