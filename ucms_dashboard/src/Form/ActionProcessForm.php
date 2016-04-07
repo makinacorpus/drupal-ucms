@@ -49,9 +49,13 @@ class ActionProcessForm extends FormBase
         $processor = $form_state->getTemporaryValue('processor');
         $item = $form_state->getTemporaryValue('item');
 
-        $processor->process($item);
+        $message = $processor->process($item);
 
         // No redirect, the API is always supposed to give us a destination
-        drupal_set_message($this->t("Action was done"));
+        if ($message) {
+            drupal_set_message($message);
+        } else {
+            drupal_set_message($this->t("Action was done"));
+        }
     }
 }

@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Seo\SeoService;
 
-class AliasCanonicalProcessor extends AbstractActionProcessor
+class AliasDeleteProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
 
@@ -33,38 +33,39 @@ class AliasCanonicalProcessor extends AbstractActionProcessor
         $this->service = $service;
         $this->currentUser = $currentUser;
 
-        parent::__construct($this->t("Set as canonical"), 'pushpin', -10, true);
+        parent::__construct($this->t("Delete"), 'trash', 500, true);
     }
 
     public function getId()
     {
-        return 'alias_canonicalize';
+        return 'alias_delete';
     }
 
     public function getQuestion($items, $totalCount)
     {
         return $this->formatPlural(
             $totalCount,
-            "Set this item as canonical for the associated page?",
-            "Set the selected @count items as canonical for their respectively associated pages?"
+            "Delete this page alias?",
+            "Delete those @count page aliases?"
         );
     }
 
     public function appliesTo($item)
     {
+        // You may not delete the canonical alias
         return $item instanceof \stdClass && property_exists($item, 'alias') && property_exists($item, 'source') && !$item->is_canonical;
     }
 
     public function processAll($items)
     {
         foreach ($items as $item) {
-            $this->service->setCanonicalForAlias($item);
+            $this->service->getAliasStorage()->delete(['pid' => $item->pid]);
         }
 
         return $this->formatPlural(
             count($item),
-            "Alias has been set as canonical for its associated page",
-            "@count aliases have been set as canonical their associated pages"
+            "Alias has been deleted",
+            "@count aliases have been deleted"
         );
     }
 

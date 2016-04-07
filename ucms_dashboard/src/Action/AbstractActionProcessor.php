@@ -76,6 +76,9 @@ abstract class AbstractActionProcessor
      * Process all provided items
      *
      * @param mixed[] $items
+     *
+     * @return string
+     *   Human localized readable status message, can be empty
      */
     abstract public function processAll($items);
 
@@ -84,7 +87,7 @@ abstract class AbstractActionProcessor
      */
     public function process($item)
     {
-        $this->processAll([$item]);
+        return $this->processAll([$item]);
     }
 
     /**
@@ -136,6 +139,7 @@ abstract class AbstractActionProcessor
             $options,
             $this->getLinkIcon(),
             $this->getLinkPriority(),
+            $this->isLinkPrimary(),
             true
         );
     }
