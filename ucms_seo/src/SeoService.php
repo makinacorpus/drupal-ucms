@@ -291,6 +291,11 @@ class SeoService
         // is explicitly told.
         $query->orderBy('u.site_id IS NULL', 'desc');
 
+        // If language is not specified, attempt with the node one
+        if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
+            $langcode = $node->language; // @todo Drupal 8
+        }
+
         // Language order is less important than site itself.
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
             $langcodeList = [$langcode];
@@ -321,7 +326,7 @@ class SeoService
         $storage = $this->siteManager->getStorage();
 
         if ($row->site_id) {
-            $site = $storage->findOne($row->siteId);
+            $site = $storage->findOne($row->site_id);
         } else {
             // There is no site, let's fetch the node one, the first, original
             // one deserves to actually be the canonical.
@@ -340,7 +345,7 @@ class SeoService
             return url($row->alias, ['absolute' => true]);
         }
 
-        return $site->http_host . '/' . $row->alias;
+        return ($GLOBALS['is_https'] ? 'https://' : 'http://') . $site->http_host . '/' . $row->alias;
     }
 
     /**
@@ -655,6 +660,49 @@ class SeoService
             }
             $q->execute();
         }
+    }
+
+    /**
+     * Find and update the canonical link for node
+     *
+     * It won't return anything because it will just update the alias table and
+     * Drupal magic will do the rest
+     *
+     * @param object|array $alias
+     */
+    public function setCanonicalForAlias($alias)
+    {
+        if (!is_object($alias)) {
+            $alias = (object)$alias;
+        }
+
+        $this
+            ->db
+            ->update('ucms_seo_alias')
+            ->fields(['is_canonical' => 0])
+            ->condition(
+                'source',
+                $this->db->escapeLike($alias->source),
+                'LIKE'
+            )
+            ->condition('language', $alias->language)
+            ->execute()
+        ;
+
+        // Use MERGE here to ensure the alias will be correctly created
+        $this
+            ->db
+            ->merge('ucms_seo_alias')
+            ->key([
+                'source'    => $alias->source,
+                'alias'     => $alias->alias,
+                'language'  => $alias->language,
+            ])
+            ->fields([
+                'is_canonical' => 1,
+            ])
+            ->execute()
+        ;
     }
 
     /**

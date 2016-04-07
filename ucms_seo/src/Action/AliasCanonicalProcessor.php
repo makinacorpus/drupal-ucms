@@ -57,7 +57,9 @@ class AliasCanonicalProcessor extends AbstractActionProcessor
 
     public function processAll($items)
     {
-        drupal_set_message("Yeah !");
+        foreach ($items as $item) {
+            $this->service->setCanonicalForAlias($item);
+        }
     }
 
     public function getItemId($item)
