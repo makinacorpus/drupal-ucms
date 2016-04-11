@@ -118,6 +118,7 @@
             // Update link's class
             $toggle_link.removeClass('active');
             $currentLink.addClass('active');
+            Drupal.behaviors.ucmsDashboardPane.resizeTabs()
           }
           return false; // Prevent hash change
         });
