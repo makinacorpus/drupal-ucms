@@ -59,7 +59,7 @@ ol.sortable li {
   background: #fff;
   margin: 2px 0;
 }
-#tab-tree .tree-item.active {
+#tab-tree .tree-item.active-trail {
   color: #F00;
   font-weight: bold;
 }

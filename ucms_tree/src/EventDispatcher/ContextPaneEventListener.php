@@ -70,20 +70,19 @@ class ContextPaneEventListener
                 ],
             ],
         ];
-        foreach ($menus as $menu) {
-            $tree = _menu_build_tree($menu['name']);
-            // We give all access to nodes, even unpublished
-            foreach (array_keys($tree['node_links']) as $nid) {
-                foreach ($tree['node_links'][$nid] as $mlid => &$link) {
-                    if (!$link['access']) {
-                        $link['access'] = true;
-                        $link['not_published'] = true;
-                    }
-                }
+        $link = menu_link_get_preferred();
+        for ($i = 1 ; $i < MENU_MAX_DEPTH ; $i++) {
+            if (!empty($link["p$i"])) {
+                $parents[] = $link["p$i"];
             }
-            // This sorts the menu items
-            _menu_tree_check_access($tree['tree']);
-            $build[$menu['name']] = $this->treeOutput($tree['tree'], $menu);
+        }
+        foreach ($menus as $menu) {
+            $tree_parameters['active_trail'] = $parents;
+            $tree = _menu_build_tree($menu['name'], $tree_parameters);
+            // This sorts the menu items without access, unlike _menu_tree_check_access().
+            $this->sortTree($tree['tree']);
+            $build[$menu['name']] = menu_tree_output($tree['tree']);
+            $build[$menu['name']]['#prefix'] = "<h3>{$menu['title']}</h3>";
         }
 
         // Check that this node is referenced in {menu_links}
@@ -132,5 +131,29 @@ class ContextPaneEventListener
         }
 
         return !empty($build['#items']) ? $build : '';
+    }
+
+    /**
+     * Sort a tree
+     *
+     * @param $tree
+     */
+    private function sortTree(&$tree) {
+        $new_tree = [];
+        foreach ($tree as $key => $v) {
+            $item = &$tree[$key]['link'];
+            $item['access'] = true;
+            $item['menu_name'] = 'admin__'.$item['menu_name'];
+            _menu_link_translate($item);
+            if ($tree[$key]['below']) {
+                $this->sortTree($tree[$key]['below']);
+            }
+            // The weights are made a uniform 5 digits by adding 50000 as an offset.
+            // Adding the mlid to the end of the index insures that it is unique.
+            $new_tree[(50000 + $item['weight']) . ' ' . $item['title'] . ' ' . $item['mlid']] = $tree[$key];
+        }
+        // Sort siblings in the tree based on the weights and localized titles.
+        ksort($new_tree);
+        $tree = $new_tree;
     }
 }
