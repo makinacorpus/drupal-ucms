@@ -48,8 +48,11 @@ ol.sortable li {
   cursor: pointer;
 }
 
-#tab-tree ol {
+#tab-tree ul {
   list-style: none;
+}
+#tab-tree > ul {
+  padding-left: 0;
 }
 #tab-tree .tree-item {
   display: block;

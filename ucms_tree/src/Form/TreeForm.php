@@ -135,7 +135,7 @@ class TreeForm extends FormBase
 
         $weight = -50;
         if (!empty($items)) {
-            foreach ($items as $item) {
+            foreach ($items as $originalIndex => &$item) {
                 $nid = $item['name'];
                 $isNew = substr($item['id'], 0, 4) == 'new_';
 
@@ -154,8 +154,13 @@ class TreeForm extends FormBase
                 }
 
                 $id = menu_link_save($link);
+                if ($isNew) {
+                    $processed[$item['id']]['mlid'] = $id;
+                }
+                else {
+                    $processed[$id] = $link;
+                }
 
-                $processed[$id] = $link;
                 if (empty($link['plid'])) {
                     $rootItems[$id] = $link;
                 }
