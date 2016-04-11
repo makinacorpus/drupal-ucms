@@ -45,6 +45,8 @@ class WebmasterAdminDisplay extends AbstractDisplay
             ];
         }
 
+        $text = check_plain($this->t("This is the global status for across the whole platform. Is a user is disabled, he/she won't be able to log in."));
+
         return [
             '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
             '#suffix' => '</div>',                  // FIXME should be in theme
@@ -53,7 +55,8 @@ class WebmasterAdminDisplay extends AbstractDisplay
                 $this->t("Name"),
                 $this->t("Email"),
                 $this->t("Role"),
-                $this->t("Global status"),
+                // FIXME should be in theme
+                $this->t("Global status") .' <span title="' . $text . '" class="glyphicon glyphicon-question-sign"></span>',
                 '',
             ],
             '#empty'  => $this->emptyMessage,
