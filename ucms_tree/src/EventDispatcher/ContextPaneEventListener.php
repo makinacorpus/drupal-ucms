@@ -50,8 +50,10 @@ class ContextPaneEventListener
         $contextPane
             ->addTab('tree', $this->t("Menu tree"), 'tree-conifer')
             ->add($this->render(), 'tree')
-            ->setDefaultTab('tree')
         ;
+        if (!$contextPane->getRealDefaultTab()) {
+            $contextPane->setDefaultTab('tree');
+        }
     }
 
     /**

@@ -185,11 +185,21 @@ class ContextPane
     /**
      * Get the default tab key, or first tab key if none set.
      *
-     * @return null
+     * @return null|string
      */
     public function getDefaultTab()
     {
         return $this->defaultTab ? $this->defaultTab : reset($this->tabs)['key'];
+    }
+
+    /**
+     * Get the real default tab key.
+     *
+     * @return null|string
+     */
+    public function getRealDefaultTab()
+    {
+        return $this->defaultTab;
     }
 
     /**

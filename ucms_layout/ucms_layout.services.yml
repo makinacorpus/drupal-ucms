@@ -25,6 +25,6 @@ services:
 
   ucms_layout.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\ContextPaneEventListener
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@ucms_site.manager", "@ucms_layout.context_manager"]
     tags:
       - {name: event_listener, event: ucms_dashboard.context_init }
