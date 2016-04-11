@@ -95,7 +95,7 @@ class NodeCopyOnEdit extends FormBase
         $form['actions']['#type'] = 'actions';
         $form['actions']['continue'] = [
             '#type'  => 'submit',
-            '#value' => $this->t("Save"),
+            '#value' => $this->t("Edit"),
         ];
         if (isset($_GET['destination'])) {
             $form['actions']['cancel'] = [
