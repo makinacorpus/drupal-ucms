@@ -372,14 +372,15 @@ class SeoService
      * Normalize given URL segment
      *
      * @param string $value
+     * @param int $maxLength
      *
      * @return string
      */
-    public function normalizeSegment($value)
+    public function normalizeSegment($value, $maxLength = 255)
     {
         // Transliterate first
         if (class_exists('URLify')) {
-            $value = \URLify::filter($value, 255);
+            $value = \URLify::filter($value, $maxLength);
         }
 
         // Only lowercase characters
@@ -869,11 +870,20 @@ class SeoService
      */
     public function onNodeSave(NodeInterface $node)
     {
-        if (property_exists($node, 'ucms_seo_segment')) {
-            $this->setNodeSegment($node, $node->ucms_seo_segment);
-        } else if (!$node->isNew()) {
-            $this->setNodeSegment($node, null);
+        $segment = null;
+
+        if (property_exists($node, 'ucms_seo_segment') && !empty($node->ucms_seo_segment)) {
+            $segment = $node->ucms_seo_segment;
+        } else {
+            // Automatically generate the first segment version from the node
+            // title, force small length when not driven by user input
+            $title = $node->getTitle();
+            if ($title) {
+                $segment = $this->normalizeSegment($title, 60);
+            }
         }
+
+        $this->setNodeSegment($node, $segment);
     }
 
     /**
