@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Implements hook_schema().
  */
@@ -47,26 +46,50 @@ function ucms_user_install_schema_fix() {
   // this is pure coincidence, this is great for us.
   $constraints = [
     'ucms_user_token' => [
-      "ALTER TABLE {ucms_user_token} ADD CONSTRAINT FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
+      'fk_ucms_user_token_uid' => "ALTER TABLE {ucms_user_token} ADD CONSTRAINT {fk_ucms_user_token_uid} FOREIGN KEY (uid) REFERENCES {users} (uid) ON DELETE CASCADE",
+    ],
+    'users' => [
+      'uk_ucms_user_mail' => "ALTER TABLE {users} ADD CONSTRAINT {uk_ucms_user_mail} UNIQUE (mail)",
     ],
   ];
 
   foreach ($constraints as $table => $statements) {
     if (db_table_exists($table)) {
       foreach ($statements as $statement) {
-        db_query($statement);
+        try {
+          db_query($statement);
+        } catch (\PDOException $e) {
+          switch ($e->getCode()) {
+            case 42710: // PostgreSQL constraint already exists
+              continue;
+            case 23000: // MySQL duplicate key in table
+              continue;
+            default:
+              throw $e;
+          }
+        }
       }
     }
   }
 }
 
+/**
+ * Implements hook_install().
+ */
+function ucms_user_install() {
+  ucms_user_install_schema_fix();
+}
 
 /**
  * Creates the module's schema.
  */
 function ucms_user_update_7001() {
-  // Creates the schema
   drupal_install_schema('ucms_user');
-  // Fixes it
+}
+
+/**
+ * Fixes database constraints.
+ */
+function ucms_user_update_7002() {
   ucms_user_install_schema_fix();
 }
