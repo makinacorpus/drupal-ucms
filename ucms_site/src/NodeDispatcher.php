@@ -71,6 +71,25 @@ class NodeDispatcher
     }
 
     /**
+     * Reference node for a site
+     *
+     * @param Site $site
+     * @param int[] $nodeIdList
+     */
+    public function createReferenceBulk(Site $site, $nodeIdList)
+    {
+        // @todo Optimize me
+        foreach ($nodeIdList as $id) {
+            $this
+                ->db
+                ->merge('ucms_site_node')
+                ->key(['nid' => $id, 'site_id' => $site->id])
+                ->execute()
+            ;
+        }
+    }
+
+    /**
      * Unreference node for a site
      *
      * @param Site $site
