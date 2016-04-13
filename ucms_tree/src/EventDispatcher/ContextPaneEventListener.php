@@ -104,11 +104,13 @@ class ContextPaneEventListener
         $items = [];
         if (!empty($tree)) {
             foreach ($tree as $i => $data) {
+                $options = [];
                 $options['attributes']['class'] = ['tree-item'];
                 // FIXME use Request object?
                 if (current_path() == $data['link']['link_path']) {
                     $options['attributes']['class'][] = 'active';
                 }
+                $element = [];
                 $element['data'] = l($data['link']['link_title'], $data['link']['link_path'], $options);
                 if ($data['below']) {
                     $elements = $this->treeOutput($data['below']);

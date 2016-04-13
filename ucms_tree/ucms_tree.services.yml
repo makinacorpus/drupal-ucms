@@ -1,3 +1,8 @@
+parameters:
+  ucms_tree_site_menu:
+    site-main: Main menu
+    site-footer: Footer menu
+
 services:
 
   ucms_tree.context_pane_event_listener:
@@ -9,7 +14,7 @@ services:
 
   ucms_tree.site_event_listener:
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventListener
-    arguments: ["@database", "@ucms_site.manager"]
+    arguments: ["@database", "@ucms_site.manager", "%ucms_tree_site_menu%"]
     tags:
       - {name: event_listener, event: "site:create"}
       - {name: event_listener, event: "site:init"}

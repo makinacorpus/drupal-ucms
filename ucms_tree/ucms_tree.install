@@ -11,7 +11,7 @@ function ucms_tree_install() {
 /**
  * Populate the default menus.
  */
-function ucms_tree_update_7001() {
+function ucms_tree_update_7002() {
 
   $site_ids = db_select('ucms_site')
     ->fields('ucms_site', ['id'])
@@ -19,22 +19,22 @@ function ucms_tree_update_7001() {
     ->fetchCol()
   ;
 
-  foreach ($site_ids as $sid) {
+  $allowedMenus = variable_get('ucms_tree_site_menu', []);
+  if (!$allowedMenus) {
+    return [];
+  }
 
-    // Can't use service here, so raw queries...
-    db_insert('umenu')
-      ->fields(['name', 'title', 'site_id'])
-      ->values([
-        'name'    => 'site-main-' . $sid,
-        'title'   => t("Main menu"),
-        'site_id' => $sid,
-      ])
-      ->values([
-        'name'    => 'site-footer-' . $sid,
-        'title'   => t("Footer menu"),
-        'site_id' => $sid,
-      ])
-      ->execute()
-    ;
+  // C'est vraiment moche, surtout ne jamais l'exécuter ailleurs que sur une dev.
+  foreach ($site_ids as $sid) {
+    foreach ($allowedMenus as $prefix => $title) {
+      db_merge('umenu')
+        ->key(['name' => $prefix . '-' . $sid])
+        ->fields([
+          'title'   => t($title),
+          'site_id' => $sid,
+        ])
+        ->execute()
+      ;
+    }
   }
 }

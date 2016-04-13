@@ -30,17 +30,26 @@ class SiteEventListener
     private $menuStorage;
 
     /**
+     * @var string
+     */
+    private $allowedMenus = [];
+
+    /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
      * @param SiteManager $siteManager
+     * @param string[] $allowedMenus
+     *   Keys are menu name prefix, values are human readable english names
      */
     public function __construct(
         \DatabaseConnection $db,
-        SiteManager $siteManager
+        SiteManager $siteManager,
+        $allowedMenus
     ) {
         $this->db = $db;
         $this->siteManager = $siteManager;
+        $this->allowedMenus = $allowedMenus;
     }
 
     /**
@@ -90,20 +99,16 @@ class SiteEventListener
     public function onSiteCreate(SiteEvent $event)
     {
         $site = $event->getSite();
-        $menus = [
-            'site-main'   => $this->t("Main menu"),
-            'site-footer' => $this->t("Footer menu"),
-        ];
 
         // Create the site default menus
-        if ($this->menuStorage) {
-            foreach ($menus as $prefix => $title) {
+        if ($this->menuStorage && $this->allowedMenus) {
+            foreach ($this->allowedMenus as $prefix => $title) {
                 $name = $prefix.'-'.$site->getId();
                 if (!$this->menuStorage->exists($name)) {
                     $this->menuStorage->create(
                         $name,
                         [
-                            'title'   => $title,
+                            'title'   => $this->t($title),
                             'site_id' => $site->getId(),
                         ]
                     );
