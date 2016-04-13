@@ -71,6 +71,11 @@ services:
       - {name: event_listener, event: "site:webmaster_demote"}
       - {name: event_listener, event: "site:webmaster_delete"}
 
+  ucms_site.menu_event_listener:
+    class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventListener
+    arguments: ["@ucms_site.node_dispatcher"]
+    tags: [{name: event_listener, event: "menu:tree"}]
+
   ucms_site.node_event_listener:
     class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventListener
     arguments: ["@ucms_site.manager", "@entity.manager"]
