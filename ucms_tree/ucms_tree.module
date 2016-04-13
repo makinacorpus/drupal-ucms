@@ -118,6 +118,7 @@ function ucms_tree_node_insert($node) {
     $link = &$node->menu;
     $link['link_title'] = $node->title;
     $link['link_path'] = "node/$node->nid";
+    $link['expanded'] = 1;
 
     // Calculate the position depending on siblings
     $siblings = menu_build_tree($node->menu['menu_name'], [

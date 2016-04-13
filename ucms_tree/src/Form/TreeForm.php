@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Tree\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
 use MakinaCorpus\Umenu\DrupalMenuStorage;
@@ -77,6 +78,8 @@ class TreeForm extends FormBase
     {
         // Load all menus for site.
         $site = $this->manager->getContext();
+        $form_state->setTemporaryValue('site', $site);
+
         $menus = $this->storage->loadWithConditions(['site_id' => $site->getId()]);
 
         $form['#attached']['library'][] = ['ucms_tree', 'nested-sortable'];
@@ -116,8 +119,9 @@ class TreeForm extends FormBase
      *
      * @param string $menuName
      * @param mixed[] $items
+     * @param Site $site
      */
-    protected function saveMenuItems($menuName, $items)
+    protected function saveMenuItems($menuName, $items, Site $site = null)
     {
         // First, get all elements so that we can delete those that are removed
         // @todo pri: sorry this is inneficient, but I need it
@@ -130,7 +134,6 @@ class TreeForm extends FormBase
 
         // Keep a list of processed elements
         $processed = [];
-        $rootItems = [];
         $deleteItems = [];
 
         $weight = -50;
@@ -143,6 +146,7 @@ class TreeForm extends FormBase
                     'menu_name'  => $menuName,
                     'link_path'  => 'node/'.$nid,
                     'link_title' => $this->getNodeTitle($nid),
+                    'expanded'   => 1,
                     'weight'     => $weight++,
                 ];
 
@@ -160,10 +164,6 @@ class TreeForm extends FormBase
                 else {
                     $processed[$id] = $link;
                 }
-
-                if (empty($link['plid'])) {
-                    $rootItems[$id] = $link;
-                }
             }
         }
 
@@ -173,7 +173,12 @@ class TreeForm extends FormBase
             $deleteItems[$id] = $deleted;
         }
 
-        $this->dispatcher->dispatch('menu:tree', new MenuEvent($menuName, $rootItems, $deleteItems));
+        $this->dispatcher->dispatch('menu:tree', new MenuEvent(
+            $menuName,
+            $processed,
+            $deleteItems,
+            $site
+        ));
     }
 
     /**
@@ -184,8 +189,10 @@ class TreeForm extends FormBase
         try {
             $tx = $this->db->startTransaction();
 
+            $site = $form_state->getTemporaryValue('site');
+
             foreach ($form_state->getValue('menus') as $menuName => $items) {
-                $this->saveMenuItems($menuName, drupal_json_decode($items));
+                $this->saveMenuItems($menuName, drupal_json_decode($items), $site);
             }
 
             unset($tx);
