@@ -1,13 +1,5 @@
 <?php
 
-
-/**
- * Implements hook_install().
- */
-function ucms_tree_install() {
-  ucms_tree_update_7001();
-}
-
 /**
  * Populate the default menus.
  */
