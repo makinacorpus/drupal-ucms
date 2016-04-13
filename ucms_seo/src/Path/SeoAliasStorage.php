@@ -125,7 +125,7 @@ class SeoAliasStorage implements AliasStorageInterface
             $query->condition(
                 db_or()
                     ->condition('u.site_id', $this->siteManager->getContext()->getId())
-                    ->isNotNull('u.site_id')
+                    ->isNull('u.site_id')
             );
             // https://stackoverflow.com/questions/9307613/mysql-order-by-null-first-and-desc-after
             $query->orderBy('u.site_id IS NULL', 'desc');
