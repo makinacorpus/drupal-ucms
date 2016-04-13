@@ -122,7 +122,18 @@ function ucms_layout_install_schema_fix() {
   foreach ($constraints as $table => $statements) {
     if (db_table_exists($table)) {
       foreach ($statements as $statement) {
-        db_query($statement);
+        try {
+          db_query($statement);
+        } catch (\PDOException $e) {
+          switch ($e->getCode()) {
+            case 42710: // PostgreSQL constraint already exists
+              continue;
+            case 23000: // MySQL duplicate key in table
+              continue;
+            default:
+              throw $e;
+          }
+        }
       }
     }
   }

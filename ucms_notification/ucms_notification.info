@@ -5,4 +5,5 @@ package = UCMS
 php = 5.5
 dependencies[] = apb
 dependencies[] = notification
+dependencies[] = ucms_layout
 dependencies[] = sf_dic
