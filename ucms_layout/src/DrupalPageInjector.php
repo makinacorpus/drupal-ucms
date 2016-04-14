@@ -116,10 +116,11 @@ class DrupalPageInjector
                 $node = $this->getNode($item->getNodeId());
                 if ($node && $node->access('view')) {
                     $items[] = [
-                        '#theme'      => 'ucms_layout_item',
-                        '#nid'        => $item->getNodeId(),
-                        '#node'       => $node,
-                        '#view_mode'  => $item->getViewMode(),
+                        '#theme'     => 'ucms_layout_item',
+                        '#nid'       => $item->getNodeId(),
+                        '#node'      => $node,
+                        '#view_mode' => $item->getViewMode(),
+                        '#region'    => $region,
                     ];
                 }
             }

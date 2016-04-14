@@ -114,6 +114,7 @@
             // Replace element on receiving, with the correct view mode, at the
             // correct position
               replaceElementWithData = function (data) {
+                // TODO region item theming should be done in ajax callback
                 var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
                 if (ui.item.justReceived) {
                   var olderBrother = $(sortable).find("> *:nth-child(" + (Drupal.ucmsTempReceivedPos + 1) + ")");

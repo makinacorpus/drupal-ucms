@@ -166,7 +166,7 @@ function ucms_layout_temporary_load($id) {
 function ucms_layout_theme() {
   return [
     'ucms_layout_item' => [
-      'variables' => ['nid' => null, 'node' => null, 'view_mode' => 'teaser'],
+      'variables' => ['nid' => null, 'node' => null, 'view_mode' => 'teaser', 'region' => ''],
       'template'  => 'ucms-layout-item',
     ],
     'ucms_layout_region' => [
@@ -205,17 +205,6 @@ function ucms_layout_preprocess_region(&$vars) {
   // Lookup for all blocks, if these are only ucms empty block, add class
   if (!element_children($vars['elements'])) {
     $vars['classes_array'][] = 'ucms-layout-empty-region';
-  }
-}
-
-/**
- * Implements template_preprocess_HOOK().
- */
-function template_preprocess_ucms_layout_item(&$variables) {
-  if (isset($variables['node'])) {
-    $variables['content'] = node_view($variables['node'], $variables['view_mode']);
-  } else {
-    $variables['content'] = [];
   }
 }
 
