@@ -174,7 +174,7 @@ class Search
     /**
      * Get query
      *
-     * @return $this
+     * @return Query
      */
     public function getQuery()
     {
@@ -184,7 +184,7 @@ class Search
     /**
      * Get query
      *
-     * @return $this
+     * @return Query
      */
     public function getFilterQuery()
     {
