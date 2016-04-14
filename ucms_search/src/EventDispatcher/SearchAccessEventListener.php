@@ -6,18 +6,17 @@ use Drupal\Core\Entity\EntityManager;
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Search\IndexStorage;
 use MakinaCorpus\Ucms\Search\Lucene\Query;
-use MakinaCorpus\Ucms\Search\Lucene\TermCollectionQuery;
-use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
+use MakinaCorpus\Ucms\Search\Search;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SearchAccessEventListener
 {
-
     /**
      * @var EntityManager
      */
     private $entityManager;
+
     /**
      * @var IndexStorage
      */
@@ -39,7 +38,7 @@ class SearchAccessEventListener
     {
         $search = $event->getSubject();
 
-        if (!$search instanceof QueryAlteredSearch) {
+        if (!$search instanceof Search) {
             return;
         }
 

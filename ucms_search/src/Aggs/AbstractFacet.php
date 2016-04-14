@@ -2,10 +2,13 @@
 
 namespace MakinaCorpus\Ucms\Search\Aggs;
 
+use MakinaCorpus\Ucms\Search\Response;
+use MakinaCorpus\Ucms\Search\Search;
+
 /**
  * Represent an Elastic Search facet based upon the aggregations feature
  */
-abstract class AbstractFacet
+abstract class AbstractFacet implements AggInterface
 {
     /**
      * @var string
@@ -33,6 +36,11 @@ abstract class AbstractFacet
     private $type = 'terms';
 
     /**
+     * @var string
+     */
+    private $parameterName;
+
+    /**
      * Default constructor
      *
      * @param string $field
@@ -43,12 +51,15 @@ abstract class AbstractFacet
      *   Query::OP_AND or Query::OP_OR determines how is built the Lucene
      *   aggregation query and how the facet values should operate on the
      *   search query
+     * @param string $parameterName
+     *   If different from field name
      */
-    public function __construct($field, $type, $operator = Query::OP_AND)
+    public function __construct($field, $type, $operator = Query::OP_AND, $parameterName = null)
     {
         $this->field = $field;
         $this->type = $type;
         $this->operator = $operator;
+        $this->parameterName = $parameterName ? $parameterName : $field;
     }
 
     /**
@@ -113,6 +124,16 @@ abstract class AbstractFacet
     }
 
     /**
+     * Get parameter name
+     *
+     * @return string
+     */
+    public function getParameterName()
+    {
+        return $this->parameterName;
+    }
+
+    /**
      * Set currently user-selected facet values for query
      *
      * @param string[] $selectedValues
@@ -142,5 +163,73 @@ abstract class AbstractFacet
     public function getSelectedValues()
     {
         return $this->selectedValues;
+    }
+
+    /**
+     * Get parameter in query
+     *
+     * @param string[] $query
+     * @param string $param
+     * @param mixed $default
+     *
+     * @return mixed
+     *
+     * @deprecated
+     *   Use Symfony's Request instead
+     */
+    protected function getQueryParam($query, $param, $default = null)
+    {
+        if (array_key_exists($param, $query)) {
+          return $query[$param];
+        }
+
+        return $default;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepareQuery(Search $search, $query)
+    {
+        $values = $this->getQueryParam($query, $this->getParameterName());
+        if ($values) {
+            if (!is_array($values)) {
+                $values = [$values];
+            }
+            $this->setSelectedValues($values);
+        }
+
+        if ($values) {
+            $search
+                ->getFilterQuery()
+                ->matchTermCollection(
+                    $this->getField(),
+                    $values,
+                    null,
+                    $this->getOperator()
+                )
+            ;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function buildQueryData(Search $search, $query)
+    {
+        return [
+            $this->getParameterName() => [
+                'terms' => [
+                    'field' => $this->getField(),
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function parseResponse(Search $search, Response $response, $raw)
+    {
     }
 }

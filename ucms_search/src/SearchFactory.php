@@ -41,13 +41,13 @@ class SearchFactory
      *
      * @param string $index
      *
-     * @return QueryAlteredSearch
+     * @return Search
      */
     public function create($index)
     {
         $realname = $this->storage->getIndexRealname($index);
 
-        $search = (new QueryAlteredSearch($this->client))->setIndex($realname);
+        $search = (new Search($this->client))->setIndex($realname);
 
         if ($this->dispatcher) {
             $this->dispatcher->dispatch('ucms_search.search_create', new GenericEvent($search));

@@ -10,7 +10,7 @@ use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
-use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
+use MakinaCorpus\Ucms\Search\Search;
 use MakinaCorpus\Ucms\Search\SearchFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -19,7 +19,7 @@ class PrivateNodeDataSource extends AbstractDatasource
     use StringTranslationTrait;
 
     /**
-     * @var QueryAlteredSearch
+     * @var Search
      */
     private $search;
 
@@ -51,7 +51,7 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * Get datasource search object
      *
-     * @return QueryAlteredSearch
+     * @return Search
      */
     public function getSearch()
     {
@@ -67,14 +67,14 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createTermAggregation('type', null)
+            ->createFacet('type', null)
             ->setChoicesMap(node_type_get_names())
             ->setTitle($this->t("Type"))
         ;
 
         $ret[] = $this
             ->getSearch()
-            ->createTermAggregation('owner', null)
+            ->createFacet('owner', null)
             ->setChoicesCallback(function ($values) {
                 if ($accounts = user_load_multiple($values)) {
                     foreach ($accounts as $index => $account) {
@@ -88,7 +88,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createTermAggregation('tags', null)
+            ->createFacet('tags', null)
             ->setChoicesCallback(function ($values) {
                 if ($terms = taxonomy_term_load_multiple($values)) {
                     foreach ($terms as $index => $term) {
@@ -102,7 +102,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createTermAggregation('status', null)
+            ->createFacet('status', null)
             ->setChoicesMap([0 => $this->t("Unpublished"), 1 => $this->t("Published")])
             ->setTitle($this->t("Status"))
         ;
@@ -114,7 +114,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createTermAggregation('site_id', null)
+            ->createFacet('site_id', null)
             ->setChoicesMap($sites)
             ->setExclusive(true)
             ->setTitle($this->t("My sites"))
@@ -183,8 +183,7 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->setPageParameter($pageState->getPageParameter())
             ->addField('_id')
             ->setLimit($pageState->getLimit())
-            ->prepare($query)
-            ->doSearch()
+            ->doSearch($query)
         ;
 
         $pageState->setTotalItemCount($response->getTotal());

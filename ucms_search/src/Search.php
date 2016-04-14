@@ -4,57 +4,94 @@ namespace MakinaCorpus\Ucms\Search;
 
 use Elasticsearch\Client;
 
-use MakinaCorpus\Ucms\Search\Aggs\AbstractFacet;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
+use MakinaCorpus\Ucms\Search\Aggs\TopHits;
 use MakinaCorpus\Ucms\Search\Lucene\Query;
 use MakinaCorpus\Ucms\Search\Sort\Sort;
 
 class Search
 {
     /**
+     * Default fulltext query parameter name
+     */
+    const PARAM_FULLTEXT_QUERY = 's';
+
+    /**
+     * Page parameter name
+     */
+    const PARAM_PAGE = 'page';
+
+    /**
+     * Default fulltext search romain and fuziness value
+     */
+    const DEFAULT_ROAMING = 0.8;
+
+    /**
      * @var \Elasticsearch\Client
      */
-    protected $client;
+    private $client;
 
     /**
      * @var string
      */
-    protected $index;
+    private $index;
 
     /**
      * @var Query
      */
-    protected $query;
+    private $query;
 
     /**
      * @var Query
      */
-    protected $filterQuery;
+    private $filterQuery;
 
     /**
      * @var int
      */
-    protected $limit = UCMS_SEARCH_LIMIT;
+    private $limit = UCMS_SEARCH_LIMIT;
 
     /**
      * @var int
      */
-    protected $page = 1;
+    private $page = 1;
 
     /**
      * @var string[]
      */
-    protected $fields = [];
+    private $fields = [];
 
     /**
      * @var Sort[]
      */
-    protected $sortFields = [];
+    private $sortFields = [];
 
     /**
-     * @var Aggs\AbstractFacet[]
+     * @var Aggs\AggInterface[]
      */
-    protected $aggregations = [];
+    private $aggregations = [];
+
+    /**
+     * @var string
+     */
+    private $fulltextParameterName = self::PARAM_FULLTEXT_QUERY;
+
+    /**
+     * @var string
+     */
+    private $pageParameterName = self::PARAM_PAGE;
+
+    /**
+     * Drupal paging start with 0, Elastic search one starts with 1
+     *
+     * @var int
+     */
+    private $pageDelta = 1;
+
+    /**
+     * @var float
+     */
+    private $fulltextRoaming = self::DEFAULT_ROAMING;
 
     /**
      * Default constructor
@@ -74,7 +111,7 @@ class Search
      * @param int $limit
      *   Positive integer or null if no limit
      *
-     * @return Search
+     * @return $this
      */
     public function setLimit($limit)
     {
@@ -100,7 +137,7 @@ class Search
      * @param int $page
      *   Positive integer or null or 1 for first page
      *
-     * @return Search
+     * @return $this
      */
     public function setPage($page)
     {
@@ -125,7 +162,7 @@ class Search
      *
      * @param string $index
      *
-     * @return Search
+     * @return $this
      */
     public function setIndex($index)
     {
@@ -137,7 +174,7 @@ class Search
     /**
      * Get query
      *
-     * @return Query
+     * @return $this
      */
     public function getQuery()
     {
@@ -147,7 +184,7 @@ class Search
     /**
      * Get query
      *
-     * @return Query
+     * @return $this
      */
     public function getFilterQuery()
     {
@@ -159,7 +196,7 @@ class Search
      *
      * @param string[]
      *
-     * @return Search
+     * @return $this
      */
     public function setFields(array $fields)
     {
@@ -173,7 +210,7 @@ class Search
      *
      * @param string $field
      *
-     * @return Search
+     * @return $this
      */
     public function addField($field)
     {
@@ -185,11 +222,92 @@ class Search
     }
 
     /**
-     * Add facet aggregation
+     * Set fulltext query parameter name
      *
      * @param string $parameterName
-     *   Facet query parameter name, if field name is not specified it will
-     *   also be used a facet field name
+     *
+     * @return $this
+     */
+    public function setFulltextParameterName($parameterName)
+    {
+        $this->fulltextParameterName = $parameterName;
+
+        return $this;
+    }
+
+    /**
+     * Get fulltext query parameter name
+     *
+     * @return string
+     */
+    public function getFulltextParameterName()
+    {
+        return $this->fulltextParameterName;
+    }
+
+    /**
+     * Set fulltext roaming and fuziness value, should be between 0 and 1
+     *
+     * @param float $value
+     *
+     * @return $this
+     */
+    public function setFulltextRoaming($value)
+    {
+        $this->fulltextRoaming = (float)$value;
+
+        return $this;
+    }
+
+    /**
+     * Set page delta
+     *
+     * @param int $value
+     *
+     * @return $this
+     */
+    public function setPageDelta($value)
+    {
+        $this->pageDelta = (int)$value;
+
+        return $this;
+    }
+
+    /**
+     * Set page parameter name
+     *
+     * @param string $parameterName
+     *
+     * @return $this
+     */
+    public function setPageParameter($parameterName)
+    {
+        $this->pageParameterName = (string)$parameterName;
+
+        return $this;
+    }
+    
+
+    /**
+     * Add "top hits" aggregation
+     *
+     * @param string $field
+     *   Field to build buckets with
+     * @param int $sire
+     *   Number of items per bucket
+     *
+     * @return TopHits
+     */
+    public function createTopHits($field, $size = 1)
+    {
+        return $this->aggregations[] = new TopHits($field, $size);
+    }
+
+    /**
+     * Add facet aggregation
+     *
+     * @param string $field
+     *   Field name if different from the name
      * @param mixed[] $currentValues
      *   Current values for filtering if any
      * @param boolean $filter
@@ -198,71 +316,38 @@ class Search
      *   for the whole index priori to filtering
      * @param string $operator
      *   Operator to use for filtering (Query::OP_OR or Query::OP_AND)
-     * @param string $field
-     *   Field name if different from the name
+     * @param string $parameterName
+     *   Facet query parameter name if different from field name
      *
      * @return TermFacet
      */
-    public function createTermAggregation($parameterName, $values = null, $operator = Query::OP_OR, $field = null)
+    public function createFacet($field, $values = null, $operator = Query::OP_OR, $parameterName = null)
     {
-        if (!$field) {
-            $field = $parameterName;
-        }
-
-        $facet = (new TermFacet($field, $operator))
-          ->setSelectedValues($values)
-        ;
-
-        $this->aggregations[$parameterName] = $facet;
-
-        return $facet;
+        return $this->aggregations[] = (new TermFacet($field, $operator, $parameterName))->setSelectedValues($values);
     }
 
     /**
-     * Build aggregations from current data
-     *
-     * @return array
-     *   Aggregation data
+     * @deprecated
+     *   Use Symfony's Request instead
      */
-    protected function applyAggregations()
+    private function getQueryParam($query, $param, $default = null)
     {
-        $ret = [];
-
-        foreach ($this->aggregations as $parameterName => $facet) {
-            $values = $facet->getSelectedValues();
-
-            if ($values) {
-                $this
-                    ->getFilterQuery()
-                    ->matchTermCollection(
-                        $facet->getField(),
-                        $values,
-                        null,
-                        $facet->getOperator()
-                    )
-                ;
-            }
-
-            $ret[$parameterName] = [
-                'terms' => [
-                    'field' => $facet->getField(),
-                ],
-            ];
+        if (array_key_exists($param, $query)) {
+            return $query[$param];
         }
 
-        return $ret;
+        return $default;
     }
 
     /**
      * Get aggregations
      *
-     * @return AbstractFacet[]
+     * @return Aggs\AggInterface[]
      */
     public function getAggregations()
     {
         return $this->aggregations;
     }
-
 
     /**
      * Add sort
@@ -288,19 +373,77 @@ class Search
     }
 
     /**
-     * Run the search and return the response
+     * Build aggregations query data
+     *
+     * @return string[]
      */
-    public function doSearch()
+    private function buildAggQueryData($query)
+    {
+        $ret = [];
+
+        foreach ($this->aggregations as $agg) {
+            $additions = $agg->buildQueryData($this, $query);
+            if ($additions) {
+                $ret = array_merge($ret, $additions);
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Prepare current search using the incomming query
+     *
+     * @param string[] $query
+     */
+    private function prepare($query)
+    {
+        foreach ($this->aggregations as $agg) {
+            $agg->prepareQuery($this, $query);
+        }
+
+        // Handle paging
+        $this->setPage(
+            $this->getQueryParam($query, $this->pageParameterName, 0)
+                + $this->pageDelta
+        );
+
+        // Only process query when there is a value, in order to avoid sending
+        // an empty query string to ElasticSearch, its API is so weird that we
+        // probably would end up with exceptions
+        $value = $this->getQueryParam($query, $this->fulltextParameterName);
+        if ($value) {
+            $this
+                ->getQuery()
+                ->matchTerm(
+                    'combined',
+                    $value,
+                    null,
+                    $this->fulltextRoaming
+                )
+            ;
+        }
+    }
+
+    /**
+     * Run the search and return the response
+     *
+     * @param string[] $query
+     *   Incomming query
+     */
+    public function doSearch($query = [])
     {
         if (!$this->index) {
             throw new \RuntimeException("You must set an index");
         }
 
+        $this->prepare($query);
+
         $isQueryEmpty = !count($this->query);
 
         // This must be set before filter since filter query will be altered by
         // the applied aggregations
-        $aggs = $this->applyAggregations();
+        $aggs = $this->buildAggQueryData($query);
 
         if (count($this->filterQuery)) {
             if ($isQueryEmpty) {

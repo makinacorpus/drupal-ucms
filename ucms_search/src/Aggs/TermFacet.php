@@ -3,6 +3,8 @@
 namespace MakinaCorpus\Ucms\Search\Aggs;
 
 use MakinaCorpus\Ucms\Search\Lucene\Query;
+use MakinaCorpus\Ucms\Search\Search;
+use MakinaCorpus\Ucms\Search\Response;
 
 /**
  * Represent an Elastic Search facet based upon the aggregations feature
@@ -34,7 +36,6 @@ class TermFacet extends AbstractFacet
      */
     private $exclusiveMode = false;
 
-
     /**
      * Default constructor
      *
@@ -44,10 +45,12 @@ class TermFacet extends AbstractFacet
      *   Query::OP_AND or Query::OP_OR determines how is built the Lucene
      *   aggregation query and how the facet values should operate on the
      *   search query
+     * @param string $parameterName
+     *   Parameter name if different from field
      */
-    public function __construct($field, $operator = Query::OP_AND)
+    public function __construct($field, $operator = Query::OP_AND, $parameterName = null)
     {
-        parent::__construct($field, 'terms', $operator);
+        parent::__construct($field, 'terms', $operator, $parameterName);
     }
 
     /**
@@ -205,5 +208,25 @@ class TermFacet extends AbstractFacet
         $this->exclusiveMode = $exclusiveMode;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function parseResponse(Search $search, Response $response, $raw)
+    {
+        $choices = [];
+
+        $name = $this->getParameterName();
+
+        if (!isset($raw['aggregations'][$name])) {
+            throw new \RuntimeException(sprintf("Aggregation '%s' is missing from response", $name));
+        }
+
+        foreach ($raw['aggregations'][$name]['buckets'] as $bucket) {
+            $choices[$bucket['key']] = $bucket['doc_count'];
+        }
+
+        $this->setChoices($choices);
     }
 }

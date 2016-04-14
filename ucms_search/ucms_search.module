@@ -17,7 +17,7 @@
  *   - Add Elastic search array query formatting (must, must not, etc...)
  */
 
-use MakinaCorpus\Ucms\Search\QueryAlteredSearch;
+use MakinaCorpus\Ucms\Search\Search;
 
 /**
  * Default number of items index each cron run.

@@ -103,21 +103,8 @@ class Response
             return;
         }
 
-        foreach ($this->search->getAggregations() as $name => $facet) {
-            if ($facet instanceof TermFacet) {
-
-                $choices = [];
-
-                if (!isset($this->rawResponse['aggregations'][$name])) {
-                    throw new \RuntimeException(sprintf("Aggregation '%s' is missing from response", $name));
-                }
-
-                foreach ($this->rawResponse['aggregations'][$name]['buckets'] as $bucket) {
-                    $choices[$bucket['key']] = $bucket['doc_count'];
-                }
-
-                $facet->setChoices($choices);
-            }
+        foreach ($this->search->getAggregations() as $agg) {
+            $agg->parseResponse($this->search, $this, $this->rawResponse);
         }
     }
 }
