@@ -47,6 +47,10 @@ ol.sortable li {
   float: right;
   cursor: pointer;
 }
+.sortable li div input {
+  float: left;
+  width: 90%;
+}
 
 #tab-tree ul {
   list-style: none;

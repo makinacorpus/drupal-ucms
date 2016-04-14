@@ -145,7 +145,7 @@ class TreeForm extends FormBase
                 $link = [
                     'menu_name'  => $menuName,
                     'link_path'  => 'node/'.$nid,
-                    'link_title' => $this->getNodeTitle($nid),
+                    'link_title' => $item['title'],
                     'expanded'   => 1,
                     'weight'     => $weight++,
                 ];
@@ -215,18 +215,6 @@ class TreeForm extends FormBase
     }
 
     /**
-     * Return the title of a node.
-     *
-     * @param $nid
-     * @return mixed
-     */
-    protected function getNodeTitle($nid)
-    {
-        // FIXME, not really performant...
-        return db_query('SELECT title FROM {node} WHERE nid = :nid', ['nid' => $nid])->fetchField();
-    }
-
-    /**
      * Recursively outputs a tree as nested item lists.
      *
      * @param $tree
@@ -241,9 +229,15 @@ class TreeForm extends FormBase
             foreach ($tree as $data) {
                 $element = [];
 
-                $element['data'] = '<div class="tree-item">'.
-                    check_plain($data['link']['link_title']).
-                    '<span class="glyphicon glyphicon-remove"></span></div>';
+                $input = [
+                  '#prefix'         => '<div class="tree-item clearfix">',
+                  '#type'           => 'textfield',
+                  '#attributes'     => ['class' => ['']],
+                  '#value'          => $data['link']['link_title'],
+                  '#theme_wrappers' => [],
+                  '#suffix'         => '<span class="glyphicon glyphicon-remove"></span></div>',
+                ];
+                $element['data'] = drupal_render($input);
                 $element['data-name'] = substr($data['link']['link_path'], 5); // node/123
                 $element['data-mlid'] = $data['link']['mlid'];
 

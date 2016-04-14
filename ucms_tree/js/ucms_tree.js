@@ -8,6 +8,11 @@
 
       function updateHiddenField() {
         var toArray = $(this).nestedSortable('toArray', {startDepthCount: 0});
+        // Add menu labels
+        for (var i in toArray) {
+          toArray[i].title = $('[data-mlid=' + toArray[i].id + '] input').val();
+        }
+        console.log(toArray);
         $('[name*=' + $(this).data('menu') + ']').val(JSON.stringify(toArray));
       }
 
