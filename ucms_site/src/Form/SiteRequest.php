@@ -258,7 +258,16 @@ class SiteRequest extends FormBase
             '#options'       => $options,
             '#default_value' => $site->theme,
             '#required'      => true,
-            '#description'   => $this->t("This will be used for the whole site and cannot be changed once set"),
+        ];
+
+        // FIXME, should be in one of our custom module
+        $field = field_info_field('thematic');
+        $form['thematic'] = [
+            '#title'         => $this->t("Thematic"),
+            '#type'          => 'select',
+            '#options'       => ['' => $this->t("None")] + list_allowed_values($field),
+            '#default_value' => $site->getAttribute('thematic'),
+            '#required'      => true,
         ];
 
         // Is template site
@@ -336,6 +345,7 @@ class SiteRequest extends FormBase
         $site->theme = $form_state->getValue('theme');
         $site->template_id = $form_state->getValue('is_template') ? 0 : $form_state->getValue('template_id');
         $site->is_template = $form_state->getValue('is_template');
+        $site->setAttribute('thematic', $form_state->getValue('thematic'));
 
         $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));

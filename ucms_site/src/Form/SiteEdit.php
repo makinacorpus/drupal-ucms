@@ -143,6 +143,16 @@ class SiteEdit extends FormBase
             '#description'    => $this->t("This will be used for the whole site and cannot be changed once set")
         ];
 
+        // FIXME, should be in one of our custom module
+        $field = field_info_field('thematic');
+        $form['thematic'] = [
+            '#title'         => $this->t("Thematic"),
+            '#type'          => 'select',
+            '#options'       => ['' => $this->t("None")] + list_allowed_values($field),
+            '#default_value' => $site->getAttribute('thematic'),
+            '#required'      => true,
+        ];
+
         $form['actions']['#type'] = 'actions';
         $form['actions']['continue'] = [
             '#type'   => 'submit',
@@ -173,6 +183,7 @@ class SiteEdit extends FormBase
         $site->http_redirects = $values['http_redirects'];
         $site->replacement_of = $values['replacement_of'];
         $site->theme          = $values['theme'];
+        $site->setAttribute('thematic', $form_state->getValue('thematic'));
 
         $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Site modifications have been saved"));
