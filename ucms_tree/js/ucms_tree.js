@@ -17,6 +17,11 @@
       }
 
       /**
+       * Inputs
+       */
+      $('[data-menu] input', context).on('blur', updateHiddenField);
+
+      /**
        * Tree sortable
        */
       $('[data-menu][data-can-receive]', context).nestedSortable($.extend({}, Drupal.ucmsSortableDefaults, {
