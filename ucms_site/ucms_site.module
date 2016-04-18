@@ -736,6 +736,13 @@ function ucms_site_custom_theme() {
 }
 
 /**
+ * Implements hook_node_prepare().
+ */
+function ucms_site_node_prepare($node) {
+  ucms_site_node_dispatcher()->onPrepare($node);
+}
+
+/**
  * Implements hook_node_presave().
  */
 function ucms_site_node_presave($node) {
