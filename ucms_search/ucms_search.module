@@ -52,6 +52,13 @@ require_once __DIR__ . '/ucms_search.usync.inc';
 function ucms_search_menu() {
   $items = [];
 
+  $items['search/autocomplete/%'] = [
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Search\Controller\AutocompleteController::search', 2],
+    'access callback'   => TRUE,
+    'type'              => MENU_CALLBACK,
+  ];
+
   $items['admin/config/search/indices'] = [
     'title'             => "Search indices",
     'page callback'     => 'sf_dic_page_form',

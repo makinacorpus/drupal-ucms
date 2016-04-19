@@ -15,7 +15,7 @@ mappings:
         type:         string
         analyzer:     standard
         term_vector:  yes
-        copy_to:      combined
+        copy_to: [combined, autocomplete]
         fields:
           raw:
             type:     string
@@ -67,3 +67,8 @@ mappings:
 
       site_id:
         type:         integer
+
+      autocomplete:
+        type : completion
+        index_analyzer : simple
+        search_analyzer : simple
