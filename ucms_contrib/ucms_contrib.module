@@ -469,6 +469,7 @@ function ucms_contrib_preprocess_node(&$variables) {
  */
 function ucms_contrib_form_node_form_alter(&$form, &$form_state, $form_id) {
   $node = $form_state['node'];
+  $user = \Drupal::currentUser();
 
   $form['locked'] = [
     '#type' => 'checkbox',
@@ -476,6 +477,25 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state, $form_id) {
     '#default_value' => isset($node->is_clonable) ? !((bool) $node->is_clonable) : 0,
     '#weight' => 100,
   ];
+
+  // Adds the 'submit and add to cart' button. Button group will be done
+  // by the theme layer.
+  if (!$node->id() || !\Drupal::service('ucms_contrib.cart')->has($user->id(), $node->id())) {
+    $submit = $form['actions']['submit']['#submit'];
+    $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
+    $form['actions']['submit_add_to_cart'] = [
+      '#type'   => 'submit',
+      '#value'  => t("Save and add to cart"),
+      '#submit' => $submit,
+    ];
+  }
+}
+
+/**
+ * Add to cart action for node form.
+ */
+function ucms_contrib_form_node_form_submit_add_to_cart($form, &$form_state) {
+  \Drupal::service('ucms_contrib.cart')->addFor(\Drupal::currentUser()->id(), $form['#node']->id());
 }
 
 /**

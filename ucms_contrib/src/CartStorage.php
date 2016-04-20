@@ -58,6 +58,26 @@ class CartStorage
     }
 
     /**
+     * Current user has item?
+     *
+     * @param int $uid
+     * @param int $nid
+     *
+     * @return boolean
+     */
+    public function has($uid, $nid)
+    {
+        return (bool)$this
+            ->db
+            ->query(
+                "SELECT 1 FROM {ucms_contrib_cart} WHERE nid = ? AND uid = ?",
+                [$nid, $uid]
+            )
+            ->fetchField()
+        ;
+    }
+
+    /**
      * Remove content from favorites
      *
      * @param int $uid
