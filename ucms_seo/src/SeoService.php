@@ -285,11 +285,7 @@ class SeoService
         // site since we will fetch it from the result itself, or from the
         // node if no site found.
         $query->orderBy('u.is_canonical', 'DESC');
-
-        // https://stackoverflow.com/questions/9307613/mysql-order-by-null-first-and-desc-after
-        // We do need a site to display the node into, in case no canonical
-        // is explicitly told.
-        $query->orderBy('u.site_id IS NULL', 'desc');
+        $query->orderBy('u.priority', 'DESC');
 
         // If language is not specified, attempt with the node one
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
@@ -588,7 +584,7 @@ class SeoService
      *   First dimension keys are node identifiers, and values are
      *   arrays of actual node aliases
      */
-    public function nodeAliasesMerge($nodeAliases, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $siteId = null)
+    protected function nodeAliasesMerge($nodeAliases, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $siteId)
     {
         // We hope doing that in only 3 SQL queries, we can't do less than
         // that, first one load existing aliases, second insert missing,
@@ -717,7 +713,7 @@ class SeoService
      * @param string $alias
      * @param string $langcode
      */
-    public function updateCanonicalForNode(NodeInterface $node, $alias, Site $site = null, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
+    public function updateCanonicalForNode(NodeInterface $node, $alias, Site $site, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
     {
         $route  = 'node/' . $node->id();
         $source = $this->db->escapeLike($route);
@@ -739,7 +735,7 @@ class SeoService
                 'source'    => $route,
                 'alias'     => $alias,
                 'language'  => $langcode,
-                'site_id'   => $site ? $site->getId() : null
+                'site_id'   => $site->getId(),
             ])
             ->fields([
                 'is_canonical' => true,
@@ -750,6 +746,9 @@ class SeoService
 
     /**
      * From the given node, rebuild all its aliases and children aliases
+     *
+     * FIXME: THIS MAY CAUSE SERIOUS TROUBLES WHEN CHANGING NODE SEGMENT
+     * FOR NODES REFERENCED IN MANY MENUS
      *
      * All node aliases for each menu entry it is into must exists in the
      * menu tree, no matter how many they are, for the sake of consistency
@@ -792,34 +791,41 @@ class SeoService
      *
      * @param NodeInterface $node
      * @param string $menuName
-     *   To restrict to a single menu
+     *   To restrict to a single menu, if you are sure that the node segment
+     *   itself has NOT been changed, if it did, leave this to null, everything
+     *   will be very slow, but it is necessary
      */
     public function onAliasChange(NodeInterface $node, $menuName = null)
     {
         $nodeRoute  = 'node/' . $node->id();
         $langcode   = $node->language()->getId();
-        $siteId     = null;
-
-        if ($this->siteManager->hasContext()) {
-            $siteId = $this->siteManager->getContext()->getId();
-        }
 
         // Fetch all menu links associated to this node in order to rebuild
         // their parenting tree with the new alias, if any changed
-        $q = $this->db->select('menu_links', 'l')->fields('l', ['mlid']);
+        $q = $this
+            ->db
+            ->select('menu_links', 'l')
+            ->fields('l', ['mlid'])
+            ->fields('m', ['site_id']);
+        ;
+        // We cannot deal aliases that are not in site context
+        $q->join('umenu', 'm', "m.name = l.menu_name AND m.site_id IS NOT NULL");
         if ($menuName) {
             $q->condition('l.menu_name', $menuName);
         }
-        $idList = $q->condition('l.link_path', $nodeRoute)->execute()->fetchCol();
+        $idMap = $q->condition('l.link_path', $nodeRoute)->execute()->fetchAllKeyed();
 
-        if ($idList) {
+        if ($idMap) {
 
             // Fetch all associated node aliases from the given menu link
             $nodeAliases = [];
-            foreach ($idList as $id) {
-                $nodeAliases = NestedArray::mergeDeepArray(
+            foreach ($idMap as $id => $siteId) {
+                if (!array_key_exists($siteId, $nodeAliases)) {
+                    $nodeAliases[$siteId] = [];
+                }
+                $nodeAliases[$siteId] = NestedArray::mergeDeepArray(
                     [
-                        $nodeAliases,
+                        $nodeAliases[$siteId],
                         $this->getLinkChildrenAliases($id),
                     ],
                     true
@@ -827,27 +833,14 @@ class SeoService
             }
 
             // Once merge, bulk update everything in there
-            $this->nodeAliasesMerge($nodeAliases, $langcode, $siteId);
-
-        } else {
-            $segment = $this->getNodeSegment($node);
-
-            // Node has no attached menus, so just add the segment alias
-            // as full alias if none exists
-            if ($segment && !$this->aliasStorage->load(['langcode' => $langcode, 'source' => $nodeRoute, 'site_id' => null])) {
-                $newAlias = $this->aliasStorage->save($nodeRoute, $segment, $langcode);
-
-                // Because the node needs an alias for everyone, let's add the
-                // default one for all sites
-                if ($newAlias['site_id']) {
-                    $this->db->query("UPDATE {ucms_seo_alias} SET site_id = ? WHERE pid = ?", [null, $newAlias['pid']]);
-                }
+            // @todo this will probably be terrible for performances
+            foreach ($nodeAliases as $siteId => $aliases) {
+                $this->nodeAliasesMerge($aliases, $langcode, $siteId);
             }
         }
 
-        // @todo
-        //   with the current algorithm we sadly can't find outdated
-        //   node aliases and set an expire on them
+        // Ensure node primary alias
+        $this->ensureNodePrimaryAlias($node);
     }
 
     /**
@@ -861,8 +854,76 @@ class SeoService
      */
     public function onAliasRemove(NodeInterface $node, $menuName = null)
     {
-        // FIXME: THIS WILL NOT WORK...
-        $this->onAliasChange($node, $menuName = null);
+        if ($menuName) {
+            // This will work, since the whole menu will be recomputed
+            $this->onAliasChange($node, $menuName);
+        } else {
+            // @todo but this won't work as we'd expect... need to investigate
+            // further into this
+            $this->onAliasChange($node, null);
+        }
+    }
+
+    /**
+     * From the given node, ensures at least one alias exists for it on all
+     * sites it is related, leave alone aliases when a menu exists
+     *
+     * @param NodeInterface $node
+     */
+    public function ensureNodePrimaryAlias(NodeInterface $node)
+    {
+        $nodeRoute  = 'node/' . $node->id();
+        $segment    = $this->getNodeSegment($node);
+        $langcode   = $node->language()->getId();
+
+        if (!$segment) {
+            $this
+                ->db
+                ->query("
+                    DELETE FROM {ucms_seo_alias}
+                    WHERE
+                        source = ?
+                        AND priority < 0
+                ", [$nodeRoute])
+            ;
+        }
+
+        if (LanguageInterface::LANGCODE_NOT_SPECIFIED !== $langcode) {
+            $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
+        } else {
+            $langcodeList = $langcode;
+        }
+
+        $this
+            ->db
+            ->query("
+                INSERT INTO {ucms_seo_alias}
+                    (source, alias, language, site_id)
+                SELECT
+                    :source1,
+                    :alias,
+                    :language,
+                    sn.site_id
+                FROM {ucms_site_node} sn
+                WHERE
+                    sn.nid = :nid
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM {ucms_seo_alias} ss
+                        WHERE
+                            ss.source = :source2
+                            AND ss.site_id = sn.site_id
+                            AND ss.language NOT IN (:languages)
+                    )
+            ", [
+                ':alias'      => $segment,
+                ':language'   => $langcode,
+                ':languages'  => $langcodeList,
+                ':nid'        => $node->id(),
+                ':source1'    => $nodeRoute,
+                ':source2'    => $nodeRoute,
+            ])
+        ;
     }
 
     /**

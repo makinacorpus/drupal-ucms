@@ -50,11 +50,15 @@ class SeoAliasStorage implements AliasStorageInterface
      */
     public function save($source, $alias, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $pid = null)
     {
+        if (!$this->siteManager->hasContext()) {
+            return false;
+        }
+
         $path = [
             'source'    => $source,
             'alias'     => $alias,
             'language'  => $langcode,
-            'site_id'   => null,
+            'site_id'   => $this->siteManager->getContext()->getId(),
         ];
 
         if ($pid) {
@@ -115,25 +119,6 @@ class SeoAliasStorage implements AliasStorageInterface
         ;
     }
 
-    protected function ensureSiteContext(\SelectQuery $query)
-    {
-        // BEWARE: HERE BE DRAGONS (probably, anyway).
-        // When looking up aliases, we need to filter using the current site
-        // this would have no use otherwise to set the site_id on the node
-        // information
-        if ($this->siteManager->hasContext()) {
-            $query->condition(
-                db_or()
-                    ->condition('u.site_id', $this->siteManager->getContext()->getId())
-                    ->isNull('u.site_id')
-            );
-            // https://stackoverflow.com/questions/9307613/mysql-order-by-null-first-and-desc-after
-            $query->orderBy('u.site_id IS NULL', 'desc');
-        } else {
-            $query->isNull('u.site_id');
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -166,6 +151,10 @@ class SeoAliasStorage implements AliasStorageInterface
      */
     public function lookupPathAlias($path, $langcode)
     {
+        if (!$this->siteManager->hasContext()) {
+            return;
+        }
+
         // See the queries above. Use LIKE for case-insensitive matching.
         $source = $this->db->escapeLike($path);
 
@@ -174,6 +163,7 @@ class SeoAliasStorage implements AliasStorageInterface
             ->select('ucms_seo_alias', 'u')
             ->fields('u', ['alias'])
             ->condition('u.source', $source, 'LIKE')
+            ->condition('u.site_id', $this->siteManager->getContext()->getId())
         ;
 
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
@@ -192,7 +182,7 @@ class SeoAliasStorage implements AliasStorageInterface
         // the alias we need to fetch to deambiguate
         $query->orderBy('u.is_canonical', 'DESC');
 
-        $this->ensureSiteContext($query);
+        $query->orderBy('u.priority', 'DESC');
 
         return $query
             ->orderBy('u.pid', 'DESC')
@@ -207,6 +197,10 @@ class SeoAliasStorage implements AliasStorageInterface
      */
     public function lookupPathSource($path, $langcode)
     {
+        if (!$this->siteManager->hasContext()) {
+            return;
+        }
+
         // See the queries above. Use LIKE for case-insensitive matching.
         $alias = $this->db->escapeLike($path);
 
@@ -217,6 +211,7 @@ class SeoAliasStorage implements AliasStorageInterface
             ->select('ucms_seo_alias', 'u')
             ->fields('u', ['source'])
             ->condition('u.alias', $alias, 'LIKE')
+            ->condition('u.site_id', $this->siteManager->getContext()->getId())
         ;
 
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
@@ -229,8 +224,6 @@ class SeoAliasStorage implements AliasStorageInterface
                 $query->orderBy('u.language', 'ASC');
             }
         }
-
-        $this->ensureSiteContext($query);
 
         return $query
             ->orderBy('u.pid', 'DESC')
@@ -245,12 +238,17 @@ class SeoAliasStorage implements AliasStorageInterface
      */
     public function aliasExists($alias, $langcode, $source = null)
     {
+        if (!$this->siteManager->hasContext()) {
+            return false;
+        }
+
         // Use LIKE and NOT LIKE for case-insensitive matching (stupid).
         $query = $this
             ->db
             ->select('ucms_seo_alias')
             ->condition('alias', $this->db->escapeLike($alias), 'LIKE')
             ->condition('language', $langcode)
+            ->condition('u.site_id', $this->siteManager->getContext()->getId())
         ;
 
         if (!empty($source)) {
@@ -271,6 +269,10 @@ class SeoAliasStorage implements AliasStorageInterface
      */
     public function preloadPathAlias($sources, $langcode)
     {
+        if (!$this->siteManager->hasContext()) {
+            return [];
+        }
+
         // VERY IMPORTANT PIECE OF DOCUMENTATION, BECAUSE CORE DOES NOT
         // DOCUMENT IT VERY WELL:
         //  - the query inverse all the orders 'pid' and 'language' compared
@@ -284,6 +286,7 @@ class SeoAliasStorage implements AliasStorageInterface
             ->db
             ->select('ucms_seo_alias', 'u')
             ->fields('u', ['source', 'alias'])
+            ->condition('u.site_id', $this->siteManager->getContext()->getId())
         ;
 
         $condition = new \DatabaseCondition('OR');
@@ -305,13 +308,13 @@ class SeoAliasStorage implements AliasStorageInterface
             }
         }
 
+        $query->orderBy('u.priority', 'ASC');
+
         // Canonical property will never be set automatically sus ensuring that
         // what the user tells is what the user gets, so caninonical is *always*
         // the alias we need to fetch to deambiguate
         // !!! condition here is inversed from the lookupPathAlias() method
         $query->orderBy('u.is_canonical', 'ASC');
-
-        $this->ensureSiteContext($query);
 
         return $query
             // !!! condition here is inversed from the lookupPathAlias() method

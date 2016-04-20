@@ -18,13 +18,18 @@ function ucms_seo_schema() {
     'description' => "Site identifier this alias belongs to",
     'type'        => 'int',
     'unsigned'    => true,
-    'not null'    => false,
-    'default'     => null,
+    'not null'    => true,
   ];
   $aliasTable['fields']['is_canonical'] = [
     'description' => "Is this alias the canonical alias for the source path",
     'type'        => 'int',
     'unsigned'    => true,
+    'not null'    => true,
+    'default'     => 0,
+  ];
+  $aliasTable['fields']['priority'] = [
+    'description' => "Defines a priority order for alias selection",
+    'type'        => 'int',
     'not null'    => true,
     'default'     => 0,
   ];
@@ -160,7 +165,6 @@ function ucms_seo_update_7001() {
       'type'        => 'int',
       'unsigned'    => true,
       'not null'    => true,
-      'default'     => null,
     ]);
   }
 }
@@ -222,12 +226,33 @@ function ucms_seo_update_7005() {
 }
 
 /**
+ * Adds missing database columns.
+ */
+function ucms_seo_update_7008() {
+  if (!db_field_exists('ucms_seo_alias', 'priority')) {
+    db_add_field('ucms_seo_alias', 'priority', [
+      'description' => "Defines a priority order for alias selection",
+      'type'        => 'int',
+      'not null'    => true,
+      'default'     => 0,
+    ]);
+  }
+  db_query("DELETE FROM {ucms_seo_alias} WHERE site_id IS NULL");
+  db_change_field('ucms_seo_alias', 'site_id', 'site_id', [
+    'description' => "Site identifier this alias belongs to",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => true,
+  ]);
+}
+
+/**
  * Restablishes the database contraints.
  *
  * Weird thing is, with MySQL, when adding the field and settings contraints
  * during the same transaction, it seems to fail due to failing constraint, but
  * if you do it in two transactions, it works.
  */
-function ucms_seo_update_7006() {
+function ucms_seo_update_7009() {
   ucms_seo_install_schema_fix();
 }

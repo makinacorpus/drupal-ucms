@@ -49,6 +49,19 @@ class NodeAliasDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
+    public function getSortFields($query)
+    {
+        return [
+            'alias'         => $this->t("Alias"),
+            'is_canonical'  => $this->t("Canonical state"),
+            'language'      => $this->t("Language"),
+            'priority'      => $this->t("Priority"),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getItems($query, PageState $pageState)
     {
         if (empty($query['node'])) {
@@ -71,7 +84,7 @@ class NodeAliasDatasource extends AbstractDatasource
         }
 
         if ($pageState->hasSortField()) {
-            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+            $q->orderBy('u.' . $pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
         $q->orderBy('u.alias', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
