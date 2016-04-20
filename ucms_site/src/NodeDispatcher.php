@@ -280,18 +280,20 @@ class NodeDispatcher
 
     public function onPrepare($node)
     {
-        // Adds all custom fields of the nodes table as properties of the node object
-        $initial_schema = drupal_get_schema_unprocessed('node', 'node');
-        $current_schema = drupal_get_schema('node');
+        if ($node->isNew()) {
+            // Adds all custom fields of the nodes table as properties of the node object
+            $initial_schema = drupal_get_schema_unprocessed('node', 'node');
+            $current_schema = drupal_get_schema('node');
 
-        $custom_fields = array_diff_key($current_schema['fields'], $initial_schema['fields']);
+            $custom_fields = array_diff_key($current_schema['fields'], $initial_schema['fields']);
 
-        foreach ($custom_fields as $name => $info) {
-            $node->$name = isset($info['default']) ? $info['default'] : null;
+            foreach ($custom_fields as $name => $info) {
+                $node->$name = isset($info['default']) ? $info['default'] : null;
+            }
+
+            // Initializes the ucms_sites property
+            $node->ucms_sites = [];
         }
-
-        // Initializes the ucms_sites property
-        $node->ucms_sites = [];
     }
 
     public function onLoad($nodes)
