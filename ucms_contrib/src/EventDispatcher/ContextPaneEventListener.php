@@ -113,20 +113,25 @@ class ContextPaneEventListener
         // FIXME kill it with fire!
         if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), ['content', 'media'])) {
             if (arg(2) == 'content') {
-                $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"), 'file');
-                $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"), 'tasks');
-            }
-            else {
-                $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"), 'picture');
+                $actions = [];
+                $actions = array_merge($actions, $this->contentActionProvider->getActions('editorial'));
+                $actions = array_merge($actions, $this->contentActionProvider->getActions('component'));
+                $contextPane->addActions($actions, $this->t("Create"), 'plus');
+            } else {
+                $actions = [];
+                $actions = array_merge($actions, $this->contentActionProvider->getActions('media'));
+                $contextPane->addActions($actions, $this->t("Create"), 'plus');
             }
         }
 
         // Add node creation link on site
         // FIXME kill it with acid!
         if ($this->siteManager->hasContext()) {
-            $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"), 'file');
-            $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"), 'tasks');
-            $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"), 'picture');
+            $actions = [];
+            $actions = array_merge($actions, $this->contentActionProvider->getActions('editorial'));
+            $actions = array_merge($actions, $this->contentActionProvider->getActions('media'));
+            $actions = array_merge($actions, $this->contentActionProvider->getActions('component'));
+            $contextPane->addActions($actions, $this->t("Create"), 'plus');
         }
 
         // Add node link on node view

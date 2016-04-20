@@ -1,16 +1,18 @@
 <div class="btn-group" role="group" aria-label="actions">
   {% if primary %}
-    {% for link in primary %}
-      <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
-        {% if link.icon %}
-          <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
-        {% endif %}
-        {% if link.icon %}
-          <span class="sr-only">{{ link.title|check_plain }}</span>
-        {% else %}
-          {{ link.title|check_plain }}
-        {% endif %}
-      </a>
+    {% for group in primary %}
+      {% for link in group %}
+        <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
+          {% if link.icon %}
+            <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+          {% endif %}
+          {% if link.icon %}
+            <span class="sr-only">{{ link.title|check_plain }}</span>
+          {% else %}
+            {{ link.title|check_plain }}
+          {% endif %}
+        </a>
+      {% endfor %}
     {% endfor %}
   {% endif %}
   {% if secondary %}
@@ -33,15 +35,22 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right">
-        {% for link in secondary %}
-          <li>
-            <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
-              {% if link.icon %}
-                <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
-              {% endif %}
-              {{ link.title|check_plain }}
-            </a>
-          </li>
+        {% set sep = false %}
+        {% for group in secondary %}
+          {% if sep %}
+            <li class="separator"><hr/></li>
+          {% endif %}
+          {% for link in group %}
+            <li>
+              <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
+                {% if link.icon %}
+                  <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+                {% endif %}
+                {{ link.title|check_plain }}
+              </a>
+            </li>
+          {% endfor %}
+          {% set sep = true %}
         {% endfor %}
       </ul>
     </div>

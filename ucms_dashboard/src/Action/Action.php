@@ -8,6 +8,33 @@ namespace MakinaCorpus\Ucms\Dashboard\Action;
  */
 class Action
 {
+    static public function create($options)
+    {
+        $options += [
+            'title'     => null,
+            'uri'       => null,
+            'options'   => [],
+            'icon'      => null,
+            'priority'  => 0,
+            'primary'   => true,
+            'redirect'  => false,
+            'disabled'  => false,
+            'group'     => null,
+        ];
+
+        return new static(
+            $options['title'],
+            $options['uri'],
+            $options['options'],
+            $options['icon'],
+            $options['priority'],
+            $options['primary'],
+            $options['redirect'],
+            $options['disabled'],
+            $options['group']
+        );
+    }
+
     private $title;
 
     private $uri;
@@ -21,6 +48,8 @@ class Action
     private $primary = true;
 
     private $disabled = false;
+
+    private $group = null;
 
     /**
      * Default constructor
@@ -46,8 +75,10 @@ class Action
      *   a query destination for the action
      * @param boolean $disabled
      *   If set to true, action will be disabled
+     * @param string $group
+     *   An arbitrary string that will be used to group actions altogether
      */
-    public function __construct($title, $uri, $options = [], $icon = null, $priority = 0, $primary = true, $addCurrentDestination = false, $disabled = false)
+    public function __construct($title, $uri = null, $options = [], $icon = null, $priority = 0, $primary = true, $addCurrentDestination = false, $disabled = false, $group = null)
     {
         $this->title = $title;
         $this->uri = $uri;
@@ -55,6 +86,7 @@ class Action
         $this->priority = $priority;
         $this->primary = $primary;
         $this->disabled = $disabled;
+        $this->group = $group;
 
         if (is_array($options)) {
             $this->linkOptions = $options;
@@ -82,6 +114,11 @@ class Action
             }
             $this->linkOptions['query'] += drupal_get_destination();
         }
+    }
+
+    public function getGroup()
+    {
+        return $this->group;
     }
 
     public function getTitle()

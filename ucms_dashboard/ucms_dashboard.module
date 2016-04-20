@@ -335,7 +335,9 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
     } else {
       $target = 'secondary';
     }
+
     $item = [];
+    $item['separator'] = false;
     $item['options']  = $action->getLinkOptions();
     $item['options'] += ['attributes' => []];
     if (isset($item['options']['attributes']['class'])) {
@@ -343,22 +345,27 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
     } else {
       $item['options']['attributes']['class'] = '';
     }
-    if ($target == 'primary') {
+    if ('primary' === $target) {
       $item['options']['attributes']['class'] .= ' btn btn-default';
     }
     $item['title']    = $action->getTitle();
     $item['href']     = $action->getURI();
     $item['priority'] = $action->getPriority();
     $item['icon']     = $action->getIcon();
-    $variables[$target][$key] = $item;
+
+    $variables[$target][$action->getGroup()][$key] = $item;
   }
+
   foreach (['primary', 'secondary'] as $target) {
     if (isset($variables[$target])) {
-      usort($variables[$target], function ($a, $b) {
-        return $a['priority'] - $b['priority'];
-      });
+      foreach ($variables[$target] as &$group) {
+        usort($group, function ($a, $b) {
+          return $a['priority'] - $b['priority'];
+        });
+      }
     }
   }
+
   if ($variables['mode']) {
     $variables['mode'] === 'icon';
   }

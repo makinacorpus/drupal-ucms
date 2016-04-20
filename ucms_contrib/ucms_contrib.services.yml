@@ -8,7 +8,7 @@ services:
   ucms_contrib.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
-    arguments: ["@ucms_site.node_access_helper", "@current_user"]
+    arguments: ["@ucms_site.node_access_helper", "@current_user", "@ucms_contrib.cart"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_contrib.content_action_provider:

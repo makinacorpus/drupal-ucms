@@ -51,17 +51,17 @@ class NodeActionProvider implements ActionProviderInterface
         $account = $this->currentUser;
 
         if ($this->nodeAccess->userCanReference($account, $item)) {
-            $ret[] = new Action($this->t("Use on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true);
+            $ret[] = new Action($this->t("Use on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
         }
         if ($this->nodeAccess->userCanLock($account, $item)) {
             if ($item->is_clonable) {
-                $ret[] = new Action($this->t("Lock"), 'node/' . $item->id() . '/lock', 'dialog', 'lock', 2, false, true);
+                $ret[] = new Action($this->t("Lock"), 'node/' . $item->id() . '/lock', 'dialog', 'lock', 2, false, true, false, 'edit');
             } else {
-                $ret[] = new Action($this->t("Unlock"), 'node/' . $item->id() . '/unlock', 'dialog', 'lock', 2, false, true);
+                $ret[] = new Action($this->t("Unlock"), 'node/' . $item->id() . '/unlock', 'dialog', 'lock', 2, false, true, false, 'edit');
             }
         }
 
-        $ret[] = new Action($this->t("Sites"), 'node/' . $item->id() . '/site-list', 'dialog', 'search', 100, false, true);
+        $ret[] = new Action($this->t("Sites"), 'node/' . $item->id() . '/site-list', 'dialog', 'search', 100, false, true, false, 'view');
 
         /*
          if ($item->access('clone')) {

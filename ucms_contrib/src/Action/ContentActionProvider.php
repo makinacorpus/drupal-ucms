@@ -79,11 +79,11 @@ class ContentActionProvider implements ActionProviderInterface
                     'attributes' => ['class' => ['use-ajax', 'minidialog']],
                     'query'      => ['minidialog'  => 1],
                 ];
-                $actions[] = new Action($label, 'node/add-to-site/' . strtr($type, '_', '-'), $options, null, $index, false);
+                $actions[] = new Action($label, 'node/add-to-site/' . strtr($type, '_', '-'), $options, null, $index, false, false, false, (string)$item);
             }
             elseif (node_access('create', $type)) {
                 $label = $this->t('Create !content_type', ['!content_type' => $this->t($names[$type])]);
-                $actions[] = new Action($label, 'node/add/' . strtr($type, '_', '-'), null, null, $index, false);
+                $actions[] = new Action($label, 'node/add/' . strtr($type, '_', '-'), null, null, $index, false, false, false, (string)$item);
             }
         }
 
