@@ -17,7 +17,7 @@ class ContextPaneEventListener
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)
     {
         if (current_path() == 'admin/dashboard/user') {
-            $action = new Action($this->t("Create user"), 'admin/dashboard/user/add', null, null, 0, true, true);
+            $action = new Action($this->t("Create user"), 'admin/dashboard/user/add', null, 'user', 0, true, true);
             $event->getContextPane()->addActions([$action]);
         }
     }

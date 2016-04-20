@@ -4,10 +4,10 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -26,7 +26,7 @@ class ContextPaneEventListener
     private $layoutContextManager;
 
     /**
-     * @var ActionProviderInterface
+     * @var ActionRegistry
      */
     private $contentActionProvider;
 
@@ -42,27 +42,27 @@ class ContextPaneEventListener
     /**
      * @var ActionProviderInterface
      */
-    private $nodeActionProvider;
+    private $actionProviderRegistry;
 
     /**
      * Default constructor
      *
      * @param LayoutContextManager $layoutContextManager
      * @param ActionProviderInterface $contentActionProvider
-     * @param ActionProviderInterface $nodeActionProvider
+     * @param ActionProviderInterface $actionProviderRegistry
      * @param SiteManager $siteManager
      * @param TypeHandler $typeHandler
      */
     public function __construct(
         LayoutContextManager $layoutContextManager,
         ActionProviderInterface $contentActionProvider,
-        ActionProviderInterface $nodeActionProvider,
+        ActionRegistry $actionRegistry,
         SiteManager $siteManager,
         TypeHandler $typeHandler
     ) {
         $this->layoutContextManager = $layoutContextManager;
         $this->contentActionProvider = $contentActionProvider;
-        $this->nodeActionProvider = $nodeActionProvider;
+        $this->actionProviderRegistry = $actionRegistry;
         $this->siteManager = $siteManager;
         $this->typeHandler = $typeHandler;
     }
@@ -102,7 +102,7 @@ class ContextPaneEventListener
         //     maybe bring in the RequestStack
         if (!path_is_admin(current_path())) {
             $backlink = new Action($this->t("Go to dashboard"), 'admin/dashboard', null, 'dashboard');
-            $contextPane->addActions([$backlink]);
+            $contextPane->addActions([$backlink], null, 'dashboard', false);
         }
         /*else {
             // @Todo possibly store the last site visited in the session to provide a backlink
@@ -113,29 +113,35 @@ class ContextPaneEventListener
         // FIXME kill it with fire!
         if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), ['content', 'media'])) {
             if (arg(2) == 'content') {
-                $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"));
-                $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"));
+                $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"), 'file');
+                $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"), 'tasks');
             }
             else {
-                $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"));
+                $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"), 'picture');
             }
         }
 
         // Add node creation link on site
         // FIXME kill it with acid!
         if ($this->siteManager->hasContext()) {
-            $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"));
-            $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"));
-            $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"));
+            $contextPane->addActions($this->contentActionProvider->getActions('editorial'), $this->t("Create editorial content"), 'file');
+            $contextPane->addActions($this->contentActionProvider->getActions('component'), $this->t("Create component"), 'tasks');
+            $contextPane->addActions($this->contentActionProvider->getActions('media'), $this->t("Create media"), 'picture');
         }
 
         // Add node link on node view
         // FIXME kill it with lasers!
         if ($router_item['path'] == 'node/%') {
             $node = $router_item['map'][1];
-            $actions = $this->nodeActionProvider->getActions($node);
-            $actions[1]->setPrimary(true); // this... this is sorcery...
-            $contextPane->addActions($actions);
+            $actions = $this->actionProviderRegistry->getActions($node);
+            foreach ($actions as $action) { // this... this is sorcery...
+                if ('pencil' === $action->getIcon()) {
+                    $action->setPrimary(true);
+                } else if ($action->isPrimary()) {
+                    $action->setPrimary(false);
+                }
+            }
+            $contextPane->addActions($actions, null, 'pencil', false);
         }
     }
 }

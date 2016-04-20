@@ -6,6 +6,7 @@ use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use MakinaCorpus\Datadmin\Action\Action;
 
 /**
  * Class ContextPane
@@ -223,17 +224,21 @@ class ContextPane
     /**
      * Add a group of actions for this context.
      *
-     * @param $actions
-     * @param null $title
+     * @param Action[] $actions
+     * @param string $title
+     * @param string $icon
+     * @param boolean $showTitle
+     *
      * @return $this
      */
-    public function addActions($actions, $title = null)
+    public function addActions($actions, $title = null, $icon = null, $showTitle = false)
     {
-        if ($title) {
-            $this->actions[$title] = $actions;
-        } else {
-            $this->actions[] = $actions;
-        }
+        $this->actions[] = [
+            'title'     => $title,
+            'icon'      => $icon,
+            'showTitle' => empty($icon) ? true : $showTitle,
+            'actions'   => $actions,
+        ];
 
         return $this;
     }
@@ -243,7 +248,8 @@ class ContextPane
      *
      * @return array
      */
-    public function getActions() {
+    public function getActions()
+    {
         return $this->actions;
     }
 }

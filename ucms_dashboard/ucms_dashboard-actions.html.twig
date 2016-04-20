@@ -5,7 +5,7 @@
         {% if link.icon %}
           <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
         {% endif %}
-        {% if icon %}
+        {% if link.icon %}
           <span class="sr-only">{{ link.title|check_plain }}</span>
         {% else %}
           {{ link.title|check_plain }}
@@ -16,8 +16,17 @@
   {% if secondary %}
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="actions">
-        {% if not primary and title %}
-          {{ title }}
+        {% if not primary %}
+          {% if icon %}
+            <span class="glyphicon glyphicon-{{ icon }}" aria-hidden="true"></span>
+          {% endif %}
+          {% if title %}
+            {% if show_title %}
+              {{ title|check_plain }}
+            {% else %}
+              <span class="sr-only">{{ title|check_plain }}</span>
+            {% endif %}
+          {% endif %}
         {% else %}
           <span{% if primary %} class="sr-only"{% endif %}>{{ "More actions"|t }}</span>
         {% endif %}

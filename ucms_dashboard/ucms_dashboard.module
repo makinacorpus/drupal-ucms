@@ -195,7 +195,14 @@ function ucms_dashboard_portlet_registry_get() {
 function ucms_dashboard_theme() {
   return [
     'ucms_dashboard_actions' => [
-      'variables' => ['item' => null, 'actions' => [], 'mode' => 'link', 'title' => ''],
+      'variables' => [
+        'item'        => null,
+        'actions'     => [],
+        'mode'        => 'link',
+        'title'       => '',
+        'icon'        => null,
+        'show_title'  => false,
+      ],
       'template'  => 'ucms_dashboard-actions',
     ],
     'ucms_dashboard_context' => [
@@ -245,15 +252,17 @@ function ucms_dashboard_page_build(&$page) {
     $context->init();
 
     $actions = [];
-    foreach ($context->getActions() as $title => $list) {
-      if (is_array($list) && count($list) && reset($list) instanceof \MakinaCorpus\Ucms\Dashboard\Action\Action) {
+    foreach ($context->getActions() as $data) {
+      if (is_array($data['actions']) && count($data['actions']) && reset($data['actions']) instanceof \MakinaCorpus\Ucms\Dashboard\Action\Action) {
         $actions[] = [
-            '#theme'   => 'ucms_dashboard_actions',
-            '#actions' => $list,
-            '#title'   => $title,
+          '#theme'      => 'ucms_dashboard_actions',
+          '#actions'    => $data['actions'],
+          '#title'      => $data['title'],
+          '#icon'       => $data['icon'],
+          '#show_title' => $data['showTitle'],
         ];
       } else {
-        $actions[] = $list;
+        $actions[] = $data['actions'];
       }
     }
     $js_setting = [
@@ -308,6 +317,12 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
   if (empty($variables['title'])) {
     $variables['title'] = '';
   }
+  if (empty($variables['icon'])) {
+    $variables['icon'] = '';
+  }
+  if (!isset($variables['show_title'])) {
+    $variables['show_title'] = empty($variables['icon']);
+  }
 
   foreach ($variables['actions'] as $key => $action) {
     /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action */
@@ -345,7 +360,7 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
     }
   }
   if ($variables['mode']) {
-    $variables['icon'] = $variables['mode'] === 'icon';
+    $variables['mode'] === 'icon';
   }
 }
 

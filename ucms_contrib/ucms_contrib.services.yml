@@ -22,7 +22,7 @@ services:
     arguments:
       - "@ucms_layout.context_manager"
       - "@ucms_contrib.content_action_provider"
-      - "@ucms_contrib.node_action_provider"
+      - "@ucms_dashboard.action_provider_registry"
       - "@ucms_site.manager"
       - "@ucms_contrib.type_handler"
     tags:
