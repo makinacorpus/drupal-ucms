@@ -41,6 +41,7 @@ function ucms_seo_schema() {
     'default'     => null,
   ];
   $schema['ucms_seo_alias'] = $aliasTable;
+  $schema['ucms_seo_alias']['unique keys']['uk_ucms_seo_alias_site'] = ['alias', 'site_id'];
 
   // Same statement as upper, any performance critical meta information must
   // live in a database table we keep the ownership on, any field API usage
@@ -248,11 +249,8 @@ function ucms_seo_update_7008() {
 
 /**
  * Restablishes the database contraints.
- *
- * Weird thing is, with MySQL, when adding the field and settings contraints
- * during the same transaction, it seems to fail due to failing constraint, but
- * if you do it in two transactions, it works.
  */
-function ucms_seo_update_7009() {
+function ucms_seo_update_7010() {
+  db_add_unique_key('ucms_seo_alias', 'uk_ucms_seo_alias_site', ['alias', 'site_id']);
   ucms_seo_install_schema_fix();
 }

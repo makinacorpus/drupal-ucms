@@ -415,7 +415,7 @@ class SeoService
         }
 
         if ($previous === $segment) {
-            return; // Nothing to do
+            //return; // Nothing to do
         }
 
         $this
@@ -696,7 +696,7 @@ class SeoService
                 'language'  => $alias->language,
             ])
             ->fields([
-                'is_canonical' => 1,
+                'is_canonical'  => 1,
             ])
             ->execute()
         ;
@@ -898,12 +898,13 @@ class SeoService
             ->db
             ->query("
                 INSERT INTO {ucms_seo_alias}
-                    (source, alias, language, site_id)
+                    (source, alias, language, site_id, priority)
                 SELECT
                     :source1,
                     :alias,
                     :language,
-                    sn.site_id
+                    sn.site_id,
+                    -1
                 FROM {ucms_site_node} sn
                 WHERE
                     sn.nid = :nid
@@ -913,7 +914,7 @@ class SeoService
                         WHERE
                             ss.source = :source2
                             AND ss.site_id = sn.site_id
-                            AND ss.language NOT IN (:languages)
+                            AND ss.language IN (:languages)
                     )
             ", [
                 ':alias'      => $segment,
