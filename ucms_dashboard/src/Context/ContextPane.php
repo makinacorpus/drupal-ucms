@@ -108,15 +108,20 @@ class ContextPane
      *   Icon name for this tab
      * @param int $priority
      *   Will determine order
+     * @param int $messageCount
+     *   An arbitrary number that will be displayed as a label over the icon
+     *   but hidden when 0
+     *
      * @return ContextPane
      */
-    public function addTab($key, $label, $icon, $priority = 0)
+    public function addTab($key, $label, $icon, $priority = 0, $messageCount = 0)
     {
         $this->tabs[$key] = [
-            'priority' => $priority,
-            'key' => $key,
-            'label' => $label,
-            'icon' => $icon,
+            'priority'  => $priority,
+            'key'       => $key,
+            'label'     => $label,
+            'icon'      => $icon,
+            'count'     => $messageCount,
         ];
 
         return $this;

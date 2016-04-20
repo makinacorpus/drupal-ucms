@@ -5,6 +5,9 @@ namespace MakinaCorpus\Ucms\Notification\EventDispatcher;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\APubSub\CursorInterface;
+use MakinaCorpus\APubSub\Field;
+use MakinaCorpus\APubSub\Notification\NotificationService;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
 
@@ -23,15 +26,22 @@ class ContextPaneEventListener
     private $currentUser;
 
     /**
+     * @var NotificationService
+     */
+    private $notificationService;
+
+    /**
      * Default constructor
      *
      * @param LayoutContextManager $layoutContextManager
      * @param AccountInterface $currentUser
+     * @param NotificationService $notificationService
      */
-    public function __construct(LayoutContextManager $layoutContextManager, AccountInterface $currentUser)
+    public function __construct(LayoutContextManager $layoutContextManager, AccountInterface $currentUser, NotificationService $notificationService)
     {
         $this->layoutContextManager = $layoutContextManager;
         $this->currentUser = $currentUser;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -43,10 +53,22 @@ class ContextPaneEventListener
     {
         $contextPane = $event->getContextPane();
 
+        $subscriber = $this->notificationService->getSubscriber($this->currentUser->id());
+        $limit = 16;
+
+        $cursor = $subscriber
+            ->fetch()
+            ->addSort(Field::MSG_SENT, CursorInterface::SORT_DESC)
+            ->addSort(Field::MSG_ID, CursorInterface::SORT_DESC)
+            ->setRange($limit, 0)
+        ;
+
+        $unreadCount = $subscriber->fetch([Field::MSG_UNREAD => 1])->count();
+
         $contextPane
-            ->addTab('notification', $this->t("Notifications"), 'bell')
+            ->addTab('notification', $this->t("Notifications"), 'bell', 0, $unreadCount)
             ->add(
-                notification_block_render($this->currentUser, true),
+                notification_block_render_messages($cursor, true), // @todo hardcoded funtion call, twig template would have been better
                 'notification'
             )
         ;

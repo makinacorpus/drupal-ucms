@@ -83,7 +83,7 @@ services:
   # Context pane event listener
   ucms_notification.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\ContextPaneEventListener
-    arguments: ["@ucms_layout.context_manager", "@current_user"]
+    arguments: ["@ucms_layout.context_manager", "@current_user", "@apb.notification"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
 

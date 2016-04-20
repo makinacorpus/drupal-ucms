@@ -4,10 +4,13 @@
       <a href="#tab-{{ key }}">
         <span class="glyphicon glyphicon-{{ tab.icon }}"></span>
         <span class="sr-only">{{ tab.label }}</span>
+        {% if tab.count %}
+          <span class="label label-danger">{{ tab.count }}</span>
+        {% endif %}
       </a>
     {% endfor %}
   </div>
-  <div class="inner">
+  <div class="inner inverse">
     <div class="actions">
       <a href="#" id="contextual-pane-switch-position" class="btn btn-default btn-sm">
         <span class="glyphicon glyphicon-collapse-down"></span>
