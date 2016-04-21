@@ -69,8 +69,8 @@ class NodeActionProvider implements ActionProviderInterface
             $inCart = $this->cart->has($this->account->id(), $item->id());
             $ret[] = Action::create([
                 'title'     => $inCart ? $this->t("Remove from cart") : $this->t("Add to cart"),
-                'uri'       => 'node/' . $item->id() . ($inCart ? '/cart-remove' : '/cart-add'),
-                'options'   => 'dialog',
+                'uri'       => 'admin/cart/' . $item->id() . ($inCart ? '/remove' : '/add') . '/nojs',
+                // 'options'   => 'ajax',
                 'icon'      => 'shopping-cart',
                 'primary'   => false,
                 'priority'  => -25,

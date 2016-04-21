@@ -4,6 +4,31 @@
   Drupal.ucmsTempReceivedPos = 0;
   Drupal.ucmsIsSameContainer = false;
 
+  var UcmsCart;
+
+  $.fn.extend({
+    /**
+     * Used through a Drupal ajax command
+     */
+    UcmsCartAdd: function (data) {
+      if (data.node) {
+        // Add item to list
+        var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + data.nid + '">' + data.node + '</div>';
+        $(elem).appendTo('#ucms-cart-list');
+        $(UcmsCart).sortable("refresh");
+      }
+    },
+    UcmsCartRefresh: function (data) {
+      if (data) {
+        $('#ucms-contrib-cart').replaceWith(data);
+        Drupal.attachBehaviors($('#ucms-contrib-cart'));
+      }
+    },
+    UcmsCartRemove: function (data) {
+      console.log("do me like one of your french girls!");
+    }
+  });
+
   /**
    * Default settings for droppables and sortables
    */
@@ -50,6 +75,7 @@
        * Cart: accepting admin items, can be removed.
        */
       $('#ucms-cart-list', context).sortable($.extend({}, Drupal.ucmsSortableDefaults, {
+
         // Connect with others lists and trash
         connectWith: '[data-can-receive], #ucms-cart-trash',
 
@@ -63,7 +89,7 @@
           var nid = ui.item.data('nid');
           var sortable = this;
 
-          $.get(settings.basePath + 'admin/cart/' + nid + '/add/nojs')
+          $.get(settings.basePath + 'admin/cart/' + nid + '/add')
             .done(function (data) {
               // Add to cart list
               var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + nid + '">' + data.node + '</div>';
@@ -172,7 +198,7 @@
           var nid = ui.item.data('nid');
           if (ui.item.hasClass('ucms-cart-item')) {
             // Remove form cart
-            $.get(settings.basePath + 'admin/cart/' + nid + '/remove/nojs')
+            $.get(settings.basePath + 'admin/cart/' + nid + '/remove')
               .done(function () {
                 ui.item.remove();
               });

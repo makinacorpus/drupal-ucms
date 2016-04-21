@@ -62,6 +62,19 @@ class ContentActionProvider implements ActionProviderInterface
         $siteAccess = $this->siteManager->getAccess();
         $names = node_type_get_names();
 
+        if ('cart' === $item) {
+            return [
+                Action::create([
+                    'title'     => $this->t("Refresh"),
+                    'uri'       => 'admin/cart/refresh/nojs',
+                    'options'   => 'ajax',
+                    'icon'      => 'refresh',
+                    'primary'   => true,
+                    'priority'  => -100,
+                ])
+            ];
+        }
+
         $types = [
             'editorial' => $this->typeHandler->getEditorialContentTypes(),
             'component' => $this->typeHandler->getComponentTypes(),

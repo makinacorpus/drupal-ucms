@@ -13,9 +13,9 @@
  *   - Add UI sorting
  */
 
-use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Site\Access;
 
 /**
@@ -241,19 +241,22 @@ function ucms_contrib_menu() {
   ];
 
   // Cart operations.
-  $items['admin/cart/%node/add/nojs'] = [
-    'title'             => "Content",
-    'page callback'     => 'ucms_contrib_ajax_favorite_add',
-    'page arguments'    => [2],
+  $items['admin/cart/refresh'] = [
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::refresh'],
     'access arguments'  => ['use favorites'],
-    'file'              => 'ucms_contrib.ajax.inc',
   ];
-  $items['admin/cart/%node/remove/nojs'] = [
+  $items['admin/cart/%node/add'] = [
     'title'             => "Content",
-    'page callback'     => 'ucms_contrib_ajax_favorite_remove',
-    'page arguments'    => [2],
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::add', 2],
     'access arguments'  => ['use favorites'],
-    'file'              => 'ucms_contrib.ajax.inc',
+  ];
+  $items['admin/cart/%node/remove'] = [
+    'title'             => "Content",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::remove', 2],
+    'access arguments'  => ['use favorites'],
   ];
 
   return $items;
@@ -508,44 +511,20 @@ function ucms_contrib_node_submit($node, $form, &$form_state) {
 /**
  * Render one's favorite cart.
  *
- * @param int|AccountInterface $account
- *
  * @return []
  *   drupal_render() friendly structure.
  */
-function ucms_contrib_favorite_render($account = null) {
+function ucms_contrib_favorite_render() {
 
-  if (!$account) {
-    $uid = $GLOBALS['user']->uid;
-  } else if (is_object($account)) {
-    $uid = $account->uid;
-  } else {
-    $uid = (int)$account;
-  }
+  $controller = new CartController();
+  $controller->setContainer(\Drupal::getContainer());
 
-  /* @var $cart \MakinaCorpus\Ucms\Contrib\CartStorage */
-  $cart     = \Drupal::service('ucms_contrib.cart');
-  $nidList  = $cart->listFor($uid);
-  $nodes    = $nidList ? node_load_multiple($nidList) : [];
-
-  $display = (new \MakinaCorpus\Ucms\Contrib\NodeCartDisplay())
-    ->setParameterName('cd')
-    ->prepareFromQuery($_GET)
+  return $controller
+      ->renderAction(
+          \Drupal::requestStack()->getCurrentRequest(),
+          \Drupal::currentUser()->id()
+      )
   ;
-
-  $ret = [
-    '#theme'    => 'ucms_contrib_cart',
-    '#account'  => $uid,
-    '#display'  => $display->renderLinks(current_path()),
-    '#items'    => $display->render($nodes),
-  ];
-
-  $ret['#attached']['library'][] = ['system', 'ui.droppable'];
-  $ret['#attached']['library'][] = ['system', 'ui.draggable'];
-  $ret['#attached']['library'][] = ['system', 'ui.sortable'];
-  $ret['#attached']['library'][] = ['ucms_contrib', 'ucms_contrib'];
-
-  return $ret;
 }
 
 /**

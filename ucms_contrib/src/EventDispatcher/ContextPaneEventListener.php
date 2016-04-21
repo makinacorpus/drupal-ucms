@@ -124,6 +124,9 @@ class ContextPaneEventListener
             }
         }
 
+        $actions = $this->contentActionProvider->getActions('cart');
+        $contextPane->addActions($actions, $this->t("Refresh"), 'refresh');
+
         // Add node creation link on site
         // FIXME kill it with acid!
         if ($this->siteManager->hasContext()) {

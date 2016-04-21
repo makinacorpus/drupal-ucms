@@ -93,6 +93,13 @@ class Action
         } else {
             switch ($options) {
 
+              case 'ajax':
+                  $this->linkOptions = [
+                      'attributes' => ['class' => ['use-ajax']],
+                      'query' => drupal_get_destination(),
+                  ];
+                  break;
+
               case 'dialog':
                   $this->linkOptions = [
                     'attributes' => ['class' => ['use-ajax', 'minidialog']],
