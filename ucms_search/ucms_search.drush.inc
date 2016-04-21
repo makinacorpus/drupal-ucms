@@ -99,6 +99,11 @@ function drush_ucms_search_index_run() {
       ->fetchField()
     ;
 
+    if ((int)$total <= 0) {
+      drush_log(dt("Nothing to reindex."), 'warning');
+      return;
+    }
+
     $progress = drush_create_progress();
     $progress->setProgress($total, 0);
     do {
