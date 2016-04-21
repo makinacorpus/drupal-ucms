@@ -107,4 +107,19 @@ class Response
             $agg->parseResponse($this->search, $this, $this->rawResponse);
         }
     }
+
+  /**
+   * Return aggregation counts
+   *
+   * @return array
+   */
+    public function getAggregationCounts() {
+        $counts = [];
+        foreach($this->rawResponse['aggregations'] as $name => $aggregation) {
+            foreach($aggregation['buckets'] as $bucket) {
+                $counts[$name][$bucket['key']] = $bucket['doc_count'];
+            }
+        }
+        return $counts;
+    }
 }

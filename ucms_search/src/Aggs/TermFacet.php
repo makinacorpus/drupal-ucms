@@ -82,6 +82,15 @@ class TermFacet extends AbstractFacet
     }
 
     /**
+     * Get choices map.
+     *
+     * @return string
+     */
+    public function getChoicesMap() {
+        return $this->choicesMap;
+    }
+
+    /**
      * Set choices map
      *
      * Choice map is a key-value array in which keys are indexed values and
