@@ -273,6 +273,8 @@ function ucms_site_admin_path_is_allowed($path) {
         switch ($action) {
           case 'edit':
           case 'clone':
+          case 'seo-edit':
+          case 'seo-aliases':
             return true;
         }
       }

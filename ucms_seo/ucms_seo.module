@@ -69,6 +69,16 @@ function ucms_seo_menu() {
 }
 
 /**
+ * Implements hook_admin_paths().
+ */
+function ucms_seo_admin_paths() {
+  return [
+    'node/*/seo-edit' => true,
+    'node/*/seo-aliases' => true,
+  ];
+}
+
+/**
  * Menu access helper.
  */
 function ucms_seo_menu_access_site_edit(Site $site) {
