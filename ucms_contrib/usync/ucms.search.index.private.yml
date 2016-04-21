@@ -73,5 +73,3 @@ mappings:
         index_analyzer : simple
         search_analyzer : simple
 
-      attachment:
-        type: attachment
