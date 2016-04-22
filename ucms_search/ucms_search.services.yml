@@ -33,6 +33,16 @@ services:
     class: MakinaCorpus\Ucms\Search\NodeIndexer
     factory: ucms_search.index_storage:indexer
 
+  # TODO - FIXME - review me
+  ucms_search.attachment_indexer:
+      class: MakinaCorpus\Hsm\Content\HsmNodeAttachmentIndexer
+      arguments:
+        - "private"
+        - "@ucms_search.elastic.client"
+        - "@database"
+        - "@entity.manager"
+        - "private"
+
   ucms_search.elastic.client:
     class: Elasticsearch\Client
     factory: [Elasticsearch\ClientBuilder, fromConfig]

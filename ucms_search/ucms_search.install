@@ -53,6 +53,13 @@ function ucms_search_schema() {
         'not null'    => true,
         'default'     => 0,
       ],
+      'needs_attachments_reindex' => [
+        'description' => "Does the content needs to have attachments indexed, 0 for false, 1 for true",
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+        'default'     => 0,
+      ],
     ],
     'indexes' => [
       'ucms_search_status_reindex' => ['index_key', 'needs_reindex'],
@@ -103,4 +110,19 @@ function ucms_search_update_7001() {
   if (!db_table_exists('ucms_search_index')) {
     db_create_table('ucms_search_index', drupal_get_schema_unprocessed('ucms_search', 'ucms_search_index'));
   }
+}
+
+/**
+ * Adds the column {needs_attachments_reindex} in {ucms_search_status} table.
+ */
+function ucms_search_update_7002() {
+    if (!db_field_exists('ucms_search_status', 'needs_attachments_reindex')) {
+        db_add_field('ucms_search_status', 'needs_attachments_reindex', [
+          'description' => "Does the content needs to have attachments indexed, 0 for false, 1 for true",
+          'type'        => 'int',
+          'unsigned'    => TRUE,
+          'not null'    => TRUE,
+          'default'     => 0,
+        ]);
+    }
 }

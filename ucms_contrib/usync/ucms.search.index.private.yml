@@ -70,6 +70,9 @@ mappings:
 
       autocomplete:
         type : completion
-        index_analyzer : simple
+        analyzer : simple
         search_analyzer : simple
+
+      attachment:
+        type: attachment
 

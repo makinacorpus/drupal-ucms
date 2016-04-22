@@ -19,6 +19,10 @@ function ucms_search_drush_command() {
       ],
       'aliases'     => ['us-index'],
     ],
+    'ucms-search-index-attachment' => [
+      'description' => "Index awaiting attachments",
+      'aliases'     => ['us-attach'],
+    ],
     'ucms-search-index-list' => [
       'description' => "Reindex everything",
       'aliases'     => ['us-list'],
@@ -115,5 +119,36 @@ function drush_ucms_search_index_run() {
       '@index' => $index,
       '@interval' => format_interval(time() - $start),
     ]), 'status');
+  }
+}
+
+function drush_ucms_search_index_attachment() {
+  $indices = array_keys(ucms_search_index()->names());
+  foreach ($indices as $index) {
+
+    $total = db_select('ucms_search_status', 's')
+      ->fields('s', ['nid'])
+      ->condition('s.index_key', $index)
+      ->condition('s.needs_attachments_reindex', 1)
+      ->countQuery()
+      ->execute()
+      ->fetchField()
+    ;
+    if ((int)$total <= 0) {
+      continue;
+    }
+
+    $progress = drush_create_progress();
+    $progress->setProgress($total, 0);
+
+    $count = 0;
+    do {
+      $done = \Drupal::service('ucms_search.attachment_indexer')->bulkAttachmentDequeue();
+      $count += $done;
+      $progress->setProgress($total, $count);
+    } while ($done);
+
+    $progress->end();
+    drush_log(dt("@index index attachments proceed.", ['@index' => $index]), 'status');
   }
 }

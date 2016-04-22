@@ -8,6 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\node\NodeInterface;
 
 use Elasticsearch\Client;
+use MakinaCorpus\Ucms\Search\Attachment\NodeAttachmentIndexerInterface;
 
 /**
  * @todo unit test me
@@ -67,6 +68,11 @@ class NodeIndexer implements NodeIndexerInterface
     private $indexRealname;
 
     /**
+     * @var NodeAttachmentIndexerInterface
+     */
+    private $attachmentIndexer = null;
+
+    /**
      * Default constructor
      *
      * @param string $index
@@ -92,6 +98,8 @@ class NodeIndexer implements NodeIndexerInterface
         $this->moduleHandler = $moduleHandler;
         $this->indexRealname = ($indexRealname ? $indexRealname : $index);
         $this->preventBulkUsage = $preventBulkUsage;
+        // TODO - FIXME inject me or rewrite me completly
+        $this->attachmentIndexer = \Drupal::service('ucms_search.attachment_indexer');
     }
 
     /**
@@ -192,6 +200,11 @@ class NodeIndexer implements NodeIndexerInterface
             ->from($query)
             ->execute()
         ;
+
+        // FIXME - fix spaghetti to do it in proper place.
+        if ($this->attachmentIndexer) {
+            $this->attachmentIndexer->bulkMarkAttachmentForReindex($nidList);
+        }
     }
 
     /**
@@ -403,6 +416,11 @@ class NodeIndexer implements NodeIndexerInterface
             ->condition('index_key', $this->index)
             ->execute()
         ;
+
+        // FIXME - fix spaghetti to do it in proper place.
+        if ($this->attachmentIndexer) {
+            $this->attachmentIndexer->bulkMarkAttachmentForReindex([$node->nid]);
+        }
 
         return true;
     }
