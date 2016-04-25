@@ -288,7 +288,9 @@ class NodeDispatcher
             $custom_fields = array_diff_key($current_schema['fields'], $initial_schema['fields']);
 
             foreach ($custom_fields as $name => $info) {
-                $node->$name = isset($info['default']) ? $info['default'] : null;
+                if (!isset($node->$name)) {
+                    $node->$name = isset($info['default']) ? $info['default'] : null;
+                }
             }
 
             // Initializes the ucms_sites property
