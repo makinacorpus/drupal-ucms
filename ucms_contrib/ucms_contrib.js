@@ -92,7 +92,7 @@
           $.get(settings.basePath + 'admin/cart/' + nid + '/add')
             .done(function (data) {
               // Add to cart list
-              var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + nid + '">' + data.node + '</div>';
+              var elem = '<div class="ucms-cart-item col-md-6" draggable="true" data-nid="' + nid + '">' + data.node + '</div>';
               $(elem).appendTo('#ucms-cart-list');
               $(sortable).sortable("refresh");
             })

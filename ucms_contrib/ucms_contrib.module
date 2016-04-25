@@ -769,3 +769,59 @@ function ucms_contrib_node_clone($originalNode) {
 
   return drupal_build_form($node->type . '_node_form', $form_state);
 }
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function ucms_contrib_element_info_alter(&$types) {
+  $types['text_format']['#process'][] = 'ucms_contrib_process_text_format';
+}
+
+/**
+ * Process callback for text_format form elements.
+ * @staticvar boolean $done
+ * @param [] $element
+ * @param [] $form_state
+ */
+function ucms_contrib_process_text_format($element, &$form_state) {
+  static $done = false;
+
+  if (module_exists('ckeditor') && !$done) {
+    module_load_include('inc', 'ckeditor', 'includes/ckeditor.lib');
+    $profiles = ckeditor_profile_input_formats();
+
+    foreach ($profiles as $profile_name => $inputs) {
+      $profile = ckeditor_profile_load($profile_name);
+
+      if (!isset($profile->settings['loadPlugins'])) {
+        continue;
+      }
+
+      $profile_plugins = array_keys((array) $profile->settings['loadPlugins']);
+
+      if (in_array('ucmsmediadnd', $profile_plugins)) {
+        $typeHandler = ucms_contrib_type_handler_get();
+        $settings = ['mediaBundles' => $typeHandler->getMediaTypes()];
+        drupal_add_js(['ucms_contrib' => $settings], 'setting');
+        break;
+      }
+    }
+
+    $done = true;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_ckeditor_plugin().
+ */
+function ucms_contrib_ckeditor_plugin() {
+  return [
+    'ucmsmediadnd' => [
+      'name' => 'ucmsmediadnd',
+      'desc' => t("UCMS medias drop & paste management"),
+      'path' => drupal_get_path('module', 'ucms_contrib') . '/js/ckeditor/',
+    ],
+  ];
+}
