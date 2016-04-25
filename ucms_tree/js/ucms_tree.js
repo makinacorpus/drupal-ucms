@@ -7,18 +7,20 @@
       $('ol[data-menu] li:empty', context).remove();
 
       function updateHiddenField() {
-        var toArray = $(this).nestedSortable('toArray', {startDepthCount: 0});
+        var toArray = $(this).nestedSortable('toArray', { startDepthCount: 0 });
         // Add menu labels
         for (var i in toArray) {
-          toArray[i].title = $('[data-mlid=' + toArray[i].id + '] input').val();
+          toArray[i].title = $('[data-mlid="' + toArray[i].id + '"] input').val();
         }
-        $('[name*=' + $(this).data('menu') + ']').val(JSON.stringify(toArray));
+        $('[name*="' + $(this).data('menu') + '"]').val(JSON.stringify(toArray));
       }
 
       /**
        * Inputs
        */
-      $('[data-menu] input', context).on('blur', updateHiddenField);
+      $('[data-menu] input', context).on('blur', function() {
+        updateHiddenField.call($(this).parents('[data-menu]'));
+      });
 
       /**
        * Tree sortable
@@ -139,9 +141,9 @@
     var h2 = $(elem).find('h2 a').first().html();
 
     return '<li data-name="' + nid + '" data-mlid="new_' + (Drupal.ucmsNewMenuItemCount++) + '">' +
-        '<div class="tree-item">' +
-          h2 + '<span class="glyphicon glyphicon-remove"></span>' +
-          '<input type="hidden" value="' + h2 + '"/>' +
+        '<div class="tree-item clearfix">' +
+          '<input type="text" class="form-control form-text" value="' + h2 + '"/>' +
+          '<span class="glyphicon glyphicon-remove"></span>' +
         '</div>' +
       '</li>';
   };
