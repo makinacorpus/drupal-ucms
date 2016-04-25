@@ -159,7 +159,7 @@ class TreeForm extends FormBase
 
                 $id = menu_link_save($link);
                 if ($isNew) {
-                    $processed[$item['id']]['mlid'] = $id;
+                    $processed[$item['id']] = $link + ['mlid' => $id];
                 }
                 else {
                     $processed[$id] = $link;

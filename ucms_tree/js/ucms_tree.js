@@ -12,7 +12,6 @@
         for (var i in toArray) {
           toArray[i].title = $('[data-mlid=' + toArray[i].id + '] input').val();
         }
-        console.log(toArray);
         $('[name*=' + $(this).data('menu') + ']').val(JSON.stringify(toArray));
       }
 
@@ -136,9 +135,15 @@
 
   Drupal.theme.prototype.menuItem = function (elem) {
     // First find the nid of the element.
-    var nid = $(elem).data('nid'),
-      h2 = $(elem).find('h2 a').first().html();
+    var nid = $(elem).data('nid');
+    var h2 = $(elem).find('h2 a').first().html();
+
     return '<li data-name="' + nid + '" data-mlid="new_' + (Drupal.ucmsNewMenuItemCount++) + '">' +
-      '<div class="tree-item">' + h2 + '<span class="glyphicon glyphicon-remove"></span></div></li>';
+        '<div class="tree-item">' +
+          h2 + '<span class="glyphicon glyphicon-remove"></span>' +
+          '<input type="hidden" value="' + h2 + '"/>' +
+        '</div>' +
+      '</li>';
   };
+
 }(jQuery));
