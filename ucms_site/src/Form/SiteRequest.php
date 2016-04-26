@@ -69,6 +69,7 @@ class SiteRequest extends FormBase
         } else {
             $site = $formData['site'];
         }
+        $form['#site'] = $site; // This is used in *_form_alter()
 
         if (empty($formData['step'])) {
             $step = 'a';
@@ -257,16 +258,6 @@ class SiteRequest extends FormBase
             '#type'          => 'radios',
             '#options'       => $options,
             '#default_value' => $site->theme,
-            '#required'      => true,
-        ];
-
-        // FIXME, should be in one of our custom module
-        $field = field_info_field('thematic');
-        $form['thematic'] = [
-            '#title'         => $this->t("Thematic"),
-            '#type'          => 'select',
-            '#options'       => ['' => $this->t("None")] + list_allowed_values($field),
-            '#default_value' => $site->getAttribute('thematic'),
             '#required'      => true,
         ];
 

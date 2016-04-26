@@ -66,6 +66,7 @@ class SiteEdit extends FormBase
         }
 
         $form_state->setTemporaryValue('site', $site);
+        $form['#site'] = $site; // This is used in *_form_alter()
 
         $form['title'] = [
             '#title'          => $this->t("Name"),
@@ -141,16 +142,6 @@ class SiteEdit extends FormBase
             '#options'        => $options,
             '#default_value'  => $site->theme,
             '#description'    => $this->t("This will be used for the whole site and cannot be changed once set")
-        ];
-
-        // FIXME, should be in one of our custom module
-        $field = field_info_field('thematic');
-        $form['thematic'] = [
-            '#title'         => $this->t("Thematic"),
-            '#type'          => 'select',
-            '#options'       => ['' => $this->t("None")] + list_allowed_values($field),
-            '#default_value' => $site->getAttribute('thematic'),
-            '#required'      => true,
         ];
 
         $form['actions']['#type'] = 'actions';
