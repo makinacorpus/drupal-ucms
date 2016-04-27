@@ -84,7 +84,7 @@ class MediaPortlet extends AbstractAdminPortlet
     protected function getDisplay(&$query, PageState $pageState)
     {
         $query['type'] = $this->typeHandler->getMediaTypes();
-        $query['owner'] = $this->getAccount()->id();
+        $query['is_global'] = 0;
 
         return new NodePortletDisplay($this->t("You have no media yet."));
     }

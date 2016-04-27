@@ -8,7 +8,7 @@
       $('#ucms-contrib-facets', context).find('a input').click(function () {
         location.href = $(this).parents('a').attr('href');
       });
-
+      $('[data-toggle="tooltip"]').tooltip();
     }
   };
 

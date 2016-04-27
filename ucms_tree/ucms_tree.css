@@ -55,7 +55,7 @@ ol.sortable li {
 #tab-tree ul {
   list-style: none;
 }
-#tab-tree > ul {
+#tab-tree > div > ul {
   padding-left: 0;
 }
 #tab-tree .tree-item {

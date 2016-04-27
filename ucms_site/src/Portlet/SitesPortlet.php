@@ -19,7 +19,7 @@ class SitesPortlet extends AbstractAdminPortlet
      */
     public function getTitle()
     {
-        return $this->t("Sites");
+        return $this->t("All sites");
     }
 
     /**

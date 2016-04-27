@@ -78,13 +78,28 @@
 }
 #contextual-pane.pane-right #contextual-pane-toggle a:first-child {
   border-top: none;
+  border-radius: 10px 0 0 0;
+}
+#contextual-pane.pane-right #contextual-pane-toggle a:last-child {
+  border-radius: 0 0 0 10px;
+}
+#contextual-pane.pane-right #contextual-pane-toggle a:only-child {
+  border-radius: 10px 0 0 10px;
 }
 #contextual-pane.pane-down #contextual-pane-toggle a {
   border-left: solid 1px #999;
-  padding: 5px 8px 0;
+  padding: 5px 10px 0;
+  margin-left: -.25em;
 }
 #contextual-pane.pane-down #contextual-pane-toggle a:first-child {
   border-left: none;
+  border-radius: 10px 0 0 0;
+}
+#contextual-pane.pane-down #contextual-pane-toggle a:last-child {
+  border-radius: 0 10px 0 0;
+}
+#contextual-pane.pane-down #contextual-pane-toggle a:only-child {
+  border-radius: 10px 10px 0 0;
 }
 
 #contextual-pane #contextual-pane-toggle a.active {

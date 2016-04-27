@@ -66,6 +66,8 @@ class ContextPaneEventListener
         rsort($menus);
 
         $build = [
+            '#prefix' => '<div class="col-xs-12">',
+            '#suffix' => '</div>',
             '#attached' => [
                 'css' => [
                     drupal_get_path('module', 'ucms_tree').'/ucms_tree.css',

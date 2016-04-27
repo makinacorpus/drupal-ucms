@@ -1,11 +1,10 @@
 <div id="contextual-pane" class="pane-right">
   <div id="contextual-pane-toggle">
     {% for key, tab in tabs %}
-      <a href="#tab-{{ key }}">
+      <a href="#tab-{{ key }}" data-toggle="tooltip" data-placement="left" title="{{ tab.label }}">
         <span class="glyphicon glyphicon-{{ tab.icon }}"></span>
-        <span class="sr-only">{{ tab.label }}</span>
         {% if tab.count %}
-          <span class="label label-danger">{{ tab.count }}</span>
+          <span class="badge{% if tab.count > 0 %} badge-unread{% endif %}">{{ tab.count }}</span>
         {% endif %}
       </a>
     {% endfor %}

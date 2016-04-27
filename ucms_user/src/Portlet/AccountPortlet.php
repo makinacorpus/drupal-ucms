@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\User\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractPortlet;
 
@@ -74,6 +73,7 @@ class AccountPortlet extends AbstractPortlet
 
         return [
             '#theme' => 'description_list',
+            '#theme_wrappers' => ['ucms_user_account_portlet'],
             '#items' => $items,
         ];
     }

@@ -169,6 +169,9 @@ function ucms_user_theme($existing, $type, $theme, $path) {
       'variables' => ['account' => null],
       'template' => 'ucms-user-profile',
     ),
+    'ucms_user_account_portlet' => array(
+      'render element' => 'element',
+    ),
   ];
 }
 
@@ -239,6 +242,13 @@ function template_preprocess_ucms_user_profile(&$variables) {
   }
 
   $variables['details_table']['#rows'][] = [['data' => t("Sites"), 'header' => true], $sites];
+}
+
+/**
+ * Allows to override account portlet from theme.
+ */
+function theme_ucms_user_account_portlet($variables) {
+  return $variables['element']['#children'];
 }
 
 
