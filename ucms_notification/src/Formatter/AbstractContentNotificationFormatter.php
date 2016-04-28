@@ -65,4 +65,15 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getVariations(NotificationInterface $notification,array &$args = []) {
+        $idList = $notification->getResourceIdList();
+        // This is already cached by $this->getTitles()
+        foreach (node_load_multiple($idList) as $node) {
+            $args['@type'] = t(node_type_get_name($node));
+        }
+    }
 }

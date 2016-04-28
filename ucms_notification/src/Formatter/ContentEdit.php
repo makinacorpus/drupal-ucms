@@ -14,25 +14,26 @@ class ContentEdit extends AbstractContentNotificationFormatter
      */
     protected function getVariations(NotificationInterface $notification, array &$args = [])
     {
+        parent::getVariations($notification, $args);
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
             return [
-                "@title has been updated by @name",
-                "@title have been updated by @name",
+                "@title of type @type has been updated by @name",
+                "@title of type @type have been updated by @name",
             ];
         } else {
             return [
-                "@title has been updated",
-                "@title have been updated",
+                "@title of type @type has been updated",
+                "@title of type @type have been updated",
             ];
         }
     }
 
     public function getTranslations()
     {
-        $this->t("@title has been updated by @name");
-        $this->t("@title have been updated by @name");
-        $this->t("@title has been updated");
-        $this->t("@title have been updated");
+        $this->t("@title of type @type has been updated by @name");
+        $this->t("@title of type @type have been updated by @name");
+        $this->t("@title of type @type has been updated");
+        $this->t("@title of type @type have been updated");
     }
 }

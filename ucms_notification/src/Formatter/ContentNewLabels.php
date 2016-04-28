@@ -15,25 +15,26 @@ class ContentNewLabels extends AbstractContentNotificationFormatter
      */
     protected function getVariations(NotificationInterface $notification, array &$args = [])
     {
+        parent::getVariations($notification, $args);
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
             return [
-                "@title has been associated with some of the labels you subscribed to by @name",
-                "@title have been associated with some of the labels you subscribed to by @name",
+                "@title of type @type has been associated with some of the labels you subscribed to by @name",
+                "@title of type @type have been associated with some of the labels you subscribed to by @name",
             ];
         } else {
             return [
-                "@title has been associated with some of the labels you subscribed to",
-                "@title have been associated with some of the labels you subscribed to",
+                "@title of type @type has been associated with some of the labels you subscribed to",
+                "@title of type @type have been associated with some of the labels you subscribed to",
             ];
         }
     }
 
     public function getTranslations()
     {
-        $this->t("@title has been associated with some of the labels you subscribed to by @name");
-        $this->t("@title have been associated with some of the labels you subscribed to by @name");
-        $this->t("@title has been associated with some of the labels you subscribed to");
-        $this->t("@title have been associated with some of the labels you subscribed to");
+        $this->t("@title of type @type has been associated with some of the labels you subscribed to by @name");
+        $this->t("@title of type @type have been associated with some of the labels you subscribed to by @name");
+        $this->t("@title of type @type has been associated with some of the labels you subscribed to");
+        $this->t("@title of type @type have been associated with some of the labels you subscribed to");
     }
 }
