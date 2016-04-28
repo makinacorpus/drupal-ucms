@@ -520,10 +520,10 @@ function ucms_contrib_favorite_render() {
   $controller->setContainer(\Drupal::getContainer());
 
   return $controller
-      ->renderAction(
-          \Drupal::requestStack()->getCurrentRequest(),
-          \Drupal::currentUser()->id()
-      )
+    ->renderAction(
+      \Drupal::requestStack()->getCurrentRequest(),
+      \Drupal::currentUser()->id()
+    )
   ;
 }
 
