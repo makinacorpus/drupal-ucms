@@ -1,7 +1,7 @@
 <div id="contextual-pane" class="pane-right">
   <div id="contextual-pane-toggle">
     {% for key, tab in tabs %}
-      <a href="#tab-{{ key }}" data-toggle="tooltip" data-placement="left" title="{{ tab.label }}">
+      <a href="#tab-{{ key }}" data-toggle="tooltip" data-placement="left" title="{{ tab.label }}" data-container="body">
         <span class="glyphicon glyphicon-{{ tab.icon }}"></span>
         {% if tab.count %}
           <span class="badge{% if tab.count > 0 %} badge-unread{% endif %}">{{ tab.count }}</span>
