@@ -192,7 +192,7 @@ function ucms_contrib_menu() {
   $items['node/%node/copy-on-edit'] = [
     'title'             => "Edit for my site",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeCopyOnEdit', 1],
+    'page arguments'    => [1],
     'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
@@ -227,6 +227,15 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeGroup', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_group',
     'access arguments'  => [1],
+    'type'              => MENU_CALLBACK,
+  ];
+  // Used only for medias in cKEditor.
+  $items['node/%node/ajax'] = [
+    'title'             => 'Unused',
+    'page callback'     => 'ucms_contrib_ajax_node_view',
+    'page arguments'    => [1],
+    'access callback'   => TRUE,
+    'file'              => 'ucms_contrib.ajax.inc',
     'type'              => MENU_CALLBACK,
   ];
 

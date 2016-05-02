@@ -8,19 +8,15 @@
 
     init: function(editor) {
       console.log('Init!');
-      var settings = Drupal.settings.ucms_contrib;
 
       editor.widgets.add('ucmsmedia', {
         allowedContent: true,
-        //allowedContent: 'div(!node)[*]',
-        //requiredContent: '',
         pathName: 'media',
 
         upcast: function(element) {
           return (
-            element.name == 'span' &&
-            element.hasClass('ucmsdnd')
-            //&& settings.mediaBundles.indexOf(element.data('bundle')) > -1
+            element.name == 'div' &&
+            element.hasClass('media')
           );
         }
       });
@@ -29,23 +25,17 @@
       editor.addFeature(editor.widgets.registered.ucmsmedia);
 
       editor.on('drop', function(event) {
-        console.log('Drop!');
         CKEDITOR.plugins.clipboard.initDragDataTransfer(event);
         var nid = event.data.dataTransfer.getData('nid');
+        console.log('Drop ' + nid);
         // Set the drop value what we want it to be
-        event.data.dataTransfer.setData('text/html', '<span class="ucmsdnd">' + nid + '</span>');
-        /*
-        CKEDITOR.ajax.load('/node/' + nid + '/ajax', function(data) {
-          event.data.dataValue = data;
-        });
-        */
+        var data = CKEDITOR.ajax.load('/node/' + nid + '/ajax');
+        event.data.dataTransfer.setData('text/html', data);
       });
     }
   });
 
   var dragHandler = function(event) {
-    console.log('Drag!');
-
     // Initialization of CKEditor data transfer facade is a necessary step to extend and unify native
     // browser capabilities. For instance, Internet Explorer does not support any other data type than 'text' and 'URL'.
     // Note: event is an instance of CKEDITOR.dom.event, not a native event.
@@ -55,6 +45,7 @@
 
     // Some text need to be set, otherwise drop event will not be fired.
     event.data.dataTransfer.setData('text', 'x');
+    console.log('Drag ' + event.listenerData);
   };
 
   var medias = CKEDITOR.document.getById('ucms-cart-list').find('.ucms-cart-item');
