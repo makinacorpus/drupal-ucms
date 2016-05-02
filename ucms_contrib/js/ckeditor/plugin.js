@@ -28,42 +28,40 @@
       // This feature does not have a button, so it needs to be registered manually.
       editor.addFeature(editor.widgets.registered.ucmsmedia);
 
-      editor.on('paste', function(event) {
-        console.log('Paste!');
+      editor.on('drop', function(event) {
+        console.log('Drop!');
+        CKEDITOR.plugins.clipboard.initDragDataTransfer(event);
         var nid = event.data.dataTransfer.getData('nid');
-
+        // Set the drop value what we want it to be
+        event.data.dataTransfer.setData('text/html', '<div>' + nid + '</div>');
+        /*
         CKEDITOR.ajax.load('/node/' + nid + '/ajax', function(data) {
           event.data.dataValue = data;
         });
+        */
       });
     }
   });
 
   var dragHandler = function(event) {
     console.log('Drag!');
-    var target = event.data.getTarget();
 
     // Initialization of CKEditor data transfer facade is a necessary step to extend and unify native
     // browser capabilities. For instance, Internet Explorer does not support any other data type than 'text' and 'URL'.
-    // Note: evt is an instance of CKEDITOR.dom.event, not a native event.
+    // Note: event is an instance of CKEDITOR.dom.event, not a native event.
     CKEDITOR.plugins.clipboard.initDragDataTransfer(event);
 
-    event.data.dataTransfer.setData('nid', target.data('nid'));
-    event.data.dataTransfer.setData('bundle', target.data('bundle'));
+    event.data.dataTransfer.setData('nid', event.listenerData);
 
-    // We need to set some normal data types to backup values for two reasons:
-    // * In some browsers this is necessary to enable drag and drop into text in editor.
-    // * The content may be dropped in another place than the editor.
-    event.data.dataTransfer.setData('text/html', target.getText());
+    // Some text need to be set, otherwise drop event will not be fired.
+    event.data.dataTransfer.setData('text', 'x');
   };
 
   var medias = CKEDITOR.document.getById('ucms-cart-list').find('.ucms-cart-item');
   for (var i = 0; i < medias.count(); i++) {
-    //console.log(medias.getItem(i));
-    //medias.getItem(i).removeListener('dragstart', dragHandler);
-    medias.getItem(i).on('dragstart', dragHandler);
+    var element = medias.getItem(i);
+    var nid = element.$.dataset.nid;
+    element.on('dragstart', dragHandler, null, nid);
   }
-
-  //CKEDITOR.document.getById('ucms-cart-list').on('dragstart', dragHandler);
 
 }(CKEDITOR, Drupal));
