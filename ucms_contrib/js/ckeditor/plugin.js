@@ -18,9 +18,9 @@
 
         upcast: function(element) {
           return (
-            element.name == 'div' &&
-            element.hasClass('ucms-cart-item') &&
-            settings.mediaBundles.indexOf(element.data('bundle')) > -1
+            element.name == 'span' &&
+            element.hasClass('ucmsdnd')
+            //&& settings.mediaBundles.indexOf(element.data('bundle')) > -1
           );
         }
       });
@@ -33,7 +33,7 @@
         CKEDITOR.plugins.clipboard.initDragDataTransfer(event);
         var nid = event.data.dataTransfer.getData('nid');
         // Set the drop value what we want it to be
-        event.data.dataTransfer.setData('text/html', '<div>' + nid + '</div>');
+        event.data.dataTransfer.setData('text/html', '<span class="ucmsdnd">' + nid + '</span>');
         /*
         CKEDITOR.ajax.load('/node/' + nid + '/ajax', function(data) {
           event.data.dataValue = data;
