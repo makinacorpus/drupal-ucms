@@ -10,7 +10,7 @@
       console.log('Init!');
 
       editor.widgets.add('ucmsmedia', {
-        allowedContent: true,
+        allowedContent: {},
         pathName: 'media',
 
         upcast: function(element) {
@@ -18,6 +18,14 @@
             element.name == 'div' &&
             element.hasClass('media')
           );
+        },
+
+        downcast: function(element) {
+          return CKEDITOR.htmlParser.fragment.fromHtml('{{12}}');
+        },
+
+        init: function() {
+          this.element.setHtml("<div class='media'>Test</div>");
         }
       });
 
@@ -28,8 +36,9 @@
         CKEDITOR.plugins.clipboard.initDragDataTransfer(event);
         var nid = event.data.dataTransfer.getData('nid');
         console.log('Drop ' + nid);
-        // Set the drop value what we want it to be
+        // Use synchronous load, otherwise the drop event finishes before ajax loading.
         var data = CKEDITOR.ajax.load('/node/' + nid + '/ajax');
+        // Set the drop value what we want it to be.
         event.data.dataTransfer.setData('text/html', data);
       });
     }
