@@ -38,3 +38,10 @@ services:
     public: false
     class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
     tags: [{ name: ucms_dashboard.portlet }]
+
+  # Users portlet
+  ucms_user.users_portlet:
+    public: false
+    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
+    arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
+    tags: [{ name: ucms_dashboard.portlet }]

@@ -117,7 +117,7 @@ class UserAdminDatasource extends AbstractDatasource
         }
 
         if ($pageState->hasSortField()) {
-            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+            $q->orderBy($pageState->getSortField(), $pageState->getSortOrder());
         }
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
