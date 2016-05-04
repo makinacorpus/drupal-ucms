@@ -1,4 +1,7 @@
 
+# This index is an example, and will need that you have Elastic 2.x and
+# the 'atttachment' plugin enabled.
+
 name: "Back-office index"
 
 node_access: true # @todo handle that in code
@@ -15,7 +18,7 @@ mappings:
         type:         string
         analyzer:     standard
         term_vector:  yes
-        copy_to: [combined, autocomplete]
+        copy_to:      [combined, autocomplete]
         fields:
           raw:
             type:     string
@@ -69,10 +72,9 @@ mappings:
         type:         integer
 
       autocomplete:
-        type : completion
-        analyzer : simple
-        search_analyzer : simple
+        type:         completion
+        analyzer:     simple
+        search_analyzer: simple
 
       attachment:
-        type: attachment
-
+        type:         attachment
