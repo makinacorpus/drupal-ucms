@@ -4,7 +4,9 @@
  * Drush integration.
  */
 
-@include_once __DIR__ . '/progress.drush.inc';
+if (!function_exists('drush_create_progress')) {
+  require_once __DIR__ . '/progress.drush.inc';
+}
 
 /**
  * Implements hook_drush_command().
