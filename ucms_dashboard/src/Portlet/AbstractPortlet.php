@@ -49,8 +49,9 @@ abstract class AbstractPortlet implements PortletInterface
         }
 
         return [
-            '#theme'    => 'ucms_dashboard_actions',
-            '#actions'  => $actions,
+            '#theme'      => 'ucms_dashboard_actions',
+            '#show_title' => true,
+            '#actions'    => $actions,
         ];
     }
 }

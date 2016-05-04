@@ -6,7 +6,7 @@
           {% if link.icon %}
             <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
           {% endif %}
-          {% if link.icon %}
+          {% if link.icon and not show_title %}
             <span class="sr-only">{{ link.title|check_plain }}</span>
           {% else %}
             {{ link.title|check_plain }}
