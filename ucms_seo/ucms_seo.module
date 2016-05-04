@@ -161,6 +161,13 @@ function ucms_seo_page_build(&$page) {
 }
 
 /**
+ * Implements hook_html_head_alter().
+ */
+function ucms_seo_html_head_alter(&$elements) {
+  unset($elements['system_meta_generator']);
+}
+
+/**
  * @return \MakinaCorpus\Ucms\Seo\SeoService
  */
 function ucms_seo_service() {
