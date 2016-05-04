@@ -3,7 +3,7 @@ services:
   # Site storage responsible for loading and updating site data
   ucms_site.storage:
     public: false
-    class: MakinaCorpus\Ucms\Site\SiteStorage
+    class: MakinaCorpus\Ucms\Site\CachedSiteStorage
     arguments: ["@database", "@event_dispatcher"]
 
   # Site access helper

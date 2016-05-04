@@ -141,7 +141,7 @@ class SiteStorage
      * @param bool $withAccess
      * @return Site[]
      */
-    private function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100, $withAccess = TRUE)
+    protected function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100, $withAccess = TRUE)
     {
         $ret = [];
 
