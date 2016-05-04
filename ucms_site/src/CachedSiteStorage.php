@@ -80,6 +80,10 @@ class CachedSiteStorage extends SiteStorage
      */
     public function loadAll($idList = [], $withAccess = true)
     {
+        if (empty($idList)) {
+            return [];
+        }
+
         $ret      = [];
         $missing  = [];
 
