@@ -116,6 +116,8 @@ function ucms_seo_permission() {
  * Implements hook_page_build().
  */
 function ucms_seo_page_build(&$page) {
+  $site = null;
+
   // This be better to be listener onResponse but hey, what Drupal can and
   // cannot do is way beyond the human comprehension level...
   $manager = ucms_site_manager();
@@ -132,19 +134,26 @@ function ucms_seo_page_build(&$page) {
     }
   }
 
-  if (!ucms_site_is_master() && !path_is_admin(current_path())) {
+  if ($site && !ucms_site_is_master() && !path_is_admin(current_path())) {
     if ($node = menu_get_object()) {
 
       foreach (ucms_seo_service()->getNodeMeta($node) as $name => $content) {
         drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => check_plain($content)]], 'meta-' . $name);
       }
 
-      $canonical = ucms_seo_service()->getNodeCanonical($node);
-      if (!$canonical) {
-        $canonical = url('node/' . $node->nid, ['absolute' => true]);
+      if (drupal_is_front_page()) {
+        // Do not set a canonical for home pages, just the site URL.
+        $canonical = url('http://' . $site->http_host . '/');
+      } else {
+        $canonical = ucms_seo_service()->getNodeCanonical($node) . '/';
+        if (!$canonical) {
+          $canonical = url('node/' . $node->nid, ['absolute' => true]) . '/';
+        }
       }
-      drupal_add_html_head(['#tag' => 'link', '#attributes' => ['rel' => 'canonical', 'href' => $canonical]], 'canonical');
 
+      if ($canonical) {
+        drupal_add_html_head(['#tag' => 'link', '#attributes' => ['rel' => 'canonical', 'href' => $canonical]], 'canonical');
+      }
     }
     // Always add robots directives.
     drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => 'robots', 'content' => 'index,follow,all']], 'robots');
