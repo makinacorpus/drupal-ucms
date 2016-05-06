@@ -92,6 +92,8 @@ function ucms_dashboard_menu_alter(&$items) {
     'page callback'     => 'ucms_dashboard_admin_redirect',
     'access arguments'  => ['access administration pages'],
     'type'              => MENU_CALLBACK,
+    // Required to avoid file_scan_directory() calls when rebuilding menu.
+    'module'            => 'ucms_dashboard',
   ];
 }
 
