@@ -194,6 +194,14 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
+    public function hasSearchForm()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSearchFormParamName()
     {
         return $this->search->getFulltextParameterName();
