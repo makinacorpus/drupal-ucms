@@ -6,6 +6,7 @@ namespace MakinaCorpus\Ucms\User\Portlet;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
@@ -51,6 +52,17 @@ class UsersPortlet extends AbstractAdminPortlet
     public function getPath()
     {
         return 'admin/dashboard/user';
+    }
+
+
+    /**
+     * @return Action[]
+     */
+    public function getActions()
+    {
+        return [
+            new Action($this->t("Create user"), 'admin/dashboard/user/add', null, 'user', 0, true, true),
+        ];
     }
 
 
