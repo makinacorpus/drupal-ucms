@@ -73,6 +73,13 @@ class NodeTabsForm extends FormBase
             '#default_value' => $this->typeHandler->getComponentTypes(),
         ];
 
+        $form['content']['locked'] = [
+            '#title'         => $this->t("Locked components"),
+            '#type'          => 'checkboxes',
+            '#options'       => node_type_get_names(),
+            '#default_value' => $this->typeHandler->getLockedTypes(),
+        ];
+
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'  => 'submit',
@@ -111,6 +118,7 @@ class NodeTabsForm extends FormBase
         $this->typeHandler->setMediaTypes($form_state->getValue('media_types'));
         $this->typeHandler->setEditorialContentTypes($form_state->getValue('editorial'));
         $this->typeHandler->setComponentTypes($form_state->getValue('component'));
+        $this->typeHandler->setLockedTypes($form_state->getValue('locked'));
 
         drupal_set_message($this->t('The configuration options have been saved.'));
     }

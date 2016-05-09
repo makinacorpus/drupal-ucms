@@ -343,11 +343,16 @@ class NodeAccessService
      * @param AccountInterface $account
      * @param NodeInterface|string $node
      * @param string $op
+     * @param Site $site
      * @return string
      */
-    public function userCanAccess(AccountInterface $account, $node, $op)
+    public function userCanAccess(AccountInterface $account, $node, $op, Site $site = null)
     {
         $access = $this->manager->getAccess();
+
+        if (!$site && $this->manager->hasContext()) {
+            $site = $this->manager->getContext();
+        }
 
         if (Access::OP_CREATE === $op) {
             if (is_string($node) || $node instanceof NodeInterface) {
@@ -355,7 +360,11 @@ class NodeAccessService
                 $handler = $this->typeHandler;
                 $type = is_string($node) ? $node : $node->bundle();
 
-                $site = $this->manager->getContext();
+                // Locked types
+                if (in_array($type, $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_MANAGE_ALL)) {
+                    return NODE_ACCESS_DENY;
+                }
+
                 if ($site) {
 
                     // Prevent creating content on disabled or pending sites
@@ -385,6 +394,11 @@ class NodeAccessService
             }
 
             return NODE_ACCESS_DENY;
+        } elseif (Access::OP_DELETE === $op) {
+            // Locked types
+            if (in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_MANAGE_ALL)) {
+                return NODE_ACCESS_DENY;
+            }
         }
 
         $grants = $this->getUserGrants($account, $op);
@@ -537,6 +551,31 @@ class NodeAccessService
 
         foreach (array_intersect_key($roles, array_flip($node->ucms_sites)) as $role) {
             if ($role->getRole() == Access::ROLE_WEBMASTER) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Can user create type in our platform
+     *
+     * @param \Drupal\Core\Session\AccountInterface $account
+     * @param string $type
+     * @return bool
+     */
+    public function userCanCreateInAnySite(AccountInterface $account, $type)
+    {
+        // Check for global contribs
+        if ($this->userCanAccess($account, $type, Access::OP_CREATE) !== NODE_ACCESS_DENY) {
+            return true;
+        }
+
+        // Iterate over all sites, check if type creation is possible in context
+        $sites = $this->manager->loadOwnSites($account);
+        foreach ($sites as $site) {
+            if ($this->userCanAccess($account, $type, Access::OP_CREATE, $site) !== NODE_ACCESS_DENY) {
                 return true;
             }
         }

@@ -9,6 +9,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 
@@ -36,18 +37,26 @@ class ContentActionProvider implements ActionProviderInterface
      */
     private $currentUser;
 
+    /**
+     * @var \MakinaCorpus\Ucms\Site\NodeAccessService
+     */
+    private $access;
+
 
     /**
      * ContentActionProvider constructor.
      *
      * @param TypeHandler $typeHandler
      * @param SiteManager $siteManager
+     * @param AccountInterface $currentUser
+     * @param NodeAccessService $access
      */
-    public function __construct(TypeHandler $typeHandler, SiteManager $siteManager, AccountInterface $currentUser)
+    public function __construct(TypeHandler $typeHandler, SiteManager $siteManager, AccountInterface $currentUser, NodeAccessService $access)
     {
         $this->typeHandler = $typeHandler;
         $this->siteManager = $siteManager;
         $this->currentUser = $currentUser;
+        $this->access = $access;
     }
 
 
@@ -84,7 +93,8 @@ class ContentActionProvider implements ActionProviderInterface
         foreach ($types[$item] as $index => $type) {
             if (
                 !$this->siteManager->hasContext() &&
-                ($siteAccess->userIsWebmaster($this->currentUser) || $siteAccess->userIsContributor($this->currentUser))
+                ($siteAccess->userIsWebmaster($this->currentUser) || $siteAccess->userIsContributor($this->currentUser)) &&
+                $this->access->userCanCreateInAnySite($this->currentUser, $type)
             ) {
                 $label = $this->t('Create !content_type', ['!content_type' => $this->t($names[$type])]);
                 // Edge case, we rewrite all options so that we don't add destination, it will be handled by the form.

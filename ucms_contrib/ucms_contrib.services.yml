@@ -13,7 +13,7 @@ services:
 
   ucms_contrib.content_action_provider:
     public: false
-    arguments: ["@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
+    arguments: ["@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user", "@ucms_site.node_access_helper"]
     class: MakinaCorpus\Ucms\Contrib\Action\ContentActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 
