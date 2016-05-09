@@ -65,6 +65,14 @@ function ucms_seo_menu() {
     'type'              => MENU_CALLBACK,
   ];
 
+  $items["node/%node/store-locator"] = [
+    'page callback' => 'sf_dic_page',
+    'page arguments' => ['MakinaCorpus\Ucms\Seo\Controller\StoreLocatorController::renderPage', 1, 3, 4, 5],
+    'access callback' => 'ucms_seo_store_locator_access',
+    'access arguments' => [1],
+    'type' => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
   return $items;
 }
 
@@ -76,6 +84,13 @@ function ucms_seo_admin_paths() {
     'node/*/seo-edit' => true,
     'node/*/seo-aliases' => true,
   ];
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_seo_store_locator_access($node) {
+  return in_array($node->type, variable_get('ucms_seo_store_locator_content_types', []), TRUE);
 }
 
 /**
@@ -233,6 +248,10 @@ function ucms_seo_theme() {
     'ucms_seo_sitemap' => [
       'variables' => ['menus' => array()],
       'template'  => 'views/ucms-seo-sitemap',
+    ],
+    'ucms_seo_store_locator_map' => [
+      'variables' => ['items' => []],
+      'template' => 'views/ucms-seo-store-locator-map',
     ],
   ];
 }

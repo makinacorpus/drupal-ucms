@@ -48,3 +48,6 @@ services:
     arguments: ["@ucms_seo.seo_service", "@entity.manager"]
     tags:
       - {name: event_listener, event: "menu:tree"}
+
+  ucms_seo.store_locator_factory:
+    class: MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory
