@@ -303,7 +303,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
 function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
   if (ucms_site_is_master()) {
     $moduleHandler = \Drupal::service('module_handler');
-    
+
     if (
       $moduleHandler->moduleExists('ucms_sso') &&
       preg_match('@^node/(\d+)(/view)?$@', $path, $matches)
@@ -451,12 +451,14 @@ function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $web
         if (!$manager->getAccess()->userIsContributor($webmaster, $site)) {
           return false;
         }
+        break;
 
       case 'demote':
         // Prevents to demote a user which is not a webmaster of the site
         if (!$manager->getAccess()->userIsWebmaster($webmaster, $site)) {
           return false;
         }
+        break;
     }
 
     return true;
