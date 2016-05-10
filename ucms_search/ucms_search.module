@@ -196,10 +196,49 @@ function ucms_search_ucms_search_index_node($index, $node) {
 /**
  * Implements hook_cron().
  */
-function ucms_search_cron() {
-  // This will happen when install and enable happens during the same PHP
-  // runtime, we don't care about clearing the indexes on install.
-  if (\Drupal::getContainer()->has('ucms_search.index_storage')) {
-    ucms_search_index()->indexer()->bulkDequeue();
+if (!module_exists('elysia_cron')) {
+
+  function ucms_search_cron() {
+
+    // This will happen when install and enable happens during the same PHP
+    // runtime, we don't care about clearing the indexes on install.
+    if (\Drupal::getContainer()->has('ucms_search.index_storage')) {
+      ucms_search_index()->indexer()->bulkDequeue();
+    }
+    // Do this check **maybe** for same previous reason??
+    if (\Drupal::getContainer()->has('ucms_search.attachment_indexer')) {
+      \Drupal::service('ucms_search.attachment_indexer')->bulkAttachmentDequeue(
+      );
+    }
   }
+}
+
+/**
+ * Implements hook_cronapi().
+ */
+function ucms_search_cronapi($op, $job = NULL) {
+  if ('list' !== $op) {
+    return;
+  }
+
+  $items['ucms_search_cron_search_indices'] = [
+    'description' => 'Update search indices',
+    'rule' => '*/15 * * * *',
+    'weight' => 1,
+  ];
+  $items['ucms_search_cron_search_attachment'] = [
+    'description' => 'Update search attachments',
+    'rule' => '*/15 * * * *',
+    'weight' => 2,
+  ];
+
+  return $items;
+}
+
+function ucms_search_cron_search_indices() {
+  ucms_search_index()->indexer()->bulkDequeue();
+}
+
+function ucms_search_cron_search_attachment() {
+  \Drupal::service('ucms_search.attachment_indexer')->bulkAttachmentDequeue();
 }
