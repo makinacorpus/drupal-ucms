@@ -147,6 +147,7 @@ function ucms_seo_uninstall_schema_fix() {
  */
 function ucms_seo_install() {
   ucms_seo_install_schema_fix();
+  ucms_seo_install_set_weight();
 }
 
 /**
@@ -253,4 +254,29 @@ function ucms_seo_update_7008() {
 function ucms_seo_update_7010() {
   db_add_unique_key('ucms_seo_alias', 'uk_ucms_seo_alias_site', ['alias', 'site_id']);
   ucms_seo_install_schema_fix();
+}
+
+/**
+ * Fix module weight.
+ */
+function ucms_seo_update_7011() {
+  ucms_seo_install_set_weight();
+}
+
+/**
+ * Set weight so that ucms_seo pass after ucms_site in hook_node_save().
+ */
+function ucms_seo_install_set_weight() {
+  $weight = db_select('system', 's')
+    ->fields('s', ['weight'])
+    ->condition('name', 'ucms_site', '=')
+    ->execute()
+    ->fetchField()
+  ;
+
+  db_update('system')
+    ->fields(['weight' => $weight + 1])
+    ->condition('name', 'ucms_seo', '=')
+    ->execute()
+  ;
 }

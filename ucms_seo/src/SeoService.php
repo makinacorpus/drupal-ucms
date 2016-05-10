@@ -891,7 +891,7 @@ class SeoService
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED !== $langcode) {
             $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
         } else {
-            $langcodeList = $langcode;
+            $langcodeList = [$langcode];
         }
 
         $this
