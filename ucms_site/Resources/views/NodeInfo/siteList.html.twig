@@ -1,7 +1,7 @@
 <ul>
   {% for site in sites %}
     <li>
-      <a href="{{ url('admin/dashboard/site/' ~ site.id) }}">
+      <a href="{{ url('sso/goto/' ~ site.id, {'query':{'destination': 'node/' ~ node.id}}) }}">
         {{ site.title }}
       </a>
     </li>

@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Site\Controller;
 
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -23,6 +22,7 @@ class NodeInfoController extends Controller
 
         return $this->render('module:ucms_site:Resources/views/NodeInfo/siteList.html.twig', [
             'sites' => $manager->getStorage()->loadAll($node->ucms_sites),
+            'node'  => $node,
         ]);
     }
 }
