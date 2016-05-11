@@ -10,7 +10,6 @@ use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -916,13 +915,22 @@ class SeoService
                             AND ss.site_id = sn.site_id
                             AND ss.language IN (:languages)
                     )
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM {ucms_seo_alias} ss
+                        WHERE
+                            ss.alias = :alias2
+                            AND ss.site_id = sn.site_id
+                            AND ss.language IN (:languages)
+                    )
             ", [
-                ':alias'      => $segment,
-                ':language'   => $langcode,
-                ':languages'  => $langcodeList,
-                ':nid'        => $node->id(),
-                ':source1'    => $nodeRoute,
-                ':source2'    => $nodeRoute,
+                ':alias'     => $segment,
+                ':alias2'    => $segment,
+                ':language'  => $langcode,
+                ':languages' => $langcodeList,
+                ':nid'       => $node->id(),
+                ':source1'   => $nodeRoute,
+                ':source2'   => $nodeRoute,
             ])
         ;
     }
