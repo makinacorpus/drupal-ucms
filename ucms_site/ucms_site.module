@@ -509,6 +509,11 @@ function ucms_site_boot() {
 
     } else {
       $manager->dropContext();
+
+      if (!ucms_site_is_master()) {
+        // This will trigger the maintainance page.
+        throw new \Exception("This site is not handled by this platform");
+      }
     }
   } else {
     $manager->dropContext();
