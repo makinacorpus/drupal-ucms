@@ -46,7 +46,7 @@
 }
 #ucms-cart-list.ucms-highlighted {
   border: dashed 5px #fff;
-  transition: .5s;
+  /* transition: .5s; */
 }
 
 /**
@@ -143,7 +143,7 @@
 
 #ucms-cart-trash.ucms-highlighted {
   border: dashed .4em #fff;
-  transition: .5s;
+  /* transition: .5s; */
 }
 #ucms-cart-trash.ucms-highlighted-hover {
   box-shadow: inset 0 0 5px 10px #fff;
@@ -159,7 +159,7 @@
 body [data-region].ui-sortable {
   border: dashed .2em #018fe2;
   min-height: 2em;
-  transition: .5s linear;
+  /* transition: .5s linear; */
   padding: 10px;
 }
 
@@ -205,10 +205,12 @@ body [data-region].ucms-highlighted-over {
   overflow: hidden;
   background: #fff;
   border-radius: 6px;
+  /*
   -ms-animation: pulse 1s linear infinite;
   -moz-animation: pulse 1s linear infinite;
   -webkit-animation: pulse 1s linear infinite;
   animation: pulse 1s linear infinite;
+   */
   border: solid 1px #018fe2;
   z-index: 120;
   padding: 0 !important;
@@ -227,6 +229,7 @@ body [data-region].ucms-highlighted-over {
   clear: both;
 }
 
+/*
 @keyframes pulse {
   0% {
     -webkit-transform: scale(1);
@@ -295,6 +298,7 @@ body [data-region].ucms-highlighted-over {
     transform: scale(1);
   }
 }
+ */
 
 /**
  * Default icons

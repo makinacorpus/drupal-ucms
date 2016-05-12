@@ -85,6 +85,14 @@
           Drupal.ucmsIsSameContainer = !!$(ui.placeholder).closest(this).length;
         },
 
+        // Ce hack de batard!
+        start: function (event, ui) {
+          $('iframe').hide();
+        },
+        stop: function (event, ui) {
+          $('iframe').show();
+        },
+
         receive: function (event, ui) {
           var nid = ui.item.data('nid');
           var sortable = this;

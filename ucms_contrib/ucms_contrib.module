@@ -229,14 +229,13 @@ function ucms_contrib_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK,
   ];
-  // Used only for medias in cKEditor.
+
+  // Returns the rendered node in a JSON response.
   $items['node/%node/ajax'] = [
-    'title'             => 'Unused',
-    'page callback'     => 'ucms_contrib_ajax_node_view',
-    'page arguments'    => [1],
-    'access arguments'  => ['access content'],
-    'file'              => 'ucms_contrib.ajax.inc',
-    'type'              => MENU_CALLBACK,
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\NodeController::view', 1],
+    'access callback'   => 'node_access',
+    'access arguments'  => ['view', 1],
   ];
 
   // Site configuration.
