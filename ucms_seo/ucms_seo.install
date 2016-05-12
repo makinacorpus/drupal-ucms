@@ -86,6 +86,33 @@ function ucms_seo_schema() {
     'primary key' => ['nid'],
   ];
 
+  $schema['ucms_seo_deadlinks_tracking'] = [
+    'description' => 'Store node references to detect deadlink.',
+    'fields' => [
+      'source_nid' => [
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'destination_nid' => [
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'source_nid' => [
+        'table'   => 'node',
+        'columns' => ['source_nid' => 'nid'],
+      ],
+      'destination_nid' => [
+        'table'   => 'node',
+        'columns' => ['destination_nid' => 'nid'],
+      ],
+    ],
+    'primary key' => ['source_nid', 'destination_nid'],
+  ];
+
   return $schema;
 }
 
@@ -257,6 +284,7 @@ function ucms_seo_update_7010() {
 }
 
 /**
+<<<<<<< be9df35c1951d6988b6eba8b10ffb290dc80e4a6
  * Fix module weight.
  */
 function ucms_seo_update_7011() {
@@ -279,4 +307,15 @@ function ucms_seo_install_set_weight() {
     ->condition('name', 'ucms_seo', '=')
     ->execute()
   ;
+=======
+ * Insert deadlink tables.
+ */
+function ucms_seo_update_7011() {
+  $schema = array_intersect_key(ucms_seo_schema(), array_flip(['ucms_seo_deadlinks_tracking']));
+  foreach ($schema as $name => $table) {
+    if (!db_table_exists($name)) {
+      db_create_table($name, $table);
+    }
+  }
+>>>>>>> init dead links
 }

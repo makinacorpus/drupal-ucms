@@ -17,6 +17,7 @@
  *   - global configuration (administer path, canonicals)
  */
 
+use MakinaCorpus\Ucms\Seo\DeadLinkHunter;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
 
@@ -235,11 +236,32 @@ function ucms_seo_form_node_form_alter(&$form, &$form_state) {
   ];
 }
 
+function ucms_seo_deadlink_track($node) {
+  if (ucms_seo_deadlink_is_active($node)) {
+    $hunter = new DeadLinkHunter($node);
+    $hunter->track();
+  }
+}
+
+function ucms_seo_deadlink_untrack($node) {
+  // Always try to untrack in case of orphan node (node type setting changed).
+  $hunter = new DeadLinkHunter($node);
+  $hunter->untrack();
+}
+
+function ucms_seo_deadlink_is_active($node) {
+  $types = variable_get('ucms_seo_track_deadlinks_types', FALSE);
+  $exists = module_exists('ulink');
+  return 'all' === $types || in_array($node->type, $types, TRUE);
+}
+
 /**
  * Implements hook_node_insert().
  */
 function ucms_seo_node_insert($node) {
   ucms_seo_service()->onNodeSave($node);
+  ucms_seo_deadlink_track($node);
+  // TODO - rebuild aliases
 }
 
 /**
@@ -247,6 +269,8 @@ function ucms_seo_node_insert($node) {
  */
 function ucms_seo_node_update($node) {
   ucms_seo_service()->onNodeSave($node);
+  ucms_seo_deadlink_track($node);
+  // TODO - update aliases
 }
 
 /**
@@ -254,6 +278,8 @@ function ucms_seo_node_update($node) {
  */
 function ucms_seo_node_delete($node) {
   ucms_seo_service()->onNodeDelete($node);
+  ucms_seo_deadlink_untrack($node);
+  // TODO - delete aliases
 }
 
 /**
