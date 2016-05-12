@@ -25,7 +25,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  overflow-y: auto;
 }
 .pane-right #ucms-cart {
   bottom: 6em;
@@ -41,6 +40,9 @@
 }
 #ucms-cart-list {
   min-height: 100px; /* Prevents empty zone */
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
 }
 #ucms-cart-list.ucms-highlighted {
   border: dashed 5px #fff;
