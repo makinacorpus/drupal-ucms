@@ -284,11 +284,25 @@ function ucms_seo_update_7010() {
 }
 
 /**
-<<<<<<< be9df35c1951d6988b6eba8b10ffb290dc80e4a6
  * Fix module weight.
  */
 function ucms_seo_update_7011() {
   ucms_seo_install_set_weight();
+}
+
+/**
+* Insert deadlink tables.
+ */
+function ucms_seo_update_7012() {
+  $schema = array_intersect_key(
+    ucms_seo_schema(),
+    array_flip(['ucms_seo_deadlinks_tracking'])
+  );
+  foreach ($schema as $name => $table) {
+    if (!db_table_exists($name)) {
+      db_create_table($name, $table);
+    }
+  }
 }
 
 /**
@@ -307,15 +321,4 @@ function ucms_seo_install_set_weight() {
     ->condition('name', 'ucms_seo', '=')
     ->execute()
   ;
-=======
- * Insert deadlink tables.
- */
-function ucms_seo_update_7011() {
-  $schema = array_intersect_key(ucms_seo_schema(), array_flip(['ucms_seo_deadlinks_tracking']));
-  foreach ($schema as $name => $table) {
-    if (!db_table_exists($name)) {
-      db_create_table($name, $table);
-    }
-  }
->>>>>>> init dead links
 }
