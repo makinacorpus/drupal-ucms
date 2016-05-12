@@ -50,7 +50,7 @@ class SitePortletDisplay extends AbstractDisplay
                 $rows[] = [
                     check_plain($item->title_admin),
                     $item->ts_created->format('d/m H:i'),
-                    check_plain($states[$item->state]),
+                    $this->t(check_plain($states[$item->state])),
                     ['#theme' => 'ucms_dashboard_actions', '#actions' => [$action]],
                 ];
             }
