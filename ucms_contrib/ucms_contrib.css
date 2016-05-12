@@ -63,6 +63,7 @@
   position: relative;
   padding-left: 0;
   padding-right: 0;
+  border-radius: 6px;
 }
 
 .ucms-cart-item h2,
@@ -210,6 +211,7 @@ body [data-region].ucms-highlighted-over {
   animation: pulse 1s linear infinite;
   border: solid 1px #018fe2;
   z-index: 120;
+  padding: 0 !important;
 }
 
 .ui-draggable.ui-draggable-dragging > .node,
