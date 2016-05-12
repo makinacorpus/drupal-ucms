@@ -51,3 +51,13 @@ services:
 
   ucms_seo.store_locator_factory:
     class: MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory
+
+  ucms_seo.admin.deadlinks_datasource:
+    class: MakinaCorpus\Ucms\Seo\Page\DeadLinkDatasource
+    arguments: ["@database", "@entity.manager"]
+
+  ucms_seo.deadlinks_portlet:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
+    arguments: ["@ucms_seo.admin.deadlinks_datasource"]
+    tags: [{ name: ucms_dashboard.portlet }]
