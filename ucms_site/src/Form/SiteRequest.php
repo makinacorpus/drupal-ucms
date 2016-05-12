@@ -170,7 +170,7 @@ class SiteRequest extends FormBase
     }
 
     /**
-     * Validate HTTP host (must be unique)
+     * Validate HTTP host (must be unique and valid)
      */
     public function validateHttpHost(&$element, FormStateInterface $form_state, &$complete_form)
     {
@@ -183,6 +183,12 @@ class SiteRequest extends FormBase
 
         if ($this->manager->getStorage()->findByHostname($value)) {
             $form_state->setError($element, $this->t("Host name already exists"));
+        }
+
+        // Validate host name format
+        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@i';
+        if (!preg_match($regex, $value)) {
+            $form_state->setError($element, $this->t("Host name contains invalid characters or has a wrong format"));
         }
     }
 
