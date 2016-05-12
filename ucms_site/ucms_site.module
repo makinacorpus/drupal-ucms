@@ -268,6 +268,9 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('admin/dashboard/tree' === $path) {
       return true;
     }
+    if ('admin/cart/refresh' === substr($path, 0, 18)) {
+      return true;
+    }
     if (arg(0) === 'node') {
       if (menu_get_object() && ($action = arg(2))) {
         switch ($action) {
