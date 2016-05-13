@@ -16,25 +16,30 @@ class DeadLinkTracker
 
     public function track()
     {
-        $nids = [];
+        $data = [];
 
         $fields = $this->getSearchableFields();
         foreach ($fields as $field) {
             $items = field_get_items('node', $this->node, $field);
             if ($items) {
-                $nids = array_merge(
-                    $nids,
-                    $this->extractNodeReferences($items)
-                );
+
+                $extracted = $this->extractData($items);
+                if ($extracted) {
+                    foreach ($extracted as $destination_nid => $row) {
+                        $data[] = [
+                            'source_nid' => $this->node->nid,
+                            'source_field' => $field,
+                        ] + $row;
+                    }
+                }
             }
         }
-        $nids = array_unique($nids);
 
-        if ($nids) {
+        if ($data) {
             $trx = db_transaction();
             try {
                 $this->clearTracking();
-                $this->insertTracking($nids);
+                $this->insertTracking($data);
             } catch (\PDOException $e) {
                 $trx->rollback();
                 // Silent fail to continue saving node.
@@ -77,31 +82,44 @@ class DeadLinkTracker
         return $fields;
     }
 
-    private function extractNodeReferences(array $items)
+    private function extractData(array $items)
     {
-        $nids = [];
+        $data = [];
+        foreach ($items as $delta => $values) {
 
-        foreach ($items as $delta => $data) {
             // FIXME - HARDCODED for now, see EntityLinkFilter::process()
             $matches = [];
             if (preg_match_all(
                 EntityLinkFilter::SCHEME_REGEX,
-                $data['value'],
+                $values['value'],
                 $matches
             )) {
-                $nids = array_merge($nids, $matches[3]);
+                foreach ($matches[0] as $index => $match) {
+                    $nid = $matches[3][$index];
+                    $data[$nid] = [
+                        'destination_nid' => $nid,
+                        'destination_url' => $match,
+                    ];
+                }
             }
+
             $matches = [];
             if (preg_match_all(
                 EntityLinkFilter::MOUSTACHE_REGEX,
-                $data['value'],
+                $values['value'],
                 $matches
             )) {
-                $nids = array_merge($nids, $matches[2]);
+                foreach ($matches[0] as $index => $match) {
+                    $nid = $matches[2][$index];
+                    $data[$nid] = [
+                        'destination_nid' => $nid,
+                        'destination_url' => $match,
+                    ];
+                }
             }
         }
 
-        return $nids;
+        return $data;
     }
 
     private function clearTracking()
@@ -111,18 +129,13 @@ class DeadLinkTracker
             ->execute();
     }
 
-    private function insertTracking(array $nids)
+    private function insertTracking(array $data)
     {
         $query = db_insert('ucms_seo_deadlinks_tracking')
-            ->fields(['source_nid', 'destination_nid']);
+            ->fields(array_keys(reset($data)));
 
-        foreach ($nids as $nid) {
-            $query->values(
-                [
-                    'source_nid' => $this->node->nid,
-                    'destination_nid' => $nid,
-                ]
-            );
+        foreach ($data as $row) {
+            $query->values($row);
         }
 
         $query->execute();

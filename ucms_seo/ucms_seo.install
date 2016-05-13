@@ -94,10 +94,22 @@ function ucms_seo_schema() {
         'unsigned'    => true,
         'not null'    => true,
       ],
+      'source_field' => [
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => false,
+        'default'     => null,
+      ],
       'destination_nid' => [
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => true,
+      ],
+      'destination_url' => [
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => false,
+        'default'     => null,
       ],
     ],
     'foreign keys' => [
@@ -301,6 +313,23 @@ function ucms_seo_update_7012() {
   foreach ($schema as $name => $table) {
     if (!db_table_exists($name)) {
       db_create_table($name, $table);
+    }
+  }
+}
+
+/**
+ * Add new columns to deadlink tables.
+ */
+function ucms_seo_update_7013() {
+  $table = 'ucms_seo_deadlinks_tracking';
+  $fields = array_intersect_key(
+      ucms_seo_schema()['ucms_seo_deadlinks_tracking']['fields'],
+      array_flip(['source_field', 'destination_url'])
+  );
+
+  foreach ($fields as $name => $column) {
+    if (!db_field_exists($table, $name)) {
+      db_add_field($table, $name, $column);
     }
   }
 }

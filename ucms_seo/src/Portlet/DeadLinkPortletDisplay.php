@@ -18,17 +18,19 @@ class DeadLinkPortletDisplay extends AbstractDisplay
         $rows   = [];
 
         foreach ($items as $item) {
-            $source = $item['source'];
+            $node = $item['source'];
 
             $rows[] = [
-                check_plain($source->title),
-                'node/' . $item['destination_nid'],
+                $node ? check_plain($node->title): '',
+                check_plain($item['source_field']),
+                $item['destination_url'],
+                $item['destination_deleted'] ? $this->t('Deleted') : $this->t('Unpublished'),
                 [
                     '#theme' => 'ucms_dashboard_actions',
                     '#actions' => [
                         new Action(
                             "",
-                            'node/' . $source->nid . '/edit',
+                            'node/' . $node->nid . '/edit',
                             ['attributes' => ['class' => ['btn-sm']]],
                             'share-alt'
                         )
@@ -41,7 +43,9 @@ class DeadLinkPortletDisplay extends AbstractDisplay
             '#theme'  => 'table',
             '#header' => [
                 $this->t('Title'),
+                $this->t('Field'),
                 $this->t('Dead link URL'),
+                $this->t('Reason'),
                 $this->t('Edit'),
             ],
             '#rows'   => $rows,

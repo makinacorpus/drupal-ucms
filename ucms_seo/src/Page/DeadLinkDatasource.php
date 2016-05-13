@@ -48,21 +48,30 @@ class DeadLinkDatasource extends AbstractDatasource
             ->where('t.destination_nid = n.nid');
 
         $query = $this->db->select('ucms_seo_deadlinks_tracking', 't')
-            ->fields('t', ['source_nid', 'destination_nid'])
+            ->fields('t')
             ->notExists($subquery);
 
-        $result = $query->execute()->fetchAllKeyed();
+        $result = $query->execute()->fetchAll();
+
+        $nids = [];
+        foreach ($result as $row) {
+            $nids[] = $row->source_nid;
+            $nids[] = $row->destination_nid;
+        }
         $nodes = $this
             ->entityManager
             ->getStorage('node')
-            ->loadMultiple(array_keys($result))
+            ->loadMultiple($nids)
         ;
 
         $ret = [];
-        foreach ($result as $source_nid => $destination_nid) {
+        foreach ($result as $row) {
             $ret[] = [
-                'source' => isset($nodes[$source_nid]) ? $nodes[$source_nid] : null,
-                'destination_nid' => $destination_nid,
+                'source' => isset($nodes[$row->source_nid]) ? $nodes[$row->source_nid] : null,
+                'source_field' => $row->source_field,
+                'destination_nid' => $row->destination_nid,
+                'destination_url' => $row->destination_url,
+                'destination_deleted' => !isset($nodes[$row->destination_nid]),
             ];
         }
         return $ret;
