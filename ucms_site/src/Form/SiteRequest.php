@@ -106,18 +106,18 @@ class SiteRequest extends FormBase
             '#type'           => 'textfield',
             '#default_value'  => $site->title,
             '#attributes'     => ['placeholder' => $this->t("Martray's optical")],
-            '#description'    => $this->t("This will appear on the site as the site title"),
+            '#description'    => $this->t("This will appear as the site's title on the frontoffice."),
             '#required'       => true,
         ];
 
         $form['title_admin'] = [
-            '#title'          => $this->t("Description"),
-            '#type'           => 'textarea',
+            '#title'          => $this->t("Administrative title"),
+            '#type'           => 'textfield',
             '#default_value'  => $site->title_admin,
-            '#attributes'     => ['placeholder' => $this->t("This site is about showing our glasses to our future clients")],
-            '#description'    => $this->t("This will be as the site's administrative description in platform backoffice"),
+            '#attributes'     => ['placeholder' => $this->t("Martray's optical")],
+            '#description'    => $this->t("This will be the site's title for the backoffice."),
+            '#maxlength'      => 255,
             '#required'       => true,
-            '#rows'           => 3,
         ];
 
         $form['http_host'] = [
@@ -199,7 +199,7 @@ class SiteRequest extends FormBase
     {
         // @todo
         //   http_host validation (unique and valid)
-        //   
+        //
     }
 
     /**
