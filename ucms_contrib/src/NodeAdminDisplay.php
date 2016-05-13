@@ -56,21 +56,28 @@ class NodeAdminDisplay extends AbstractDisplay
 
                 foreach ($nodes as $node) {
                     // FIXME should be in theme
-                    $title = '<div class="ucms-contrib-result" data-nid="'.$node->nid.'">'.
-                        (!(bool)$node->is_clonable ? '<span class="glyphicon glyphicon-lock"></span>&nbsp;' : '').
-                        l(
-                            $node->title,
-                            'node/'.$node->nid
-                        ).'</div>';
+                    $title = '<div class="ucms-contrib-result" data-nid="' . $node->nid . '">'
+                        . (!(bool)$node->is_clonable ? '<span class="glyphicon glyphicon-lock"></span>&nbsp;' : '')
+                        . l($node->title, 'node/' . $node->nid)
+                        . '</div>';
+
+                    // Prepares last update indication
+                    $lastUpdate = ($node->getChangedTime() == 0)
+                        ? $this->t("Never")
+                        : format_interval(time() - $node->getChangedTime());
+
+                    // Prepares owner name
+                    $owner = isset($accountMap[$node->uid])
+                        ? filter_xss(format_username($accountMap[$node->uid]))
+                        : filter_xss(format_username($anonymous));
+
                     $rows[] = [
                         $names[$node->type],
                         $title,
                         $node->status ? $this->t("published") : $this->t("unpublished"),
                         format_interval(time() - $node->created),
-                        format_interval(time() - $node->changed),
-                        isset($accountMap[$node->uid])
-                            ? filter_xss(format_username($accountMap[$node->uid]))
-                            : filter_xss(format_username($anonymous)),
+                        $lastUpdate,
+                        $owner,
                         theme('ucms_dashboard_actions', ['actions' => $this->getActions($node), 'mode' => 'icon']),
                     ];
                 }

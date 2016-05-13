@@ -30,11 +30,15 @@ class NodePortletDisplay extends AbstractDisplay
 
         foreach ($items as $item) {
             /** @var $item NodeInterface */
+            $lastUpdate = ($item->getChangedTime() == 0)
+                ? $this->t("Never")
+                : format_interval(time() - $item->getChangedTime());
+
             $rows[] = [
                 check_plain($item->getTitle()),
                 $item->bundle(),
                 '', // @todo sites
-                format_interval(time() - $item->getChangedTime()),
+                $lastUpdate,
                 $item->isPublished() ? $this->t("published") : '',
             ];
         }
