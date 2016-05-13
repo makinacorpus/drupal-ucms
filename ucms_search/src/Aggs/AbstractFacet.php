@@ -221,6 +221,7 @@ abstract class AbstractFacet implements AggInterface
             $this->getParameterName() => [
                 'terms' => [
                     'field' => $this->getField(),
+                    'size'  => 100,
                 ],
             ]
         ];
