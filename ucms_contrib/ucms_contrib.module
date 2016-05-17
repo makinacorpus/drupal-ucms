@@ -842,32 +842,23 @@ function ucms_contrib_filter_info() {
     'ucmsmediadnd' => [
       'title'             => t('UCMS Media DnD'),
       'description'       => t('Will transform UCMS DnD markup into content'),
-      'process callback'  => '_ucms_contrib_filter_mediadnd',
+      'prepare callback'  => 'ucms_contrib_filter_media_prepare',
+      'process callback'  => 'ucms_contrib_filter_media_process',
+      'default settings'  => [],
     ],
   ];
 }
 
 /**
- * Filter processing for picto
+ * Implements callback_filter_prepare().
  */
-function _ucms_contrib_filter_mediadnd($text, $filter) {
-  $output = $text;
-  $matches = array();
-  if (preg_match_all('/{{(\d+)(:(\w+))?}}/', $output, $matches, PREG_SET_ORDER)) {
-    foreach($matches as $match) {
-      $nid = $match[1];
-      $view_mode = 'default';
-      if (!empty($match[2])) {
-        $view_mode = $match[3];
-      }
-      $node = node_load($nid);
-      $replace = '';
-      if (!empty($node)) {
-        $media = node_view($node, 'teaser');
-        $replace = drupal_render($media);
-      }
-      $output = str_replace($match[0], $replace, $output);
-    }
-  }
-  return $output;
+function ucms_contrib_filter_media_prepare($text, $filter, $format, $langcode) {
+  return sf_dic_plugin_create('MakinaCorpus\ULink\EntityLinkFilter', (array)$filter)->prepare($text, $langcode);
+}
+
+/**
+ * Implements callback_filter_process().
+ */
+function ucms_contrib_filter_media_process($text, $filter, $format, $langcode) {
+  return sf_dic_plugin_create('MakinaCorpus\ULink\EntityLinkFilter', (array)$filter)->process($text, $langcode)->getProcessedText();
 }
