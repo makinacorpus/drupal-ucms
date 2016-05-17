@@ -9,12 +9,10 @@
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\UCPublicStreamWrapper;
 
 /**
  * Implements hook_menu().
@@ -510,7 +508,8 @@ function ucms_site_boot() {
     } else {
       $manager->dropContext();
 
-      if (!ucms_site_is_master()) {
+      // TODO: fix ticket #771
+      if (!ucms_site_is_master() && $GLOBALS['base_url'] !== variable_get('ucms_site_cdn_uri')) {
         // This will trigger the maintainance page.
         throw new \Exception("This site is not handled by this platform");
       }
