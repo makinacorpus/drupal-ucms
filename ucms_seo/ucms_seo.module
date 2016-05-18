@@ -17,11 +17,10 @@
  *   - global configuration (administer path, canonicals)
  */
 
+use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Seo\DeadLinks\DeadLinkTracker;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
-
-use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_menu().
@@ -304,7 +303,13 @@ function ucms_seo_theme() {
       'template'  => 'views/ucms-seo-sitemap',
     ],
     'ucms_seo_store_locator_map' => [
-      'variables' => ['items' => []],
+      'variables' => [
+        'items' => [],
+        'node' => NULL,
+        'type' => NULL,
+        'sub_area' => NULL,
+        'locality' => NULL,
+      ],
       'template' => 'views/ucms-seo-store-locator-map',
     ],
   ];
