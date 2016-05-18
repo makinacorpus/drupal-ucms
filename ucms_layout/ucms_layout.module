@@ -18,14 +18,10 @@
  */
 
 use Drupal\user\UserInterface;
-
-use MakinaCorpus\Ucms\Layout\Context;
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\DrupalPageInjector;
-use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\SiteManager;
-use MakinaCorpus\Ucms\Site\Access;
 
 /**
  * Implements hook_menu().
@@ -180,13 +176,7 @@ function ucms_layout_theme() {
  * Implements hook_page_build().
  */
 function ucms_layout_page_build(&$page) {
-
   $site = ucms_site_manager()->getContext();
-
-  // Only the case of a node's full page in a site context
-  if (!$site || !menu_get_object() || arg(2)) {
-    return;
-  }
 
   (new DrupalPageInjector(ucms_layout_context_manager(), \Drupal::service('entity.manager')))->inject($page, $site->getTheme());
 }
