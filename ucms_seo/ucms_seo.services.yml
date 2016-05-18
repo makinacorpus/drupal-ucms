@@ -51,6 +51,7 @@ services:
 
   ucms_seo.store_locator_factory:
     class: MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory
+    arguments: ["@ucms_seo.seo_service"]
 
   ucms_seo.admin.deadlinks_datasource:
     class: MakinaCorpus\Ucms\Seo\Page\DeadLinkDatasource

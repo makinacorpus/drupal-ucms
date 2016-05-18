@@ -256,13 +256,25 @@ function ucms_seo_deadlink_is_enable() {
   return $is_enable;
 }
 
+function ucms_seo_store_locator_rebuild_aliases($node) {
+  $factory = \Drupal::service('ucms_seo.store_locator_factory');
+  if (in_array($node->type, variable_get('ucms_seo_store_locator_content_types', []), TRUE)) {
+    $storeLocator = $factory->create($node);
+    $storeLocator->rebuildAliases();
+  }
+  else {
+    $storeLocator = $factory->create();
+    $storeLocator->rebuildAliases($node);
+  }
+}
+
 /**
  * Implements hook_node_insert().
  */
 function ucms_seo_node_insert($node) {
   ucms_seo_service()->onNodeSave($node);
   ucms_seo_deadlink_track($node);
-  // TODO - rebuild aliases
+  ucms_seo_store_locator_rebuild_aliases($node);
 }
 
 /**
@@ -271,7 +283,7 @@ function ucms_seo_node_insert($node) {
 function ucms_seo_node_update($node) {
   ucms_seo_service()->onNodeSave($node);
   ucms_seo_deadlink_track($node);
-  // TODO - update aliases
+  ucms_seo_store_locator_rebuild_aliases($node);
 }
 
 /**
@@ -280,7 +292,6 @@ function ucms_seo_node_update($node) {
 function ucms_seo_node_delete($node) {
   ucms_seo_service()->onNodeDelete($node);
   ucms_seo_deadlink_untrack($node);
-  // TODO - delete aliases
 }
 
 /**
