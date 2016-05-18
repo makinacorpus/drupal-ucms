@@ -10,6 +10,9 @@
 
   // The only one of you I love is the one that wrote jshint.com
 
+  // And by the way, you will need this to work gracefully:
+  // extraAllowedContent: 'div[*];img{width,height}[style,src,srcset,media,sizes];picture{width,height}[style];source[src,srcset,media,sizes];'
+
   /**
    * CKEDITOR instance ready event listener, find deeper div within the editor
    * just on top the iframe, and make it being a jQuery.ui.droppable instance

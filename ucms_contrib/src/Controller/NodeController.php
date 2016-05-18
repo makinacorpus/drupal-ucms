@@ -12,7 +12,7 @@ class NodeController extends Controller
 {
     public function viewAction(NodeInterface $node, $mode = 'normal')
     {
-        $view = node_view($node, 'teaser');
+        $view = node_view($node, 'default');
 
         return new JsonResponse(['output' => drupal_render($view)]);
     }
