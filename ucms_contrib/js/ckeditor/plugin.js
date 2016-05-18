@@ -14,6 +14,73 @@
   // extraAllowedContent: 'div[*];img{width,height}[style,src,srcset,media,sizes];picture{width,height}[style];source[src,srcset,media,sizes];'
 
   /**
+   * Fetch Drupal rendered node and replace innerHTML of the given element
+   *
+   * @param CKEDITOR.editor editor
+   * @param int nid
+   * @param CKEDITOR.dom.element parent
+   */
+  function fetchAndReplaceContent(editor, nid, parent) {
+    if (!nid) {
+      return;
+    }
+    CKEDITOR.ajax.load('/node/' + nid + '/ajax', function (data) {
+      data = JSON.parse(data);
+      if (data && data.output && "string" === typeof data.output) {
+        parent.$.innerHTML = data.output;
+      } else {
+        if (console) {
+          parent.$.innerHTML = "Loading the element failed";
+          console.log("error while rendering element, wrong content loaded from ajax");
+        }
+      }
+    });
+  }
+
+  /**
+   * Create media element prior to inclusion in the editor
+   *
+   * @param CKEDITOR.editor editor
+   * @param int nid
+   * @param string content
+   *
+   * @return CKEDITOR.dom.element
+   */
+  function createMediaElement(editor, nid, content) {
+    // content must be converted to anything that is dom-ish, the more I refine
+    // this widget, the less I use jQuery into all of this, it justs brings an
+    // awful lot of bugs.
+    var element;
+    if (content) {
+      element = CKEDITOR.dom.element.createFromHtml(content);
+    } else {
+      element = new CKEDITOR.dom.element('span');
+    }
+    element.setAttribute('data-media-nid', nid);
+    element.setAttribute('data-media-width', '100%');
+    element.setAttribute('data-media-float', '');
+    return element;
+  }
+
+  /**
+   * Load nid content and set it into the editor as a widget
+   *
+   * @param CKEDITOR.editor editor
+   * @param int nid
+   */
+  function createAndPlaceMedia(editor, nid, content) {
+    var element = createMediaElement(editor, nid, content);
+    editor.insertElement(element);
+
+    // and finally, CKEditor is not that bad, once you read the doc
+    // http://docs.ckeditor.com/#!/api/CKEDITOR.plugins.widget
+    editor.widgets.initOn(element, 'ucmsmedia');
+    // this call is not mandatory, but it forces a refresh, it allowed us to
+    // detect bugs that were otherwise triggered on POST and almost invisible
+    editor.updateElement();
+  }
+
+  /**
    * CKEDITOR instance ready event listener, find deeper div within the editor
    * just on top the iframe, and make it being a jQuery.ui.droppable instance
    */
@@ -54,37 +121,17 @@
         }
         CKEDITOR.ajax.load('/node/' + nid + '/ajax', function (data) {
           data = JSON.parse(data);
-          if (data && data.output) {
+          if (data && data.output && "string" === typeof data.output) {
             createAndPlaceMedia(editorEvent.editor, nid, data.output);
+          } else {
+            if (console) {
+              parent.$.innerHTML = "Loading the element failed";
+              console.log("error while rendering element, wrong content loaded from ajax");
+            }
           }
         });
       }
     });
-  }
-
-  /**
-   * Magical function taht gets the raw HTML content that reprensents the media
-   * and inject it into the editor, simple and efficient
-   *
-   * @param CKEDITOR.editor editor
-   * @param int nid
-   * @param string content
-   */
-  function createAndPlaceMedia (editor, nid, content) {
-
-    // content must be converted to anything that is dom-ish, the more I refine
-    // this widget, the less I use jQuery into all of this, it justs brings an
-    // awful lot of bugs.
-    var element = CKEDITOR.dom.element.createFromHtml(content);
-    element.setAttribute('data-media-nid', nid);
-    editor.insertElement(element);
-
-    // and finally, CKEditor is not that bad, once you read the doc
-    // http://docs.ckeditor.com/#!/api/CKEDITOR.plugins.widget
-    editor.widgets.initOn(element, 'ucmsmedia');
-    // this call is not mandatory, but it forces a refresh, it allowed us to
-    // detect bugs that were otherwise triggered on POST and almost invisible
-    editor.updateElement();
   }
 
   CKEDITOR.plugins.add('ucmsmediadnd', {
@@ -117,15 +164,18 @@
         // allow arbitrary div elements!
         allowedContent: '*[*]{*}(*)',
         requiredContent: 'div[data-media-nid]',
-        template: '<div data-media-nid=some></div>',
+        template: '<div data-media-nid=""></div>',
 
         // Believe this or not, but we don't need any data, but if we don't set
         // it at some point, our element is empty, and has no data, it may break
         // CKE at some point, for an unknown and deep totally non-legit reason,
         // even if I could not reproduce the bug since, let's keep this
         init: function () {
-
-          this.setData('nid', this.element.getAttribute('data-media-nid'));
+          var nid = this.element.getAttribute('data-media-nid');
+          if (nid) {
+            fetchAndReplaceContent(editor, nid, this.element);
+          }
+          this.setData('nid', nid);
           this.setData('float', this.element.getAttribute('data-media-float'));
           this.setData('width', this.element.getAttribute('data-media-width'));
         },
