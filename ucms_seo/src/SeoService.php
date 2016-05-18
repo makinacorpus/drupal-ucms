@@ -259,12 +259,12 @@ class SeoService
     }
 
     /**
-     * Get node canonical URL
+     * Get node canonical alias
      *
      * @param NodeInterface $node
      * @param string $langcode
      */
-    public function getNodeCanonical(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
+    public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
     {
         $route  = 'node/' . $node->id();
         $source = $this->db->escapeLike($route);
@@ -303,13 +303,25 @@ class SeoService
             }
         }
 
-        $row = $query
+        return $query
             ->orderBy('u.pid', 'DESC')
             ->range(0, 1)
             ->condition('u.language', $langcodeList)
             ->execute()
             ->fetch()
         ;
+    }
+
+    /**
+     * Get node canonical URL
+     *
+     * @param NodeInterface $node
+     * @param string $langcode
+     */
+    public function getNodeCanonical(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
+    {
+        $route  = 'node/' . $node->id();
+        $row = $this->getNodeCanonicalAlias($node, $langcode);
 
         if (!$row) {
             // No alias at all means that the canonical is the node URL in the
