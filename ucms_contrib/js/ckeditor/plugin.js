@@ -95,6 +95,9 @@
       // Attach external dnd listener
       editor.on('instanceReady', onInstanceReady);
 
+      // Register our dialog
+      CKEDITOR.dialog.add('ucmsMediaDialog', this.path + 'dialogs/media.js');
+
       // For later, anyone trying to change or fix this code, please first read:
       // http://docs.ckeditor.com/#!/guide/widget_sdk_tutorial_1
       editor.widgets.add('ucmsmedia', {
@@ -121,13 +124,40 @@
         // CKE at some point, for an unknown and deep totally non-legit reason,
         // even if I could not reproduce the bug since, let's keep this
         init: function () {
-          this.setData('data-media-nid', this.element.getAttribute('data-media-nid'));
+
+          this.setData('nid', this.element.getAttribute('data-media-nid'));
+          this.setData('float', this.element.getAttribute('data-media-float'));
+          this.setData('width', this.element.getAttribute('data-media-width'));
         },
 
         // Allow the editor to match our raw html as a widget instance
         // http://docs.ckeditor.com/#!/api/CKEDITOR.plugins.widget.definition-property-upcast
         upcast: function (element) {
-          return element.name == 'div' && element.attributes['data-media-nid'];
+          return !!element.attributes['data-media-nid'];
+        },
+
+        data: function () {
+          // We never know, better do nothing than crash
+          if (!this.data || !this.element || !this.element.$.parentElement) {
+            return;
+          }
+
+          // Apply everything to the wrapper only
+          if (this.data.width) {
+            this.element.$.parentElement.style.width = this.data.width;
+            this.element.setAttribute('data-media-width', this.data.width);
+          } else {
+            this.element.$.parentElement.style.width = '';
+            this.element.setAttribute('data-media-width', '');
+          }
+
+          if (this.data.float) {
+            this.element.$.parentElement.style.float = this.data.float;
+            this.element.setAttribute('data-media-float', this.data.float);
+          } else {
+            this.element.$.parentElement.style.float = '';
+            this.element.setAttribute('data-media-width', '');
+          }
         }
       });
 
@@ -136,63 +166,13 @@
       // http://docs.ckeditor.com/#!/guide/plugin_sdk_sample_2
       if (editor.contextMenu) {
 
-        // All three commands will set the float classes on both the wrapper and
-        // the inner div, this is necessary somehow because we do need it to
-        // really float in both the editor (wrapper class) and the final text
-        // looses the wrapper (the inside div)
-        editor.addCommand('ucmsMediaLeft', new CKEDITOR.command(editor, {
-          canUndo: true,
-          exec: function (editor) {
-            var element = editor.getSelection().getStartElement();
-            if (element) {
-              var widget = editor.widgets.getByElement(element);
-              element.addClass('pull-left');
-              widget.element.addClass('pull-left');
-            }
-          }
-        }));
-        editor.addCommand('ucmsMediaRight', new CKEDITOR.command(editor, {
-          canUndo: true,
-          exec: function (editor) {
-            var element = editor.getSelection().getStartElement();
-            if (element) {
-              var widget = editor.widgets.getByElement(element);
-              element.addClass('pull-right');
-              widget.element.addClass('pull-right');
-            }
-          }
-        }));
-        editor.addCommand('ucmsMediaNone', new CKEDITOR.command(editor, {
-          canUndo: true,
-          exec: function (editor) {
-            var element = editor.getSelection().getStartElement();
-            if (element) {
-              var widget = editor.widgets.getByElement(element);
-              element.removeClass('pull-left');
-              element.removeClass('pull-right');
-              widget.element.removeClass('pull-left');
-              widget.element.removeClass('pull-right');
-            }
-          }
-        }));
+        editor.addCommand('ucmsMediaDialog', new CKEDITOR.dialogCommand('ucmsMediaDialog'));
 
         editor.addMenuGroup('ucmsMediaGroup');
-        editor.addMenuItem('ucmsMediaLeft', {
-          label: 'Float left',
+        editor.addMenuItem('ucmsMediaEdit', {
+          label: 'Edit media display',
           icon: this.path + 'icons/left.png',
-          command: 'ucmsMediaLeft',
-          group: 'ucmsMediaGroup'
-        });
-        editor.addMenuItem('ucmsMediaRight', {
-          label: 'Float right',
-          icon: this.path + 'icons/right.png',
-          command: 'ucmsMediaRight',
-          group: 'ucmsMediaGroup'
-        });
-        editor.addMenuItem('ucmsMediaNone', {
-          label: 'Remove float',
-          icon: this.path + 'icons/none.png',
-          command: 'ucmsMediaNone',
+          command: 'ucmsMediaDialog',
           group: 'ucmsMediaGroup'
         });
 
@@ -200,9 +180,7 @@
           var widget = editor.widgets.getByElement(element);
           if (widget && "ucmsmedia" === widget.name) {
             return {
-              ucmsMediaLeft: CKEDITOR.TRISTATE_OFF,
-              ucmsMediaRight: CKEDITOR.TRISTATE_OFF,
-              ucmsMediaNone: CKEDITOR.TRISTATE_OFF
+              ucmsMediaEdit: CKEDITOR.TRISTATE_OFF
             };
           }
         });
