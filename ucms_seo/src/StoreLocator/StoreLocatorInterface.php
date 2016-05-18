@@ -19,7 +19,7 @@ interface StoreLocatorInterface
     public function getSubAreaLabel();
 
     public function getLocalityLabel();
-  
+
     /**
      * @param \Drupal\node\NodeInterface|null $childNode
      *   A node to update the alias. If none given, apply to all nodes.

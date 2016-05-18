@@ -178,7 +178,12 @@ function ucms_layout_theme() {
 function ucms_layout_page_build(&$page) {
   $site = ucms_site_manager()->getContext();
 
-  (new DrupalPageInjector(ucms_layout_context_manager(), \Drupal::service('entity.manager')))->inject($page, $site->getTheme());
+  if ($site) {
+    (new DrupalPageInjector(ucms_layout_context_manager(), \Drupal::service('entity.manager')))->inject(
+      $page,
+      $site->getTheme()
+    );
+  }
 }
 
 /**
