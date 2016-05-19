@@ -696,6 +696,16 @@ function ucms_contrib_field_widget_unoderef_form_alter(&$element, &$form_state, 
 }
 
 /**
+ * Implements hook_node_presave().
+ */
+function ucms_contrib_node_presave($node) {
+  // Find, in all text field, references to media with data-media-nid attribute
+  // parse them, and add them to the associated reference field, or attach them
+  // to site.
+  // @todo
+}
+
+/**
  * Implements hook_node_insert().
  */
 function ucms_contrib_node_insert($node) {
@@ -853,12 +863,12 @@ function ucms_contrib_filter_info() {
  * Implements callback_filter_prepare().
  */
 function ucms_contrib_filter_media_prepare($text, $filter, $format, $langcode) {
-  return sf_dic_plugin_create('MakinaCorpus\ULink\EntityLinkFilter', (array)$filter)->prepare($text, $langcode);
+  return sf_dic_plugin_create('MakinaCorpus\Ucms\Contrib\Filter\MediaFilter', (array)$filter)->prepare($text, $langcode);
 }
 
 /**
  * Implements callback_filter_process().
  */
 function ucms_contrib_filter_media_process($text, $filter, $format, $langcode) {
-  return sf_dic_plugin_create('MakinaCorpus\ULink\EntityLinkFilter', (array)$filter)->process($text, $langcode)->getProcessedText();
+  return sf_dic_plugin_create('MakinaCorpus\Ucms\Contrib\Filter\MediaFilter', (array)$filter)->process($text, $langcode)->getProcessedText();
 }
