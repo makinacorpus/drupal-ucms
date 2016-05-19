@@ -305,7 +305,7 @@ function ucms_seo_theme() {
     'ucms_seo_store_locator_map' => [
       'variables' => [
         'items' => [],
-        'node' => NULL,
+        'nodes' => [],
         'type' => NULL,
         'sub_area' => NULL,
         'locality' => NULL,

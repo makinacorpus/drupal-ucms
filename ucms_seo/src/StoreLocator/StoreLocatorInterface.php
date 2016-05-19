@@ -12,6 +12,8 @@ interface StoreLocatorInterface
 
     public function getMapItems();
 
+    public function getNodes();
+
     public function getLinks();
 
     public function getTypeLabel($type = null);
