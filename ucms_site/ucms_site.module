@@ -508,8 +508,7 @@ function ucms_site_boot() {
     } else {
       $manager->dropContext();
 
-      // TODO: fix ticket #771
-      if (!ucms_site_is_master() && $GLOBALS['base_url'] !== variable_get('ucms_site_cdn_uri')) {
+      if (!ucms_site_is_master() && !ucms_site_is_cdn()) {
         // This will trigger the maintainance page.
         throw new \Exception("This site is not handled by this platform");
       }
@@ -653,6 +652,15 @@ function ucms_site_file_url_alter(&$original_uri) {
  */
 function ucms_site_is_master() {
   return variable_get('ucms_site_master_hostname') === $_SERVER['HTTP_HOST'];
+}
+
+/**
+ * Is current site CDN.
+ *
+ * @return boolean
+ */
+function ucms_site_is_cdn() {
+  return $_SERVER['HTTP_HOST'] === variable_get('ucms_site_cdn_domain');
 }
 
 /**
