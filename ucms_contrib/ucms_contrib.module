@@ -116,8 +116,8 @@ function ucms_contrib_menu() {
     $typeUrlKey = str_replace('_', '-', $type->type);
 
     $items['node/add-to-site/' . $typeUrlKey] = [
-      'title'             => "New " . strtolower($type->name) . " for my site",
-      'title callback'    => 'check_plain',
+      'title'             => "New @type for my site",
+      'title arguments'   => ['@type' => strtolower($type->name)],
       'page callback'     => 'sf_dic_page_form',
       'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite', $type->type],
       'access callback'   => 'ucms_contrib_menu_node_access_add_to_site',
