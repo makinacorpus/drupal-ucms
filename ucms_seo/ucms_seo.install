@@ -86,45 +86,6 @@ function ucms_seo_schema() {
     'primary key' => ['nid'],
   ];
 
-  $schema['ucms_seo_deadlinks_tracking'] = [
-    'description' => 'Store node references to detect deadlink.',
-    'fields' => [
-      'source_nid' => [
-        'type'        => 'int',
-        'unsigned'    => true,
-        'not null'    => true,
-      ],
-      'source_field' => [
-        'type'        => 'varchar',
-        'length'      => 255,
-        'not null'    => false,
-        'default'     => null,
-      ],
-      'destination_nid' => [
-        'type'        => 'int',
-        'unsigned'    => true,
-        'not null'    => true,
-      ],
-      'destination_url' => [
-        'type'        => 'varchar',
-        'length'      => 255,
-        'not null'    => false,
-        'default'     => null,
-      ],
-    ],
-    'foreign keys' => [
-      'source_nid' => [
-        'table'   => 'node',
-        'columns' => ['source_nid' => 'nid'],
-      ],
-      'destination_nid' => [
-        'table'   => 'node',
-        'columns' => ['destination_nid' => 'nid'],
-      ],
-    ],
-    'primary key' => ['source_nid', 'destination_nid'],
-  ];
-
   return $schema;
 }
 
@@ -179,6 +140,25 @@ function ucms_seo_uninstall_schema_fix() {
     }
   }
    */
+}
+
+/**
+ * Set weight so that ucms_seo pass after ucms_site in hook_node_save().
+ */
+function ucms_seo_install_set_weight() {
+
+  $weight = db_select('system', 's')
+    ->fields('s', ['weight'])
+    ->condition('name', 'ucms_site', '=')
+    ->execute()
+    ->fetchField()
+  ;
+
+  db_update('system')
+    ->fields(['weight' => $weight + 1])
+    ->condition('name', 'ucms_seo', '=')
+    ->execute()
+  ;
 }
 
 /**
@@ -303,51 +283,10 @@ function ucms_seo_update_7011() {
 }
 
 /**
-* Insert deadlink tables.
+ * Removes some tables.
  */
-function ucms_seo_update_7012() {
-  $schema = array_intersect_key(
-    ucms_seo_schema(),
-    array_flip(['ucms_seo_deadlinks_tracking'])
-  );
-  foreach ($schema as $name => $table) {
-    if (!db_table_exists($name)) {
-      db_create_table($name, $table);
-    }
+function ucms_seo_update_7014() {
+  if (db_table_exists('ucms_seo_deadlinks_tracking')) {
+    db_drop_table('ucms_seo_deadlinks_tracking');
   }
-}
-
-/**
- * Add new columns to deadlink tables.
- */
-function ucms_seo_update_7013() {
-  $table = 'ucms_seo_deadlinks_tracking';
-  $fields = array_intersect_key(
-      ucms_seo_schema()['ucms_seo_deadlinks_tracking']['fields'],
-      array_flip(['source_field', 'destination_url'])
-  );
-
-  foreach ($fields as $name => $column) {
-    if (!db_field_exists($table, $name)) {
-      db_add_field($table, $name, $column);
-    }
-  }
-}
-
-/**
- * Set weight so that ucms_seo pass after ucms_site in hook_node_save().
- */
-function ucms_seo_install_set_weight() {
-  $weight = db_select('system', 's')
-    ->fields('s', ['weight'])
-    ->condition('name', 'ucms_site', '=')
-    ->execute()
-    ->fetchField()
-  ;
-
-  db_update('system')
-    ->fields(['weight' => $weight + 1])
-    ->condition('name', 'ucms_seo', '=')
-    ->execute()
-  ;
 }

@@ -16,7 +16,10 @@
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeReferenceCollectEvent;
 use MakinaCorpus\Ucms\Site\Access;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * View mode for content display.
@@ -696,19 +699,50 @@ function ucms_contrib_field_widget_unoderef_form_alter(&$element, &$form_state, 
 }
 
 /**
- * Implements hook_node_presave().
+ * Collect and update all node references.
+ *
+ * @param NodeInterface $node
  */
-function ucms_contrib_node_presave($node) {
-  // Find, in all text field, references to media with data-media-nid attribute
-  // parse them, and add them to the associated reference field, or attach them
-  // to site.
-  // @todo
+function ucms_contrib_node_collect_reference(NodeInterface $node) {
+  $event = new NodeReferenceCollectEvent($node);
+
+  /** @var $dispatcher EventDispatcherInterface */
+  $dispatcher = \Drupal::service('event_dispatcher');
+  $dispatcher->dispatch(NodeReferenceCollectEvent::EVENT_NAME, $event);
+
+  // This will happen anyway, references are going to be rebuilt each save.
+  db_delete('ucms_node_reference')->condition('source_id', $node->id())->execute();
+
+  $references = $event->getReferences();
+
+  if ($references) {
+    // Proceed only if references are found.
+    $q = db_insert('ucms_node_reference')->fields(['source_id', 'target_id', 'type', 'field_name']);
+    foreach ($references as $reference) {
+      $q->values([
+          $reference->getSourceId(),
+          $reference->getTargetId(),
+          $reference->getType(),
+          $reference->getFieldName(),
+      ]);
+    }
+    $q->execute();
+  }
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function ucms_contrib_node_update($node) {
+  ucms_contrib_node_collect_reference($node);
 }
 
 /**
  * Implements hook_node_insert().
  */
 function ucms_contrib_node_insert($node) {
+  ucms_contrib_node_collect_reference($node);
+
   if (isset($node->parent_nid)) {
     // Menu path is handled by menu_node_insert().
 

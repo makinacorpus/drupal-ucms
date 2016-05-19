@@ -1,26 +1,16 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Seo\Page;
-
 
 use Drupal\Core\Entity\EntityManager;
 
+use MakinaCorpus\Ucms\Contrib\NodeReference;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 
-
 class DeadLinkDatasource extends AbstractDatasource
 {
-
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var EntityManager
-     */
     private $entityManager;
 
     /**
@@ -42,38 +32,35 @@ class DeadLinkDatasource extends AbstractDatasource
      */
     public function getItems($query, PageState $pageState)
     {
-        $subquery = $this->db->select('node', 'n')
-            ->fields('n', ['nid'])
-            ->condition('n.status', 1)
-            ->where('t.destination_nid = n.nid');
+        $query = $this->db->select('ucms_node_reference', 't');
+        // Add join to node only for node_access, necessary
+        $query->join('node', 'n', "n.nid = t.source_id");
+        $query->addTag('node_access');
+        // And really, I am sorry Yannick, but in the end I have no choice,
+        // we need this join to ensure the node exists or not, it could have
+        // been a sub-request in select, but MySQL does not allow this
+        $query->leftJoin('node', 's', "s.nid = t.target_id");
+        $query->condition((new \DatabaseCondition('OR'))
+            ->condition('s.status', 0)
+            ->isNull('s.nid')
+        );
+        $query->fields('t', ['source_id', 'target_id', 'type', 'field_name']);
+        $query->addExpression('s.nid', 'target_exists');
 
-        $query = $this->db->select('ucms_seo_deadlinks_tracking', 't')
-            ->fields('t')
-            ->notExists($subquery);
+        $ret = $query->execute()->fetchAll(\PDO::FETCH_CLASS, NodeReference::class);
 
-        $result = $query->execute()->fetchAll();
-
+        // Preload everything since it's for displaying just later.
         $nids = [];
-        foreach ($result as $row) {
-            $nids[] = $row->source_nid;
-            $nids[] = $row->destination_nid;
+        foreach ($ret as $reference) {
+            /** @var $reference NodeReference */
+            // Source always exists, since there is a foreign key constraint.
+            $nids[] = $reference->getSourceId();
+            if ($reference->targetExists()) {
+                $nids[] = $reference->getTargetId();
+            }
         }
-        $nodes = $this
-            ->entityManager
-            ->getStorage('node')
-            ->loadMultiple($nids)
-        ;
+        $this->entityManager->getStorage('node')->loadMultiple($nids);
 
-        $ret = [];
-        foreach ($result as $row) {
-            $ret[] = [
-                'source' => isset($nodes[$row->source_nid]) ? $nodes[$row->source_nid] : null,
-                'source_field' => $row->source_field,
-                'destination_nid' => $row->destination_nid,
-                'destination_url' => $row->destination_url,
-                'destination_deleted' => !isset($nodes[$row->destination_nid]),
-            ];
-        }
         return $ret;
     }
 }

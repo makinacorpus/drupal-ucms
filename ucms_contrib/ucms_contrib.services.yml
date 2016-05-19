@@ -51,3 +51,8 @@ services:
   # Component responsible for providing content type context
   ucms_contrib.type_handler:
     class: MakinaCorpus\Ucms\Contrib\TypeHandler
+
+  ucms_contrib.media.subsriber:
+    public: true
+    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\MediaReferenceEventListener
+    tags: [{ name: event_subscriber }]

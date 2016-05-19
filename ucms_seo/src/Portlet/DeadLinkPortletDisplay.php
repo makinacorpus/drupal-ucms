@@ -1,36 +1,69 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Seo\Portlet;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Ucms\Contrib\NodeReference;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
-
 
 class DeadLinkPortletDisplay extends AbstractDisplay
 {
     use StringTranslationTrait;
 
+    private $entityManager;
+
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     protected function displayAs($mode, $items)
     {
         $rows   = [];
 
+        $nodeStorage = $this->entityManager->getStorage('node');
+
         foreach ($items as $item) {
-            $node = $item['source'];
+            /** @var $item NodeReference */
+
+            switch ($item->getType()) {
+                case 'link':
+                    $typeLabel = $this->t("Link");
+                    break;
+                case 'media':
+                    $typeLabel = $this->t("Media");
+                    break;
+                case 'unknown':
+                    $typeLabel = $this->t("Undefined");
+                    break;
+                default:
+                    $typeLabel = $item->getType();
+                    break;
+            }
+
+            $fieldName = $item->getFieldName();
+            if ($info = field_info_field($fieldName)) {
+                $fieldName = $info['label'];
+            }
+
+            $source = $nodeStorage->load($item->getSourceId());
+            $target = $item->targetExists() ? $nodeStorage->load($item->getTargetId()) : null;
 
             $rows[] = [
-                $node ? check_plain($node->title): '',
-                check_plain($item['source_field']),
-                $item['destination_url'],
-                $item['destination_deleted'] ? $this->t('Deleted') : $this->t('Unpublished'),
+                check_plain($source ? $source->title : 'error'),
+                check_plain($fieldName),
+                $target ? check_plain($target->title) : '<em>' . $item->getTargetId() . '</em>',
+                $item->targetExists() ? $this->t('Unpublished') : $this->t('Deleted'),
+                $typeLabel,
                 [
                     '#theme' => 'ucms_dashboard_actions',
                     '#actions' => [
                         new Action(
                             "",
-                            'node/' . $node->nid . '/edit',
+                            'node/' . $source->id() . '/edit',
                             ['attributes' => ['class' => ['btn-sm']]],
                             'share-alt'
                         )
@@ -44,8 +77,9 @@ class DeadLinkPortletDisplay extends AbstractDisplay
             '#header' => [
                 $this->t('Title'),
                 $this->t('Field'),
-                $this->t('Dead link URL'),
+                $this->t('Destination'),
                 $this->t('Reason'),
+                $this->t("Type"),
                 $this->t('Edit'),
             ],
             '#rows'   => $rows,
