@@ -77,7 +77,7 @@ class SiteSwitch extends FormBase
 
         return confirm_form($form, $this->t("Switch site @site to state @state ?", [
             '@site'   => $site->title,
-            '@state'  => SiteState::getList()[$state],
+            '@state'  => $this->t(SiteState::getList()[$state]),
         ]), 'admin/dashboard/site/' . $site->id);
     }
 
@@ -108,8 +108,8 @@ class SiteSwitch extends FormBase
                     "Site @site has been switched from @from to @to",
                     [
                         '@site' => $site->title,
-                        '@from' => $list[$data['from']],
-                        '@to'   => $list[$data['to']],
+                        '@from' => $this->t($list[$data['from']]),
+                        '@to'   => $this->t($list[$data['to']]),
                     ]
                 )
             );
@@ -128,8 +128,8 @@ class SiteSwitch extends FormBase
                         "There was an error switching site @site from @from to @to",
                         [
                             '@site' => $site->title,
-                            '@from' => $list[$data['from']],
-                            '@to'   => $list[$data['to']],
+                            '@from' => $this->t($list[$data['from']]),
+                            '@to'   => $this->t($list[$data['to']]),
                         ]
                     ),
                     'error'

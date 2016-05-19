@@ -962,7 +962,7 @@ function theme_ucms_site_state_transition_form($variables) {
   $map    = SiteState::getList();
 
   foreach (element_children($form['transitions']) as $k1) {
-    $header[] = $map[$k1];
+    $header[] = t($map[$k1]);
     $row = [];
     $row[] = ['data' => $map[$k1], 'header' => true];
     foreach (element_children($form['transitions'][$k1]) as $k2) {

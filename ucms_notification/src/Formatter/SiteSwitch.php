@@ -63,8 +63,8 @@ class SiteSwitch extends AbstractNotificationFormatter
         $list = SiteState::getList();
 
         if (isset($notification['from'])) {
-            $args['@from']  = $list[$notification['from']];
-            $args['@to']    = $list[$notification['to']];
+            $args['@from']  = $this->t($list[$notification['from']]);
+            $args['@to']    = $this->t($list[$notification['to']]);
         } else {
             // Someone forgot to set data on their resource event!
             $args['@from']  = '?';

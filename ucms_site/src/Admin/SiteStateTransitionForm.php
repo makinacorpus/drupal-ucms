@@ -69,8 +69,8 @@ class SiteStateTransitionForm extends FormBase
                             '#title'          => $name,
                             '#attributes'     => ['title' => $this->t("Allow @name to switch site state from @from to @to", [
                                 '@name' => $name,
-                                '@from' => $stateList[$d1],
-                                '@to'   => $stateList[$d2],
+                                '@from' => $this->t($stateList[$d1]),
+                                '@to'   => $this->t($stateList[$d2]),
                             ])],
                             '#return_value'   => $rid,
                             '#default_value'  => !empty($matrix[$d1][$d2][$rid]),

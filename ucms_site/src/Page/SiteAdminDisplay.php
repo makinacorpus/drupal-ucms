@@ -29,6 +29,10 @@ class SiteAdminDisplay extends AbstractDisplay
         $rows   = [];
         $states = SiteState::getList();
 
+        foreach ($states as $key => $label) {
+          $states[$key] = $this->t($label);
+        }
+
         // Preload users, we'll need it here
         $accountMap = [];
         foreach ($sites as $site) {
