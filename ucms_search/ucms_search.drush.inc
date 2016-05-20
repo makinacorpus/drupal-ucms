@@ -126,9 +126,10 @@ function drush_ucms_search_index_run() {
 
 function drush_ucms_search_index_attachment() {
   $indices = array_keys(ucms_search_index()->names());
+
   foreach ($indices as $index) {
 
-    $total = db_select('ucms_search_status', 's')
+    $total = (int)db_select('ucms_search_status', 's')
       ->fields('s', ['nid'])
       ->condition('s.index_key', $index)
       ->condition('s.needs_attachments_reindex', 1)
@@ -136,7 +137,8 @@ function drush_ucms_search_index_attachment() {
       ->execute()
       ->fetchField()
     ;
-    if ((int)$total <= 0) {
+
+    if ($total <= 0) {
       continue;
     }
 

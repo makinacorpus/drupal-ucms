@@ -15,6 +15,12 @@ parameters:
   # https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
   ucms_search.elastic.never_bulk: false
 
+  # Set this to false if you do not wish the module to use the Elastic search
+  # attachments plugin. It is available in Elastic core since 2.2 and might not
+  # be present nor enabled within your Elastic head. Or you may just want to
+  # disable this feature.
+  ucms_search.elastic.attachment_enabled: true
+
 services:
 
   ucms_search.index_storage:
@@ -33,15 +39,26 @@ services:
     class: MakinaCorpus\Ucms\Search\NodeIndexer
     factory: ucms_search.index_storage:indexer
 
-  # TODO - FIXME - review me
+  # TODO
+  #   - the implementation should be merged back with the abstract class
+  #   - the implementation must use ucms_contrib instead
+  #   - a compiler pass should disable it is ucms_contrib is not enabled
+  #     or if the ucms_search.elastic.attachment_enabled is set to false
+  #   - it should be something like a node index listener, and be registered
+  #     using a service tag instead
+  #   - and I should seriously review the code
+  #   - it has index real name as parameter !!! WTF SERIOUSLY
+  #   - and index name neither should be here, it should be injected via the
+  #     storage/manager instance instead...
+  #   - WAT DA FOUQUE!
   ucms_search.attachment_indexer:
-      class: MakinaCorpus\Hsm\Content\HsmNodeAttachmentIndexer
-      arguments:
-        - "private"
-        - "@ucms_search.elastic.client"
-        - "@database"
-        - "@entity.manager"
-        - "private"
+    class: MakinaCorpus\Ucms\Search\Attachment\DefaultNodeAttachmentIndexer
+    arguments:
+      - "private"
+      - "@ucms_search.elastic.client"
+      - "@database"
+      - "@entity.manager"
+      - "private"
 
   ucms_search.elastic.client:
     class: Elasticsearch\Client
