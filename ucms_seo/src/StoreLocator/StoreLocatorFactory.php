@@ -2,13 +2,12 @@
 
 namespace MakinaCorpus\Ucms\Seo\StoreLocator;
 
-
 use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Seo\SeoService;
 
 class StoreLocatorFactory
 {
-
     /**
      * @var SeoService
      */
@@ -23,6 +22,7 @@ class StoreLocatorFactory
     {
         $class = variable_get('ucms_seo_store_locator_class', false);
         assert($class !== false, 'Drupal variable "ucms_seo_store_locator_class" must be defined.');
+
         return new $class($this->service, $node, $type, $subArea, $locality);
     }
 }

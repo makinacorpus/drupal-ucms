@@ -2,12 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Seo\StoreLocator;
 
-
 use Drupal\node\NodeInterface;
 
 interface StoreLocatorInterface
 {
-
     public function getTitle();
 
     public function getMapItems();
@@ -23,7 +21,7 @@ interface StoreLocatorInterface
     public function getLocalityLabel();
 
     /**
-     * @param \Drupal\node\NodeInterface|null $childNode
+     * @param \Drupal\node\NodeInterface $childNode
      *   A node to update the alias. If none given, apply to all nodes.
      */
     public function rebuildAliases(NodeInterface $childNode = null);

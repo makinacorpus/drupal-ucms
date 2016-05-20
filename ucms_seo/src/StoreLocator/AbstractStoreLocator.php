@@ -2,12 +2,12 @@
 
 namespace MakinaCorpus\Ucms\Seo\StoreLocator;
 
-
 use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Seo\SeoService;
 
-abstract class AbstractStoreLocator implements StoreLocatorInterface {
-
+abstract class AbstractStoreLocator implements StoreLocatorInterface
+{
     protected $service;
     protected $node;
     protected $type;

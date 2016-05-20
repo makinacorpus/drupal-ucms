@@ -2,7 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Seo\Form;
 
-use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;

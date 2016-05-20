@@ -220,7 +220,7 @@ function ucms_seo_form_node_form_alter(&$form, &$form_state) {
     '#collapsible'  => true,
     '#collapsed'    => false,
     '#group'        => 'additional_settings',
-    '#weight'       => -3,
+    '#weight'       => 100,
   ];
 
   $form['ucms_seo']['ucms_seo_segment'] = [
@@ -231,6 +231,8 @@ function ucms_seo_form_node_form_alter(&$form, &$form_state) {
     '#default_value'  => $service->getNodeSegment($form['#node']),
     '#attributes'     => ['placeholder' => 'welcome-to-my-site'],
     '#element_validate' => ['ucms_seo_element_validate_segment'],
+    '#field_prefix'     => 'some/path/', // @todo
+    '#weight'         => 100,
   ];
 }
 
