@@ -55,6 +55,7 @@ class SiteAliasDatasource extends AbstractDatasource
             'alias'         => $this->t("Alias"),
             'is_canonical'  => $this->t("Canonical state"),
             'language'      => $this->t("Language"),
+            'expires'       => $this->t("Expiry date"),
             'priority'      => $this->t("Priority"),
         ];
     }

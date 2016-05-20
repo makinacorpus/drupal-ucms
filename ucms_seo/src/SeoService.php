@@ -271,7 +271,7 @@ class SeoService
             ->db
             ->select('ucms_seo_alias', 'u')
             ->fields('u', ['alias', 'site_id'])
-            ->condition('node_id', $node->id)
+            ->condition('node_id', $node->id())
         ;
 
         // Where the magic happens, if no canonical is present, this query
@@ -301,6 +301,7 @@ class SeoService
         }
 
         return $query
+            ->orderBy('u.expires', 'IS NULL DESC')
             ->orderBy('u.pid', 'DESC')
             ->range(0, 1)
             ->condition('u.language', $langcodeList)
@@ -647,7 +648,7 @@ class SeoService
             $q = $this
                 ->db
                 ->insert('ucms_seo_alias')
-                ->fields(['source', 'alias', 'language', 'site_id', 'node_id'])
+                ->fields(['source', 'alias', 'language', 'site_id', 'node_id', 'priority' => Alias::PRIORITY_DEFAULT])
             ;
             foreach ($nodeAliases as $nodeId => $aliases) {
                 foreach ($aliases as $alias) {
@@ -892,13 +893,32 @@ class SeoService
             ;
         }
 
+        // If alias already exists, remove its potential expiry date so it gets
+        // selected instead of others
+        $this
+        ->db
+        ->query("
+                UPDATE {ucms_seo_alias}
+                SET
+                    expires = NULL
+                WHERE
+                    node_id = :nid
+                    AND alias = :alias
+                    AND expires IS NOT NULL
+            ", [
+                  ':alias'      => $segment,
+                  ':nid'        => $node->id(),
+              ])
+          ;
+
+        // First query will set alias for nodes wherever it does not exists
         $this
             ->db
             ->query("
                 INSERT INTO {ucms_seo_alias}
                     (source, alias, language, site_id, node_id, priority)
                 SELECT
-                    :source1, :alias1, :language, s.site_id, s.nid, -1
+                    :source1, :alias1, :language, s.site_id, s.nid, :priority1
                 FROM {ucms_site_node} s
                 WHERE
                     s.nid = :nid
@@ -907,16 +927,38 @@ class SeoService
                         WHERE
                             e.site_id = s.site_id AND (
                                 e.alias = :alias2
-                                OR e.source = :source2
+                                OR (e.source = :source2 AND e.priority > :priority2)
                             )
                     )
             ", [
-                ':alias1'    => $segment,
-                ':alias2'    => $segment,
-                ':language'  => $langcode,
-                ':nid'       => $node->id(),
-                ':source1'   => $nodeRoute,
-                ':source2'   => $nodeRoute,
+                ':alias1'     => $segment,
+                ':alias2'     => $segment,
+                ':language'   => $langcode,
+                ':nid'        => $node->id(),
+                ':priority1'  => Alias::PRIORITY_LOW,
+                ':priority2'  => Alias::PRIORITY_LOW,
+                ':source1'    => $nodeRoute,
+                ':source2'    => $nodeRoute,
+            ])
+        ;
+
+        // Considering that the segment just changed, we also need to update
+        // it where it was generated previously
+        $this
+            ->db
+            ->query("
+                UPDATE {ucms_seo_alias}
+                SET
+                    expires = :expiry
+                WHERE
+                    node_id = :nid
+                    AND alias <> :alias
+                    AND priority = :priority
+            ", [
+                ':alias'      => $segment,
+                ':expiry'     => (new \DateTime(Alias::EXPIRY))->format('Y-m-d H:i:s'),
+                ':nid'        => $node->id(),
+                ':priority'   => Alias::PRIORITY_LOW,
             ])
         ;
     }

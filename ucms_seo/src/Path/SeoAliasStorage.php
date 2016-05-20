@@ -185,6 +185,7 @@ class SeoAliasStorage implements AliasStorageInterface
         $query->orderBy('u.priority', 'DESC');
 
         return $query
+            ->orderBy('u.expires', 'IS NULL DESC')
             ->orderBy('u.pid', 'DESC')
             ->condition('u.language', $langcodeList)
             ->execute()
@@ -226,6 +227,7 @@ class SeoAliasStorage implements AliasStorageInterface
         }
 
         return $query
+            ->orderBy('u.expires', 'IS NULL DESC')
             ->orderBy('u.pid', 'DESC')
             ->condition('u.language', $langcodeList)
             ->execute()
@@ -318,6 +320,7 @@ class SeoAliasStorage implements AliasStorageInterface
 
         return $query
             // !!! condition here is inversed from the lookupPathAlias() method
+            ->orderBy('u.expires', 'IS NULL ASC')
             ->orderBy('u.pid', 'ASC')
             ->condition('u.language', $langcodeList)
             ->execute()

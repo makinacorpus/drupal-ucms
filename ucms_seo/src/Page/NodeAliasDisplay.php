@@ -75,7 +75,7 @@ class NodeAliasDisplay extends AbstractDisplay
                 $siteLabel,
                 $language,
                 $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
-                $item->expires ? format_date($item->expires) : $this->t("No"),
+                $item->expires ? format_date((new \DateTime($item->expires))->getTimestamp()) : $this->t("No"),
                 $item->priority,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];

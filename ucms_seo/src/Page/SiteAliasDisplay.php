@@ -76,7 +76,7 @@ class SiteAliasDisplay extends AbstractDisplay
                 $language,
                 $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
                 $item->priority,
-                $item->expires ? format_date($item->expires) : $this->t("No"),
+                $item->expires ? format_date((new \DateTime($item->expires))->getTimestamp()) : $this->t("No"),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }

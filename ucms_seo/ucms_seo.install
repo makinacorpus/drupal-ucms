@@ -35,9 +35,10 @@ function ucms_seo_schema() {
   ];
   $aliasTable['fields']['expires'] = [
     'description' => "When this alias expires",
-    'type'        => 'int',
-    'unsigned'    => true,
-    'not null'    => false,
+    'mysql_type'  => 'datetime',
+    'pgsql_type'  => 'timestamp',
+    'type'        => 'varchar',
+    'length'      => 16,
     'default'     => null,
   ];
   $aliasTable['fields']['node_id'] = [
@@ -336,4 +337,20 @@ function ucms_seo_update_7015() {
   foreach ($map as $source => $nodeId) {
     db_query("UPDATE {ucms_seo_alias} SET node_id = :id WHERE source = :source", [':id' => $nodeId, ':source' => $source]);
   }
+}
+
+/**
+ * Changes the {ucms_seo_alias}.expires to datetime
+ */
+function ucms_seo_update_7016() {
+  // There is no real content yet so this is OK.
+  db_query("UPDATE {ucms_seo_alias} SET expires = NULL");
+  db_change_field('ucms_seo_alias', 'expires', 'expires', [
+    'description' => "When this alias expires",
+    'mysql_type'  => 'datetime',
+    'pgsql_type'  => 'timestamp',
+    'type'        => 'varchar',
+    'length'      => 16,
+    'default'     => null,
+  ]);
 }
