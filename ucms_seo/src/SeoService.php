@@ -266,15 +266,12 @@ class SeoService
      */
     public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
     {
-        $route  = 'node/' . $node->id();
-        $source = $this->db->escapeLike($route);
-
         // We need to directly query the path alias table from here.
         $query = $this
             ->db
             ->select('ucms_seo_alias', 'u')
             ->fields('u', ['alias', 'site_id'])
-            ->condition('u.source', $source, 'LIKE')
+            ->condition('node_id', $node->id)
         ;
 
         // Where the magic happens, if no canonical is present, this query
@@ -605,17 +602,12 @@ class SeoService
             return;
         }
 
-        $sourceMap = [];
-        foreach ($nodeAliases as $id => $aliases) {
-            $sourceMap['node/' . $id] = $id;
-        }
-
         // 1 SQL query
         $r = $this
             ->db
             ->select('ucms_seo_alias', 'u')
-            ->fields('u', ['pid', 'source', 'alias', 'expires'])
-            ->condition('u.source', array_keys($sourceMap))
+            ->fields('u', ['pid', 'source', 'alias', 'expires', 'node_id'])
+            ->condition('u.node_id', array_keys($nodeAliases))
             ->condition('u.language', $langcode)
             ->condition('u.site_id', $siteId)
             ->execute()
@@ -624,11 +616,11 @@ class SeoService
         $expiring = [];
 
         foreach ($r as $row) {
-            if (isset($sourceMap[$row->source])) {
+            if (isset($nodeAliases[$row->node_id])) {
                 if ($row->expires) {
                     $expiring[] = $row->pid;
                 }
-                $nodeId = $sourceMap[$row->source];
+                $nodeId = $row->node_id;
                 if (!empty($nodeAliases[$nodeId]) && false !== ($index = array_search($row->alias, $nodeAliases[$nodeId]))) {
                     // Unmark the alias for insertion
                     unset($nodeAliases[$nodeId][$index]);
@@ -655,11 +647,11 @@ class SeoService
             $q = $this
                 ->db
                 ->insert('ucms_seo_alias')
-                ->fields(['source', 'alias', 'language', 'site_id'])
+                ->fields(['source', 'alias', 'language', 'site_id', 'node_id'])
             ;
             foreach ($nodeAliases as $nodeId => $aliases) {
                 foreach ($aliases as $alias) {
-                    $q->values(['node/' . $nodeId, $alias, $langcode, $siteId]);
+                    $q->values(['node/' . $nodeId, $alias, $langcode, $siteId, $nodeId]);
                 }
 
                 // Bad thing here, we need to manually clear the path cache for
@@ -727,13 +719,12 @@ class SeoService
     public function updateCanonicalForNode(NodeInterface $node, $alias, Site $site, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
     {
         $route  = 'node/' . $node->id();
-        $source = $this->db->escapeLike($route);
 
         $this
             ->db
             ->update('ucms_seo_alias')
             ->fields(['is_canonical' => 0])
-            ->condition('source', $source, 'LIKE')
+            ->condition('node_id', $node->id(), 'LIKE')
             ->condition('language', $langcode)
             ->execute()
         ;
@@ -749,7 +740,9 @@ class SeoService
                 'site_id'   => $site->getId(),
             ])
             ->fields([
-                'is_canonical' => true,
+                'is_canonical'  => true,
+                // Enfore node identifier, because you never know.
+                'node_id'       => $node->id(),
             ])
             ->execute()
         ;
@@ -899,47 +892,28 @@ class SeoService
             ;
         }
 
-        if (LanguageInterface::LANGCODE_NOT_SPECIFIED !== $langcode) {
-            $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
-        } else {
-            $langcodeList = [$langcode];
-        }
-
         $this
             ->db
             ->query("
                 INSERT INTO {ucms_seo_alias}
-                    (source, alias, language, site_id, priority)
+                    (source, alias, language, site_id, node_id, priority)
                 SELECT
-                    :source1,
-                    :alias,
-                    :language,
-                    sn.site_id,
-                    -1
-                FROM {ucms_site_node} sn
+                    :source1, :alias1, :language, s.site_id, s.nid, -1
+                FROM {ucms_site_node} s
                 WHERE
-                    sn.nid = :nid
+                    s.nid = :nid
                     AND NOT EXISTS (
-                        SELECT 1
-                        FROM {ucms_seo_alias} ss
+                        SELECT 1 FROM {ucms_seo_alias} e
                         WHERE
-                            ss.source = :source2
-                            AND ss.site_id = sn.site_id
-                            AND ss.language IN (:languages)
-                    )
-                    AND NOT EXISTS (
-                        SELECT 1
-                        FROM {ucms_seo_alias} ss
-                        WHERE
-                            ss.alias = :alias2
-                            AND ss.site_id = sn.site_id
-                            AND ss.language IN (:languages)
+                            e.site_id = s.site_id AND (
+                                e.alias = :alias2
+                                OR e.source = :source2
+                            )
                     )
             ", [
-                ':alias'     => $segment,
+                ':alias1'    => $segment,
                 ':alias2'    => $segment,
                 ':language'  => $langcode,
-                ':languages' => $langcodeList,
                 ':nid'       => $node->id(),
                 ':source1'   => $nodeRoute,
                 ':source2'   => $nodeRoute,

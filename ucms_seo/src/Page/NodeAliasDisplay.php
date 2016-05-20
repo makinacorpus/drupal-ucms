@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Seo\Page;
 
+use Drupal\Core\Entity\EntityManager;
+
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -18,14 +20,21 @@ class NodeAliasDisplay extends AbstractDisplay
     private $siteManager;
 
     /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
      * Default constructor
      *
      * @param SiteManager $siteManager
+     * @param EntityManager $entityManager
      * @param string $emptyMessage
      */
-    public function __construct(SiteManager $siteManager, $emptyMessage = null)
+    public function __construct(SiteManager $siteManager, EntityManager $entityManager, $emptyMessage = null)
     {
         $this->siteManager = $siteManager;
+        $this->entityManager = $entityManager;
         $this->emptyMessage = $emptyMessage;
     }
 
@@ -36,14 +45,26 @@ class NodeAliasDisplay extends AbstractDisplay
     {
         $rows   = [];
         $sites  = [];
+        $nodes  = [];
 
+        // Preload sites
         foreach ($items as $item) {
             if ($item->site_id) {
                 $sites[$item->site_id] = $item->site_id;
             }
         }
-        if (!empty($sites)) {
+        if ($sites) {
             $sites = $this->siteManager->getStorage()->loadAll($sites);
+        }
+
+        // Preload nodes
+        foreach ($items as $item) {
+            if ($item->node_id) {
+                $nodes[$item->node_id] = $item->node_id;
+            }
+        }
+        if ($nodes) {
+            $nodes = $this->entityManager->getStorage('node')->loadMultiple($nodes);
         }
 
         foreach ($items as $item) {
@@ -54,10 +75,23 @@ class NodeAliasDisplay extends AbstractDisplay
                 $siteLabel = l('admin/dashboard/site/' . $site->getId(), $site->title);
             }
 
+            if ($item->node_id && isset($nodes[$item->node_id])) {
+                $nodeLabel = $nodes[$item->node_id]->getTitle();
+            } else {
+                $nodeLabel = '<em>' . $this->t("None") . '</em>';
+            }
+
+            if (null === $item->language || 'und' === $item->language) {
+                $language = '<em>' . $this->t("default") . '</em>';;
+            } else {
+                $language = check_plain($language);
+            }
+
             $rows[] = [
                 check_plain($item->alias),
                 $siteLabel,
-                // @todo langauge $item->language
+                $language,
+                $nodeLabel,
                 $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
                 $item->expires ? format_date($item->expires) : $this->t("No"),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
@@ -71,7 +105,8 @@ class NodeAliasDisplay extends AbstractDisplay
             '#header' => [
                 $this->t("Alias"),
                 $this->t("Site"),
-                //$this->t("Language"),
+                $this->t("Language"),
+                $this->t("Content"),
                 $this->t("Canonical"),
                 $this->t("Expires"),
                 '',

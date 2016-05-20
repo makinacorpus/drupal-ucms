@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Seo\Controller;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
@@ -36,10 +37,18 @@ class NodeSeoController extends Controller
         return $this->get('ucms_dashboard.page_factory');
     }
 
+    /**
+     * @return EntityManager
+     */
+    private function getEntityManager()
+    {
+        return $this->get('entity.manager');
+    }
+
     public function aliasesListAction(NodeInterface $node)
     {
         $datasource = \Drupal::service('ucms_seo.admin.node_alias_datasource');
-        $display    = new NodeAliasDisplay($this->getSiteManager(), t("This content has no SEO alias."));
+        $display    = new NodeAliasDisplay($this->getSiteManager(), $this->getEntityManager(), t("This content has no SEO alias."));
 
         $query  = ['node' => $node->id()];
 

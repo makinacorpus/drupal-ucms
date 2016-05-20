@@ -63,8 +63,9 @@ class SeoServiceTest extends AbstractDrupalTest
 
         $this
             ->getDatabaseConnection()
-            ->insert('ucms_seo_node')
-            ->fields(['nid' => $node->id(), 'alias_segment' => $alias])
+            ->merge('ucms_seo_node')
+            ->key(['nid' => $node->id()])
+            ->fields(['alias_segment' => $alias])
             ->execute()
         ;
 

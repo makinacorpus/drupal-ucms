@@ -40,6 +40,13 @@ function ucms_seo_schema() {
     'not null'    => false,
     'default'     => null,
   ];
+  $aliasTable['fields']['node_id'] = [
+    'description' => "Associated node identifier if applyable",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => false,
+    'default'     => null,
+  ];
   $schema['ucms_seo_alias'] = $aliasTable;
   $schema['ucms_seo_alias']['unique keys']['uk_ucms_seo_alias_site'] = ['alias', 'site_id'];
 
@@ -96,6 +103,9 @@ function ucms_seo_install_constraints() {
   // Hopefully, this syntax should work on both PostgreSQL and MySQL although
   // this is pure coincidence, this is great for us.
   return [
+    'ucms_seo_alias' => [
+      'ucms_seo_alias_node_id_fk' => "ALTER TABLE {ucms_seo_alias} ADD CONSTRAINT {ucms_seo_alias_node_id_fk} FOREIGN KEY (node_id) REFERENCES {node} (nid) ON DELETE CASCADE",
+    ],
     'ucms_seo_node' => [
       'ucms_seo_node_fk' => "ALTER TABLE {ucms_seo_node} ADD CONSTRAINT {ucms_seo_node_fk} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
       'ucms_seo_alias_site_fk' => "ALTER TABLE {ucms_seo_alias} ADD CONSTRAINT {ucms_seo_alias_site_fk} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
@@ -288,5 +298,42 @@ function ucms_seo_update_7011() {
 function ucms_seo_update_7014() {
   if (db_table_exists('ucms_seo_deadlinks_tracking')) {
     db_drop_table('ucms_seo_deadlinks_tracking');
+  }
+}
+
+/**
+ * Adds the {ucms_seo_alias}.node_id column.
+ */
+function ucms_seo_update_7015() {
+  if (!db_field_exists('ucms_seo_alias', 'node_id')) {
+    db_add_field('ucms_seo_alias', 'node_id', [
+      'description' => "Associated node identifier if applyable",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+  ucms_seo_install_schema_fix();
+
+  // We are still just in the begining of the project, so there is not a
+  // massive amount of aliases, just fix this basically, there is no SQL
+  // standard way to do this.
+  $map = db_query("SELECT source, source FROM {ucms_seo_alias} WHERE source LIKE 'node/%'")->fetchAllKeyed();
+  $missing = [];
+  $map = array_map(function ($value) use (&$missing) {
+    $nodeId = explode('/', $value, 2)[1];
+    if (db_query("SELECT 1 FROM {node} WHERE nid = ?", [$nodeId])->fetchField()) {
+      return $nodeId;
+    }
+    $missing[] = $value;
+  }, $map);
+  // Remove missing nodes
+  if ($missing) {
+    db_query("DELETE FROM {ucms_seo_alias} WHERE source IN (:missing)", [':missing' => $missing]);
+  }
+  // Update others
+  foreach ($map as $source => $nodeId) {
+    db_query("UPDATE {ucms_seo_alias} SET node_id = :id WHERE source = :source", [':id' => $nodeId, ':source' => $source]);
   }
 }
