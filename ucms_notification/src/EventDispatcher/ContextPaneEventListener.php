@@ -54,7 +54,7 @@ class ContextPaneEventListener
         $contextPane = $event->getContextPane();
 
         $subscriber = $this->notificationService->getSubscriber($this->currentUser->id());
-        $limit = 16;
+        $limit = 10;
 
         $cursor = $subscriber
             ->fetch()
