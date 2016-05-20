@@ -6,7 +6,6 @@ namespace MakinaCorpus\Ucms\Layout;
 use MakinaCorpus\Ucms\Layout\Context;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-
 class ContextManager
 {
     const CONTEXT_NONE      = 0;
