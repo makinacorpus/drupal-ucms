@@ -8,20 +8,13 @@ class DefaultNodeAttachmentIndexer extends AbstractNodeAttachmentIndexer
 {
     protected function getSubselectQueryMarkReindex(array $nids = null)
     {
-        // List of fields is empty. Maybe to disable the feature?
-        $content_types = $this->getAttachmentContentTypes();
-        if (!$content_types) {
-            return;
-        }
-
         // Returns any nodes which have a content type with a field in the
         // hardcoded list of fields self::fields
         $query = $this
             ->db
             ->select('node', 'n')
             ->fields('n', ['nid'])
-            ->condition('n.type', $content_types, 'IN');
-
+        ;
         // If not, mark all nodes of these types!
         if (null !== $nids) {
             $query->condition('n.nid', $nids, 'IN');
@@ -84,23 +77,5 @@ class DefaultNodeAttachmentIndexer extends AbstractNodeAttachmentIndexer
         }
 
         return $attachments;
-    }
-
-    /**
-     * Returns a list of content types which used one of the hardcoded fields in
-     * self::fields.
-     */
-    private function getAttachmentContentTypes()
-    {
-        $content_types = [];
-
-        foreach ($this->fields as $fieldname) {
-            $info = field_info_field($fieldname);
-            if (!empty($info['bundles']['node'])) {
-                $content_types += $info['bundles']['node'];
-            }
-        }
-
-        return array_unique($content_types);
     }
 }
