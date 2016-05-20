@@ -44,7 +44,8 @@ class SiteActionProvider implements ActionProviderInterface
         $ret = [];
 
         if ($this->service->userCanEditSiteSeo($this->currentUser, $item)) {
-            $ret[] = new Action($this->t("SEO parameters"), 'admin/dashboard/site/' . $item->id . '/seo', null, 'globe', -2, false, true);
+            $ret[] = new Action($this->t("SEO parameters"), 'admin/dashboard/site/' . $item->id . '/seo-edit', null, 'globe', -1, false, true, false, 'seo');
+            $ret[] = new Action($this->t("SEO aliases"), 'admin/dashboard/site/' . $item->id . '/seo-aliases', null, 'globe', -1, false, true, false, 'seo');
         }
 
         return $ret;

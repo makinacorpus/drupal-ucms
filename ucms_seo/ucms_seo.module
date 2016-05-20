@@ -18,6 +18,7 @@
  */
 
 use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
 
@@ -44,24 +45,32 @@ function ucms_seo_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Seo\Form\SeoNodeForm', 1],
     'access callback'   => 'ucms_seo_menu_access_node_edit',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/seo-aliases'] = [
     'title'             => "Node path aliases",
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\NodeSeoController::aliasesList', 1],
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::nodeAliasList', 1],
     'access callback'   => 'ucms_seo_menu_access_node_edit',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
-  $items['admin/dashboard/site/%ucms_site/seo'] = [
+  $items['admin/dashboard/site/%ucms_site/seo-aliases'] = [
+    'title'             => "Site path aliases",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::siteAliasList', 3],
+    'access callback'   => 'ucms_seo_menu_access_site_edit',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/site/%ucms_site/seo-edit'] = [
     'title'             => "Edit SEO parameters",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Seo\Form\SeoSiteForm', 3],
     'access callback'   => 'ucms_seo_menu_access_site_edit',
     'access arguments'  => [3],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   $items["node/%node/store-locator"] = [

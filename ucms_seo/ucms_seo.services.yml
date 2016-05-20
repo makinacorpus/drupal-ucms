@@ -36,6 +36,9 @@ services:
   ucms_seo.admin.node_alias_datasource:
     class: MakinaCorpus\Ucms\Seo\Page\NodeAliasDatasource
     arguments: ["@database"]
+  ucms_seo.admin.site_alias_datasource:
+    class: MakinaCorpus\Ucms\Seo\Page\SiteAliasDatasource
+    arguments: ["@database"]
 
   twig.extension.ucms_seo:
     public: false

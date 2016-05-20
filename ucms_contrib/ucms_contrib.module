@@ -134,7 +134,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodePublish', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_publish',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unpublish'] = [
     'title'             => "Unpublish content",
@@ -142,7 +142,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_publish',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/report'] = [
     'title'             => "Flag as inappropriate",
@@ -150,7 +150,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeFlag', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_flag',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unreport'] = [
     'title'             => "Un-flag as innappropriate",
@@ -158,7 +158,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnflag', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_unflag',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/star'] = [
     'title'             => "Star",
@@ -166,7 +166,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeStar', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_star',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unstar'] = [
     'title'             => "Unstar",
@@ -174,7 +174,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnstar', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_star',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/lock'] = [
     'title'             => "Lock",
@@ -182,7 +182,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeLock', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_lock',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unlock'] = [
     'title'             => "Unlock",
@@ -190,7 +190,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnlock', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_lock',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/copy-on-edit'] = [
     'title'             => "Edit for my site",
@@ -198,7 +198,7 @@ function ucms_contrib_menu() {
     'page arguments'    => [1],
     'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/clone'] = [
     'title'             => "Edit",
@@ -206,7 +206,7 @@ function ucms_contrib_menu() {
     'page arguments'    => [1],
     'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/make-global'] = [
     'title'             => "Add to global contents",
@@ -214,7 +214,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeMakeGlobal', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_global',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/make-group'] = [
     'title'             => "Define as group content",
@@ -222,7 +222,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeMakeGroup', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_group',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unmake-group'] = [
     'title'             => "Remove from group contents",
@@ -230,7 +230,7 @@ function ucms_contrib_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeGroup', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_group',
     'access arguments'  => [1],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   // Returns the rendered node in a JSON response.

@@ -38,7 +38,7 @@ function ucms_label_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelEdit', 3],
     'access callback'   => 'ucms_label_access_manage',
     'access arguments'  => [LabelAccess::OP_EDIT, 3],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   $items['admin/dashboard/label/%taxonomy_term/subscribe'] = [
@@ -46,7 +46,7 @@ function ucms_label_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelSubscribe', 3],
     'access arguments'  => [LabelAccess::PERM_ACCESS_DASHBOARD],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   $items['admin/dashboard/label/%taxonomy_term/unsubscribe'] = [
@@ -54,7 +54,7 @@ function ucms_label_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelUnsubscribe', 3],
     'access arguments'  => [LabelAccess::PERM_ACCESS_DASHBOARD],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   $items['admin/dashboard/label/%taxonomy_term/delete'] = [
@@ -64,7 +64,7 @@ function ucms_label_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Label\Form\LabelDelete', 3],
     'access callback'   => 'ucms_label_access_manage',
     'access arguments'  => [LabelAccess::OP_DELETE, 3],
-    'type'              => MENU_CALLBACK,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   return $items;

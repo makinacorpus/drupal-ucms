@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityManager;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class NodeAliasDisplay extends AbstractDisplay
+class SiteAliasDisplay extends AbstractDisplay
 {
     /**
      * @var string
@@ -44,24 +44,24 @@ class NodeAliasDisplay extends AbstractDisplay
     protected function displayAs($mode, $items)
     {
         $rows   = [];
-        $sites  = [];
+        $nodes  = [];
 
-        // Preload sites
+        // Preload nodes
         foreach ($items as $item) {
-            if ($item->site_id) {
-                $sites[$item->site_id] = $item->site_id;
+            if ($item->node_id) {
+                $nodes[$item->node_id] = $item->node_id;
             }
         }
-        if ($sites) {
-            $sites = $this->siteManager->getStorage()->loadAll($sites);
+        if ($nodes) {
+            $nodes = $this->entityManager->getStorage('node')->loadMultiple($nodes);
         }
 
         foreach ($items as $item) {
 
-            $siteLabel = '<em>' . $this->t("None") . '</em>';
-            if ($item->site_id && $sites[$item->site_id]) {
-                $site = $sites[$item->site_id];
-                $siteLabel = l('admin/dashboard/site/' . $site->getId(), $site->title);
+            if ($item->node_id && isset($nodes[$item->node_id])) {
+                $nodeLabel = $nodes[$item->node_id]->getTitle();
+            } else {
+                $nodeLabel = '<em>' . $this->t("None") . '</em>';
             }
 
             if (null === $item->language || 'und' === $item->language) {
@@ -72,11 +72,11 @@ class NodeAliasDisplay extends AbstractDisplay
 
             $rows[] = [
                 check_plain($item->alias),
-                $siteLabel,
+                $nodeLabel,
                 $language,
                 $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
-                $item->expires ? format_date($item->expires) : $this->t("No"),
                 $item->priority,
+                $item->expires ? format_date($item->expires) : $this->t("No"),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
@@ -87,7 +87,7 @@ class NodeAliasDisplay extends AbstractDisplay
             '#theme'  => 'table',
             '#header' => [
                 $this->t("Alias"),
-                $this->t("Site"),
+                $this->t("Content"),
                 $this->t("Language"),
                 $this->t("Canonical"),
                 $this->t("Priority"),
