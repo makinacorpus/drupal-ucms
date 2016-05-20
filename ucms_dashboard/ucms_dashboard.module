@@ -6,6 +6,7 @@
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
+use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
 
 /**
  * Use contextual pane permission.
@@ -58,6 +59,22 @@ function ucms_dashboard_menu() {
   ];
 
   return $items;
+}
+
+/**
+ * Do it in a transaction!
+ */
+function ucms_dashboard_transaction_form() {
+  if ('GET' !== \Drupal::requestStack()->getCurrentRequest()->getMethod()) {
+    $args = func_get_args();
+    /** @var $helper TransactionHandler */
+    $helper = \Drupal::get('ucms_dashboard.transaction_handler');
+    $helper->run(function () use ($args) {
+      return sf_dic_page_form($args);
+    });
+  } else {
+    return sf_dic_page_form(func_get_args());
+  }
 }
 
 /**
