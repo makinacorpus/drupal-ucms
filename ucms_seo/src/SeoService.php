@@ -649,11 +649,11 @@ class SeoService
             $q = $this
                 ->db
                 ->insert('ucms_seo_alias')
-                ->fields(['source', 'alias', 'language', 'site_id', 'node_id', 'priority' => Alias::PRIORITY_DEFAULT])
+                ->fields(['source', 'alias', 'language', 'site_id', 'node_id', 'priority'])
             ;
             foreach ($nodeAliases as $nodeId => $aliases) {
                 foreach ($aliases as $alias) {
-                    $q->values(['node/' . $nodeId, $alias, $langcode, $siteId, $nodeId]);
+                    $q->values(['node/' . $nodeId, $alias, $langcode, $siteId, $nodeId, Alias::PRIORITY_DEFAULT]);
                 }
 
                 // Bad thing here, we need to manually clear the path cache for
