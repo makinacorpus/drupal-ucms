@@ -18,3 +18,7 @@ services:
 
   ucms_dashboard.portlet_registry:
     class: MakinaCorpus\Ucms\Dashboard\Portlet\PortletRegistry
+
+  ucms_dashboard.transaction_handler:
+    class: MakinaCorpus\Ucms\Dashboard\TransactionHandler
+    arguments: ['@database']

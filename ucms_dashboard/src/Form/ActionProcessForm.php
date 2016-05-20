@@ -6,15 +6,32 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
+use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ActionProcessForm extends FormBase
 {
     /**
      * {@inheritdoc}
      */
+    static public function create(ContainerInterface $container)
+    {
+        return new self($container->get('ucms_dashboard.transaction_handler'));
+    }
+
+    private $transactionHandler;
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFormId()
     {
         return 'ucms_dashboard_action_form';
+    }
+
+    public function __construct(TransactionHandler $transactionHandler)
+    {
+        $this->transactionHandler = $transactionHandler;
     }
 
     /**
@@ -49,7 +66,12 @@ class ActionProcessForm extends FormBase
         $processor = $form_state->getTemporaryValue('processor');
         $item = $form_state->getTemporaryValue('item');
 
-        $message = $processor->process($item);
+        $message = $this
+            ->transactionHandler
+            ->run(function () use ($processor, $item) {
+                return $processor->process($item);
+            })
+        ;
 
         // No redirect, the API is always supposed to give us a destination
         if ($message) {
