@@ -46,12 +46,19 @@ services:
     arguments: ["@ucms_seo.seo_service", "@ucms_site.manager"]
     tags: [{name: twig.extension}]
 
+  # A few various listeners
   ucms_seo.menu_event_listener:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventListener
     arguments: ["@ucms_seo.seo_service", "@entity.manager"]
     tags:
       - {name: event_listener, event: "menu:tree"}
+  ucms_seo.site_attach.subscriber:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteAttachEventListener
+    arguments: ["@ucms_seo.seo_service"]
+    tags: [{ name: event_subscriber }]
 
+  # Store locator
+  # @todo review the component
   ucms_seo.store_locator_factory:
     class: MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory
     arguments: ["@ucms_seo.seo_service"]

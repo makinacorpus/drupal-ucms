@@ -10,6 +10,7 @@ use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -424,7 +425,7 @@ class SeoService
         }
 
         if ($previous === $segment) {
-            //return; // Nothing to do
+            return; // Nothing to do
         }
 
         $this
@@ -870,8 +871,85 @@ class SeoService
     }
 
     /**
+     * From the given site, ensure that all nodes in it have a primary alias
+     *
+     * @see ::ensureNodePrimaryAlias()
+     *   For the equivalent method that ensure all aliases on all sites for
+     *   a single node
+     *
+     * @param int $siteId
+     * @param string $nodeIdList
+     *   If given, restrict the bulk operation to given node list
+     */
+    public function ensureSitePrimaryAliases($siteId, array $nodeIdList = null)
+    {
+        // HUGE YEAH! CONCAT() exists in both MySQL and PostgreSQL and are
+        // compatible altogether!!!
+        if ($nodeIdList) {
+            $this
+                ->db
+                ->query("
+                    INSERT INTO {ucms_seo_alias}
+                        (source, alias, language, site_id, node_id, priority)
+                    SELECT
+                        CONCAT('node', '/', s.nid), s.alias_segment, n.language, r.site_id, s.nid, :priority
+                    FROM {ucms_seo_node} s
+                    JOIN {node} n ON n.nid = s.nid
+                    JOIN {ucms_site_node} r
+                        ON r.site_id = :siteId
+                        AND r.nid = s.nid
+                    WHERE
+                        s.nid IN (:nidList)
+                        AND NOT EXISTS (
+                            SELECT 1 FROM {ucms_seo_alias} a
+                            WHERE
+                                a.node_id = n.nid
+                                AND a.site_id = r.site_id
+                        )
+                ", [
+                    ':priority'   => Alias::PRIORITY_LOW,
+                    ':siteId'     => $siteId,
+                    ':nidList'    => $nodeIdList,
+                ])
+            ;
+        } else {
+            $this
+                ->db
+                ->query("
+                    INSERT INTO {ucms_seo_alias}
+                        (source, alias, language, site_id, node_id, priority)
+                    EXPLAIN
+                    SELECT
+                        CONCAT('node', '/', s.nid), s.alias_segment, n.language, r.site_id, s.nid, :priority
+                    FROM {ucms_seo_node} s
+                    JOIN {node} n ON n.nid = s.nid
+                    JOIN {ucms_site_node} r
+                        ON r.site_id = :siteId
+                        AND r.nid = s.nid
+                    WHERE
+                        NOT EXISTS (
+                            SELECT 1 FROM {ucms_seo_alias} a
+                            WHERE
+                                a.node_id = n.nid
+                                AND a.site_id = r.site_id
+                        )
+                ", [
+                    ':siteId'   => $siteId,
+                    ':priority' => Alias::PRIORITY_LOW,
+                ])
+            ;
+        }
+
+        $this->aliasManager->cacheClear();
+    }
+
+    /**
      * From the given node, ensures at least one alias exists for it on all
      * sites it is related, leave alone aliases when a menu exists
+     *
+     * @see ::ensureSitePrimaryAliases()
+     *   For the equivalent method that ensure aliases of a list of nodes for
+     *   a single site
      *
      * @param NodeInterface $node
      */
@@ -881,86 +959,95 @@ class SeoService
         $segment    = $this->getNodeSegment($node);
         $langcode   = $node->language()->getId();
 
-        if (!$segment) {
+        // If alias already exists, remove its potential expiry date so it gets
+        // selected instead of others
+        if ($segment) {
             $this
                 ->db
                 ->query("
-                    DELETE FROM {ucms_seo_alias}
+                    UPDATE {ucms_seo_alias}
+                    SET
+                        expires = NULL
                     WHERE
-                        source = ?
-                        AND priority < 0
-                ", [$nodeRoute])
+                        node_id = :nid
+                        AND alias = :alias
+                        AND expires IS NOT NULL
+                ", [
+                    ':alias'      => $segment,
+                    ':nid'        => $node->id(),
+                ])
+            ;
+
+            // First query will set alias for nodes wherever it does not exists
+            $this
+                ->db
+                ->query("
+                    INSERT INTO {ucms_seo_alias}
+                        (source, alias, language, site_id, node_id, priority)
+                    SELECT
+                        :source1, :alias1, :language, s.site_id, s.nid, :priority1
+                    FROM {ucms_site_node} s
+                    WHERE
+                        s.nid = :nid
+                        AND NOT EXISTS (
+                            SELECT 1 FROM {ucms_seo_alias} e
+                            WHERE
+                                e.site_id = s.site_id AND (
+                                    e.alias = :alias2
+                                    OR (e.source = :source2 AND e.priority > :priority2)
+                                )
+                        )
+                ", [
+                    ':alias1'     => $segment,
+                    ':alias2'     => $segment,
+                    ':language'   => $langcode,
+                    ':nid'        => $node->id(),
+                    ':priority1'  => Alias::PRIORITY_LOW,
+                    ':priority2'  => Alias::PRIORITY_LOW,
+                    ':source1'    => $nodeRoute,
+                    ':source2'    => $nodeRoute,
+                ])
+            ;
+
+            // Considering that the segment just changed, we also need to update
+            // it where it was generated previously
+            $this
+                ->db
+                ->query("
+                    UPDATE {ucms_seo_alias}
+                    SET
+                        expires = :expiry
+                    WHERE
+                        node_id = :nid
+                        AND alias <> :alias
+                        AND priority = :priority
+                ", [
+                    ':alias'      => $segment,
+                    ':expiry'     => (new \DateTime(Alias::EXPIRY))->format('Y-m-d H:i:s'),
+                    ':nid'        => $node->id(),
+                    ':priority'   => Alias::PRIORITY_LOW,
+                ])
+            ;
+        } else {
+            // Just mark as expiring everything
+            $this
+                ->db
+                ->query("
+                    UPDATE {ucms_seo_alias}
+                    SET
+                        expires = :expiry
+                    WHERE
+                        node_id = :nid
+                        AND priority = :priority
+                ", [
+                    ':expiry'     => (new \DateTime(Alias::EXPIRY))->format('Y-m-d H:i:s'),
+                    ':nid'        => $node->id(),
+                    ':priority'   => Alias::PRIORITY_LOW,
+                ])
             ;
         }
 
-        // If alias already exists, remove its potential expiry date so it gets
-        // selected instead of others
-        $this
-        ->db
-        ->query("
-                UPDATE {ucms_seo_alias}
-                SET
-                    expires = NULL
-                WHERE
-                    node_id = :nid
-                    AND alias = :alias
-                    AND expires IS NOT NULL
-            ", [
-                  ':alias'      => $segment,
-                  ':nid'        => $node->id(),
-              ])
-          ;
-
-        // First query will set alias for nodes wherever it does not exists
-        $this
-            ->db
-            ->query("
-                INSERT INTO {ucms_seo_alias}
-                    (source, alias, language, site_id, node_id, priority)
-                SELECT
-                    :source1, :alias1, :language, s.site_id, s.nid, :priority1
-                FROM {ucms_site_node} s
-                WHERE
-                    s.nid = :nid
-                    AND NOT EXISTS (
-                        SELECT 1 FROM {ucms_seo_alias} e
-                        WHERE
-                            e.site_id = s.site_id AND (
-                                e.alias = :alias2
-                                OR (e.source = :source2 AND e.priority > :priority2)
-                            )
-                    )
-            ", [
-                ':alias1'     => $segment,
-                ':alias2'     => $segment,
-                ':language'   => $langcode,
-                ':nid'        => $node->id(),
-                ':priority1'  => Alias::PRIORITY_LOW,
-                ':priority2'  => Alias::PRIORITY_LOW,
-                ':source1'    => $nodeRoute,
-                ':source2'    => $nodeRoute,
-            ])
-        ;
-
-        // Considering that the segment just changed, we also need to update
-        // it where it was generated previously
-        $this
-            ->db
-            ->query("
-                UPDATE {ucms_seo_alias}
-                SET
-                    expires = :expiry
-                WHERE
-                    node_id = :nid
-                    AND alias <> :alias
-                    AND priority = :priority
-            ", [
-                ':alias'      => $segment,
-                ':expiry'     => (new \DateTime(Alias::EXPIRY))->format('Y-m-d H:i:s'),
-                ':nid'        => $node->id(),
-                ':priority'   => Alias::PRIORITY_LOW,
-            ])
-        ;
+        $this->aliasManager->cacheClear();
     }
 
     /**

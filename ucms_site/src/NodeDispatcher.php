@@ -7,6 +7,7 @@ use Drupal\node\NodeInterface;
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 
 /**
  * Handles whatever needs to be done with nodes
@@ -68,6 +69,8 @@ class NodeDispatcher
         if (!in_array($site->id, $node->ucms_sites)) {
             $node->ucms_sites[] = $site->id;
         }
+
+        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($site, [$node->id()]));
     }
 
     /**
@@ -87,6 +90,14 @@ class NodeDispatcher
                 ->execute()
             ;
         }
+
+        $this
+            ->entityManager
+            ->getStorage('node')
+            ->resetCache($nodeIdList)
+        ;
+
+        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($site, $nodeIdList));
     }
 
     /**
@@ -110,6 +121,8 @@ class NodeDispatcher
             ->getStorage('node')
             ->resetCache($nodeIdList)
         ;
+
+        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_DETACH, new SiteAttachEvent($site, $nodeIdList));
     }
 
     /**
