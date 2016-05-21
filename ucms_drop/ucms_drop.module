@@ -3,3 +3,26 @@
  * @file
  * UCMS  - Drag and drop API
  */
+
+/**
+ * Implements hook_library().
+ */
+function ucms_drop_library() {
+  $path = drupal_get_path('module', 'ucms_drop');
+  return [
+    'dragula' => [
+      'title'     => "Dragula",
+      'homepage'  => 'http://bevacqua.github.io/dragula/',
+      'version'   => '3.7.1',
+      'js' => [$path . '/resources/dragula.min.js' => []],
+      'css' => [$path . '/resources/dragula.min.css' => ['type'  => 'file', 'media' => 'screen'],],
+    ],
+    'drop' => [
+      'title'     => "µCMS drag'n'drop' API",
+      'homepage'  => 'http://github.com/makina-corpus/drupal-ucms',
+      'version'   => '0.1',
+      'js' => [$path . '/resources/drop.js' => []],
+      'dependencies' => [['ucms_drop', 'dragula']],
+    ],
+  ];
+}
