@@ -26,3 +26,10 @@ function ucms_drop_library() {
     ],
   ];
 }
+
+/**
+ * Implements hook_page_build().
+ */
+function ucms_drop_page_build(&$page) {
+  drupal_add_library('ucms_drop', 'drop');
+}

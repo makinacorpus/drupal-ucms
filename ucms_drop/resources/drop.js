@@ -21,6 +21,22 @@ var Ucms = Ucms || {};
   //  - ...
 
   /**
+   * Alias of querySelectorAll() that returns an array instead of a NodeList
+   */
+  function query(element, selector) {
+    var ret = [];
+    if (!element) {
+      element = document;
+    }
+    var elements = element.querySelectorAll(selector);
+    var i = 0;
+    for (i; i < elements.length; ++i) {
+      ret.push(elements[i]);
+    }
+    return ret;
+  }
+
+  /**
    * Log something to console
    *
    * @param string message
@@ -41,14 +57,14 @@ var Ucms = Ucms || {};
    * @param DOMNode element
    * @return boolean
    */
-  function isDroppableRegistered(element) {
+  function isNotDroppableRegistered(element) {
     var ret = false;
     droppables.forEach(function (item) {
       if (item.element === element) {
         ret = true;
       }
     });
-    return ret;
+    return !ret;
   }
 
   /**
@@ -57,14 +73,14 @@ var Ucms = Ucms || {};
    * @param DOMNode element
    * @return boolean
    */
-  function isDraggableRegistered(element) {
+  function isNotDraggableRegistered(element) {
     var ret = false;
     draggables.forEach(function (item) {
       if (item.element === element) {
         ret = true;
       }
     });
-    return ret;
+    return !ret;
   }
 
   /**
@@ -96,16 +112,15 @@ var Ucms = Ucms || {};
 
     switch (type) {
       case "droppable":
-        filterCallback = isDroppableRegistered;
+        filterCallback = isNotDroppableRegistered;
         break;
       case "draggable":
-        filterCallback = isDraggableRegistered;
+        filterCallback = isNotDraggableRegistered;
         break;
     }
 
     // Find all using data attributes
-    element
-      .querySelectorAll("*[" + typeAttr + "]")
+    query(element, "*[" + typeAttr + "]")
       .filter(filterCallback)
       .forEach(function (node) {
         if (node) {

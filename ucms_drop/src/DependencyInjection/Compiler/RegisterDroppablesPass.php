@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Drop\Notification\DependencyInjection\Compiler;
+namespace MakinaCorpus\Ucms\Drop\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
