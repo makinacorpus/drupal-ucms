@@ -1,0 +1,5 @@
+name = "UCMS - Drag'n'Drop api"
+description = "Drag and drop base API"
+core = 7.x
+package = UCMS
+php = 5.5

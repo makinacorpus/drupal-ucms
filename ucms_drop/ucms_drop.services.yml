@@ -1,0 +1,7 @@
+services:
+
+  ucms_drop.collector:
+    class: MakinaCorpus\Ucms\Drop\Collector
+
+  ucms_drop.registry:
+    class: MakinaCorpus\Ucms\Drop\HandlerRegistry
