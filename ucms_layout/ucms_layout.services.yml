@@ -28,3 +28,9 @@ services:
     arguments: ["@ucms_site.manager", "@ucms_layout.context_manager"]
     tags:
       - {name: event_listener, event: ucms_dashboard.context_init }
+
+  ucms_layout.drop.region_handler:
+    public: true
+    class: MakinaCorpus\Ucms\Layout\Drop\RegionDropHandler
+    arguments: ['@entity.manager', '@ucms_layout.context_manager']
+    tags: [{ name: ucms_drop.droppable, type: region }]

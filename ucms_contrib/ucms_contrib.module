@@ -474,6 +474,10 @@ function ucms_contrib_node_view_alter(&$build) {
  * Removes submitted information and adds necessary stuff for JS.
  */
 function ucms_contrib_preprocess_node(&$variables) {
+
+  $variables['attributes_array']['data-draggable-type'] = 'node';
+  $variables['attributes_array']['data-draggable-id'] = $variables['node']->nid;
+
   switch ($variables['view_mode']) {
 
     case UCMS_VIEW_MODE_CONTENTADMIN:
@@ -552,7 +556,7 @@ function ucms_contrib_library() {
       'title'   => 'UCMS - Contrib',
       'version' => '0.1',
       'js'      => [
-        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js' => [],
+        //drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js' => [],
       ],
       'css'     => [
         drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css' => [

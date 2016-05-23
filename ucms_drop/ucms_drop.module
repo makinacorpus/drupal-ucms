@@ -4,6 +4,21 @@
  * UCMS  - Drag and drop API
  */
 
+function ucms_drop_menu() {
+  $items = [];
+
+  foreach (['accepts'] as $method) {
+    $items['ucms/drop/ajax/' . $method] = [
+      'page callback'     => 'sf_dic_page',
+      'page arguments'    => ['MakinaCorpus\Ucms\Drop\Controller\DropController::' . $method],
+      'access arguments'  => ['access content'], // @todo
+      'type'              => MENU_CALLBACK,
+    ];
+  }
+
+  return $items;
+}
+
 /**
  * Implements hook_library().
  */

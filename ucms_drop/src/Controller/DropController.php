@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
  *   - 'position': for removeAt and dropAt actions
  *   - 'from' and 'to': for the move action
  */
-class Controller extends Controller
+class DropController extends Controller
 {
     /**
      * Get handler registry
@@ -35,7 +35,7 @@ class Controller extends Controller
      */
     private function getHandlerRegistry()
     {
-        return $this->get('ucms.drop.registry');
+        return $this->get('ucms_drop.registry');
     }
 
     /**

@@ -42,7 +42,11 @@ class RegisterDroppablesPass implements CompilerPassInterface
                 throw new \InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, $interface));
             }
 
-            $definition->addMethodCall('registerService', [$id]);
+            if (!isset($attributes[0]['type'])) {
+                throw new \InvalidArgumentException(sprintf('Service "%s" must have the "type" tag attribute.', $id, $interface));
+            }
+
+            $definition->addMethodCall('registerService', [$attributes[0]['type'], $id]);
         }
     }
 }

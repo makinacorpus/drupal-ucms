@@ -1,6 +1,9 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Drop;
+namespace MakinaCorpus\Ucms\Drop\Impl;
+
+use MakinaCorpus\Ucms\Drop\DragItem;
+use MakinaCorpus\Ucms\Drop\DropHandlerInterface;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;

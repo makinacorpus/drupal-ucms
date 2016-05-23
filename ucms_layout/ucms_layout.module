@@ -192,6 +192,9 @@ function ucms_layout_page_build(&$page) {
 function ucms_layout_preprocess_region(&$vars) {
   $manager = ucms_layout_context_manager();
 
+  $vars['attributes_array']['data-droppable-type'] = 'region';
+  $vars['attributes_array']['data-droppable-id'] = $vars['region'];
+
   if ($manager->isRegionInEditMode($vars['region'])) {
     $vars['attributes_array']['data-region'] = $vars['region'];
     $vars['attributes_array']['data-can-receive'] = 1;

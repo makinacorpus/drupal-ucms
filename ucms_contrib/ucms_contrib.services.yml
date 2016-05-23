@@ -56,3 +56,9 @@ services:
     public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\MediaReferenceEventListener
     tags: [{ name: event_subscriber }]
+
+  ucms_contrib.drop.cart_handler:
+    public: true
+    class: MakinaCorpus\Ucms\Contrib\Drop\CartDropHandler
+    arguments: ['@ucms_contrib.cart', '@current_user', '@entity.manager']
+    tags: [{ name: ucms_drop.droppable, type: cart }]

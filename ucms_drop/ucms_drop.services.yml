@@ -5,3 +5,5 @@ services:
 
   ucms_drop.registry:
     class: MakinaCorpus\Ucms\Drop\HandlerRegistry
+    calls:
+      - [setContainer, ['@service_container']]
