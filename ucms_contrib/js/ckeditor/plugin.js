@@ -52,10 +52,11 @@
     // awful lot of bugs.
     var element;
     if (content) {
-      element = CKEDITOR.dom.element.createFromHtml(content);
+      element = CKEDITOR.dom.element.createFromHtml('<div>' + content + '</div>');
     } else {
       element = new CKEDITOR.dom.element('span');
     }
+    // @todo Here it might fail if the element is neither span or div... please fix this
     element.setAttribute('data-media-nid', nid);
     element.setAttribute('data-media-width', '100%');
     element.setAttribute('data-media-float', '');

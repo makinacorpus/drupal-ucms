@@ -720,10 +720,10 @@ function ucms_contrib_node_collect_reference(NodeInterface $node) {
     $q = db_insert('ucms_node_reference')->fields(['source_id', 'target_id', 'type', 'field_name']);
     foreach ($references as $reference) {
       $q->values([
-          $reference->getSourceId(),
-          $reference->getTargetId(),
-          $reference->getType(),
-          $reference->getFieldName(),
+        $reference->getSourceId(),
+        $reference->getTargetId(),
+        $reference->getType(),
+        $reference->getFieldName(),
       ]);
     }
     $q->execute();

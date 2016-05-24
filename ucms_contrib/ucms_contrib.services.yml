@@ -1,3 +1,6 @@
+parameters:
+  ucms_contrib.filter.view_mode: wysiwyg
+
 services:
 
   # Site storage responsible for loading and updating site data

@@ -22,19 +22,14 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
             $pluginId,
             $pluginDefinition,
             $container->get('entity.manager'),
-            $container->get('logger.channel.default')
+            $container->get('logger.channel.default'),
+            $container->getParameter('ucms_contrib.filter.view_mode')
         );
     }
 
-    /**
-     * @var EntityManager
-     */
     private $entityManager;
-
-    /**
-     * @var LoggerChannelInterface
-     */
     private $logger;
+    private $viewMode = 'default';
 
     /**
      * Default constructor
@@ -43,12 +38,22 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
      * @param string $pluginId
      * @param string $pluginDefinition
      * @param EntityManager $entityManager
+     * @param LoggerChannelInterface $logger
+     * @param string $viewMode
      */
-    public function __construct(array $configuration, $pluginId, $pluginDefinition, EntityManager $entityManager, LoggerChannelInterface $logger)
+    public function __construct(
+        array $configuration,
+        $pluginId,
+        $pluginDefinition,
+        EntityManager $entityManager,
+        LoggerChannelInterface $logger = null,
+        $viewMode = 'default')
     {
         parent::__construct($configuration, $pluginId, $pluginDefinition);
 
         $this->entityManager = $entityManager;
+        $this->logger = $logger;
+        $this->viewMode = $viewMode;
     }
 
     /**
@@ -143,7 +148,7 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
 
             // Render the node only once
             // @todo node_view() is not d8 friendly
-            $renderedMedia = node_view($nodes[$nodeId], 'default');
+            $renderedMedia = node_view($nodes[$nodeId], $this->viewMode);
             $renderedMedia = drupal_render($renderedMedia);
 
             // Normal procedure, render the node and put it there
@@ -151,6 +156,7 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
                 list($node, $width, $float) = $data;
 
                 $new = $d->createElement('div');
+                $new->setAttribute('class', 'body-media');
                 $this->setInnerHtml($new, $renderedMedia);
 
                 $new->setAttribute('data-media-nid', $nodeId);

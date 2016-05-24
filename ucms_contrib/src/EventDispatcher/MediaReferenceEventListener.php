@@ -35,7 +35,7 @@ class MediaReferenceEventListener implements EventSubscriberInterface
 
             foreach ($items as $item) {
                 $matches = [];
-                if (preg_match_all('@data-media-nid=([^\s]+)@ims', $item['value'], $matches)) {
+                if (preg_match_all('@data-media-nid=([^\s\<\>]+)?@ims', $item['value'], $matches)) {
                     $idList = array_map(function ($id) { return trim($id, '\'"'); }, $matches[1]);
                     $event->addReferences('media', $idList, $field);
                 }
