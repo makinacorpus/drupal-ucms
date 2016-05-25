@@ -65,7 +65,7 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
     {
         $d = new \DOMDocument();
 
-        if (!$d->loadHTML('<!DOCTYPE html><html><body>' . $text . '</body></html>')) {
+        if (!@$d->loadHTML('<!DOCTYPE html><html><body>' . $text . '</body></html>')) {
             $this->logger->error("markup contain invalid HTML, cannot parse medias");
 
             return;
