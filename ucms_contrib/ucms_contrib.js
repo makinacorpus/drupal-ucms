@@ -130,6 +130,8 @@
         $('[data-region]', context).sortable($.extend({}, Drupal.ucmsSortableDefaults, {
           // Connect with others regions and trash
           connectWith: '[data-region], #ucms-cart-trash',
+          appendTo: document.body,
+          helper: 'clone',
 
           start: function (event, ui) {
             // Add some useful info to items for update() and receive()
