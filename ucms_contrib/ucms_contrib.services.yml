@@ -1,5 +1,6 @@
 parameters:
-  ucms_contrib.filter.view_mode: wysiwyg
+  ucms_contrib.filter.view_mode.wysiwyg: wysiwyg
+  ucms_contrib.filter.view_mode.markup: default
 
 services:
 

@@ -23,7 +23,7 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
             $pluginDefinition,
             $container->get('entity.manager'),
             $container->get('logger.channel.default'),
-            $container->getParameter('ucms_contrib.filter.view_mode')
+            $container->getParameter('ucms_contrib.filter.view_mode.markup')
         );
     }
 

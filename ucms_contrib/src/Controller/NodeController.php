@@ -12,7 +12,7 @@ class NodeController extends Controller
 {
     private function getWysiwygViewMode()
     {
-        return $this->getParameter('ucms_contrib.filter.view_mode');
+        return $this->getParameter('ucms_contrib.filter.view_mode.wysiwyg');
     }
 
     public function viewAction(NodeInterface $node, $mode = 'normal')
