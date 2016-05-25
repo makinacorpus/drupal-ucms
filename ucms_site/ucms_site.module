@@ -269,6 +269,9 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('admin/cart/refresh' === substr($path, 0, 18)) {
       return true;
     }
+    if ('admin/cart' === substr($path, 0, 10)) {
+      return true;
+    }
     if (arg(0) === 'node') {
       if (menu_get_object() && ($action = arg(2))) {
         switch ($action) {
@@ -304,11 +307,8 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
 function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
   if (ucms_site_is_master()) {
     $moduleHandler = \Drupal::service('module_handler');
-
-    if (
-      $moduleHandler->moduleExists('ucms_sso') &&
-      preg_match('@^node/(\d+)(/view)?$@', $path, $matches)
-    ) {
+    $matches = [];
+    if ($moduleHandler->moduleExists('ucms_sso') && preg_match('@^node/(\d+)(/view)?$@', $path, $matches)) {
       $node = \Drupal::service('entity.manager')->getStorage('node')->load($matches[1]);
       if (!empty($node->site_id)) {
         $options['query'] = ['destination' => $path];

@@ -13,7 +13,6 @@ use MakinaCorpus\Ucms\Contrib\NodeCartDisplay;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class CartController extends Controller
 {
