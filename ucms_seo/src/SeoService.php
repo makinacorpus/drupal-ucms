@@ -903,7 +903,7 @@ class SeoService
                         AND NOT EXISTS (
                             SELECT 1 FROM {ucms_seo_alias} a
                             WHERE
-                                a.node_id = n.nid
+                                (a.node_id = r.nid OR a.alias = s.alias_segment)
                                 AND a.site_id = r.site_id
                         )
                 ", [
@@ -930,7 +930,7 @@ class SeoService
                         NOT EXISTS (
                             SELECT 1 FROM {ucms_seo_alias} a
                             WHERE
-                                a.node_id = n.nid
+                                (a.node_id = r.nid OR a.alias = s.alias_segment)
                                 AND a.site_id = r.site_id
                         )
                 ", [
