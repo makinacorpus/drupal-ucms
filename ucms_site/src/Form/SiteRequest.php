@@ -252,6 +252,7 @@ class SiteRequest extends FormBase
                     'alt'         => $this->t('Screenshot for !theme theme', ['!theme' => $themes[$theme]->info['name']]),
                     'attributes'  => ['class' => ['screenshot']],
                 ]);
+                $text .= '<p>'. $themes[$theme]->info['name'] . '</p>';
             } else {
                 $text = $themes[$theme]->info['name'];
             }
