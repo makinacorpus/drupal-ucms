@@ -47,7 +47,14 @@ class NodeActionProvider implements ActionProviderInterface
 
         /* @var $item NodeInterface */
 
-        $ret[] = new Action($this->t("View"), 'node/' . $item->id(), null, 'eye-open');
+        // Select the most revelant site to view node in, avoiding the user to
+        // view nodes on master site.
+        $siteId = $this->access->findMostRevelantSiteFor($item);
+        if ($siteId) {
+            $ret[] = new Action($this->t("View"), 'sso/goto/' . $siteId, ['query' => ['destination' => 'node/' . $item->id()]], 'eye-open');
+        } else {
+            $ret[] = new Action($this->t("View"), 'node/' . $item->id(), null, 'eye-open', 0, true, false, true); // disabled link
+        }
 
         if ($item->access(Access::OP_UPDATE)) {
             $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/edit', null, 'pencil', -100, false, true, false, 'edit');

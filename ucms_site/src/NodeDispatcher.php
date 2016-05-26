@@ -285,7 +285,6 @@ class NodeDispatcher
         // Dispatch event for others.
         $this->eventDispatcher->dispatch('site:clone', new GenericEvent($target, ['source' => $source]));
 
-
         // @todo
         //   - duplicate menus
         //   - duplicate composite contents
@@ -321,7 +320,6 @@ class NodeDispatcher
         // @todo Later in the future, determiner an efficient way of caching it,
         // we'll need this data to be set in Elastic Search anyway so we'll risk data
         // stalling in there.
-
         $r = $this
             ->db
             ->select('ucms_site_node', 'usn')
@@ -334,10 +332,33 @@ class NodeDispatcher
         foreach ($nodes as $node) {
             $node->ucms_sites = [];
         }
-
         foreach ($r as $row) {
             $node = $nodes[$row->nid];
             $node->ucms_sites[] = $row->site_id;
+        }
+
+        // Repeat it with user visible sites allowing administration pages to
+        // compute visible node links for the user, that's why we restrict this
+        // extra query to master site only
+        if (!$this->manager->hasContext()) {
+
+            $r = $this
+                ->db
+                ->select('ucms_site_node', 'usn')
+                ->fields('usn', ['nid', 'site_id'])
+                ->condition('usn.nid', array_keys($nodes))
+                ->orderBy('usn.nid')
+                ->addTag('ucms_site_access')
+                ->execute()
+            ;
+
+            foreach ($nodes as $node) {
+                $node->ucms_allowed_sites = [];
+            }
+            foreach ($r as $row) {
+                $node = $nodes[$row->nid];
+                $node->ucms_allowed_sites[] = $row->site_id;
+            }
         }
     }
 

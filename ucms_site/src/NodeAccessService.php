@@ -116,6 +116,32 @@ class NodeAccessService
     }
 
     /**
+     * Find the most revelant site to view the node in
+     *
+     * @param NodeInterface $node
+     *
+     * @see MakinaCorpus\Ucms\Site\NodeDispatcher::onLoad()
+     *
+     * @return int
+     *   The site identifier is returned, we don't need to load it to build
+     *   a node route
+     */
+    public function findMostRevelantSiteFor(NodeInterface $node)
+    {
+        if (empty($node->ucms_allowed_sites)) {
+            return; // Node cannot be viewed
+        }
+
+        if (in_array($node->site_id, $node->ucms_allowed_sites)) {
+            // Per default, the primary site seems the best to work with
+            return $node->site_id;
+        }
+
+        // First one seems the best one.
+        return reset($node->ucms_allowed_sites);
+    }
+
+    /**
      * Alter-ego of hook_node_access_records().
      */
     public function getNodeGrants($node)
