@@ -70,6 +70,15 @@
    * @param int nid
    */
   function createAndPlaceMedia(editor, nid, content) {
+
+    // Attempt to deterrmine if there is a selection or not
+    var selection = editor.getSelection();
+    if (!selection) {
+      // Dawn, we're fucked, find another way around this.
+    }
+
+    editor.focus();
+
     var element = createMediaElement(editor, nid, content);
     editor.insertElement(element);
 
