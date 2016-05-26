@@ -195,7 +195,7 @@ function ucms_contrib_menu() {
   $items['node/%node/copy-on-edit'] = [
     'title'             => "Edit for my site",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => [1],
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeCopyOnEdit', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,

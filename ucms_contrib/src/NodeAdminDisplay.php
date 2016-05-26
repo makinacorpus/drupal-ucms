@@ -55,11 +55,18 @@ class NodeAdminDisplay extends AbstractDisplay
                 $anonymous = drupal_anonymous_user();
 
                 foreach ($nodes as $node) {
-                    // FIXME should be in theme
-                    $title = '<div class="ucms-contrib-result" data-nid="' . $node->nid . '">'
-                        . (!(bool)$node->is_clonable ? '<span class="glyphicon glyphicon-lock"></span>&nbsp;' : '')
-                        . l($node->title, 'node/' . $node->nid)
-                        . '</div>';
+                    $titleSuffix = [];
+                    $titleSuffix[] = '<span class="pull-right">';
+                    if (!(bool)$node->is_clonable) {
+                        $titleSuffix[] = '<span class="glyphicon glyphicon-lock" data-toggle="tooltip" title="' . $this->t("This content may not be cloned") . '"></span>&nbsp;';
+                    }
+                    if (!empty($node->origin_nid) || !empty($node->parent_nid)) {
+                        $titleSuffix[] = '<span class="glyphicon glyphicon-duplicate" data-toggle="tooltip" title="' . $this->t("This content is a copy of another content") . '"></span>&nbsp;';
+                    }
+                    $titleSuffix[] = '</span>';
+
+                    $titleSuffix = implode('', $titleSuffix);
+                    $title = $titleSuffix . '<div class="ucms-contrib-result" data-nid="' . $node->nid . '">' . l($node->title, 'node/' . $node->nid) . '</div>';
 
                     // Prepares last update indication
                     $lastUpdate = ($node->getChangedTime() == 0)
