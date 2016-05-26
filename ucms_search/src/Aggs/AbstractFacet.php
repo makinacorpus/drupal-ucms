@@ -3,13 +3,9 @@
 namespace MakinaCorpus\Ucms\Search\Aggs;
 
 use MakinaCorpus\Ucms\Search\Lucene\Query;
-use MakinaCorpus\Ucms\Search\Response;
 use MakinaCorpus\Ucms\Search\Search;
 
-/**
- * Represent an Elastic Search facet based upon the aggregations feature
- */
-abstract class AbstractFacet implements AggInterface
+abstract class AbstractFacet implements FacetInterface
 {
     /**
      * @var string
@@ -219,27 +215,5 @@ abstract class AbstractFacet implements AggInterface
                 )
             ;
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function buildQueryData(Search $search, $query)
-    {
-        return [
-            $this->getParameterName() => [
-                $this->getType() => [
-                    'field' => $this->getField(),
-                    'size'  => 100,
-                ],
-            ]
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function parseResponse(Search $search, Response $response, $raw)
-    {
     }
 }

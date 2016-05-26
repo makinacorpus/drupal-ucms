@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Search;
 use Elasticsearch\Client;
 
 use MakinaCorpus\Ucms\Search\Aggs\AggInterface;
+use MakinaCorpus\Ucms\Search\Aggs\DateHistogramFacet;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\Aggs\TopHits;
 use MakinaCorpus\Ucms\Search\Aggs\ValueCount;
@@ -341,6 +342,42 @@ class Search
     }
 
     /**
+     * @deprecated
+     *   Use ::createTermFacet() instead
+     *
+     * @return TermFacet
+     */
+    public function createFacet($field, $values = null, $operator = Query::OP_OR, $parameterName = null, $isPostFilter = false)
+    {
+        return $this->aggregations[] = (new TermFacet($field, $operator, $parameterName, $isPostFilter))->setSelectedValues($values);
+    }
+
+    /**
+     * Create a date histogram facet
+     *
+     * @param string $field
+     *   Field name if different from the name
+     * @param mixed[] $currentValues
+     *   Current values for filtering if any
+     * @param boolean $filter
+     *   Filter aggregation will filter the result before running the
+     *   aggregation while global aggregation will always return values
+     *   for the whole index priori to filtering
+     * @param string $operator
+     *   Operator to use for filtering (Query::OP_OR or Query::OP_AND)
+     * @param string $parameterName
+     *   Facet query parameter name if different from field name
+     * @param boolean $isPostFilter
+     *   Tell if the current facet filter should apply after query
+     *
+     * @return TermFacet
+     */
+    public function createDateHistogramFacet($field, $values = null, $operator = Query::OP_OR, $parameterName = null, $isPostFilter = false)
+    {
+        return $this->aggregations[] = (new DateHistogramFacet($field, $operator, $parameterName, $isPostFilter))->setSelectedValues($values);
+    }
+
+    /**
      * Add facet aggregation
      *
      * @param string $field
@@ -360,7 +397,7 @@ class Search
      *
      * @return TermFacet
      */
-    public function createFacet($field, $values = null, $operator = Query::OP_OR, $parameterName = null, $isPostFilter = false)
+    public function createTermFacet($field, $values = null, $operator = Query::OP_OR, $parameterName = null, $isPostFilter = false)
     {
         return $this->aggregations[] = (new TermFacet($field, $operator, $parameterName, $isPostFilter))->setSelectedValues($values);
     }

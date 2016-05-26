@@ -67,14 +67,14 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createFacet('type', null)
+            ->createTermFacet('type', null)
             ->setChoicesMap(node_type_get_names())
             ->setTitle($this->t("Type"))
         ;
 
         $ret[] = $this
             ->getSearch()
-            ->createFacet('owner', null)
+            ->createTermFacet('owner', null)
             ->setChoicesCallback(function ($values) {
                 if ($accounts = user_load_multiple($values)) {
                     foreach ($accounts as $index => $account) {
@@ -88,7 +88,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createFacet('tags', null)
+            ->createTermFacet('tags', null)
             ->setChoicesCallback(function ($values) {
                 if ($terms = taxonomy_term_load_multiple($values)) {
                     foreach ($terms as $index => $term) {
@@ -102,7 +102,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createFacet('status', null)
+            ->createTermFacet('status', null)
             ->setChoicesMap([0 => $this->t("Unpublished"), 1 => $this->t("Published")])
             ->setTitle($this->t("Status"))
         ;
@@ -114,9 +114,17 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $ret[] = $this
             ->getSearch()
-            ->createFacet('site_id', null)
+            ->createTermFacet('site_id', null)
             ->setChoicesMap($sites)
             ->setExclusive(true)
+            ->setTitle($this->t("My sites"))
+        ;
+
+        $ret[] = $this
+            ->getSearch()
+            ->createDateHistogramFacet('created', null)
+            //->setChoicesMap($sites)
+            //->setExclusive(true)
             ->setTitle($this->t("My sites"))
         ;
 

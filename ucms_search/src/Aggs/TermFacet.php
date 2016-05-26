@@ -144,9 +144,7 @@ class TermFacet extends AbstractFacet
     }
 
     /**
-     * Get formatter list of choices after query
-     *
-     * @return string[]
+     * {@inheritdoc}
      */
     public function getFormattedChoices()
     {
@@ -208,6 +206,21 @@ class TermFacet extends AbstractFacet
         $this->exclusiveMode = $exclusiveMode;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function buildQueryData(Search $search, $query)
+    {
+        return [
+            $this->getParameterName() => [
+                $this->getType() => [
+                    'field' => $this->getField(),
+                    'size'  => 100,
+                ],
+            ]
+        ];
     }
 
     /**
