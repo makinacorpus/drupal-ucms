@@ -37,20 +37,11 @@ class TermFacet extends AbstractFacet
     private $exclusiveMode = false;
 
     /**
-     * Default constructor
-     *
-     * @param string $field
-     *   Field name
-     * @param string $operator
-     *   Query::OP_AND or Query::OP_OR determines how is built the Lucene
-     *   aggregation query and how the facet values should operate on the
-     *   search query
-     * @param string $parameterName
-     *   Parameter name if different from field
+     * {@inheritdoc}
      */
-    public function __construct($field, $operator = Query::OP_AND, $parameterName = null)
+    public function getType()
     {
-        parent::__construct($field, 'terms', $operator, $parameterName);
+        return 'terms';
     }
 
     /**

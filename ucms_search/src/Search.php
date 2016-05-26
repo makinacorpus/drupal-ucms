@@ -4,8 +4,10 @@ namespace MakinaCorpus\Ucms\Search;
 
 use Elasticsearch\Client;
 
+use MakinaCorpus\Ucms\Search\Aggs\AggInterface;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\Aggs\TopHits;
+use MakinaCorpus\Ucms\Search\Aggs\ValueCount;
 use MakinaCorpus\Ucms\Search\Lucene\Query;
 use MakinaCorpus\Ucms\Search\Sort\Sort;
 
@@ -47,6 +49,11 @@ class Search
     private $filterQuery;
 
     /**
+     * @var Query
+     */
+    private $postFilterQuery;
+
+    /**
      * @var int
      */
     private $limit = UCMS_SEARCH_LIMIT;
@@ -67,7 +74,7 @@ class Search
     private $sortFields = [];
 
     /**
-     * @var Aggs\AggInterface[]
+     * @var AggInterface[]
      */
     private $aggregations = [];
 
@@ -103,6 +110,7 @@ class Search
         $this->client = $client;
         $this->query = new Query();
         $this->filterQuery = (new Query())->setOperator(Query::OP_AND);
+        $this->postFilterQuery = (new Query())->setOperator(Query::OP_AND);
     }
 
     /**
@@ -189,6 +197,23 @@ class Search
     public function getFilterQuery()
     {
         return $this->filterQuery;
+    }
+
+    /**
+     * Get post-filter query
+     *
+     * Using a post-filter query allows you to apply and fetch result for
+     * aggregations that are being run *before* this filter is applied to the
+     * response, this way, you may aggregate stuff and get the results that
+     * ignore the actual filtered query
+     *
+     * @see https://www.elastic.co/guide/en/elasticsearch/guide/current/_post_filter.html
+     *
+     * @return Query
+     */
+    public function getPostFilterQuery()
+    {
+        return $this->postFilterQuery;
     }
 
     /**
@@ -286,14 +311,13 @@ class Search
 
         return $this;
     }
-    
 
     /**
      * Add "top hits" aggregation
      *
      * @param string $field
      *   Field to build buckets with
-     * @param int $sire
+     * @param int $size
      *   Number of items per bucket
      *
      * @return TopHits
@@ -301,6 +325,19 @@ class Search
     public function createTopHits($field, $size = 1)
     {
         return $this->aggregations[] = new TopHits($field, $size);
+    }
+
+    /**
+     * Add "top hits" aggregation
+     *
+     * @param string $field
+     *   Field to build buckets with
+     *
+     * @return ValueCount
+     */
+    public function createValueCount($field)
+    {
+        return $this->aggregations[] = new ValueCount($field);
     }
 
     /**
@@ -318,12 +355,14 @@ class Search
      *   Operator to use for filtering (Query::OP_OR or Query::OP_AND)
      * @param string $parameterName
      *   Facet query parameter name if different from field name
+     * @param boolean $isPostFilter
+     *   Tell if the current facet filter should apply after query
      *
      * @return TermFacet
      */
-    public function createFacet($field, $values = null, $operator = Query::OP_OR, $parameterName = null)
+    public function createFacet($field, $values = null, $operator = Query::OP_OR, $parameterName = null, $isPostFilter = false)
     {
-        return $this->aggregations[] = (new TermFacet($field, $operator, $parameterName))->setSelectedValues($values);
+        return $this->aggregations[] = (new TermFacet($field, $operator, $parameterName, $isPostFilter))->setSelectedValues($values);
     }
 
     /**
@@ -506,6 +545,10 @@ class Search
                     ],
                 ];
             }
+        }
+
+        if (count($this->postFilterQuery)) {
+            $body['post_filter']['query_string']['query'] = (string)$this->postFilterQuery;
         }
 
         if ($aggs) {

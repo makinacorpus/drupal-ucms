@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Search\Aggs;
 
+use MakinaCorpus\Ucms\Search\Lucene\Query;
 use MakinaCorpus\Ucms\Search\Response;
 use MakinaCorpus\Ucms\Search\Search;
 
@@ -41,25 +42,30 @@ abstract class AbstractFacet implements AggInterface
     private $parameterName;
 
     /**
+     * @var boolean
+     */
+    private $isPostFilter = false;
+
+    /**
      * Default constructor
      *
      * @param string $field
      *   Field name
-     * @param string $type
-     *   Aggregation type
      * @param string $operator
      *   Query::OP_AND or Query::OP_OR determines how is built the Lucene
      *   aggregation query and how the facet values should operate on the
      *   search query
      * @param string $parameterName
      *   If different from field name
+     * @param boolean $isPostFilter
+     *   Tell if the current facet filter should apply after query
      */
-    public function __construct($field, $type, $operator = Query::OP_AND, $parameterName = null)
+    public function __construct($field, $operator = Query::OP_AND, $parameterName = null, $isPostFilter = false)
     {
         $this->field = $field;
-        $this->type = $type;
         $this->operator = $operator;
         $this->parameterName = $parameterName ? $parameterName : $field;
+        $this->isPostFilter = $isPostFilter;
     }
 
     /**
@@ -67,10 +73,7 @@ abstract class AbstractFacet implements AggInterface
      *
      * @return string
      */
-    public function getType()
-    {
-        return $this->type;
-    }
+    abstract public function getType();
 
     /**
      * Get aggregation query operator
@@ -200,8 +203,14 @@ abstract class AbstractFacet implements AggInterface
         }
 
         if ($values) {
-            $search
-                ->getFilterQuery()
+
+            if ($this->isPostFilter) {
+                $query = $search->getPostFilterQuery();
+            } else {
+                $query = $search->getFilterQuery();
+            }
+
+            $query
                 ->matchTermCollection(
                     $this->getField(),
                     $values,
@@ -219,7 +228,7 @@ abstract class AbstractFacet implements AggInterface
     {
         return [
             $this->getParameterName() => [
-                'terms' => [
+                $this->getType() => [
                     'field' => $this->getField(),
                     'size'  => 100,
                 ],

@@ -121,7 +121,12 @@ class Response
         }
 
         foreach ($this->rawResponse['aggregations'] as $name => $aggregation) {
-            foreach($aggregation['buckets'] as $bucket) {
+
+            if (empty($aggregation['buckets'])) {
+                continue; // Not all aggregations will count something...
+            }
+
+            foreach ($aggregation['buckets'] as $bucket) {
                 $counts[$name][$bucket['key']] = $bucket['doc_count'];
             }
         }
