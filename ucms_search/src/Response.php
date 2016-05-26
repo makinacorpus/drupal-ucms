@@ -115,11 +115,17 @@ class Response
    */
     public function getAggregationCounts() {
         $counts = [];
-        foreach($this->rawResponse['aggregations'] as $name => $aggregation) {
+
+        if (!isset($this->rawResponse['aggregations'])) {
+            return $counts;
+        }
+
+        foreach ($this->rawResponse['aggregations'] as $name => $aggregation) {
             foreach($aggregation['buckets'] as $bucket) {
                 $counts[$name][$bucket['key']] = $bucket['doc_count'];
             }
         }
+
         return $counts;
     }
 }
