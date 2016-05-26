@@ -706,6 +706,28 @@ function ucms_site_redirect_to_default() {
 }
 
 /**
+ * Redirect on node view if node can be viewed elsewhere than master.
+ */
+function ucms_site_init_node_redirect() {
+  if (user_is_anonymous()) { // Better be safe than sorry.
+    return;
+  }
+  if (!ucms_site_is_master()) { // Non-applicable.
+    return;
+  }
+  // Pure optimisation, and find node view page at the same time.
+  if ('node' !== arg(0) || !is_numeric(arg(1)) || arg(2)) {
+    return;
+  }
+  if ($node = menu_get_object()) {
+    $siteId = ucms_site_node_access_helper()->findMostRevelantSiteFor($node);
+    if ($siteId) {
+      drupal_goto('sso/goto/' . $siteId, ['query' => ['destination' => current_path()]]);
+    }
+  }
+}
+
+/**
  * Implements hook_init().
  */
 function ucms_site_init() {
@@ -739,12 +761,12 @@ function ucms_site_init() {
       if ($site->title) {
         $GLOBALS['conf']['site_name'] = $site->title;
       }
-
-      // @todo other alterations here
     }
   } else if (user_is_logged_in() && !ucms_site_is_master()) {
     ucms_site_redirect_to_master(); // Site does not exists.
   }
+
+  ucms_site_init_node_redirect();
 }
 
 /**
