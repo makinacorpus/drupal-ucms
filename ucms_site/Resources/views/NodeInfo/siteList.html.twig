@@ -4,6 +4,9 @@
       <a href="{{ url('sso/goto/' ~ site.id, {'query':{'destination': 'node/' ~ node.id}}) }}">
         {{ site.title }}
       </a>
+        {% if origin and site.id == origin.id %}
+          ({{ "Origin"|trans }})
+        {% endif %}
     </li>
   {% endfor %}
 </ul>

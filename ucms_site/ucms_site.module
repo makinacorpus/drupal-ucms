@@ -292,6 +292,8 @@ function ucms_site_admin_path_is_allowed($path) {
  * Implements hook_url_outbound_alter().
  */
 function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
+  // Enforce master-only (administration pages) links to be absolute with the
+  // master hostname instead of being directed to the current site.
   if ($path && !$options['absolute'] && ucms_site_manager()->hasContext()) {
     if (!ucms_site_admin_path_is_allowed($path)) {
       $options['absolute'] = true;

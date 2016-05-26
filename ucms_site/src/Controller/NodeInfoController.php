@@ -18,11 +18,21 @@ class NodeInfoController extends Controller
 
     public function siteListAction(NodeInterface $node)
     {
-        $manager = $this->getSiteManager();
+        $manager  = $this->getSiteManager();
+        $origin   = null;
+        $sites    = null;
+
+        if ($node->site_id) {
+            $origin = $manager->getStorage()->findOne($node->site_id);
+        }
+        if ($node->ucms_sites) {
+            $sites = $manager->getStorage()->loadAll($node->ucms_sites);
+        }
 
         return $this->render('module:ucms_site:Resources/views/NodeInfo/siteList.html.twig', [
-            'sites' => $manager->getStorage()->loadAll($node->ucms_sites),
-            'node'  => $node,
+            'origin'  => $origin,
+            'sites'   => $sites,
+            'node'    => $node,
         ]);
     }
 }
