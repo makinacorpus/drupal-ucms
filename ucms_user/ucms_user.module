@@ -193,7 +193,7 @@ function template_preprocess_ucms_user_profile(&$variables) {
     $account->getRoles(true)
   );
 
-  $sites = $manager->loadWebmasterSites($account);
+  $sites = $manager->loadOwnSites($account);
   $requests = [];
   foreach ($sites as $id => $site) {
     $site_name = l($site->title_admin, 'admin/dashboard/site/' . $site->id);
