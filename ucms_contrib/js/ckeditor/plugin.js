@@ -70,17 +70,20 @@
    * @param int nid
    */
   function createAndPlaceMedia(editor, nid, content) {
-
-    // Attempt to deterrmine if there is a selection or not
-    var selection = editor.getSelection();
-    if (!selection) {
-      // Dawn, we're fucked, find another way around this.
-    }
-
+    // Fouque, why doesn't it work without this?
     editor.focus();
 
     var element = createMediaElement(editor, nid, content);
-    editor.insertElement(element);
+
+    // Attempt to deterrmine if there is a selection or not
+    var selection = editor.getSelection();
+    if (!selection || !selection.getRanges().length) {
+      // Dawn, we're fucked, find another way around this.
+      editor.insertElement(element);
+    } else {
+      // Ok, replace selection..
+      editor.insertElement(element);
+    }
 
     // and finally, CKEditor is not that bad, once you read the doc
     // http://docs.ckeditor.com/#!/api/CKEDITOR.plugins.widget
