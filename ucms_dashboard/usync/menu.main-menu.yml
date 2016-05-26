@@ -45,12 +45,12 @@ item:
     expanded: true
     options:
       icon: 'user'
-  -
-    name: "SEO"
-    path: "admin/dashboard/seo"
-    expanded: true
-    options:
-      icon: 'globe'
+#  -
+#    name: "SEO"
+#    path: "admin/dashboard/seo"
+#    expanded: true
+#    options:
+#      icon: 'globe'
   -
     name: "Arborescence"
     path: "admin/dashboard/tree"
