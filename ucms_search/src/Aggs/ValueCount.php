@@ -10,7 +10,7 @@ use MakinaCorpus\Ucms\Search\Search;
  *
  * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-valuecount-aggregation.html
  */
-class ValueCount
+class ValueCount implements AggInterface
 {
     /**
      * @var string

@@ -15,7 +15,7 @@ use MakinaCorpus\Ucms\Search\Search;
  *
  * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-top-hits-aggregation.html
  */
-class TopHits
+class TopHits implements AggInterface
 {
     /**
      * @var string
