@@ -31,6 +31,7 @@ class NodeInfoController extends Controller
 
         return $this->render('module:ucms_site:Resources/views/NodeInfo/siteList.html.twig', [
             'origin'  => $origin,
+            'allowed' => $node->ucms_allowed_sites,
             'sites'   => $sites,
             'node'    => $node,
         ]);

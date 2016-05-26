@@ -61,7 +61,7 @@ class NodeActionProvider implements ActionProviderInterface
             }
         }
 
-        $ret[] = new Action($this->t("Sites"), 'node/' . $item->id() . '/site-list', 'dialog', 'search', 100, false, true, false, 'view');
+        $ret[] = new Action($this->t("View in site"), 'node/' . $item->id() . '/site-list', 'dialog', 'search', 100, false, true, false, 'view');
 
         /*
          if ($item->access('clone')) {
