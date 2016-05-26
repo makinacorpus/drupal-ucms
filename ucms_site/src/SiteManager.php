@@ -6,8 +6,6 @@ use Drupal\Core\Session\AccountInterface;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
-
 /**
  * Facade for using both site storage and site access helpers, that will also
  * carry the site wide configuration; this means to reduce the number of
