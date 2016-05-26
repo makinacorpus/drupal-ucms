@@ -8,13 +8,19 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\node\NodeInterface;
 
 use Elasticsearch\Client;
+
 use MakinaCorpus\Ucms\Search\Attachment\NodeAttachmentIndexerInterface;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use MakinaCorpus\Ucms\Search\EventDispatcher\NodeIndexEvent;
 
 /**
  * @todo unit test me
  */
 class NodeIndexer implements NodeIndexerInterface
 {
+    const EVENT_INDEX = 'ucms_search:index';
+
     /**
      * Node(s) (is|are) being indexed hook
      */
@@ -36,6 +42,11 @@ class NodeIndexer implements NodeIndexerInterface
      * @var ModuleHandlerInterface
      */
     private $moduleHandler;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var EntityStorageInterface
@@ -88,6 +99,7 @@ class NodeIndexer implements NodeIndexerInterface
         \DatabaseConnection $db,
         EntityManager $entityManager,
         ModuleHandlerInterface $moduleHandler,
+        EventDispatcherInterface $eventDispatcher,
         $indexRealname = null,
         $preventBulkUsage = false)
     {
@@ -96,6 +108,7 @@ class NodeIndexer implements NodeIndexerInterface
         $this->db = $db;
         $this->nodeStorage = $entityManager->getStorage('node');
         $this->moduleHandler = $moduleHandler;
+        $this->eventDispatcher = $eventDispatcher;
         $this->indexRealname = ($indexRealname ? $indexRealname : $index);
         $this->preventBulkUsage = $preventBulkUsage;
         // TODO - FIXME inject me or rewrite me completly
@@ -207,36 +220,6 @@ class NodeIndexer implements NodeIndexerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function nodeToFulltext(NodeInterface $node, $field_name)
-    {
-        if (field_get_items('node', $node, $field_name)) {
-            $build = field_view_field('node', $node, $field_name, 'full');
-
-            return drupal_render($build);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function nodeExtractTagIdList(NodeInterface $node, $field_name)
-    {
-        $ret = [];
-
-        if ($items = field_get_items('node', $node, $field_name)) {
-            foreach ($items as $item) {
-                if (isset($item['tid'])) {
-                    $ret[] = (int)$item['tid'];
-                }
-            }
-        }
-
-        return $ret;
-    }
-
     protected function nodeExtractGrants(NodeInterface $node)
     {
         // @todo Drupal is stupid, fix this
@@ -279,16 +262,16 @@ class NodeIndexer implements NodeIndexerInterface
         // @todo Note the right place for this todo but allow usync definition to
         //   also include basic matching rules whenever possible.
 
-        return [
+        $values = [
             'title'       => $node->getTitle(),
             'id'          => $node->id(),
             'owner'       => $node->getOwnerId(),
             'created'     => $created ? $created->format(\DateTime::ISO8601) : null,
             'updated'     => $changed ? $changed->format(\DateTime::ISO8601) : null,
             'type'        => $node->getType(),
-            'body'        => strip_tags($this->nodeToFulltext($node, 'body')),
+            'body'        => [],
             'status'      => (int)$node->isPublished(),
-            'tags'        => $this->nodeExtractTagIdList($node, 'tags'),
+            'tags'        => [],
             'is_starred'  => (bool)$node->is_starred,
             'is_flagged'  => (bool)$node->is_flagged,
             'is_global'   => (bool)$node->is_global,
@@ -297,6 +280,11 @@ class NodeIndexer implements NodeIndexerInterface
             'node_access' => $this->nodeExtractGrants($node),
             'site_id'     => $node->ucms_sites,
         ];
+
+        $event = new NodeIndexEvent($node, $values);
+        $this->eventDispatcher->dispatch(self::EVENT_INDEX, $event);
+
+        return $event->getValues();
     }
 
     /**

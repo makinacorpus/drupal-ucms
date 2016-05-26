@@ -8,10 +8,17 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 
 use Elasticsearch\Client;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 class IndexStorage
 {
     /**
-     * An index definition has been saved
+     * An index definition is being saved, and can be modified
+     */
+    const EVENT_INDEX_SAVE = 'ucms_search_index_save';
+
+    /**
+     * An index definition is being saved, and can be modified
      */
     const HOOK_DEF_SAVE = 'ucms_search_index_definition_save';
 
@@ -41,6 +48,11 @@ class IndexStorage
      * @var ModuleHandlerInterface
      */
     private $moduleHandler;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var EntityManager
@@ -96,6 +108,7 @@ class IndexStorage
         \DatabaseConnection $db,
         CacheBackendInterface $cache,
         EntityManager $entityManager,
+        EventDispatcherInterface $eventDispatcher,
         ModuleHandlerInterface $moduleHandler,
         array $indexAliasMap = null,
         $preventBulkUsage = false)
@@ -105,6 +118,7 @@ class IndexStorage
         $this->cache = $cache;
         $this->entityManager = $entityManager;
         $this->moduleHandler = $moduleHandler;
+        $this->eventDispatcher = $eventDispatcher;
         if ($indexAliasMap) {
             $this->indexAliasMap = $indexAliasMap;
         }
@@ -147,6 +161,7 @@ class IndexStorage
                     $this->db,
                     $this->entityManager,
                     $this->moduleHandler,
+                    $this->eventDispatcher,
                     $this->getIndexRealname($existing),
                     $this->preventBulkUsage
                 );

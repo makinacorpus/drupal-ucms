@@ -56,7 +56,12 @@ services:
   ucms_contrib.type_handler:
     class: MakinaCorpus\Ucms\Contrib\TypeHandler
 
-  ucms_contrib.media.subsriber:
+  ucms_contrib.media.subscriber:
     public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\MediaReferenceEventListener
+    tags: [{ name: event_subscriber }]
+
+  ucms_contrib.node_index.subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeIndexEventSubscriber
     tags: [{ name: event_subscriber }]
