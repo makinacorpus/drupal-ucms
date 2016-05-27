@@ -44,26 +44,30 @@ class StoreLocatorController extends Controller
             ->get('ucms_seo.store_locator_factory')
             ->create($node, $type, $sub_area, $locality);
 
-        $title = $storeLocator->getTitle();
-        drupal_set_title($node->title . ' ' . $title);
+        $build = [];
 
-        drupal_add_js([
-          'storeLocator' => ['items' => $storeLocator->getMapItems()],
-        ], 'setting');
+        if (node_is_page($node)) {
+            $title = $storeLocator->getTitle();
+            drupal_set_title($node->title.' '.$title);
 
-        return [
-            'map'         => [
+            drupal_add_js([
+                'storeLocator' => ['items' => $storeLocator->getMapItems()],
+            ], 'setting');
+            $build['map'] = [
                 '#theme'    => 'ucms_seo_store_locator_map',
                 '#items'    => $storeLocator->getMapItems(),
                 '#nodes'    => $storeLocator->getNodes(),
                 '#type'     => $storeLocator->getTypeLabel($type),
                 '#sub_area' => $storeLocator->getSubAreaLabel(),
                 '#locality' => $storeLocator->getLocalityLabel(),
-            ],
-            'store_links' => [
-                '#theme' => 'links__ucms_seo__store_locator',
-                '#links' => $storeLocator->getLinks(),
-            ],
+            ];
+        }
+
+        $build['store_links'] = [
+            '#theme' => 'links__ucms_seo__store_locator',
+            '#links' => $storeLocator->getLinks(),
         ];
+
+        return $build;
     }
 }
