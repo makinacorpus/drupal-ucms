@@ -56,6 +56,14 @@ class NodeActionProvider implements ActionProviderInterface
             $ret[] = new Action($this->t("View"), 'node/' . $item->id(), null, 'eye-open', 0, true, false, true); // disabled link
         }
 
+        // @todo
+        //   - if there is a site context:
+        //      - if node site is current: just display "edit" and NOT "copy on edit"
+        //      - if node site is different: juste display "copy on edit" (if clonable) but NOT "edit"
+        //   - no site context (admin):
+        //      - if can edit, just display "edit" and NOT "copy on edit"
+        //      - if can not edit, don't care, the user has "use on my site" do NOT "copy on edit"
+
         if ($item->access(Access::OP_UPDATE)) {
             $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/edit', null, 'pencil', -100, false, true, false, 'edit');
 

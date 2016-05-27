@@ -8,6 +8,8 @@ use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\Ucms\Site\NodeDispatcher;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteManager;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -15,10 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class NodeCopyOnEdit extends FormBase
 {
-    /**
-     * @var NodeDispatcher
-     */
     private $nodeDispatcher;
+    private $siteManager;
 
     /**
      * {@inheritDoc}
@@ -27,6 +27,7 @@ class NodeCopyOnEdit extends FormBase
     {
         return new self(
             $container->get('ucms_site.node_dispatcher'),
+            $container->get('ucms_site.manager'),
             $container->get('module_handler')
         );
     }
@@ -37,9 +38,10 @@ class NodeCopyOnEdit extends FormBase
      * @param NodeDispatcher $dispatcher
      * @param ModuleHandlerInterface $moduleHandler
      */
-    public function __construct(NodeDispatcher $dispatcher, ModuleHandlerInterface $moduleHandler)
+    public function __construct(NodeDispatcher $dispatcher, SiteManager $siteManager, ModuleHandlerInterface $moduleHandler)
     {
         $this->nodeDispatcher = $dispatcher;
+        $this->siteManager = $siteManager;
         $this->ssoEnabled = $moduleHandler ? $moduleHandler->moduleExists('ucms_sso') : false;
     }
 
@@ -76,9 +78,18 @@ class NodeCopyOnEdit extends FormBase
 
         $form['#form_horizontal'] = true;
 
+        $context = null;
+        if ($this->siteManager->hasContext()) {
+            $context = $this->siteManager->getContext();
+        }
+
         $options = [];
         foreach ($sites as $site) {
-            $options[$site->id] = check_plain($site->title);
+            if ($context && $context->getId() == $site->getId()) {
+                $options[$site->id] = check_plain($site->title) . ' (' . $this->t("This site") . ')';
+            } else {
+                $options[$site->id] = check_plain($site->title);
+            }
         }
 
         $form_state->setTemporaryValue('node', $node);

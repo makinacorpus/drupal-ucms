@@ -201,17 +201,58 @@ class NodeDispatcher
      */
     public function findSiteCandidatesForCloning(NodeInterface $node, $userId)
     {
-        $query = $this->db->select('ucms_site_node', 'sn');
-        $query->fields('sn', ['site_id']);
-        $query->join('ucms_site_access', 'sa', 'sa.site_id = sn.site_id');
-        $query->leftJoin('node', 'n', 'n.parent_nid = sn.nid');
-        $query->isNull('n.nid');
-        $query->condition('sa.uid', $userId);
-        $query->condition('sa.role', Access::ROLE_WEBMASTER);
-        $query->condition('sn.nid', $node->id());
-        $query->condition('sn.site_id', $node->site_id, '!=');
+        /*
+         * The right and only working query for this.
+         *
+            SELECT sa.site_id
+            FROM ucms_site_access sa
+            WHERE
+                sa.uid = 13 -- current user
+                AND sa.role = 1 -- webmaster
+                AND sa.site_id <> 2 -- node current site
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM node en
+                    WHERE
+                        en.site_id = sa.site_id
+                        AND (
+                            en.parent_nid = 6 -- node we are looking for
+                            OR nid = 6
+                        )
+                )
+            ;
+          */
 
-        return $this->manager->getStorage()->loadAll($query->execute()->fetchCol());
+        $sq = $this
+            ->db
+            ->select('node', 'en')
+            ->where('en.site_id = sa.site_id')
+            ->where('en.parent_nid = :nid1 OR nid = :nid2', [':nid1' => $node->id(), ':nid2' => $node->id()])
+        ;
+
+        $sq->addExpression('1');
+
+        $q = $this
+            ->db
+            ->select('ucms_site_access', 'sa')
+            ->fields('sa', ['site_id'])
+            ->condition('sa.uid', $userId)
+            ->condition('sa.role', Access::ROLE_WEBMASTER)
+        ;
+
+        // The node might not be attached to any site if it is a global content
+        if ($node->site_id) {
+            $q->condition('sa.site_id', $node->site_id, '<>');
+        }
+
+        $idList = $q
+            ->notExists($sq)
+            ->addTag('ucms_site_access')
+            ->execute()
+            ->fetchCol()
+        ;
+
+        return $this->manager->getStorage()->loadAll($idList);
     }
 
     /**
