@@ -232,6 +232,7 @@ class IndexStorage
                 $this->db,
                 $this->entityManager,
                 $this->moduleHandler,
+                $this->eventDispatcher,
                 $this->getIndexRealname($index),
                 $this->preventBulkUsage
             ));
