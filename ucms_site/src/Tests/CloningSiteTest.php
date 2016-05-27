@@ -7,7 +7,6 @@ use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Layout\DrupalStorage;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
-use MakinaCorpus\Ucms\Site\NodeDispatcher;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
@@ -38,14 +37,6 @@ class CloningSiteTest extends AbstractDrupalTest
     private function getSiteManager()
     {
         return $this->getDrupalContainer()->get('ucms_site.manager');
-    }
-
-    /**
-     * @return NodeDispatcher
-     */
-    private function getNodeDispatcher()
-    {
-        return $this->getDrupalContainer()->get('ucms_site.node_dispatcher');
     }
 
     /**
@@ -180,15 +171,15 @@ class CloningSiteTest extends AbstractDrupalTest
 
     public function testCloningSite()
     {
-        $nodeDispatcher = $this->getNodeDispatcher();
+        $siteManager = $this->getSiteManager();
         $pending = $this->sites['pending'];
         $template = $this->sites['template'];
-        $nodeDispatcher->cloneSite($template, $pending);
 
+        $siteManager->getStorage()->duplicate($template, $pending);
         $this->assertAllTheThings($template, $pending);
 
         // Create another site
-        $nodeDispatcher->cloneSite($template, $this->sites['another']);
+        $siteManager->getStorage()->duplicate($template, $this->sites['another']);
         $this->assertAllTheThings($template, $pending);
     }
 

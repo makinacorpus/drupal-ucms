@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
-use MakinaCorpus\Ucms\Site\NodeDispatcher;
+use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,24 +23,24 @@ class NodeReference extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_site.node_dispatcher'),
+            $container->get('ucms_site.node_manager'),
             $container->get('event_dispatcher')
         );
     }
 
     /**
-     * @var NodeDispatcher
+     * @var NodeManager
      */
-    protected $nodeDispatcher;
+    protected $nodeManager;
 
     /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
-    public function __construct(NodeDispatcher $nodeDispatcher, EventDispatcherInterface $eventDispatcher)
+    public function __construct(NodeManager $nodeManager, EventDispatcherInterface $eventDispatcher)
     {
-        $this->nodeDispatcher = $nodeDispatcher;
+        $this->nodeManager = $nodeManager;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -64,7 +64,7 @@ class NodeReference extends FormBase
 
         // Fetch the intersection of the sites the user is webmaster and the
         // user has not this node already
-        $sites = $this->nodeDispatcher->findSiteCandidatesForReference($node, $this->currentUser()->uid);
+        $sites = $this->nodeManager->findSiteCandidatesForReference($node, $this->currentUser()->uid);
 
         if (!$sites) {
             $form['notice'] = [
@@ -120,7 +120,7 @@ class NodeReference extends FormBase
         $sites  = &$form_state->getTemporaryValue('sites');
         $siteId = &$form_state->getValue('site');
 
-        $this->nodeDispatcher->createReference($sites[$siteId], $node);
+        $this->nodeManager->createReference($sites[$siteId], $node);
 
         drupal_set_message($this->t("%title has been added to site %site", [
             '%title'  => $node->title,

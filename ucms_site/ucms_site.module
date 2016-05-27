@@ -350,15 +350,6 @@ function ucms_site_manager() {
 }
 
 /**
- * Get site manager service.
- *
- * @return \MakinaCorpus\Ucms\Site\NodeDispatcher
- */
-function ucms_site_node_dispatcher() {
-  return \Drupal::service('ucms_site.node_dispatcher');
-}
-
-/**
  * Get node access helper.
  *
  * @return \MakinaCorpus\Ucms\Site\NodeAccessService
@@ -807,58 +798,6 @@ function ucms_site_custom_theme() {
       return $site->theme;
     }
   }
-}
-
-/**
- * Implements hook_node_prepare().
- */
-function ucms_site_node_prepare($node) {
-  ucms_site_node_dispatcher()->onPrepare($node);
-}
-
-/**
- * Implements hook_node_presave().
- */
-function ucms_site_node_presave($node) {
-  $dispatcher = ucms_site_node_dispatcher();
-  if (empty($node->nid)) {
-    $dispatcher->onPreInsert($node);
-  } else {
-    $dispatcher->onPreUpdate($node);
-  }
-  $dispatcher->onPreSave($node);
-}
-
-/**
- * Implements hook_node_load().
- */
-function ucms_site_node_load($nodes, $types) {
-  ucms_site_node_dispatcher()->onLoad($nodes);
-}
-
-/**
- * Implements hook_node_insert().
- */
-function ucms_site_node_insert($node) {
-  $dispatcher = ucms_site_node_dispatcher();
-  $dispatcher->onInsert($node);
-  $dispatcher->onSave($node);
-}
-
-/**
- * Implements hook_node_update().
- */
-function ucms_site_node_update($node) {
-  $dispatcher = ucms_site_node_dispatcher();
-  $dispatcher->onUpdate($node);
-  $dispatcher->onSave($node);
-}
-
-/**
- * Implements hook_node_delete().
- */
-function ucms_site_node_delete($node) {
-  ucms_site_node_dispatcher()->onDelete($node);
 }
 
 /**

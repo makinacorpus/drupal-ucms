@@ -16,6 +16,8 @@
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeCollectionEvent;
+use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeReferenceCollectEvent;
 use MakinaCorpus\Ucms\Site\Access;
 
@@ -202,7 +204,7 @@ function ucms_contrib_menu() {
   ];
   $items['node/%node/clone'] = [
     'title'             => "Edit",
-    'page callback'     => 'ucms_contrib_node_clone',
+    'page callback'     => 'ucms_contrib_node_clone_form',
     'page arguments'    => [1],
     'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
     'access arguments'  => [1],
@@ -361,6 +363,19 @@ function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
  */
 function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
   return ucms_site_node_access_helper()->userCanCopyOnEdit(\Drupal::currentUser(), $node);
+}
+
+/**
+ * Callback for the node cloning form.
+ */
+function ucms_contrib_node_clone_form($node) {
+  $clone = ucms_contrib_node_clone($node);
+
+  $form_state = [];
+  $form_state['build_info']['args'] = [$clone];
+  form_load_include($form_state, 'inc', 'node', 'node.pages');
+
+  return drupal_build_form($clone->type . '_node_form', $form_state);
 }
 
 /**
@@ -739,37 +754,124 @@ function ucms_contrib_node_collect_reference(NodeInterface $node) {
 }
 
 /**
- * Implements hook_node_update().
+ * Implements hook_node_prepare().
  */
-function ucms_contrib_node_update($node) {
-  ucms_contrib_node_collect_reference($node);
+function ucms_contrib_node_prepare($node) {
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_PREPARE, $node);
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function ucms_contrib_node_presave($node) {
+  if ($node->isNew()) {
+    ucms_contrib_event_dispatch(NodeEvent::EVENT_PREINSERT, $node);
+  } else {
+    ucms_contrib_event_dispatch(NodeEvent::EVENT_PREUPDATE, $node);
+  }
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_PRESAVE, $node);
+}
+
+/**
+ * Implements hook_node_load().
+ */
+function ucms_contrib_node_load($nodes, $types) {
+  ucms_contrib_collection_event_dispatch(NodeCollectionEvent::EVENT_LOAD, $nodes);
 }
 
 /**
  * Implements hook_node_insert().
  */
 function ucms_contrib_node_insert($node) {
-  ucms_contrib_node_collect_reference($node);
-
-  if (isset($node->parent_nid)) {
-    // Menu path is handled by menu_node_insert().
-
-    // Update layout
-    db_update('ucms_layout')
-      ->fields(['nid' => $node->nid])
-      ->condition('site_id', $node->site_id)
-      ->condition('nid', $node->parent_nid)
-      ->execute()
-    ;
-
-    // Dereference original node
-    db_delete('ucms_site_node')
-      ->condition('site_id', $node->site_id)
-      ->condition('nid', $node->parent_nid)
-      ->execute()
-    ;
-  }
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_INSERT, $node);
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_SAVE, $node);
 }
+
+/**
+ * Implements hook_node_update().
+ */
+function ucms_contrib_node_update($node) {
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_UPDATE, $node);
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_SAVE, $node);
+}
+
+/**
+ * Clone the given node.
+ *
+ * @param $originalNode
+ * @return NodeInterface
+ */
+function ucms_contrib_node_clone($originalNode) {
+  $user = \Drupal::service('current_user');
+
+  // This method, instead of the clone operator, will actually drop all
+  // existing references and pointers and give you raw values.
+  // All credits to https://stackoverflow.com/a/10831885/5826569
+  $node = unserialize(serialize($originalNode));
+
+  $node->nid      = null;
+  $node->vid      = null;
+  $node->tnid     = null;
+  $node->log      = null;
+  $node->uid      = $user->id();
+  $node->created  = null;
+  $node->changed  = null;
+  $node->path     = null;
+  $node->files    = [];
+  // Fills in the some default values
+  $node->status   = 0;
+  $node->promote  = 0;
+  $node->sticky   = 0;
+  $node->revision = 1;
+  // Resets sites information
+  $node->site_id  = null;
+  $node->ucms_sites = [];
+  // Sets the origin_id and parent_id
+  $node->parent_nid = $originalNode->nid;
+  $node->origin_nid = empty($originalNode->origin_nid) ? $originalNode->nid : $originalNode->origin_nid;
+  // Forces node indexing
+  $node->ucms_index_now = 1; // @todo find a better way
+
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_CLONE, $node);
+time();
+  return $node;
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function ucms_contrib_node_delete($node) {
+  ucms_contrib_event_dispatch(NodeEvent::EVENT_DELETE, $node);
+}
+
+/**
+ * Dispatches a node event.
+ *
+ * @param string $name
+ *  The event name. Use constants of the NodeEvent class.
+ * @param NodeInterface $node
+ *  The node concerned by the event.
+ */
+function ucms_contrib_event_dispatch($name, NodeInterface $node) {
+  $currentUser = \Drupal::service('current_user');
+  $event = new NodeEvent($node, ($currentUser->isAnonymous() ? null : $currentUser->id()));
+  \Drupal::service('event_dispatcher')->dispatch($name, $event);
+}
+
+/**
+ * Dispatches a nodes collection event.
+ *
+ * @param string $name
+ *  The event name. Use constants of the NodeCollectionEvent class.
+ * @param NodeInterface[] $nodes
+ *  Nodes concerned by the event.
+ */
+function ucms_contrib_collection_event_dispatch($name, array $nodes) {
+  $currentUser = \Drupal::service('current_user');
+  $event = new NodeCollectionEvent($nodes, ($currentUser->isAnonymous() ? null : $currentUser->id()));
+  \Drupal::service('event_dispatcher')->dispatch($name, $event);
+}
+
 
 /**
  * Implements hook_admin_paths().
@@ -779,55 +881,6 @@ function ucms_contrib_admin_paths() {
     'node/*/clone' => TRUE,
   ];
   return $paths;
-}
-
-/**
- * Clone form callback
- *
- * @param $originalNode
- * @return array|mixed
- */
-function ucms_contrib_node_clone($originalNode) {
-  global $user;
-
-  $node = clone $originalNode;
-
-  $node->nid = NULL;
-  $node->vid = NULL;
-  $node->tnid = NULL;
-  $node->log = NULL;
-
-  $node->name = isset($user->name) ? $user->name : NULL;
-  $node->uid = $user->uid;
-
-  $node->created = NULL;
-  $node->path = NULL;
-  $node->files = [];
-
-  // Fill in the default values.
-  $node->status = 0;
-  $node->promote = 0;
-  $node->sticky = 0;
-  $node->revision = 1;
-
-  // Reset sites information
-  $node->site_id = NULL;
-  $node->ucms_sites = [];
-
-  // Set the origin_id and parent_id.
-  $node->parent_nid = $originalNode->nid;
-  if (isset($originalNode->origin_nid)) {
-    $node->origin_nid = $originalNode->origin_nid;
-  } else {
-    $node->origin_nid = $originalNode->nid;
-  }
-
-  // Make sure the file defining the node form is loaded.
-  $form_state = [];
-  $form_state['build_info']['args'] = [$node];
-  form_load_include($form_state, 'inc', 'node', 'node.pages');
-
-  return drupal_build_form($node->type . '_node_form', $form_state);
 }
 
 /**

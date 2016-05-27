@@ -3,24 +3,24 @@
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
-use MakinaCorpus\Ucms\Site\NodeDispatcher;
+use MakinaCorpus\Ucms\Site\NodeManager;
 
 class MenuEventListener
 {
     /**
-     * @var NodeDispatcher
+     * @var NodeManager
      */
-    private $nodeDispatcher;
+    private $nodeManager;
 
     /**
      * Default constructor
      *
-     * @param NodeDispatcher $siteManager
+     * @param NodeManager $siteManager
      * @param EntityManager $entityManager
      */
-    public function __construct(NodeDispatcher $nodeDispatcher)
+    public function __construct(NodeManager $nodeManager)
     {
-        $this->nodeDispatcher = $nodeDispatcher;
+        $this->nodeManager = $nodeManager;
     }
 
     private function findNodeIdentifierFromItem($item)
@@ -62,7 +62,7 @@ class MenuEventListener
             }
         }
         if ($changed) {
-            $this->nodeDispatcher->createReferenceBulk($event->getSite(), $changed);
+            $this->nodeManager->createReferenceBulk($event->getSite(), $changed);
         }
     }
 }

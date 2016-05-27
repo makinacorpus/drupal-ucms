@@ -120,7 +120,7 @@ class NodeAccessService
      *
      * @param NodeInterface $node
      *
-     * @see MakinaCorpus\Ucms\Site\NodeDispatcher::onLoad()
+     * @see MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber::onLoad()
      *
      * @return int
      *   The site identifier is returned, we don't need to load it to build

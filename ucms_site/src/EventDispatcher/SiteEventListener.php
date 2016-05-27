@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
-use MakinaCorpus\Ucms\Site\NodeDispatcher;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteState;
@@ -15,7 +14,7 @@ use MakinaCorpus\Umenu\MenuStorageInterface;
 class SiteEventListener
 {
     use StringTranslationTrait;
-    
+
     /**
      * @var SiteManager
      */
@@ -27,23 +26,16 @@ class SiteEventListener
     private $entityManager;
 
     /**
-     * @var NodeDispatcher
-     */
-    private $nodeDispatcher;
-
-    /**
      * Default constructor
      *
      * @param SiteManager $manager
      * @param EntityManager $entityManager
-     * @param NodeDispatcher $nodeDispatcher
      * @param MenuStorageInterface $menuStorage
      */
-    public function __construct(SiteManager $manager, EntityManager $entityManager, NodeDispatcher $nodeDispatcher)
+    public function __construct(SiteManager $manager, EntityManager $entityManager)
     {
         $this->manager = $manager;
         $this->entityManager = $entityManager;
-        $this->nodeDispatcher = $nodeDispatcher;
     }
 
     public function onSiteCreate(SiteEvent $event)
@@ -92,9 +84,8 @@ class SiteEventListener
           && !$event->getSite()->is_template && $event->getSite()->template_id
         ) {
             $template = $this->manager->getStorage()->findOne($event->getSite()->template_id);
-
             // Clone the template site into the site
-            $this->nodeDispatcher->cloneSite($template, $event->getSite());
+            $this->manager->getStorage()->duplicate($template, $event->getSite());
         }
     }
 

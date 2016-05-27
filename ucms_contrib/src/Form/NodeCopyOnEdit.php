@@ -6,7 +6,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\Ucms\Site\NodeDispatcher;
+use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -17,7 +17,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class NodeCopyOnEdit extends FormBase
 {
-    private $nodeDispatcher;
+    /**
+     * @var NodeManager
+     */
+    private $nodeManager;
+
+    /**
+     * @var SiteManager
+     */
     private $siteManager;
 
     /**
@@ -26,7 +33,7 @@ class NodeCopyOnEdit extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_site.node_dispatcher'),
+            $container->get('ucms_site.node_manager'),
             $container->get('ucms_site.manager'),
             $container->get('module_handler')
         );
@@ -35,12 +42,13 @@ class NodeCopyOnEdit extends FormBase
     /**
      * NodeCopyOnEdit constructor.
      *
-     * @param NodeDispatcher $dispatcher
+     * @param NodeManager $nodeManager
+     * @param SiteManager $siteManager
      * @param ModuleHandlerInterface $moduleHandler
      */
-    public function __construct(NodeDispatcher $dispatcher, SiteManager $siteManager, ModuleHandlerInterface $moduleHandler)
+    public function __construct(NodeManager $nodeManager, SiteManager $siteManager, ModuleHandlerInterface $moduleHandler)
     {
-        $this->nodeDispatcher = $dispatcher;
+        $this->nodeManager = $nodeManager;
         $this->siteManager = $siteManager;
         $this->ssoEnabled = $moduleHandler ? $moduleHandler->moduleExists('ucms_sso') : false;
     }
@@ -65,7 +73,7 @@ class NodeCopyOnEdit extends FormBase
 
         // Fetch the intersection of the sites the user is webmaster and the
         // user has not this node already
-        $sites = $this->nodeDispatcher->findSiteCandidatesForCloning($node, $this->currentUser()->uid);
+        $sites = $this->nodeManager->findSiteCandidatesForCloning($node, $this->currentUser()->id());
 
         if (!$sites) {
             $form['notice'] = [

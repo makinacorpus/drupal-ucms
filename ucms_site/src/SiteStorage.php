@@ -2,9 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Site storage service
@@ -330,6 +332,83 @@ class SiteStorage
 
             $this->dispatch($site, 'create', [], $userId);
         }
+    }
+
+    /**
+     * Duplicates the given source site content into the given target
+     *
+     * Most of all content will be just referenced, and compositions will be
+     * cloned, which will allow us to do this in 2 SQL queries (easy right?)
+     * nevertheless, a few content types might need cloning anyway, but we'll
+     * worry about those later.
+     *
+     * Don't forget, this needs to run in a transaction.
+     *
+     * @param Site $source
+     * @param Site $target
+     */
+    public function duplicate(Site $source, Site $target)
+    {
+        // IMPORTANT: Read the documentation in Resources/docs/site-clone.sql
+        // and UPDATE IT whenever you fix this.
+
+        // Copy content references
+        $this
+            ->db
+            ->query("
+                INSERT INTO {ucms_site_node} (site_id, nid)
+                SELECT
+                    :target, usn.nid
+                FROM {ucms_site_node} usn
+                JOIN {node} n ON n.nid = usn.nid
+                WHERE
+                    usn.site_id = :source
+                    AND (n.status = 1 OR n.is_global = 0)
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM {ucms_site_node} s_usn
+                        WHERE
+                            s_usn.nid = usn.nid
+                            AND s_usn.site_id = :target2
+                    )
+            ", [
+                ':target'   => $target->getId(),
+                ':source'   => $source->getId(),
+                ':target2'  => $target->getId(),
+            ])
+        ;
+
+        // Update the homepage of the target site
+        $this
+            ->db
+            ->query(
+                "
+                UPDATE {ucms_site}
+                SET home_nid = :home_nid
+                WHERE id = :target
+            ",
+                [
+                    ':target' => $target->getId(),
+                    ':home_nid' => $source->getHomeNodeId(),
+                ]
+            );
+
+        // Update node access rights
+        $nidList = $this->db
+            ->select('ucms_site_node', 'usn')
+            ->fields('usn', ['nid'])
+            ->condition('site_id', $target->getId())
+            ->execute()
+            ->fetchCol();
+
+        $this->dispatcher->dispatch('node:access_change', new ResourceEvent('node', $nidList));
+
+        // Dispatch event for others.
+        $this->dispatcher->dispatch('site:clone', new GenericEvent($target, ['source' => $source]));
+
+        // @todo
+        //   - duplicate menus
+        //   - duplicate composite contents
     }
 
     /**
