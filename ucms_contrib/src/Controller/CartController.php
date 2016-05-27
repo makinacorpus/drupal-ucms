@@ -51,7 +51,7 @@ class CartController extends Controller
             $ret = [
                 'success' => true,
                 'nid'     => $node->id(),
-                'node'    => drupal_render($node_view),
+                'output'  => drupal_render($node_view),
             ];
         } else {
             $ret = ['error' => t("%title is already a favorite", ['%title' => $node->getTitle()])];

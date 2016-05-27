@@ -474,6 +474,14 @@ function ucms_contrib_node_view_alter(&$build) {
  * Removes submitted information and adds necessary stuff for JS.
  */
 function ucms_contrib_preprocess_node(&$variables) {
+
+  // Adds the data-nid attribute on all nodes.
+  // @todo exclude cart as of now else it'll trigger bugs:
+  //   - remove custom template for cart items
+  if ('favorite' !== $variables['view_mode']) {
+    $variables['attributes_array']['data-nid'] = $variables['node']->nid;
+  }
+
   switch ($variables['view_mode']) {
 
     case UCMS_VIEW_MODE_CONTENTADMIN:

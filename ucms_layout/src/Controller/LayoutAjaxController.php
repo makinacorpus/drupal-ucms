@@ -3,11 +3,13 @@
 namespace MakinaCorpus\Ucms\Layout\Controller;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
+use MakinaCorpus\Ucms\Layout\Region;
 use MakinaCorpus\Ucms\Site\Site;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -72,6 +74,19 @@ class LayoutAjaxController extends Controller
         return $site;
     }
 
+    private function renderNode(NodeInterface $node, Region $region, $viewMode)
+    {
+        $build = [
+            '#theme'     => 'ucms_layout_item',
+            '#nid'       => $node->id(),
+            '#node'      => $node,
+            '#view_mode' => $viewMode,
+            '#region'    => $region,
+        ];
+
+        return drupal_render($build);
+    }
+
     /**
      * Add item to a a region callback
      */
@@ -95,20 +110,19 @@ class LayoutAjaxController extends Controller
         $manager  = $this->getContextManager();
         $site     = $this->getSiteContext();
         $item     = new Item($nid, $viewmode);
+        $region   = $layout->getRegion($region);
 
-        $layout->getRegion($region)->addAt($item, $position);
+        $region->addAt($item, $position);
 
-        if ($manager->isPageContextRegion($region, $site->theme)) {
+        if ($manager->isPageContextRegion($region->getName(), $site->theme)) {
             $manager->getPageContext()->getStorage()->save($layout);
-        } else if ($manager->isTransversalContextRegion($region, $site->theme)) {
+        } else if ($manager->isTransversalContextRegion($region->getName(), $site->theme)) {
             $manager->getSiteContext()->getStorage()->save($layout);
         } else {
             throw $this->createAccessDeniedException();
         }
 
-        $renderedNode = node_view($node, $viewmode);
-
-        return new JsonResponse(['success' => true, 'node' => drupal_render($renderedNode)]);
+        return new JsonResponse(['success' => true, 'output' => $this->renderNode($node, $region, $viewmode)]);
     }
 
     /**
@@ -120,12 +134,13 @@ class LayoutAjaxController extends Controller
         $position = $request->get('position', 0);
         $manager  = $this->getContextManager();
         $site     = $this->getSiteContext();
+        $region   = $layout->getRegion($region);
 
-        $layout->getRegion($region)->removeAt($position);
+        $region->removeAt($position);
 
-        if ($manager->isPageContextRegion($region, $site->theme)) {
+        if ($manager->isPageContextRegion($region->getName(), $site->theme)) {
             $manager->getPageContext()->getStorage()->save($layout);
-        } else if ($manager->isTransversalContextRegion($region, $site->theme)) {
+        } else if ($manager->isTransversalContextRegion($region->getName(), $site->theme)) {
             $manager->getSiteContext()->getStorage()->save($layout);
         } else {
             throw $this->createAccessDeniedException();
@@ -177,8 +192,6 @@ class LayoutAjaxController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $renderedNode = node_view($node, $viewmode);
-
-        return new JsonResponse(['success' => true, 'node' => drupal_render($renderedNode)]);
+        return new JsonResponse(['success' => true, 'output' => $this->renderNode($node, $layout->getRegion($region), $viewmode)]);
     }
 }

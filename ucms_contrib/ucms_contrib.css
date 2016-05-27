@@ -45,7 +45,7 @@
   overflow-y: auto;
 }
 #ucms-cart-list.ucms-highlighted {
-  border: dashed 5px #fff;
+  outline: dashed 5px #fff;
   /* transition: .5s; */
 }
 
@@ -152,15 +152,39 @@
   margin: .4em;
 }
 
+/* Highlight car items */
+#ucms-cart [data-selected] .node, #ucms-cart [data-can-receive] .node:hover {
+  filter: brightness(1.3);
+  box-shadow: 0 0 1em #404040, inset 0 0 0 2pt red;
+  box-sizing: border-box;
+}
+#ucms-cart [data-selected] .node {
+  border: 2px solid red;
+}
+/* And other sortables too */
+#page-wrapper [data-selected], #page-wrapper [data-can-receive] > *:hover {
+  filter: brightness(1.3);
+  background: #ccc;
+  /* box-sizing: border-box; */
+  box-shadow: 0 0 1em #404040;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+#page-wrapper [data-selected] {
+  border: 2px solid red;
+}
 
 /**
  * Regions
  */
 body [data-region].ui-sortable {
-  border: dashed .2em #018fe2;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0.5em #018fe2, 0 0 1em #808080;
+  border-radius: 4px;
+
+  /* make them visible */
   min-height: 2em;
-  /* transition: .5s linear; */
-  padding: 10px;
+  /* padding: 10px; */
 }
 
 body [data-region].ucms-highlighted:after {

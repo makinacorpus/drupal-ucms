@@ -1,21 +1,177 @@
 (function ($) {
+  "use strict";
+
   // This variable is used because of this bug https://bugs.jqueryui.com/ticket/4303
   // so as workaround, we save the helper and its position before it's removed
   Drupal.ucmsTempReceivedPos = 0;
   Drupal.ucmsIsSameContainer = false;
 
   var UcmsCart;
+  var currentSelection;
+  var drupalSettings = {};
+
+  // Run this once, so this OK to do it from here
+  document.addEventListener("keydown", function (event) {
+    if (46 === event.keyCode) { // Delete key
+      onDeletePress(event);
+    }
+    if (27 === event.keyCode) {
+      onEscapePress(event);
+    }
+  });
+
+  /**
+   * Select element
+   */
+  function selectElement(element) {
+    if (currentSelection) {
+      currentSelection.removeAttribute('data-selected');
+    }
+    element.setAttribute('data-selected', true);
+    currentSelection = element;
+  }
+
+  /**
+   * Clear current selection
+   */
+  function clearSelection() {
+    if (currentSelection) {
+      currentSelection.removeAttribute('data-selected');
+      currentSelection = null;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * On escape press, remove current selection
+   */
+  function onEscapePress(event) {
+    if (clearSelection()) {
+      // Cancel propagation only if we have something legitimate to do, but
+      // leave any other code do whatever it needs to do if we don't
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  }
+
+  /**
+   * Get element position within parent
+   *
+   * @return number
+   */
+  function getElementPosition(element) {
+    var i = 0, count = 0;
+    for (i; i < element.parentElement.children.length; ++i) {
+      if (element.parentElement.children[i] === element) {
+        break;
+      }
+      count++;
+    }
+    return count;
+  }
+
+  /**
+   * Delete element from DOM, send the trash event
+   *
+   * Weird signature, but first is DOMElement, second is jQuery selector
+   *
+   * @param DOMElement element
+   * @param undefined|jQuery sortable
+   */
+  function trashElement(element) {
+    var nid = element.getAttribute('data-nid');
+
+    if (!nid) {
+      if (console && console.log) {
+        console.log("attempt to trash a non-managed item");
+      }
+      return false;
+    }
+
+    var target = $(element);
+    var sortable = target.closest('.ui-sortable');
+    var region = sortable.data('region');
+
+    if (target.hasClass('ucms-cart-item')) {
+      var getURL = drupalSettings.basePath + 'admin/cart/' + nid + '/remove';
+      $.get(getURL).done(function () {
+        target.remove();
+      });
+      return true;
+    } else {
+      // Remove from region
+      if (!region) {
+        if (console && console.log) {
+          console.log("attempt to trash a non-managed item");
+        }
+        return false;
+      }
+      var payload = {
+        region: region,
+        position: getElementPosition(element),
+        token: drupalSettings.ucmsLayout.editToken
+      };
+      var postURL = drupalSettings.basePath + 'ajax/ucms/layout/' + drupalSettings.ucmsLayout.layoutId + '/remove';
+      $.post(postURL, payload).done(function () {
+        target.remove();
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Appy behaviors on items within the given container
+   */
+  function connectItems(container) {
+    var elements = container.querySelectorAll("[data-nid]");
+    elements = Array.prototype.slice.call(elements, 0);
+    elements.forEach(function (node) {
+      node.addEventListener("click", function (event) {
+        selectElement(node);
+        event.stopPropagation();
+        event.preventDefault();
+      });
+    });
+  }
+
+  /**
+   * Remove current item (move to trash)
+   */
+  function onDeletePress(event) {
+    if (currentSelection && trashElement(currentSelection)) {
+      // Cancel propagation only if we have something legitimate to do, but
+      // leave any other code do whatever it needs to do if we don't
+      event.stopPropagation();
+      event.preventDefault();
+      if (currentSelection) {
+        trashElement(currentSelection);
+      }
+      clearSelection();
+    }
+  }
+
+  /**
+   * Refresh sortable for when you added new items
+   */
+  function refreshSortable(sortable) {
+    $(sortable).sortable('refresh');
+    connectItems(sortable);
+    Drupal.attachBehaviors(sortable);
+  }
 
   $.fn.extend({
     /**
      * Used through a Drupal ajax command
      */
     UcmsCartAdd: function (data) {
-      if (data.node) {
+      if (data.output) {
         // Add item to list
-        var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + data.nid + '">' + data.node + '</div>';
+        var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + data.nid + '">' + data.output + '</div>';
         $(elem).appendTo('#ucms-cart-list');
-        $(UcmsCart).sortable("refresh");
+        refreshSortable(UcmsCart);
       }
     },
     UcmsCartRefresh: function (data) {
@@ -58,6 +214,10 @@
    */
   Drupal.behaviors.ucmsCart = {
     attach: function (context, settings) {
+
+      // This allow higher scope functions to use it
+      drupalSettings = $.extend(drupalSettings, settings);
+
       /**
        * Admin items: can be dropped on cart, always reverted
        */
@@ -100,9 +260,9 @@
           $.get(settings.basePath + 'admin/cart/' + nid + '/add')
             .done(function (data) {
               // Add to cart list
-              var elem = '<div class="ucms-cart-item col-md-6" draggable="true" data-nid="' + nid + '">' + data.node + '</div>';
+              var elem = '<div class="ucms-cart-item col-md-6" draggable="true" data-nid="' + nid + '">' + data.output + '</div>';
               $(elem).appendTo('#ucms-cart-list');
-              $(sortable).sortable("refresh");
+              refreshSortable();
             })
             .fail(function (xhr) {
               // display error and revert
@@ -146,31 +306,35 @@
           },
 
           receive: function (event, ui) {
-            var sortable = this,
+            var sortable = this;
+
             // Replace element on receiving, with the correct view mode, at the
             // correct position
-              replaceElementWithData = function (data) {
-                // TODO region item theming should be done in ajax callback
-                var elem = '<div class="ucms-region-item" data-nid="' + ui.item.data('nid') + '">' + data.node + '</div>';
+            var replaceElementWithData = function (data) {
+              // TODO region item theming should be done in ajax callback
+              if (data.output) {
                 if (ui.item.justReceived) {
                   var olderBrother = $(sortable).find("> *:nth-child(" + (Drupal.ucmsTempReceivedPos + 1) + ")");
                   if (olderBrother.length) {
-                    olderBrother.before(elem);
+                    olderBrother.before(data.output);
                   } else {
-                    $(sortable).append(elem);
+                    $(sortable).append(data.output);
                   }
-                  $(sortable).sortable('refresh');
                 } else {
-                  $(ui.item).replaceWith(elem);
+                  $(ui.item).replaceWith(data.output);
                 }
-              },
-              opts = {
-                region: $(this).data('region'),
-                nid: ui.item.data('nid'),
-                position: Drupal.ucmsTempReceivedPos, // Don't ask me why
-                token: settings.ucmsLayout.editToken
-              },
-              action = 'add';
+                refreshSortable();
+              }
+            };
+
+            var opts = {
+              region: $(this).data('region'),
+              nid: ui.item.data('nid'),
+              position: Drupal.ucmsTempReceivedPos, // Don't ask me why
+              token: settings.ucmsLayout.editToken
+            };
+
+            var action = 'add';
             if (ui.item.originRegion) {
               // Move from previous region
               opts.prevRegion = ui.sender.data('region');
@@ -205,24 +369,7 @@
        */
       $('#ucms-cart-trash', context).sortable($.extend({}, Drupal.ucmsSortableDefaults, {
         receive: function (event, ui) {
-          var nid = ui.item.data('nid');
-          if (ui.item.hasClass('ucms-cart-item')) {
-            // Remove form cart
-            $.get(settings.basePath + 'admin/cart/' + nid + '/remove')
-              .done(function () {
-                ui.item.remove();
-              });
-          }
-          else {
-            // Remove from region
-            $.post(settings.basePath + 'ajax/ucms/layout/' + settings.ucmsLayout.layoutId + '/remove', {
-              region: ui.item.originRegion,
-              position: ui.item.startPos,
-              token: settings.ucmsLayout.editToken
-            }).done(function () {
-              ui.item.remove();
-            });
-          }
+          trashElement(ui.item.get(0));
         },
         over: function () {
           $(this).addClass('ucms-highlighted-hover');
@@ -231,6 +378,9 @@
           $(this).removeClass('ucms-highlighted-hover');
         }
       }));
+
+      $('#ucms-cart-list').each(function () { connectItems(this); });
+      $('[data-can-receive]').each(function () { connectItems(this); });
     }
   };
 }(jQuery));
