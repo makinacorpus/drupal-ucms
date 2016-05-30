@@ -58,9 +58,37 @@
     }
     // @todo Here it might fail if the element is neither span or div... please fix this
     element.setAttribute('data-media-nid', nid);
-    element.setAttribute('data-media-width', '100%');
-    element.setAttribute('data-media-float', '');
+    // Set not so stupid defaults
+    element.setAttribute('data-media-width', '25%');
+    element.setAttribute('data-media-float', 'left');
     return element;
+  }
+
+  /**
+   * CKEditor selection is a nightmare, this saves us.
+   *
+   * @param CKEDITOR.editor editor
+   *
+   * @return CKEDITOR.dom.range
+   *   May an instance, maybe not
+   */
+  function selectRangeForMediaInsertion(editor) {
+    // Attempt to deterrmine if there is a selection or not
+    var selection = editor.getSelection();
+    var range;
+    if (!selection || !selection.getRanges().length) {
+      // Dawn, we're fucked, find another way around this.
+      range = editor.createRange();
+      range.moveToPosition(range.root, CKEDITOR.POSITION_BEFORE_END);
+      editor.getSelection().selectRanges([range]);
+    } else {
+      range = selection.getRanges()[0];
+    }
+    if (!range.collapsed) {
+      range.collapse();
+    }
+    range.moveToClosestEditablePosition();
+    return range;
   }
 
   /**
@@ -75,15 +103,13 @@
 
     var element = createMediaElement(editor, nid, content);
 
-    // Attempt to deterrmine if there is a selection or not
-    var selection = editor.getSelection();
-    if (!selection || !selection.getRanges().length) {
-      // Dawn, we're fucked, find another way around this.
-      editor.insertElement(element);
-    } else {
-      // Ok, replace selection..
-      editor.insertElement(element);
+    // Nothing to say, I hate CKEditor
+    var range = selectRangeForMediaInsertion(editor);
+    if (!range) {
+      return null;
     }
+
+    editor.insertElement(element);
 
     // and finally, CKEditor is not that bad, once you read the doc
     // http://docs.ckeditor.com/#!/api/CKEDITOR.plugins.widget
@@ -210,6 +236,7 @@
             this.element.$.parentElement.style.width = this.data.width;
             this.element.setAttribute('data-media-width', this.data.width);
           } else {
+            // We might want to set less aggressive defaults
             this.element.$.parentElement.style.width = '';
             this.element.setAttribute('data-media-width', '');
           }
