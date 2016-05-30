@@ -147,6 +147,8 @@
       // we reproduced it using CSS instead, it allows us to ensure that we do
       // not trigger the draggable iframe bug (dragging over an iframe freezes
       // the browser).
+      // IMPORTANT: In order to know where the magic actually happen, have a see
+      // into the ucms_contrib.js file, at cart initialization time.
       //iframeFix: true,
       accept: function ($item) {
         // Prevent wrong bundles.
