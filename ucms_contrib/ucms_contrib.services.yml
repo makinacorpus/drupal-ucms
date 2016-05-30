@@ -64,7 +64,7 @@ services:
   ucms_contrib.node_event_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEventSubscriber
-    arguments: ["@database"]
+    arguments: ["@database", "@ucms_site.manager"]
     tags: [{ name: event_subscriber }]
 
   ucms_contrib.node_index_subscriber:

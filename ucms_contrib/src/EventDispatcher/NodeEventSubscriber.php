@@ -3,13 +3,11 @@
 
 namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
-use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 
@@ -23,25 +21,10 @@ class NodeEventSubscriber implements EventSubscriberInterface
      */
     private $db;
 
-//    /**
-//     * @var SiteManager
-//     */
-//    private $manager;
-//
-//    /**
-//     * @var NodeManager
-//     */
-//    private $nodeManager;
-//
-//    /**
-//     * @var EntityManager
-//     */
-//    private $entityManager;
-//
-//    /**
-//     * @var EventDispatcherInterface
-//     */
-//    private $eventDispatcher;
+    /**
+     * @var SiteManager
+     */
+    private $siteManager;
 
 
     /**
@@ -56,9 +39,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
             NodeEvent::EVENT_UPDATE => [
                 ['onUpdate', 0]
             ],
-            NodeEvent::EVENT_CLONE => [
-                ['onClone', 0]
-            ],
         ];
     }
 
@@ -67,23 +47,12 @@ class NodeEventSubscriber implements EventSubscriberInterface
      * Constructor
      *
      * @param \DatabaseConnection $db
-     * @param SiteManager $manager
-     * @param SiteManager $nodeManager
-     * @param EntityManager $entityManager
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param SiteManager $siteManager
      */
-    public function __construct(
-        \DatabaseConnection $db
-//        SiteManager $manager,
-//        NodeManager $nodeManager,
-//        EntityManager $entityManager,
-//        EventDispatcherInterface $eventDispatcher
-    ) {
+    public function __construct(\DatabaseConnection $db, SiteManager $siteManager)
+    {
         $this->db = $db;
-//        $this->manager = $manager;
-//        $this->nodeManager = $nodeManager;
-//        $this->entityManager = $entityManager;
-//        $this->eventDispatcher= $eventDispatcher;
+        $this->siteManager = $siteManager;
     }
 
 
@@ -111,6 +80,14 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 ->condition('nid', $node->parent_nid)
                 ->execute()
             ;
+
+            // Define the node as the homepage of its site
+            // if the parent node was the homepage.
+            $site = $this->siteManager->getStorage()->findOne($node->site_id);
+            if ($site->home_nid == $node->parent_nid) {
+                $site->home_nid = $node->nid;
+                $this->siteManager->getStorage()->save($site);
+            }
         }
     }
 
@@ -119,12 +96,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
         ucms_contrib_node_collect_reference($node);
-    }
-
-
-    public function onClone(NodeEvent $event)
-    {
-        $node = $event->getNode();
     }
 }
 
