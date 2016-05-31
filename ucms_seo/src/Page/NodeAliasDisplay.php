@@ -67,7 +67,7 @@ class NodeAliasDisplay extends AbstractDisplay
             if (null === $item->language || 'und' === $item->language) {
                 $language = '<em>' . $this->t("default") . '</em>';;
             } else {
-                $language = check_plain($language);
+                $language = check_plain($item->language);
             }
 
             $rows[] = [
