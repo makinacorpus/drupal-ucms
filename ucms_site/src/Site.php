@@ -99,6 +99,11 @@ class Site
         return $this->theme;
     }
 
+    public function setHomeNodeId($nodeId)
+    {
+        $this->home_nid = $nodeId;
+    }
+
     public function getHomeNodeId()
     {
         return $this->home_nid;
@@ -124,6 +129,7 @@ class Site
         if ($this->hasAttribute($name)) {
             return $this->attributes[$name];
         }
+
         return $default;
     }
 

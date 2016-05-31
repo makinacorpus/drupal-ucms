@@ -3,13 +3,33 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Form;
 
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Form\AbstractEntityActionForm;
+use MakinaCorpus\Ucms\Site\NodeManager;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class NodeMakeGlobal extends AbstractEntityActionForm
+class NodeMakeGlobal extends FormBase
 {
+    /**
+     * {@inheritdoc}
+     */
+    static public function create(ContainerInterface $container)
+    {
+        return new self(
+            $container->get('ucms_site.node_manager')
+        );
+    }
+
+    public function __construct(NodeManager $nodeManager)
+    {
+        $this->nodeManager = $nodeManager;
+    }
+
+    private $nodeManager;
+
     /**
      * {@inheritdoc}
      */
@@ -21,24 +41,27 @@ class NodeMakeGlobal extends AbstractEntityActionForm
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, $node = null)
+    public function buildForm(array $form, FormStateInterface $formState, NodeInterface $node = null)
     {
-        $this->setEntity($form_state, $node);
-        return confirm_form($form, $this->t("Add %title to global contents?", ['%title' => $node->title]), 'node/' . $node->nid, '');
+        $formState->setTemporaryValue('node', $node);
+
+        return confirm_form($form, $this->t("Add %title to global contents?", ['%title' => $node->title]), 'node/' . $node->id(), '');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function submitForm(array &$form, FormStateInterface $form_state)
+    public function submitForm(array &$form, FormStateInterface $formState)
     {
-        $node = ucms_contrib_node_clone($this->getEntity($form_state));
-        $node->site_id = null;
-        $node->is_global = 1;
-        $this->getEntityStorage('node')->save($node);
+        $original = $formState->getTemporaryValue('node');
+
+        $node = $this->nodeManager->createAndSaveClone($original, [
+            'uid'       => $this->currentUser()->id(),
+            'site_id'   => null,
+            'is_global' => 1,
+        ]);
 
         drupal_set_message($this->t("%title has been added to global contents.", ['%title' => $node->title]));
-        $form_state->setRedirect('node/' . $node->nid);
+        $formState->setRedirect('node/' . $node->id());
     }
 }
-

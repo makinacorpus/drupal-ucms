@@ -44,8 +44,12 @@ class NodeManager
      * @param EntityManager $entityManager
      * @param EventDispatcher $eventDispatcher
      */
-    public function __construct(\DatabaseConnection $db, SiteManager $manager, EntityManager $entityManager, EventDispatcher $eventDispatcher)
-    {
+    public function __construct(
+        \DatabaseConnection $db,
+        SiteManager $manager,
+        EntityManager $entityManager,
+        EventDispatcher $eventDispatcher
+    ) {
         $this->db = $db;
         $this->manager = $manager;
         $this->entityManager = $entityManager;
@@ -99,6 +103,79 @@ class NodeManager
         ;
 
         $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($site, $nodeIdList));
+    }
+
+    /**
+     * Create unsaved node clone
+     *
+     * @param NodeInterface $original
+     *   Original node to clone
+     * @param array $updates
+     *   Any fields that will replace properties on the new node object, set
+     *   the 'uid' property as user identifier
+     *
+     * @return NodeInterface
+     *   Unsaved clone
+     */
+    public function createUnsavedClone(NodeInterface $original, array $updates = [])
+    {
+        // This method, instead of the clone operator, will actually drop all
+        // existing references and pointers and give you raw values.
+        // All credits to https://stackoverflow.com/a/10831885/5826569
+        $node = unserialize(serialize($original));
+
+        // Fetcth the new user identifier from the updates
+        $userId = isset($updates['uid']) ? $updates['uid'] : $original->getOwnerId();
+
+        $node->nid      = null;
+        $node->vid      = null;
+        $node->tnid     = null;
+        $node->log      = null;
+        $node->uid      = $userId;
+        $node->created  = null;
+        $node->changed  = null;
+        $node->path     = null;
+        $node->files    = [];
+        // Fills in the some default values
+        $node->status   = 0;
+        $node->promote  = 0;
+        $node->sticky   = 0;
+        $node->revision = 1;
+        // Resets sites information
+        $node->site_id  = null;
+        $node->ucms_sites = [];
+        // Sets the origin_id and parent_id
+        $node->parent_nid = $original->id();
+        $node->origin_nid = empty($original->origin_nid) ? $original->id() : $original->origin_nid;
+        // Forces node indexing
+        $node->ucms_index_now = 1; // @todo find a better way
+
+        foreach ($updates as $key => $value) {
+            $node->{$key} = $value;
+        }
+
+        return $node;
+    }
+
+    /**
+     * Clone the given node
+     *
+     * @param NodeInterface $original
+     *   Original node to clone
+     * @param array $updates
+     *   Any fields that will replace properties on the new node object, set
+     *   the 'uid' property as user identifier
+     *
+     * @return NodeInterface
+     *   New duplicated node, it has already been saved, to update values use
+     *   the $updates parameter
+     */
+    public function createAndSaveClone(NodeInterface $original, array $updates = [])
+    {
+        $clone = $this->createUnsavedClone($original, $updates);
+        $this->entityManager->getStorage('node')->save($clone);
+
+        return $clone;
     }
 
     /**

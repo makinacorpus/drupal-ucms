@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
@@ -14,11 +13,9 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-
 class NodeEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
-
 
     /**
      * @var \DatabaseConnection
@@ -45,18 +42,17 @@ class NodeEventSubscriber implements EventSubscriberInterface
      */
     private $eventDispatcher;
 
-
     /**
      * {@inheritdoc}
      */
     static public function getSubscribedEvents()
     {
         return [
-            NodeEvent::EVENT_PREPARE => [
-                ['onPrepare', 0]
-            ],
             NodeCollectionEvent::EVENT_LOAD => [
                 ['onLoad', 0]
+            ],
+            NodeEvent::EVENT_PREPARE => [
+                ['onPrepare', 0]
             ],
             NodeEvent::EVENT_PREINSERT => [
                 ['onPreInsert', 0]
@@ -69,7 +65,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
             ],
         ];
     }
-
 
     /**
      * Constructor
@@ -94,7 +89,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
         $this->eventDispatcher= $eventDispatcher;
     }
 
-
     public function onPrepare(NodeEvent $event)
     {
         $node = $event->getNode();
@@ -116,7 +110,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
             $node->ucms_sites = [];
         }
     }
-
 
     public function onLoad(NodeCollectionEvent $event)
     {
@@ -172,7 +165,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
         }
     }
 
-
     public function onPreInsert(NodeEvent $event)
     {
         $node = $event->getNode();
@@ -191,8 +183,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
         if (!empty($node->site_id)) {
             $node->ucms_sites[] = $node->site_id;
             $node->is_global = 0;
-        }
-        else if (false !== $node->site_id) {
+        } else if (false !== $node->site_id) {
             if ($site = $this->manager->getContext()) {
 
                 $node->site_id = $site->id;
@@ -209,7 +200,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
             $node->is_global = 1;
         }
     }
-
 
     public function onInsert(NodeEvent $event)
     {
@@ -228,8 +218,31 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 $this->manager->getStorage()->save($site, ['home_nid']);
             }
         }
-    }
 
+        // parent_nid determines if node is a clone or node, we are inserting
+        // so it's the actual "clone" operation being done
+        if ($node->parent_nid && $node->site_id) {
+
+            $storage = $this->manager->getStorage();
+            $site = $storage->findOne($node->site_id);
+
+            // Replace the new node home page if the original was the home page
+            if ($site->getHomeNodeId() == $node->parent_nid) {
+                $site->setHomeNodeId($node->id());
+                $storage->save($site, ['home_nid']);
+
+                drupal_set_message(t("The site home page has been changed to the current content."), 'success');
+
+                if (!$node->isPublished()) {
+                    drupal_set_message(t("The cloned content is now the current site home page, yet it is unpublished, you should probably publish it!"), 'warning');
+                }
+            }
+
+            // Dereference node from the clone site, since it will be replaced
+            // by the new one in all contextes it can be
+            $this->nodeManager->deleteReferenceBulk($site, [$node->parent_nid]);
+        }
+    }
 
     public function onSave(NodeEvent $event)
     {
@@ -240,7 +253,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
             $this->nodeManager->createReference($site, $node);
         }
     }
-
 
     public function onDelete(NodeEvent $event)
     {
