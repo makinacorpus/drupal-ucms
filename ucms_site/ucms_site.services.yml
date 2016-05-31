@@ -44,7 +44,7 @@ services:
   ucms_site.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\NodeActionProvider
-    arguments: ["@ucms_site.node_access_helper", "@current_user"]
+    arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@current_user"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_site.webmaster_action_provider:
