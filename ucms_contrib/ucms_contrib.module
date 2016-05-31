@@ -369,13 +369,15 @@ function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
  * Callback for the node cloning form.
  */
 function ucms_contrib_node_clone_form($node) {
-  $clone = ucms_contrib_node_clone($node);
 
-  $form_state = [];
-  $form_state['build_info']['args'] = [$clone];
-  form_load_include($form_state, 'inc', 'node', 'node.pages');
+  /** @var $manager \MakinaCorpus\Ucms\Site\NodeManager */
+  $manager = \Drupal::service('ucms_site.node_manager');
 
-  return drupal_build_form($clone->type . '_node_form', $form_state);
+  $clone = $manager->createUnsavedClone($node, ['uid' => \Drupal::currentUser()->id()]);
+
+  module_load_include('inc', 'node', 'node.pages');
+
+  return drupal_get_form($clone->type . '_node_form', $clone);
 }
 
 /**
@@ -537,7 +539,11 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state, $form_id) {
  * Add to cart action for node form.
  */
 function ucms_contrib_form_node_form_submit_add_to_cart($form, &$form_state) {
-  \Drupal::service('ucms_contrib.cart')->addFor(\Drupal::currentUser()->id(), $form['#node']->id());
+  // $form['#node'] is the wrong node, when you are creating a new node, it's
+  // the non-saved empty version of the node instead of being the one that
+  // gets submitted. This would work in update scenario, but for an obscure
+  // reason won't when we clone.
+  \Drupal::service('ucms_contrib.cart')->addFor(\Drupal::currentUser()->id(), $form_state['node']->id());
 }
 
 /**
@@ -796,48 +802,6 @@ function ucms_contrib_node_update($node) {
 }
 
 /**
- * Clone the given node.
- *
- * @param $originalNode
- * @return NodeInterface
- */
-function ucms_contrib_node_clone($originalNode) {
-  $user = \Drupal::service('current_user');
-
-  // This method, instead of the clone operator, will actually drop all
-  // existing references and pointers and give you raw values.
-  // All credits to https://stackoverflow.com/a/10831885/5826569
-  $node = unserialize(serialize($originalNode));
-
-  $node->nid      = null;
-  $node->vid      = null;
-  $node->tnid     = null;
-  $node->log      = null;
-  $node->uid      = $user->id();
-  $node->created  = null;
-  $node->changed  = null;
-  $node->path     = null;
-  $node->files    = [];
-  // Fills in the some default values
-  $node->status   = 0;
-  $node->promote  = 0;
-  $node->sticky   = 0;
-  $node->revision = 1;
-  // Resets sites information
-  $node->site_id  = null;
-  $node->ucms_sites = [];
-  // Sets the origin_id and parent_id
-  $node->parent_nid = $originalNode->nid;
-  $node->origin_nid = empty($originalNode->origin_nid) ? $originalNode->nid : $originalNode->origin_nid;
-  // Forces node indexing
-  $node->ucms_index_now = 1; // @todo find a better way
-
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_CLONE, $node);
-time();
-  return $node;
-}
-
-/**
  * Implements hook_node_delete().
  */
 function ucms_contrib_node_delete($node) {
@@ -854,7 +818,13 @@ function ucms_contrib_node_delete($node) {
  */
 function ucms_contrib_event_dispatch($name, NodeInterface $node) {
   $currentUser = \Drupal::service('current_user');
-  $event = new NodeEvent($node, ($currentUser->isAnonymous() ? null : $currentUser->id()));
+  $userId = ($currentUser->isAnonymous() ? null : $currentUser->id());
+  if (isset($node->parent_nid)) {
+    $parent = \Drupal::service('entity.manager')->getStorage('node')->load($node->parent_nid);
+  } else {
+    $parent = null;
+  }
+  $event = new NodeEvent($node, $parent, $userId);
   \Drupal::service('event_dispatcher')->dispatch($name, $event);
 }
 

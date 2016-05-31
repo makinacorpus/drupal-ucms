@@ -40,7 +40,7 @@ class NodeCopyOnEdit extends FormBase
     }
 
     /**
-     * NodeCopyOnEdit constructor.
+     * Constructor.
      *
      * @param NodeManager $nodeManager
      * @param SiteManager $siteManager
