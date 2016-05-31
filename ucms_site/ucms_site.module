@@ -169,6 +169,14 @@ function ucms_site_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
+  $items['node/%node/dereference-from/%ucms_site'] = [
+    'title'             => "Dereference this content from current site",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\NodeDereferenceFrom', 1, 3],
+    'access callback'   => 'ucms_site_menu_access_dereference_from',
+    'access arguments'  => [1, 3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
 
   $items['node/%node/site-list'] = [
     'title'             => "Sites",
@@ -469,6 +477,23 @@ function ucms_site_menu_access_reference(NodeInterface $node, $account = null) {
     $account = \Drupal::currentUser();
   }
   return $node->access('view', $account) && ucms_site_node_access_helper()->userCanReference($account, $node);
+}
+
+/**
+ * Menu access check helper.
+ */
+function ucms_site_menu_access_dereference_from(NodeInterface $node, $site = null, $account = null) {
+  if (!$account) {
+    $account = \Drupal::currentUser();
+  }
+  $manager = ucms_site_manager();
+  if (!$site) {
+    if (!$manager->hasContext()) {
+      return false;
+    }
+    $site = $manager->getContext();
+  }
+  return ucms_site_node_access_helper()->userCanDereference($account, $node, $site);
 }
 
 /**

@@ -420,6 +420,7 @@ class NodeAccessService
             }
 
             return NODE_ACCESS_DENY;
+
         } elseif (Access::OP_DELETE === $op) {
             // Locked types
             if (in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_MANAGE_ALL)) {
@@ -483,7 +484,7 @@ class NodeAccessService
         if ($node->is_group && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
             return true;
         }
-        if (!empty($node->site_id) && ($userSites = ucms_site_manager()->loadWebmasterSites($account))) {
+        if (!empty($node->site_id) && ($userSites = $this->manager->loadWebmasterSites($account))) {
             foreach ($userSites as $site) {
                 if ($node->site_id == $site->id) {
                     return true;
@@ -503,7 +504,21 @@ class NodeAccessService
      */
     public function userCanReference(AccountInterface $account, NodeInterface $node)
     {
-        return $node->access(Access::OP_VIEW) && ucms_site_manager()->getAccess()->userIsWebmaster($account);
+        return $node->access(Access::OP_VIEW, $account) && $this->manager->getAccess()->userIsWebmaster($account);
+    }
+
+    /**
+     * Can the user dereference the current content from the given site
+     *
+     * @param AccountInterface $account
+     * @param NodeInterface $node
+     * @param Site $site
+     *
+     * @return boolean
+     */
+    public function userCanDereference(AccountInterface $account, NodeInterface $node, Site $site)
+    {
+        return $node->access(Access::OP_VIEW, $account) && $node->site_id != $site->getId() && $this->manager->getAccess()->userIsWebmaster($account, $site);
     }
 
     /**

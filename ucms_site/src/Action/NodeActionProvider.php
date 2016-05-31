@@ -10,6 +10,7 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
  * The site module will add node actions, corresponding to reference
@@ -19,25 +20,22 @@ class NodeActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
 
-    /**
-     * @var NodeAccessService
-     */
+    private $siteManager;
     private $nodeAccess;
-
-    /**
-     * @var AccountInterface
-     */
     private $currentUser;
 
     /**
      * Default constructor
      *
+     * @param SiteManager $mananger
      * @param NodeAccessService $nodeAccess
+     * @param AccountInterface $currentUser
      */
-    public function __construct(NodeAccessService $nodeAccess, AccountInterface $currentUser)
+    public function __construct(SiteManager $siteManager, NodeAccessService $nodeAccess, AccountInterface $currentUser)
     {
-        $this->currentUser = $currentUser;
+        $this->siteManager = $siteManager;
         $this->nodeAccess = $nodeAccess;
+        $this->currentUser = $currentUser;
     }
 
     /**
@@ -50,9 +48,22 @@ class NodeActionProvider implements ActionProviderInterface
         /* @var $item NodeInterface */
         $account = $this->currentUser;
 
-        if ($this->nodeAccess->userCanReference($account, $item)) {
+        // Check if current content is a reference within the current context
+        if ($this->siteManager->hasContext()) {
+            $site = $this->siteManager->getContext();
+
+            if ($this->nodeAccess->userCanDereference($account, $item, $site)) {
+                $ret[] = new Action($this->t("Remove from the current site"), 'node/' . $item->nid . '/dereference-from/' . $site->getId(), 'dialog', 'remove', 2, true, true, false, 'site');
+            }
+            if ($this->nodeAccess->userCanReference($account, $item)) {
+                $ret[] = new Action($this->t("Use on another site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
+            }
+
+        } else if ($this->nodeAccess->userCanReference($account, $item)) {
+            // We are not on a site, just display "normal" action
             $ret[] = new Action($this->t("Use on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
         }
+
         if ($this->nodeAccess->userCanLock($account, $item)) {
             if ($item->is_clonable) {
                 $ret[] = new Action($this->t("Lock"), 'node/' . $item->id() . '/lock', 'dialog', 'lock', 2, false, true, false, 'edit');
@@ -62,16 +73,6 @@ class NodeActionProvider implements ActionProviderInterface
         }
 
         $ret[] = new Action($this->t("View in site"), 'node/' . $item->id() . '/site-list', 'dialog', 'search', 100, false, true, false, 'view');
-
-        /*
-         if ($item->access('clone')) {
-         $ret[] = new Action($this->t("Clone"), 'node/' . $item->nid . '/clone', null, 'dialog', 'save', 0, false, true);
-         }
-         if (!empty($item->is_clonable)) {
-         // ajouter au panier  permet d'ajouter le contenu au panier de l'utilisateur courant ;
-         // enlever du panier  permet d'enlever le contenu du panier de l'utilisateur courant ;
-         }
-         */
 
         return $ret;
     }
