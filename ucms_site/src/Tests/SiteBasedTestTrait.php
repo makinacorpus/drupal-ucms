@@ -11,6 +11,7 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use MakinaCorpus\Ucms\Seo\SeoService;
 
 trait SiteBasedTestTrait
 {
@@ -48,6 +49,14 @@ trait SiteBasedTestTrait
     protected function getNodeManager()
     {
       return $this->getDrupalContainer()->get('ucms_site.node_manager');
+    }
+
+    /**
+     * @return SeoService
+     */
+    protected function getSeoService()
+    {
+        return $this->getDrupalContainer()->get('ucms_seo.seo_service');
     }
 
     /**

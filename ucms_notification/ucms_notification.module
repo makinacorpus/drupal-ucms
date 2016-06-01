@@ -143,12 +143,3 @@ function ucms_notification_node_update($node) {
     }
   }
 }
-
-/**
- * Implements hook_node_delete().
- */
-function ucms_notification_node_delete($node) {
-  global $user;
-  $dispatcher = \Drupal::service('event_dispatcher');
-  $dispatcher->dispatch('node:delete', new ResourceEvent('node', $node->nid, $user->uid));
-}

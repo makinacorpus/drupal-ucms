@@ -18,6 +18,14 @@ class StoreLocatorFactory
         $this->service = $service;
     }
 
+    /**
+     * @param NodeInterface $node
+     * @param string $type
+     * @param string $subArea
+     * @param string $locality
+     *
+     * @return StoreLocatorInterface
+     */
     public function create(NodeInterface $node = null, $type = null, $subArea = null, $locality = null)
     {
         $class = variable_get('ucms_seo_store_locator_class', false);
