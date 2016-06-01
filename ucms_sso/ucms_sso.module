@@ -177,6 +177,10 @@ function ucms_sso_write_token($origin, $destination = null) {
     $query['destination'] = $_GET['destination'];
   }
 
+  if (!empty($_GET['form_redirect'])) {
+    $query['form_redirect'] = $_GET['form_redirect'];
+  }
+
   return url(ucms_sso_scheme_get() . '://' . $origin . '/sso/login/', ['query' => $query, 'absolute' => true]);
 }
 
@@ -239,10 +243,22 @@ function ucms_sso_callback_login() {
   $domain = $_SERVER['HTTP_HOST'];
   $cid    = $domain .':'. $token;
 
+  $path = '';
+  $options = [];
+  // Ugly tricks to avoid destination parameter conflict.
+  // @see MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite::submitForm
+  if (!empty($_GET['destination']) && !empty($_GET['form_redirect'])) {
+    $path = $_GET['destination'];
+    $options['query']['destination'] = $_GET['form_redirect'];
+    // © Meurs mais meurs en brillant
+    // © Ils sont morts, alléluia
+    unset($_GET['destination']);
+  }
+
   if (user_is_logged_in()) {
     // User is logged in, attempt token removal and exit.
     cache_clear_all($cid, 'cache_sso');
-    drupal_goto();
+    drupal_goto($path, $options);
   }
 
   $entry = cache_get($cid, 'cache_sso');
@@ -268,7 +284,7 @@ function ucms_sso_callback_login() {
   $expire = $params['lifetime'] ? REQUEST_TIME + $params['lifetime'] : 0;
   setcookie(session_name(), $sessionId, $expire, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
   // Leave the user to the page he sould be.
-  drupal_goto();
+  drupal_goto($path, $options);
 }
 
 /**
