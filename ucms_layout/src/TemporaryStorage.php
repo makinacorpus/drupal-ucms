@@ -124,4 +124,18 @@ class TemporaryStorage implements StorageInterface
 
         return $this->load($id);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetCacheForNode($nodeId)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetCacheForSite($siteId)
+    {
+    }
 }

@@ -75,23 +75,50 @@ class NodeManager
             $node->ucms_sites[] = $site->id;
         }
 
-        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($site, [$node->id()]));
+        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($site->getId(), $node->id()));
     }
 
     /**
-     * Reference node for a site
+     * Reference a single within multiple sites
      *
-     * @param Site $site
-     * @param int[] $nodeIdList
+     * @param int $nodeId
+     * @param int[] $siteIdList
      */
-    public function createReferenceBulk(Site $site, $nodeIdList)
+    public function createReferenceBulkForNode($nodeId, $siteIdList)
     {
         // @todo Optimize me
-        foreach ($nodeIdList as $id) {
+        foreach ($siteIdList as $siteId) {
             $this
                 ->db
                 ->merge('ucms_site_node')
-                ->key(['nid' => $id, 'site_id' => $site->id])
+                ->key(['nid' => $nodeId, 'site_id' => $siteId])
+                ->execute()
+            ;
+        }
+
+        $this
+            ->entityManager
+            ->getStorage('node')
+            ->resetCache([$nodeId])
+        ;
+
+        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($siteIdList, $nodeId));
+    }
+
+    /**
+     * Reference multiple nodes within a single site
+     *
+     * @param int $siteId
+     * @param int[] $nodeIdList
+     */
+    public function createReferenceBulkInSite($siteId, $nodeIdList)
+    {
+        // @todo Optimize me
+        foreach ($nodeIdList as $nodeId) {
+            $this
+                ->db
+                ->merge('ucms_site_node')
+                ->key(['nid' => $nodeId, 'site_id' => $siteId])
                 ->execute()
             ;
         }
@@ -102,7 +129,7 @@ class NodeManager
             ->resetCache($nodeIdList)
         ;
 
-        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($site, $nodeIdList));
+        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 
     /**
@@ -181,16 +208,16 @@ class NodeManager
     /**
      * Unreference node for a site
      *
-     * @param Site $site
+     * @param int $siteId
      * @param int[] $nodeIdList
      */
-    public function deleteReferenceBulk(Site $site, $nodeIdList)
+    public function deleteReferenceBulkFromSite($siteId, $nodeIdList)
     {
         $this
             ->db
             ->delete('ucms_site_node')
             ->condition('nid', $nodeIdList)
-            ->condition('site_id', $site->id)
+            ->condition('site_id', $siteId)
             ->execute()
         ;
 
@@ -200,7 +227,7 @@ class NodeManager
             ->resetCache($nodeIdList)
         ;
 
-        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_DETACH, new SiteAttachEvent($site, $nodeIdList));
+        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_DETACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 
     /**

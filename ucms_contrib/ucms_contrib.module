@@ -819,12 +819,7 @@ function ucms_contrib_node_delete($node) {
 function ucms_contrib_event_dispatch($name, NodeInterface $node) {
   $currentUser = \Drupal::service('current_user');
   $userId = ($currentUser->isAnonymous() ? null : $currentUser->id());
-  if (isset($node->parent_nid)) {
-    $parent = \Drupal::service('entity.manager')->getStorage('node')->load($node->parent_nid);
-  } else {
-    $parent = null;
-  }
-  $event = new NodeEvent($node, $parent, $userId);
+  $event = new NodeEvent($name, $node, $userId);
   \Drupal::service('event_dispatcher')->dispatch($name, $event);
 }
 

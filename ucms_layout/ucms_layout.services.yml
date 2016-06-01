@@ -23,6 +23,12 @@ services:
       - {name: event_listener, event: "site:clone"}
       - {name: event_listener, event: "site:ref"}
 
+  ucms_layout.node_event_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Layout\EventDispatcher\NodeEventSubscriber
+    arguments: ["@database", "@ucms_site.manager"]
+    tags: [{ name: event_subscriber }]
+
   ucms_layout.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_site.manager", "@ucms_layout.context_manager"]

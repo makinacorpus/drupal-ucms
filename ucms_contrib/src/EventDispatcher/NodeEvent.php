@@ -17,19 +17,34 @@ class NodeEvent extends GenericEvent
     const EVENT_SAVE      = 'node:save';
     const EVENT_DELETE    = 'node:delete';
 
+    private $eventName;
+    private $userId;
+
     /**
      * Constructor
      *
+     * @param string $eventName
      * @param NodeInterface $node
      * @param int $userId
      * @param array $arguments
      */
-    public function __construct(NodeInterface $node, NodeInterface $parent = null, $userId = null, array $arguments = [])
+    public function __construct($eventName, NodeInterface $node, $userId = null)
     {
-        $arguments['uid'] = $userId;
-        $arguments['parent'] = $parent;
+        $this->eventName = $eventName;
+        $this->userId = $userId;
 
-        parent::__construct($node, $arguments);
+        // Argument here serves only for the notification listeners, keep this.
+        parent::__construct($node, ['uid' => $userId]);
+    }
+
+    /**
+     * Is the current event a clone operation
+     *
+     * @return boolean
+     */
+    public function isClone()
+    {
+        return self::EVENT_INSERT === $this->eventName && null !== $this->getNode()->parent_nid;
     }
 
     /**
@@ -39,7 +54,7 @@ class NodeEvent extends GenericEvent
      */
     public function getUserId()
     {
-        return $this->getArgument('uid');
+        return $this->userId;
     }
 
     /**
@@ -50,25 +65,5 @@ class NodeEvent extends GenericEvent
     public function getNode()
     {
         return $this->getSubject();
-    }
-
-    /**
-     * Has the given node a parent node
-     *
-     * @return boolean
-     */
-    public function hasParentNode()
-    {
-        return $this->hasArgument('parent');
-    }
-
-    /**
-     * Get the parent node, if any
-     *
-     * @return NodeInterface
-     */
-    public function getParentNode()
-    {
-        return $this->getArgument('parent');
     }
 }

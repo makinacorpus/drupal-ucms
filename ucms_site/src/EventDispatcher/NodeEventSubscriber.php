@@ -219,9 +219,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
             }
         }
 
-        // parent_nid determines if node is a clone or node, we are inserting
-        // so it's the actual "clone" operation being done
-        if ($node->parent_nid && $node->site_id) {
+        if ($event->isClone() && $node->site_id) {
 
             $storage = $this->manager->getStorage();
             $site = $storage->findOne($node->site_id);
@@ -240,17 +238,15 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
             // Dereference node from the clone site, since it will be replaced
             // by the new one in all contextes it can be
-            $this->nodeManager->deleteReferenceBulk($site, [$node->parent_nid]);
+            $this->nodeManager->deleteReferenceBulkFromSite($site->getId(), [$node->parent_nid]);
         }
     }
 
     public function onSave(NodeEvent $event)
     {
         $node = $event->getNode();
-        $sites = $this->manager->getStorage()->loadAll($node->ucms_sites);
-
-        foreach ($sites as $site) {
-            $this->nodeManager->createReference($site, $node);
+        if ($node->ucms_sites) {
+            $this->nodeManager->createReferenceBulkForNode($node->id(), $node->ucms_sites);
         }
     }
 

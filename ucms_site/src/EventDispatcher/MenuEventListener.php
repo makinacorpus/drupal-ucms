@@ -62,7 +62,7 @@ class MenuEventListener
             }
         }
         if ($changed) {
-            $this->nodeManager->createReferenceBulk($event->getSite(), $changed);
+            $this->nodeManager->createReferenceBulkInSite($event->getSite()->getId(), $changed);
         }
     }
 }

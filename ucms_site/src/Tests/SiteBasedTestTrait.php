@@ -58,16 +58,28 @@ trait SiteBasedTestTrait
         return $this->getDrupalContainer()->get('ucms_layout.storage');
     }
 
+    protected function isNodeInSite($node, $site)
+    {
+        $site = (int)($site instanceof Site) ? $site->getId() : $site;
+        $node = (int)($node instanceof NodeInterface) ? $node->id() : $node;
+
+        return (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_site_node} WHERE nid = :nid AND site_id = :sid", [':nid' => $node, ':sid' => $site])->fetchField();
+    }
+
+    /**
+     * Assert that given node is in site, in database
+     */
+    protected function assertNotNodeInSite($node, $site)
+    {
+        $this->assertFalse($this->isNodeInSite($node, $site));
+    }
+
     /**
      * Assert that given node is in site, in database
      */
     protected function assertNodeInSite($node, $site)
     {
-        $site = (int)($site instanceof Site) ? $site->getId() : $site;
-        $node = (int)($node instanceof NodeInterface) ? $node->id() : $node;
-
-        $ret = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_site_node} WHERE nid = :nid AND site_id = :sid", [':nid' => $node, ':sid' => $site])->fetchField();
-        $this->assertTrue($ret);
+        $this->assertTrue($this->isNodeInSite($node, $site));
     }
 
     /**

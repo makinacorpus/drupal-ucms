@@ -2,8 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
-
 use Drupal\Core\Entity\EntityManager;
+
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 

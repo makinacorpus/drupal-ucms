@@ -281,4 +281,20 @@ class DrupalStorage implements StorageInterface
             ;
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetCacheForNode($nodeId)
+    {
+        cache_clear_all('*', 'cache_layout', true);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetCacheForSite($siteId)
+    {
+        cache_clear_all('*', 'cache_layout', true);
+    }
 }
