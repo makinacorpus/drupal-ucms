@@ -16,6 +16,7 @@ class NodeIndexerTest extends AbstractElasticTest
             $this->getDatabaseConnection(),
             $this->getDrupalContainer()->get('entity.manager'),
             $this->getNullModuleHandler(),
+            $this->getDrupalContainer()->get('event_dispatcher'),
             $this->getAliasMap()[$index],
         ];
     }

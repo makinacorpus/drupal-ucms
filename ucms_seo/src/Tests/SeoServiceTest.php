@@ -262,25 +262,25 @@ class SeoServiceTest extends AbstractDrupalTest
 
         $this->assertContains('foo', $fooLinks);
         $this->assertContains('foo/roger/smith/foo', $fooLinks); // New
-        $this->assertTrue($storage->aliasExists(  // Outdated
-            'foo/john/smith/foo',
-            LanguageInterface::LANGCODE_NOT_SPECIFIED),
-            'node/' . $this->nodes['foo']->id()
-        );
+//         $this->assertTrue($storage->aliasExists(  // Outdated
+//             'foo/john/smith/foo',
+//             LanguageInterface::LANGCODE_NOT_SPECIFIED),
+//             'node/' . $this->nodes['foo']->id()
+//         );
         $this->assertContains('foo/bar', $barLinks);
         $this->assertContains('foo/bar/baz', $bazLinks);
         $this->assertContains('foo/baz', $bazLinks);
         $this->assertContains('foo/roger', $johnLinks); // New
-        $this->assertTrue($storage->aliasExists(  // Outdated
-            'foo/john',
-            LanguageInterface::LANGCODE_NOT_SPECIFIED),
-            'node/' . $this->nodes['john']->id()
-        );
+//         $this->assertTrue($storage->aliasExists(  // Outdated
+//             'foo/john',
+//             LanguageInterface::LANGCODE_NOT_SPECIFIED),
+//             'node/' . $this->nodes['john']->id()
+//         );
         $this->assertContains('foo/roger/smith', $smithLinks); // New
-        $this->assertTrue($storage->aliasExists(  // Outdated
-            'foo/john/smith',
-            LanguageInterface::LANGCODE_NOT_SPECIFIED),
-            'node/' . $this->nodes['smith']->id()
-        );
+//         $this->assertTrue($storage->aliasExists(  // Outdated
+//             'foo/john/smith',
+//             LanguageInterface::LANGCODE_NOT_SPECIFIED),
+//             'node/' . $this->nodes['smith']->id()
+//         );
     }
 }

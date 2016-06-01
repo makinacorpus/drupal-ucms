@@ -86,7 +86,7 @@ class NodeDereferenceFrom extends FormBase
         $node = $form_state->getTemporaryValue('node');
         $site = $this->siteManager->getContext();
 
-        $this->nodeManager->deleteReferenceBulk($site->getId(), [$node->id()]);
+        $this->nodeManager->deleteReferenceBulkFromSite($site->getId(), [$node->id()]);
 
         drupal_set_message($this->t("%title has been removed from site %site", [
             '%title'  => $node->title,

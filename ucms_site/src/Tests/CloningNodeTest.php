@@ -44,6 +44,32 @@ class CloningNodeTest extends AbstractDrupalTest
         ;
     }
 
+    /**
+     * @param NodeInterface $node
+     * @param Site $site
+     *
+     * @return mixed[]
+     *   First value is the Layout instance, second is an array of NodeInstance
+     */
+    protected function createArbitraryCompoForNodeInSite(NodeInterface $node, Site $site)
+    {
+        // Go for a composition on the node
+        // Create some nodes
+        $compo = [];
+        $compo[] = $this->createDrupalNode('news');
+        $compo[] = $this->createDrupalNode('news');
+        $compo[] = $this->createDrupalNode('news');
+        $layout = new Layout();
+        $layout->setSiteId($site->getId());
+        $layout->setNodeId($node->id());
+        foreach ($compo as $irrevelantNode) {
+            $layout->getRegion('content')->addAt(new Item($irrevelantNode->id()));
+        }
+        $this->getLayoutStorage()->save($layout);
+
+        return [$layout, $compo];
+    }
+
     public function testBasicNodeClone()
     {
         $site1 = $this->createDrupalSite();
@@ -60,26 +86,6 @@ class CloningNodeTest extends AbstractDrupalTest
         $this->assertSame($node->site_id, $site1->getId());
         $this->assertContains($site2->getId(), $node->ucms_sites);
         $this->assertNodeInSite($node, $site2);
-
-        // Go for a composition on the node
-        // Create some nodes
-        $compo = [];
-        $compo[] = $this->createDrupalNode('news');
-        $compo[] = $this->createDrupalNode('news');
-        $compo[] = $this->createDrupalNode('news');
-        $layout = new Layout();
-        $layout->setSiteId($site2->getId());
-        $layout->setNodeId($node->id());
-        foreach ($compo as $irrevelantNode) {
-            $layout->getRegion('content')->addAt(new Item($irrevelantNode->id()));
-        }
-        $this->getLayoutStorage()->save($layout);
-
-        // I got a layout! I got a layout!
-        foreach ($compo as $irrevelantNode) {
-            $this->assertTrue($this->isNodeInLayout($node, $irrevelantNode, $site2));
-            $this->assertFalse($this->isNodeInLayout($node, $irrevelantNode, $site1));
-        }
 
         // And now, go go go !!
         $clone = $this->getNodeManager()->createAndSaveClone($node);
@@ -99,5 +105,120 @@ class CloningNodeTest extends AbstractDrupalTest
         $cloneception = $this->getNodeManager()->createAndSaveClone($clone);
         $this->assertSame($clone->nid, $cloneception->parent_nid);
         $this->assertSame($node->nid, $cloneception->origin_nid);
+    }
+
+    public function testContextIsChanged()
+    {
+        $site1 = $this->createDrupalSite();
+        $site2 = $this->createDrupalSite();
+
+        $this->getSiteManager()->setContext($site1);
+        $node = $this->createDrupalNode('news', $site1);
+        $this->assertNodeInSite($node, $site1);
+
+        $this->getSiteManager()->setContext($site2);
+        $clone = $this->getNodeManager()->createAndSaveClone($node);
+        // We got a clone, node should not be in site2 anymore (dereferenced)
+        $this->assertNotNodeInSite($node, $site2);
+
+        $this->assertSame($site2->getId(), $clone->site_id);
+        $this->assertNotNodeInSite($clone, $site1);
+    }
+
+    public function testLayoutIsChanged()
+    {
+        $site1 = $this->createDrupalSite();
+        $site2 = $this->createDrupalSite();
+
+        $this->getSiteManager()->setContext($site1);
+        $node = $this->createDrupalNode('news', $site1);
+        $this->assertNodeInSite($node, $site1);
+
+        /** @var $compo NodeInterface[] */
+        list(, $compo) = $this->createArbitraryCompoForNodeInSite($node, $site2);
+        // I got a layout! I got a layout!
+        foreach ($compo as $irrevelantNode) {
+            $this->assertTrue($this->isNodeInLayout($node, $irrevelantNode, $site2));
+            $this->assertFalse($this->isNodeInLayout($node, $irrevelantNode, $site1));
+        }
+
+        $this->getSiteManager()->setContext($site2);
+        $clone = $this->getNodeManager()->createAndSaveClone($node);
+        // We got a clone, node should not be in site2 anymore (dereferenced)
+        $this->assertNotNodeInSite($node, $site2);
+
+        $this->assertSame($site2->getId(), $clone->site_id);
+        $this->assertNotNodeInSite($clone, $site1);
+
+        // I got a layout! I got a layout!
+        foreach ($compo as $irrevelantNode) {
+            // Layout changed for the clone node and is on site2
+            $this->assertTrue($this->isNodeInLayout($clone, $irrevelantNode, $site2));
+            // Layout never has been on site1
+            $this->assertFalse($this->isNodeInLayout($clone, $irrevelantNode, $site1));
+            // Original node has no layout anymore on site2
+            $this->assertFalse($this->isNodeInLayout($node, $irrevelantNode, $site2));
+        }
+    }
+
+    public function testOtherLayoutsAreChanged()
+    {
+        $site1 = $this->createDrupalSite();
+        $site2 = $this->createDrupalSite();
+
+        $this->getSiteManager()->setContext($site1);
+        $node = $this->createDrupalNode('news', $site1);
+        $this->getNodeManager()->createReference($site2, $node);
+
+        $s1nodes = [];
+        for ($i = 0; $i < 7; ++$i) {
+            $s1nodes[] = $this->createDrupalNode('news', $site1);
+        }
+        $s2nodes = [];
+        for ($i = 0; $i < 7; ++$i) {
+            $s2nodes[] = $this->createDrupalNode('news', $site2);
+        }
+
+        /** @var $layout Layout */
+        // Create a few layouts for site 1
+        foreach ($s1nodes as $irrevelantNode) {
+            list($layout) = $this->createArbitraryCompoForNodeInSite($irrevelantNode, $site1);
+            // Add it twice, just to be sure
+            $layout->getRegion('content')->append(new Item($node->id()));
+            $layout->getRegion('r-' . rand(0, 5))->append(new Item($node->id()));
+            $this->getLayoutStorage()->save($layout);
+        }
+        // Then for site 2
+        foreach ($s2nodes as $irrevelantNode) {
+            list($layout) = $this->createArbitraryCompoForNodeInSite($irrevelantNode, $site2);
+            // Add it twice, just to be sure
+            $layout->getRegion('content')->append(new Item($node->id()));
+            $layout->getRegion('r-' . rand(0, 5))->append(new Item($node->id()));
+            $this->getLayoutStorage()->save($layout);
+        }
+
+        // Assert our node is in all compositions we just created
+        foreach ($s1nodes as $irrevelantNode) {
+            $this->assertTrue($this->isNodeInLayout($irrevelantNode, $node, $site1));
+            $this->assertFalse($this->isNodeInLayout($irrevelantNode, $node, $site2));
+        }
+        foreach ($s2nodes as $irrevelantNode) {
+            $this->assertTrue($this->isNodeInLayout($irrevelantNode, $node, $site2));
+            $this->assertFalse($this->isNodeInLayout($irrevelantNode, $node, $site1));
+        }
+
+        $this->getSiteManager()->setContext($site2);
+        $clone = $this->getNodeManager()->createAndSaveClone($node);
+
+        // Ok now assert that in site1, all references are kept
+        foreach ($s1nodes as $irrevelantNode) {
+            $this->assertTrue($this->isNodeInLayout($irrevelantNode, $node, $site1));
+            $this->assertFalse($this->isNodeInLayout($irrevelantNode, $clone, $site1));
+        }
+        // And by the way, in site2 everything should have changed
+        foreach ($s2nodes as $irrevelantNode) {
+            $this->assertFalse($this->isNodeInLayout($irrevelantNode, $node, $site2));
+            $this->assertTrue($this->isNodeInLayout($irrevelantNode, $clone, $site2));
+        }
     }
 }

@@ -2,10 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
+use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use MakinaCorpus\Ucms\Seo\SeoService;
 
 /**
  * This subscriber will collect linked content within text fields.
@@ -21,7 +21,16 @@ class SiteAttachEventListener implements EventSubscriberInterface
 
     public function onAttach(SiteAttachEvent $event)
     {
-        $this->service->ensureSitePrimaryAliases($event->getSite()->getId(), $event->getNodeList());
+        $siteIdList = $event->getSiteIdList();
+
+        if (1 < count($siteIdList)) {
+            // @todo optimize me
+            foreach ($siteIdList as $siteId) {
+                $this->service->ensureSitePrimaryAliases($siteId, $event->getNodeIdList());
+            }
+        } else {
+            $this->service->ensureSitePrimaryAliases(reset($siteIdList), $event->getNodeIdList());
+        }
     }
 
     public function onDetach(SiteAttachEvent $event)

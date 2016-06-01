@@ -82,6 +82,7 @@ abstract class AbstractElasticTest extends AbstractDrupalTest
                 $this->getDatabaseConnection(),
                 $this->getNullCacheBackend(),
                 $this->getDrupalContainer()->get('entity.manager'),
+                $this->getDrupalContainer()->get('event_dispatcher'),
                 $this->getNullModuleHandler(),
                 $this->getAliasMap()
             );
