@@ -44,6 +44,22 @@ class CloningNodeTest extends AbstractDrupalTest
         ;
     }
 
+    protected function doesAliasExists(Site $site, NodeInterface $node, $alias)
+    {
+        return (bool)$this
+            ->getDatabaseConnection()
+            ->query(
+                "SELECT 1 FROM {ucms_seo_alias} WHERE site_id = :site AND node_id = :nid AND alias = :alias",
+                [
+                    ':site'   => $site->getId(),
+                    ':nid'    => $node->id(),
+                    ':alias'  => $alias,
+                ]
+            )
+            ->fetchField()
+        ;
+    }
+
     /**
      * @param NodeInterface $node
      * @param Site $site
@@ -171,11 +187,11 @@ class CloningNodeTest extends AbstractDrupalTest
         $this->getNodeManager()->createReference($site2, $node);
 
         $s1nodes = [];
-        for ($i = 0; $i < 7; ++$i) {
+        for ($i = 0; $i < 3; ++$i) {
             $s1nodes[] = $this->createDrupalNode('news', $site1);
         }
         $s2nodes = [];
-        for ($i = 0; $i < 7; ++$i) {
+        for ($i = 0; $i < 3; ++$i) {
             $s2nodes[] = $this->createDrupalNode('news', $site2);
         }
 
@@ -220,5 +236,31 @@ class CloningNodeTest extends AbstractDrupalTest
             $this->assertFalse($this->isNodeInLayout($irrevelantNode, $node, $site2));
             $this->assertTrue($this->isNodeInLayout($irrevelantNode, $clone, $site2));
         }
+    }
+
+    public function testAliasesAreGivenToNewNode()
+    {
+        $site1 = $this->createDrupalSite();
+        $site2 = $this->createDrupalSite();
+
+        $this->getSiteManager()->setContext($site1);
+        $node = $this->createDrupalNode('news', $site1);
+        $this->getSeoService()->setNodeSegment($node, 'foo_bar_site1');
+        // Normal status
+        $this->assertTrue($this->doesAliasExists($site1, $node, 'foo_bar_site1'));
+        $this->assertFalse($this->doesAliasExists($site2, $node, 'foo_bar_site1'));
+
+        $this->getNodeManager()->createReference($site2, $node);
+        // Now everybody exists, yeah
+        $this->assertTrue($this->doesAliasExists($site1, $node, 'foo_bar_site1'));
+        $this->assertTrue($this->doesAliasExists($site2, $node, 'foo_bar_site1'));
+
+        $this->getSiteManager()->setContext($site2);
+        $clone = $this->getNodeManager()->createAndSaveClone($node);
+        // Now, clone has site2 alias, parent does not have anymore
+        $this->assertTrue($this->doesAliasExists($site1, $node, 'foo_bar_site1'));
+        $this->assertFalse($this->doesAliasExists($site2, $node, 'foo_bar_site1'));
+        $this->assertFalse($this->doesAliasExists($site1, $clone, 'foo_bar_site1'));
+        $this->assertTrue($this->doesAliasExists($site2, $clone, 'foo_bar_site1'));
     }
 }

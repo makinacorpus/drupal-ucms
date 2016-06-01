@@ -871,6 +871,37 @@ class SeoService
     }
 
     /**
+     * Within the given site, change all aliases from the given node to another
+     *
+     * Please be warned that WE DO NOT CHECK FOR CONSTRAINTS becaue it is only
+     * supposed to happen at node insert time.
+     *
+     * @param int $siteId
+     * @param int $previousNodeId
+     * @param int $nextNodeId
+     */
+    public function replaceNodeAliases($siteId, $previousNodeId, $nextNodeId)
+    {
+        $this
+              ->db
+              ->query("
+                  UPDATE {ucms_seo_alias}
+                  SET
+                      node_id = :next,
+                      source = :source
+                  WHERE
+                      site_id = :site
+                      AND node_id = :previous
+              ", [
+                  ':site'     => $siteId,
+                  ':previous' => $previousNodeId,
+                  ':next'     => $nextNodeId,
+                  ':source'   => 'node/' . $nextNodeId,
+              ])
+          ;
+    }
+
+    /**
      * From the given site, ensure that all nodes in it have a primary alias
      *
      * @see ::ensureNodePrimaryAlias()
@@ -1048,34 +1079,5 @@ class SeoService
         }
 
         $this->aliasManager->cacheClear();
-    }
-
-    /**
-     * On node post save event
-     */
-    public function onNodeSave(NodeInterface $node)
-    {
-        $segment = null;
-
-        if (property_exists($node, 'ucms_seo_segment') && !empty($node->ucms_seo_segment)) {
-            $segment = $node->ucms_seo_segment;
-        } else {
-            // Automatically generate the first segment version from the node
-            // title, force small length when not driven by user input
-            $title = $node->getTitle();
-            if ($title) {
-                $segment = $this->normalizeSegment($title, 60);
-            }
-        }
-
-        $this->setNodeSegment($node, $segment);
-    }
-
-    /**
-     * On node delete event
-     */
-    public function onNodeDelete(NodeInterface $node)
-    {
-        $this->onAliasRemove($node);
     }
 }
