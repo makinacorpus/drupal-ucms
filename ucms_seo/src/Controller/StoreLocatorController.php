@@ -36,7 +36,8 @@ class StoreLocatorController extends Controller
      */
     public function renderFieldAction(NodeInterface $node, $type, $sub_area = null, $locality = null)
     {
-        $type = $type === 'all' ? null : $type;
+        $all_type_key = variable_get('ucms_seo_store_locator_type_all_key', 'all');
+        $type = $type === $all_type_key ? null : $type;
         $sub_area = $sub_area === 'all' ? null : $sub_area;
 
         /** @var StoreLocatorInterface $storeLocator */
