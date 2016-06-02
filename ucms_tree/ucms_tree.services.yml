@@ -19,3 +19,8 @@ services:
       - {name: event_listener, event: "site:create"}
       - {name: event_listener, event: "site:init"}
       - {name: event_listener, event: "site:clone"}
+
+  ucms_tree.node_event_subscriber:
+    class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
+    arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
+    tags: [{ name: event_subscriber }]
