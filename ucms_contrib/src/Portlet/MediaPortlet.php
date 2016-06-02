@@ -86,6 +86,8 @@ class MediaPortlet extends AbstractAdminPortlet
         $query['type'] = $this->typeHandler->getMediaTypes();
         $query['is_global'] = 0;
 
+        $pageState->setSortField('created');
+
         return new NodePortletDisplay($this->t("You have no media yet."));
     }
 
