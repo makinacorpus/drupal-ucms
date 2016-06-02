@@ -44,13 +44,13 @@ class ContextPaneEventListener
             return;
         }
 
-
         $contextPane = $event->getContextPane();
         // Add the tree structure as a new tab
         $contextPane
             ->addTab('tree', $this->t("Menu tree"), 'tree-conifer')
             ->add($this->render(), 'tree')
         ;
+
         if (!$contextPane->getRealDefaultTab()) {
             $contextPane->setDefaultTab('tree');
         }
@@ -74,13 +74,18 @@ class ContextPaneEventListener
                 ],
             ],
         ];
+
         $link = menu_link_get_preferred();
+
+        $parents = [];
         for ($i = 1 ; $i < MENU_MAX_DEPTH ; $i++) {
             if (!empty($link["p$i"])) {
                 $parents[] = $link["p$i"];
             }
         }
+
         foreach ($menus as $menu) {
+            $tree_parameters = [];
             $tree_parameters['active_trail'] = $parents;
             $tree = _menu_build_tree($menu['name'], $tree_parameters);
             // This sorts the menu items without access, unlike _menu_tree_check_access().
@@ -104,23 +109,29 @@ class ContextPaneEventListener
     private function treeOutput($tree, $menu = null)
     {
         $items = [];
+
         if (!empty($tree)) {
-            foreach ($tree as $i => $data) {
+            foreach ($tree as $data) {
                 $options = [];
                 $options['attributes']['class'] = ['tree-item'];
+
                 // FIXME use Request object?
                 if (current_path() == $data['link']['link_path']) {
                     $options['attributes']['class'][] = 'active';
                 }
+
                 $element = [];
                 $element['data'] = l($data['link']['link_title'], $data['link']['link_path'], $options);
+
                 if ($data['below']) {
                     $elements = $this->treeOutput($data['below']);
                     $element['data'] .= drupal_render($elements);
                 }
+
                 $items[] = $element;
             }
         }
+
         $build = [
             '#theme' => 'item_list',
             '#type'  => 'ol',
@@ -144,20 +155,27 @@ class ContextPaneEventListener
      *
      * @param $tree
      */
-    private function sortTree(&$tree) {
+    private function sortTree(&$tree)
+    {
         $new_tree = [];
-        foreach ($tree as $key => $v) {
+
+        foreach (array_keys($tree) as $key) {
+
             $item = &$tree[$key]['link'];
             $item['access'] = true;
             $item['menu_name'] = 'admin__'.$item['menu_name'];
+
             _menu_link_translate($item);
+
             if ($tree[$key]['below']) {
                 $this->sortTree($tree[$key]['below']);
             }
+
             // The weights are made a uniform 5 digits by adding 50000 as an offset.
             // Adding the mlid to the end of the index insures that it is unique.
             $new_tree[(50000 + $item['weight']) . ' ' . $item['title'] . ' ' . $item['mlid']] = $tree[$key];
         }
+
         // Sort siblings in the tree based on the weights and localized titles.
         ksort($new_tree);
         $tree = $new_tree;
