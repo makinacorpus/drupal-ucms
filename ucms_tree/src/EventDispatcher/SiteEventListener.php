@@ -60,6 +60,28 @@ class SiteEventListener
         $this->menuStorage = $menuStorage;
     }
 
+    private function ensureSiteMenus(Site $site)
+    {
+        $ret = [];
+
+        if ($this->menuStorage && $this->allowedMenus) {
+            foreach ($this->allowedMenus as $prefix => $title) {
+                $name = $prefix.'-'.$site->getId();
+                if (!$this->menuStorage->exists($name)) {
+                    $ret[$name] = $this->menuStorage->create(
+                        $name,
+                        [
+                            'title'   => $this->t($title),
+                            'site_id' => $site->getId(),
+                        ]
+                    );
+                }
+            }
+        }
+
+        return $ret;
+    }
+
     /**
      * On site context initialization.
      *
@@ -72,10 +94,11 @@ class SiteEventListener
         // Reset menus.
         $activeMenus = [];
         if ($this->menuStorage) {
+
             $menuList = $this->menuStorage->loadWithConditions(['site_id' => $site->getId()]);
 
             if (empty($menuList)) {
-                $this->onSiteCreate(new SiteEvent($site));
+                $menuList = $this->ensureSiteMenus($event->getSite());
             }
 
             // @todo
@@ -98,21 +121,31 @@ class SiteEventListener
      */
     public function onSiteCreate(SiteEvent $event)
     {
-        $site = $event->getSite();
+        $this->ensureSiteMenus($event->getSite());
+    }
 
-        // Create the site default menus
-        if ($this->menuStorage && $this->allowedMenus) {
-            foreach ($this->allowedMenus as $prefix => $title) {
-                $name = $prefix.'-'.$site->getId();
-                if (!$this->menuStorage->exists($name)) {
-                    $this->menuStorage->create(
-                        $name,
-                        [
-                            'title'   => $this->t($title),
-                            'site_id' => $site->getId(),
-                        ]
-                    );
-                }
+    /**
+     * Recursion for onSiteClone()
+     */
+    private function recursiveMenuClone($name, $item, $parentId = null)
+    {
+        $new = [
+            'menu_name'   => $name,
+            'link_path'   => $item['link']['link_path'],
+            'link_title'  => $item['link']['link_title'],
+            'options'     => @unserialize($item['link']['options']),
+            'weight'      => $item['link']['weight'],
+        ];
+
+        if ($parentId) {
+            $new['plid'] = $parentId;
+        }
+
+        $mlid = menu_link_save($new);
+
+        if (!empty($item['below'])) {
+            foreach ($item['below'] as $child) {
+                $this->recursiveMenuClone($name, $child, $mlid);
             }
         }
     }
@@ -129,27 +162,20 @@ class SiteEventListener
         /* @var Site */
         $target = $event->getSubject();
 
-        // Duplicate menu links from menus.
-        foreach ($this->menuStorage->loadWithConditions(['site_id' => $source->getId()]) as $menu) {
-            $this
-                ->db
-                ->query(
-                    "
-                INSERT INTO {menu_links} (
-                  menu_name, plid, link_path, link_title, router_path, `module`, options, weight, depth, has_children, 
-                  p1, p2, p3, p4, p5, p6, p7, p8, p9, `external`
-                )
-                SELECT
-                    :target, plid, link_path, link_title, router_path, `module`, options, weight, depth, has_children, 
-                    p1, p2, p3, p4, p5, p6, p7, p8, p9, `external`
-                FROM {menu_links}
-                WHERE menu_name = :source
-            ",
-                    [
-                        ':target' => str_replace($source->getId(), $target->getId(), $menu['name']),
-                        ':source' => $menu['name'],
-                    ]
-                );
+        // We do need them, they might not have been created.
+        $this->ensureSiteMenus($target);
+
+        $menuList = $this->menuStorage->loadWithConditions(['site_id' => $source->getId()]);
+        foreach ($menuList as $menu) {
+
+            $tree = _menu_build_tree($menu['name']);
+            $name = str_replace($source->getId(), $target->getId(), $menu['name']);
+
+            if ($tree && isset($tree['tree'])) {
+                foreach ($tree['tree'] as $item) {
+                    $this->recursiveMenuClone($name, $item);
+                }
+            }
         }
     }
 }
