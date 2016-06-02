@@ -405,10 +405,6 @@ class SiteStorage
 
         // Dispatch event for others.
         $this->dispatcher->dispatch('site:clone', new GenericEvent($target, ['source' => $source]));
-
-        // @todo
-        //   - duplicate menus
-        //   - duplicate composite contents
     }
 
     /**
