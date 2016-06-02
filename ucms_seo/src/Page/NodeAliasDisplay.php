@@ -59,9 +59,9 @@ class NodeAliasDisplay extends AbstractDisplay
         foreach ($items as $item) {
 
             $siteLabel = '<em>' . $this->t("None") . '</em>';
-            if ($item->site_id && $sites[$item->site_id]) {
+            if ($item->site_id && isset($sites[$item->site_id])) {
                 $site = $sites[$item->site_id];
-                $siteLabel = l('admin/dashboard/site/' . $site->getId(), $site->title);
+                $siteLabel = l($site->title, 'admin/dashboard/site/' . $site->getId());
             }
 
             if (null === $item->language || 'und' === $item->language) {
