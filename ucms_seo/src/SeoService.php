@@ -508,14 +508,11 @@ class SeoService
      *
      * @param int $id
      *   Menu link identifier
-     * @param string $prefix
-     *   If the menu alias has already been computed (during recursion) this
-     *   will be set
      *
      * @return string[]
      *   Keys are node identifiers, values are new aliases
      */
-    public function getLinkChildrenAliases($id, $prefix = null)
+    public function getLinkChildrenAliases($id)
     {
         $ret = [];
 
@@ -563,7 +560,7 @@ class SeoService
         }
 
         // Don't forget to add the one we had as function parameter
-        $linkMap[$id] = $prefix ? $prefix : $this->getLinkAlias($id);
+        $linkMap[$id] = $this->getLinkAlias($id);
 
         // And now the hard part: we need to proceed to a topological sort on
         // loaded item list, match them to the node identifiers, and build all
@@ -579,7 +576,10 @@ class SeoService
                     break;
                 }
             } while ($current);
-            $ret[$item->nodeId][] = implode('/', $segments);
+            // Re-key the array using aliases: avoids duplicates, which may
+            // cause, later, SQL INSERT exceptions due to constraint violation
+            $alias = implode('/', $segments);
+            $ret[$item->nodeId][$alias] = $alias;
         }
 
         // For lucky little bastards that read the function till the end:
@@ -639,7 +639,7 @@ class SeoService
                 ->db
                 ->update('ucms_seo_alias')
                 ->condition('pid', $expiring)
-                ->fields('expires', null)
+                ->fields(['expires' => null])
                 ->execute()
             ;
         }
@@ -841,7 +841,9 @@ class SeoService
             // Once merge, bulk update everything in there
             // @todo this will probably be terrible for performances
             foreach ($nodeAliases as $siteId => $aliases) {
-                $this->nodeAliasesMerge($aliases, $langcode, $siteId);
+                if ($aliases) {
+                    $this->nodeAliasesMerge($aliases, $langcode, $siteId);
+                }
             }
         }
 
