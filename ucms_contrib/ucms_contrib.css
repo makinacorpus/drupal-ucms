@@ -153,16 +153,16 @@
 }
 
 /* Highlight car items */
-#ucms-cart [data-selected] .node, #ucms-cart [data-can-receive] .node:hover {
+.ucms-cart-item[data-selected] .node, #ucms-cart [data-can-receive] .node:hover {
   filter: brightness(1.3);
   box-shadow: 0 0 1em #404040, inset 0 0 0 2pt red;
   box-sizing: border-box;
 }
-#ucms-cart [data-selected] .node {
+.ucms-cart-item[data-selected] .node {
   border: 2px solid red;
 }
 /* And other sortables too */
-#page-wrapper [data-selected], #page-wrapper [data-can-receive] > *:hover {
+:not(.ucms-cart-item)[data-selected], #page-wrapper [data-can-receive] > *:hover {
   filter: brightness(1.3);
   background: #ccc;
   /* box-sizing: border-box; */
@@ -170,7 +170,7 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-#page-wrapper [data-selected] {
+:not(.ucms-cart-item)[data-selected] {
   border: 2px solid red;
 }
 

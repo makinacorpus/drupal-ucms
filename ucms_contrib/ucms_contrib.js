@@ -262,7 +262,7 @@
               // Add to cart list
               var elem = '<div class="ucms-cart-item col-md-6" draggable="true" data-nid="' + nid + '">' + data.output + '</div>';
               $(elem).appendTo('#ucms-cart-list');
-              refreshSortable();
+              refreshSortable(sortable);
             })
             .fail(function (xhr) {
               // display error and revert
@@ -323,7 +323,7 @@
                 } else {
                   $(ui.item).replaceWith(data.output);
                 }
-                refreshSortable();
+                refreshSortable(sortable);
               }
             };
 

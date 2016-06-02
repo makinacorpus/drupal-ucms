@@ -43,7 +43,15 @@ abstract class AbstractAdminPortlet extends AbstractPortlet
             $query = [];
 
             $pageState->setRange(6);
-            $pageState->setSortOrder(PageState::SORT_DESC);
+
+            if ($defaultSort = $this->datasource->getDefaultSort()) {
+                if (isset($defaultSort[0])) {
+                    $pageState->setSortField($defaultSort[0]);
+                }
+                if (isset($defaultSort[1])) {
+                    $pageState->setSortOrder($defaultSort[1]);
+                }
+            }
 
             $this->datasource->init($query);
 

@@ -99,6 +99,8 @@ class ContentPortlet extends AbstractAdminPortlet
         $query['type'] = $this->typeHandler->getEditorialContentTypes();
         $query['is_global'] = 0;
 
+        $pageState->setSortField('created');
+
         return new NodePortletDisplay($this->t("You have no content yet."));
     }
 
