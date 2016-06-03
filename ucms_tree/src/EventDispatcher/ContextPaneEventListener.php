@@ -61,8 +61,10 @@ class ContextPaneEventListener
      */
     private function render()
     {
+        $site = $this->manager->getContext();
+
         // Get all trees for this site
-        $menus = $this->storage->loadWithConditions(['site_id' => $this->manager->getContext()->getId()]);
+        $menus = $this->storage->loadWithConditions(['site_id' => $site->getId()]);
         rsort($menus);
 
         $build = [
@@ -96,6 +98,19 @@ class ContextPaneEventListener
 
         // Check that this node is referenced in {menu_links}
         // else check for list_type
+
+        // Add an edit button
+        if ($this->manager->getAccess()->userCanEditTree(\Drupal::currentUser(), $site)) {
+            $build['edit_link'] = [
+                '#theme'   => 'link',
+                '#path'    => 'admin/dashboard/tree',
+                '#text'    => $this->t('Edit tree for this site'),
+                '#options' => [
+                    'attributes' => ['class' => ['btn btn-primary']],
+                ],
+            ];
+        }
+
         return $build;
     }
 
