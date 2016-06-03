@@ -184,7 +184,7 @@ body [data-region].ui-sortable {
 
   /* make them visible */
   min-height: 2em;
-  /* padding: 10px; */
+  min-width: 10em;
 }
 
 body [data-region].ucms-highlighted:after {
@@ -361,18 +361,21 @@ body [data-region].ucms-highlighted-over {
   font-size: 72px;
 }
 
-.node .content .ucms-type-icon,
-.ucms-contrib-result-inner .ucms-type-icon {
+.node .content .ucms-metadata,
+.ucms-contrib-result-inner .ucms-metadata {
   position: absolute;
   bottom: 0;
   right: 0;
   top: auto;
   background: #333;
-  padding: 3px 1px 1px 3px;
   border-top-left-radius: 4px;
   color: #fff;
 }
-.node .content  .content .ucms-type-icon {
+.node .content .ucms-metadata span,
+.ucms-contrib-result-inner .ucms-metadata span {
+  padding: 3px 1px 1px 3px;
+}
+.node .content  .content .ucms-metadata {
   display: none;
 }
 .ucms-contrib-result-inner .ucms-default-icon.img-thumbnail {
