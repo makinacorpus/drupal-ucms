@@ -14,7 +14,6 @@
  */
 
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeCollectionEvent;
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
@@ -661,9 +660,18 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
       $meta_type = $tab;
     }
   }
+  $output['metadata']['#prefix'] = '<div class="ucms-metadata">';
+  $output['metadata']['#suffix'] = '</div>';
+  if (!$context['entity']->status) {
+    $output['metadata']['status_icon'] = [
+      '#markup' => '<span class="ucms-unpublished-icon glyphicon glyphicon-warning-sign"></span>',
+      '#weight' => 5,
+    ];
+  }
   if ($meta_type && isset($icon_mapping[$meta_type])) {
-    $output['type_icon'] = [
+    $output['metadata']['type_icon'] = [
       '#markup' => '<span class="ucms-type-icon glyphicon glyphicon-' . $icon_mapping[$meta_type] . '"></span>',
+      '#weight' => 10,
     ];
   }
 }
