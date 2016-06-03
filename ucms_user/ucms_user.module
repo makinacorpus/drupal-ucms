@@ -287,14 +287,19 @@ After setting your password, you will be able to log in at [site:login-url] in t
       break;
 
     case 'new-account-enabled':
-      $message['subject'] = t("You have been registered at [site:name]", [], ['langcode' => $langcode]);
-      $message['body'][] = t("[user:name],
+      $message['subject'] = variable_get(
+          'ucms_user_mail_new_account_enabled_subject_' . $langcode,
+          t("You have been registered at [site:name]", [], ['langcode' => $langcode])
+      );
+      $message['body'][] = variable_get(
+          'ucms_user_mail_new_account_enabled_body_' . $langcode,
+          t("[user:name],
 
 An account has been created for you at [site:name].
 
 This account is already active, you will be able to log in at [site:login-url] using the password that we will provide you soon.
 
---  [site:name] team", [], ['langcode' => $langcode]);
+--  [site:name] team", [], ['langcode' => $langcode]));
       break;
 
     case 'new-password-request':
