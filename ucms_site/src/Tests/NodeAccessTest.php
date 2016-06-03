@@ -380,7 +380,7 @@ class NodeAccessTest extends AbstractDrupalTest
         switch ($op) {
 
             case 'clone':
-                $success = $this->getNodeHelper()->userCanCopyOnEdit($account, $node);
+                $success = $this->getNodeHelper()->userCanDuplicate($account, $node);
                 break;
 
             case 'lock':

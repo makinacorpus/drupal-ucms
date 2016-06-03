@@ -32,6 +32,11 @@ class NodeManager
     private $entityManager;
 
     /**
+     * @var NodeAccessService
+     */
+    private $nodeAccessService;
+
+    /**
      * @var EventDispatcher
      */
     private $eventDispatcher;
@@ -42,18 +47,31 @@ class NodeManager
      * @param \DatabaseConnection $db
      * @param SiteManager $manager
      * @param EntityManager $entityManager
+     * @param NodeAccessService $nodeAccessService
      * @param EventDispatcher $eventDispatcher
      */
     public function __construct(
         \DatabaseConnection $db,
         SiteManager $manager,
         EntityManager $entityManager,
+        NodeAccessService $nodeAccessService,
         EventDispatcher $eventDispatcher
     ) {
         $this->db = $db;
         $this->manager = $manager;
         $this->entityManager = $entityManager;
+        $this->nodeAccessService = $nodeAccessService;
         $this->eventDispatcher= $eventDispatcher;
+    }
+
+    /**
+     * Get node access service
+     *
+     * @return NodeAccessService
+     */
+    public function getAccessService()
+    {
+        return $this->nodeAccessService;
     }
 
     /**
