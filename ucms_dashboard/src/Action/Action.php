@@ -102,9 +102,12 @@ class Action
 
               case 'dialog':
                   $this->linkOptions = [
-                    'attributes' => ['class' => ['use-ajax', 'minidialog']],
-                    'query' => ['minidialog' => 1] + drupal_get_destination(),
+                      'attributes' => ['class' => ['use-ajax', 'minidialog']],
+                      'query' => ['minidialog' => 1],
                   ];
+                  if ($addCurrentDestination) {
+                      $this->linkOptions['query'] += drupal_get_destination();
+                  }
                   break;
             }
         }

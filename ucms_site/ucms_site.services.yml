@@ -25,7 +25,7 @@ services:
   # Node manager, handles node attach/detach/clone to sites
   ucms_site.node_manager:
     class: MakinaCorpus\Ucms\Site\NodeManager
-    arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@event_dispatcher"]
+    arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
 
   ucms_site.admin.datasource:
     class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource

@@ -107,6 +107,7 @@ class ContextPaneEventListener
                 '#text'    => $this->t('Edit tree for this site'),
                 '#options' => [
                     'attributes' => ['class' => ['btn btn-primary']],
+                    'html' => false,
                 ],
             ];
         }

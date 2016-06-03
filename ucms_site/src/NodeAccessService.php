@@ -579,7 +579,7 @@ class NodeAccessService
      *
      * @return boolean
      */
-    public function userCanCopyOnEdit(AccountInterface $account, NodeInterface $node)
+    public function userCanDuplicate(AccountInterface $account, NodeInterface $node)
     {
         if (!$node->is_clonable) {
             return false;

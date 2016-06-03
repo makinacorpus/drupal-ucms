@@ -74,6 +74,44 @@ class SiteManager
     }
 
     /**
+     * Get URL in site
+     *
+     * @param int|Site $site
+     *   Site identifier
+     * @param string $path
+     *   Drupal path to hit in site
+     * @param mixed[] $options
+     *   Link options, see url()
+     *
+     * @return mixed
+     *   First value is the string path
+     *   Second value are updates $options
+     */
+    public function getUrlInSite($site, $path, $options)
+    {
+        if ($site instanceof Site) {
+            $site = $site->getId();
+        }
+
+        if ($this->hasContext() && $this->getContext()->getId() == $site) {
+            return [$path, $options];
+        }
+
+        $realpath = 'sso/goto/' . $site;
+
+        if (isset($_GET['destination'])) {
+            $options['query']['form_redirect'] = $_GET['destination'];
+            unset($_GET['destination']);
+        } else if (isset($options['query']['destination'])) {
+            $options['query']['form_redirect'] = $options['query']['destination'];
+        }
+
+        $options['query']['destination'] = $path;
+
+        return [$realpath, $options];
+    }
+
+    /**
      * Get current context
      *
      * @return Site

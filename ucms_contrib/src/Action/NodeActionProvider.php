@@ -11,6 +11,7 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 class NodeActionProvider implements ActionProviderInterface
 {
@@ -22,6 +23,11 @@ class NodeActionProvider implements ActionProviderInterface
     private $access;
 
     /**
+     * @var SiteManager
+     */
+    private $siteManager;
+
+    /**
      * @var AccountInterface
      */
     private $account;
@@ -31,9 +37,10 @@ class NodeActionProvider implements ActionProviderInterface
      */
     private $cart;
 
-    public function __construct(NodeAccessService $access, AccountInterface $account, CartStorage $cart)
+    public function __construct(NodeAccessService $access, SiteManager $siteManager, AccountInterface $account, CartStorage $cart)
     {
         $this->access = $access;
+        $this->siteManager = $siteManager;
         $this->account = $account;
         $this->cart = $cart;
     }
@@ -64,8 +71,8 @@ class NodeActionProvider implements ActionProviderInterface
         //      - if can edit, just display "edit" and NOT "copy on edit"
         //      - if can not edit, don't care, the user has "use on my site" do NOT "copy on edit"
 
-        if ($item->access(Access::OP_UPDATE)) {
-            $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/edit', null, 'pencil', -100, false, true, false, 'edit');
+        if ($item->access(Access::OP_UPDATE, $this->account) || $this->access->userCanDuplicate($this->account, $item)) {
+            $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/duplicate', 'dialog', 'pencil', -100, false, !$this->siteManager->hasContext(), false, 'edit');
 
             if ($this->access->userCanPublish($this->account, $item)) {
                 if ($item->status) {
@@ -92,15 +99,6 @@ class NodeActionProvider implements ActionProviderInterface
                 'redirect'  => true,
                 'group'     => 'mark',
             ]);
-        }
-
-        if ($this->access->userCanCopyOnEdit($this->account, $item)) {
-            // Edge case, we rewrite all options so that we don't add destination, it will be handled by the form.
-            $options = [
-                'attributes' => ['class' => ['use-ajax', 'minidialog']],
-                'query'      => ['minidialog'  => 1],
-            ];
-            $ret[] = new Action($this->t("Edit for my site"), 'node/' . $item->id() . '/copy-on-edit', $options, 'pencil', -90, false, false, false, 'edit');
         }
 
         if (!$item->is_global && user_access(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
