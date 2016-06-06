@@ -142,7 +142,7 @@ class NodeAddToSite extends FormBase
 
         if ($this->ssoEnabled) {
             $uri = url('sso/goto/' . $site->id);
-            if ($_GET['destination']) {
+            if (!empty($_GET['destination'])) {
                 // Keep your brain ahead, and forward new redirection with any
                 // another parameter for SSO mechanism. Because otherwise, we
                 // would have a destination conflict.
