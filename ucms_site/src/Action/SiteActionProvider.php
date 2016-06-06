@@ -71,7 +71,7 @@ class SiteActionProvider implements ActionProviderInterface
         // Append all possible state switch operations
         $i = 10;
         foreach ($access->getAllowedTransitions($account, $item) as $state => $name) {
-            $ret[] = new Action($this->t("Switch to @state", ['@state' => $name]), 'admin/dashboard/site/' . $item->id . '/switch/' . $state, 'dialog', 'refresh', ++$i, false, true, false, 'switch');
+            $ret[] = new Action($this->t("Switch to @state", ['@state' => $this->t($name)]), 'admin/dashboard/site/' . $item->id . '/switch/' . $state, 'dialog', 'refresh', ++$i, false, true, false, 'switch');
         }
 
         // @todo Consider delete as a state
