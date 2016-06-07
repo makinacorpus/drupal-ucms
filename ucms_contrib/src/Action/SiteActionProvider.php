@@ -40,8 +40,10 @@ class SiteActionProvider implements ActionProviderInterface
         $access   = $this->manager->getAccess();
 
         if ($access->userCanOverview($account, $item)) {
-            $ret[] = new Action($this->t("View content"), 'admin/dashboard/content/site/' . $item->getId(), null, 'file', 100, false, false, false, 'content');
-            $ret[] = new Action($this->t("View medias"), 'admin/dashboard/media/site/' . $item->getId(), null, 'picture', 100, false, false, false, 'content');
+            list($path, $options) = $this->manager->getUrlInSite($item->getId(), 'admin/dashboard/content');
+            $ret[] = new Action($this->t("Content in site"), $path, $options, 'file', 100, false, false, false, 'content');
+            list($path, $options) = $this->manager->getUrlInSite($item->getId(), 'admin/dashboard/media');
+            $ret[] = new Action($this->t("Medias in site"), $path, $options, 'picture', 100, false, false, false, 'content');
         }
 
         return $ret;
