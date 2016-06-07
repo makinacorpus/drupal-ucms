@@ -10,6 +10,7 @@ use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 class MediaPortlet extends AbstractAdminPortlet
 {
@@ -26,21 +27,37 @@ class MediaPortlet extends AbstractAdminPortlet
     private $typeHandler;
 
     /**
+     * @var \MakinaCorpus\Ucms\Site\SiteManager
+     */
+    private $siteManager;
+
+    /**
+     * @var \Drupal\Core\Session\AccountInterface
+     */
+    private $currentUser;
+
+    /**
      * Default constructor
      *
      * @param DatasourceInterface $datasource
      * @param ActionProviderInterface $actionProvider
      * @param TypeHandler $typeHandler
+     * @param ActionProviderInterface $actionProvider
+     * @param \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler
      */
     public function __construct(
         DatasourceInterface $datasource,
         ActionProviderInterface $actionProvider,
-        TypeHandler $typeHandler
+        TypeHandler $typeHandler,
+        SiteManager $siteManager,
+        AccountInterface $currentUser
     ) {
         parent::__construct($datasource);
 
         $this->actionProvider = $actionProvider;
         $this->typeHandler = $typeHandler;
+        $this->siteManager = $siteManager;
+        $this->currentUser = $currentUser;
     }
 
     /**
@@ -56,6 +73,9 @@ class MediaPortlet extends AbstractAdminPortlet
      */
     public function getPath()
     {
+        if ($this->siteManager->getAccess()->userIsWebmaster($this->currentUser)) {
+            return 'admin/dashboard/media/local';
+        }
         return 'admin/dashboard/media';
     }
 
@@ -85,6 +105,19 @@ class MediaPortlet extends AbstractAdminPortlet
     {
         $query['type'] = $this->typeHandler->getMediaTypes();
         $query['is_global'] = 0;
+
+        // Only for webmaster, show local nodes (instead of own).
+        if ($this->siteManager->getAccess()->userIsWebmaster($this->currentUser)) {
+            $map = $this->siteManager->getAccess()->getUserRoles($this->currentUser);
+            $site_ids = [];
+            foreach ($map as $item) {
+                $site_ids[] = $item->getSiteId();
+            }
+
+            if ($site_ids) {
+                $query['site_id'] = $site_ids;
+            }
+        }
 
         $pageState->setSortField('created');
 
