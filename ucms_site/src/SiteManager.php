@@ -87,7 +87,7 @@ class SiteManager
      *   First value is the string path
      *   Second value are updates $options
      */
-    public function getUrlInSite($site, $path, $options)
+    public function getUrlInSite($site, $path, $options = [])
     {
         if ($site instanceof Site) {
             $site = $site->getId();

@@ -134,32 +134,9 @@ class NodeAddToSite extends FormBase
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
         $type   = $form_state->getTemporaryValue('type');
-        $sites  = $form_state->getTemporaryValue('sites');
-        /* @var Site */
-        $site   = $sites[$form_state->getValue('site')];
 
-        $options = ['query' => ['destination' => 'node/add/' . str_replace('_', '-', $type)]];
-
-        if ($this->ssoEnabled) {
-            $uri = url('sso/goto/' . $site->id);
-            if (!empty($_GET['destination'])) {
-                // Keep your brain ahead, and forward new redirection with any
-                // another parameter for SSO mechanism. Because otherwise, we
-                // would have a destination conflict.
-                $options['query']['form_redirect'] = $_GET['destination'];
-                // © Allô maman... ca va pas fort... j'ai peur du temps...
-                // © Allô maman... j'aime pas tes rides et tes cheveux blancs
-                // © Allô maman... bobooooooo... bobooooooooooo...
-                // © Allons-nous en!!
-                // @see drupal_goto()
-                unset($_GET['destination']);
-            }
-        } else {
-            $uri = url('http://' . $site->http_host);
-        }
-
-
-        $form_state->setRedirect($uri, $options);
+        list($path, $options) = $this->siteManager->getUrlInSite($siteId, 'node/add/' . str_replace('_', '-', $type));
+        $form_state->setRedirect($path, $options);
     }
 
 
