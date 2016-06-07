@@ -77,7 +77,7 @@ class SiteManager
      * Get URL in site
      *
      * @param int|Site $site
-     *   Site identifier
+     *   Site identifier, if site is null
      * @param string $path
      *   Drupal path to hit in site
      * @param mixed[] $options

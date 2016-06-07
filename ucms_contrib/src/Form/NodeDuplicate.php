@@ -120,7 +120,10 @@ class NodeDuplicate extends FormBase
                     '#type'           => count($options) < 11 ? 'radios' : 'select',
                     '#title'          => $this->t("Select a site"),
                     '#options'        => $options,
-                    '#default_value'  => null,
+                    // If "create a global content" is selected, this widget does
+                    // not serve any purpose, so we don't care about default value
+                    '#default_value'  => key($options),
+                    '#required'       => true,
                     '#states'         => ['visible' => [':input[name="action"]' => ['value' => 'duplicate']]],
                 ];
             }

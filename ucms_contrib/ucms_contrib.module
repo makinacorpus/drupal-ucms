@@ -287,21 +287,26 @@ function ucms_contrib_menu_alter(&$items) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_add_to_site($type) {
+
   $user = \Drupal::service('current_user');
   $typeHandler = ucms_contrib_type_handler_get();
   $siteAccess = ucms_site_manager()->getAccess();
   $nodeAccess = ucms_site_node_access_helper();
 
-  // Locked type can't be created by non-technical admin
-  if (!$nodeAccess->userCanCreateInAnySite($user, $type)) {
+  if (ucms_site_manager()->hasContext()) {
+    // This does not make any sense outside of the admin context
     return false;
   }
-  // Webmasters can create anything
-  if ($siteAccess->userIsWebmaster($user) && in_array($type, $typeHandler->getAllTypes())) {
-    return true;
+  if (!$nodeAccess->userCanCreateInAnySite($user, $type)) {
+    // Locked type can't be created by non-technical admin
+    return false;
   }
-  // Contributors can only create editorial content
-  elseif ($siteAccess->userIsContributor($user) && in_array($type, $typeHandler->getEditorialTypes())) {
+
+  if ($siteAccess->userIsWebmaster($user) && in_array($type, $typeHandler->getAllTypes())) {
+    // Webmasters can create anything
+    return true;
+  } else if ($siteAccess->userIsContributor($user) && in_array($type, $typeHandler->getEditorialTypes())) {
+    // Contributors can only create editorial content
     return true;
   }
 
