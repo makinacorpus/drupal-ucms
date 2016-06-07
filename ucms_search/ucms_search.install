@@ -116,13 +116,13 @@ function ucms_search_update_7001() {
  * Adds the column {needs_attachments_reindex} in {ucms_search_status} table.
  */
 function ucms_search_update_7002() {
-    if (!db_field_exists('ucms_search_status', 'needs_attachments_reindex')) {
-        db_add_field('ucms_search_status', 'needs_attachments_reindex', [
-          'description' => "Does the content needs to have attachments indexed, 0 for false, 1 for true",
-          'type'        => 'int',
-          'unsigned'    => TRUE,
-          'not null'    => TRUE,
-          'default'     => 0,
-        ]);
-    }
+  if (!db_field_exists('ucms_search_status', 'needs_attachments_reindex')) {
+    db_add_field('ucms_search_status', 'needs_attachments_reindex', [
+      'description' => "Does the content needs to have attachments indexed, 0 for false, 1 for true",
+      'type'        => 'int',
+      'unsigned'    => TRUE,
+      'not null'    => TRUE,
+      'default'     => 0,
+    ]);
+  }
 }
