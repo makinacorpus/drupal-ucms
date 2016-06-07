@@ -191,6 +191,8 @@ function ucms_search_cronapi($op, $job = NULL) {
     return;
   }
 
+  $items = [];
+
   $items['ucms_search_cron_search_indices'] = [
     'description' => 'Update search indices',
     'rule' => '*/15 * * * *',
