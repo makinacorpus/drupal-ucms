@@ -77,6 +77,10 @@ class NodeEventSubscriber implements EventSubscriberInterface
             $storeLocator->rebuildAliases();
         } else {
             $storeLocator = $this->locatorFactory->create();
+            // © Singing don't worry about a thing,
+            // © Cause every little thing gonna be alright.
+            // store locator won't rebuild ALL aliases but only ones which are
+            // interesting for it ;-)
             $storeLocator->rebuildAliases($node);
         }
     }
