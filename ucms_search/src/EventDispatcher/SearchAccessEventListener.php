@@ -63,10 +63,4 @@ class SearchAccessEventListener
             }
         }
     }
-
-    public function onNodeAccessChange(ResourceEvent $event)
-    {
-        $nodes = $this->entityManager->getStorage('node')->loadMultiple($event->getResourceIdList());
-        $this->storage->indexer()->enqueue($nodes);
-    }
 }

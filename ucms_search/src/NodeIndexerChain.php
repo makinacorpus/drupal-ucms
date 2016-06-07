@@ -119,20 +119,6 @@ class NodeIndexerChain implements NodeIndexerInterface
     /**
      * {inheritdoc}
      */
-    public function matches(NodeInterface $node)
-    {
-        foreach ($this->chain as $indexer) {
-            if ($indexer->matches($node)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * {inheritdoc}
-     */
     public function bulkUpsert($nodeList, $force = false, $refresh = false)
     {
         foreach ($this->chain as $indexer) {

@@ -22,11 +22,6 @@ class NodeIndexer implements NodeIndexerInterface
     const EVENT_INDEX = 'ucms_search:index';
 
     /**
-     * Node(s) (is|are) being indexed hook
-     */
-    const HOOK_NODE_INDEX = 'ucms_search_index_node';
-
-    /**
      * @var Client
      */
     private $client;
@@ -121,7 +116,13 @@ class NodeIndexer implements NodeIndexerInterface
     public function enqueue(array $nodes)
     {
         foreach ($nodes as $node) {
-            $this->nodeQueue[$node->nid] = $node->nid;
+            if (is_numeric($node)) {
+                $this->nodeQueue[(int)$node] = (int)$node;
+            } else if ($node instanceof NodeInterface) {
+                $this->nodeQueue[$node->nid] = $node->nid;
+            } else {
+                throw new \InvalidArgumentException("enqueued items must be \Drupal\node\NodeInterface instances or integers");
+            }
         }
     }
 
@@ -200,8 +201,6 @@ class NodeIndexer implements NodeIndexerInterface
 
         $query->addExpression(':index', 'index_key', [':index' => $this->index]);
         $query->addExpression(1, 'needs_reindex');
-
-        $this->moduleHandler->invokeAll('ucms_search_index_reindex', [$this->index, $query]);
 
         if (null !== $nidList) {
             $query->condition('n.nid', $nidList);
@@ -313,20 +312,6 @@ class NodeIndexer implements NodeIndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function matches(NodeInterface $node)
-    {
-        foreach ($this->moduleHandler->getImplementations(self::HOOK_NODE_INDEX) as $module) {
-            if ($this->moduleHandler->invoke($module, self::HOOK_NODE_INDEX, [$this->index, $node])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function bulkUpsert($nodeList, $force = false, $refresh = false)
     {
         if (empty($nodeList)) {
@@ -344,10 +329,6 @@ class NodeIndexer implements NodeIndexerInterface
         $nidList  = [];
 
         foreach ($nodeList as $key => $node) {
-
-            if (!$force && !$this->matches($node)) {
-                unset($nodeList[$key]);
-            }
 
             $params['body'][] = [
                 'index' => [
@@ -381,10 +362,6 @@ class NodeIndexer implements NodeIndexerInterface
      */
     public function upsert(NodeInterface $node, $force = false, $refresh = false)
     {
-        if (!$force && !$this->matches($node)) {
-            return false;
-        }
-
         $this
             ->client
             ->index([

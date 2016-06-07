@@ -7,6 +7,8 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 
 /**
  * Site storage service
@@ -394,6 +396,8 @@ class SiteStorage
             );
 
         // Update node access rights
+        // @todo This is seriously wrong, find another way and get rid of the
+        // "node:access_change" event...
         $nidList = $this->db
             ->select('ucms_site_node', 'usn')
             ->fields('usn', ['nid'])
@@ -404,7 +408,7 @@ class SiteStorage
         $this->dispatcher->dispatch('node:access_change', new ResourceEvent('node', $nidList));
 
         // Dispatch event for others.
-        $this->dispatcher->dispatch('site:clone', new GenericEvent($target, ['source' => $source]));
+        $this->dispatcher->dispatch(SiteEvents::EVENT_CLONE, new SiteCloneEvent($target, $source));
     }
 
     /**

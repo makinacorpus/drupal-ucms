@@ -6,9 +6,6 @@ use MakinaCorpus\Ucms\Site\Site;
 
 class SiteAttachEvent extends SiteEvent
 {
-    const EVENT_ATTACH = 'site:node.attach';
-    const EVENT_DETACH = 'site:node.dettach';
-
     /**
      * Default constructor
      *

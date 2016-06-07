@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -93,7 +94,7 @@ class NodeManager
             $node->ucms_sites[] = $site->id;
         }
 
-        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($site->getId(), $node->id()));
+        $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($site->getId(), $node->id()));
     }
 
     /**
@@ -120,7 +121,7 @@ class NodeManager
             ->resetCache([$nodeId])
         ;
 
-        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($siteIdList, $nodeId));
+        $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteIdList, $nodeId));
     }
 
     /**
@@ -147,7 +148,7 @@ class NodeManager
             ->resetCache($nodeIdList)
         ;
 
-        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeIdList));
+        $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 
     /**
@@ -245,7 +246,7 @@ class NodeManager
             ->resetCache($nodeIdList)
         ;
 
-        $this->eventDispatcher->dispatch(SiteAttachEvent::EVENT_DETACH, new SiteAttachEvent($siteId, $nodeIdList));
+        $this->eventDispatcher->dispatch(SiteEvents::EVENT_DETACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 
     /**

@@ -12,7 +12,7 @@ interface NodeIndexerInterface
      * FIXME The queue should be persistent in order to avoid loosing data
      * in case of PHP crash or any other bugguy reason.
      *
-     * @param NodeInterface[] $nodes
+     * @param int[]|NodeInterface[] $nodes
      */
     public function enqueue(array $nodes);
 
@@ -43,15 +43,6 @@ interface NodeIndexerInterface
      * @param NodeInterface $node
      */
     public function delete(NodeInterface $node);
-
-    /**
-     * Tell if the given node matches the given index.
-     *
-     * @param NodeInterface $node
-     *
-     * @return boolean
-     */
-    public function matches(NodeInterface $node);
 
     /**
      * Index or upsert given nodes using a bulk request

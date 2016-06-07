@@ -1,20 +1,18 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Layout\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
 
 class SiteEventListener
 {
@@ -106,12 +104,10 @@ class SiteEventListener
     }
 
 
-    public function onSiteClone(GenericEvent $event)
+    public function onSiteClone(SiteCloneEvent $event)
     {
-        /* @var Site */
-        $source = $event->getArgument('source');
-        /* @var Site */
-        $target = $event->getSubject();
+        $source = $event->getTemplateSite();
+        $target = $event->getSite();
 
         // First copy node layouts
         $this
