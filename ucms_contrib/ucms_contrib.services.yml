@@ -21,6 +21,12 @@ services:
     class: MakinaCorpus\Ucms\Contrib\Action\ContentActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 
+  ucms_contrib.site_action_provider:
+    public: false
+    arguments: ["@ucms_site.manager", "@current_user"]
+    class: MakinaCorpus\Ucms\Contrib\Action\SiteActionProvider
+    tags: [{name: ucms_dashboard.action_provider}]
+
   ucms_contrib.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
     arguments:

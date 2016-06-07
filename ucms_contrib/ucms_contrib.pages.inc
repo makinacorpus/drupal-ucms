@@ -20,6 +20,7 @@ function ucms_contrib_admin_content_page_global($tab = null) {
     ->getFilterQuery()
     ->matchTerm('is_global', 1)
     ->matchTerm('is_group', 0);
+
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 
@@ -66,8 +67,13 @@ function ucms_contrib_admin_content_page_starred($tab = null) {
 function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab = null) {
 
   $ret = [];
-
   $search = $datasource->getSearch();
+
+  // Apply context, if any
+  $siteManager = ucms_site_manager();
+  if ($siteManager->hasContext()) {
+    $search->getFilterQuery()->matchTerm('site_id', $siteManager->getContext()->getId());
+  }
 
   $types = ucms_contrib_type_handler_get()->getTabTypes($tab);
   if (!empty($types)) {
