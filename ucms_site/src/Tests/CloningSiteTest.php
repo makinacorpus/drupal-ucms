@@ -167,5 +167,7 @@ class CloningSiteTest extends AbstractDrupalTest
             ->fetchField()
         ;
         $this->assertEquals(2, $links);
+
+        # @todo Ensure that nodes are marked for reindex
     }
 }
