@@ -11,12 +11,12 @@ class PageTest extends AbstractDrupalTest
 {
     public function testEmptyPage()
     {
-        $formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
+        $formBuilder = $this->getMockBuilder('\Drupal\Core\Form\FormBuilderInterface')->getMock();
         $formBuilder->method('getForm')->willReturn(['#type' => 'form']);
 
         $actionRegistry = new ActionRegistry();
-        $datasource = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface');
-        $display = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface');
+        $datasource = $this->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface')->getMock();
+        $display = $this->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface')->getMock();
 
         $page = new Page($formBuilder, $actionRegistry, $datasource, $display);
         $render = $page->render([], 'some/path');
@@ -49,10 +49,10 @@ class PageTest extends AbstractDrupalTest
 
     public function testSortManagerStuff()
     {
-        $formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
+        $formBuilder = $this->getMockBuilder('\Drupal\Core\Form\FormBuilderInterface')->getMock();
         $actionRegistry = new ActionRegistry();
 
-        $datasource = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface');
+        $datasource = $this->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface')->getMock();
         $datasource->method('getSortFields')->willReturn([
             'a'       => "A",
             'kitten'  => "Aww",
@@ -60,7 +60,7 @@ class PageTest extends AbstractDrupalTest
         ]);
         $datasource->method('getDefaultSort')->willReturn(['kitten', 'desc']);
 
-        $display = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface');
+        $display = $this->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface')->getMock();
         $page = new Page($formBuilder, $actionRegistry, $datasource, $display);
         $render = $page->render([
             'some'  => 'query',
@@ -92,10 +92,10 @@ class PageTest extends AbstractDrupalTest
 
     public function testFiltersInBaseQueryAreDropped()
     {
-        $formBuilder = $this->getMock('\Drupal\Core\Form\FormBuilderInterface');
+        $formBuilder = $this->getMockBuilder('\Drupal\Core\Form\FormBuilderInterface')->getMock();
         $actionRegistry = new ActionRegistry();
 
-        $datasource = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface');
+        $datasource = $this->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface')->getMock();
         $datasource->method('getFilters')->willReturn([
             new LinksFilterDisplay('foo'),
             new LinksFilterDisplay('bar'),
@@ -103,7 +103,7 @@ class PageTest extends AbstractDrupalTest
             new LinksFilterDisplay('trout'),
         ]);
 
-        $display = $this->getMock('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface');
+        $display = $this->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface')->getMock();
 
         // Ensure all filters are there
         $page = new Page($formBuilder, $actionRegistry, $datasource, $display);

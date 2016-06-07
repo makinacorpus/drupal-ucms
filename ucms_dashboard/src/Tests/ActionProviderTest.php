@@ -15,7 +15,8 @@ class ActionProviderTest extends \PHPUnit_Framework_TestCase
         $registry = new ActionRegistry();
 
         $providerSupporting = $this
-            ->getMock('\MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface')
+            ->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface')
+            ->getMock()
         ;
         $providerSupporting
             ->method('supports')
@@ -28,7 +29,8 @@ class ActionProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $providerNotSupporting = $this
-            ->getMock('\MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface')
+            ->getMockBuilder('\MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface')
+            ->getMock()
         ;
         $providerNotSupporting
             ->method('supports')

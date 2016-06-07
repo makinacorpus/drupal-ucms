@@ -395,6 +395,10 @@ class NodeAccessTest extends AbstractDrupalTest
                 $success = $this->getNodeHelper()->userCanReference($account, $node);
                 break;
 
+            case 'dereference':
+                  $success = $this->getNodeHelper()->userCanDereference($account, $node);
+                  break;
+
             default:
                 throw new \InvalidArgumentException("\$op can be only one of 'lock', 'clone', 'promote', 'reference'");
         }
