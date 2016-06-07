@@ -55,13 +55,23 @@ class NodeAdminDisplay extends AbstractDisplay
                 $anonymous = drupal_anonymous_user();
 
                 foreach ($nodes as $node) {
+
                     $titleSuffix = [];
                     $titleSuffix[] = '<span class="pull-right">';
+                    if ((bool)$node->is_flagged) {
+                        $titleSuffix[] = '<span class="glyphicon glyphicon-flag" data-toggle="tooltip" title="' . $this->t("This has been flagged as innapropriate") . '"></span>&nbsp;';
+                    }
+                    if ((bool)$node->is_starred) {
+                        $titleSuffix[] = '<span class="glyphicon glyphicon-star" data-toggle="tooltip" title="' . $this->t("This content has been flagged as important") . '"></span>&nbsp;';
+                    }
                     if (!(bool)$node->is_clonable) {
                         $titleSuffix[] = '<span class="glyphicon glyphicon-lock" data-toggle="tooltip" title="' . $this->t("This content may not be cloned") . '"></span>&nbsp;';
                     }
                     if (!empty($node->origin_nid) || !empty($node->parent_nid)) {
                         $titleSuffix[] = '<span class="glyphicon glyphicon-duplicate" data-toggle="tooltip" title="' . $this->t("This content is a copy of another content") . '"></span>&nbsp;';
+                    }
+                     if ((bool)$node->is_group) {
+                        $titleSuffix[] = '<span class="glyphicon glyphicon-briefcase" data-toggle="tooltip" title="' . $this->t("This is a group content") . '"></span>&nbsp;';
                     }
                     $titleSuffix[] = '</span>';
 
