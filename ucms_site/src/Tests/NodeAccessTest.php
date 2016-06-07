@@ -396,8 +396,8 @@ class NodeAccessTest extends AbstractDrupalTest
                 break;
 
             case 'dereference':
-                  $success = $this->getNodeHelper()->userCanDereference($account, $node);
-                  break;
+                $success = $this->getNodeHelper()->userCanDereference($account, $node);
+                break;
 
             default:
                 throw new \InvalidArgumentException("\$op can be only one of 'lock', 'clone', 'promote', 'reference'");
@@ -650,6 +650,39 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canDoNone('lock')
                 ->canDoNone('promote')
                 //->canDoNone('reference')
+        ;
+    }
+
+    public function testWebmasterCreateRights()
+    {
+        $this->getSiteManager()->setContext($this->getSite('init'));
+        $this
+            ->whenIAm([], ['init' => Access::ROLE_WEBMASTER])
+                ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
+        ;
+
+        $this->getSiteManager()->setContext($this->getSite('on'));
+        $this
+            ->whenIAm([], ['on' => Access::ROLE_WEBMASTER])
+                ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
+        ;
+
+        $this->getSiteManager()->setContext($this->getSite('off'));
+        $this
+            ->whenIAm([], ['off' => Access::ROLE_WEBMASTER])
+                ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
+        ;
+
+        $this->getSiteManager()->setContext($this->getSite('archive'));
+        $this
+            ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER])
+                ->canCreateNone()
+        ;
+
+        $this->getSiteManager()->setContext($this->getSite('pending'));
+        $this
+            ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER])
+                ->canCreateNone()
         ;
     }
 
