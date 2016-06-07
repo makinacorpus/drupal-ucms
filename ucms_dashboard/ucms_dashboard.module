@@ -47,6 +47,7 @@ function ucms_dashboard_menu() {
   ];
   $items['admin/dashboard'] = [
     'title'             => "Dashboard",
+    'title callback'    => 'ucms_dashboard_title',
     'page callback'     => 'ucms_dashboard_page',
     'access arguments'  => ['access administration pages'],
     'type'              => MENU_NORMAL_ITEM,
@@ -59,6 +60,17 @@ function ucms_dashboard_menu() {
   ];
 
   return $items;
+}
+
+/**
+ * Menu title callback.
+ */
+function ucms_dashboard_title() {
+  $siteManager = ucms_site_manager();
+  if ($siteManager->hasContext()) {
+    return check_plain($siteManager->getContext()->getAdminTitle());
+  }
+  return t("Dashboard");
 }
 
 /**
