@@ -12,7 +12,7 @@ use MakinaCorpus\Ucms\Site\SiteState;
 
 class CloningSiteTest extends AbstractDrupalTest
 {
-    use SiteBasedTestTrait;
+    use SiteTestTrait;
 
     /**
      * @var Layout

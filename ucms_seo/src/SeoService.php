@@ -645,22 +645,29 @@ class SeoService
         }
 
         if (!empty($nodeAliases)) {
-            // 3 SQL queries
-            $q = $this
-                ->db
-                ->insert('ucms_seo_alias')
-                ->fields(['source', 'alias', 'language', 'site_id', 'node_id', 'priority'])
-            ;
+
+            // <strike>3 SQL queries</strike> nope, chuck testa...
+
+            // Duplicate key won't stop happening, fouque, Drupal was not meant
+            // to deal with such algorithm, so we don't really have a choice
+            // here but to use db_merge() or and advanced non-standard query,
+            // so for now, we choose the standard way.
+
             foreach ($nodeAliases as $nodeId => $aliases) {
                 foreach ($aliases as $alias) {
-                    $q->values(['node/' . $nodeId, $alias, $langcode, $siteId, $nodeId, Alias::PRIORITY_DEFAULT]);
+                    $this
+                        ->db
+                        ->merge('ucms_seo_alias')
+                        ->key(['alias' => $alias, 'site_id' => $siteId])
+                        ->fields(['source' => 'node/' . $nodeId, 'language' => $langcode, 'node_id' => $nodeId, 'priority' => Alias::PRIORITY_DEFAULT])
+                        ->execute()
+                    ;
                 }
 
                 // Bad thing here, we need to manually clear the path cache for
                 // each node one by one
                 $this->aliasManager->cacheClear('node/' . $nodeId);
             }
-            $q->execute();
         }
     }
 

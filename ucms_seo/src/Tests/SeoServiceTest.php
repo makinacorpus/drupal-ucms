@@ -2,14 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Seo\Tests;
 
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Path\AliasStorageInterface;
-use Drupal\node\Node;
-use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
-use MakinaCorpus\Ucms\Seo\SeoService;
-use MakinaCorpus\Umenu\DrupalMenuStorage;
 
 /**
  * Now, how aliases are built: for example, lets say you have nodes,
@@ -40,61 +33,11 @@ use MakinaCorpus\Umenu\DrupalMenuStorage;
  */
 class SeoServiceTest extends AbstractDrupalTest
 {
-    protected $nodes = [];
+    use AliasTestTrait;
 
+    protected $localNodes = [];
     protected $menuName;
-
     protected $menuLinks = [];
-
-    /**
-     * @return NodeInterface
-     */
-    protected function createNode($alias, $published = true)
-    {
-        $node = new Node();
-        $node->type = 'article';
-        $node->setPublished($published);
-
-        $this
-            ->getEntityManager()
-            ->getStorage('node')
-            ->save($node)
-        ;
-
-        $this
-            ->getDatabaseConnection()
-            ->merge('ucms_seo_node')
-            ->key(['nid' => $node->id()])
-            ->fields(['alias_segment' => $alias])
-            ->execute()
-        ;
-
-        $this->nodes[$alias] = $node;
-    }
-
-    /**
-     * @return SeoService
-     */
-    protected function getSeoService()
-    {
-        return $this->getDrupalContainer()->get('ucms_seo.seo_service');
-    }
-
-    /**
-     * @return DrupalMenuStorage
-     */
-    protected function getMenuStorage()
-    {
-        return $this->getDrupalContainer()->get('umenu.storage');
-    }
-
-    /**
-     * @return AliasStorageInterface
-     */
-    protected function getAliasStorage()
-    {
-        return $this->getDrupalContainer()->get('path.alias_storage');
-    }
 
     protected function setUp()
     {
@@ -104,11 +47,11 @@ class SeoServiceTest extends AbstractDrupalTest
         require_once DRUPAL_ROOT . '/modules/menu/menu.module';
 
         // Creates a few nodes
-        $this->createNode('foo');
-        $this->createNode('bar');
-        $this->createNode('baz');
-        $this->createNode('john');
-        $this->createNode('smith');
+        $this->localNodes['foo'] = $this->createNodeWithAlias('foo');
+        $this->localNodes['bar'] = $this->createNodeWithAlias('bar');
+        $this->localNodes['baz'] = $this->createNodeWithAlias('baz');
+        $this->localNodes['john'] = $this->createNodeWithAlias('john');
+        $this->localNodes['smith'] = $this->createNodeWithAlias('smith');
 
         // And now create the associated menu
         $this->menuName = uniqid('phpunit-seo-');
@@ -118,14 +61,14 @@ class SeoServiceTest extends AbstractDrupalTest
         ]);
 
         $item = [
-            'link_path'   => 'node/' . $this->nodes['foo']->id(),
+            'link_path'   => 'node/' . $this->localNodes['foo']->id(),
             'link_title'  => 'foo',
             'menu_name'   => $this->menuName,
         ];
         $this->menuLinks['foo'] = menu_link_save($item);
 
         $item = [
-            'link_path'   => 'node/' . $this->nodes['bar']->id(),
+            'link_path'   => 'node/' . $this->localNodes['bar']->id(),
             'link_title'  => 'bar',
             'menu_name'   => $this->menuName,
             'plid'        => $this->menuLinks['foo'],
@@ -133,7 +76,7 @@ class SeoServiceTest extends AbstractDrupalTest
         $this->menuLinks['foo/bar'] = menu_link_save($item);
 
         $item = [
-            'link_path'   => 'node/' . $this->nodes['baz']->id(),
+            'link_path'   => 'node/' . $this->localNodes['baz']->id(),
             'link_title'  => 'baz',
             'menu_name'   => $this->menuName,
             'plid'        => $this->menuLinks['foo/bar'],
@@ -141,7 +84,7 @@ class SeoServiceTest extends AbstractDrupalTest
         $this->menuLinks['foo/bar/baz'] = menu_link_save($item);
 
         $item = [
-            'link_path'   => 'node/' . $this->nodes['john']->id(),
+            'link_path'   => 'node/' . $this->localNodes['john']->id(),
             'link_title'  => 'john',
             'menu_name'   => $this->menuName,
             'plid'        => $this->menuLinks['foo'],
@@ -149,7 +92,7 @@ class SeoServiceTest extends AbstractDrupalTest
         $this->menuLinks['foo/john'] = menu_link_save($item);
 
         $item = [
-            'link_path'   => 'node/' . $this->nodes['smith']->id(),
+            'link_path'   => 'node/' . $this->localNodes['smith']->id(),
             'link_title'  => 'smith',
             'menu_name'   => $this->menuName,
             'plid'        => $this->menuLinks['foo/john'],
@@ -157,7 +100,7 @@ class SeoServiceTest extends AbstractDrupalTest
         $this->menuLinks['foo/john/smith'] = menu_link_save($item);
 
         $item = [
-            'link_path'   => 'node/' . $this->nodes['foo']->id(),
+            'link_path'   => 'node/' . $this->localNodes['foo']->id(),
             'link_title'  => 'foo',
             'menu_name'   => $this->menuName,
             'plid'        => $this->menuLinks['foo/john/smith'],
@@ -165,7 +108,7 @@ class SeoServiceTest extends AbstractDrupalTest
         $this->menuLinks['foo/john/smith/foo'] = menu_link_save($item);
 
         $item = [
-            'link_path'   => 'node/' . $this->nodes['baz']->id(),
+            'link_path'   => 'node/' . $this->localNodes['baz']->id(),
             'link_title'  => 'baz',
             'menu_name'   => $this->menuName,
             'plid'        => $this->menuLinks['foo'],
@@ -173,15 +116,15 @@ class SeoServiceTest extends AbstractDrupalTest
         $this->menuLinks['foo/baz'] = menu_link_save($item);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
-        $this
-            ->getEntityManager()
-            ->getStorage('node')
-            ->delete($this->nodes)
-        ;
-
         $this->getMenuStorage()->delete($this->menuName);
+        $this->eraseAllData();
+
+        parent::tearDown();
     }
 
     public function testMenuLinkAliasBuild()
@@ -202,11 +145,11 @@ class SeoServiceTest extends AbstractDrupalTest
             )
         ;
 
-        $fooLinks = $links[$this->nodes['foo']->id()];
-        $barLinks = $links[$this->nodes['bar']->id()];
-        $bazLinks = $links[$this->nodes['baz']->id()];
-        $johnLinks = $links[$this->nodes['john']->id()];
-        $smithLinks = $links[$this->nodes['smith']->id()];
+        $fooLinks   = $links[$this->localNodes['foo']->id()];
+        $barLinks   = $links[$this->localNodes['bar']->id()];
+        $bazLinks   = $links[$this->localNodes['baz']->id()];
+        $johnLinks  = $links[$this->localNodes['john']->id()];
+        $smithLinks = $links[$this->localNodes['smith']->id()];
 
         $this->assertCount(2, $fooLinks);
         $this->assertCount(1, $barLinks);
@@ -227,10 +170,10 @@ class SeoServiceTest extends AbstractDrupalTest
     {
         $service  = $this->getSeoService();
         $storage  = $this->getAliasStorage();
-        $node     = $this->nodes['john'];
+        $node     = $this->localNodes['john'];
 
         // Ensure aliases are in database (setUp() does not do it)
-        $service->onAliasChange($this->nodes['foo']);
+        $service->onAliasChange($this->localNodes['foo']);
 
         // Change the alias, go go go!
         $this
@@ -246,11 +189,11 @@ class SeoServiceTest extends AbstractDrupalTest
 
         $links = $service->getLinkChildrenAliases($this->menuLinks['foo']);
 
-        $fooLinks = $links[$this->nodes['foo']->id()];
-        $barLinks = $links[$this->nodes['bar']->id()];
-        $bazLinks = $links[$this->nodes['baz']->id()];
-        $johnLinks = $links[$this->nodes['john']->id()];
-        $smithLinks = $links[$this->nodes['smith']->id()];
+        $fooLinks = $links[$this->localNodes['foo']->id()];
+        $barLinks = $links[$this->localNodes['bar']->id()];
+        $bazLinks = $links[$this->localNodes['baz']->id()];
+        $johnLinks = $links[$this->localNodes['john']->id()];
+        $smithLinks = $links[$this->localNodes['smith']->id()];
 
         $this->assertCount(2, $fooLinks);
         $this->assertCount(1, $barLinks);
@@ -265,7 +208,7 @@ class SeoServiceTest extends AbstractDrupalTest
 //         $this->assertTrue($storage->aliasExists(  // Outdated
 //             'foo/john/smith/foo',
 //             LanguageInterface::LANGCODE_NOT_SPECIFIED),
-//             'node/' . $this->nodes['foo']->id()
+//             'node/' . $this->localNodes['foo']->id()
 //         );
         $this->assertContains('foo/bar', $barLinks);
         $this->assertContains('foo/bar/baz', $bazLinks);
@@ -274,13 +217,13 @@ class SeoServiceTest extends AbstractDrupalTest
 //         $this->assertTrue($storage->aliasExists(  // Outdated
 //             'foo/john',
 //             LanguageInterface::LANGCODE_NOT_SPECIFIED),
-//             'node/' . $this->nodes['john']->id()
+//             'node/' . $this->localNodes['john']->id()
 //         );
         $this->assertContains('foo/roger/smith', $smithLinks); // New
 //         $this->assertTrue($storage->aliasExists(  // Outdated
 //             'foo/john/smith',
 //             LanguageInterface::LANGCODE_NOT_SPECIFIED),
-//             'node/' . $this->nodes['smith']->id()
+//             'node/' . $this->localNodes['smith']->id()
 //         );
     }
 }
