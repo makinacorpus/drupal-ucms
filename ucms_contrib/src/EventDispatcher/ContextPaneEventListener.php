@@ -139,7 +139,7 @@ class ContextPaneEventListener
 
         // Add node link on node view
         // FIXME kill it with lasers!
-        if ($router_item['path'] == 'node/%') {
+        if ($router_item['path'] == 'node/%' && menu_get_object()) {
             $node = $router_item['map'][1];
             $actions = $this->actionProviderRegistry->getActions($node);
             foreach ($actions as $action) { // this... this is sorcery...
