@@ -174,6 +174,7 @@
 
           var $clonedElement = $(this).clone(true);
           $contextualPane.find('.inner .actions').append($clonedElement);
+          $contextualPane.find('.dropup').removeClass('dropup');
         });
         Drupal.behaviors.ucmsDashboardPane.resizeTabs();
       });
