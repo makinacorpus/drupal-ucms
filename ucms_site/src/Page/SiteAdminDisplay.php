@@ -4,19 +4,19 @@ namespace MakinaCorpus\Ucms\Site\Page;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SiteAdminDisplay extends AbstractDisplay
 {
-    /**
-     * @var string
-     */
     private $emptyMessage;
+    private $manager;
 
     /**
      * Default constructor
      */
-    public function __construct($emptyMessage = null)
+    public function __construct(SiteManager $manager, $emptyMessage = null)
     {
+        $this->manager = $manager;
         $this->emptyMessage = $emptyMessage;
     }
 
@@ -42,7 +42,7 @@ class SiteAdminDisplay extends AbstractDisplay
 
         foreach ($sites as $site) {
             $rows[] = [
-                check_plain($site->type),
+                check_plain($this->manager->getTypeName($site->type)),
                 check_plain($site->http_host),
                 check_plain($site->title),
                 check_plain($states[$site->state]),

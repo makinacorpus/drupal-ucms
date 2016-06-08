@@ -170,6 +170,36 @@ class SiteManager
     }
 
     /**
+     * Get allowed site types
+     *
+     * @return string[]
+     */
+    public function getAllowedTypes()
+    {
+        return variable_get('ucms_site_allowed_types', [
+            'default' => t("Default"), // @todo
+        ]);
+    }
+
+    /**
+     * Get type human readable name
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getTypeName($type)
+    {
+        $allowedTypes = $this->getAllowedTypes();
+
+        if ($type && isset($allowedTypes[$type])) {
+            return $allowedTypes[$type];
+        }
+
+        return t("None"); // @todo
+    }
+
+    /**
      * Get allowed template sites identifiers along with their title
      */
     public function getTemplateList()
