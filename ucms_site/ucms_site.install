@@ -664,3 +664,20 @@ function ucms_site_update_7016() {
     ]);
   }
 }
+
+/**
+ * Fixes the NULL types on sites.
+ */
+function ucms_site_update_7017() {
+  db_query("
+    UPDATE {ucms_site} s1
+    JOIN {ucms_site} s2 ON s2.id = s1.template_id
+    SET s1.type = s2.type
+    WHERE s1.type IS NULL
+  ");
+  db_query("
+    UPDATE {ucms_site} s1
+    SET s1.type = 'ssam'
+    WHERE s1.type IS NULL
+  ");
+}
