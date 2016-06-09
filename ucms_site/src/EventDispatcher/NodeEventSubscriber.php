@@ -58,7 +58,8 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 ['onPreInsert', 0]
             ],
             NodeEvent::EVENT_INSERT => [
-                ['onInsert', 0]
+                ['onInsert', 0],
+                ['onPostInsert', -128],
             ],
             NodeEvent::EVENT_SAVE => [
                 ['onSave', 0]
@@ -235,10 +236,20 @@ class NodeEventSubscriber implements EventSubscriberInterface
                     drupal_set_message(t("The cloned content is now the current site home page, yet it is unpublished, you should probably publish it!"), 'warning');
                 }
             }
+        }
+    }
 
+    public function onPostInsert(NodeEvent $event)
+    {
+        $node = $event->getNode();
+
+        // This MUST happen after the layouts are being changed, else the
+        // foreign key cascade constraints will happen and nothing will be
+        // duplicated
+        if ($event->isClone() && $node->site_id && $node->parent_nid) {
             // Dereference node from the clone site, since it will be replaced
             // by the new one in all contextes it can be
-            $this->nodeManager->deleteReferenceBulkFromSite($site->getId(), [$node->parent_nid]);
+            $this->nodeManager->deleteReferenceBulkFromSite($node->site_id, [$node->parent_nid]);
         }
     }
 
