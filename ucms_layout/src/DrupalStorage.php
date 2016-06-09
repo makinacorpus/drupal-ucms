@@ -266,19 +266,27 @@ class DrupalStorage implements StorageInterface
 
         if ($createOnMiss) {
 
-            $id = (int)db_insert('ucms_layout')
-                ->fields([
-                    'nid'     => $nodeId,
-                    'site_id' => $siteId
-                ])
-                ->execute()
-            ;
+            // Else we will experience foreign key constraint violation
+            $existsInSite = (bool)db_query("SELECT 1 FROM {ucms_site_node} WHERE nid = :node_id AND site_id = :site_id", [
+                ':node_id' => $nodeId,
+                ':site_id' => $siteId,
+            ])->fetchField();
 
-            return (new Layout())
-                ->setId($id)
-                ->setSiteId($siteId)
-                ->setNodeId($nodeId)
-            ;
+            if ($existsInSite) {
+                $id = (int)db_insert('ucms_layout')
+                    ->fields([
+                        'nid'     => $nodeId,
+                        'site_id' => $siteId
+                    ])
+                    ->execute()
+                ;
+
+                return (new Layout())
+                    ->setId($id)
+                    ->setSiteId($siteId)
+                    ->setNodeId($nodeId)
+                ;
+            }
         }
     }
 
