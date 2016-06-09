@@ -16,7 +16,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         return [
             NodeEvent::EVENT_INSERT => [
-                ['onInsert', 0]
+                ['onInsert', -10]
             ],
         ];
     }

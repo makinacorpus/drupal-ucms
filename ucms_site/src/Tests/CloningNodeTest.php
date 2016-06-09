@@ -66,6 +66,7 @@ class CloningNodeTest extends AbstractDrupalTest
         foreach ($compo as $irrevelantNode) {
             $layout->getRegion('content')->addAt(new Item($irrevelantNode->id()));
         }
+        $this->getNodeManager()->createReference($site, $node);
         $this->getLayoutStorage()->save($layout);
 
         return [$layout, $compo];
