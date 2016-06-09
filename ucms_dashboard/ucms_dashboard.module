@@ -318,11 +318,19 @@ function ucms_dashboard_page_build(&$page) {
   }
 
   if (user_is_logged_in() || path_is_admin(current_path())) {
+    $links = menu_navigation_links('main-menu');
+    foreach ($links as $i => $link) {
+      if ($link['href'] === 'user/logout') {
+        $links[$i]['href'] = ucms_site_master_absolute_url() . '/user/logout';
+        $links[$i]['absolute'] = TRUE;
+      }
+    }
+
     $page['page_top']['ucms_dashboard_top'] = [
       '#theme' => 'ucms_dashboard_top',
       '#links' => [
         '#theme' => 'links__main_menu',
-        '#links' => menu_navigation_links('main-menu'),
+        '#links' => $links,
       ],
     ];
   }
