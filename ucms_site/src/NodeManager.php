@@ -294,10 +294,12 @@ class NodeManager
         /*
          * The right and only working query for this.
          *
-            SELECT sa.site_id
+            SELECT DISTINCT(sa.site_id)
             FROM ucms_site_access sa
+            JOIN ucms_site_node sn ON sn.site_id = sa.site_id
             WHERE
                 sa.uid = 13 -- current user
+                AND sn.
                 AND sa.role = 1 -- webmaster
                 AND sa.site_id <> 2 -- node current site
                 AND NOT EXISTS (
@@ -329,6 +331,9 @@ class NodeManager
             ->condition('sa.uid', $userId)
             ->condition('sa.role', Access::ROLE_WEBMASTER)
         ;
+
+        $q->join('ucms_site_node', 'sn', 'sn.site_id = sa.site_id');
+        $q->condition('sn.nid', $node->id());
 
         // The node might not be attached to any site if it is a global content
         if ($node->site_id) {

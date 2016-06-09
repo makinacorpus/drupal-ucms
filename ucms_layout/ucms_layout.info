@@ -3,4 +3,5 @@ description = "Custom per page layout configuration"
 core = 7.x
 package = UCMS
 php = 5.5
+dependencies[] = plusql
 dependencies[] = ucms_site
