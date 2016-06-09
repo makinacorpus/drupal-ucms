@@ -1,5 +1,7 @@
 <?php
 
+use MakinaCorpus\PluSQL\Constraint;
+
 /**
  * Implements hook_schema().
  */
@@ -32,13 +34,13 @@ function ucms_layout_schema() {
       'site_id_nid_key' => ['site_id', 'nid'],
     ],
     'foreign keys' => [
-      'site_id' => [
-        'table'   => 'ucms_site',
-        'columns' => ['site_id' => 'id'],
-      ],
       'nid' => [
-        'table'   => 'node',
-        'columns' => ['nid' => 'nid'],
+        'table'   => 'ucms_site_node',
+        'columns' => [
+          'site_id' => 'site_id',
+          'nid'     => 'nid',
+        ],
+        'delete'  => 'cascade',
       ],
     ],
     'primary key' => ['id'],
@@ -84,10 +86,12 @@ function ucms_layout_schema() {
       'layout_id' => [
         'table'   => 'ucms_layout',
         'columns' => ['layout_id' => 'id'],
+        'delete'  => 'cascade',
       ],
       'nid' => [
         'table'   => 'node',
         'columns' => ['nid' => 'nid'],
+        'delete'  => 'cascade',
       ],
     ],
     'indexes' => [
@@ -106,37 +110,9 @@ function ucms_layout_schema() {
  * Adds missing database table columns and constraints.
  */
 function ucms_layout_install_schema_fix() {
-  // Add a few constraints.
-  // Hopefully, this syntax should work on both PostgreSQL and MySQL although
-  // this is pure coincidence, this is great for us.
-  $constraints = [
-    'ucms_layout' => [
-      'fk_ucms_layout_site' => "ALTER TABLE {ucms_layout} ADD CONSTRAINT {fk_ucms_layout_site} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
-      'fk_ucms_layout_nid' => "ALTER TABLE {ucms_layout} ADD CONSTRAINT {fk_ucms_layout_nid} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
-    ],
-    'ucms_layout_data' => [
-      'fk_ucms_layout_data_id' => "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT {fk_ucms_layout_data_id} FOREIGN KEY (layout_id) REFERENCES {ucms_layout} (id) ON DELETE CASCADE",
-      'fk_ucms_layout_data_node' => "ALTER TABLE {ucms_layout_data} ADD CONSTRAINT  {fk_ucms_layout_data_node} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
-    ],
-  ];
-  foreach ($constraints as $table => $statements) {
-    if (db_table_exists($table)) {
-      foreach ($statements as $statement) {
-        try {
-          db_query($statement);
-        } catch (\PDOException $e) {
-          switch ($e->getCode()) {
-            case 42710: // PostgreSQL constraint already exists
-              continue;
-            case 23000: // MySQL duplicate key in table
-              continue;
-            default:
-              throw $e;
-          }
-        }
-      }
-    }
-  }
+  drupal_get_complete_schema(true);
+  db_constraint_add_all('ucms_layout', drupal_get_schema('ucms_layout'));
+  db_constraint_add_all('ucms_layout_data', drupal_get_schema('ucms_layout_data'));
 }
 
 /**
@@ -178,4 +154,31 @@ function ucms_layout_update_7003() {
   if (db_table_exists('ucms_layout_data')) {
     db_query("ALTER TABLE {ucms_layout_data} ADD PRIMARY KEY (layout_id, region, nid, weight)");
   }
+}
+
+/**
+ * Refactor the schema and cleanup data.
+ */
+function ucms_layout_update_7004() {
+
+  // These are remains of the past.
+  if (db_constraint_exists_unsafe('ucms_layout', Constraint::FOREIGN_KEY, 'fk_ucms_layout_site')) {
+    db_constraint_drop_unsafe('ucms_layout', Constraint::FOREIGN_KEY, 'fk_ucms_layout_site');
+  }
+  if (db_constraint_exists_unsafe('ucms_layout', Constraint::FOREIGN_KEY, 'fk_ucms_layout_nid')) {
+    db_constraint_drop_unsafe('ucms_layout', Constraint::FOREIGN_KEY, 'fk_ucms_layout_nid');
+  }
+  if (db_constraint_exists_unsafe('ucms_layout_data', Constraint::FOREIGN_KEY, 'fk_ucms_layout_data_id')) {
+    db_constraint_drop_unsafe('ucms_layout_data', Constraint::FOREIGN_KEY, 'fk_ucms_layout_data_id');
+  }
+  if (db_constraint_exists_unsafe('ucms_layout_data', Constraint::FOREIGN_KEY, 'fk_ucms_layout_data_node')) {
+    db_constraint_drop_unsafe('ucms_layout_data', Constraint::FOREIGN_KEY, 'fk_ucms_layout_data_node');
+  }
+
+  // We don't have any foreign key anymore, but let's enfore them with some
+  // DELETE queries.
+  db_query("DELETE l.* FROM {ucms_layout} l WHERE NOT EXISTS (SELECT 1 FROM {ucms_site_node} s WHERE s.site_id = l.site_id AND s.nid = l.nid)");
+  db_query("DELETE d.* FROM {ucms_layout_data} d WHERE NOT EXISTS (SELECT 1 FROM {ucms_layout} l WHERE l.id = d.layout_id)");
+
+  ucms_layout_install_schema_fix();
 }
