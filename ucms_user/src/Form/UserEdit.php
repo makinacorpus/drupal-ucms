@@ -194,6 +194,17 @@ class UserEdit extends FormBase
             if ((bool) $q->execute()->fetchField()) {
                 form_set_error('mail', $this->t('The e-mail address %email is already taken.', array('%email' => $mail)));
             }
+
+            // Validate username must be unique
+            $userName = $form_state->getValue('name');
+            $q = db_select('users')->fields('users', ['uid'])->condition('name', db_like($userName), 'LIKE');
+            if (!$user->isNew()) {
+                $q->condition('uid', $user->id(), '<>');
+            }
+            $exists = $q->range(0, 1)->execute()->fetchField();
+            if ($exists) {
+                $form_state->setErrorByName('name', $this->t("A user with the same user name already exists."));
+            }
         }
 
         if ((int) $form_state->getValue('enable') === 1) {
