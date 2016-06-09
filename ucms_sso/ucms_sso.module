@@ -87,6 +87,25 @@ function ucms_sso_menu() {
 }
 
 /**
+ * Implements hook_init().
+ */
+function ucms_boot() {
+
+}
+
+/**
+ * Implements hook_menu_site_status_alter().
+ */
+function ucms_seo_menu_site_status_alter(&$menu_site_status, $path) {
+  if (MENU_SITE_ONLINE === $menu_site_status && ucms_site_manager()->hasContext()) {
+    $path = explode('/', current_path());
+    if ('user' === $path[0] && (1 === count($path) || in_array($path[1], ['login', 'logout', 'password', 'register']))) {
+      $menu_site_status = MENU_NOT_FOUND;
+    }
+  }
+}
+
+/**
  * Get default URL scheme. Later will always be 'https'.
  */
 function ucms_sso_scheme_get() {

@@ -80,7 +80,7 @@ class MyAccountEdit extends FormBase
             '#description' => $this->t(
                 'A valid e-mail address. All e-mails from the system will be sent to this address. The e-mail address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by e-mail.'
             ),
-            '#attributes' => ['placeholder' => 'Confirm the new e-mail address'],
+            '#attributes' => ['placeholder' => $this->t('Confirm the new e-mail address')],
         );
 
         $form['actions'] = array('#type' => 'actions');

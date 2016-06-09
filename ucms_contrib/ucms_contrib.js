@@ -169,7 +169,7 @@
     UcmsCartAdd: function (data) {
       if (data.output) {
         // Add item to list
-        var elem = '<div class="ucms-cart-item col-md-6" data-nid="' + data.nid + '">' + data.output + '</div>';
+        var elem = '<div class="ucms-cart-item" data-nid="' + data.nid + '">' + data.output + '</div>';
         $(elem).appendTo('#ucms-cart-list');
         refreshSortable(UcmsCart);
       }
@@ -260,7 +260,7 @@
           $.get(settings.basePath + 'admin/cart/' + nid + '/add')
             .done(function (data) {
               // Add to cart list
-              var elem = '<div class="ucms-cart-item col-md-6" draggable="true" data-nid="' + nid + '">' + data.output + '</div>';
+              var elem = '<div class="ucms-cart-item" draggable="true" data-nid="' + nid + '">' + data.output + '</div>';
               $(elem).appendTo('#ucms-cart-list');
               refreshSortable(sortable);
             })

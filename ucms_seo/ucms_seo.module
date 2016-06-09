@@ -164,10 +164,12 @@ function ucms_seo_page_build(&$page) {
         drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => check_plain($content)]], 'meta-' . $name);
       }
 
+      $canonical = null;
+
       if (drupal_is_front_page()) {
         // Do not set a canonical for home pages, just the site URL.
         $canonical = url('http://' . $site->http_host . '/');
-      } else {
+      } else if ('node' === arg(0) && !arg(3)) {
         $canonical = ucms_seo_service()->getNodeCanonical($node) . '/';
         if (!$canonical) {
           $canonical = url('node/' . $node->nid, ['absolute' => true]) . '/';

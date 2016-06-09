@@ -81,7 +81,6 @@ class TypeHandler
         return $this->filterVariable('ucms_contrib_component_types');
     }
 
-
     /**
      * Get component types.
      *
@@ -90,6 +89,16 @@ class TypeHandler
     public function getLockedTypes()
     {
         return $this->filterVariable('ucms_contrib_locked_types');
+    }
+
+    /**
+     * Get all other types than components.
+     *
+     * @return string[]
+     */
+    public function getUnlockedTypes()
+    {
+        return array_diff($this->getAllTypes(), $this->filterVariable('ucms_contrib_locked_types'));
     }
 
     /**

@@ -1,3 +1,11 @@
+.ucms-cart-item {
+  display: block !important;
+  width: 160px !important;
+  position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
+  float: left;
+}
 /**
  * Sortable placeholders
  */
@@ -68,9 +76,9 @@
 
 .ucms-cart-item h2,
 .ucms-contrib-result-inner h2 {
-  font-size: 12px;
+  font-size: 12px !important;
   position: absolute;
-  margin: 0;
+  margin: 0 !important;
   padding: 3px;
   top: 0;
   left: 0;

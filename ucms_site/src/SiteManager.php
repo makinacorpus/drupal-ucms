@@ -77,7 +77,7 @@ class SiteManager
      * Get URL in site
      *
      * @param int|Site $site
-     *   Site identifier
+     *   Site identifier, if site is null
      * @param string $path
      *   Drupal path to hit in site
      * @param mixed[] $options
@@ -87,7 +87,7 @@ class SiteManager
      *   First value is the string path
      *   Second value are updates $options
      */
-    public function getUrlInSite($site, $path, $options)
+    public function getUrlInSite($site, $path, $options = [])
     {
         if ($site instanceof Site) {
             $site = $site->getId();
@@ -167,6 +167,36 @@ class SiteManager
     public function getAllowedThemes()
     {
         return variable_get('ucms_site_allowed_themes', []);
+    }
+
+    /**
+     * Get allowed site types
+     *
+     * @return string[]
+     */
+    public function getAllowedTypes()
+    {
+        return variable_get('ucms_site_allowed_types', [
+            'default' => t("Default"), // @todo
+        ]);
+    }
+
+    /**
+     * Get type human readable name
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getTypeName($type)
+    {
+        $allowedTypes = $this->getAllowedTypes();
+
+        if ($type && isset($allowedTypes[$type])) {
+            return $allowedTypes[$type];
+        }
+
+        return t("None"); // @todo
     }
 
     /**

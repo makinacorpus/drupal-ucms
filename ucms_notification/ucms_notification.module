@@ -112,7 +112,11 @@ function ucms_notification_node_update($node) {
   $dispatcher = \Drupal::service('event_dispatcher');
   $event = new ResourceEvent('node', $node->nid, $user->uid);
 
-  if ($node->status != $node->original->status) {
+  if ($node->is_flagged != $node->original->is_flagged) {
+    if ($node->is_flagged) {
+      $dispatcher->dispatch('node:flag', $event);
+    }
+  } else if ($node->status != $node->original->status) {
     if ($node->status) {
       $dispatcher->dispatch('node:publish', $event);
     } else {
@@ -126,7 +130,7 @@ function ucms_notification_node_update($node) {
     } else {
       $oldLabels = [];
     }
-    
+
     if ($currentLabels = field_get_items('node', $node, 'labels')) {
       if (is_array($currentLabels)) {
         $currentLabels = array_column($currentLabels, 'tid');

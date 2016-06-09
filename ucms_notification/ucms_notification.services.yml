@@ -69,6 +69,12 @@ services:
       - { name: apb.notification.formatter, event: "node:unpublish", auto: true, channels: "admin:content" }
       - { name: ucms_contrib.type_handler }
 
+  ucms_notification.content_flag:
+    class: MakinaCorpus\Ucms\Notification\Formatter\ContentFlag
+    tags:
+      - { name: apb.notification.formatter, event: "node:flag", auto: true, channels: "admin:content" }
+      - { name: ucms_contrib.type_handler }
+
   ucms_notification.content_delete:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentDelete
     tags:

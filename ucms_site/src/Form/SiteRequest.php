@@ -345,6 +345,10 @@ class SiteRequest extends FormBase
         $site->is_template = $form_state->getValue('is_template');
         $site->setAttribute('thematic', $form_state->getValue('thematic'));
 
+        if ($site->template_id) {
+            $site->type = $this->manager->getStorage()->findOne($site->template_id)->type;
+        }
+
         $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Your site creation request has been submitted"));
 

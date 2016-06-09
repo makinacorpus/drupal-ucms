@@ -107,18 +107,20 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->setTitle($this->t("Status"))
         ;
 
-        $sites = [];
-        foreach ($this->manager->loadOwnSites($this->account) as $site) {
-            $sites[$site->getId()] = check_plain($site->title);
-        }
+        if (!$this->manager->hasContext()) {
+            $sites = [];
+            foreach ($this->manager->loadOwnSites($this->account) as $site) {
+                $sites[$site->getId()] = check_plain($site->title);
+            }
 
-        $ret[] = $this
-            ->getSearch()
-            ->createFacet('site_id', null)
-            ->setChoicesMap($sites)
-            ->setExclusive(true)
-            ->setTitle($this->t("My sites"))
-        ;
+            $ret[] = $this
+                ->getSearch()
+                ->createFacet('site_id', null)
+                ->setChoicesMap($sites)
+                ->setExclusive(true)
+                ->setTitle($this->t("My sites"))
+            ;
+        }
 
         return $ret;
     }

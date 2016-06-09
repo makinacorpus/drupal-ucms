@@ -94,6 +94,16 @@ class Site
         return $this->id;
     }
 
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function getAdminTitle()
+    {
+        return $this->title_admin;
+    }
+
     public function getTheme()
     {
         return $this->theme;

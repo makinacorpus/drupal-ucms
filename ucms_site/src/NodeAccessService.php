@@ -394,11 +394,12 @@ class NodeAccessService
                 if ($site) {
 
                     // Prevent creating content on disabled or pending sites
-                    if (!in_array($site->state, [SiteState::OFF, SiteState::ON])) {
+                    if (!in_array($site->state, [SiteState::INIT, SiteState::OFF, SiteState::ON])) {
                         return NODE_ACCESS_DENY;
                     }
 
                     if ($this->typeHandler) {
+
                         // Contributor can only create editorial content
                         if ($access->userIsContributor($account, $site) && in_array($type, $handler->getEditorialTypes())) {
                             return NODE_ACCESS_ALLOW;

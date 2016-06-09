@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -45,10 +46,10 @@ class SiteAttachEventListener implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return [
-            SiteAttachEvent::EVENT_ATTACH => [
+            SiteEvents::EVENT_ATTACH => [
                 ['onAttach', 0]
             ],
-            SiteAttachEvent::EVENT_DETACH => [
+            SiteEvents::EVENT_DETACH => [
                 ['onDetach', 0]
             ],
         ];

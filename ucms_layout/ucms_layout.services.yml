@@ -21,6 +21,7 @@ services:
     tags:
       - {name: event_listener, event: "site:init"}
       - {name: event_listener, event: "site:clone"}
+      # @todo Move this to an event subscriber using SiteEvents::EVENT_ATTACH
       - {name: event_listener, event: "site:ref"}
 
   ucms_layout.node_event_subscriber:

@@ -251,17 +251,6 @@ function theme_ucms_user_account_portlet($variables) {
   return $variables['element']['#children'];
 }
 
-
-/**
- * Implements hook_admin_paths().
- */
-function ucms_user_admin_paths() {
-  return [
-    'user/*' => true,
-  ];
-}
-
-
 /**
  * Implements hook_mail().
  */

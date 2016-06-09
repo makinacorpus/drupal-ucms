@@ -8,6 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Contrib\NodeReference;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Ucms\Site\Access;
 
 class DeadLinkPortletDisplay extends AbstractDisplay
 {
@@ -52,13 +53,8 @@ class DeadLinkPortletDisplay extends AbstractDisplay
             $source = $nodeStorage->load($item->getSourceId());
             $target = $item->targetExists() ? $nodeStorage->load($item->getTargetId()) : null;
 
-            $rows[] = [
-                check_plain($source ? $source->title : 'error'),
-                check_plain($fieldName),
-                $target ? check_plain($target->title) : '<em>' . $item->getTargetId() . '</em>',
-                $item->targetExists() ? $this->t('Unpublished') : $this->t('Deleted'),
-                $typeLabel,
-                [
+            if ($source->access(Access::OP_UPDATE)) {
+                $actions = [
                     '#theme' => 'ucms_dashboard_actions',
                     '#actions' => [
                         new Action(
@@ -68,7 +64,18 @@ class DeadLinkPortletDisplay extends AbstractDisplay
                             'share-alt'
                         )
                     ]
-                ],
+                ];
+            } else {
+                $actions = '';
+            }
+
+            $rows[] = [
+                check_plain($source ? $source->title : 'error'),
+                check_plain($fieldName),
+                $target ? check_plain($target->title) : '<em>' . $item->getTargetId() . '</em>',
+                $item->targetExists() ? $this->t('Unpublished') : $this->t('Deleted'),
+                $typeLabel,
+                $actions,
             ];
         }
 

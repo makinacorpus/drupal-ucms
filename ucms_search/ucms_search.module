@@ -165,35 +165,6 @@ function ucms_search_node_delete($node) {
 }
 
 /**
- * Implements hook_ucms_search_index_reindex().
- */
-function ucms_search_ucms_search_index_reindex($index, SelectQueryInterface $query) {
-  switch ($index) {
-
-    case 'public':
-      $query->condition('n.status', 1);
-      break;
-  }
-}
-
-/**
- * Implements hook_ucms_search_index_node().
- */
-function ucms_search_ucms_search_index_node($index, $node) {
-  switch ($index) {
-
-    case 'public':
-      if ($node->status) {
-        return true;
-      }
-      break;
-
-    case 'private':
-      return true;
-  }
-}
-
-/**
  * Implements hook_cron().
  */
 if (!module_exists('elysia_cron')) {
@@ -219,6 +190,8 @@ function ucms_search_cronapi($op, $job = NULL) {
   if ('list' !== $op) {
     return;
   }
+
+  $items = [];
 
   $items['ucms_search_cron_search_indices'] = [
     'description' => 'Update search indices',

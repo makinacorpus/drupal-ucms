@@ -2,18 +2,20 @@
 
 namespace MakinaCorpus\Ucms\Site\Tests;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\node\Node;
 use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Layout\DrupalStorage;
+use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use MakinaCorpus\Ucms\Seo\SeoService;
 
-trait SiteBasedTestTrait
+trait SiteTestTrait
 {
     /**
      * @var Site[]
@@ -41,6 +43,14 @@ trait SiteBasedTestTrait
     protected function getSiteManager()
     {
         return $this->getDrupalContainer()->get('ucms_site.manager');
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->getDrupalContainer()->get('entity.manager');
     }
 
     /**
@@ -154,18 +164,23 @@ trait SiteBasedTestTrait
      *
      * @param string $type
      * @param string $site
+     * @param mixed[] $values
      *
      * @return NodeInterface
      */
-    protected function createDrupalNode($type, $site = null)
+    protected function createDrupalNode($type, $site = null, $values = [])
     {
         $node = new Node();
         $node->title = 'Node test '.$this->nidSeq++;;
-        $node->status = NODE_PUBLISHED;
+        $node->status = 1;
         $node->is_global = false;
         $node->type = $type;
         $node->is_group = false;
         $node->is_clonable = false;
+
+        foreach ($values as $key => $value) {
+            $node->{$key} = $value;
+        }
 
         if ($site instanceof Site) {
             $node->site_id = $site->getId();
@@ -174,7 +189,12 @@ trait SiteBasedTestTrait
         } else {
             $node->site_id = null;
         }
-        node_save($node);
+
+        if ($site instanceof Site) {
+            $this->getSiteManager()->getStorage()->save($site);
+        }
+
+        $this->getEntityManager()->getStorage('node')->save($node);
 
         return $this->nodes[] = $node;
     }

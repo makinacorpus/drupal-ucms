@@ -287,21 +287,26 @@ function ucms_contrib_menu_alter(&$items) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_add_to_site($type) {
+
   $user = \Drupal::service('current_user');
   $typeHandler = ucms_contrib_type_handler_get();
   $siteAccess = ucms_site_manager()->getAccess();
   $nodeAccess = ucms_site_node_access_helper();
 
-  // Locked type can't be created by non-technical admin
-  if (!$nodeAccess->userCanCreateInAnySite($user, $type)) {
+  if (ucms_site_manager()->hasContext()) {
+    // This does not make any sense outside of the admin context
     return false;
   }
-  // Webmasters can create anything
-  if ($siteAccess->userIsWebmaster($user) && in_array($type, $typeHandler->getAllTypes())) {
-    return true;
+  if (!$nodeAccess->userCanCreateInAnySite($user, $type)) {
+    // Locked type can't be created by non-technical admin
+    return false;
   }
-  // Contributors can only create editorial content
-  elseif ($siteAccess->userIsContributor($user) && in_array($type, $typeHandler->getEditorialTypes())) {
+
+  if ($siteAccess->userIsWebmaster($user) && in_array($type, $typeHandler->getAllTypes())) {
+    // Webmasters can create anything
+    return true;
+  } else if ($siteAccess->userIsContributor($user) && in_array($type, $typeHandler->getEditorialTypes())) {
+    // Contributors can only create editorial content
     return true;
   }
 
@@ -512,8 +517,26 @@ function ucms_contrib_preprocess_node(&$variables) {
  * Implements hook_form_node_form_alter().
  */
 function ucms_contrib_form_node_form_alter(&$form, &$form_state, $form_id) {
-  $node = $form_state['node'];
-  $user = \Drupal::currentUser();
+
+  $node         = $form_state['node'];
+  $user         = \Drupal::currentUser();
+  $access       = \Drupal::service('ucms_site.node_access_helper');
+  $siteManager  = ucms_site_manager();
+
+  // Node object and database have default values, so depending on context,
+  // when creating the node, we do need to set those defaults to the current
+  // context defaults instead so that the user access functions will work
+  // seamlessly with the non-persisted yet node object.
+  if (!$node->id() || $node->isNew()) {
+    $node->is_global = $siteManager->hasContext();
+    $form['is_global'] = ['#type' => 'value', '#value' => (int)$siteManager->hasContext()];
+    if ($siteManager->hasContext()) {
+      $siteId = $siteManager->getContext()->getId();
+      $node->site_id = $siteId;
+      $node->ucms_sites = [$siteId];
+      $form['site_id'] = ['#type' => 'value', '#value' => $siteId];
+    }
+  }
 
   $form['locked'] = [
     '#type' => 'checkbox',
@@ -524,13 +547,36 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state, $form_id) {
 
   // Adds the 'submit and add to cart' button. Button group will be done
   // by the theme layer.
-  if (!$node->id() || !\Drupal::service('ucms_contrib.cart')->has($user->id(), $node->id())) {
+  $add_to_cart = !$node->id() || !\Drupal::service('ucms_contrib.cart')->has($user->id(), $node->id());
+  if ($add_to_cart) {
     $submit = $form['actions']['submit']['#submit'];
     $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
     $form['actions']['submit_add_to_cart'] = [
-      '#type'   => 'submit',
-      '#value'  => t("Save and add to cart"),
+      '#type' => 'submit',
+      '#value' => t("Save and add to cart"),
       '#submit' => $submit,
+    ];
+  }
+
+  $add_and_publish = !$node->id() && (!$access || $access->userCanPublish($user, $node));
+  if ($add_and_publish) {
+    $submit = $form['actions']['submit']['#submit'];
+    $submit[] = 'ucms_contrib_form_node_form_submit_publish';
+    $form['actions']['submit_publish'] = [
+      '#type' => 'submit',
+      '#value' => t("Save and publish"),
+      '#submit' => $submit,
+    ];
+  }
+
+  if ($add_to_cart && $add_and_publish) {
+    $submit = $form['actions']['submit']['#submit'];
+    $submit[] = 'ucms_contrib_form_node_form_submit_publish';
+    $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
+    $form['actions']['submit_publish_add_to_cart'] = [
+        '#type' => 'submit',
+        '#value' => t("Save, publish and add to cart"),
+        '#submit' => $submit,
     ];
   }
 }
@@ -544,6 +590,13 @@ function ucms_contrib_form_node_form_submit_add_to_cart($form, &$form_state) {
   // gets submitted. This would work in update scenario, but for an obscure
   // reason won't when we clone.
   \Drupal::service('ucms_contrib.cart')->addFor(\Drupal::currentUser()->id(), $form_state['node']->id());
+}
+
+function ucms_contrib_form_node_form_submit_publish($form, &$form_state) {
+  $node = $form_state['node'];
+  $node->status = NODE_PUBLISHED;
+  // Is that good to do this?
+  node_save($node);
 }
 
 /**

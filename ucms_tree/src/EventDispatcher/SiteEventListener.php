@@ -3,12 +3,12 @@
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use MakinaCorpus\Umenu\DrupalMenuStorage;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SiteEventListener
 {
@@ -153,14 +153,14 @@ class SiteEventListener
     /**
      * On site cloning.
      *
-     * @param GenericEvent $event
+     * @param SiteCloneEvent $event
      */
-    public function onSiteClone(GenericEvent $event)
+    public function onSiteClone(SiteCloneEvent $event)
     {
         /* @var Site */
-        $source = $event->getArgument('source');
+        $source = $event->getTemplateSite();
         /* @var Site */
-        $target = $event->getSubject();
+        $target = $event->getSite();
 
         // We do need them, they might not have been created.
         $this->ensureSiteMenus($target);
