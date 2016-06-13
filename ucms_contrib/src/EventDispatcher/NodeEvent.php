@@ -44,7 +44,7 @@ class NodeEvent extends GenericEvent
      */
     public function isClone()
     {
-        return self::EVENT_INSERT === $this->eventName && null !== $this->getNode()->parent_nid;
+        return self::EVENT_INSERT === $this->eventName && !empty($this->getNode()->parent_nid);
     }
 
     /**
