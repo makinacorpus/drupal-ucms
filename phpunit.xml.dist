@@ -11,9 +11,10 @@
     </php>
 
     <testsuites>
-        <testsuite name="Dashboard test suite">
+        <testsuite name="UCMS test suite">
             <directory>./ucms_contrib/src/Tests/</directory>
             <directory>./ucms_dashboard/src/Tests/</directory>
+            <directory>./ucms_layout/src/Tests/</directory>
             <directory>./ucms_seo/src/Tests/</directory>
             <directory>./ucms_search/src/Tests/</directory>
             <directory>./ucms_site/src/Tests/</directory>

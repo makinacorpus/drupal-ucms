@@ -55,18 +55,4 @@ interface StorageInterface
      * @return Layout
      */
     public function findForNodeOnSite($nodeId, $siteId, $createOnMiss = false);
-
-    /**
-     * Reset cache for node
-     *
-     * @param int $nodeId
-     */
-    public function resetCacheForNode($nodeId);
-
-    /**
-     * Reset cache for site
-     *
-     * @param int $nodeId
-     */
-    public function resetCacheForSite($siteId);
 }

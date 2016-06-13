@@ -5,12 +5,10 @@ namespace MakinaCorpus\Ucms\Site\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Reference a node on a site
@@ -23,8 +21,7 @@ class NodeReference extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_site.node_manager'),
-            $container->get('event_dispatcher')
+            $container->get('ucms_site.node_manager')
         );
     }
 
@@ -33,15 +30,9 @@ class NodeReference extends FormBase
      */
     protected $nodeManager;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    public function __construct(NodeManager $nodeManager, EventDispatcherInterface $eventDispatcher)
+    public function __construct(NodeManager $nodeManager)
     {
         $this->nodeManager = $nodeManager;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -126,8 +117,6 @@ class NodeReference extends FormBase
             '%title'  => $node->title,
             '%site'   => $sites[$siteId]->title,
         ]));
-
-        $this->eventDispatcher->dispatch('site:ref', new ResourceEvent('site', $siteId, $this->currentUser()->uid, ['nid' => $node->nid]));
 
         $form_state->setRedirect('node/' . $node->nid);
     }

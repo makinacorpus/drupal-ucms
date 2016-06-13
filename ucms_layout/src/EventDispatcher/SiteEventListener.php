@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Layout\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
@@ -103,7 +102,9 @@ class SiteEventListener
         }
     }
 
-
+    /**
+     * When cloning a site, we need to clone all layouts as well.
+     */
     public function onSiteClone(SiteCloneEvent $event)
     {
         $source = $event->getTemplateSite();
@@ -168,30 +169,5 @@ class SiteEventListener
                     ':target' => $target->getId(),
                 ]
             );
-    }
-
-
-    public function onSiteRef(ResourceEvent $event)
-    {
-        $siteId = $event->getResourceIdList()[0];
-        /* @var \Drupal\node\NodeInterface $node */
-        $node = $this->entityManager->getStorage('node')->load($event->getArgument('nid'));
-
-        $layout = $this->contextManager
-            ->getPageContext()
-            ->getStorage()
-            ->findForNodeOnSite($node->id(), $node->site_id);
-
-        if ($layout) {
-            $clone = clone $layout;
-            $clone->setId(null);
-            $clone->setSiteId($siteId);
-
-            foreach ($clone->getAllRegions() as $region) {
-                $region->toggleUpdateStatus(true);
-            }
-
-            $this->contextManager->getPageContext()->getStorage()->save($clone);
-        }
     }
 }

@@ -29,66 +29,51 @@ class DrupalStorage implements StorageInterface
     {
         $ret = [];
 
-        $cidList = array_map(
-            function ($value) {
-                return 'layout:' . $value;
-            },
-            $idList
-        );
+        $rows = $this
+            ->db
+            ->select('ucms_layout', 'l')
+            ->fields('l')
+            ->condition('l.id', $idList)
+            ->execute()
+            ->fetchAllAssoc('id')
+        ;
 
-        foreach (cache_get_multiple($cidList, 'cache_layout') as $cached) {
-            if ($cached->data instanceof Layout) {
-                $ret[$cached->data->getId()] = $cached->data;
-            }
+        $data = $this
+            ->db
+            ->select('ucms_layout_data', 'd')
+            ->fields('d')
+            ->condition('d.layout_id', $idList)
+            ->orderBy('d.layout_id')
+            ->orderBy('d.region')
+            ->orderBy('d.weight')
+            ->execute()
+        ;
+
+        // Build a structure map for easier and quicker lookup then
+        $regionMap = [];
+        foreach ($data as $line) {
+            $regionMap[$line->layout_id][$line->region][] = new Item($line->nid, $line->view_mode);
         }
 
-        $missing = array_diff($idList, array_keys($ret));
-        if (!empty($missing)) {
+        foreach ($rows as $row) {
 
-            $rows = db_select('ucms_layout', 'l')
-                ->fields('l')
-                ->condition('l.id', $missing)
-                ->execute()
-                ->fetchAllAssoc('id')
+            $layout = (new Layout())
+                ->setId($row->id)
+                ->setSiteId($row->site_id)
+                ->setNodeId($row->nid)
             ;
 
-            $data = db_select('ucms_layout_data', 'd')
-                ->fields('d')
-                ->condition('d.layout_id', $missing)
-                ->orderBy('d.layout_id')
-                ->orderBy('d.region')
-                ->orderBy('d.weight')
-                ->execute()
-            ;
-
-            // Build a structure map for easier and quicker lookup then
-            $regionMap = [];
-            foreach ($data as $line) {
-                $regionMap[$line->layout_id][$line->region][] = new Item($line->nid, $line->view_mode);
-            }
-
-            foreach ($rows as $row) {
-
-                $layout = (new Layout())
-                    ->setId($row->id)
-                    ->setSiteId($row->site_id)
-                    ->setNodeId($row->nid)
-                ;
-
-                if (!empty($regionMap[$row->id])) {
-                    foreach ($regionMap[$row->id] as $name => $items) {
-                        $region = $layout->getRegion($name);
-                        foreach ($items as $item) {
-                            $region->append($item);
-                        }
-                        $region->toggleUpdateStatus(false);
+            if (!empty($regionMap[$row->id])) {
+                foreach ($regionMap[$row->id] as $name => $items) {
+                    $region = $layout->getRegion($name);
+                    foreach ($items as $item) {
+                        $region->append($item);
                     }
+                    $region->toggleUpdateStatus(false);
                 }
-
-                cache_set('layout:' . $layout->getId(), $layout, 'cache_layout');
-
-                $ret[$row->id] = $layout;
             }
+
+            $ret[$row->id] = $layout;
         }
 
         return $ret;
@@ -111,7 +96,9 @@ class DrupalStorage implements StorageInterface
     {
         if ($region->isUpdated()) {
 
-            db_delete('ucms_layout_data')
+            $this
+                ->db
+                ->delete('ucms_layout_data')
                 ->condition('layout_id', $layout->getId())
                 ->condition('region', $region->getName())
                 ->execute()
@@ -131,7 +118,7 @@ class DrupalStorage implements StorageInterface
             }
 
             if (!empty($values)) {
-                $q = db_insert('ucms_layout_data');
+                $q = $this->db->insert('ucms_layout_data');
                 $q->fields(['layout_id', 'region', 'nid', 'weight', 'view_mode']);
                 foreach ($values as $row) {
                     $q->values($row);
@@ -155,16 +142,12 @@ class DrupalStorage implements StorageInterface
         $tx = null;
 
         try {
-            $tx = db_transaction();
+            $tx = $this->db->startTransaction();
 
             // Value object that will get us the identifier then
             $row              = new \stdClass();
             $row->site_id     = $layout->getSiteId();
             $row->nid         = $layout->getNodeId();
-
-            /* if (empty($row->nid)) {
-                $row->nid = $GLOBALS['user']->nid;
-            } */
 
             if ($layout->getId()) {
                 $row->id = $layout->getId();
@@ -174,12 +157,9 @@ class DrupalStorage implements StorageInterface
                 $layout->setId((int)$row->id);
             }
 
-            // Update region
             foreach ($layout->getAllRegions() as $region) {
                 $this->regionUpdate($layout, $region);
             }
-
-            cache_clear_all('layout:' . $layout->getId(), 'cache_layout');
 
             unset($tx); // Explicit commit
 
@@ -206,20 +186,14 @@ class DrupalStorage implements StorageInterface
         $tx = null;
 
         try {
-          $tx = db_transaction();
+            $tx = $this->db->startTransaction();
 
-            // We miss a few ON DELETE CASCADE
-            db_delete('ucms_layout_data')
-                ->condition('layout_id', $id)
-                ->execute()
-            ;
-
-            db_delete('ucms_layout')
+            $this
+                ->db
+                ->delete('ucms_layout')
                 ->condition('id', $id)
                 ->execute()
             ;
-
-            cache_clear_all('layout:' . $id, 'cache_layout');
 
             unset($tx); // Explicit commit
 
@@ -267,42 +241,28 @@ class DrupalStorage implements StorageInterface
         if ($createOnMiss) {
 
             // Else we will experience foreign key constraint violation
-            $existsInSite = (bool)db_query("SELECT 1 FROM {ucms_site_node} WHERE nid = :node_id AND site_id = :site_id", [
-                ':node_id' => $nodeId,
-                ':site_id' => $siteId,
-            ])->fetchField();
+            $existsInSite = (bool)$this
+                ->db
+                ->query(
+                    "SELECT 1 FROM {ucms_site_node} WHERE nid = :node_id AND site_id = :site_id",
+                    [
+                        ':node_id' => $nodeId,
+                        ':site_id' => $siteId,
+                    ]
+                )
+                ->fetchField()
+            ;
 
             if ($existsInSite) {
-                $id = (int)db_insert('ucms_layout')
-                    ->fields([
-                        'nid'     => $nodeId,
-                        'site_id' => $siteId
-                    ])
-                    ->execute()
-                ;
 
-                return (new Layout())
-                    ->setId($id)
-                    ->setSiteId($siteId)
-                    ->setNodeId($nodeId)
-                ;
+                $layout = new Layout();
+                $layout->setSiteId($siteId);
+                $layout->setNodeId($nodeId);
+
+                $this->save($layout);
+
+                return $layout;
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resetCacheForNode($nodeId)
-    {
-        cache_clear_all('*', 'cache_layout', true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resetCacheForSite($siteId)
-    {
-        cache_clear_all('*', 'cache_layout', true);
     }
 }

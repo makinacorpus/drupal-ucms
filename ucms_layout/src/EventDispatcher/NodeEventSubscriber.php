@@ -27,6 +27,11 @@ class NodeEventSubscriber implements EventSubscriberInterface
         $this->manager = $manager;
     }
 
+    /**
+     * When cloning a node within a site, we must replace all its parent
+     * references using the new new node identifier instead, in order to make
+     * it gracefully inherit from the right layouts.
+     */
     public function onInsert(NodeEvent $event)
     {
         $node = $event->getNode();
@@ -45,7 +50,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
             if ($exists) {
 
                 // On clone, the original node layout should be kept but owned
-                // by the clone instead of the parent, IF AND ONLY If the site
+                // by the clone instead of the parent, IF AND ONLY IF the site
                 // is the same; please note that the dereferencing happens in
                 // 'ucms_site' module.
                 $this
