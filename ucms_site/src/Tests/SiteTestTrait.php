@@ -20,12 +20,12 @@ trait SiteTestTrait
     /**
      * @var Site[]
      */
-    protected $sites;
+    protected $sites = [];
 
     /**
      * @var Node[]
      */
-    protected $nodes;
+    protected $nodes = [];
 
     /**
      * @var integer
@@ -113,7 +113,7 @@ trait SiteTestTrait
      *
      * @return Site
      */
-    protected function createDrupalSite($state = SiteState::ON, $template = null, $name = null)
+    protected function createDrupalSite($state = SiteState::ON, $template = null, $name = null, $values = [])
     {
         $site = new Site();
 
@@ -122,6 +122,10 @@ trait SiteTestTrait
         $site->title = $stupidHash;
         $site->title_admin = $stupidHash;
         $site->http_host = $stupidHash.'.example.com';
+
+        foreach ($values as $key => $value) {
+            $site->{$key} = $value;
+        }
 
         if ($template === true) {
             // this site is a template

@@ -65,7 +65,11 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
     {
         $d = new \DOMDocument();
 
-        if (!@$d->loadHTML('<!DOCTYPE html><html><body>' . $text . '</body></html>')) {
+        // Originally fixed by Yannick converting everything to HTML_ENTITIES
+        // but this may break HTML behaviour at some point, so just switching
+        // the xml header to utf-8 encoding
+        // @see http://stackoverflow.com/a/8218649
+        if (!@$d->loadHTML('<?xml encoding="utf-8" ?><!DOCTYPE html><html><body>' . $text . '</body></html>')) {
             $this->logger->error("markup contain invalid HTML, cannot parse medias");
 
             return;
@@ -157,7 +161,7 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
 
                 $new = $d->createElement('div');
                 $new->setAttribute('class', 'body-media');
-                $this->setInnerHtml($new, $renderedMedia);
+                 $this->setInnerHtml($new, $renderedMedia);
 
                 $new->setAttribute('data-media-nid', $nodeId);
                 $new->setAttribute('data-media-width', $width);

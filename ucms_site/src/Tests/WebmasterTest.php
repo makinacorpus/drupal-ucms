@@ -3,17 +3,18 @@
 namespace MakinaCorpus\Ucms\Site\Tests;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 class WebmasterTest extends AbstractDrupalTest
 {
+    use SiteTestTrait;
+
     public function testNodeIndexerChain()
     {
         /* @var $manager SiteManager */
         $manager  = $this->getDrupalContainer()->get('ucms_site.manager');
-        $storage  = $manager->getStorage();
         $access   = $manager->getAccess();
 
         $u1 = $this->createDrupalUser()->uid;
@@ -21,12 +22,7 @@ class WebmasterTest extends AbstractDrupalTest
         $u3 = $this->createDrupalUser()->uid;
 
         // Create a new foo site with a non existing user
-        $site = new Site();
-        $site->uid = $u1;
-        $site->title = 'Satan !';
-        $site->title_admin = "Satan's site";
-        $site->http_host = uniqid() . mt_rand() . '.example.com';
-        $storage->save($site);
+        $site = $this->createDrupalSite(SiteState::ON, null, null, ['uid' => $u1]);
 
         // Ensures that upon site creation, event is raised and site now
         // has a new webmaster, which is our user
