@@ -63,16 +63,13 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
      */
     protected function getDocumentFromHtml($text)
     {
-        $d = new \DOMDocument('1.0', 'UTF-8');
+        $d = new \DOMDocument();
 
-        // PHP and its libs are so ugly... and so criminal!!
-        // © Everyday a mama cry
-        // © Innocent ou criminal
-        // © Enterrement et tribunal
+        // Originally fixed by Yannick converting everything to HTML_ENTITIES
+        // but this may break HTML behaviour at some point, so just switching
+        // the xml header to utf-8 encoding
         // @see http://stackoverflow.com/a/8218649
-        $text = mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8');
-
-        if (!@$d->loadHTML('<!DOCTYPE html><html><body>' . $text . '</body></html>')) {
+        if (!@$d->loadHTML('<?xml encoding="utf-8" ?><!DOCTYPE html><html><body>' . $text . '</body></html>')) {
             $this->logger->error("markup contain invalid HTML, cannot parse medias");
 
             return;
