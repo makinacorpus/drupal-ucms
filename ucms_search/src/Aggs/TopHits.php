@@ -33,6 +33,11 @@ class TopHits implements AggInterface
     private $results;
 
     /**
+     * @var int[][]
+     */
+    private $counts;
+
+    /**
      * Default constructor
      *
      * @param string $field
@@ -86,6 +91,17 @@ class TopHits implements AggInterface
     }
 
     /**
+     * Get top hit counts per bucket
+     *
+     * @param int[]
+     *   Keys are field values, values are counts.
+     */
+    public function getCounts()
+    {
+        return $this->counts;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function buildQueryData(Search $search, $query)
@@ -133,6 +149,7 @@ class TopHits implements AggInterface
         $this->results = [];
 
         foreach ($raw['aggregations'][$name]['buckets'] as $bucket) {
+            $this->counts[$bucket['key']] = $bucket['doc_count'];
             foreach ($bucket[$this->getAggregationBucketName()]['hits']['hits'] as $data) {
                 $this->results[$bucket['key']][] = $data['_id'];
             }
