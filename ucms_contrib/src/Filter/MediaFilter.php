@@ -63,7 +63,14 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
      */
     protected function getDocumentFromHtml($text)
     {
-        $d = new \DOMDocument();
+        $d = new \DOMDocument('1.0', 'UTF-8');
+
+        // PHP and its libs are so ugly... and so criminal!!
+        // © Everyday a mama cry
+        // © Innocent ou criminal
+        // © Enterrement et tribunal
+        // @see http://stackoverflow.com/a/8218649
+        $text = mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8');
 
         if (!@$d->loadHTML('<!DOCTYPE html><html><body>' . $text . '</body></html>')) {
             $this->logger->error("markup contain invalid HTML, cannot parse medias");
@@ -157,7 +164,7 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
 
                 $new = $d->createElement('div');
                 $new->setAttribute('class', 'body-media');
-                $this->setInnerHtml($new, $renderedMedia);
+                 $this->setInnerHtml($new, $renderedMedia);
 
                 $new->setAttribute('data-media-nid', $nodeId);
                 $new->setAttribute('data-media-width', $width);
