@@ -139,8 +139,6 @@ function ucms_layout_update_7002() {
   db_drop_table('ucms_layout_data');
   db_drop_table('ucms_layout');
 
-  cache_clear_all('*', 'cache_layout', true);
-
   db_create_table('ucms_layout', drupal_get_schema_unprocessed('ucms_layout', 'ucms_layout'));
   db_create_table('ucms_layout_data', drupal_get_schema_unprocessed('ucms_layout', 'ucms_layout_data'));
 

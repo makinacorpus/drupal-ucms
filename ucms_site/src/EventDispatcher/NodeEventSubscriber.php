@@ -59,7 +59,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
             ],
             NodeEvent::EVENT_INSERT => [
                 ['onInsert', 0],
-                ['onPostInsert', -128],
+                ['onPostInsert', -32],
             ],
             NodeEvent::EVENT_SAVE => [
                 ['onSave', 0]
