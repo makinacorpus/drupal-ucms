@@ -195,14 +195,14 @@ abstract class AbstractFacet implements AggInterface
     public function prepareQuery(Search $search, $query)
     {
         $values = $this->getQueryParam($query, $this->getParameterName());
-        if ($values) {
+        if (isset($values)) {
             if (!is_array($values)) {
                 $values = [$values];
             }
             $this->setSelectedValues($values);
         }
 
-        if ($values) {
+        if (isset($values)) {
 
             if ($this->isPostFilter) {
                 $query = $search->getPostFilterQuery();
