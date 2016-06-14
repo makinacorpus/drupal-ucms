@@ -3,6 +3,7 @@ description = "Provide site entity, site workflow, site node access machinery"
 core = 7.x
 package = UCMS
 php = 5.5
+dependencies[] = minidialog
 dependencies[] = sf_dic
 dependencies[] = ucms_dashboard
 dependencies[] = umenu

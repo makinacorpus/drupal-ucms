@@ -3,18 +3,26 @@
 namespace MakinaCorpus\Ucms\Seo\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
+use MakinaCorpus\Umenu\TreeManager;
 
 use Symfony\Component\HttpFoundation\Response;
 
 class SitemapController extends Controller
 {
-
-    public function displayAction($display='html')
+    /**
+     * @return TreeManager
+     */
+    private function getTreeManager()
     {
-        $site = $this->get('ucms_site.manager')->getContext();
-        $menus = $this->get('umenu.storage')->loadWithConditions(['site_id' => $site->getId()]);
+        return $this->get('umenu.manager');
+    }
 
-        if ($display === 'xml') {
+    public function displayAction($display = 'html')
+    {
+        $site   = $this->get('ucms_site.manager')->getContext();
+        $menus  = $this->get('umenu.storage')->loadWithConditions(['site_id' => $site->getId()]);
+
+        if ('xml' === $display) {
             return $this->displayXML($menus);
         }
 
@@ -23,37 +31,33 @@ class SitemapController extends Controller
 
     private function displayXML($menus)
     {
-        $menus_tree = [];
-        foreach ($menus as $menu_name => $menu) {
-            $menus_tree[] = menu_build_tree($menu_name);
+        $treeList = [];
+        $manager  = $this->getTreeManager();
+
+        foreach (array_keys($menus) as $menuName) {
+            $tree = $manager->buildTree($menuName, true);
+            if (!$tree->isEmpty()) {
+                $treeList[$menuName] = $tree;
+            }
         }
 
-        $output = $this->renderView(
-            'module:ucms_seo:views/sitemap.xml.twig',
-            ['menus_tree' => $menus_tree]
-        );
+        $output = $this->renderView('module:ucms_seo:views/sitemap.xml.twig', ['menus_tree' => $treeList]);
 
-        return new Response(
-            $output,
-            200,
-            array('content-type' => 'application/xml')
-        );
+        return new Response($output, 200, ['content-type' => 'application/xml']);
     }
 
     private function displayHTML($menus)
     {
-        $build = [];
+        $build    = [];
+        $manager  = $this->getTreeManager();
 
-        foreach ($menus as $menu_name => $menu) {
-            $tree = menu_build_tree($menu_name);
-            $menu_output = menu_tree_output($tree);
-            if ($menu_output) {
-                $build[$menu_name] = $menu_output;
+        foreach (array_keys($menus) as $menuName) {
+            $tree = $manager->buildTree($menuName, true);
+            if (!$tree->isEmpty()) {
+                $build[$menuName] = $tree;
             }
         }
 
-        return theme('ucms_seo_sitemap', [
-            'menus' => $build,
-        ]);
+        return theme('ucms_seo_sitemap', ['menus' => $build]);
     }
 }

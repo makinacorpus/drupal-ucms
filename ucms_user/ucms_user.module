@@ -122,7 +122,7 @@ function ucms_user_menu() {
     'title'             => 'Set password',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserSetPassword', 1],
-    'access callback'   => true,
+    'access callback'   => ['user_is_logged_in'],
     'type'              => MENU_CALLBACK,
   ];
 

@@ -14,6 +14,7 @@ use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\User\UserAccess;
 
 /**
  * Implements hook_menu().
@@ -157,7 +158,7 @@ function ucms_site_menu() {
   $items['admin/dashboard/site/users-ac'] = [
     'title'             => "Users autocompletion",
     'page callback'     => 'ucms_site_dashboard_users_autocomplete',
-    'access callback'   => true,
+    'access callback'   => 'ucms_site_menu_access_autocomplete',
     'type'              => MENU_CALLBACK,
     'file'              => 'ucms_site.dashboard.inc',
   ];
@@ -265,6 +266,9 @@ function ucms_site_permission() {
  */
 function ucms_site_admin_path_is_allowed($path) {
   if ('system/ajax' === $path) {
+    return true;
+  }
+  if (minidialog_is_ajax()) {
     return true;
   }
   if (path_is_admin($path)) {
@@ -434,6 +438,15 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
     $account = \Drupal::currentUser();
   }
   return ucms_site_manager()->getAccess()->userCanSwitch($account, $site, $state);
+}
+
+/**
+ * Menu access helper for users autocomplete.
+ */
+function ucms_site_menu_access_autocomplete() {
+  $account = \Drupal::currentUser();
+  $manager = ucms_site_manager();
+  return $manager->getAccess()->userIsWebmaster($account) || $account->hasPermission(UserAccess::PERM_MANAGE_ALL);
 }
 
 /**

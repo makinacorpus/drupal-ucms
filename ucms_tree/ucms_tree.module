@@ -1,5 +1,12 @@
 <?php
+/**
+ * @file
+ * UCMS Tree module.
+ */
 
+use Drupal\node\NodeInterface;
+
+use MakinaCorpus\Umenu\TreeItem;
 
 /**
  * Implements hook_menu().
@@ -27,6 +34,40 @@ function ucms_tree_menu() {
 }
 
 /**
+ * Find most revelant menu item for node in context
+ *
+ * @param int|NodeInterface $nodeId
+ *
+ * @return TreeItem
+ *
+ * @deprecated
+ *   Move this out to a service somewhere
+ */
+function ucms_tree_find_node_item($node) {
+
+  $siteManager = ucms_site_manager();
+  $treeManager = umenu_get_manager();
+
+  if (!$siteManager->hasContext()) {
+    return null;
+  }
+
+  $nodeId = null;
+
+  if ($node instanceof NodeInterface) {
+    $nodeId = $node->id();
+  } else if (is_numeric($node)) {
+    $nodeId = $node;
+  } else {
+    return null;
+  }
+
+  $name = 'site-main-' . $siteManager->getContext()->getId();
+
+  return $treeManager->buildTree($name)->getMostRevelantItemForNode($nodeId);
+}
+
+/**
  * @return mixed
  */
 function ucms_tree_check_access($account = NULL) {
@@ -39,8 +80,9 @@ function ucms_tree_check_access($account = NULL) {
     return $manager
       ->getAccess()
       ->userCanEditTree($account, $manager->getContext())
-      ;
+    ;
   }
+
   return FALSE;
 }
 
