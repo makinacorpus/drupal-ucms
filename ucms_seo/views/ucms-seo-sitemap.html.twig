@@ -1,4 +1,20 @@
+{% macro tree(tree) %}
+  {% import _self as xmlsitemap %}
+  {% if tree.children %}
+    <ul class="nav nav-stacked">
+      {% for item in tree.children %}
+        <li>
+          <a href="{{ url(item.route) }}">{{ item.title }}</a>{{ xmlsitemap.tree(item) }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
+{% import _self as xmlsitemap %}
+
 {% for menu_name, tree in menus %}
-    <h3>{{ menu_name }}</h3>
-    {{ tree }}
+  <h3>{{ menu_name }}</h3>
+  {{ xmlsitemap.tree(tree) }}
 {% endfor %}
+

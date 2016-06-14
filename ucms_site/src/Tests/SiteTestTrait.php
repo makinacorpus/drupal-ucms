@@ -172,7 +172,7 @@ trait SiteTestTrait
      *
      * @return NodeInterface
      */
-    protected function createDrupalNode($type, $site = null, $values = [])
+    protected function createDrupalNode($type = 'test', $site = null, $values = [])
     {
         $node = new Node();
         $node->title = 'Node test '.$this->nidSeq++;;
