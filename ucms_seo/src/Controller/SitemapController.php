@@ -20,7 +20,7 @@ class SitemapController extends Controller
     public function displayAction($display = 'html')
     {
         $site   = $this->get('ucms_site.manager')->getContext();
-        $menus  = $this->get('umenu.storage')->loadWithConditions(['site_id' => $site->getId()]);
+        $menus  = $this->get('umenu.menu_storage')->loadWithConditions(['site_id' => $site->getId()]);
 
         if ('xml' === $display) {
             return $this->displayXML($menus);

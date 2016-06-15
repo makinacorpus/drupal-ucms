@@ -104,6 +104,7 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->getSearch()
             ->createFacet('status', null)
             ->setChoicesMap([0 => $this->t("Unpublished"), 1 => $this->t("Published")])
+            ->setExclusive(true)
             ->setTitle($this->t("Status"))
         ;
 

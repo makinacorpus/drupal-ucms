@@ -18,7 +18,7 @@ trait AliasTestTrait
      */
     protected function getMenuStorage()
     {
-        return $this->getDrupalContainer()->get('umenu.storage');
+        return $this->getDrupalContainer()->get('umenu.menu_storage');
     }
 
     /**

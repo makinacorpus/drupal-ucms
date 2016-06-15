@@ -16,12 +16,12 @@ class TreeCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('umenu.storage') || $container->hasAlias('umenu.storage')) {
+        if ($container->hasDefinition('umenu.menu_storage') || $container->hasAlias('umenu.menu_storage')) {
             $eventListener = $container->getDefinition('ucms_tree.site_event_listener');
 
             $eventListener->addMethodCall(
                 'setMenuStorage',
-                [new Reference('umenu.storage')]
+                [new Reference('umenu.menu_storage')]
             );
         }
     }

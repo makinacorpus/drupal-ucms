@@ -151,11 +151,6 @@ class NodeAddToSite extends FormBase
         $path   = 'node/add/' . str_replace('_', '-', $type);
 
         $options = [];
-        if (isset($_GET['destination'])) {
-            $options['query']['destination'] = $_GET['destination'];
-            unset($_GET['destination']);
-        }
-
         switch ($action) {
 
             case 'local':

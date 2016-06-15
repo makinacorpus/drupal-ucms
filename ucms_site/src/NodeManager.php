@@ -232,6 +232,10 @@ class NodeManager
      */
     public function deleteReferenceBulkFromSite($siteId, $nodeIdList)
     {
+        if (!$nodeIdList) {
+            return;
+        }
+
         $this
             ->db
             ->delete('ucms_site_node')
