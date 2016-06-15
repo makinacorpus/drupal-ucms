@@ -31,14 +31,6 @@ class MenuEventListener
         $this->entityManager = $entityManager;
     }
 
-    private function findNodeIdentifierFromItem($item)
-    {
-        $matches = [];
-        if (preg_match('@^node/(\d+)$@', $item['link_path'], $matches)) {
-            return (int)$matches[1];
-        }
-    }
-
     /**
      * On site context initialization.
      *
@@ -52,9 +44,7 @@ class MenuEventListener
         $storage = $this->entityManager->getStorage('node');
 
         foreach ($event->getDeletedItems() as $item) {
-            if ($id = $this->findNodeIdentifierFromItem($item)) {
-                $deleted[] = $id;
-            }
+            $deleted[] = $item->getNodeId();
         }
         if ($deleted) {
             foreach ($storage->loadMultiple($deleted) as $node) {
@@ -62,10 +52,8 @@ class MenuEventListener
             }
         }
 
-        foreach ($event->getRootItems() as $item) {
-            if ($id = $this->findNodeIdentifierFromItem($item)) {
-                $changed[] = $id;
-            }
+        foreach ($event->getTree()->getChildren() as $item) {
+            $changed[] = $item->getNodeId();
         }
         if ($changed) {
             foreach ($storage->loadMultiple($changed) as $node) {

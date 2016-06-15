@@ -3,6 +3,8 @@
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Umenu\Tree;
+use MakinaCorpus\Umenu\TreeItem;
 
 use Symfony\Component\EventDispatcher\Event;
 
@@ -17,10 +19,10 @@ class MenuEvent extends Event
      */
     private $site;
 
-    public function __construct($menuName, $items = [], $deletedItems = [], $site)
+    public function __construct($menuName, Tree $tree, $deletedItems = [], $site)
     {
         $this->menuName = $menuName;
-        $this->items = $items;
+        $this->tree = $tree;
         $this->deletedItems = $deletedItems;
         $this->site = $site;
     }
@@ -43,18 +45,17 @@ class MenuEvent extends Event
         return $this->menuName;
     }
 
-    public function getRootItems()
+    /**
+     * @return Tree
+     */
+    public function getTree()
     {
-        return array_filter($this->items, function ($item) {
-            return empty($item['plid']);
-        });
+        return $this->tree;
     }
 
-    public function getAllItems()
-    {
-        return $this->items;
-    }
-
+    /**
+     * @return TreeItem[]
+     */
     public function getDeletedItems()
     {
         return $this->deletedItems;
