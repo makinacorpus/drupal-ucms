@@ -35,7 +35,7 @@
     "require" : {
         "elasticsearch/elasticsearch" : "^2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
-        "makinacorpus/drupal-umenu" : ">=1.0.8",
+        "makinacorpus/drupal-umenu" : ">=1.0.9",
         "makinacorpus/drupal-sf-dic" : "^3.0"
     },
     "suggests" : {
