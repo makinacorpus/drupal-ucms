@@ -8,31 +8,17 @@ use Drupal\Core\Form\FormStateInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
-use MakinaCorpus\Umenu\DrupalMenuStorage;
+use MakinaCorpus\Umenu\TreeBase;
+use MakinaCorpus\Umenu\TreeManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class TreeForm extends FormBase
 {
-    /**
-     * @var \MakinaCorpus\Umenu\DrupalMenuStorage
-     */
-    private $storage;
-
-    /**
-     * @var \MakinaCorpus\Ucms\Site\SiteManager
-     */
-    private $manager;
-
-    /**
-     * @var \DatabaseConnection
-     */
+    private $treeManager;
+    private $siteManager;
     private $db;
-
-    /**
-     * @var EventDispatcher
-     */
     private $dispatcher;
 
     /**
@@ -41,7 +27,7 @@ class TreeForm extends FormBase
     public static function create(ContainerInterface $container)
     {
         return new static(
-            $container->get('umenu.storage'),
+            $container->get('umenu.manager'),
             $container->get('ucms_site.manager'),
             $container->get('database'),
             $container->get('event_dispatcher')
@@ -51,14 +37,14 @@ class TreeForm extends FormBase
     /**
      * TreeForm constructor.
      *
-     * @param \MakinaCorpus\Umenu\DrupalMenuStorage $storage
-     * @param \MakinaCorpus\Ucms\Site\SiteManager $manager
+     * @param TreeManager $treeManager
+     * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
      */
-    public function __construct(DrupalMenuStorage $storage, SiteManager $manager, \DatabaseConnection $db, EventDispatcher $dispatcher)
+    public function __construct(TreeManager $treeManager, SiteManager $siteManager, \DatabaseConnection $db, EventDispatcher $dispatcher)
     {
-        $this->storage = $storage;
-        $this->manager = $manager;
+        $this->treeManager = $treeManager;
+        $this->siteManager = $siteManager;
         $this->db = $db;
         $this->dispatcher = $dispatcher;
     }
@@ -77,10 +63,10 @@ class TreeForm extends FormBase
     public function buildForm(array $form, FormStateInterface $form_state)
     {
         // Load all menus for site.
-        $site = $this->manager->getContext();
+        $site = $this->siteManager->getContext();
         $form_state->setTemporaryValue('site', $site);
 
-        $menus = $this->storage->loadWithConditions(['site_id' => $site->getId()]);
+        $menus = $this->treeManager->getMenuStorage()->loadWithConditions(['site_id' => $site->getId()]);
 
         $form['#attached']['library'][] = ['ucms_tree', 'nested-sortable'];
 
@@ -89,22 +75,15 @@ class TreeForm extends FormBase
         $form['menus']['#tree'] = true;
 
         foreach ($menus as $menu) {
-            $tree = _menu_build_tree($menu['name']);
-            // We give all access to nodes, even unpublished
-            foreach (array_keys($tree['node_links']) as $nid) {
-                foreach ($tree['node_links'][$nid] as &$link) {
-                    $link['access'] = true;
-                }
-            }
-            // This sorts the menu items
-            _menu_tree_check_access($tree['tree']);
+            $tree = $this->treeManager->buildTree($menu['id'], false);
+
             $form['menus'][$menu['name']] = [
                 '#type' => 'hidden',
-                // Will be filled in Javascript
-                // '#value' => '',
+                // '#value' => '', // Will be filled in Javascript
             ];
-            $form['menus'][$menu['name'].'_list'] = $this->treeOutput($tree['tree'], $menu);
+            $form['menus'][$menu['name'].'_list'] = $this->treeOutput($tree, $menu);
         }
+
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'  => 'submit',
@@ -217,32 +196,33 @@ class TreeForm extends FormBase
     /**
      * Recursively outputs a tree as nested item lists.
      *
-     * @param $tree
-     * @param null $menu
+     * @param TreeBase $tree
+     * @param string[] $menu
+     *
      * @return string
      */
-    private function treeOutput($tree, $menu = null)
+    private function treeOutput(TreeBase $tree, $menu = null)
     {
         $items = [];
 
         if (!empty($tree)) {
-            foreach ($tree as $data) {
+            foreach ($tree->getChildren() as $item) {
                 $element = [];
 
                 $input = [
                   '#prefix'         => '<div class="tree-item clearfix">',
                   '#type'           => 'textfield',
                   '#attributes'     => ['class' => ['']],
-                  '#value'          => $data['link']['link_title'],
+                  '#value'          => $item->getTitle(),
                   '#theme_wrappers' => [],
                   '#suffix'         => '<span class="glyphicon glyphicon-remove"></span></div>',
                 ];
                 $element['data'] = drupal_render($input);
-                $element['data-name'] = substr($data['link']['link_path'], 5); // node/123
-                $element['data-mlid'] = $data['link']['mlid'];
+                $element['data-name'] = $item->getNodeId();
+                $element['data-mlid'] = $item->getId();
 
-                if ($data['below']) {
-                    $elements = $this->treeOutput($data['below']);
+                if ($item->hasChildren()) {
+                    $elements = $this->treeOutput($item);
                     $element['data'] .= drupal_render($elements);
                 }
 
