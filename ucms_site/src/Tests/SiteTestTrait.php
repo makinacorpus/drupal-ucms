@@ -8,6 +8,7 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Layout\DrupalStorage;
 use MakinaCorpus\Ucms\Seo\SeoService;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
