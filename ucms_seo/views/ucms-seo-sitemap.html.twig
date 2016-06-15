@@ -13,8 +13,8 @@
 
 {% import _self as xmlsitemap %}
 
-{% for menu_name, tree in menus %}
-  <h3>{{ menu_name }}</h3>
+{% for name, tree in menus %}
+  <h3>{{ name }}</h3>
   {{ xmlsitemap.tree(tree) }}
 {% endfor %}
 

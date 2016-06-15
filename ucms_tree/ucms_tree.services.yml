@@ -7,7 +7,7 @@ services:
 
   ucms_tree.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\ContextPaneEventListener
-    arguments: ["@ucms_site.manager", "@umenu.storage"]
+    arguments: ["@ucms_site.manager", "@umenu.manager"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
 
