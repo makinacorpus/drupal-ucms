@@ -23,14 +23,6 @@ class MenuEventListener
         $this->nodeManager = $nodeManager;
     }
 
-    private function findNodeIdentifierFromItem($item)
-    {
-        $matches = [];
-        if (preg_match('@^node/(\d+)$@', $item['link_path'], $matches)) {
-            return (int)$matches[1];
-        }
-    }
-
     /**
      * On site context initialization.
      *
@@ -46,9 +38,7 @@ class MenuEventListener
         $changed = [];
 
         foreach ($event->getDeletedItems() as $item) {
-            if ($id = $this->findNodeIdentifierFromItem($item)) {
-                $deleted[] = $id;
-            }
+            $deleted[] = $item->getNodeId();
         }
         if ($deleted) {
             // @todo
@@ -56,10 +46,8 @@ class MenuEventListener
             //  except for some types such as news (list by type)
         }
 
-        foreach ($event->getAllItems() as $item) {
-            if ($id = $this->findNodeIdentifierFromItem($item)) {
-                $changed[] = $id;
-            }
+        foreach ($event->getTree()->getAll() as $item) {
+            $changed[] = $item->getNodeId();
         }
         if ($changed) {
             $this->nodeManager->createReferenceBulkInSite($event->getSite()->getId(), $changed);

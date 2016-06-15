@@ -96,17 +96,22 @@ class TreeForm extends FormBase
     /**
      * Save the items in the menus, converting from JS structure to real menu links.
      *
-     * @param string $menuName
+     * @param string $menuId
      * @param mixed[] $items
      * @param Site $site
      */
     protected function saveMenuItems($menuName, $items, Site $site = null)
     {
+        $itemStorage  = $this->treeManager->getItemStorage();
+        $currentTree  = $this->treeManager->buildTree($menuName, false);
+        $menu         = $this->treeManager->getMenuStorage()->load($menuName);
+        $menuId       = $menu['id'];
+
         // First, get all elements so that we can delete those that are removed
         // @todo pri: sorry this is inneficient, but I need it
         $old = [];
-        foreach (menu_load_links($menuName) as $item) {
-            $old[$item['mlid']] = $item;
+        foreach ($currentTree->getAll() as $item) {
+            $old[$item->getId()] = $item;
         }
 
         // FIXME, this is coming from javascript, we should really check access on nodes
@@ -115,49 +120,43 @@ class TreeForm extends FormBase
         $processed = [];
         $deleteItems = [];
 
-        $weight = -50;
+        // Keep in mind that items ordered
         if (!empty($items)) {
-            foreach ($items as $originalIndex => &$item) {
-                $nid = $item['name'];
-                $isNew = substr($item['id'], 0, 4) == 'new_';
+            foreach ($items as $item) {
 
-                $link = [
-                    'menu_name'  => $menuName,
-                    'link_path'  => 'node/'.$nid,
-                    'link_title' => $item['title'],
-                    'expanded'   => 1,
-                    'weight'     => $weight++,
-                ];
+                $nodeId   = $item['name'];
+                $isNew    = substr($item['id'], 0, 4) == 'new_';
+                $title    = $item['title'];
+                $itemId   = $isNew ? null : $item['id'];
+                $parentId = empty($item['parent_id']) ? null : $item['parent_id'];
 
-                if (!$isNew) {
-                    $link['mlid'] = $item['id'];
-                }
-                if ($item['parent_id']) {
-                    $link['plid'] = $processed[$item['parent_id']]['mlid'];
-                }
-
-                $id = menu_link_save($link);
                 if ($isNew) {
-                    $processed[$item['id']] = $link + ['mlid' => $id];
+                    if ($parentId) {
+                        $item = $itemStorage->insertAsChild($parentId, $nodeId, $title);
+                    } else {
+                        $item = $itemStorage->insert($menuId, $nodeId, $title);
+                    }
+                } else {
+                    if ($parentId) {
+                        $itemStorage->moveAsChild($itemId, $parentId);
+                    } else {
+                        $itemStorage->moveToRoot($itemId);
+                    }
                 }
-                else {
-                    $processed[$id] = $link;
-                }
+
+                $processed[$itemId] = true;
             }
         }
 
+        $newTree = $this->treeManager->buildTree($menuId, false, true);
+
         // Remove elements not in the original array
         foreach (array_diff_key($old, $processed) as $id => $deleted) {
-            menu_link_delete($id);
+            $itemStorage->delete($id);
             $deleteItems[$id] = $deleted;
         }
 
-        $this->dispatcher->dispatch('menu:tree', new MenuEvent(
-            $menuName,
-            $processed,
-            $deleteItems,
-            $site
-        ));
+        $this->dispatcher->dispatch('menu:tree', new MenuEvent($menuName, $newTree, $deleteItems, $site));
     }
 
     /**

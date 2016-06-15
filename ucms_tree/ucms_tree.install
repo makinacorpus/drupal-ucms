@@ -32,8 +32,8 @@ function ucms_tree_update_7002() {
 }
 
 /**
- * Set expanded = 1 to all custom menu links.
+ * Skipped update.
  */
 function ucms_tree_update_7003() {
-  db_query("UPDATE {menu_links} ml SET ml.expanded = 1 WHERE ml.menu_name LIKE 'site-%'");
+  // Skipped update.
 }
