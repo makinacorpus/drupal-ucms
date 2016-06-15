@@ -37,24 +37,17 @@ class CloningSiteTest extends AbstractDrupalTest
         $this->nodes['not_relevant_news'] = $this->createDrupalNode('news', 'not_relevant');
 
         // Add some menu links
-        $item = [
-            'menu_name'  => 'site-main-'.$this->sites['template']->getId(),
-            'link_path'  => 'node/'.$this->nodes['ref_homepage']->id(),
-            'link_title' => 'node/'.$this->nodes['ref_homepage']->getTitle(),
-        ];
-        menu_link_save($item);
-        $item = [
-            'menu_name'  => 'site-main-'.$this->sites['template']->getId(),
-            'link_path'  => 'node/'.$this->nodes['ref_news']->id(),
-            'link_title' => 'node/'.$this->nodes['ref_news']->getTitle(),
-        ];
-        menu_link_save($item);
-        $item = [
-            'menu_name'  => 'site-main-'.$this->sites['not_relevant']->getId(),
-            'link_path'  => 'node/'.$this->nodes['ref_news']->id(),
-            'link_title' => 'node/'.$this->nodes['ref_news']->getTitle(),
-        ];
-        menu_link_save($item);
+        $treeManager  = $this->getTreeManager();
+        $itemStorage  = $treeManager->getItemStorage();
+
+        $menuName     = 'site-main-'.$this->sites['template']->getId();
+        $menuId       = $treeManager->getMenuStorage()->load($menuName)['id'];
+        $itemStorage->insert($menuId, $this->nodes['ref_homepage']->id(), $this->nodes['ref_homepage']->getTitle());
+        $itemStorage->insert($menuId, $this->nodes['ref_news']->id(), $this->nodes['ref_news']->getTitle());
+
+        $menuName     = 'site-main-'.$this->sites['not_relevant']->getId();
+        $menuId       = $treeManager->getMenuStorage()->load($menuName)['id'];
+        $itemStorage->insert($menuId, $this->nodes['ref_news']->id(), $this->nodes['ref_news']->getTitle());
 
         // Create some layout on it
         $layout = new Layout();

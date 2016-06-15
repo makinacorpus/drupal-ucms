@@ -8,11 +8,11 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Layout\DrupalStorage;
 use MakinaCorpus\Ucms\Seo\SeoService;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Umenu\TreeManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -68,6 +68,14 @@ trait SiteTestTrait
     protected function getSeoService()
     {
         return $this->getDrupalContainer()->get('ucms_seo.seo_service');
+    }
+
+    /**
+     * @return TreeManager
+     */
+    protected function getTreeManager()
+    {
+        return $this->getDrupalContainer()->get('umenu.manager');
     }
 
     /**
