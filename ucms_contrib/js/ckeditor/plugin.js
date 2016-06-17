@@ -59,7 +59,7 @@
     // @todo Here it might fail if the element is neither span or div... please fix this
     element.setAttribute('data-media-nid', nid);
     // Set not so stupid defaults
-    element.setAttribute('data-media-width', '25%');
+    element.setAttribute('data-media-width', '100%');
     element.setAttribute('data-media-float', 'left');
     return element;
   }
