@@ -125,8 +125,8 @@ class TreeForm extends FormBase
             foreach ($items as $item) {
 
                 $nodeId   = $item['name'];
-                $isNew    = substr($item['id'], 0, 4) == 'new_';
-                $title    = $item['title'];
+                $isNew    = substr($item['id'], 0, 4) == 'new_' || empty($item['id']);
+                $title    = trim($item['title']);
                 $itemId   = $isNew ? null : $item['id'];
                 $parentId = empty($item['parent_id']) ? null : $item['parent_id'];
 
@@ -142,6 +142,11 @@ class TreeForm extends FormBase
                     } else {
                         $itemStorage->moveToRoot($itemId);
                     }
+
+                    // Update title if revelant
+                    if ($title !== $currentTree->getItemById($itemId)->getTitle()) {
+                        $itemStorage->update($itemId, null, $title);
+                    }
                 }
 
                 $processed[$itemId] = true;
@@ -151,9 +156,9 @@ class TreeForm extends FormBase
         $newTree = $this->treeManager->buildTree($menuId, false, true);
 
         // Remove elements not in the original array
-        foreach (array_diff_key($old, $processed) as $id => $deleted) {
-            $itemStorage->delete($id);
-            $deleteItems[$id] = $deleted;
+        foreach (array_diff_key($old, $processed) as $itemId => $deleted) {
+            $itemStorage->delete($itemId);
+            $deleteItems[$itemId] = $deleted;
         }
 
         $this->dispatcher->dispatch('menu:tree', new MenuEvent($menuName, $newTree, $deleteItems, $site));
