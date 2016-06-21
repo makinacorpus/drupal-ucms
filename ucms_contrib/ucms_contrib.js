@@ -63,7 +63,12 @@
   function getElementPosition(element) {
     var i = 0, count = 0;
     for (i; i < element.parentElement.children.length; ++i) {
-      if (element.parentElement.children[i] === element) {
+      var child = element.parentElement.children[i];
+
+      // Don't count other DOM element.
+      if (child.getAttribute('data-nid') === null) {
+        continue;
+      } else if (child === element) {
         break;
       }
       count++;
