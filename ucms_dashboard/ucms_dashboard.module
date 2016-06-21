@@ -282,6 +282,12 @@ function ucms_dashboard_page_build(&$page) {
 
     $context->init();
 
+    if (variable_get('kernel.debug', false)) {
+      $context->addTab('dblog', "Log", 'warning-sign', 100);
+      $response = sf_dic_page('MakinaCorpus\Ucms\Dashboard\Controller\DbLog::displayLog');
+      $context->add(['#markup' => (string)$response], 'dblog');
+    }
+
     $actions = [];
     foreach ($context->getActions() as $data) {
       if (is_array($data['actions']) && count($data['actions']) && reset($data['actions']) instanceof \MakinaCorpus\Ucms\Dashboard\Action\Action) {

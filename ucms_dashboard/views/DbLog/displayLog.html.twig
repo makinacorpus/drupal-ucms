@@ -1,0 +1,9 @@
+{% for entry in entries %}
+  <div class="alert alert-{{ entry.severity|raw }}">
+    <a href="{{ url('admin/reports/event/' ~ entry.wid) }}">
+      {{ entry.message|raw }}
+    </a>
+  </div>
+{% else %}
+  <p>{{ "There is not log entries to display"|trans }}</p>
+{% endfor %}
