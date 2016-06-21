@@ -153,7 +153,7 @@ class TreeForm extends FormBase
             }
         }
 
-        $newTree = $this->treeManager->buildTree($menuId, false, true);
+        $newTree = $this->treeManager->buildTree($menuId, false, false, true);
 
         // Remove elements not in the original array
         foreach (array_diff_key($old, $processed) as $itemId => $deleted) {
