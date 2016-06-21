@@ -117,37 +117,47 @@ function ucms_tree_library() {
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
-  if (!empty($_GET['menu_name'])) {
+  if (!empty($_GET['menu'])) {
 
-    // Verify access to menu
-    $matches = [];
-    preg_match('@.*-(\d+)@', $_GET['menu_name'], $matches);
-    $manager = ucms_site_manager();
-    $site = $manager->getContext();
-    $account = \Drupal::currentUser();
-    if (!$site
-      || $site->getId() !== $matches[1]
-      || !$manager->getAccess()->userIsWebmaster($account, $site)) {
-      drupal_access_denied();
-      exit;
+    try {
+      $account      = \Drupal::currentUser();
+      $treeManager  = umenu_get_manager();
+      $siteManager  = ucms_site_manager();
+      $menu         = $treeManager->getMenuStorage()->load($_GET['menu']);
+
+      // Those exceptions will be silenced anyway.
+      if (!$siteManager->hasContext()) {
+          throw new \InvalidArgumentException("You see, in this world there's two kinds of people, my friend: Those with loaded guns and those who dig. You dig.");
+      }
+      if (!$siteManager->getAccess()->userIsWebmaster($account, $siteManager->getContext())) {
+          throw new \InvalidArgumentException("You know how to whistle, don't you, Steve? You just put your lips together - and blow.");
+      }
+      if ($menu['site_id'] != $siteManager->getContext()->getId()) {
+          throw new \InvalidArgumentException("Open the pod bay doors, HAL. I'm sorry Dave, I'm afraid I can't do that.");
+      }
+
+      // Add GET parameters to form
+      $form['menu'] = [
+        '#tree' => TRUE,
+      ];
+      $form['menu']['menu'] = [
+        '#type'  => 'value',
+        '#value' => $_GET['menu'],
+      ];
+      $form['menu']['plid'] = [
+        '#type'  => 'value',
+        '#value' => !empty($_GET['parent']) ? $_GET['parent'] : 0,
+      ];
+      $form['menu']['position'] = [
+        '#type'  => 'value',
+        '#value' => $_GET['position'],
+      ];
+    } catch (\Exception $e) {
+      // Ok, somehow the user messed up with GET parameters, just let him
+      // believe it'll work silently, but seriously, don't make him angry
+      // with an error page, the rest will work gracefully anyway, the
+      // content will just not be in a menu...
     }
-
-    // Add GET parameters to form
-    $form['menu'] = [
-      '#tree' => TRUE,
-    ];
-    $form['menu']['menu_name'] = [
-      '#type'  => 'value',
-      '#value' => $_GET['menu_name'],
-    ];
-    $form['menu']['plid'] = [
-      '#type'  => 'value',
-      '#value' => !empty($_GET['parent']) ? $_GET['parent'] : 0,
-    ];
-    $form['menu']['position'] = [
-      '#type'  => 'value',
-      '#value' => $_GET['position'],
-    ];
   }
 }
 
@@ -155,37 +165,66 @@ function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_node_insert().
  */
 function ucms_tree_node_insert($node) {
-  // We handle only insert
-  if (isset($node->menu)) {
-    $link = &$node->menu;
-    $link['link_title'] = $node->title;
-    $link['link_path'] = "node/$node->nid";
-    $link['expanded'] = 1;
+  if (isset($node->menu)) { // We handle only insert
+
+    // @todo THIS IS SO WRONG IMPLEMENT ->insertAt() and ->insertAsChildAt()
+
+    $menuId       = $node->menu['menu'];
+    $treeManager  = umenu_get_manager();
+    $tree         = $treeManager->buildTree($menuId);
+    $itemStorage  = $treeManager->getItemStorage();
+    $index        = $node->menu['position'];
+    $parentId     = $node->menu['parent'];
+
+    $parent = null;
+    if ($parentId) {
+      $parent = $tree->getItemById($parentId);
+    } else {
+      $parent = $tree;
+    }
 
     // Calculate the position depending on siblings
-    $siblings = menu_build_tree($node->menu['menu_name'], [
-      'plid' => $node->menu['plid'],
-    ]);
-    $index = 0;
-    $previous_sibling_weight = -100;
-    $weight_proposition = -100;
-    foreach ($siblings as $sibling) {
-      $sibling_weight = (int)$sibling['link']['weight'];
-      if ($node->menu['position'] == $index) {
-        // Take the half between prev sibling weight and the sibling's
-        $weight_proposition = $sibling_weight - ($sibling_weight - $previous_sibling_weight) / 2;
+    $before = null;
+    $after = null;
+    if (!$index) {
+      // We need to prepend
+      foreach ($parent->getChildren() as $item) {
+        $before = $item;
+        break;
       }
-      $previous_sibling_weight = $sibling_weight;
-      $index++;
+    } else if ($index >= $parent->getChildCount()) {
+      foreach ($parent->getChildren() as $item) { // Fetch last
+        $after = $item;
+      }
+    } else {
+      $count = 0;
+      foreach ($parent->getChildren() as $item) {
+        if ($count <= $index) {
+          $before = $item;
+        } else {
+          $after = $item;
+          break;
+        }
+        $count++;
+      }
     }
-    $link['weight'] = $weight_proposition;
 
-    if (!menu_link_save($link)) {
-      drupal_set_message(t('There was an error saving the menu link.'), 'error');
+    if ($after) {
+      $itemStorage->insertAfter($after->getId(), $node->id(), $node->getTitle());
+    } else if ($before) {
+      $itemStorage->insertBefore($before->getId(), $node->id(), $node->getTitle());
+    } else {
+      // We could not find anything any relatives, if there is a parent, just
+      // put the item under the parent, if there is no parent just put in the
+      // root
+      if ($parent && $parentId) {
+        $itemStorage->insertAsChild($parentId, $node->id(), $node->getTitle());
+      } else {
+        $itemStorage->insert($menuId, $node->id(), $node->getTitle());
+      }
     }
   }
 }
-
 
 /**
  * Implements hook_node_delete().

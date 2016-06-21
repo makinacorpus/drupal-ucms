@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Tree\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
+
 use Symfony\Component\HttpFoundation\Request;
 
 class TreeController extends Controller
@@ -26,13 +27,18 @@ class TreeController extends Controller
     {
         $links = [];
         $handler = $this->getTypeHandler();
-        foreach ($this->getTypeHandler()
-                      ->getTypesAsHumanReadableList($handler->getContentTypes()) as $type => $name) {
+
+        foreach (
+            $this
+                ->getTypeHandler()
+                ->getTypesAsHumanReadableList($handler->getContentTypes())
+            as $type => $name
+        ) {
             if (node_access('create', $type)) {
                 $options = [
                     'query' => [
                         'destination' => $request->get('destination'),
-                        'menu_name'   => $request->get('menu'),
+                        'menu'        => $request->get('menu'),
                         'parent'      => $request->get('parent'),
                         'position'    => $request->get('position'),
                     ],
