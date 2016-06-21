@@ -86,14 +86,16 @@
           return; // this in most cases will not happen
         }
 
-        var data = {};
+        var data = {
+          width: this.getContentElement('tab-content', 'width').getValue(),
+          float: this.getContentElement('tab-content', 'float').getValue()
+        };
 
-        this.commitContent(data);
+        widget.setData(data);
 
-        var widthElement = this.getContentElement('tab-content', 'width');
-        var floatElement = this.getContentElement('tab-content', 'float');
-        widget.setData('width', widthElement.getValue());
-        widget.setData('float', floatElement.getValue());
+        // This is a slight possiblity, but I can't find out why, that our
+        // widget data event is not being called, let's force it...
+        widget.fire('data', widget.data);
       }
     };
   });

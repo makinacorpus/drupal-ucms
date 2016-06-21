@@ -236,19 +236,19 @@
           // Apply everything to the wrapper only
           if (this.data.width) {
             this.element.$.parentElement.style.width = this.data.width;
-            this.element.setAttribute('data-media-width', this.data.width);
+            this.element.$.setAttribute('data-media-width', this.data.width);
           } else {
             // We might want to set less aggressive defaults
             this.element.$.parentElement.style.width = '';
-            this.element.setAttribute('data-media-width', '');
+            this.element.$.setAttribute('data-media-width', '');
           }
 
           if (this.data.float) {
             this.element.$.parentElement.style.float = this.data.float;
-            this.element.setAttribute('data-media-float', this.data.float);
+            this.element.$.setAttribute('data-media-float', this.data.float);
           } else {
             this.element.$.parentElement.style.float = '';
-            this.element.setAttribute('data-media-width', '');
+            this.element.$.setAttribute('data-media-float', '');
           }
         }
       });
