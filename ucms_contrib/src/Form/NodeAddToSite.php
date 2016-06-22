@@ -151,10 +151,15 @@ class NodeAddToSite extends FormBase
         $path   = 'node/add/' . str_replace('_', '-', $type);
 
         $options = [];
+        if (isset($_GET['destination'])) {
+            $options['query']['destination'] = $_GET['destination'];
+            unset($_GET['destination']);
+        }
+
         switch ($action) {
 
             case 'local':
-                list($path, $options) = $this->siteManager->getUrlInSite($siteId, $path);
+                list($path, $options) = $this->siteManager->getUrlInSite($siteId, $path, $options);
                 drupal_set_message($this->t("You are now creating a content into your site."));
                 break;
 
