@@ -279,7 +279,7 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('admin/dashboard/tree' === $path) {
       return true;
     }
-    if ('admin/dashboard/content' === $path) {
+    if ('admin/dashboard/content' === substr($path, 0, 23)) {
       return true;
     }
     if ('admin/dashboard/media' === $path) {
