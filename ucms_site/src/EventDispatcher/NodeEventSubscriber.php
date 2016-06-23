@@ -163,6 +163,18 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 $node = $nodes[$row->nid];
                 $node->ucms_allowed_sites[] = $row->site_id;
             }
+        } else {
+            // Counterpart whenever there is a site context, if node is visible
+            // whithin this context (user can see the node) then the most
+            // revelant site IS the current context; in this very specific use
+            // case we do believe that node access stuff has already run prior
+            // to us, so we don't care about it
+            $siteId = $this->manager->getContext()->getId();
+            foreach ($nodes as $node) {
+                if (in_array($siteId, $node->ucms_sites)) {
+                    $node->ucms_allowed_sites = [$siteId];
+                }
+            }
         }
     }
 
