@@ -63,6 +63,21 @@ function ucms_dashboard_menu() {
 }
 
 /**
+ * Implements hook_menu_breadcrumb_alter().
+ */
+function ucms_dashboard_menu_breadcrumb_alter(&$active_trail, $item) {
+  $manager = ucms_site_manager();
+  if ('admin' === arg(0) && $manager->hasContext()) {
+    $site = $manager->getContext();
+    $active_trail[1] = [
+      'title' => check_plain($site->getAdminTitle()),
+      'href'  => '<front>',
+      'localized_options' => [],
+    ];
+  }
+}
+
+/**
  * Menu title callback.
  */
 function ucms_dashboard_title() {
