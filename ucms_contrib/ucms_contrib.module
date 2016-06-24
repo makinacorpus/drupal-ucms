@@ -935,6 +935,13 @@ function ucms_contrib_ckeditor_plugin() {
 }
 
 /**
+ * Implements hook_ckeditor_settings_alter().
+ */
+function ucms_contrib_ckeditor_settings_alter(&$settings, $context) {
+  $settings['contentsCss'][] = url(drupal_get_path('module', 'ucms_contrib') . '/js/ckeditor/styles.css');
+}
+
+/**
  * Implements hook_filter_info().
  */
 function ucms_contrib_filter_info() {
