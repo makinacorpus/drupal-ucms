@@ -47,7 +47,6 @@ function ucms_dashboard_menu() {
   ];
   $items['admin/dashboard'] = [
     'title'             => "Dashboard",
-    'title callback'    => 'ucms_dashboard_title',
     'page callback'     => 'ucms_dashboard_page',
     'access arguments'  => ['access administration pages'],
     'type'              => MENU_NORMAL_ITEM,
@@ -66,26 +65,49 @@ function ucms_dashboard_menu() {
  * Implements hook_menu_breadcrumb_alter().
  */
 function ucms_dashboard_menu_breadcrumb_alter(&$active_trail, $item) {
-  $manager = ucms_site_manager();
-  if ('admin' === arg(0) && $manager->hasContext()) {
-    $site = $manager->getContext();
-    $active_trail[1] = [
-      'title' => check_plain($site->getAdminTitle()),
-      'href'  => '<front>',
-      'localized_options' => [],
-    ];
-  }
-}
+  if (path_is_admin(current_path())) {
 
-/**
- * Menu title callback.
- */
-function ucms_dashboard_title() {
-  $siteManager = ucms_site_manager();
-  if ($siteManager->hasContext()) {
-    return check_plain($siteManager->getContext()->getAdminTitle());
+    // Remove the useless 'Home' link. Using array_splice() will reset the
+    // numerical indexes within the array allowing the rest of the function
+    // to work properly.
+    array_splice($active_trail, 0, 1);
+
+    // Remove any item that would be just 'admin', this specific admin page
+    // is to be hidden within our custom admin, it does not make sense to
+    // keep it.
+    foreach ($active_trail as $index => $item) {
+      if ('admin' === $item['href']) {
+        array_splice($active_trail, $index, 1);
+      }
+    }
+
+    // Ensure the first item is the dashboard item, if not inject it,
+    // dashboard is the main entry point for everything. Please note that if
+    // the current path is the dashboard, there is not other alteration to be
+    // done so we'll return early.
+    if ('admin/dashboard' === current_path()) {
+      return;
+    }
+
+    if ('admin/dashboard' !== $active_trail[0]['href']) {
+      array_unshift($active_trail, [
+        'title' => t("Dashboard"),
+        'href'  => 'admin/dahsboard',
+        'localized_options' => [],
+      ]);
+    }
+
+    $manager = ucms_site_manager();
+    if ($manager->hasContext()) {
+      array_splice($active_trail, 1, 0, [
+        [
+          'title' => check_plain($manager->getContext()->getAdminTitle()),
+          'href'  => '<front>',
+          'localized_options' => [],
+        ]
+      ]);
+    }
   }
-  return t("Dashboard");
 }
 
 /**
