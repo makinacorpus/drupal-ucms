@@ -27,7 +27,7 @@ class SitesPortlet extends AbstractAdminPortlet
      */
     public function getPath()
     {
-        return 'admin/dashboard/site';
+        return 'admin/dashboard/site/all';
     }
 
     /**
