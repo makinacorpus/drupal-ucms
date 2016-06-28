@@ -90,6 +90,14 @@ class SeoService
     }
 
     /**
+     * Clear alias cache, if any
+     */
+    public function clearCache()
+    {
+        $this->aliasManager->cacheClear();
+    }
+
+    /**
      * Get alias storage
      *
      * @return AliasStorageInterface
@@ -980,7 +988,7 @@ class SeoService
             ;
         }
 
-        $this->aliasManager->cacheClear();
+        $this->clearCache();
     }
 
     /**
@@ -1087,6 +1095,6 @@ class SeoService
             ;
         }
 
-        $this->aliasManager->cacheClear();
+        $this->clearCache();
     }
 }
