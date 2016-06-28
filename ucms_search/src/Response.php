@@ -108,11 +108,11 @@ class Response
         }
     }
 
-  /**
-   * Return aggregation counts
-   *
-   * @return array
-   */
+    /**
+     * Return aggregation counts
+     *
+     * @return array
+     */
     public function getAggregationCounts() {
         $counts = [];
 
