@@ -48,11 +48,14 @@ class StoreLocatorController extends Controller
 
         if (node_is_page($node)) {
             $title = $storeLocator->getTitle();
+            // @todo this is global state, therefore wrong
             drupal_set_title($node->title.' '.$title);
 
+            // @todo this should be #attached
             drupal_add_js([
                 'storeLocator' => ['items' => $storeLocator->getMapItems()],
             ], 'setting');
+
             $build['map'] = [
                 '#theme'    => 'ucms_seo_store_locator_map',
                 '#items'    => $storeLocator->getMapItems(),

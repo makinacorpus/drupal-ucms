@@ -283,6 +283,9 @@ class SeoService
             ->condition('node_id', $node->id())
         ;
 
+        // Always lower the priority for expiring items.
+        $query->orderBy('u.expires', 'IS NULL DESC');
+
         // Where the magic happens, if no canonical is present, this query
         // actually does reproduce the SeoAliasStorage::lookupPathAlias() order
         // and ensure we have consistent aliases and canonicals all over the
@@ -310,7 +313,6 @@ class SeoService
         }
 
         return $query
-            ->orderBy('u.expires', 'IS NULL DESC')
             ->orderBy('u.pid', 'DESC')
             ->range(0, 1)
             ->condition('u.language', $langcodeList)

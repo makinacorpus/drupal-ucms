@@ -166,6 +166,9 @@ class SeoAliasStorage implements AliasStorageInterface
             ->condition('u.site_id', $this->siteManager->getContext()->getId())
         ;
 
+        // Always lower the priority for expiring items.
+        $query->orderBy('u.expires', 'IS NULL DESC');
+
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
             $langcodeList = [$langcode];
         } else {
@@ -185,7 +188,6 @@ class SeoAliasStorage implements AliasStorageInterface
         $query->orderBy('u.priority', 'DESC');
 
         return $query
-            ->orderBy('u.expires', 'IS NULL DESC')
             ->orderBy('u.pid', 'DESC')
             ->condition('u.language', $langcodeList)
             ->execute()
@@ -215,6 +217,9 @@ class SeoAliasStorage implements AliasStorageInterface
             ->condition('u.site_id', $this->siteManager->getContext()->getId())
         ;
 
+        // Always lower the priority for expiring items.
+        $query->orderBy('u.expires', 'IS NULL DESC');
+
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
             $langcodeList = [$langcode];
         } else {
@@ -227,7 +232,6 @@ class SeoAliasStorage implements AliasStorageInterface
         }
 
         return $query
-            ->orderBy('u.expires', 'IS NULL DESC')
             ->orderBy('u.pid', 'DESC')
             ->condition('u.language', $langcodeList)
             ->execute()
