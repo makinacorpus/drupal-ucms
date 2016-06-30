@@ -14,7 +14,11 @@ function ucms_seo_schema() {
   // the hook_schema_alter() anymore, we'll also provide a replacement
   // AliasStorageInterface to come up with.
   $aliasTable = drupal_get_schema_unprocessed('system', 'url_alias');
+<<<<<<< 746857ea72157593e44171fcc9b78a6a30e2196f
   $aliasTable['fields']['alias']['url_alias']['length'] = 1024;
+=======
+  $aliasTable['fields']['alias']['url_alias']['length'] = 1000;
+>>>>>>> seo: ucms_seo_alias.alias length change from 255 to 1000
   $aliasTable['fields']['site_id'] = [
     'description' => "Site identifier this alias belongs to",
     'type'        => 'int',
@@ -131,7 +135,11 @@ function ucms_seo_install_schema_fix() {
     // @see ucms_seo_schema().
     db_query("ALTER TABLE ucms_seo_alias DROP KEY uk_ucms_seo_alias_site");
     db_query("ALTER TABLE ucms_seo_alias ADD KEY uk_ucms_seo_alias_site (alias(255), site_id)");
+<<<<<<< 746857ea72157593e44171fcc9b78a6a30e2196f
     db_query("ALTER TABLE ucms_seo_alias MODIFY COLUMN alias varchar(1024) NOT NULL DEFAULT ''");
+=======
+    db_query("ALTER TABLE ucms_seo_alias MODIFY COLUMN alias varchar(1000) NOT NULL DEFAULT ''");
+>>>>>>> seo: ucms_seo_alias.alias length change from 255 to 1000
   }
 
   foreach (ucms_seo_install_constraints() as $table => $statements) {
@@ -372,7 +380,11 @@ function ucms_seo_update_7016() {
 }
 
 /**
+<<<<<<< 746857ea72157593e44171fcc9b78a6a30e2196f
  * Change the {ucms_seo_alias}.alias length from 255 to 1024
+=======
+ * Change the {ucms_seo_alias}.alias length from 255 to 1000
+>>>>>>> seo: ucms_seo_alias.alias length change from 255 to 1000
  */
 function ucms_seo_update_7017() {
   ucms_seo_install_schema_fix();
