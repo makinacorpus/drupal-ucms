@@ -14,6 +14,7 @@ function ucms_seo_schema() {
   // the hook_schema_alter() anymore, we'll also provide a replacement
   // AliasStorageInterface to come up with.
   $aliasTable = drupal_get_schema_unprocessed('system', 'url_alias');
+  $aliasTable['fields']['alias']['url_alias']['length'] = 1024;
   $aliasTable['fields']['site_id'] = [
     'description' => "Site identifier this alias belongs to",
     'type'        => 'int',
@@ -49,7 +50,14 @@ function ucms_seo_schema() {
     'default'     => null,
   ];
   $schema['ucms_seo_alias'] = $aliasTable;
-  $schema['ucms_seo_alias']['unique keys']['uk_ucms_seo_alias_site'] = ['alias', 'site_id'];
+  if ('mysql' !== \Database::getConnection()->driver()) {
+    // This can't be set this way on MySQL, because this fucking sadistic monkey
+    // driven so-called "relational database" (what a joke) cannot do UNIQUE
+    // KEYS nor INDEX on VARCHAR() that are longer than 768 bytes (so this is
+    // actually 255 characters using UTF-8).
+    // Why on earth anyone would want to use MySQL ? Seriously.
+    $schema['ucms_seo_alias']['unique keys']['uk_ucms_seo_alias_site'] = ['alias', 'site_id'];
+  }
 
   // Same statement as upper, any performance critical meta information must
   // live in a database table we keep the ownership on, any field API usage
@@ -118,6 +126,14 @@ function ucms_seo_install_constraints() {
  * Adds database constraints.
  */
 function ucms_seo_install_schema_fix() {
+
+  if ('mysql' === \Database::getConnection()->driver()) {
+    // @see ucms_seo_schema().
+    db_query("ALTER TABLE ucms_seo_alias DROP KEY uk_ucms_seo_alias_site");
+    db_query("ALTER TABLE ucms_seo_alias ADD KEY uk_ucms_seo_alias_site (alias(255), site_id)");
+    db_query("ALTER TABLE ucms_seo_alias MODIFY COLUMN alias varchar(1024) NOT NULL DEFAULT ''");
+  }
+
   foreach (ucms_seo_install_constraints() as $table => $statements) {
     if (db_table_exists($table)) {
       foreach ($statements as $statement) {
@@ -353,4 +369,11 @@ function ucms_seo_update_7016() {
     'length'      => 16,
     'default'     => null,
   ]);
+}
+
+/**
+ * Change the {ucms_seo_alias}.alias length from 255 to 1024
+ */
+function ucms_seo_update_7017() {
+  ucms_seo_install_schema_fix();
 }
