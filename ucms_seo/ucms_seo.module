@@ -18,7 +18,6 @@
  */
 
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
 
@@ -160,6 +159,7 @@ function ucms_seo_page_build(&$page) {
   if ($site && !ucms_site_is_master() && !path_is_admin(current_path())) {
     if ($node = menu_get_object()) {
 
+      // TODO: meta title is a tag by itself
       foreach (ucms_seo_service()->getNodeMeta($node) as $name => $content) {
         drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => check_plain($content)]], 'meta-' . $name);
       }
@@ -225,25 +225,45 @@ function ucms_seo_form_node_form_alter(&$form, &$form_state) {
   $service = ucms_seo_service();
 
   $form['ucms_seo'] = [
-    '#type'         => 'fieldset',
-    '#title'        => t('SEO'),
-    '#access'       => $account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) || $account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN),
-    '#collapsible'  => true,
-    '#collapsed'    => false,
-    '#group'        => 'additional_settings',
-    '#weight'       => 100,
+    '#type'        => 'fieldset',
+    '#title'       => t('SEO'),
+    '#access'      => $account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) || $account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN),
+    '#collapsible' => TRUE,
+    '#collapsed'   => FALSE,
+    '#group'       => 'additional_settings',
+    '#weight'      => 100,
   ];
 
   $form['ucms_seo']['ucms_seo_segment'] = [
-    '#type'           => 'textfield',
-    '#maxlength'      => variable_get('ucms_seo.segment_max_length', 255),
-    '#title'          => t("Node alias"),
-    '#description'    => t("This alias must not contain the / character"),
-    '#default_value'  => $service->getNodeSegment($form['#node']),
-    '#attributes'     => ['placeholder' => 'welcome-to-my-site'],
+    '#type'             => 'textfield',
+    '#maxlength'        => variable_get('ucms_seo.segment_max_length', 255),
+    '#title'            => t("Node alias"),
+    '#description'      => t("This alias must not contain the / character"),
+    '#default_value'    => $service->getNodeSegment($form['#node']),
+    '#attributes'       => ['placeholder' => 'alias-seo'],
     '#element_validate' => ['ucms_seo_element_validate_segment'],
-    '#field_prefix'     => 'some/path/', // @todo
-    '#weight'         => 100,
+    '#field_prefix'     => t('some/path/'), // @todo
+    '#weight'           => 100,
+  ];
+
+  $meta = $service->getNodeMeta($form['#node']);
+  $form['ucms_seo']['ucms_seo_title'] = [
+    '#title'         => t("Meta title"),
+    '#type'          => 'textfield',
+    '#attributes'    => ['placeholder' => "Titre pour le SEO"],
+    '#default_value' => $meta['title'],
+    '#description'   => t("This title will be used by search engines to index you content"),
+    '#maxlength'     => 68,
+    '#weight'        => 110,
+  ];
+  $form['ucms_seo']['ucms_seo_description'] = [
+    '#title'         => t("Meta description"),
+    '#type'          => 'textarea',
+    '#attributes'    => ['placeholder' => "Description pour le seo"],
+    '#default_value' => $meta['description'],
+    '#description'   => t("This text is what will appear as your page summary when searching in most search engines"),
+    '#maxlength'     => 156,
+    '#weight'        => 120,
   ];
 }
 

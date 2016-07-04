@@ -89,6 +89,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $this->onSaveEnsureSegment($event);
         $this->onSaveRebuildLocatorAliases($event);
+        $this->onSaveStoreMeta($event);
     }
 
     public function onInsert(NodeEvent $event)
@@ -106,5 +107,21 @@ class NodeEventSubscriber implements EventSubscriberInterface
     public function onDelete(NodeEvent $event)
     {
         $this->service->onAliasRemove($event->getNode());
+    }
+
+    private function onSaveStoreMeta(NodeEvent $event) {
+        $node = $event->getNode();
+
+        $values = [];
+
+        // This comes from the node form, and is the only case it'd happen
+        if (property_exists($node, 'ucms_seo_title') && !empty($node->ucms_seo_title)) {
+            $values['title'] = $node->ucms_seo_title;
+        }
+        if (property_exists($node, 'ucms_seo_description') && !empty($node->ucms_seo_description)) {
+            $values['description'] = $node->ucms_seo_description;
+        }
+
+        $this->service->setNodeMeta($node, $values);
     }
 }
