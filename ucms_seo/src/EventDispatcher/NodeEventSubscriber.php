@@ -71,8 +71,17 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
+        $types = variable_get('ucms_seo_store_locator_content_types', []);
+
+        if (!$types) {
+            // System is not configured to have a store locator, which means
+            // the specific store locator implementation probably does not
+            // exist, just be silent about this
+            return;
+        }
+
         // @todo inject the variable instead of using variable_get()
-        if (in_array($node->type, variable_get('ucms_seo_store_locator_content_types', []), true)) {
+        if (in_array($node->type, $types, true)) {
             $storeLocator = $this->locatorFactory->create($node);
             $storeLocator->rebuildAliases();
         } else {
