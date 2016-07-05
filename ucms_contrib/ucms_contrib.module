@@ -645,6 +645,10 @@ function ucms_contrib_library() {
           'media' => 'screen',
         ],
       ],
+      'dependencies' => [
+        ['system', 'ui.draggable'],
+        ['system', 'ui.droppable'],
+      ],
     ],
   ];
 }
