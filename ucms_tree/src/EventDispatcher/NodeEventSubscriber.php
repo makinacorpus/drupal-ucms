@@ -36,22 +36,29 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // cache (instead of deleting/saving new elements then clearing the
         // whole menu cache).
         if ($event->isClone() && $node->site_id) {
-            $this
-                ->db
-                ->query(
-                    "
+            switch ($this->db->driver()) {
+                case 'mysql':
+                    $sql = "
                         UPDATE {menu_links} ml
                         JOIN {umenu} u ON u.name = ml.menu_name
                         SET link_path = :route
                         WHERE u.site_id = :site AND ml.link_path = :legacy
-                    ",
-                    [
-                        ':route'  => 'node/' . $node->nid,
-                        ':site'   => $node->site_id,
-                        ':legacy' => 'node/' . $node->parent_nid,
-                    ]
-                )
-            ;
+                    ";
+                    break;
+                default:
+                    $sql = "
+                        UPDATE {menu_links} AS ml
+                        SET link_path = :route
+                        FROM {umenu} u
+                        WHERE u.name = ml.menu_name AND u.site_id = :site AND ml.link_path = :legacy
+                    ";
+                    break;
+            }
+            $this->db->query($sql, [
+                ':route'  => 'node/' . $node->nid,
+                ':site'   => $node->site_id,
+                ':legacy' => 'node/' . $node->parent_nid,
+            ]);
 
             // @todo Hardcoded procedural call, this is so wrong
             menu_cache_clear_all();
