@@ -169,6 +169,13 @@ class SeoAliasStorage implements AliasStorageInterface
         // Always lower the priority for expiring items.
         $query->orderBy('u.expires', 'IS NULL DESC');
 
+        // Canonical property will never be set automatically sus ensuring that
+        // what the user tells is what the user gets, so caninonical is *always*
+        // the alias we need to fetch to deambiguate
+        $query->orderBy('u.is_canonical', 'DESC');
+
+        $query->orderBy('u.priority', 'DESC');
+
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
             $langcodeList = [$langcode];
         } else {
@@ -179,13 +186,6 @@ class SeoAliasStorage implements AliasStorageInterface
                 $query->orderBy('u.language', 'ASC');
             }
         }
-
-        // Canonical property will never be set automatically sus ensuring that
-        // what the user tells is what the user gets, so caninonical is *always*
-        // the alias we need to fetch to deambiguate
-        $query->orderBy('u.is_canonical', 'DESC');
-
-        $query->orderBy('u.priority', 'DESC');
 
         return $query
             ->orderBy('u.pid', 'DESC')
@@ -302,19 +302,8 @@ class SeoAliasStorage implements AliasStorageInterface
         }
         $query->condition($condition);
 
-        if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
-            $langcodeList = [$langcode];
-        } else {
-            $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
-            // !!! condition here is inversed from the lookupPathAlias() method
-            if (LanguageInterface::LANGCODE_NOT_SPECIFIED > $langcode) {
-                $query->orderBy('u.language', 'DESC');
-            } else {
-                $query->orderBy('u.language', 'ASC');
-            }
-        }
-
-        $query->orderBy('u.priority', 'ASC');
+        // !!! condition here is inversed from the lookupPathAlias() method
+        $query->orderBy('u.expires', 'IS NULL ASC');
 
         // Canonical property will never be set automatically sus ensuring that
         // what the user tells is what the user gets, so caninonical is *always*
@@ -322,9 +311,22 @@ class SeoAliasStorage implements AliasStorageInterface
         // !!! condition here is inversed from the lookupPathAlias() method
         $query->orderBy('u.is_canonical', 'ASC');
 
+        // !!! condition here is inversed from the lookupPathAlias() method
+        $query->orderBy('u.priority', 'ASC');
+
+        if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
+            $langcodeList = [$langcode];
+        } else {
+            $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
+            // !!! conditions here are inversed from the lookupPathAlias() method
+            if (LanguageInterface::LANGCODE_NOT_SPECIFIED > $langcode) {
+                $query->orderBy('u.language', 'DESC');
+            } else {
+                $query->orderBy('u.language', 'ASC');
+            }
+        }
+
         return $query
-            // !!! condition here is inversed from the lookupPathAlias() method
-            ->orderBy('u.expires', 'IS NULL ASC')
             ->orderBy('u.pid', 'ASC')
             ->condition('u.language', $langcodeList)
             ->execute()
