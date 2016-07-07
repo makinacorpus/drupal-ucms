@@ -762,6 +762,7 @@ function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
     foreach (element_children($element) as $key) {
       $image_found = _ucms_contrib_find_image_recursive($element[$key], $view_mode);
       if ($image_found) {
+        $element = $element[$key];
         return TRUE;
       }
     }
