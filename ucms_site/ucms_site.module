@@ -282,7 +282,7 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('admin/dashboard/content' === substr($path, 0, 23)) {
       return true;
     }
-    if ('admin/dashboard/media' === $path) {
+    if ('admin/dashboard/media' === substr($path, 0, 21)) {
       return true;
     }
     if ('admin/cart/refresh' === substr($path, 0, 18)) {
