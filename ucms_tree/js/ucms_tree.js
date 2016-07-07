@@ -62,7 +62,7 @@
         /**
          * Close buttons
          */
-        $menu.find('div span.glyphicon-remove').click(function () {
+        $menu.on('click', 'div span.glyphicon-remove', function () {
           var sortable = $(this).closest('[data-menu]');
           $(this).closest('li').remove();
           $(sortable).nestedSortable('refresh');
