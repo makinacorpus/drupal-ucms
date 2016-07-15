@@ -332,6 +332,13 @@ body [data-region].ucms-highlighted-over {
 }
  */
 
+#tab-tree {
+  min-height: 100px;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+}
+
 /**
  * Default icons
  */
