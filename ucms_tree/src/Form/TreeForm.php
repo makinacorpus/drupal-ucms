@@ -69,6 +69,10 @@ class TreeForm extends FormBase
         $menus = $this->treeManager->getMenuStorage()->loadWithConditions(['site_id' => $site->getId()]);
 
         $form['#attached']['library'][] = ['ucms_tree', 'nested-sortable'];
+        $form['#attached']['js'][] = [
+          'data' => ['ucmsTree' => ['menuNestingLevel' => variable_get('ucms_tree_menu_nesting_limit', 2)]],
+          'type' => 'setting'
+        ];
 
         rsort($menus);
 
@@ -81,7 +85,15 @@ class TreeForm extends FormBase
                 '#type' => 'hidden',
                 // '#value' => '', // Will be filled in Javascript
             ];
-            $form['menus'][$menu['name'].'_list'] = $this->treeOutput($tree, $menu);
+
+            // This is ugly, but it happens sometime that when menu is empty
+            // output goes "", making crashes happen in sf_dic form processing
+            // dues to array type hint in form processing functions
+            $output = $this->treeOutput($tree, $menu);
+            if (!is_array($output)) {
+                $output = ['#markup' => $output];
+            }
+            $form['menus'][$menu['name'].'_list'] = $output;
         }
 
         $form['actions']['#type'] = 'actions';

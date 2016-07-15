@@ -2,7 +2,7 @@
   Drupal.ucmsNewMenuItemCount = 0;
 
   Drupal.behaviors.ucmsTree = {
-    attach: function (context) {
+    attach: function (context, settings) {
       $('ol[data-menu]', context).once('ucms-tree', function () {
         var $menu = $(this);
 
@@ -31,7 +31,7 @@
         $menu.filter('[data-can-receive]').nestedSortable($.extend({}, Drupal.ucmsSortableDefaults, {
           connectWith: '[data-menu][data-can-receive]',
           tabSize: 25,
-          maxLevels: 2,
+          maxLevels: settings.ucmsTree.menuNestingLevel || 2,
           isTree: true,
           expandOnHover: 700,
           startCollapsed: false,
