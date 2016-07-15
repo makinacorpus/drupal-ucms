@@ -221,29 +221,27 @@ class TreeForm extends FormBase
     {
         $items = [];
 
-        if (!empty($tree)) {
-            foreach ($tree->getChildren() as $item) {
-                $element = [];
+        foreach ($tree->getChildren() as $item) {
+            $element = [];
 
-                $input = [
-                  '#prefix'         => '<div class="tree-item clearfix">',
-                  '#type'           => 'textfield',
-                  '#attributes'     => ['class' => ['']],
-                  '#value'          => $item->getTitle(),
-                  '#theme_wrappers' => [],
-                  '#suffix'         => '<span class="glyphicon glyphicon-remove"></span></div>',
-                ];
-                $element['data'] = drupal_render($input);
-                $element['data-name'] = $item->getNodeId();
-                $element['data-mlid'] = $item->getId();
+            $input = [
+                '#prefix'         => '<div class="tree-item clearfix">',
+                '#type'           => 'textfield',
+                '#attributes'     => ['class' => ['']],
+                '#value'          => $item->getTitle(),
+                '#theme_wrappers' => [],
+                '#suffix'         => '<span class="glyphicon glyphicon-remove"></span></div>',
+            ];
+            $element['data'] = drupal_render($input);
+            $element['data-name'] = $item->getNodeId();
+            $element['data-mlid'] = $item->getId();
 
-                if ($item->hasChildren()) {
-                    $elements = $this->treeOutput($item);
-                    $element['data'] .= drupal_render($elements);
-                }
-
-                $items[] = $element;
+            if ($item->hasChildren()) {
+                $elements = $this->treeOutput($item);
+                $element['data'] .= drupal_render($elements);
             }
+
+            $items[] = $element;
         }
 
         $build = [
@@ -252,21 +250,20 @@ class TreeForm extends FormBase
             '#items' => $items,
         ];
 
-        if ($menu) {
-            if ($menu['name']) {
-                $build['#attributes'] = [
-                    'data-menu'        => $menu['name'],
-                    'data-can-receive' => 1,
-                    'class'            => ['sortable'],
-                ];
-                $build['#title'] = $menu['title'];
-                if (empty($tree)) {
-                    $build['#items'] = [''];
-                }
-            }
+        if ($menu && isset($menu['name']) && isset($menu['title'])) {
+            $build['#attributes'] = [
+                'data-menu'        => $menu['name'],
+                'data-can-receive' => 1,
+                'class'            => ['sortable'],
+            ];
+            $build['#title'] = $menu['title'];
 
+            // If tree has no children, add an empty element to allow drop.
+            if (!$tree->hasChildren()) {
+                $build['#items'] = [''];
+            }
         }
 
-        return !empty($build['#items']) ? $build : '';
+        return $build;
     }
 }

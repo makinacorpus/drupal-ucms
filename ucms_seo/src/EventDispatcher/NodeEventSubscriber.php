@@ -71,8 +71,17 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
+        $types = variable_get('ucms_seo_store_locator_content_types', []);
+
+        if (!$types) {
+            // System is not configured to have a store locator, which means
+            // the specific store locator implementation probably does not
+            // exist, just be silent about this
+            return;
+        }
+
         // @todo inject the variable instead of using variable_get()
-        if (in_array($node->type, variable_get('ucms_seo_store_locator_content_types', []), true)) {
+        if (in_array($node->type, $types, true)) {
             $storeLocator = $this->locatorFactory->create($node);
             $storeLocator->rebuildAliases();
         } else {
@@ -89,6 +98,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $this->onSaveEnsureSegment($event);
         $this->onSaveRebuildLocatorAliases($event);
+        $this->onSaveStoreMeta($event);
     }
 
     public function onInsert(NodeEvent $event)
@@ -106,5 +116,21 @@ class NodeEventSubscriber implements EventSubscriberInterface
     public function onDelete(NodeEvent $event)
     {
         $this->service->onAliasRemove($event->getNode());
+    }
+
+    private function onSaveStoreMeta(NodeEvent $event) {
+        $node = $event->getNode();
+
+        $values = [];
+
+        // This comes from the node form, and is the only case it'd happen
+        if (property_exists($node, 'ucms_seo_title') && !empty($node->ucms_seo_title)) {
+            $values['title'] = $node->ucms_seo_title;
+        }
+        if (property_exists($node, 'ucms_seo_description') && !empty($node->ucms_seo_description)) {
+            $values['description'] = $node->ucms_seo_description;
+        }
+
+        $this->service->setNodeMeta($node, $values);
     }
 }

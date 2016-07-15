@@ -62,18 +62,25 @@ class SiteEventSubscriber implements EventSubscriberInterface
         ;
 
         // Then update everyone to be reindexed
-        $this
-            ->db
-            ->query(
-                "
+        switch ($this->db->driver()) {
+            case 'mysql':
+                $sql = "
                     UPDATE {ucms_search_status} ss
                     JOIN {ucms_site_node} sn ON sn.nid = ss.nid
                     SET ss.needs_reindex = 1
                     WHERE sn.site_id = ? AND ss.needs_reindex = 0
-                ",
-                [$siteId]
-            )
-        ;
+                ";
+                break;
+            default:
+                $sql = "
+                    UPDATE ucms_search_status AS ss
+                    SET needs_reindex = 1
+                    FROM ucms_site_node sn
+                    WHERE sn.nid = ss.nid AND sn.site_id = 666 AND ss.needs_reindex = 0
+                ";
+                break;
+        }
+        $this->db->query($sql, [$siteId]);
     }
 
     private function reindexAllNodes($nidList)

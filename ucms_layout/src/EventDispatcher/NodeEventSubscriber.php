@@ -56,7 +56,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 $this
                     ->db
                     ->query(
-                        "UPDATE {ucms_layout} l SET l.nid = :clone WHERE l.nid = :parent AND l.site_id = :site",
+                        "UPDATE {ucms_layout} SET nid = :clone WHERE nid = :parent AND site_id = :site",
                         [
                             ':clone'  => $node->id(),
                             ':parent' => $node->parent_nid,
@@ -68,24 +68,36 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 // The same way, if the original node was present in some site
                 // layout, it must be replaced by the new one, IF AND ONLY IF
                 // the site is the same
-                $this
-                    ->db
-                    ->query(
-                        "
+                switch ($this->db->driver()) {
+                    case 'mysql':
+                        $sql = "
                             UPDATE {ucms_layout_data} d
                             JOIN {ucms_layout} l ON l.id = d.layout_id
                             SET
                                 d.nid = :clone
                             WHERE
                                 d.nid = :parent
-                                AND l.site_id = :site",
-                        [
-                            ':clone'  => $node->id(),
-                            ':parent' => $node->parent_nid,
-                            ':site'   => $node->site_id,
-                        ]
-                    )
-                ;
+                                AND l.site_id = :site
+                        ";
+                        break;
+                    default:
+                        $sql = "
+                            UPDATE {ucms_layout_data} AS d
+                            SET
+                                nid = :clone
+                            FROM {ucms_layout} l
+                            WHERE
+                                l.id = d.layout_id
+                                AND d.nid = :parent
+                                AND l.site_id = :site
+                        ";
+                        break;
+                }
+                $this->db->query($sql, [
+                    ':clone'  => $node->id(),
+                    ':parent' => $node->parent_nid,
+                    ':site'   => $node->site_id,
+                ]);
             }
         }
     }

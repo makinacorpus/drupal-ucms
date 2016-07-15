@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Seo\Tests;
 
+use Drupal\Core\Language\LanguageInterface;
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Now, how aliases are built: for example, lets say you have nodes,
@@ -134,6 +136,65 @@ class SeoServiceTest extends AbstractDrupalTest
         foreach ($this->menuLinks as $path => $id) {
             $this->assertSame($path, $service->getLinkAlias($id));
         }
+    }
+
+    /**
+     * Fixed a bug on orders of orders in the preload phase.
+     */
+    public function testMenuLinkPreloadAliasOrder()
+    {
+        $service = $this->getSeoService();
+
+        // Let's create 4 aliases for the same node
+        $site = $this->createDrupalSite(SiteState::ON, null, 'some_name');
+        $this->getSiteManager()->setContext($site);
+        $node = $this->createNodeWithAlias('some_alias', 'article', $site);
+        $langcode = $node->language()->getId();
+        $source = 'node/'.$node->id();
+
+        // first has been created during node save, priority -100, lang und
+        $firstAlias = $service->getAliasStorage()->load(['source' => $source]);
+
+        // Second is priority 0, will be canonical, lang und
+        $this->getAliasStorage()->save($source, 'foo');
+        $secondAlias = $service->getAliasStorage()->load(['source' => $source]);
+
+        // Third is priority 0, will not be canonical, lang und
+        $this->getAliasStorage()->save($source, 'foo/bar');
+        $thirdAlias = $service->getAliasStorage()->load(['source' => $source]);
+
+        // Fourth is priority 100, will not be canonical, lang und
+        $this->getAliasStorage()->save($source, 'foo/bar/baz');
+        $fourthAlias = $service->getAliasStorage()->load(['source' => $source]);
+
+        // Update node_id as there is no API for now
+        db_update('ucms_seo_alias')
+            ->fields(['node_id' => $node->id()])
+            ->condition('source', $source)
+            ->execute()
+        ;
+
+        // Set the second as canonical
+        $service->setCanonicalForAlias($secondAlias);
+
+        // Set the fourth with high priority
+        db_update('ucms_seo_alias')
+            ->fields(['priority' => 100])
+            ->condition('pid', $fourthAlias['pid'])
+            ->execute()
+        ;
+
+        // Now all queries should return the same alias, the conical one
+        $getNodeCanonicalAlias = $service->getNodeCanonicalAlias($node);
+        $preloadPathAlias = $service->getAliasStorage()->preloadPathAlias([$source], $langcode);
+        $lookupPathAlias = $service->getAliasStorage()->lookupPathAlias($source, $langcode);
+        $this->assertEquals('foo', $preloadPathAlias[$source]);
+        $this->assertEquals('foo', $getNodeCanonicalAlias->alias);
+        $this->assertEquals('foo', $lookupPathAlias);
+
+        // TODO: test with langcodes too
+
+        $this->getSiteManager()->dropContext();
     }
 
     public function testMenuChildrenAliasBuild()

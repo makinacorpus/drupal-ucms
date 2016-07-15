@@ -129,9 +129,9 @@ function ucms_seo_install_schema_fix() {
 
   if ('mysql' === \Database::getConnection()->driver()) {
     // @see ucms_seo_schema().
-    db_query("ALTER TABLE ucms_seo_alias DROP KEY uk_ucms_seo_alias_site");
-    db_query("ALTER TABLE ucms_seo_alias ADD KEY uk_ucms_seo_alias_site (alias(255), site_id)");
-    db_query("ALTER TABLE ucms_seo_alias MODIFY COLUMN alias varchar(1000) NOT NULL DEFAULT ''");
+    db_query("ALTER TABLE {ucms_seo_alias} DROP KEY uk_ucms_seo_alias_site");
+    db_query("ALTER TABLE {ucms_seo_alias} ADD KEY uk_ucms_seo_alias_site (alias(255), site_id)");
+    db_query("ALTER TABLE {ucms_seo_alias} MODIFY COLUMN `alias` varchar(1000) NOT NULL DEFAULT ''");
   }
 
   foreach (ucms_seo_install_constraints() as $table => $statements) {
