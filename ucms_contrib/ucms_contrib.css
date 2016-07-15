@@ -340,6 +340,9 @@ body [data-region].ucms-highlighted-over {
   width: 100%;
   overflow-y: auto;
 }
+#tab-tree h3 {
+  font-size: 1.5em;
+}
 
 /**
  * Default icons
