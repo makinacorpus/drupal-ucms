@@ -156,7 +156,7 @@ class IndexListForm extends FormBase
 
         try {
             $stats = $this->client->indices()->status(['index' => implode(',', $aliases)]);
-        } catch (Missing404Exception $e) {
+        } catch (\Exception $e) {
             watchdog_exception(__FUNCTION__, $e);
         }
 
