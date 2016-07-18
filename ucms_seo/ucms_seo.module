@@ -161,7 +161,7 @@ function ucms_seo_page_build(&$page) {
 
       // TODO: meta title is a tag by itself
       foreach (ucms_seo_service()->getNodeMeta($node) as $name => $content) {
-        drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => check_plain($content)]], 'meta-' . $name);
+        drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => $content]], 'meta-' . $name);
       }
 
       $canonical = null;
