@@ -24,3 +24,18 @@ services:
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
     arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
     tags: [{ name: event_subscriber }]
+
+  # Administrative components
+  ucms_tree.admin.datasource:
+    class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDatasource
+    arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
+  ucms_tree.admin.display:
+    class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDisplay
+    arguments: ["@ucms_site.manager"]
+
+  # Action processors
+  ucms_tree.action.tree_delete:
+    public: false
+    class: MakinaCorpus\Ucms\Tree\Action\TreeDeleteProcessor
+    arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
+    tags: [{name: ucms_dashboard.action}]
