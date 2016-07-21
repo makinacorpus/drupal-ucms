@@ -519,7 +519,7 @@ class NodeAccessService
      */
     public function userCanDereference(AccountInterface $account, NodeInterface $node, Site $site)
     {
-        return $node->access(Access::OP_VIEW, $account) && $node->site_id != $site->getId() && $this->manager->getAccess()->userIsWebmaster($account, $site);
+        return $node->access(Access::OP_VIEW, $account) && in_array($site->getId(), $node->ucms_sites) && $this->manager->getAccess()->userIsWebmaster($account, $site);
     }
 
     /**
