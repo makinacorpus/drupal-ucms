@@ -32,9 +32,15 @@ class TreeAdminDisplay extends AbstractDisplay
             // I could use some preload there...
             try {
                 $siteName = check_plain($this->siteManager->getStorage()->findOne($menu->getSiteId())->getAdminTitle());
+                if ($menu->isSiteMain()) {
+                    $siteMain = '<strong>' . $this->t("Yes") . '</strong>';
+                } else {
+                    $siteMain = $this->t("No");
+                }
             } catch (\Exception $e) {
                 // In theory, this can't happen...
                 $siteName = '<em>' . $this->t("unknown") . '</em>';
+                $siteMain = '<em>' . $this->t("N/A") . '</em>';
             }
 
             $rows[] = [
@@ -43,6 +49,7 @@ class TreeAdminDisplay extends AbstractDisplay
                 check_plain($menu->getTitle()),
                 check_plain($menu->getDescription()),
                 check_plain($siteName),
+                $siteMain,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($menu), 'mode' => 'icon']),
             ];
         }
@@ -57,6 +64,7 @@ class TreeAdminDisplay extends AbstractDisplay
                 $this->t("Title"),
                 $this->t("Description"),
                 $this->t("Site"),
+                $this->t("Site main"),
                 '',
             ],
             '#empty'  => $this->emptyMessage,

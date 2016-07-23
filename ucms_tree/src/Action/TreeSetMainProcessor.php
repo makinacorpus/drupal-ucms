@@ -11,7 +11,7 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\MenuStorageInterface;
 
-class TreeDeleteProcessor extends AbstractActionProcessor
+class TreeSetMainProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
 
@@ -31,7 +31,7 @@ class TreeDeleteProcessor extends AbstractActionProcessor
         $this->siteManager = $siteManager;
         $this->currentUser = $currentUser;
 
-        parent::__construct($this->t("Delete"), 'trash', 500, false);
+        parent::__construct($this->t("Set as main menu"), 'pushpin', 100, false);
     }
 
     /**
@@ -39,7 +39,7 @@ class TreeDeleteProcessor extends AbstractActionProcessor
      */
     public function getId()
     {
-        return 'tree_delete';
+        return 'tree_set_main';
     }
 
     /**
@@ -49,8 +49,8 @@ class TreeDeleteProcessor extends AbstractActionProcessor
     {
         return $this->formatPlural(
             $totalCount,
-            "Delete this page menu tree?",
-            "Delete those @count menu trees?"
+            "Set this menu as main site menu?",
+            "Set those @count menus as main site menu?"
         );
     }
 
@@ -60,7 +60,7 @@ class TreeDeleteProcessor extends AbstractActionProcessor
     public function appliesTo($item)
     {
         // You may not delete the canonical alias
-        return $item instanceof Menu;
+        return $item instanceof Menu && ((bool)$item->getSiteId());
     }
 
     /**
@@ -69,13 +69,13 @@ class TreeDeleteProcessor extends AbstractActionProcessor
     public function processAll($items)
     {
         foreach ($items as $item) {
-            $this->menuStorage->delete($item->getId());
+            $this->menuStorage->setMainMenuStatus($item->getName(), true);
         }
 
         return $this->formatPlural(
             count($item),
-            "Menu tree has been deleted",
-            "@count menu trees have been deleted"
+            "Menu has been set as main site menu",
+            "@count menus have been set as main site menu"
         );
     }
 
