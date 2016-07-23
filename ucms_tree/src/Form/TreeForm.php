@@ -77,9 +77,9 @@ class TreeForm extends FormBase
         $form['menus']['#tree'] = true;
 
         foreach ($menus as $menu) {
-            $tree = $this->treeManager->buildTree($menu['id'], false);
+            $tree = $this->treeManager->buildTree($menu->getId(), false);
 
-            $form['menus'][$menu['name']] = [
+            $form['menus'][$menu->getName()] = [
                 '#type' => 'hidden',
                 // '#value' => '', // Will be filled in Javascript
             ];
@@ -91,7 +91,7 @@ class TreeForm extends FormBase
             if (!is_array($output)) {
                 $output = ['#markup' => $output];
             }
-            $form['menus'][$menu['name'].'_list'] = $output;
+            $form['menus'][$menu->getName().'_list'] = $output;
         }
 
         $form['actions']['#type'] = 'actions';
@@ -115,7 +115,7 @@ class TreeForm extends FormBase
         $itemStorage  = $this->treeManager->getItemStorage();
         $currentTree  = $this->treeManager->buildTree($menuName, false);
         $menu         = $this->treeManager->getMenuStorage()->load($menuName);
-        $menuId       = $menu['id'];
+        $menuId       = $menu->getId();
 
         // First, get all elements so that we can delete those that are removed
         // @todo pri: sorry this is inneficient, but I need it
@@ -262,13 +262,13 @@ class TreeForm extends FormBase
             '#items' => $items,
         ];
 
-        if ($menu && isset($menu['name']) && isset($menu['title'])) {
+        if ($menu) {
             $build['#attributes'] = [
-                'data-menu'        => $menu['name'],
+                'data-menu'        => $menu->getName(),
                 'data-can-receive' => 1,
                 'class'            => ['sortable'],
             ];
-            $build['#title'] = $menu['title'];
+            $build['#title'] = $menu->getTitle();
 
             // If tree has no children, add an empty element to allow drop.
             if (!$tree->hasChildren()) {

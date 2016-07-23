@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
@@ -74,10 +75,10 @@ class ContextPaneEventListener
         ];
 
         foreach ($menus as $menu) {
-            $build[$menu['name']] = [
+            $build[$menu->getName()] = [
                 '#theme'  => 'umenu__context_pane',
-                '#tree'   => $this->treeManager->buildTree($menu['id'], false),
-                '#prefix' => "<h3>{$menu['title']}</h3>",
+                '#tree'   => $this->treeManager->buildTree($menu->getId(), false),
+                '#prefix' => "<h3>" . $menu->getTitle() . "</h3>",
             ];
         }
 
