@@ -5,14 +5,13 @@ namespace MakinaCorpus\Ucms\Tree\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use MakinaCorpus\Umenu\Menu;
 
-class TreeForm extends FormBase
+class TreeEditForm extends FormBase
 {
     private $treeManager;
     private $siteManager;
@@ -57,11 +56,29 @@ class TreeForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, Menu $menu = null)
     {
-        // Load all menus for site.
-        $form_state->setTemporaryValue('menu', $menu);
+        $form['#form_horizontal'] = true;
+
+        $isCreation = false;
+
+        if (!$menu) {
+            $isCreation = true;
+            $menu = new Menu();
+        }
+
+        $form['name'] = [
+            '#type'           => 'textfield',
+            '#attributes'     => ['placeholder' => 'site-42-main'],
+            '#description'    => $this->t("Leave this empty for auto-generation"),
+            '#default_value'  => $menu->getName(),
+            '#maxlength'      => 255,
+            '#disabled'       => !$isCreation,
+        ];
+
+        $form['is_creation'] = ['#type' => 'value', '#value' => $isCreation];
 
         $form['title'] = [
             '#type'           => 'textfield',
+            '#title'          => $this->t("Title"),
             '#attributes'     => ['placeholder' => $this->t("Main, Footer, ...")],
             '#default_value'  => $menu->getTitle(),
             '#required'       => true,
@@ -70,10 +87,18 @@ class TreeForm extends FormBase
 
         $form['description'] = [
             '#type'           => 'textfield',
+            '#title'          => $this->t("Description"),
             '#attributes'     => ['placeholder' => $this->t("Something about this menu...")],
-            '#default_value'  => $menu->getTitle(),
-            '#required'       => true,
+            '#default_value'  => $menu->getDescription(),
             '#maxlength'      => 1024,
+        ];
+
+        $form['is_main'] = [
+            '#type'           => 'checkbox',
+            '#title'          => $this->t("Is this menu the site main menu?"),
+            '#attributes'     => ['placeholder' => $this->t("Something about this menu...")],
+            '#default_value'  => $menu->isSiteMain(),
+            '#description'    => $this->t("If the site already has a main menu, this will change it."),
         ];
 
         $form['actions']['#type'] = 'actions';
@@ -93,7 +118,33 @@ class TreeForm extends FormBase
         try {
             $tx = $this->db->startTransaction();
 
-            //$this->treeManager->getMenuStorage()->update($name, $values);
+            $storage = $this->treeManager->getMenuStorage();
+            $name = $form_state->getValue('name');
+
+            $values = [
+                'title'       => $form_state->getValue('title'),
+                'description' => $form_state->getValue('description'),
+            ];
+
+            if ($this->siteManager->hasContext()) {
+                $siteId = $this->siteManager->getContext()->getId();
+                $values['site_id'] = $siteId;
+
+                if (!$name) {
+                    // Auto-generation for name
+                    $name = \URLify::filter('site-' . $siteId . '-' . $values['title'], 255);
+                }
+            } else if (!$name) {
+                // Auto-generation for name
+                $name = \URLify::filter($values['title'], 255);
+            }
+
+            if ($form_state->getValue('is_creation')) {
+                $storage->create($name, $values);
+            } else {
+                $storage->update($name, $values);
+            }
+            $storage->setMainMenuStatus($name, (bool)$form_state->getValue('is_main'));
 
             unset($tx);
 

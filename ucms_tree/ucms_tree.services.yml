@@ -5,11 +5,14 @@ parameters:
 
 services:
 
+  ucms_tree.menu_access:
+    class: MakinaCorpus\Ucms\Tree\MenuAccess
+    arguments: ['@ucms_site.manager']
+
   ucms_tree.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_site.manager", "@umenu.manager"]
-    tags:
-      - { name: event_listener, event: ucms_dashboard.context_init }
+    tags: [{name: event_listener, event: ucms_dashboard.context_init}]
 
 
   ucms_tree.site_event_listener:

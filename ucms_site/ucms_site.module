@@ -292,7 +292,7 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('node/add' === substr($path, 0, 8)) {
       return true;
     }
-    if ('admin/dashboard/tree' === $path) {
+    if ('admin/dashboard/tree' === substr($path, 0, 20)) {
       return true;
     }
     if ('admin/dashboard/content' === substr($path, 0, 23)) {
