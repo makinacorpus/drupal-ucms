@@ -92,13 +92,25 @@ final class LabelManager
 
 
     /**
+     * Load all labels
+     *
+     * @param integer[] $ids
+     * @return stdClass[]
+     */
+    public function loadAllLabels()
+    {
+        return taxonomy_get_tree($this->getVocabularyId(), 0, null, true);
+    }
+
+
+    /**
      * Load the root labels.
      *
      * @return stdClass[]
      */
     public function loadRootLabels()
     {
-        return taxonomy_get_tree($this->getVocabularyId(), 0, 1, TRUE);
+        return taxonomy_get_tree($this->getVocabularyId(), 0, 1, true);
     }
 
 
