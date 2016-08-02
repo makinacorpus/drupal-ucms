@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
@@ -94,6 +93,18 @@ class ContextPaneEventListener
                     ->addTab('cart', $this->t("Cart"), 'shopping-cart')
                     ->add(ucms_contrib_favorite_render(), 'cart')
                 ;
+
+                // Set as default tab on lists
+                $defaultTabRoutes = [
+                    'admin/dashboard/content',
+                    'admin/dashboard/media',
+                ];
+                if (
+                    in_array($router_item['path'], $defaultTabRoutes) ||
+                    in_array($router_item['tab_parent'], $defaultTabRoutes)
+                ) {
+                    $contextPane->setDefaultTab('cart');
+                }
             }
         }
 
