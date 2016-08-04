@@ -135,6 +135,40 @@ function ucms_seo_permission() {
 }
 
 /**
+ * Implements hook_init().
+ */
+function ucms_seo_init() {
+  $manager = ucms_site_manager();
+  // Globalredirect behavior
+  if ($manager->hasContext()) {
+    $site = $manager->getContext();
+    // Check a whole lot of condition to be sure we are only viewing the node
+    if (
+      $site && !ucms_site_is_master() &&
+      !path_is_admin(current_path()) &&
+      ($node = menu_get_object()) &&
+      'node' === arg(0) && !arg(2)
+    ) {
+      // On front page, we should not have an alias
+      if (drupal_is_front_page() && request_path() !== "") {
+        drupal_goto('', [
+          'query' => drupal_get_query_parameters(),
+        ], 301);
+      }
+      elseif (!drupal_is_front_page()) {
+        // Verify that we are on the best alias
+        $best_alias = ucms_seo_service()->getNodeCanonicalAlias($node);
+        if ($best_alias && $best_alias->alias !== request_path()) {
+          drupal_goto($best_alias->alias, [
+            'query' => drupal_get_query_parameters(),
+          ], 301);
+        }
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_page_build().
  */
 function ucms_seo_page_build(&$page) {
@@ -159,9 +193,19 @@ function ucms_seo_page_build(&$page) {
   if ($site && !ucms_site_is_master() && !path_is_admin(current_path())) {
     if ($node = menu_get_object()) {
 
-      // TODO: meta title is a tag by itself
+      // Add metadata on node view
       foreach (ucms_seo_service()->getNodeMeta($node) as $name => $content) {
-        drupal_add_html_head(['#tag' => 'meta', '#attributes' => ['name' => $name, 'content' => $content]], 'meta-' . $name);
+        if (!empty($content)) {
+          if ($name == 'title') {
+            drupal_set_title($content);
+          }
+          else {
+            drupal_add_html_head([
+              '#tag'        => 'meta',
+              '#attributes' => ['name' => $name, 'content' => $content],
+            ], 'meta-' . $name);
+          }
+        }
       }
 
       $canonical = null;
@@ -169,10 +213,11 @@ function ucms_seo_page_build(&$page) {
       if (drupal_is_front_page()) {
         // Do not set a canonical for home pages, just the site URL.
         $canonical = url('http://' . $site->http_host . '/');
-      } else if ('node' === arg(0) && !arg(3)) {
-        $canonical = ucms_seo_service()->getNodeCanonical($node) . '/';
+      } else if ('node' === arg(0) && !arg(2)) {
+        // Set the canonical url
+        $canonical = ucms_seo_service()->getNodeCanonical($node);
         if (!$canonical) {
-          $canonical = url('node/' . $node->nid, ['absolute' => true]) . '/';
+          $canonical = url('node/' . $node->nid, ['absolute' => true]);
         }
       }
 
