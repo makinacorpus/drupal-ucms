@@ -4,7 +4,9 @@
  * Dashboard related pages.
  */
 
+use MakinaCorpus\APubSub\CursorInterface;
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
+use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Page\SiteAdminDisplay;
@@ -129,14 +131,13 @@ function ucms_site_dashboard_site_page_log(Site $site) {
       ->getChannel('site:' . $site->id)
       ->fetch()
     ;
+    $messages->addSort(Field::MSG_SENT, CursorInterface::SORT_DESC);
 
-    notification_block_render_messages($messages);
+    return notification_block_render_messages($messages);
 
   } catch (ChannelDoesNotExistException $e) {
     return ['#markup' => '<p>' . t("There is no history to display.") . '<p>'];
   }
-
-  return [];
 }
 
 

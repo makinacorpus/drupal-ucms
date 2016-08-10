@@ -73,22 +73,31 @@ class SiteSwitch extends AbstractNotificationFormatter
 
         if ($name = $this->getUserAccountName($notification)) {
             $args['@name'] = $name;
-            return [
+            $ret = [
                 "@name switched @title from @from to @to",
                 "@name switched @title from @from to @to",
             ];
         } else {
-            return [
+            $ret = [
                 "@title switched from @from to @to",
                 "@title switched from @from to @to",
             ];
         }
+        if (!empty($notification['message'])) {
+            $args['%reason'] = $notification['message'];
+            $ret[0] .= ": %reason";
+            $ret[1] .= ": %reason";
+        }
+
+        return $ret;
     }
 
     public function getTranslations()
     {
         $this->t("@name switched @title from @from to @to");
+        $this->t("@name switched @title from @from to @to: %reason");
         $this->t("@title switched from @from to @to");
+        $this->t("@title switched from @from to @to: %reason");
     }
 
     /**

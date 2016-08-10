@@ -4,12 +4,10 @@ namespace MakinaCorpus\Ucms\Site\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -75,10 +73,21 @@ class SiteSwitch extends FormBase
         $form_state->setTemporaryValue('site', $site);
         $form_state->setTemporaryValue('state', $state);
 
-        return confirm_form($form, $this->t("Switch site @site to state @state ?", [
-            '@site'   => $site->title,
-            '@state'  => $this->t(SiteState::getList()[$state]),
-        ]), 'admin/dashboard/site/' . $site->id);
+        $question = $this->t(
+            "Switch site @site to state @state ?",
+            [
+                '@site'  => $site->title,
+                '@state' => $this->t(SiteState::getList()[$state]),
+            ]
+        );
+        $form = confirm_form($form, $question, 'admin/dashboard/site/' . $site->id);
+
+        $form['message'] = [
+            '#type'       => 'textarea',
+            '#title'      => $this->t("Reason"),
+            '#attributes' => ['placeholder' => $this->t("Describe here why you're switching this site's state")],
+        ];
+      return $form;
     }
 
     /**
@@ -88,7 +97,7 @@ class SiteSwitch extends FormBase
     {
         $site = $form_state->getTemporaryValue('site');
         $state = (int)$form_state->getTemporaryValue('state');
-        $data = ['from' => $site->state, 'to' => $state];
+        $data = ['from' => $site->state, 'to' => $state, 'message' => $form_state->getValue('message')];
         $list = SiteState::getList();
 
 
