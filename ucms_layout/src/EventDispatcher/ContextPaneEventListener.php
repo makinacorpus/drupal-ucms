@@ -40,7 +40,7 @@ class ContextPaneEventListener
         $contextPane = $event->getContextPane();
         $manager = $this->siteManager;
 
-        $site = $site = $manager->getContext();
+        $site = $manager->getContext();
         $account = \Drupal::currentUser();
         // @todo this should check for any layout at all being here
         if (!path_is_admin(current_path()) && $site && $manager->getAccess()->userIsWebmaster($account, $site)) {
