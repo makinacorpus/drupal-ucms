@@ -305,7 +305,11 @@ class NodeAccessService
         $ret = [];
 
         // This should always be true anyway.
-        if (($site = $this->manager->getContext()) && SiteState::ON === $site->state) {
+        if (
+            ($site = $this->manager->getContext()) &&
+            (SiteState::ON === $site->state) &&
+            (true === $site->isPublic())
+        ) {
             $ret[self::REALM_PUBLIC] = [$site->getId()];
         }
 

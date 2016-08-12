@@ -65,8 +65,16 @@ function ucms_site_schema() {
         'description' => 'Plain text describing the legacy sites this one replaces',
         'type'        => 'text',
       ],
+      'is_public' => [
+        'description' => "Is this site public",
+        'type'        => 'int',
+        'size'        => 'tiny',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
       'template_id' => [
-        'description' => "Site identifier",
+        'description' => "Template site identifier",
         'type'        => 'int',
         'unsigned'    => true,
         'not null'    => false,
@@ -680,4 +688,20 @@ function ucms_site_update_7017() {
     SET s1.type = 'ssam'
     WHERE s1.type IS NULL
   ");
+}
+
+/**
+ * Adds the {ucms_site}.is_public column.
+ */
+function ucms_site_update_7018() {
+  if (!db_field_exists('ucms_site', 'is_public')) {
+    db_add_field('ucms_site', 'is_public', [
+      'description' => "Is this site public",
+      'type'        => 'int',
+      'size'        => 'tiny',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 0,
+    ]);
+  }
 }

@@ -55,6 +55,11 @@ class Site
     public $replacement_of = '';
 
     /**
+     * @var int (boolean usage)
+     */
+    public $is_public = 0;
+
+    /**
      * @var int
      */
     public $template_id = null;
@@ -117,6 +122,11 @@ class Site
     public function getHomeNodeId()
     {
         return $this->home_nid;
+    }
+
+    public function isPublic()
+    {
+        return (boolean) $this->is_public;
     }
 
     public function getAttributes()

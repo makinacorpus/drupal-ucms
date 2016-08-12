@@ -275,6 +275,7 @@ class SiteStorage
             'uid',
             'template_id',
             'is_template',
+            'is_public',
             'type',
             'home_nid',
             'attributes',

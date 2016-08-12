@@ -150,6 +150,13 @@ class SiteRequest extends FormBase
             '#rows'           => 2,
         ];
 
+        $form['is_public'] = [
+            '#title'         => $this->t("Public site"),
+            '#type'          => 'checkbox',
+            '#description'   => $this->t("Uncheck this field to limit access to the site."),
+            '#default_value' => ($site->getId() == null) ? 1 : $site->is_public,
+        ];
+
         // @todo Missing site type
 
         $form['actions']['#type'] = 'actions';
@@ -217,6 +224,7 @@ class SiteRequest extends FormBase
         $site->http_host      = $values['http_host'];
         $site->http_redirects = $values['http_redirects'];
         $site->replacement_of = $values['replacement_of'];
+        $site->is_public      = $values['is_public'];
 
         $formData['step'] = 'b';
         $form_state->setRebuild(true);

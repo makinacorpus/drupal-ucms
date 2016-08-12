@@ -94,28 +94,30 @@ function ucms_site_dashboard_site_page_view(Site $site) {
   $uri = 'http://' . $site->http_host;
 
   $rows = [
-      [['data' => '<strong>' . t("Identification") . '</strong>', 'colspan' => 2]],
-      [t("HTTP hostname"), l($uri, $uri)],
-      [t("State"), t($states[$site->state])],
-      [t("Title"), check_plain($site->title)],
-      [t("Created at"), format_date($site->ts_created->getTimestamp())],
-      [t("Lastest update"), format_date($site->ts_changed->getTimestamp())],
-      [t("Requester"), check_plain(format_username($requester))],
-      [['data' => '<strong>' . t("Description") . '</strong>', 'colspan' => 2]],
-      [t("Description"), check_markup($site->title_admin)],
-      [t("Replaces"), check_markup($site->replacement_of)],
-      [t("HTTP redirections"), check_markup($site->http_redirects)],
-      [['data' => '<strong>' . t("Display information") . '</strong>', 'colspan' => 2]],
-      [t("Theme"), check_plain($site->theme)],
-      [t("Is a template"), $site->is_template ? '<strong>' . t("yes") . '</strong>' : t("No")],
+    [['data' => '<strong>' . t("Identification") . '</strong>', 'colspan' => 2]],
+    [t("HTTP hostname"), l($uri, $uri)],
+    [t("State"), t($states[$site->state])],
+    [t("Title"), check_plain($site->title)],
+    [t("Created at"), format_date($site->ts_created->getTimestamp())],
+    [t("Lastest update"), format_date($site->ts_changed->getTimestamp())],
+    [t("Requester"), check_plain(format_username($requester))],
+    [['data' => '<strong>' . t("Description") . '</strong>', 'colspan' => 2]],
+    [t("Description"), check_markup($site->title_admin)],
+    [t("Replaces"), check_markup($site->replacement_of)],
+    [t("HTTP redirections"), check_markup($site->http_redirects)],
+    [['data' => '<strong>' . t("Display information") . '</strong>', 'colspan' => 2]],
+    [t("Public site"), $site->isPublic() ? t("Yes") : t("No")],
+    [t("Theme"), check_plain($site->theme)],
+    [t("Is a template"), $site->is_template ? '<strong>' . t("Yes") . '</strong>' : t("No")],
   ];
+
   if ($template) {
     $rows[] = [t("Site template"), $template];
   }
 
   $ret[] = [
-      '#theme'    => 'table__ucms_site_details',
-      '#rows'     => $rows,
+    '#theme'  => 'table__ucms_site_details',
+    '#rows'   => $rows,
   ];
 
   return $ret;
