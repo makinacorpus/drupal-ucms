@@ -22,6 +22,7 @@
         "psr-4" : {
             "MakinaCorpus\\Ucms\\Contrib\\" : "ucms_contrib/src",
             "MakinaCorpus\\Ucms\\Dashboard\\" : "ucms_dashboard/src",
+            "MakinaCorpus\\Ucms\\Extranet\\" : "ucms_extranet/src",
             "MakinaCorpus\\Ucms\\Label\\" : "ucms_label/src",
             "MakinaCorpus\\Ucms\\Layout\\" : "ucms_layout/src",
             "MakinaCorpus\\Ucms\\Notification\\" : "ucms_notification/src",

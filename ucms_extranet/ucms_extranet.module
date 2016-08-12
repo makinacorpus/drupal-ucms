@@ -1,0 +1,62 @@
+<?php
+/**
+ * @file
+ * UCMS - Extranet management.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+//function ucms_extranet_menu() {
+//  return [];
+//}
+
+/**
+ * Implements hook_permission().
+ */
+//function ucms_extranet_permission() {
+//  return [];
+//}
+
+/**
+ * Implements hook_init().
+ */
+function ucms_extranet_init() {
+
+  if (drupal_is_cli()) {
+    return; // Make drush happy.
+  }
+
+  $manager = ucms_site_manager();
+
+  if ($manager->hasContext()) {
+    $site = $manager->getContext();
+
+    // Nothing to do if the site is public.
+    if ($site->isPublic()) {
+      return;
+    }
+
+    $valid_paths = [
+      'user/login',
+      'user/register',
+      'sso/login',
+    ];
+
+    if (user_is_anonymous() && !in_array(current_path(), $valid_paths)) {
+      drupal_goto('user/login');
+    }
+  }
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function ucms_extranet_user_login(&$edit, $account) {
+  if (drupal_is_cli()) {
+    return; // Make drush happy.
+  }
+  if (ucms_site_manager()->hasContext()) {
+    $edit['redirect'] = '<front>';
+  }
+}
