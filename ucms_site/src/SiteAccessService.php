@@ -157,16 +157,16 @@ class SiteAccessService
     }
 
     /**
-     * Get relative roles identifiers
+     * Get relative roles identifiers keyed by Drupal roles identifiers.
      *
      * @todo
      *   This sadly fundamentally broken since role are identifiers, it should
-     *   use permissions instead, but this would be severly broken too somehow
+     *   use permissions instead, but this would be severly broken too somehow.
      *
      * @return int[]
-     *   Keys are role identifiers, values are Access::ROLE_* constants
+     *   Keys are Drupal roles identifiers, values are relative roles identifiers.
      */
-    public function getRelativeRoles()
+    public function getRolesAssociations()
     {
         return variable_get('ucms_site_relative_roles');
     }
@@ -176,7 +176,7 @@ class SiteAccessService
      *
      * @param int[] $roleIdList
      */
-    public function updateRelativeRoles($roleIdList)
+    public function updateRolesAssociations($roleIdList)
     {
         variable_set('ucms_site_relative_roles', array_filter(array_map('intval', $roleIdList)));
     }
@@ -209,14 +209,14 @@ class SiteAccessService
     }
 
     /**
-     * Get a Relative role name, i.e. the name of the matching Drupal role
+     * Get a relative role name, i.e. the name of the matching Drupal role
      *
      * @param int $rrid Relative role ID (Access::ROLE_* constant)
      * @return string
      */
     public function getRelativeRoleName($rrid)
     {
-        if ($rid = array_keys($this->getRelativeRoles(), $rrid)) {
+        if ($rid = array_keys($this->getRolesAssociations(), $rrid)) {
             return $this->getDrupalRoleName(reset($rid));
         }
     }
@@ -229,11 +229,11 @@ class SiteAccessService
      *
      * @return int[]
      */
-    public function getRelativeUserRoleList(AccountInterface $account, Site $site)
+    public function getUserRelativeRoleList(AccountInterface $account, Site $site)
     {
         $ret = [];
 
-        $relativeRoles  = $this->getRelativeRoles();
+        $relativeRoles  = $this->getRolesAssociations();
         $grant          = $this->getUserRoleCacheValue($account, $site);
 
         // First check the user site roles if any
@@ -457,7 +457,7 @@ class SiteAccessService
         $ret = [];
         $states = SiteState::getList();
         $matrix = $this->getStateTransitionMatrix();
-        $roles  = $this->getRelativeUserRoleList($account, $site);
+        $roles  = $this->getUserRelativeRoleList($account, $site);
 
         foreach ($states as $state => $name) {
             foreach ($roles as $rid) {

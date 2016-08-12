@@ -120,7 +120,7 @@ class UserEdit extends FormBase
         $allRoles = $this->siteManager->getAccess()->getDrupalRoleList();
         unset($allRoles[DRUPAL_ANONYMOUS_RID]);
         unset($allRoles[DRUPAL_AUTHENTICATED_RID]);
-        $siteRoles = $this->siteManager->getAccess()->getRelativeRoles();
+        $siteRoles = $this->siteManager->getAccess()->getRolesAssociations();
         $availableRoles = array_diff_key($allRoles, $siteRoles);
 
         $form['roles'] = [
@@ -244,7 +244,7 @@ class UserEdit extends FormBase
 
         // Prepares user roles
         $userRoles  = array_filter($form_state->getValue('roles', []));
-        $siteRoles  = $this->siteManager->getAccess()->getRelativeRoles();
+        $siteRoles  = $this->siteManager->getAccess()->getRolesAssociations();
 
         foreach (array_keys($siteRoles) as $rid) {
             if (isset($user->roles[$rid])) {

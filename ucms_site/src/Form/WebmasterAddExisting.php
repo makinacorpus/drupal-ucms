@@ -90,7 +90,7 @@ class WebmasterAddExisting extends FormBase
         ];
 
         $roles = [];
-        $relativeRoles = $this->siteManager->getAccess()->getRelativeRoles();
+        $relativeRoles = $this->siteManager->getAccess()->getRolesAssociations();
         foreach (array_keys($relativeRoles) as $rid) {
             $roles[$rid] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
         }
@@ -147,7 +147,7 @@ class WebmasterAddExisting extends FormBase
         $user = $form_state->getTemporaryValue('user');
 
         $rid = $form_state->getValue('role');
-        $relativeRoles = $this->siteManager->getAccess()->getRelativeRoles();
+        $relativeRoles = $this->siteManager->getAccess()->getRolesAssociations();
 
         if ((int) $relativeRoles[$rid] === Access::ROLE_WEBMASTER) {
             $this->siteManager->getAccess()->addWebmasters($site, $user->id());

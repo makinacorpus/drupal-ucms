@@ -124,7 +124,7 @@ class SiteManagementForm extends FormBase
             $values[$rid] = (int)$role;
           }
         }
-        $this->manager->getAccess()->updateRelativeRoles($values);
+        $this->manager->getAccess()->updateRolesAssociations($values);
 
         $this->manager->setHomeNodeType($form_state->getValue('home_node_type'));
 

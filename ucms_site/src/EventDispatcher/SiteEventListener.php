@@ -56,7 +56,7 @@ class SiteEventListener
 
             /* @var $user UserInterface */
             if ($user = $storage->load($site->uid)) {
-                $roles = $this->manager->getAccess()->getRelativeRoles();
+                $roles = $this->manager->getAccess()->getRolesAssociations();
 
                 // Relative roles might not be set (this would an error thought)
                 if ($rid = array_search(Access::ROLE_WEBMASTER, $roles)) {
@@ -97,7 +97,7 @@ class SiteEventListener
         /* @var UserInterface $webmaster */
         $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
         $access     = $this->manager->getAccess()->getUserRole($webmaster, $event->getSite());
-        $roles      = $this->manager->getAccess()->getRelativeRoles();
+        $roles      = $this->manager->getAccess()->getRolesAssociations();
 
         // Relative roles might not be set (this would an error thought)
         if ($rid = array_search($access->getRole(), $roles)) {
@@ -114,7 +114,7 @@ class SiteEventListener
         /* @var UserInterface $webmaster */
         $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
         $access     = $this->manager->getAccess()->getUserRole($webmaster, $event->getSite());
-        $roles      = $this->manager->getAccess()->getRelativeRoles();
+        $roles      = $this->manager->getAccess()->getRolesAssociations();
 
         // Relative roles might not be set (this would an error thought)
         if (($rid = array_search($access->getRole(), $roles)) && !$webmaster->hasRole($rid)) {
@@ -130,7 +130,7 @@ class SiteEventListener
 
         /* @var UserInterface $webmaster */
         $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
-        $roles      = $this->manager->getAccess()->getRelativeRoles();
+        $roles      = $this->manager->getAccess()->getRolesAssociations();
 
         if (($rid = array_search(Access::ROLE_WEBMASTER, $roles)) && !$webmaster->hasRole($rid)) {
             $webmaster->addRole($rid);
@@ -159,7 +159,7 @@ class SiteEventListener
 
         /* @var UserInterface $webmaster */
         $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
-        $roles      = $this->manager->getAccess()->getRelativeRoles();
+        $roles      = $this->manager->getAccess()->getRolesAssociations();
 
         if (($rid = array_search(Access::ROLE_CONTRIB, $roles)) && !$webmaster->hasRole($rid)) {
             $webmaster->addRole($rid);
@@ -188,7 +188,7 @@ class SiteEventListener
 
         /* @var UserInterface $webmaster */
         $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
-        $roles      = $this->manager->getAccess()->getRelativeRoles();
+        $roles      = $this->manager->getAccess()->getRolesAssociations();
         $role       = $event->getArgument('role');
 
         $deleteOldRole = true;
