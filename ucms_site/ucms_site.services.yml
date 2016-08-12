@@ -10,7 +10,7 @@ services:
   ucms_site.access:
     public: false
     class: MakinaCorpus\Ucms\Site\SiteAccessService
-    arguments: ["@database"]
+    arguments: ["@database", "@event_dispatcher"]
 
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:

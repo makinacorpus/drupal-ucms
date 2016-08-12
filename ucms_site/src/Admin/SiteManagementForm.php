@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Site\Admin;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -83,17 +82,16 @@ class SiteManagementForm extends FormBase
         //   if porting this to D8, this query should be replaced by some API
         //   services giving the right role list instead, hence there is no
         //   dependency on the database service
-        $relativeRoles = $this->manager->getAccess()->getRelativeRoles();
+        $rolesAssociations = $this->manager->getAccess()->getRolesAssociations();
+        $relativeRoles = $this->manager->getAccess()->collectRelativeRoles();
+
         foreach ($this->manager->getAccess()->getDrupalRoleList() as $rid => $name) {
             $form['roles'][$rid] = [
                 '#title'          => $name,
                 '#type'           => 'select',
                 '#empty_option'   => $this->t("None"),
-                '#options'        => [
-                    Access::ROLE_WEBMASTER  => $this->t("Webmaster"),
-                    Access::ROLE_CONTRIB    => $this->t("Contributor"),
-                ],
-                '#default_value'  => isset($relativeRoles[$rid]) ? $relativeRoles[$rid] : null,
+                '#options'        => $relativeRoles,
+                '#default_value'  => isset($rolesAssociations[$rid]) ? $rolesAssociations[$rid] : null,
             ];
         }
 

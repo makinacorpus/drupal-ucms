@@ -354,13 +354,17 @@ class NodeAccessService
                         $ret[self::REALM_READONLY][] = $siteId;
                         break;
                 }
-            } else {
+            }
+            elseif (Access::ROLE_CONTRIB == $grant->getRole()) {
                 switch ($grant->getSiteState()) {
                     case SiteState::ON:
                     case SiteState::OFF:
                         $ret[self::REALM_READONLY][] = $siteId;
                         break;
                 }
+            }
+            elseif (SiteState::ON == $grant->getSiteState()) {
+                $ret[self::REALM_READONLY][] = $siteId;
             }
         }
 

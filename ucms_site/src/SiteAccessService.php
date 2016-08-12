@@ -3,16 +3,28 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
+use MakinaCorpus\Ucms\Site\EventDispatcher\RolesCollectionEvent;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles site access
  */
 class SiteAccessService
 {
+    use StringTranslationTrait;
+
     /**
      * @var \DatabaseConnection
      */
     private $db;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
 
     /**
      * User access cache
@@ -31,9 +43,10 @@ class SiteAccessService
      *
      * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(\DatabaseConnection $db, EventDispatcherInterface $dispatcher)
     {
         $this->db = $db;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -154,6 +167,34 @@ class SiteAccessService
             }
         }
         variable_set('ucms_site_state_transition_matrix', $matrix);
+    }
+
+    /**
+     * Get the default relative roles provided by ucms_site.
+     *
+     * @return [] Labels keyed by identifiers
+     */
+    public function getDefaultRelativeRoles()
+    {
+        return [
+            Access::ROLE_WEBMASTER  => $this->t("Webmaster"),
+            Access::ROLE_CONTRIB    => $this->t("Contributor"),
+        ];
+    }
+
+    /**
+     * Collect relative roles according to an optional context (site).
+     * No context means that we expect all existing relative roles.
+     *
+     * @param Site $context
+     *
+     * @return [] Labels keyed by identifiers
+     */
+    public function collectRelativeRoles(Site $context = null)
+    {
+        $event = new RolesCollectionEvent($this->getDefaultRelativeRoles(), $context);
+        $this->dispatcher->dispatch(RolesCollectionEvent::EVENT_NAME, $event);
+        return $event->getRoles();
     }
 
     /**
