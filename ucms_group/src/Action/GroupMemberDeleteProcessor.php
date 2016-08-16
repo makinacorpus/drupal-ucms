@@ -8,8 +8,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Group\GroupMember;
 
-class GroupDeleteProcessor extends AbstractActionProcessor
+class GroupMemberDeleteProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
 
@@ -32,45 +33,54 @@ class GroupDeleteProcessor extends AbstractActionProcessor
 
     public function getId()
     {
-        return 'group_delete';
+        return 'group_member_delete';
     }
 
     public function getQuestion($items, $totalCount)
     {
         return $this->formatPlural(
             $totalCount,
-            "Delete this group?",
-            "Delete the selected @count groups?"
+            "Remove this member from this group?",
+            "Remove the selected @count members for this group?"
         );
     }
 
     public function appliesTo($item)
     {
-        return $item instanceof Group && $this->groupManager->getAccess()->userCanDelete($this->currentUser, $item);
+        if (!$item instanceof GroupMember) {
+            return false;
+        }
+
+        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
+        $group = $this->groupManager->getStorage()->findOne($item->getGroupId());
+
+        return $this->groupManager->getAccess()->userCanManageMembers($this->currentUser, $group);
     }
 
     public function processAll($items)
     {
-        /** @var \MakinaCorpus\Ucms\Group\Group $item */
+        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
         foreach ($items as $item) {
-            $this->groupManager->getStorage()->delete($item, $this->currentUser->id());
+            $this->groupManager->getAccess()->removeMember($item->getGroupId(), $item->getUserId());
         }
 
         return $this->formatPlural(
             count($item),
-            "Group has been deleted",
-            "@count groups have been deleted"
+            "Group member has been removed",
+            "@count group members have been removed"
         );
     }
 
     public function getItemId($item)
     {
-        /** @var \MakinaCorpus\Ucms\Group\Group $item */
-        return $item->getId();
+        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
+        return $item->getGroupId() . ':' . $item->getUserId();
     }
 
     public function loadItem($id)
     {
-        return $this->groupManager->getStorage()->findOne($id);
+        list ($groupId, $userId) = explode(':', $id);
+
+        return GroupMember::create($groupId, $userId);
     }
 }

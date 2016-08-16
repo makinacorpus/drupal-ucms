@@ -13,6 +13,22 @@ namespace MakinaCorpus\Ucms\Group;
 class GroupMember
 {
     /**
+     * Use this only when you can't or don't want to go throught database
+     *
+     * @param int $groupId
+     * @param int $userId
+     */
+    static public function create($groupId, $userId)
+    {
+        $instance = new self();
+
+        $instance->group_id = $groupId;
+        $instance->user_id = $userId;
+
+        return $instance;
+    }
+
+    /**
      * @var int
      */
     private $group_id;

@@ -79,11 +79,21 @@ function ucms_group_menu() {
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
+
+  // Members administration
   $items['admin/dashboard/group/%ucms_group_menu/members'] = [
-    'title'             => "Users",
+    'title'             => "Members",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::membersAction', 3],
     'access callback'   => 'ucms_group_menu_access_view',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/group/%ucms_group_menu/members/add'] = [
+    'title'             => "Add member",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::memberAddAction', 3],
+    'access callback'   => 'ucms_group_menu_access_manage_members',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
@@ -113,6 +123,18 @@ function ucms_group_menu_access_view(Group $group) {
   /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
   $manager = \Drupal::service('ucms_group.manager');
   return $manager->getAccess()->userCanView($account, $group);
+}
+
+/**
+ * Menu helper, do not use.
+ *
+ * @deprecated
+ */
+function ucms_group_menu_access_manage_members(Group $group) {
+  $account = \Drupal::currentUser();
+  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  $manager = \Drupal::service('ucms_group.manager');
+  return $manager->getAccess()->userCanManageMembers($account, $group);
 }
 
 /**
