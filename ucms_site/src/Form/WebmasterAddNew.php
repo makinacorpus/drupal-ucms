@@ -98,9 +98,13 @@ class WebmasterAddNew extends FormBase
         );
 
         $roles = [];
-        $relativeRoles = $this->siteManager->getAccess()->getRolesAssociations();
-        foreach (array_keys($relativeRoles) as $rid) {
-            $roles[$rid] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
+        $relativeRoles = $this->siteManager->getAccess()->collectRelativeRoles($site);
+        $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();
+
+        foreach ($rolesAssociations as $rid => $rrid) {
+            if (isset($relativeRoles[$rrid])) {
+                $roles[$rid] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
+            }
         }
 
         $form['role'] = [
