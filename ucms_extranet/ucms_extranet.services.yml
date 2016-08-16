@@ -1,5 +1,11 @@
 services:
 
+  ucms_extranet.site_status_event_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Extranet\EventDispatcher\SiteStatusEventSubscriber
+    arguments: ["@ucms_site.manager"]
+    tags: [{ name: event_subscriber }]
+
   ucms_extranet.roles_collection_event_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Extranet\EventDispatcher\RolesCollectionEventSubscriber

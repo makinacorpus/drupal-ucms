@@ -311,20 +311,7 @@ class SiteAccessService
      */
     public function userIsWebmaster(AccountInterface $account, Site $site = null)
     {
-        if (null === $site) {
-            foreach ($this->getUserRoleCacheValue($account) as $grant) {
-                if (Access::ROLE_WEBMASTER === $grant->getRole()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if ($grant = $this->getUserRoleCacheValue($account, $site)) {
-            return Access::ROLE_WEBMASTER === $grant->getRole();
-        }
-
-        return false;
+        return $this->userHasRole($account, $site, Access::ROLE_WEBMASTER);
     }
 
     /**
@@ -338,17 +325,44 @@ class SiteAccessService
      */
     public function userIsContributor(AccountInterface $account, Site $site = null)
     {
+        return $this->userHasRole($account, $site, Access::ROLE_CONTRIB);
+    }
+
+    /**
+     * Has the user the given role for the given site.
+     *
+     * If no site is provided, informs if the user has the given relative role
+     * for any site.
+     * If no role is provided, informs if the user has any relative role.
+     *
+     * @param AccountInterface $account
+     * @param Site $site
+     * @param integer $rrid Relative role identifier
+     *
+     * @return boolean
+     */
+    public function userHasRole(AccountInterface $account, Site $site = null, $rrid = null)
+    {
+        if (null === $site && null === $rrid) {
+          return (boolean) count($this->getUserRoleCacheValue($account));
+        }
+
         if (null === $site) {
             foreach ($this->getUserRoleCacheValue($account) as $grant) {
-                if (Access::ROLE_CONTRIB === $grant->getRole()) {
+                if ((integer) $rrid === $grant->getRole()) {
                     return true;
                 }
             }
             return false;
         }
 
+        if (null === $rrid) {
+            $grant = $this->getUserRoleCacheValue($account, $site);
+            return ($grant instanceof SiteAccessRecord) && ($grant->getRole() !== Access::ROLE_NONE);
+        }
+
         if ($grant = $this->getUserRoleCacheValue($account, $site)) {
-            return Access::ROLE_CONTRIB === $grant->getRole();
+            return (integer) $rrid === $grant->getRole();
         }
 
         return false;

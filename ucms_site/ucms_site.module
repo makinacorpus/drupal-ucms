@@ -12,6 +12,7 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\User\UserAccess;
@@ -619,11 +620,11 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
   if (!$site) {
     return; // No site in context, nothing to check for.
   }
-  if (SiteState::ON == $site->state) {
-    return; // Normal runtime operation, nothing to do.
-  }
 
-  if (!ucms_site_manager()->getAccess()->userCanView($account, $site)) {
+  if (
+    SiteState::ON != $site->state &&
+    !ucms_site_manager()->getAccess()->userCanView($account, $site)
+  ) {
     $menu_site_status = MENU_SITE_OFFLINE;
     // State off means that the site is valid and up, but in maintainance mode,
     // case in which we should just set the maintainance mode and leave,
@@ -634,6 +635,13 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     if (SiteState::OFF != $site->state) {
       ucms_site_redirect_to_default();
     }
+  }
+
+  // Trigger an event allowing status alteration, only if the site is currently online.
+  if (MENU_SITE_ONLINE === $menu_site_status) {
+    $event = new SiteStatusEvent($site, $menu_site_status, $path);
+    \Drupal::service('event_dispatcher')->dispatch(SiteStatusEvent::EVENT_NAME, $event);
+    $menu_site_status = $event->getStatus();
   }
 }
 
