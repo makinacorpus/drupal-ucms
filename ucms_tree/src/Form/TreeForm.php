@@ -4,13 +4,11 @@ namespace MakinaCorpus\Ucms\Tree\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
 use MakinaCorpus\Umenu\TreeBase;
 use MakinaCorpus\Umenu\TreeManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -134,8 +132,13 @@ class TreeForm extends FormBase
 
         // Keep in mind that items ordered
         if (!empty($items)) {
-            foreach ($items as $item) {
 
+            // Because they are ordered and a parent will be saved before a child,
+            // thus modifying a child: we have to use a classic loop
+            $itemsCount = count($items);
+            for ($i = 0; $i < $itemsCount; $i++) {
+
+                $item = $items[$i];
                 $nodeId   = $item['name'];
                 $isNew    = substr($item['id'], 0, 4) == 'new_' || empty($item['id']);
                 $title    = trim($item['title']);
@@ -144,9 +147,15 @@ class TreeForm extends FormBase
 
                 if ($isNew) {
                     if ($parentId) {
-                        $item = $itemStorage->insertAsChild($parentId, $nodeId, $title);
+                        $id = $itemStorage->insertAsChild($parentId, $nodeId, $title);
                     } else {
-                        $item = $itemStorage->insert($menuId, $nodeId, $title);
+                        $id = $itemStorage->insert($menuId, $nodeId, $title);
+                    }
+                    // New potential parent item inserted, replace potential children parent_id
+                    foreach ($items as $index => $potentialChild) {
+                        if ($potentialChild['parent_id'] === $item['id']) {
+                            $items[$index]['parent_id'] = $id;
+                        }
                     }
                 } else {
                     if ($parentId) {
