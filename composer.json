@@ -6,12 +6,24 @@
     "license" : "GPL-2",
     "authors" : [
         {
+            "name" : "Lonny Loquesol",
+            "email" : "lonny.loquesol@makina-corpus.com"
+        },
+        {
             "name" : "Pierre Rineau",
             "email" : "pierre.rineau@makina-corpus.com"
         },
         {
+            "name" : "Régis Leroy",
+            "email" : "regis.leroy@makina-corpus.com"
+        },
+        {
             "name" : "Sébastien Corbin",
             "email" : "sebastien.corbin@makina-corpus.com"
+        },
+        {
+            "name" : "Yannick Chabbert",
+            "email" : "yannick.chabbert@makina-corpus.com"
         },
         {
             "name" : "Makina Corpus",
@@ -22,6 +34,8 @@
         "exclude-from-classmap": [
             "/ucms_contrib/src/Tests/",
             "/ucms_dashboard/src/Tests/",
+            "/ucms_extranet/src/Tests/",
+            "/ucms_group/src/Tests/",
             "/ucms_label/src/Tests/",
             "/ucms_layout/src/Tests/",
             "/ucms_list/src/Tests/",
@@ -39,6 +53,7 @@
             "MakinaCorpus\\Ucms\\Contrib\\" : "ucms_contrib/src",
             "MakinaCorpus\\Ucms\\Dashboard\\" : "ucms_dashboard/src",
             "MakinaCorpus\\Ucms\\Extranet\\" : "ucms_extranet/src",
+            "MakinaCorpus\\Ucms\\Group\\" : "ucms_group/src",
             "MakinaCorpus\\Ucms\\Label\\" : "ucms_label/src",
             "MakinaCorpus\\Ucms\\Layout\\" : "ucms_layout/src",
             "MakinaCorpus\\Ucms\\Notification\\" : "ucms_notification/src",
@@ -49,6 +64,9 @@
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
             "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src"
         }
+            "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src"
+        },
+        "exclude-from-classmap": ["**/Tests/"]
     },
     "require" : {
         "elasticsearch/elasticsearch" : "2.2.0",

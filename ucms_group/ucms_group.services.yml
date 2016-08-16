@@ -1,0 +1,9 @@
+services:
+
+  ucms_group.storage:
+    class: MakinaCorpus\Ucms\Group\GroupStorage
+    arguments: ['@database', '@event_dispatcher']
+
+  ucms_group.manager:
+    class: MakinaCorpus\Ucms\Group\GroupManager
+    arguments: ['@database', '@storage']

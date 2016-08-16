@@ -82,6 +82,7 @@ function ucms_site_schema() {
       'is_template' => [
         'description' => "Is this site a template site",
         'type'        => 'int',
+        'size'        => 'tiny',
         'unsigned'    => true,
         'not null'    => true,
         'default'     => 0,

@@ -1,0 +1,8 @@
+<?php
+/**
+ * Brings the 'group' feature to µCMS.
+ *
+ * Group features allows to create arbitrary groups, which may contain both
+ * sites and users. Once enabled, new set of user rights, such as site and
+ * content visibility throught the admin will be altered to match the groups.
+ */

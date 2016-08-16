@@ -1,0 +1,7 @@
+name = "UCMS - Group"
+description = "Provides user group and site group feature"
+core = 7.x
+package = UCMS
+php = 5.5
+dependencies[] = sf_dic
+dependencies[] = ucms_site
