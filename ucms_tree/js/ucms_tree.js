@@ -21,7 +21,7 @@
         /**
          * Inputs
          */
-        $menu.find('input', context).on('blur', function () {
+        $menu.on('blur', 'div input', function () {
           updateHiddenField.call($(this).parents('[data-menu]'));
         });
 
