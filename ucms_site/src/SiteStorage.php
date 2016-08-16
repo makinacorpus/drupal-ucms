@@ -36,28 +36,6 @@ class SiteStorage
     }
 
     /**
-     * Fix site instance
-     *
-     * @param Site $site
-     */
-    public function prepareInstance(Site $site)
-    {
-        $site->state = (int)$site->state;
-
-        if ($site->ts_created) {
-            $site->ts_created = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_created);
-        } else {
-            $site->ts_created = new \DateTime();
-        }
-
-        if ($site->ts_changed) {
-            $site->ts_changed = \DateTime::createFromFormat('Y-m-d H:i:s', $site->ts_changed);
-        } else {
-            $site->ts_changed = new \DateTime();
-        }
-    }
-
-    /**
      * Find by hostname
      *
      * @param string $hostname
@@ -79,12 +57,8 @@ class SiteStorage
                 "SELECT * FROM {ucms_site} WHERE http_host = :host LIMIT 1 OFFSET 0",
                 [':host' => $hostname]
             )
-            ->fetchObject('MakinaCorpus\\Ucms\\Site\\Site')
+            ->fetchObject(Site::class)
         ;
-
-        if ($site) {
-            $this->prepareInstance($site);
-        }
 
         return $site;
     }
@@ -116,12 +90,8 @@ class SiteStorage
                 "SELECT * FROM {ucms_site} WHERE id = :id LIMIT 1 OFFSET 0",
                 [':id' => $id]
             )
-            ->fetchObject('MakinaCorpus\\Ucms\\Site\\Site')
+            ->fetchObject(Site::class)
         ;
-
-        if ($site) {
-            $this->prepareInstance($site);
-        }
 
         if (!$site) {
             throw new \InvalidArgumentException("Site does not exists");
@@ -174,12 +144,11 @@ class SiteStorage
 
         $sites = $q
             ->execute()
-            ->fetchAll(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\Site')
+            ->fetchAll(\PDO::FETCH_CLASS, Site::class)
         ;
 
         foreach ($sites as $site) {
-            $this->prepareInstance($site);
-            $ret[$site->id] = $site;
+            $ret[$site->getId()] = $site;
         }
 
         return $ret;
@@ -231,15 +200,14 @@ class SiteStorage
             ->fields('s')
             ->condition('s.id', $idList)
             ->execute()
-            ->fetchAll(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\Site')
+            ->fetchAll(\PDO::FETCH_CLASS, Site::class)
         ;
 
         // Ensure order is the same
         // FIXME: find a better way
         $sort = [];
         foreach ($sites as $site) {
-            $this->prepareInstance($site);
-            $sort[$site->id] = $site;
+            $sort[$site->getId()] = $site;
         }
         foreach ($idList as $id) {
             if (isset($sort[$id])) {
@@ -300,7 +268,7 @@ class SiteStorage
                     break;
 
                 default:
-                    $values[$field] = $site->{$field};
+                    $values[$field] = $site->{$field}; // @todo direct property access
             }
         }
 

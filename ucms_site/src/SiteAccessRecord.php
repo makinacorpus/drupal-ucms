@@ -9,6 +9,7 @@ namespace MakinaCorpus\Ucms\Site;
  *
  * @todo
  *   - reference the site object within
+ *   - make the object extensible (global permissions within groups)
  */
 class SiteAccessRecord
 {

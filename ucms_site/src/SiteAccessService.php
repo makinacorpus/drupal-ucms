@@ -768,7 +768,8 @@ class SiteAccessService
      * @param \MakinaCorpus\Ucms\Site\Site $site
      * @return bool
      */
-    public function userCanEditTree(AccountInterface $account, Site $site) {
+    public function userCanEditTree(AccountInterface $account, Site $site)
+    {
         return $this->userIsWebmaster($account, $site);
     }
 }

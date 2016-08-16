@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider;
+use MakinaCorpus\Ucms\Dashboard\Form\ActionProcessForm;
 use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +68,7 @@ class ActionProcessorController extends Controller
         return $this
             ->getTransactionHandler()
             ->run(function () use ($builder, $processor, $item) {
-                return $builder->getForm('\MakinaCorpus\Ucms\Dashboard\Form\ActionProcessForm', $processor, $item);
+                return $builder->getForm($processor->getFormClass(), $processor, $item);
             })
         ;
     }

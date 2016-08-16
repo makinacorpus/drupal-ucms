@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Action;
 
+use MakinaCorpus\Ucms\Dashboard\Form\ActionProcessForm;
+
 /**
  * Represent a possible action over a certain item, this is just a value
  * object that will be used to build UI links or buttons
@@ -81,6 +83,16 @@ abstract class AbstractActionProcessor
      *   Human localized readable status message, can be empty
      */
     abstract public function processAll($items);
+
+    /**
+     * Get form class
+     *
+     * @return string
+     */
+    public function getFormClass()
+    {
+        return ActionProcessForm::class;
+    }
 
     /**
      * Process a single item

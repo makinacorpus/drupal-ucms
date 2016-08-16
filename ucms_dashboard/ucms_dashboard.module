@@ -3,6 +3,7 @@
  * UCMS - Dashboard and fioritures.
  */
 
+use MakinaCorpus\Ucms\Dashboard\Controller\ActionProcessorController;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
@@ -54,7 +55,7 @@ function ucms_dashboard_menu() {
   ];
   $items['admin/action/process'] = [
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Dashboard\Controller\ActionProcessorController::process'],
+    'page arguments'    => [ActionProcessorController::class .  '::process'],
     'type'              => MENU_CALLBACK,
   ];
 
