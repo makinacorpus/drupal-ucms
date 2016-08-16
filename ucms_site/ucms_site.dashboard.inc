@@ -151,7 +151,7 @@ function ucms_site_dashboard_site_page_log(Site $site) {
  */
 function ucms_site_dashboard_site_page_webmasters(Site $site) {
   $datasource = \Drupal::service('ucms_site.admin.webmaster_datasource');
-  $display    = new WebmasterAdminDisplay(t("There is no webmaster or contributor yet."));
+  $display    = new WebmasterAdminDisplay(ucms_site_manager(), t("There is no webmaster or contributor yet."));
 
   $page   = ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site', 'webmaster']);
   $query  = ['site_id' => $site->id];

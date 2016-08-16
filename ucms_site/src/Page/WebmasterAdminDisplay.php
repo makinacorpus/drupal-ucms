@@ -7,10 +7,16 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
 
 class WebmasterAdminDisplay extends AbstractDisplay
 {
+    /**
+     * @var SiteManager
+     */
+    private $manager;
+
     /**
      * @var string
      */
@@ -20,8 +26,9 @@ class WebmasterAdminDisplay extends AbstractDisplay
     /**
      * Default constructor
      */
-    public function __construct($emptyMessage = null)
+    public function __construct(SiteManager $manager, $emptyMessage = null)
     {
+        $this->manager = $manager;
         $this->emptyMessage = $emptyMessage;
     }
 
@@ -32,6 +39,7 @@ class WebmasterAdminDisplay extends AbstractDisplay
     protected function displayAs($mode, $accessRecords)
     {
         $rows = [];
+        $relativeRoles = $this->manager->getAccess()->collectRelativeRoles();
 
         foreach ($accessRecords as $access) {
             $user = user_load($access->getUserId());
@@ -39,7 +47,7 @@ class WebmasterAdminDisplay extends AbstractDisplay
             $rows[] = [
                 filter_xss(format_username($user)),
                 check_plain($user->mail),
-                ((int) $access->getRole() === Access::ROLE_WEBMASTER) ? $this->t("Webmaster") : $this->t("Contributor"),
+                $relativeRoles[(int) $access->getRole()],
                 ($user->status == 0) ? $this->t("Disabled") : $this->t("Enabled"),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($access), 'mode' => 'icon']),
             ];

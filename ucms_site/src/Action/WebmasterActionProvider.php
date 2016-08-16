@@ -53,7 +53,8 @@ class WebmasterActionProvider implements ActionProviderInterface
             if ((int) $item->getRole() === Access::ROLE_WEBMASTER) {
                 $path = $this->buildWebmasterUri($item, 'demote');
                 $actions[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 10, true, true);
-            } else {
+            }
+            elseif ((int) $item->getRole() === Access::ROLE_CONTRIB) {
                 $path = $this->buildWebmasterUri($item, 'promote');
                 $actions[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 10, true, true);
             }

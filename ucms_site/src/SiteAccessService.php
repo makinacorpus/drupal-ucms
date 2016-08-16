@@ -519,7 +519,7 @@ class SiteAccessService
      * @param int $role
      *   Access::ROLE_* constant
      */
-    private function mergeUsersWithRole(Site $site, $userIdList, $role)
+    public function mergeUsersWithRole(Site $site, $userIdList, $role)
     {
         if (!is_array($userIdList) && !$userIdList instanceof \Traversable) {
             $userIdList = [$userIdList];
@@ -552,7 +552,7 @@ class SiteAccessService
      * @param int $role
      *   Access::ROLE_* constant
      */
-    private function removeUsersWithRole(Site $site, $userIdList, $role = null)
+    public function removeUsersWithRole(Site $site, $userIdList, $role = null)
     {
         $q = $this
             ->db

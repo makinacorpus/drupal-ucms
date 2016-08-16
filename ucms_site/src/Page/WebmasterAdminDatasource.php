@@ -47,12 +47,19 @@ class WebmasterAdminDatasource extends AbstractDatasource
      */
     public function getFilters($query)
     {
-        return [
-            (new LinksFilterDisplay('role', $this->t("Role")))->setChoicesMap([
-                Access::ROLE_WEBMASTER  => $this->t("Webmaster"),
-                Access::ROLE_CONTRIB    => $this->t("Contributor"),
-            ]),
-        ];
+        if (empty($query['site_id'])) {
+            return [];
+        }
+
+        $site = $this->manager->getStorage()->findOne($query['site_id']);
+        $relativeRoles = $this->manager->getAccess()->collectRelativeRoles($site);
+
+        $choices = [];
+        foreach ($relativeRoles as $rrid => $label) {
+          $choices[$rrid] = $label;
+        }
+
+        return [(new LinksFilterDisplay('role', $this->t("Role")))->setChoicesMap($choices)];
     }
 
 

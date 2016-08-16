@@ -147,13 +147,8 @@ class WebmasterAddExisting extends FormBase
         $user = $form_state->getTemporaryValue('user');
 
         $rid = $form_state->getValue('role');
-        $relativeRoles = $this->siteManager->getAccess()->getRolesAssociations();
-
-        if ((int) $relativeRoles[$rid] === Access::ROLE_WEBMASTER) {
-            $this->siteManager->getAccess()->addWebmasters($site, $user->id());
-        } else {
-            $this->siteManager->getAccess()->addContributors($site, $user->id());
-        }
+        $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();
+        $this->siteManager->getAccess()->mergeUsersWithRole($site, $user->id(), $rolesAssociations[$rid]);
 
         drupal_set_message($this->t("!name has been added as %role.", [
             '!name' => $user->getDisplayName(),
