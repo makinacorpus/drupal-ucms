@@ -1,51 +1,41 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\Page;
+namespace MakinaCorpus\Ucms\Group\Page;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
-use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\SiteManager;
 
-class WebmasterAdminDisplay extends AbstractDisplay
+class GroupMembersAdminDisplay extends AbstractDisplay
 {
-    /**
-     * @var SiteManager
-     */
-    private $manager;
-
     /**
      * @var string
      */
     private $emptyMessage;
 
-
     /**
      * Default constructor
      */
-    public function __construct(SiteManager $manager, $emptyMessage = null)
+    public function __construct($emptyMessage = null)
     {
-        $this->manager = $manager;
         $this->emptyMessage = $emptyMessage;
     }
-
 
     /**
      * {@inheritdoc}
      */
-    protected function displayAs($mode, $accessRecords)
+    protected function displayAs($mode, $members)
     {
         $rows = [];
-        $relativeRoles = $this->manager->getAccess()->collectRelativeRoles();
 
-        foreach ($accessRecords as $access) {
-            $user = user_load($access->getUserId());
+        /** @var \MakinaCorpus\Ucms\Group\GroupMember $member */
+        foreach ($members as $member) {
+            /** @var \Drupal\user\UserInterface $user */
+            $user = user_load($member->getUserId());
 
             $rows[] = [
-                filter_xss(format_username($user)),
-                check_plain($user->mail),
-                $relativeRoles[(int) $access->getRole()],
-                ($user->status == 0) ? $this->t("Disabled") : $this->t("Enabled"),
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($access), 'mode' => 'icon']),
+                $user->getDisplayName(),
+                check_plain($user->getEmail()),
+                $user->isActive() ? $this->t("Enabled") : $this->t("Disabled"),
+                theme('ucms_dashboard_actions', ['actions' => $this->getActions($member), 'mode' => 'icon']),
             ];
         }
 
@@ -58,7 +48,6 @@ class WebmasterAdminDisplay extends AbstractDisplay
             '#header' => [
                 $this->t("Name"),
                 $this->t("Email"),
-                $this->t("Role"),
                 // FIXME should be in theme
                 $this->t("Global status") .' <span title="' . $text . '" class="glyphicon glyphicon-question-sign"></span>',
                 '',

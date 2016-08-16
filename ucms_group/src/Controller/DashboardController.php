@@ -11,6 +11,7 @@ use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\Page\GroupAdminDisplay;
+use MakinaCorpus\Ucms\Group\Page\GroupMembersAdminDisplay;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,7 +33,15 @@ class DashboardController extends Controller
      */
     private function getGroupAdminDatasource()
     {
-        return $this->get('ucms_group.admin.datasource');
+        return $this->get('ucms_group.admin.group_datasource');
+    }
+
+    /**
+     * @return DatasourceInterface
+     */
+    private function getGroupMembersAdminDatasource()
+    {
+        return $this->get('ucms_group.admin.group_member_datasource');
     }
 
     /**
@@ -102,5 +111,22 @@ class DashboardController extends Controller
     public function viewAction(Group $group)
     {
         throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * View members action
+     */
+    public function membersAction(Request $request, Group $group)
+    {
+        return $this
+            ->createPage(
+                $this->getGroupMembersAdminDatasource(),
+                new GroupMembersAdminDisplay($this->t("This group has no members."))
+            )
+            ->setBaseQuery([
+                'group' => $group->getId(),
+            ])
+            ->render($request->query->all())
+        ;
     }
 }

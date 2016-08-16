@@ -72,12 +72,18 @@ function ucms_group_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['admin/dashboard/group/%ucms_group_menu/edit'] = [
-    'title'             => "Edit group",
-    'title callback'    => 'ucms_group_menu_title',
-    'title arguments'   => [3],
+    'title'             => "Edit",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::editAction', 3],
     'access callback'   => 'ucms_group_menu_access_edit',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/group/%ucms_group_menu/members'] = [
+    'title'             => "Users",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::membersAction', 3],
+    'access callback'   => 'ucms_group_menu_access_view',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];

@@ -15,9 +15,14 @@ services:
     class: MakinaCorpus\Ucms\Group\GroupManager
     arguments: ["@database", "@ucms_group.storage", "@ucms_group.access"]
 
-  ucms_group.admin.datasource:
+  # Admin datasources
+  ucms_group.admin.group_datasource:
     public: true
     class: MakinaCorpus\Ucms\Group\Page\GroupAdminDatasource
+    arguments: ["@database", "@ucms_group.manager"]
+  ucms_group.admin.group_member_datasource:
+    public: true
+    class: MakinaCorpus\Ucms\Group\Page\GroupMembersAdminDatasource
     arguments: ["@database", "@ucms_group.manager"]
 
   # Various listeners and subscribers

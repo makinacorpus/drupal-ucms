@@ -78,7 +78,7 @@ class SiteAccessService
                 )
             ;
 
-            $r->setFetchMode(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\SiteAccessRecord');
+            $r->setFetchMode(\PDO::FETCH_CLASS, SiteAccessRecord::class);
 
             // Can't use fetchAllAssoc() because properties are private on the
             // objects built by PDO
@@ -621,7 +621,7 @@ class SiteAccessService
         ;
 
         /* @var $r \PDOStatement */
-        $r->setFetchMode(\PDO::FETCH_CLASS, 'MakinaCorpus\\Ucms\\Site\\SiteAccessRecord');
+        $r->setFetchMode(\PDO::FETCH_CLASS, SiteAccessRecord::class);
 
         return $r->fetchAll();
     }
