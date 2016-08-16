@@ -6,7 +6,6 @@ use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use MakinaCorpus\Datadmin\Action\Action;
 
 /**
  * Class ContextPane
@@ -69,7 +68,7 @@ class ContextPane
     {
         $event = new ContextPaneEvent($this);
 
-        $this->dispatcher->dispatch('ucms_dashboard.context_init', $event);
+        $this->dispatcher->dispatch(ContextPaneEvent::EVENT_INIT, $event);
     }
 
     /**

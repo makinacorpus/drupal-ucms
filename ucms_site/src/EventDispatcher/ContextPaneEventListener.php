@@ -12,16 +12,8 @@ class ContextPaneEventListener
 {
     use StringTranslationTrait;
 
-    /**
-     * @var ActionRegistry
-     */
     private $actionRegistry;
 
-    /**
-     * Default constructor
-     *
-     * @param ActionRegistry $actionRegistry
-     */
     public function __construct(ActionRegistry $actionRegistry)
     {
         $this->actionRegistry = $actionRegistry;

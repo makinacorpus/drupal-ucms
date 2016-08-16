@@ -45,6 +45,14 @@ item:
     expanded: true
     options:
       icon: 'user'
+
+  -
+    name: "Groupes"
+    path: "admin/dashboard/group"
+    expanded: true
+    options:
+      icon: tent
+
 #  -
 #    name: "SEO"
 #    path: "admin/dashboard/seo"

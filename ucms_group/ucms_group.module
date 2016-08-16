@@ -6,3 +6,126 @@
  * sites and users. Once enabled, new set of user rights, such as site and
  * content visibility throught the admin will be altered to match the groups.
  */
+
+use MakinaCorpus\Ucms\Group\Controller\DashboardController;
+use MakinaCorpus\Ucms\Group\Group;
+use MakinaCorpus\Ucms\Group\GroupAccess;
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_group_permission() {
+  return [
+    GroupAccess::PERM_DASHBOARD_ACCESS => [
+      'title' => t("Access to group dashboard"),
+    ],
+    GroupAccess::PERM_MANAGE_ALL => [
+      'title' => t("Manage all groups"),
+    ],
+    GroupAccess::PERM_VIEW_ALL => [
+      'title' => t("View all groups"),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_group_menu() {
+  $items = [];
+
+  // Dashboard callbacks
+  $items['admin/dashboard/group'] = [
+    'title'             => "Sites",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::viewMineAction'],
+    'access arguments'  => [GroupAccess::PERM_DASHBOARD_ACCESS],
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+  $items['admin/dashboard/group/mine'] = [
+    'title'             => "My groups",
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+    'weight'            => -100,
+  ];
+  $items['admin/dashboard/group/all'] = [
+    'title'             => "All groups",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::viewAllAction'],
+    'access arguments'  => [GroupAccess::PERM_VIEW_ALL],
+    'type'              => MENU_LOCAL_TASK,
+  ];
+  $items['admin/dashboard/group/add'] = [
+    'title'             => "Add group",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::addAction'],
+    'access arguments'  => [GroupAccess::PERM_MANAGE_ALL],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  // Single group callbacks
+  $items['admin/dashboard/group/%ucms_group_menu'] = [
+    'title'             => "Group details",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::viewAction', 3],
+    'access callback'   => 'ucms_group_menu_access_view',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/group/%ucms_group_menu/edit'] = [
+    'title'             => "Edit group",
+    'title callback'    => 'ucms_group_menu_title',
+    'title arguments'   => [3],
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::editAction', 3],
+    'access callback'   => 'ucms_group_menu_access_edit',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  return $items;
+}
+
+/**
+ * Menu helper, do not use.
+ *
+ * @deprecated
+ */
+function ucms_group_menu_load($id) {
+  try {
+    return \Drupal::service('ucms_group.manager')->getStorage()->findOne($id);
+  } catch (\Exception $e) {}
+  return false;
+}
+
+/**
+ * Menu helper, do not use.
+ *
+ * @deprecated
+ */
+function ucms_group_menu_access_view(Group $group) {
+  $account = \Drupal::currentUser();
+  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  $manager = \Drupal::service('ucms_group.manager');
+  return $manager->getAccess()->userCanView($account, $group);
+}
+
+/**
+ * Menu helper, do not use.
+ *
+ * @deprecated
+ */
+function ucms_group_menu_access_edit(Group $group) {
+  $account = \Drupal::currentUser();
+  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  $manager = \Drupal::service('ucms_group.manager');
+  return $manager->getAccess()->userCanEdit($account, $group);
+}
+
+/**
+ * Menu helper, do not use.
+ *
+ * @deprecated
+ */
+function ucms_group_menu_title(Group $group) {
+  return $group->getTitle();
+}

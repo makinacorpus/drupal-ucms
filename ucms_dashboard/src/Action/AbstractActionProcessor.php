@@ -16,6 +16,7 @@ abstract class AbstractActionProcessor
     private $isPrimary = false;
     private $isDangerous = false;
     private $isDialog = true;
+    private $group;
     private $description;
 
     /**
@@ -29,7 +30,7 @@ abstract class AbstractActionProcessor
      * @param boolean $isDialog
      * @param string $description
      */
-    public function __construct($title, $icon = null, $priority = 0, $isPrimary = true, $isDangerous = false, $isDialog = true, $description = null)
+    public function __construct($title, $icon = null, $priority = 0, $isPrimary = true, $isDangerous = false, $isDialog = true, $group = null, $description = null)
     {
         $this->title = $title;
         $this->icon = $icon;
@@ -37,6 +38,7 @@ abstract class AbstractActionProcessor
         $this->isPrimary = $isPrimary;
         $this->isDangerous = $isDangerous;
         $this->isDialog = $isDialog;
+        $this->group = $group;
         $this->description = $description;
     }
 
@@ -152,7 +154,9 @@ abstract class AbstractActionProcessor
             $this->getLinkIcon(),
             $this->getLinkPriority(),
             $this->isLinkPrimary(),
-            true
+            true,
+            false,
+            $this->getLinkGroup()
         );
     }
 
@@ -204,6 +208,16 @@ abstract class AbstractActionProcessor
     public function isLinkPrimary()
     {
         return $this->isPrimary;
+    }
+
+    /**
+     * Get action link group
+     *
+     * @return string
+     */
+    public function getLinkGroup()
+    {
+        return $this->group;
     }
 
     /**
