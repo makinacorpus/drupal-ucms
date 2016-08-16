@@ -108,10 +108,14 @@ class GroupMemberAddExisting extends FormBase
         /** @var \Drupal\user\UserInterface $user */
         $user = $form_state->getTemporaryValue('user');
 
-        $this->groupManager->getAccess()->addMember($form_state->getValue('group'), $user->id());
-
-        drupal_set_message($this->t("!name has been added to group.", [
-            '!name' => $user->getDisplayName(),
-        ]));
+        if ($this->groupManager->getAccess()->addMember($form_state->getValue('group'), $user->id())) {
+            drupal_set_message($this->t("!name has been added to group.", [
+                '!name' => $user->getDisplayName(),
+            ]));
+        } else {
+            drupal_set_message($this->t("!name is already a member of this group.", [
+                '!name' => $user->getDisplayName(),
+            ]));
+        }
     }
 }

@@ -40,17 +40,25 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
 
     public function onContextPaneInit(ContextPaneEvent $event)
     {
-        if ('admin/dashboard/group' === current_path()) {
-            $event->getContextPane()->addActions([
-                new Action($this->t("Add group"), 'admin/dashboard/group/add', null, 'plus', 0, true, true),
-            ]);
-        } else if ('admin/dashboard/group/' === substr(current_path(), 0, 22)) {
-            if ($group = menu_get_object('ucms_group_load', 3)) {
-                $event->getContextPane()->addActions(
-                    $this->actionRegistry->getActions($group)
-                );
-            }
+        switch (current_path()) {
+
+            case 'admin/dashboard/group':
+            case 'admin/dashboard/group/mine':
+            case 'admin/dashboard/group/all':
+                $event->getContextPane()->addActions([
+                    new Action($this->t("Add group"), 'admin/dashboard/group/add', null, 'plus', 0, true, true),
+                ]);
+                break;
+
+            default:
+                if ('admin/dashboard/group/' === substr(current_path(), 0, 22)) {
+                    if ($group = menu_get_object('ucms_group_menu', 3)) {
+                        $event->getContextPane()->addActions(
+                            $this->actionRegistry->getActions($group)
+                        );
+                    }
+                }
+                break;
         }
     }
-
 }

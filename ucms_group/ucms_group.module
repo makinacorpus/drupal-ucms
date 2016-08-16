@@ -36,7 +36,7 @@ function ucms_group_menu() {
 
   // Dashboard callbacks
   $items['admin/dashboard/group'] = [
-    'title'             => "Sites",
+    'title'             => "Groups",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::viewMineAction'],
     'access arguments'  => [GroupAccess::PERM_DASHBOARD_ACCESS],
@@ -65,6 +65,8 @@ function ucms_group_menu() {
   // Single group callbacks
   $items['admin/dashboard/group/%ucms_group_menu'] = [
     'title'             => "Group details",
+    'title callback'    => 'ucms_group_menu_title',
+    'title arguments'   => [3],
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::viewAction', 3],
     'access callback'   => 'ucms_group_menu_access_view',

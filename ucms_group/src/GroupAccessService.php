@@ -50,10 +50,24 @@ class GroupAccessService
      * @param int $groupId
      * @param int $userId
      *
-     * @return GroupMember
+     * @return bool
+     *   True if user was really added, false if it is already member
      */
     public function addMember($groupId, $userId)
     {
+        $exists = (bool)$this
+            ->database
+            ->query(
+                "SELECT 1 FROM {ucms_group_user} WHERE group_id = :group AND user_id = :user",
+                [':group' => $groupId, ':user' => $userId]
+            )
+            ->fetchField()
+        ;
+
+        if ($exists) {
+            return false;
+        }
+
         $this
             ->database
             ->merge('ucms_group_user')
@@ -64,7 +78,7 @@ class GroupAccessService
             ->execute()
         ;
 
-        return GroupMember::create($groupId, $userId);
+        return true;
     }
 
     /**
