@@ -177,6 +177,9 @@ class TreeForm extends FormBase
         $newTree = $this->treeManager->buildTree($menuId, false, false, true);
 
         // Remove elements not in the original array
+        // TODO: if an item is moved from menuA to menuB, it will be deleted in menuA loop, and won't be available in
+        // menuB loop, so we need to refactor this to either have a single menu editable per route, or handle deleted
+        // items at the end of all menu processing.
         foreach (array_diff_key($old, $processed) as $itemId => $deleted) {
             $itemStorage->delete($itemId);
             $deleteItems[$itemId] = $deleted;
