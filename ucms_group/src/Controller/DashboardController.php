@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Group\Controller;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
@@ -11,7 +9,6 @@ use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Form\GroupMemberAddExisting;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\Page\GroupAdminDisplay;
 use MakinaCorpus\Ucms\Group\Page\GroupMembersAdminDisplay;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 class DashboardController extends Controller
 {
     use PageControllerTrait;
-    use StringTranslationTrait;
 
     /**
      * @return GroupManager
@@ -59,12 +55,9 @@ class DashboardController extends Controller
     public function viewAllAction(Request $request)
     {
         return $this
-            ->createPage(
+            ->createTemplatePage(
                 $this->getGroupAdminDatasource(),
-                new GroupAdminDisplay(
-                    $this->getGroupManager(),
-                    $this->t("There is no groups yet.")
-                )
+                'module:ucms_group:views/Page/groupAdmin.html.twig'
             )
             ->render($request->query->all())
         ;
@@ -76,12 +69,9 @@ class DashboardController extends Controller
     public function viewMineAction(Request $request)
     {
         return $this
-            ->createPage(
+            ->createTemplatePage(
                 $this->getGroupAdminDatasource(),
-                new GroupAdminDisplay(
-                    $this->getGroupManager(),
-                    $this->t("You are not member of any group.")
-                )
+                'module:ucms_group:views/Page/groupAdminMine.html.twig'
             )
             ->setBaseQuery([
                 'uid' => $this->getCurrentUserId(),
@@ -120,9 +110,9 @@ class DashboardController extends Controller
     public function membersAction(Request $request, Group $group)
     {
         return $this
-            ->createPage(
+            ->createTemplatePage(
                 $this->getGroupMembersAdminDatasource(),
-                new GroupMembersAdminDisplay($this->t("This group has no members."))
+                'module:ucms_group:views/Page/groupMembersAdmin.html.twig'
             )
             ->setBaseQuery([
                 'group' => $group->getId(),
