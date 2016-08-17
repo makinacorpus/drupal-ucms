@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
+
 /**
  * Single access record for a site and user couple
  *
@@ -13,6 +15,8 @@ namespace MakinaCorpus\Ucms\Site;
  */
 class SiteAccessRecord
 {
+    use PartialUserTrait;
+
     /**
      * @var int
      */

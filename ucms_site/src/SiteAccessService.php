@@ -67,8 +67,11 @@ class SiteAccessService
                 ->query(
                     "
                         SELECT
-                            a.uid, a.site_id, a.role, s.state AS site_state
+                            a.uid, a.site_id, a.role, s.state AS site_state,
+                            u.name, u.mail, u.status
                         FROM {ucms_site_access} a
+                        JOIN {users} u
+                            ON u.uid = a.uid
                         JOIN {ucms_site} s
                             ON s.id = a.site_id
                         WHERE
@@ -600,9 +603,10 @@ class SiteAccessService
     {
         $q = $this
             ->db
-            ->select('ucms_site_access', 'u')
-            ->fields('u')
-            ->condition('u.site_id', $site->id)
+            ->select('ucms_site_access', 'sa')
+            ->fields('sa')
+            ->fields('u', ['name', 'mail', 'status'])
+            ->condition('sa.site_id', $site->id)
         ;
 
         // @todo
@@ -610,13 +614,15 @@ class SiteAccessService
         //  - return a cursor instead ? with a count() method for paging
 
         if ($role) {
-            $q->condition('u.role', $role);
+            $q->condition('sa.role', $role);
         }
+
+        $q->join('users', 'u', "u.uid = sa.uid");
 
         /* @var $q \SelectQuery */
         $r = $q
             ->range($offset, $limit)
-            ->orderBy('u.uid')
+            ->orderBy('sa.uid')
             ->execute()
         ;
 

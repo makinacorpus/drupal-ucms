@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Site\Page;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
-use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class WebmasterAdminDisplay extends AbstractDisplay
@@ -32,20 +31,20 @@ class WebmasterAdminDisplay extends AbstractDisplay
     /**
      * {@inheritdoc}
      */
-    protected function displayAs($mode, $accessRecords)
+    protected function displayAs($mode, $items)
     {
         $rows = [];
         $relativeRoles = $this->manager->getAccess()->collectRelativeRoles();
 
-        foreach ($accessRecords as $access) {
-            $user = user_load($access->getUserId());
-
+        /** @var \MakinaCorpus\Ucms\Site\SiteAccessRecord $item */
+        foreach ($items as $item) {
             $rows[] = [
-                filter_xss(format_username($user)),
-                check_plain($user->mail),
-                $relativeRoles[(int) $access->getRole()],
-                ($user->status == 0) ? $this->t("Disabled") : $this->t("Enabled"),
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($access), 'mode' => 'icon']),
+                $item->getDisplayName(),
+                check_plain($item->getEmail()),
+                $relativeRoles[$item->getRole()],
+                //((int)$item->getRole() === Access::ROLE_WEBMASTER) ? $this->t("Webmaster") : $this->t("Contributor"),
+                ($item->isBlocked()) ? $this->t("Disabled") : $this->t("Enabled"),
+                theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
 

@@ -81,6 +81,10 @@ class GroupMemberDeleteProcessor extends AbstractActionProcessor
     {
         list ($groupId, $userId) = explode(':', $id);
 
+        // This is somehow bad, because we are creating a partial partial user
+        // implementation, with name, email and status missing, but it's only
+        // to pass throught requests and form state, and will not happen to
+        // be displayed in any template, so get over it!
         return GroupMember::create($groupId, $userId);
     }
 }

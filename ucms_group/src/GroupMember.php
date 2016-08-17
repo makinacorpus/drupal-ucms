@@ -2,16 +2,17 @@
 
 namespace MakinaCorpus\Ucms\Group;
 
+use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
+
 /**
  * Single access record for a group and user couple
  *
  * This object is immutable
- *
- * @todo
- *   - reference the site object within
  */
 class GroupMember
 {
+    use PartialUserTrait;
+
     /**
      * Use this only when you can't or don't want to go throught database
      *
