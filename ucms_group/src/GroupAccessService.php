@@ -4,6 +4,8 @@ namespace MakinaCorpus\Ucms\Group;
 
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Ucms\Site\Site;
+
 class GroupAccessService
 {
     private $database;
@@ -17,6 +19,76 @@ class GroupAccessService
     public function __construct(\DatabaseConnection $database)
     {
         $this->database = $database;
+    }
+
+    /**
+     * Get site groups
+     *
+     * @param Site $site
+     *
+     * @return GroupSite[]
+     */
+    public function getSiteGroups(Site $site)
+    {
+        throw new \Exception("Not implemented yet");
+    }
+
+    /**
+     * Add site to group
+     *
+     * @param int $groupId
+     * @param int $siteId
+     *
+     * @return bool
+     *   True if user was really added, false if site is already in group
+     */
+    public function addSite($groupId, $siteId)
+    {
+        $exists = (bool)$this
+            ->database
+            ->query(
+                "SELECT 1 FROM {ucms_group_site} WHERE group_id = :group AND site_id = :site",
+                [':group' => $groupId, ':site' => $siteId]
+            )
+            ->fetchField()
+        ;
+
+        if ($exists) {
+            return false;
+        }
+
+        $this
+            ->database
+            ->merge('ucms_group_site')
+            ->key([
+                'group_id'  => $groupId,
+                'site_id'   => $siteId,
+            ])
+            ->execute()
+        ;
+
+        // @todo dispatch event
+
+        return true;
+    }
+
+    /**
+     * Remote site from group
+     *
+     * @param int $groupId
+     * @param int $siteId
+     */
+    public function removeSite($groupId, $siteId)
+    {
+        $this
+            ->database
+            ->delete('ucms_group_site')
+            ->condition('group_id', $groupId)
+            ->condition('site_id', $siteId)
+            ->execute()
+        ;
+
+        // @todo dispatch event
     }
 
     /**
@@ -59,7 +131,7 @@ class GroupAccessService
      * @param int $userId
      *
      * @return bool
-     *   True if user was really added, false if it is already member
+     *   True if user was really added, false if user is already a member
      */
     public function addMember($groupId, $userId)
     {
