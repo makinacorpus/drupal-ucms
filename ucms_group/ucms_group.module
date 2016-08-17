@@ -86,7 +86,7 @@ function ucms_group_menu() {
   $items['admin/dashboard/group/%ucms_group_menu/members'] = [
     'title'             => "Members",
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => [DashboardController::class . '::membersAction', 3],
+    'page arguments'    => [DashboardController::class . '::memberListAction', 3],
     'access callback'   => 'ucms_group_menu_access_view',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,

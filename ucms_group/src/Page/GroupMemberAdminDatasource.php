@@ -11,7 +11,7 @@ use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupMember;
 
-class GroupMembersAdminDatasource extends AbstractDatasource
+class GroupMemberAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 

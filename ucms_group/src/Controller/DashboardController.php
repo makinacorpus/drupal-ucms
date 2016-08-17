@@ -9,7 +9,6 @@ use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Form\GroupMemberAddExisting;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\Page\GroupMembersAdminDisplay;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -36,7 +35,15 @@ class DashboardController extends Controller
     /**
      * @return DatasourceInterface
      */
-    private function getGroupMembersAdminDatasource()
+    private function getGroupSiteAdminDatasource()
+    {
+        return $this->get('ucms_group.admin.group_site_datasource');
+    }
+
+    /**
+     * @return DatasourceInterface
+     */
+    private function getGroupMemberAdminDatasource()
     {
         return $this->get('ucms_group.admin.group_member_datasource');
     }
@@ -107,12 +114,12 @@ class DashboardController extends Controller
     /**
      * View members action
      */
-    public function membersAction(Request $request, Group $group)
+    public function memberListAction(Request $request, Group $group)
     {
         return $this
             ->createTemplatePage(
-                $this->getGroupMembersAdminDatasource(),
-                'module:ucms_group:views/Page/groupMembersAdmin.html.twig'
+                $this->getGroupMemberAdminDatasource(),
+                'module:ucms_group:views/Page/groupMemberAdmin.html.twig'
             )
             ->setBaseQuery([
                 'group' => $group->getId(),
@@ -127,5 +134,22 @@ class DashboardController extends Controller
     public function memberAddAction(Group $group)
     {
         return \Drupal::formBuilder()->getForm(GroupMemberAddExisting::class, $group);
+    }
+
+    /**
+     * Site list action for group
+     */
+    public function siteListAction(Request $request)
+    {
+        return $this
+            ->createTemplatePage(
+                $this->getGroupSiteAdminDatasource(),
+                'module:ucms_group:views/Page/groupSiteAdmin.html.twig'
+            )
+            ->setBaseQuery([
+                'uid' => $this->getCurrentUserId(),
+            ])
+            ->render($request->query->all())
+        ;
     }
 }

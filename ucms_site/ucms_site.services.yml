@@ -103,3 +103,9 @@ services:
     class: MakinaCorpus\Ucms\Site\Portlet\MySitesPortlet
     arguments: ["@ucms_site.admin.datasource"]
     tags: [{ name: ucms_dashboard.portlet }]
+
+  ucms_site.twig.site_extension:
+    public: false
+    class: MakinaCorpus\Ucms\Site\Twig\Extension\SiteExtension
+    arguments: ["@ucms_site.manager"]
+    tags: [{ name: twig.extension }]

@@ -8,9 +8,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupMember;
+use MakinaCorpus\Ucms\Group\GroupSite;
 
-class GroupMemberDeleteProcessor extends AbstractActionProcessor
+class GroupSiteRemoveProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
 
@@ -28,63 +28,63 @@ class GroupMemberDeleteProcessor extends AbstractActionProcessor
         $this->groupManager = $groupManager;
         $this->currentUser = $currentUser;
 
-        parent::__construct($this->t("Delete"), 'remove', 500, true, true, true, 'edit');
+        parent::__construct($this->t("Remove"), 'remove', 500, true, true, true, 'edit');
     }
 
     public function getId()
     {
-        return 'group_member_delete';
+        return 'group_site_remove';
     }
 
     public function getQuestion($items, $totalCount)
     {
         return $this->formatPlural(
             $totalCount,
-            "Remove this member from this group?",
-            "Remove the selected @count members for this group?"
+            "Remove this site from this group?",
+            "Remove the selected @count sites from this group?"
         );
     }
 
     public function appliesTo($item)
     {
-        if (!$item instanceof GroupMember) {
+        if (!$item instanceof GroupSite) {
             return false;
         }
 
-        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
+        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
         $group = $this->groupManager->getStorage()->findOne($item->getGroupId());
 
-        return $this->groupManager->getAccess()->userCanManageMembers($this->currentUser, $group);
+        return $this->groupManager->getAccess()->userCanManageSites($this->currentUser, $group);
     }
 
     public function processAll($items)
     {
-        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
+        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
         foreach ($items as $item) {
-            $this->groupManager->getAccess()->removeMember($item->getGroupId(), $item->getUserId());
+            $this->groupManager->getAccess()->removeSite($item->getGroupId(), $item->getSiteId());
         }
 
         return $this->formatPlural(
             count($item),
-            "Group member has been removed",
-            "@count group members have been removed"
+            "Site has been removed from this group",
+            "@count sites have been removed from this group"
         );
     }
 
     public function getItemId($item)
     {
-        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
-        return $item->getGroupId() . ':' . $item->getUserId();
+        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
+        return $item->getGroupId() . ':' . $item->getSiteId();
     }
 
     public function loadItem($id)
     {
-        list ($groupId, $userId) = explode(':', $id);
+        list ($groupId, $siteId) = explode(':', $id);
 
         // This is somehow bad, because we are creating a partial partial user
         // implementation, with name, email and status missing, but it's only
         // to pass throught requests and form state, and will not happen to
         // be displayed in any template, so get over it!
-        return GroupMember::create($groupId, $userId);
+        return GroupSite::create($groupId, $siteId);
     }
 }

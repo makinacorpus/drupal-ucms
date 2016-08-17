@@ -239,6 +239,19 @@ class GroupAccessService
     }
 
     /**
+     * Can user manage the group sites
+     *
+     * @param AccountInterface $account
+     * @param Group $group
+     *
+     * @return bool
+     */
+    public function userCanManageSites(AccountInterface $account, Group $group)
+    {
+        return $this->userCanManageAll($account);
+    }
+
+    /**
      * Can user manage the group members
      *
      * @param AccountInterface $account
