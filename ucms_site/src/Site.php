@@ -87,7 +87,7 @@ class Site
 
     public function getId()
     {
-        return $this->id;
+        return (int)$this->id;
     }
 
     public function getTitle()
@@ -98,6 +98,11 @@ class Site
     public function getAdminTitle()
     {
         return $this->title_admin;
+    }
+
+    public function getHostname()
+    {
+        return $this->http_host;
     }
 
     public function getTheme()

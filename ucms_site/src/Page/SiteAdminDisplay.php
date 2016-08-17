@@ -44,7 +44,7 @@ class SiteAdminDisplay extends AbstractDisplay
             $rows[] = [
                 check_plain($this->manager->getTypeName($site->type)),
                 check_plain($site->http_host),
-                check_plain($site->title),
+                check_plain($site->getAdminTitle()),
                 check_plain($states[$site->state]),
                 format_interval(time() - $site->ts_created->getTimestamp()),
                 format_interval(time() - $site->ts_changed->getTimestamp()),
