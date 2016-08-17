@@ -11,6 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Controller\DashboardController;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\Site;
@@ -60,12 +61,11 @@ function ucms_site_menu() {
   $items['admin/dashboard/site/%ucms_site'] = [
     'title callback'    => 'ucms_site_menu_item_title',
     'title arguments'   => [3],
-    'page callback'     => 'ucms_site_dashboard_site_page_view',
-    'page arguments'    => [3],
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::viewAction', 3],
     'access callback'   => 'ucms_site_menu_access_overview',
     'access arguments'  => [3],
     'type'              => MENU_NORMAL_ITEM,
-    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/view'] = [
     'title'             => "Details",

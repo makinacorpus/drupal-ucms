@@ -10,7 +10,7 @@ use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
  *
  * This object is immutable
  */
-class GroupMember implements PartialUserInterface
+class GroupMember implements GroupAwareInterface, PartialUserInterface
 {
     use PartialUserTrait;
 
@@ -49,9 +49,7 @@ class GroupMember implements PartialUserInterface
     }
 
     /**
-     * Get group identifier
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getGroupId()
     {

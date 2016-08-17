@@ -14,7 +14,7 @@ use MakinaCorpus\Ucms\Site\Site;
  * site in normal site admin from a site in group admin, because actions will
  * be different; we also will need the group identifier for actions
  */
-class GroupSite
+class GroupSite implements GroupAwareInterface
 {
     /**
      * Use this only when you can't or don't want to go throught database
@@ -58,9 +58,7 @@ class GroupSite
     }
 
     /**
-     * Get group identifier
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getGroupId()
     {

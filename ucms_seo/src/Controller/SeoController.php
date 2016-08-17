@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Dashboard\Page\PageFactory;
+use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Seo\Page\NodeAliasDisplay;
 use MakinaCorpus\Ucms\Seo\Page\SiteAliasDisplay;
 use MakinaCorpus\Ucms\Seo\SeoService;
@@ -15,6 +15,8 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SeoController extends Controller
 {
+    use PageControllerTrait;
+
     /**
      * @return SiteManager
      */
@@ -29,14 +31,6 @@ class SeoController extends Controller
     private function getSeoService()
     {
         return $this->get('ucms_seo.service');
-    }
-
-    /**
-     * @return PageFactory
-     */
-    private function getPageFactory()
-    {
-        return $this->get('ucms_dashboard.page_factory');
     }
 
     /**
@@ -55,8 +49,7 @@ class SeoController extends Controller
         $query  = ['node' => $node->id()];
 
         return $this
-            ->getPageFactory()
-            ->get($datasource, $display, ['dashboard', 'seo', 'aliases'])
+            ->createPage($datasource, $display, ['dashboard', 'seo', 'aliases'])
             ->setBaseQuery($query)
             ->render(drupal_get_query_parameters(), current_path())
         ;
@@ -70,8 +63,7 @@ class SeoController extends Controller
         $query  = ['site' => $site->getId()];
 
         return $this
-            ->getPageFactory()
-            ->get($datasource, $display, ['dashboard', 'seo', 'aliases'])
+            ->createPage($datasource, $display, ['dashboard', 'seo', 'aliases'])
             ->setBaseQuery($query)
             ->render(drupal_get_query_parameters(), current_path())
         ;

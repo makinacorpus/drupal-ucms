@@ -40,6 +40,11 @@ services:
     class: MakinaCorpus\Ucms\Group\EventDispatcher\ContextPaneEventSubscriber
     arguments: ["@ucms_dashboard.action_provider_registry"]
     tags: [{ name: event_subscriber }]
+  ucms_group.admin_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Group\EventDispatcher\AdminEventSubscriber
+    arguments: ["@ucms_group.manager"]
+    tags: [{ name: event_subscriber }]
 
   # Action processors and providers
   ucms_group.action.group_delete:

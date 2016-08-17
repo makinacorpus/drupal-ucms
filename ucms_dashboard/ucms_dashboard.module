@@ -7,6 +7,7 @@ use MakinaCorpus\Ucms\Dashboard\Controller\ActionProcessorController;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
+use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
 use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
 
 /**
@@ -229,9 +230,33 @@ function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_cod
  *   to use will be: 'ucms_dashboard-page-list--foo--bar'.
  *
  * @return Page
+ *
+ * @deprecated
  */
 function ucms_dashboard_page_get(DatasourceInterface $datasource, DisplayInterface $display, $suggestions) {
-  return \Drupal::service('ucms_dashboard.page_factory')->get($datasource, $display, $suggestions);
+  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory */
+  $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
+  return $factory->getPage($datasource, $display, $suggestions);
+}
+
+/**
+ * Create an admin table.
+ *
+ * Sad but true story, because we are not going to inject the controllers we
+ * are forced to keep this in the procedural code, in order for page callbacks
+ * to be able to use it.
+ *
+ * @param string $name
+ * @param mixed[] $attributes
+ *
+ * @return AdminTable
+ *
+ * @deprecated
+ */
+function ucms_dashboard_admin_table_get($name, array $attributes = []) {
+  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory */
+  $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
+  return $factory->getTable($name, $attributes);
 }
 
 /**

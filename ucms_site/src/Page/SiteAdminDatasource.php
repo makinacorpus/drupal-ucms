@@ -66,6 +66,7 @@ class SiteAdminDatasource extends AbstractDatasource
         return [
             's.id'          => $this->t("identifier"),
             's.title'       => $this->t("title"),
+            's.title_admin' => $this->t("administrative title"),
             's.http_host'   => $this->t("hostname"),
             's.state'       => $this->t("state"),
             's.type'        => $this->t("type"),

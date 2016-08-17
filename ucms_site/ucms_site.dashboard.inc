@@ -8,6 +8,7 @@ use MakinaCorpus\APubSub\CursorInterface;
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
+use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Page\SiteAdminDisplay;
 use MakinaCorpus\Ucms\Site\Page\WebmasterAdminDisplay;
@@ -27,7 +28,6 @@ function ucms_site_dashboard_site_list_all() {
   ;
 }
 
-
 /**
  * My sites list page.
  */
@@ -42,7 +42,6 @@ function ucms_site_dashboard_site_list_mine() {
     ->render(drupal_get_query_parameters(), current_path())
   ;
 }
-
 
 /**
  * All sites list page.
@@ -64,70 +63,11 @@ function ucms_site_dashboard_site_list_archive() {
   ;
 }
 
-
 /**
  * Site page details
  */
-function ucms_site_dashboard_site_page_view(Site $site) {
-
-  $ret = [];
-
-  $requester = user_load($site->uid);
-  if (!$requester) {
-    $requester = drupal_anonymous_user();
-  }
-
-  $template = null;
-  if ($site->template_id) {
-    try {
-      $template = ucms_site_manager()->getStorage()->findOne($site->template_id);
-      $template = l($template->title, 'admin/dashboard/site/' . $template->id);
-    } catch (\Exception $e) {
-      $template = '<span class="text-muted>' . t("Template does not exist anymore") . '</span>';
-    }
-  } else {
-    $template = '';
-  }
-
-  $states = SiteState::getList();
-
-  $uri = 'http://' . $site->http_host;
-
-  $rows = [
-    [['data' => '<strong>' . t("Identification") . '</strong>', 'colspan' => 2]],
-    [t("HTTP hostname"), l($uri, $uri)],
-    [t("State"), t($states[$site->state])],
-    [t("Title"), check_plain($site->title)],
-    [t("Created at"), format_date($site->ts_created->getTimestamp())],
-    [t("Lastest update"), format_date($site->ts_changed->getTimestamp())],
-    [t("Requester"), check_plain(format_username($requester))],
-    [['data' => '<strong>' . t("Description") . '</strong>', 'colspan' => 2]],
-    [t("Description"), check_markup($site->title_admin)],
-    [t("Replaces"), check_markup($site->replacement_of)],
-    [t("HTTP redirections"), check_markup($site->http_redirects)],
-    [['data' => '<strong>' . t("Display information") . '</strong>', 'colspan' => 2]],
-    [t("Public site"), $site->isPublic() ? t("Yes") : t("No")],
-    [t("Theme"), check_plain($site->theme)],
-    [t("Is a template"), $site->is_template ? '<strong>' . t("Yes") . '</strong>' : t("No")],
-  ];
-
-  if ($template) {
-    $rows[] = [t("Site template"), $template];
-  }
-
-  $ret[] = [
-    '#theme'  => 'table__ucms_site_details',
-    '#rows'   => $rows,
-  ];
-
-  return $ret;
-}
-
-
 function ucms_site_dashboard_site_page_log(Site $site) {
-
   try {
-
     $messages = notification_service_get()
       ->getBackend()
       ->getChannel('site:' . $site->id)

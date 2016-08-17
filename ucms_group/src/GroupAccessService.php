@@ -25,12 +25,39 @@ class GroupAccessService
      * Get site groups
      *
      * @param Site $site
+     * @param bool $withAccess
      *
      * @return GroupSite[]
      */
-    public function getSiteGroups(Site $site)
+    public function getSiteGroups(Site $site, $withAccess = false)
     {
-        throw new \Exception("Not implemented yet");
+        $ret = [];
+
+        $q = $this
+            ->database
+            ->select('ucms_group_site', 'gs')
+            ->fields('gs', ['group_id', 'site_id'])
+            ->condition('gs.site_id', $site->getId())
+            ->groupBy('gs.site_id')
+        ;
+
+        if ($withAccess) {
+            $q
+                ->addTag('ucms_group_access')
+                ->addTag('ucms_site_access')
+            ;
+        }
+
+        $r = $q->execute();
+        $r->setFetchMode(\PDO::FETCH_CLASS, GroupSite::class);
+
+        /** @var \MakinaCorpus\Ucms\Group\GroupSite $record */
+        foreach ($r as $record) {
+            $record->setSite($site);
+            $ret[] = $record;
+        }
+
+        return $ret;
     }
 
     /**

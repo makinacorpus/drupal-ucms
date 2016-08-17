@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Group\Controller;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
@@ -15,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class DashboardController extends Controller
 {
     use PageControllerTrait;
+    use StringTranslationTrait;
 
     /**
      * @return GroupManager
@@ -108,7 +111,17 @@ class DashboardController extends Controller
      */
     public function viewAction(Group $group)
     {
-        throw new \Exception("Not implemented yet");
+        $table = $this->createAdminTable('ucms_group');
+
+        $table
+            ->addHeader($this->t("Information"), 'basic')
+            ->addRow($this->t("Title"), $group->getTitle())
+            ->addRow($this->t("Identifier"), $group->getId())
+        ;
+
+        $this->addArbitraryAttributesToTable($table, $group->getAttributes());
+
+        return $table->render();
     }
 
     /**

@@ -5,12 +5,14 @@ namespace MakinaCorpus\Ucms\Group\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
+use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Group\GroupSite;
+use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 class GroupSiteAdminDatasource extends AbstractDatasource
 {
@@ -38,7 +40,19 @@ class GroupSiteAdminDatasource extends AbstractDatasource
      */
     public function getFilters($query)
     {
-        return [];
+        $states = SiteState::getList(SiteState::ARCHIVE);
+
+        foreach ($states as $key => $label) {
+          $states[$key] = $this->t($label);
+        }
+
+        return [
+            (new LinksFilterDisplay('state', $this->t("State")))->setChoicesMap($states),
+            // @todo missing site type registry or variable somewhere
+            (new LinksFilterDisplay('theme', $this->t("Theme")))->setChoicesMap($this->siteManager->getAllowedThemesOptionList()),
+            (new LinksFilterDisplay('template', $this->t("Template")))->setChoicesMap($this->siteManager->getTemplateList()),
+            (new LinksFilterDisplay('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
+        ];
     }
 
     /**
@@ -50,6 +64,8 @@ class GroupSiteAdminDatasource extends AbstractDatasource
             'gs.site_id'    => $this->t("identifier"),
             's.title'       => $this->t("title"),
             's.title_admin' => $this->t("administrative title"),
+            's.state'       => $this->t("state"),
+            's.type'        => $this->t("type"),
             's.http_host'   => $this->t("domain name"),
         ];
     }
@@ -80,6 +96,17 @@ class GroupSiteAdminDatasource extends AbstractDatasource
         }
         if (!empty($query['site'])) {
             $q->condition('gs.site_id', $query['site']);
+        }
+
+        // Filters
+        if (isset($query['state'])) {
+            $q->condition('s.state', $query['state']);
+        }
+        if (isset($query['theme'])) {
+            $q->condition('s.theme', $query['theme']);
+        }
+        if (isset($query['template'])) {
+            $q->condition('s.template_id', $query['template']);
         }
 
         if ($pageState->hasSortField()) {
