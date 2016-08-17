@@ -233,6 +233,9 @@ function ucms_site_permission() {
     Access::PERM_CONTENT_UNFLAG => [
       'title' => t("Unflag content flagged as inappropriate"),
     ],
+    Access::PERM_CONTENT_TRANSFER_OWNERSHIP => [
+      'title' => t("Transfer content ownership to another user"),
+    ],
     Access::PERM_CONTENT_VIEW_ALL => [
       'title' => t("View all content no matter where it stands"),
     ],

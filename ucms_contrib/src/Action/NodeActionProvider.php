@@ -87,6 +87,22 @@ class NodeActionProvider implements ActionProviderInterface
             }
         }
 
+        if (
+            $this->account->hasPermission(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) &&
+            $item->access(Access::OP_UPDATE, $this->account)
+        ) {
+            $ret[] = Action::create([
+                'title'     => $this->t("Transfer ownership"),
+                'uri'       => 'node/' . $item->id() . '/transfer',
+                'options'   => 'dialog',
+                'icon'      => 'transfer',
+                'primary'   => false,
+                'priority'  => 0,
+                'redirect'  => true,
+                'group'     => 'edit',
+            ]);
+        }
+
         if ($this->account->hasPermission('use favorites')) { // @todo constant or helper ?
             $inCart = $this->cart->has($this->account->id(), $item->id());
             $ret[] = Action::create([

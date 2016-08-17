@@ -58,6 +58,11 @@ final class Access
     const PERM_CONTENT_UNFLAG = 'content unflag';
 
     /**
+     * Transfer content ownership.
+     */
+    const PERM_CONTENT_TRANSFER_OWNERSHIP = 'content transfer ownership';
+
+    /**
      * View all content in all circumstances
      */
     const PERM_CONTENT_VIEW_ALL = 'content view all';
