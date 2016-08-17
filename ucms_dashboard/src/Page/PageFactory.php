@@ -13,15 +13,9 @@ use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
  */
 class PageFactory
 {
-    /**
-     * @var FormBuilderInterface
-     */
     private $formBuilder;
-
-    /**
-     * @var ActionRegistry
-     */
     private $actionRegistry;
+    private $twig;
 
     /**
      * Default constructor
@@ -29,10 +23,11 @@ class PageFactory
      * @param FormBuilderInterface $formBuilder
      * @param ActionRegistry $actionRegistry
      */
-    public function __construct(FormBuilderInterface $formBuilder, ActionRegistry $actionRegistry)
+    public function __construct(FormBuilderInterface $formBuilder, ActionRegistry $actionRegistry, \Twig_Environment $twig)
     {
         $this->formBuilder = $formBuilder;
         $this->actionRegistry = $actionRegistry;
+        $this->twig = $twig;
     }
 
     /**
@@ -47,5 +42,15 @@ class PageFactory
     public function get(DatasourceInterface $datasource, DisplayInterface $display, $suggestions = null)
     {
         return new Page($this->formBuilder, $this->actionRegistry, $datasource, $display, $suggestions);
+    }
+
+    /**
+     * Get page using a template
+     *
+     * @param DatasourceInterface $datasource
+     */
+    public function getTemplate(DatasourceInterface $datasource, $templateName)
+    {
+        return new Page($this->formBuilder, $this->actionRegistry, $datasource, new TemplateDisplay($this->twig, $templateName));
     }
 }

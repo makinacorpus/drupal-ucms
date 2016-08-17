@@ -6,7 +6,7 @@ services:
 
   ucms_dashboard.page_factory:
     class: MakinaCorpus\Ucms\Dashboard\Page\PageFactory
-    arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry"]
+    arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry", "@twig"]
 
   ucms_dashboard.processor_registry:
     class: MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider
@@ -22,3 +22,9 @@ services:
   ucms_dashboard.transaction_handler:
     class: MakinaCorpus\Ucms\Dashboard\TransactionHandler
     arguments: ['@database']
+
+  ucms_dashboard.twig.action_extension:
+    public: false
+    class: MakinaCorpus\Ucms\Dashboard\Twig\Extension\ActionExtension
+    arguments: ['@ucms_dashboard.action_provider_registry']
+    tags: [{name: twig.extension}]

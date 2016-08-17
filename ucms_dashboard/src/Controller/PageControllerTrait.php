@@ -32,4 +32,17 @@ trait PageControllerTrait
     {
         return $this->getPageFactory()->get($datasource, $display, $suggestions);
     }
+
+    /**
+     * Create page from a template
+     *
+     * @param DatasourceInterface $datasource
+     * @param string $templateName
+     *
+     * @return Page
+     */
+    protected function createTemplatePage(DatasourceInterface $datasource, $templateName)
+    {
+        return $this->getPageFactory()->getTemplate($datasource, $templateName);
+    }
 }
