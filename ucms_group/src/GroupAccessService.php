@@ -29,7 +29,15 @@ class GroupAccessService
      */
     public function userIsMember(AccountInterface $account, Group $group)
     {
-        return true; // @todo fixme
+        // @todo fix this, cache that
+        return (bool)$this
+            ->database
+            ->query(
+                "SELECT 1 FROM {ucms_group_user} WHERE group_id = :group AND user_id = :user",
+                [':group' => $group->getId(), ':user' => $account->id()]
+            )
+            ->fetchField()
+        ;
     }
 
     /**
@@ -78,6 +86,8 @@ class GroupAccessService
             ->execute()
         ;
 
+        // @todo dispatch event
+
         return true;
     }
 
@@ -98,6 +108,8 @@ class GroupAccessService
             ->condition('user_id', $userId)
             ->execute()
         ;
+
+        // @todo dispatch event
     }
 
     /**
@@ -110,10 +122,21 @@ class GroupAccessService
      */
     public function userCanView(AccountInterface $account, Group $group)
     {
+        return $this->userCanManageAll($account) || $this->userIsMember($account, $group);
+    }
+
+    /**
+     * Can user manage all groups
+     *
+     * @param AccountInterface $account
+     *
+     * @return bool
+     */
+    public function userCanManageAll(AccountInterface $account)
+    {
         return
             $account->hasPermission(GroupAccess::PERM_VIEW_ALL) ||
-            $account->hasPermission(GroupAccess::PERM_MANAGE_ALL) ||
-            $this->userIsMember($account, $group)
+            $account->hasPermission(GroupAccess::PERM_MANAGE_ALL)
         ;
     }
 
@@ -127,7 +150,7 @@ class GroupAccessService
      */
     public function userCanEdit(AccountInterface $account, Group $group)
     {
-        return $account->hasPermission(GroupAccess::PERM_MANAGE_ALL);
+        return $this->userCanManageAll($account);
     }
 
     /**
@@ -140,7 +163,7 @@ class GroupAccessService
      */
     public function userCanDelete(AccountInterface $account, Group $group)
     {
-        return $account->hasPermission(GroupAccess::PERM_MANAGE_ALL);
+        return $this->userCanManageAll($account);
     }
 
     /**
@@ -153,6 +176,6 @@ class GroupAccessService
      */
     public function userCanManageMembers(AccountInterface $account, Group $group)
     {
-        return $account->hasPermission(GroupAccess::PERM_MANAGE_ALL);
+        return $this->userCanManageAll($account);
     }
 }

@@ -132,6 +132,18 @@ function ucms_group_menu_access_view(Group $group) {
  *
  * @deprecated
  */
+function ucms_group_menu_access_manage(Group $group) {
+  $account = \Drupal::currentUser();
+  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  $manager = \Drupal::service('ucms_group.manager');
+  return $manager->getAccess()->userCanManageAll($account);
+}
+
+/**
+ * Menu helper, do not use.
+ *
+ * @deprecated
+ */
 function ucms_group_menu_access_manage_members(Group $group) {
   $account = \Drupal::currentUser();
   /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
