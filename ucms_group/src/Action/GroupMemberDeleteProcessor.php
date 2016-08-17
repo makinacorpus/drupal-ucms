@@ -28,7 +28,7 @@ class GroupMemberDeleteProcessor extends AbstractActionProcessor
         $this->groupManager = $groupManager;
         $this->currentUser = $currentUser;
 
-        parent::__construct($this->t("Delete"), 'trash', 500, false, true, true, 'edit');
+        parent::__construct($this->t("Delete"), 'remove', 500, true, true, true, 'edit');
     }
 
     public function getId()

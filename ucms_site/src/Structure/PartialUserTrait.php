@@ -3,17 +3,17 @@
 namespace MakinaCorpus\Ucms\Site\Structure;
 
 /**
- * Allows some structure to access user identity, in order to provide shortcuts
- * to templates without the need to load data
+ * Implementation of PartialUserInterface suitable for objects loaded via
+ * PDO. This trait is immutable.
  */
-trait PartialUserTrait
+trait PartialUserTrait /* implements PartialUserInterface */
 {
     private $name;
     private $mail;
     private $status;
 
     /**
-     * Get user unescaped account name
+     * {@inheritdoc}
      */
     public function getAccountName()
     {
@@ -21,9 +21,7 @@ trait PartialUserTrait
     }
 
     /**
-     * Get user escaped display name
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getDisplayName()
     {
@@ -31,9 +29,7 @@ trait PartialUserTrait
     }
 
     /**
-     * Get user email
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getEmail()
     {
@@ -41,9 +37,7 @@ trait PartialUserTrait
     }
 
     /**
-     * Is this user active
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isActive()
     {
@@ -51,8 +45,7 @@ trait PartialUserTrait
     }
 
     /**
-     * Is this user blocked
-     *
+     * {@inheritdoc}
      */
     public function isBlocked()
     {

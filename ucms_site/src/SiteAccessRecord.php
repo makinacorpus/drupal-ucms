@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
 
 /**
@@ -13,7 +14,7 @@ use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
  *   - reference the site object within
  *   - make the object extensible (global permissions within groups)
  */
-class SiteAccessRecord
+class SiteAccessRecord implements PartialUserInterface
 {
     use PartialUserTrait;
 
@@ -38,9 +39,7 @@ class SiteAccessRecord
     private $role;
 
     /**
-     * Get user identifier
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getUserId()
     {

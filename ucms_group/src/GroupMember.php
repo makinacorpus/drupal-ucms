@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Group;
 
+use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
 
 /**
@@ -9,7 +10,7 @@ use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
  *
  * This object is immutable
  */
-class GroupMember
+class GroupMember implements PartialUserInterface
 {
     use PartialUserTrait;
 
@@ -40,9 +41,7 @@ class GroupMember
     private $user_id;
 
     /**
-     * Get user identifier
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getUserId()
     {

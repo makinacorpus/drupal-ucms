@@ -7,6 +7,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 
 class UserActionProvider implements ActionProviderInterface
 {
@@ -29,31 +30,22 @@ class UserActionProvider implements ActionProviderInterface
 
     private function getUserIdFrom($item)
     {
-        if (method_exists($item, 'getUserId')) {
-            return $item->getUserId();
-        }
-        if (property_exists($item, 'uid')) {
-            return $item->uid;
-        }
-        if (property_exists($item, 'user_id')) {
-            return $item->user_id;
-        }
-        if (method_exists($item, 'id')) {
+        if ($item instanceof AccountInterface) {
             return $item->id();
+        }
+        if ($item instanceof PartialUserInterface) {
+            return $item->getUserId();
         }
         throw new \InvalidArgumentException("cannot find user identifier from item");
     }
 
     private function getStatusFrom($item)
     {
-        if (method_exists($item, 'isActive')) {
-            return $item->isActive();
-        }
-        if (property_exists($item, 'isBlocked')) {
-            return !$item->isBlocked();
-        }
-        if (property_exists($item, 'status')) {
+        if ($item instanceof AccountInterface) {
             return $item->status;
+        }
+        if ($item instanceof PartialUserInterface) {
+            return $item->isActive();
         }
         throw new \InvalidArgumentException("cannot find user status from item");
     }
@@ -97,6 +89,6 @@ class UserActionProvider implements ActionProviderInterface
      */
     public function supports($item)
     {
-        return is_object($item) && property_exists($item, 'uid') && property_exists($item, 'mail');
+        return $item instanceof AccountInterface || $item instanceof PartialUserInterface;
     }
 }
