@@ -292,6 +292,7 @@ function ucms_site_admin_path_is_allowed($path) {
       return true;
     }
     if (arg(0) === 'node') {
+      // Allow node actions
       if (menu_get_object() && ($action = arg(2))) {
         switch ($action) {
           case 'edit':
@@ -300,6 +301,10 @@ function ucms_site_admin_path_is_allowed($path) {
           case 'seo-aliases':
             return true;
         }
+      }
+      // Allow webform actions
+      if (menu_get_object('webform_menu') && arg(2) == 'webform') {
+        return true;
       }
     }
     return false;
