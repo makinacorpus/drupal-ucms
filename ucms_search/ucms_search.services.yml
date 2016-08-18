@@ -121,4 +121,4 @@ services:
 
   ucms_search.autocomplete:
     class: MakinaCorpus\Ucms\Search\Autocomplete
-    arguments: ["@ucms_search.elastic.client", "@ucms_search.index_storage"]
+    arguments: ["@ucms_search.elastic.client", "@ucms_search.index_storage", "@ucms_site.manager"]
