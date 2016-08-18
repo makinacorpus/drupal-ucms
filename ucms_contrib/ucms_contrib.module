@@ -650,6 +650,19 @@ function ucms_contrib_library() {
         ['system', 'ui.droppable'],
       ],
     ],
+    'dragula' => [
+      'title'   => 'DragulaJS',
+      'version' => '3.7.1+dragscroll',
+      'js'      => [
+        drupal_get_path('module', 'ucms_contrib') . '/lib/dragula/dragula.min.js' => [],
+      ],
+      'css'     => [
+        drupal_get_path('module', 'ucms_contrib') . '/lib/dragula/dragula.min.css' => [
+          'type'  => 'file',
+          'media' => 'screen',
+        ],
+      ],
+    ],
   ];
 }
 
