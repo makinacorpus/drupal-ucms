@@ -118,24 +118,6 @@ function ucms_group_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
-  // Sites administration (the other way arround)
-  $items['admin/dashboard/site/%ucms_site/groups'] = [
-    'title'             => "Groups",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [DashboardController::class . '::siteGroupListAction', 3],
-    'access callback'   => 'ucms_group_menu_access_manage',
-    'access arguments'  => [3],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['admin/dashboard/site/%ucms_site/groups/add'] = [
-    'title'             => "Add to group",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [DashboardController::class . '::siteGroupAddAction', 3],
-    'access callback'   => 'ucms_group_menu_access_manage',
-    'access arguments'  => [3],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-
   return $items;
 }
 

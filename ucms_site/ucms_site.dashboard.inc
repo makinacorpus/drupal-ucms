@@ -8,7 +8,6 @@ use MakinaCorpus\APubSub\CursorInterface;
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
-use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Page\SiteAdminDisplay;
 use MakinaCorpus\Ucms\Site\Page\WebmasterAdminDisplay;
@@ -99,27 +98,3 @@ function ucms_site_dashboard_site_page_webmasters(Site $site) {
   return $page->setBaseQuery($query)->render(drupal_get_query_parameters(), current_path());
 }
 
-
-/**
- * Callback for autocompletion on users' names.
- *
- * @param string $input
- * @return string[]
- */
-function ucms_site_dashboard_users_autocomplete($input) {
-  $query = db_select('users', 'u')
-    ->fields('u', array('uid', 'name'))
-    ->condition('u.name', '%' . db_like($input) . '%', 'LIKE')
-    ->condition('u.uid', [0, 1], 'NOT IN')
-    ->range(0, 10);
-
-  $suggest = [];
-
-  foreach ($query->execute()->fetchAll() as $record) {
-    $key = $record->name . ' [' . $record->uid . ']';
-    $suggest[$key] = check_plain($record->name);
-  }
-
-  drupal_json_output($suggest);
-  exit();
-}

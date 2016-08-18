@@ -9,8 +9,10 @@ use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Form\GroupMemberAddExisting;
+use MakinaCorpus\Ucms\Group\Form\GroupSiteAdd;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Site;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -147,6 +149,14 @@ class DashboardController extends Controller
     public function memberAddAction(Group $group)
     {
         return \Drupal::formBuilder()->getForm(GroupMemberAddExisting::class, $group);
+    }
+
+    /**
+     * Add site action
+     */
+    public function siteAddAction(Group $group)
+    {
+        return \Drupal::formBuilder()->getForm(GroupSiteAdd::class, $group);
     }
 
     /**
