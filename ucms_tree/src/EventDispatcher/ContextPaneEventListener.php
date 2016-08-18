@@ -38,7 +38,11 @@ class ContextPaneEventListener
             ->add($this->renderCurrentTree(), 'tree')
         ;
 
-        if (!$contextPane->getRealDefaultTab()) {
+        if (current_path() === 'admin/dashboard/tree') {
+            // Default tab on tree edit is the cart
+            $contextPane->setDefaultTab('cart');
+        } elseif (!$contextPane->getRealDefaultTab()) {
+            // Else it's the tree
             $contextPane->setDefaultTab('tree');
         }
     }
