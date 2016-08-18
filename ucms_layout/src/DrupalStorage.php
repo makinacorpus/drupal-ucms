@@ -145,16 +145,31 @@ class DrupalStorage implements StorageInterface
             $tx = $this->db->startTransaction();
 
             // Value object that will get us the identifier then
-            $row              = new \stdClass();
-            $row->site_id     = $layout->getSiteId();
-            $row->nid         = $layout->getNodeId();
+            $row = [
+              'site_id' => $layout->getSiteId(),
+              'nid'     => $layout->getNodeId(),
+            ];
 
             if ($layout->getId()) {
-                $row->id = $layout->getId();
-                drupal_write_record('ucms_layout', $row, ['id']);
+
+                $this
+                    ->db
+                    ->update('ucms_layout')
+                    ->fields($row)
+                    ->condition('id', $layout->getId())
+                    ->execute()
+                ;
+
             } else {
-                drupal_write_record('ucms_layout', $row);
-                $layout->setId((int)$row->id);
+
+                $id = (int)$this
+                    ->db
+                    ->insert('ucms_layout')
+                    ->fields($row)
+                    ->execute()
+                ;
+
+                $layout->setId((int)$id);
             }
 
             foreach ($layout->getAllRegions() as $region) {

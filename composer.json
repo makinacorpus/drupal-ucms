@@ -62,7 +62,7 @@
             "MakinaCorpus\\Ucms\\Site\\" : "ucms_site/src",
             "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
-            "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src"
+            "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src"
         },
         "exclude-from-classmap": ["**/Tests/"]
@@ -70,7 +70,7 @@
     "require" : {
         "elasticsearch/elasticsearch" : "2.2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
-        "makinacorpus/drupal-umenu" : "^1.1.3",
+        "makinacorpus/drupal-umenu" : "^1.1.4",
         "makinacorpus/drupal-sf-dic" : "^3.0.25",
         "makinacorpus/drush-progressbar" : "^1.0"
     },

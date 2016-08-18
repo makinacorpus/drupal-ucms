@@ -123,7 +123,7 @@ class CloningNodeTest extends AbstractDrupalTest
         // We got a clone, node should not be in site2 anymore (dereferenced)
         $this->assertNotNodeInSite($node, $site2);
 
-        $this->assertSame($site2->getId(), $clone->site_id);
+        $this->assertEquals($site2->getId(), $clone->site_id);
         $this->assertNotNodeInSite($clone, $site1);
     }
 
@@ -149,7 +149,7 @@ class CloningNodeTest extends AbstractDrupalTest
         // We got a clone, node should not be in site2 anymore (dereferenced)
         $this->assertNotNodeInSite($node, $site2);
 
-        $this->assertSame($site2->getId(), $clone->site_id);
+        $this->assertEquals($site2->getId(), $clone->site_id);
         $this->assertNotNodeInSite($clone, $site1);
 
         // I got a layout! I got a layout!
