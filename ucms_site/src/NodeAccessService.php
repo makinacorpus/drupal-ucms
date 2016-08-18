@@ -45,7 +45,7 @@ class NodeAccessService
     /**
      * Grants for group content
      */
-    const REALM_GROUP_VIEW = 'ucms_group_view';
+    const REALM_GROUP_READONLY = 'ucms_group_ro';
 
     /**
      * Grants for group content
@@ -178,7 +178,7 @@ class NodeAccessService
                 'priority'      => self::PRIORITY_DEFAULT,
             ];
             $ret[] = [
-                'realm'         => self::REALM_GROUP_VIEW,
+                'realm'         => self::REALM_GROUP_READONLY,
                 'gid'           => self::GID_DEFAULT,
                 'grant_view'    => $node->status,
                 'grant_update'  => 0,
@@ -333,7 +333,7 @@ class NodeAccessService
                 $ret[self::REALM_GLOBAL_VIEW] = [self::GID_DEFAULT];
             }
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
-                $ret[self::REALM_GROUP_VIEW] = [self::GID_DEFAULT];
+                $ret[self::REALM_GROUP_READONLY] = [self::GID_DEFAULT];
             }
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
                 $ret[self::REALM_OTHER] = [self::GID_DEFAULT];
