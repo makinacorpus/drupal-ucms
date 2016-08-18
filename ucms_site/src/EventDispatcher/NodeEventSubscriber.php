@@ -5,8 +5,8 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeCollectionEvent;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeCollectionEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 

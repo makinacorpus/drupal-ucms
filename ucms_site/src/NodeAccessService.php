@@ -2,9 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
+
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
 
 /**
  * Drupal ACL builder for usage with node_access() related hooks

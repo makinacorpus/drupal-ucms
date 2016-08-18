@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

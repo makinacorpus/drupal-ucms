@@ -1,4 +1,5 @@
 <?php
+
 namespace MakinaCorpus\Ucms\Group\Form;
 
 use Drupal\Core\Form\FormBase;

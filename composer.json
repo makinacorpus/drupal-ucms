@@ -63,7 +63,6 @@
             "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
             "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src"
-        }
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src"
         },
         "exclude-from-classmap": ["**/Tests/"]

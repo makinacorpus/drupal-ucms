@@ -14,13 +14,9 @@
  */
 
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Ucms\Contrib\Controller\CartController;
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeCollectionEvent;
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeReferenceCollectEvent;
-use MakinaCorpus\Ucms\Site\Access;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Site\Access;
 
 /**
  * View mode for content display.
@@ -828,85 +824,6 @@ function ucms_contrib_field_widget_unoderef_form_alter(&$element, &$form_state, 
     ->addTab('cart', t("Cart"), 'shopping-cart')
     ->add(ucms_contrib_favorite_render(), 'cart');
 }
-
-/**
- * Implements hook_node_prepare().
- */
-function ucms_contrib_node_prepare($node) {
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_PREPARE, $node);
-}
-
-/**
- * Implements hook_node_presave().
- */
-function ucms_contrib_node_presave($node) {
-  if ($node->isNew()) {
-    ucms_contrib_event_dispatch(NodeEvent::EVENT_PREINSERT, $node);
-  } else {
-    ucms_contrib_event_dispatch(NodeEvent::EVENT_PREUPDATE, $node);
-  }
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_PRESAVE, $node);
-}
-
-/**
- * Implements hook_node_load().
- */
-function ucms_contrib_node_load($nodes, $types) {
-  ucms_contrib_collection_event_dispatch(NodeCollectionEvent::EVENT_LOAD, $nodes);
-}
-
-/**
- * Implements hook_node_insert().
- */
-function ucms_contrib_node_insert($node) {
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_INSERT, $node);
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_SAVE, $node);
-}
-
-/**
- * Implements hook_node_update().
- */
-function ucms_contrib_node_update($node) {
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_UPDATE, $node);
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_SAVE, $node);
-}
-
-/**
- * Implements hook_node_delete().
- */
-function ucms_contrib_node_delete($node) {
-  ucms_contrib_event_dispatch(NodeEvent::EVENT_DELETE, $node);
-}
-
-/**
- * Dispatches a node event.
- *
- * @param string $name
- *  The event name. Use constants of the NodeEvent class.
- * @param NodeInterface $node
- *  The node concerned by the event.
- */
-function ucms_contrib_event_dispatch($name, NodeInterface $node) {
-  $currentUser = \Drupal::service('current_user');
-  $userId = ($currentUser->isAnonymous() ? null : $currentUser->id());
-  $event = new NodeEvent($name, $node, $userId);
-  \Drupal::service('event_dispatcher')->dispatch($name, $event);
-}
-
-/**
- * Dispatches a nodes collection event.
- *
- * @param string $name
- *  The event name. Use constants of the NodeCollectionEvent class.
- * @param NodeInterface[] $nodes
- *  Nodes concerned by the event.
- */
-function ucms_contrib_collection_event_dispatch($name, array $nodes) {
-  $currentUser = \Drupal::service('current_user');
-  $event = new NodeCollectionEvent($nodes, ($currentUser->isAnonymous() ? null : $currentUser->id()));
-  \Drupal::service('event_dispatcher')->dispatch($name, $event);
-}
-
 
 /**
  * Implements hook_admin_paths().

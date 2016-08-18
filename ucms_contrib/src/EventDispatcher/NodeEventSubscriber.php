@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -54,7 +54,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
     public function onSave(NodeEvent $event)
     {
         $node = $event->getNode();
-        
+
         $event = new NodeReferenceCollectEvent($node);
         $this->eventDispatcher->dispatch(NodeReferenceCollectEvent::EVENT_NAME, $event);
 

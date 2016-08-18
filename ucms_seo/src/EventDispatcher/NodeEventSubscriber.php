@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
