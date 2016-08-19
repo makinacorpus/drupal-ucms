@@ -2,9 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
-
-use Exception;
-
 class TypeHandler
 {
     /**
@@ -35,8 +32,8 @@ class TypeHandler
      * Given a tab name, get its corresponding types.
      *
      * @param $tab
+     *
      * @return \string[]
-     * @throws Exception
      */
     public function getTabTypes($tab)
     {
@@ -46,7 +43,7 @@ class TypeHandler
             case 'media':
                 return $this->getMediaTypes();
             default:
-                throw new Exception("Tab not implemented");
+                throw new \Exception("Tab not implemented");
         }
     }
 
@@ -133,6 +130,7 @@ class TypeHandler
 
     /**
      * Set all media types.
+     *
      * @param array $types
      */
     public function setMediaTypes(array $types)
@@ -152,6 +150,7 @@ class TypeHandler
 
     /**
      * Set component types.
+     *
      * @param array $types
      */
     public function setComponentTypes(array $types)
@@ -161,6 +160,7 @@ class TypeHandler
 
     /**
      * Set component types.
+     *
      * @param array $types
      */
     public function setLockedTypes(array $types)
@@ -172,6 +172,7 @@ class TypeHandler
      * Given an array of type, return the human-readable types keyed by type.
      *
      * @param array $types
+     *
      * @return mixed
      */
     public function getTypesAsHumanReadableList(array $types)

@@ -100,6 +100,11 @@ class Site
         return $this->title_admin;
     }
 
+    public function getState()
+    {
+        return $this->state;
+    }
+
     public function getHostname()
     {
         return $this->http_host;

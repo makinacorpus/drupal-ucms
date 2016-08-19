@@ -868,27 +868,6 @@ function ucms_site_custom_theme() {
 }
 
 /**
- * Implements hook_node_access().
- */
-function ucms_site_node_access($node, $op, $account) {
-  return ucms_site_node_access_helper()->userCanAccess($account, $node, $op);
-}
-
-/**
- * Implements hook_node_access_records().
- */
-function ucms_site_node_access_records($node) {
-  return ucms_site_node_access_helper()->getNodeGrants($node);
-}
-
-/**
- * Implements hook_node_grants().
- */
-function ucms_site_node_grants($account, $op) {
-  return ucms_site_node_access_helper()->getUserGrants($account, $op);
-}
-
-/**
  * Implements hook_query_TAG_alter().
  *
  * This is required in order for users that may bypass node access (UID 1 is
