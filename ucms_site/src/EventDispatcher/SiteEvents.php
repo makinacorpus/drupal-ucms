@@ -12,4 +12,7 @@ final class SiteEvents
 
     // Admin screens events
     const SITE_DISPLAY_TABLE = 'ucms_site_table_display';
+
+    // Site initialization
+    const EVENT_INIT = 'site:init';
 }

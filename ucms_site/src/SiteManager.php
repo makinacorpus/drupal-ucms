@@ -4,12 +4,24 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Facade for using both site storage and site access helpers, that will also
  * carry the site wide configuration; this means to reduce the number of
  * services dependencies for other components
+ *
+ * This class carries the current site context, as an instance of Site you can
+ * fetch using the getContext() method, but implementors might also add as many
+ * dependent contextes as they need.
+ *
+ * A dependent context is any kind of object or value, identifier by a string
+ * key, unknown to this API but that any module extending might set. In order
+ * to set correctly dependent contextes, an event is dispatched whenever the
+ * site context is changed.
  */
 class SiteManager
 {
@@ -27,6 +39,11 @@ class SiteManager
      * @var Site
      */
     private $context;
+
+    /**
+     * @var mixed[]
+     */
+    private $dependentContext = [];
 
     /**
      * @var \DatabaseConnection
@@ -62,53 +79,25 @@ class SiteManager
      * Set current site context
      *
      * @param Site $site
+     * @param bool $disableDispatch
+     *   If set, no event will be raised, please note this should never ever
+     *   be used, except during ucms_site_boot() which will pre-set the site
+     *   without knowing if the context is valid or not
      */
-    public function setContext(Site $site)
+    public function setContext(Site $site, $disableDispatch = false)
     {
+        $doDispatch = false;
+
+        if (!$doDispatch && !$this->context || $this->context->getId() !== $site->getId()) {
+            $doDispatch = true;
+        }
+
         $this->context = $site;
 
-        // @todo
-        //   dispatch init has beeing delegated to hook_custom_theme()
-        //   see ucms_site_custom_theme() code documentation to know why
-        // $this->dispatcher->dispatch('site:init', new SiteEvent($site));
-    }
-
-    /**
-     * Get URL in site
-     *
-     * @param int|Site $site
-     *   Site identifier, if site is null
-     * @param string $path
-     *   Drupal path to hit in site
-     * @param mixed[] $options
-     *   Link options, see url()
-     *
-     * @return mixed
-     *   First value is the string path
-     *   Second value are updates $options
-     */
-    public function getUrlInSite($site, $path, $options = [])
-    {
-        if ($site instanceof Site) {
-            $site = $site->getId();
+        // Dispatch the context init event
+        if (!$disableDispatch && $doDispatch) {
+            $this->dispatcher->dispatch(SiteEvents::EVENT_INIT, new SiteEvent($this->context));
         }
-
-        if ($this->hasContext() && $this->getContext()->getId() == $site) {
-            return [$path, $options];
-        }
-
-        $realpath = 'sso/goto/' . $site;
-
-        if (isset($_GET['destination'])) {
-            $options['query']['form_redirect'] = $_GET['destination'];
-            unset($_GET['destination']);
-        } else if (isset($options['query']['destination'])) {
-            $options['query']['form_redirect'] = $options['query']['destination'];
-        }
-
-        $options['query']['destination'] = $path;
-
-        return [$realpath, $options];
     }
 
     /**
@@ -127,6 +116,7 @@ class SiteManager
     public function dropContext()
     {
         $this->context = null;
+        $this->dependentContext = [];
     }
 
     /**
@@ -137,6 +127,48 @@ class SiteManager
     public function hasContext()
     {
         return !!$this->context;
+    }
+
+    /**
+     * Has dependent context
+     *
+     * @param string $name
+     */
+    public function hasDependentContext($name)
+    {
+        return isset($this->dependentContext[$name]);
+    }
+
+    /**
+     * Get dependent context
+     *
+     * @param string $name
+     *
+     * @param mixed
+     */
+    public function getDependentContext($name)
+    {
+        if (!isset($this->dependentContext[$name])) {
+            throw new \InvalidArgumentException(sprintf("there is no dependent context '%s'", $name));
+        }
+
+        return $this->dependentContext[$name];
+    }
+
+    /**
+     * Set dependent context
+     *
+     * @param string $name
+     * @param mixed $value
+     * @param bool $allowOverride
+     */
+    public function setDependentContext($name, $value, $allowOverride = false)
+    {
+        if (!$allowOverride && isset($this->dependentContext[$name])) {
+            throw new \LogicException(sprintf("you are overriding an existing dependent context '%s', are you sure you meant to do this?", $name));
+        }
+
+        $this->dependentContext[$name] = $value;
     }
 
     /**
@@ -179,6 +211,44 @@ class SiteManager
         return variable_get('ucms_site_allowed_types', [
             'default' => t("Default"), // @todo
         ]);
+    }
+
+    /**
+     * Get URL in site
+     *
+     * @param int|Site $site
+     *   Site identifier, if site is null
+     * @param string $path
+     *   Drupal path to hit in site
+     * @param mixed[] $options
+     *   Link options, see url()
+     *
+     * @return mixed
+     *   First value is the string path
+     *   Second value are updates $options
+     */
+    public function getUrlInSite($site, $path, $options = [])
+    {
+        if ($site instanceof Site) {
+            $site = $site->getId();
+        }
+
+        if ($this->hasContext() && $this->getContext()->getId() == $site) {
+            return [$path, $options];
+        }
+
+        $realpath = 'sso/goto/' . $site;
+
+        if (isset($_GET['destination'])) {
+            $options['query']['form_redirect'] = $_GET['destination'];
+            unset($_GET['destination']);
+        } else if (isset($options['query']['destination'])) {
+            $options['query']['form_redirect'] = $options['query']['destination'];
+        }
+
+        $options['query']['destination'] = $path;
+
+        return [$realpath, $options];
     }
 
     /**

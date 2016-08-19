@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Group;
 
 use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Site\Site;
 
@@ -10,6 +11,7 @@ class GroupAccessService
 {
     private $database;
     private $storage;
+    private $accessCache = [];
 
     /**
      * Default constructor
@@ -58,6 +60,35 @@ class GroupAccessService
         }
 
         return $ret;
+    }
+
+    /**
+     * Get node groups
+     *
+     * This implementation can only return group identifiers, since sites
+     * might have more than one group, case in which duplicates are possible
+     * and it is not revelant for node access implementation to know about
+     * that.
+     *
+     * @param NodeInterface $node
+     *
+     * @return int[]
+     */
+    public function getNodeGroups(NodeInterface $node)
+    {
+        if (empty($node->ucms_sites)) {
+            return [];
+        }
+
+        return $this
+            ->database
+            ->select('ucms_group_site', 'gs')
+            ->fields('gs', ['group_id'])
+            ->condition('gs.site_id', $node->ucms_sites)
+            ->groupBy('gs.group_id')
+            ->execute()
+            ->fetchCol()
+        ;
     }
 
     /**
@@ -148,7 +179,40 @@ class GroupAccessService
      */
     public function getUserGroups(AccountInterface $account)
     {
-        throw new \Exception("Not implemented yet");
+        $userId = $account->id();
+
+        if (!isset($this->accessCache[$userId])) {
+            $this->accessCache[$userId] = [];
+
+            $q = $this
+                ->database
+                ->select('ucms_group_user', 'gu')
+                ->fields('gu', ['group_id', 'user_id'])
+                ->condition('gu.user_id', $userId)
+            ;
+
+            // This will populate the PartialUserInterface information without
+            // the need to join on the user table. Performance for the win.
+            // This will always remain true as long as we have a foreign key
+            // constraint on the user table, we are sure that the user actually
+            // exists, and since we have the instance, it's all good!
+            $q->addExpression(':name', 'name', [':name' => $account->getAccountName()]);
+            $q->addExpression(':mail', 'mail', [':mail' => $account->getEmail()]);
+            $q->addExpression(':status', 'status', [':status' => $account->status]);
+
+            $r = $q->execute();
+            $r->setFetchMode(\PDO::FETCH_CLASS, GroupMember::class);
+
+            // Can't use fetchAllAssoc() because properties are private on the
+            // objects built by PDO
+            $this->accessCache[$userId] = [];
+
+            foreach ($r as $record) {
+                $this->accessCache[$userId][] = $record;
+            }
+        }
+
+        return $this->accessCache[$userId];
     }
 
     /**

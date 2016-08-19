@@ -43,7 +43,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     /**
      * Grants for people accessing the dashboard
      */
-    const REALM_GLOBAL_VIEW = 'ucms_global_view';
+    const REALM_GLOBAL_READONLY = 'ucms_global_ro';
 
     /**
      * Grants for global content
@@ -59,11 +59,6 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
      * Grants for group content
      */
     const REALM_GROUP = 'ucms_group';
-
-    /**
-     * Grants for content owner in global repository
-     */
-    const REALM_GLOBAL_SELF = 'ucms_global_self';
 
     /**
      * Default group identifier for grants where it does not make sense
@@ -132,9 +127,10 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         $node = $event->getNode();
 
         // This is where it gets complicated.
-        $isGlobal   = $node->is_global;
-        $isGroup    = $node->is_group;
-        $isNotLocal = $isGlobal || $isGroup;
+        $isGlobal     = $node->is_global;
+        $isGroup      = $node->is_group;
+        $isNotLocal   = $isGlobal || $isGroup;
+        $isPublished  = $node->isPublished();
 
         // People with "view all" permissions should view it
         $event->add(self::REALM_READONLY, self::GID_DEFAULT);
@@ -145,10 +141,14 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
         if ($isGroup) {
             $event->add(self::REALM_GROUP, self::GID_DEFAULT, true, true, true);
-            $event->add(self::REALM_GROUP_READONLY, self::GID_DEFAULT, $node->isPublished());
+            if ($isPublished) { // Avoid data volume exploding
+                $event->add(self::REALM_GROUP_READONLY, self::GID_DEFAULT);
+            }
         } else if ($isGlobal) {
             $event->add(self::REALM_GLOBAL, self::GID_DEFAULT, true, true, true);
-            $event->add(self::REALM_GLOBAL_VIEW, self::GID_DEFAULT, $node->isPublished());
+            if ($isPublished) { // Avoid data volume exploding
+                $event->add(self::REALM_GLOBAL_READONLY, self::GID_DEFAULT);
+            }
         }
 
         // This allows other webmasters to see other site content, but please
@@ -156,10 +156,8 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         // is no easy way of doing this except by rewriting all site content
         // node access rights on each site status change, and that's sadly a
         // no-go.
-        if (!$isNotLocal) {
-            if ($node->status) {
-                $event->add(self::REALM_OTHER, self::GID_DEFAULT);
-            }
+        if (!$isNotLocal && $isPublished) {
+            $event->add(self::REALM_OTHER, self::GID_DEFAULT);
         }
 
         // Inject an entry for each site, even when the node is a global node, this
@@ -174,7 +172,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 // Grant that reprensents the node in the site for anonymous
                 // as long as it exists, not may show up anytime when the site
                 // state is on
-                if ($node->status) {
+                if ($isPublished) {
                     $event->add(self::REALM_PUBLIC, $siteId);
                 }
 
@@ -183,13 +181,15 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 //   - user is a contributor on a specific site
                 //   - user is a webmaster on a readonly site
                 if ($isNotLocal) {
-                    if ($node->status) {
+                    if ($isPublished) {
                         $event->add(self::REALM_READONLY, $siteId);
                         $event->add(self::REALM_WEBMASTER, $siteId);
                     }
                 } else  {
                     $event->add(self::REALM_READONLY, $siteId);
-                    $event->add(self::REALM_WEBMASTER, $siteId, $siteId === $node->site_id, $siteId === $node->site_id);
+                    if ($siteId === $node->site_id) { // Avoid data volume exploding
+                        $event->add(self::REALM_WEBMASTER, $siteId, true, true);
+                    }
                 }
             }
         }
@@ -220,7 +220,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
             $ret[self::REALM_READONLY][] = self::GID_DEFAULT;
         } else {
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
-                $ret[self::REALM_GLOBAL_VIEW][] = self::GID_DEFAULT;
+                $ret[self::REALM_GLOBAL_READONLY][] = self::GID_DEFAULT;
             }
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
                 $ret[self::REALM_GROUP_READONLY][] = self::GID_DEFAULT;
