@@ -58,6 +58,11 @@ class NodeAccessTest extends AbstractDrupalTest
         $this->nodes['site_pending_published']          = $this->createDrupalNode(1, 'pending', [], false, false, true);
         $this->nodes['site_pending_unpublished']        = $this->createDrupalNode(0, 'pending', [], false, false, true);
 
+        // This'll be useful for debug, no business meaning.
+        foreach ($this->nodes as $index => $node) {
+            $node->setTitle($index);
+        }
+
         $this->getSiteManager()->dropContext();
     }
 

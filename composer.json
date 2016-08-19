@@ -71,7 +71,7 @@
         "elasticsearch/elasticsearch" : "2.2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-umenu" : "^1.1.4",
-        "makinacorpus/drupal-sf-dic" : "^3.0.25",
+        "makinacorpus/drupal-sf-dic" : "^3.0.26",
         "makinacorpus/drush-progressbar" : "^1.0"
     },
     "suggests" : {

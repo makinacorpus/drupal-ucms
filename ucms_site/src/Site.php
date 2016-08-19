@@ -102,7 +102,7 @@ class Site
 
     public function getState()
     {
-        return $this->state;
+        return (int)$this->state;
     }
 
     public function getHostname()

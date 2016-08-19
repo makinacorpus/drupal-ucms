@@ -107,6 +107,9 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
             NodeAccessGrantEvent::EVENT_NODE_ACCESS_GRANT => [
                 ['onNodeAccessGrant', 128],
             ],
+            SiteEvents::EVENT_INIT => [
+                ['onSiteInit', 0],
+            ],
         ];
     }
 
@@ -115,8 +118,18 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
      */
     public function resetCache()
     {
+        drupal_static_reset('node_access');
+
         drupal_static_reset('ucms_site_node_grants');
         $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
+    }
+
+    /**
+     * Resets internal cache on site init
+     */
+    public function onSiteInit(SiteEvent $event)
+    {
+        $this->resetCache();
     }
 
     /**
@@ -200,7 +213,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         $ret = [];
 
         // This should always be true anyway.
-        if (($site = $this->siteManager->getContext()) && SiteState::ON === $site->state) {
+        if (($site = $this->siteManager->getContext()) && SiteState::ON === $site->getState()) {
             $ret[self::REALM_PUBLIC][] = $site->getId();
         }
 
