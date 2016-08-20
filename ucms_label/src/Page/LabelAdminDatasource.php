@@ -92,6 +92,11 @@ class LabelAdminDatasource extends AbstractDatasource
     public function getItems($query, PageState $pageState)
     {
         $q = $this->db->select('taxonomy_term_data', 't');
+        // fields() must be call prior to orderBy() because orderBy() will
+        // also add the fields to the field list, thus change the order they
+        // are SELECT'ed and make fetchCol() return the sorted field instead
+        // of the one added right here.
+        $q->fields('t', ['tid']);
         $q->join('taxonomy_term_hierarchy', 'h', "h.tid = t.tid");
 
         if (isset($query['category'])) {
@@ -111,7 +116,6 @@ class LabelAdminDatasource extends AbstractDatasource
 //        }
 
         $ids = $q
-            ->fields('t', ['tid'])
             ->condition('t.vid', $this->manager->getVocabularyId())
             ->extend('PagerDefault')
             ->limit($pageState->getLimit())
