@@ -131,7 +131,7 @@ class UserRequestNewPassword extends FormBase
     {
         /* @var UserInterface $user */
         $user = $form_state->getTemporaryValue('user');
-        $this->tokenManager->sendTokenMail($user, 'new-password-request');
+        $this->tokenManager->sendTokenMail($user, 'ucms_user', 'new-password-request');
         drupal_set_message($this->t("Further instructions have been sent to your e-mail address."));
         $this->dispatcher->dispatch('user:request_new_password', new UserEvent($user->uid, $this->currentUser()->id()));
     }

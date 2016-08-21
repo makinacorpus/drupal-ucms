@@ -47,14 +47,16 @@ class SiteStatusEventSubscriber implements EventSubscriberInterface
 
         $user = \Drupal::currentUser();
 
-        $valid_paths = [
-            'user/login',
-            'user/register',
+        $valid_paths = implode(PHP_EOL, [
+            'extranet/register',
+            'extranet/register/confirm',
+            'set-password/*',
             'sso/login',
-        ];
+            'user/login',
+        ]);
 
         if (
-            !in_array($event->getPath(), $valid_paths) &&
+            !drupal_match_path($event->getPath(), $valid_paths) &&
             !$user->hasPermission(ExtranetAccess::PERM_EXTRANET_ACCESS_ALL) &&
             !$this->manager->getAccess()->userHasRole($user, $event->getSite())
         ) {

@@ -7,3 +7,4 @@ php = 5.5
 dependencies[] = minidialog
 dependencies[] = sf_dic
 dependencies[] = ucms_site
+dependencies[] = ucms_user

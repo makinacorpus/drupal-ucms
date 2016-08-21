@@ -101,7 +101,7 @@ class UserResetPassword extends FormBase
 
         if ($saved) {
             drupal_set_message($this->t("@name's password has been resetted.", array('@name' => $user->getDisplayName())));
-            $this->tokenManager->sendTokenMail($user, 'password-reset');
+            $this->tokenManager->sendTokenMail($user, 'ucms_user', 'password-reset');
             $this->dispatcher->dispatch('user:reset_password', new UserEvent($user->uid, $this->currentUser()->id()));
         } else {
             drupal_set_message($this->t("An error occured. Please try again."), 'error');

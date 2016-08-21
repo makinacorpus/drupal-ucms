@@ -260,9 +260,9 @@ class UserEdit extends FormBase
                 drupal_set_message($this->t("The new user @name has been created.", array('@name' => $user->name)));
 
                 if ($user->isActive()) {
-                    $this->tokenManager->sendTokenMail($user, 'new-account-enabled');
+                    $this->tokenManager->sendTokenMail($user, 'ucms_user', 'new-account-enabled');
                 } else {
-                    $this->tokenManager->sendTokenMail($user, 'new-account-disabled');
+                    $this->tokenManager->sendTokenMail($user, 'ucms_user', 'new-account-disabled');
                 }
 
                 $this->dispatcher->dispatch('user:add', new UserEvent($user->uid, $this->currentUser()->uid));

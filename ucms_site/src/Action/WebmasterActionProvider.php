@@ -3,65 +3,34 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\SiteAccessRecord;
-use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\Action\AbstractWebmasterActionProvider;
 
 
-class WebmasterActionProvider implements ActionProviderInterface
+class WebmasterActionProvider extends AbstractWebmasterActionProvider
 {
-    use StringTranslationTrait;
-
-
-    /**
-     * @var SiteManager
-     */
-    private $manager;
-
-    /**
-     * @var AccountInterface
-     */
-    private $currentUser;
-
-
-    /**
-     * Default constructor
-     *
-     * @param SiteManager $manager
-     */
-    public function __construct(SiteManager $manager, AccountInterface $currentUser)
-    {
-        $this->manager = $manager;
-        $this->currentUser = $currentUser;
-    }
-
-
     /**
      * {@inheritdoc}
-     * @param SiteAccessRecord $item
      */
     public function getActions($item)
     {
+        if ($item->getUserId() == $this->currentUser->id()) {
+            return [];
+        }
+
         $actions = [];
 
-        if ($item->getUserId() != $this->currentUser->id()) {
-            if ((int) $item->getRole() === Access::ROLE_WEBMASTER) {
-                $path = $this->buildWebmasterUri($item, 'demote');
-                $actions[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 10, true, true);
-            }
-            elseif ((int) $item->getRole() === Access::ROLE_CONTRIB) {
-                $path = $this->buildWebmasterUri($item, 'promote');
-                $actions[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 10, true, true);
-            }
-
-            $path = $this->buildWebmasterUri($item, 'delete');
-            $actions[] = new Action($this->t("Delete from this site"), $path, 'dialog', 'remove', 20, true, true);
+        if ($item->getRole() === Access::ROLE_WEBMASTER) {
+            $path = $this->buildWebmasterUri($item, 'demote');
+            $actions[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 50, true, true);
         }
+        elseif ($item->getRole() === Access::ROLE_CONTRIB) {
+            $path = $this->buildWebmasterUri($item, 'promote');
+            $actions[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 50, true, true);
+        }
+
+        $actions[] = $this->createDeleteAction($item);
 
         return $actions;
     }
@@ -72,21 +41,9 @@ class WebmasterActionProvider implements ActionProviderInterface
      */
     public function supports($item)
     {
-        return $item instanceof SiteAccessRecord;
-    }
-
-
-    /**
-     * Builds the URI for a given operation on site accesses.
-     *
-     * @param SiteAccessRecord $item
-     * @param string $op
-     * @return string
-     */
-    protected function buildWebmasterUri($item, $op)
-    {
-        return 'admin/dashboard/site/' . $item->getSiteId()
-            . '/webmaster/' . $item->getUserId() . '/' . $op;
+        // We act only on the roles known by ucms_site and let other modules
+        // provide actions for their own roles.
+        $roles = [Access::ROLE_WEBMASTER, Access::ROLE_CONTRIB];
+        return parent::supports($item) && in_array($item->getRole(), $roles);
     }
 }
-

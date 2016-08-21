@@ -4,19 +4,92 @@
  * UCMS - Extranet management.
  */
 
+
+use Drupal\user\UserInterface;
+
+use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
+use MakinaCorpus\Ucms\Site\Site;
+
+
 /**
  * Implements hook_menu().
  */
-//function ucms_extranet_menu() {
-//  return [];
-//}
+function ucms_extranet_menu() {
+  $items = [];
+
+  // Registration form
+  $items['extranet/register'] = [
+    'title'             => "Register on the extranet",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Extranet\Form\RegisterForm'],
+    'access callback'   => true,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  // Registration confirmation page
+  $items['extranet/register/confirm'] = [
+    'title'             => "Confirmation of your registration",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Extranet\Controller\ExtranetController::confirm'],
+    'access callback'   => true,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  // Registration acceptance form
+  $items['admin/dashboard/site/%ucms_site/webmaster/%user/accept'] = [
+    'title'             => "Accept registration",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Extranet\Form\MemberAcceptanceForm', 3, 5],
+    'access callback'   => 'ucms_extranet_access_registration_validation',
+    'access arguments'  => [3, 5],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  // Registration rejection form
+  $items['admin/dashboard/site/%ucms_site/webmaster/%user/reject'] = [
+    'title'             => "Reject registration",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Extranet\Form\MemberRejectionForm', 3, 5],
+    'access callback'   => 'ucms_extranet_access_registration_validation',
+    'access arguments'  => [3, 5],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  return $items;
+}
+
 
 /**
- * Implements hook_permission().
+ * Checks access to validation of member registrations.
+ *
+ * @param Site $site
+ *  Site concerned by the registration.
+ * @param UserInterface $account
+ *  Account whose the registration must be validate.
+ * @param AccountInterface $user
+ *  User whose we want to check the access rights.
+ *  The current user by default.
+ *
+ * @return boolean
  */
-//function ucms_extranet_permission() {
-//  return [];
-//}
+function ucms_extranet_access_registration_validation(Site $site, UserInterface $account, AccountInterface $user = null) {
+
+  if (!$site instanceof Site || !$account instanceof UserInterface) {
+    return false;
+  }
+
+  if (!$user) {
+    $user = \Drupal::currentUser();
+  }
+
+  $siteAccessService = ucms_site_manager()->getAccess();
+
+  return (
+    $siteAccessService->userCanManage($user, $site) &&
+    $siteAccessService->userHasRole($account, $site, ExtranetAccess::ROLE_EXTRANET_MEMBER) &&
+    $account->getLastAccessedTime() == 0 &&
+    $account->isBlocked()
+  );
+}
+
 
 /**
  * Implements hook_init().
@@ -37,13 +110,15 @@ function ucms_extranet_init() {
       return;
     }
 
-    $valid_paths = [
-      'user/login',
-      'user/register',
+    $valid_paths = implode(PHP_EOL, [
+      'extranet/register',
+      'extranet/register/confirm',
+      'set-password/*',
       'sso/login',
-    ];
+      'user/login',
+    ]);
 
-    if (user_is_anonymous() && !in_array(current_path(), $valid_paths)) {
+    if (user_is_anonymous() && !drupal_match_path(current_path(), $valid_paths)) {
       drupal_goto('user/login');
     }
   }
@@ -58,5 +133,74 @@ function ucms_extranet_user_login(&$edit, $account) {
   }
   if (ucms_site_manager()->hasContext()) {
     $edit['redirect'] = '<front>';
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function ucms_extranet_mail($key, &$message, $params) {
+  $langcode = isset($message['language']) ? $message['language']->language : null;
+
+  switch ($key) {
+    case 'new-member-registered':
+      $message['subject'] = t("New registration on [site:name]", [], ['langcode' => $langcode]);
+      $message['body'][] = t("Webmasters,
+
+The registration of [user:name] is waiting for your validation on [site:name].
+You can accept or reject it from the users management page:
+[site:users-management-url]
+
+See you soon!", [], ['langcode' => $langcode]);
+      break;
+
+    case 'new-member-accepted':
+      $message['subject'] = t("New registration on [site:name]", [], ['langcode' => $langcode]);
+      $message['body'][] = t("[user:name],
+
+Your registration on [site:name] has been accepted.
+
+You may now set your password by clicking this link or copying and pasting it to your browser:
+
+[user:set-password-url]
+
+This link can only be used once and will lead you to a page where you can set your password.
+It expires after one day and nothing will happen if it's not used.
+
+--  [site:name] team", [], ['langcode' => $langcode]);
+      break;
+  }
+
+  $options = [
+    'language' => $message['language'],
+    'callback' => 'ucms_extranet_replace_tokens',
+    // We do not sanitize the token replacement, since the output of this
+    // replacement is intended for an e-mail message, not a web browser.
+    'sanitize' => false,
+    'clear' => true,
+  ];
+
+  $message['subject'] = token_replace($message['subject'], $params, $options);
+  $message['body'][0] = token_replace($message['body'][0], $params, $options);
+}
+
+
+/**
+ * Callback to add exceptional tokens.
+ */
+function ucms_extranet_replace_tokens(&$replacements, $data, $options) {
+
+  if (isset($data['site'])) {
+    $replacements['[site:users-management-url]'] = url('admin/dashboard/site/' . $data['site']->getId() . '/webmaster', [
+      'absolute' => true,
+      'base_url' => ucms_site_master_absolute_url(),
+    ]);
+
+    if (isset($data['token'])) {
+      $replacements['[user:set-password-url]'] = url('set-password/' . $data['token']->token, [
+        'absolute' => true,
+        'base_url' => ($GLOBALS['is_https'] ? 'https' : 'http') . $data['site']->http_host,
+      ]);
+    }
   }
 }

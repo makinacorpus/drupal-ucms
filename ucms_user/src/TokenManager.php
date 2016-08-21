@@ -127,20 +127,24 @@ final class TokenManager
      *
      * @global $language
      * @param AccountInterface $user
-     *  The recipient of the mail
+     *  The recipient of the mail.
+     * @param string $mailModule
+     *  Name of the module containing the type of mail.
      * @param string $mailKey
-     *  Key of the type of mail you want to send
+     *  Key of the type of mail you want to send.
+     * @param mixed[] $params
+     *  Additional parameters for the mail generation.
      *
      * @see ucms_user_mail()
      */
-    public function sendTokenMail(AccountInterface $user, $mailKey)
+    public function sendTokenMail(AccountInterface $user, $mailModule, $mailKey, array $params = [])
     {
         global $language;
 
         $token = $this->createToken($user);
-        $params = ['user' => $user, 'token' => $token];
+        $params = ['user' => $user, 'token' => $token] + $params;
 
-        drupal_mail('ucms_user', $mailKey, $user->getEmail(), $language, $params);
+        drupal_mail($mailModule, $mailKey, $user->getEmail(), $language, $params);
     }
 }
 
