@@ -44,6 +44,22 @@ services:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserDelete
     tags: [{ name: apb.notification.formatter, event: "user:delete", auto: true, channels: "admin:client" }]
 
+  # Extranet notifications
+  ucms_notification.member_register:
+    class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberRegister
+    arguments: ["@ucms_site.manager"]
+    tags: [{ name: apb.notification.formatter, event: "member:register" }]
+
+  ucms_notification.member_accept:
+    class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberAccept
+    arguments: ["@ucms_site.manager"]
+    tags: [{ name: apb.notification.formatter, event: "member:accept" }]
+
+  ucms_notification.member_reject:
+    class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberReject
+    arguments: ["@ucms_site.manager"]
+    tags: [{ name: apb.notification.formatter, event: "member:reject" }]
+
   # Content notifications
   ucms_notification.content_add:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentAdd
@@ -102,3 +118,10 @@ services:
       - { name: event_listener, event: "site:webmaster_add_new" }
       - { name: event_listener, event: "site:webmaster_add_existing" }
       - { name: event_listener, event: "site:webmaster_delete" }
+
+  # Extranet member event subscriber
+  ucms_notification.extranet_member_event_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Notification\EventDispatcher\ExtranetMemberEventSubscriber
+    arguments: ["@apb.notification"]
+    tags: [{ name: event_subscriber }]
