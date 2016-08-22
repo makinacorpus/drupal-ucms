@@ -10,9 +10,9 @@ use Drupal\node\NodeInterface;
 use Elasticsearch\Client;
 
 use MakinaCorpus\Ucms\Search\Attachment\NodeAttachmentIndexerInterface;
+use MakinaCorpus\Ucms\Search\EventDispatcher\NodeIndexEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use MakinaCorpus\Ucms\Search\EventDispatcher\NodeIndexEvent;
 
 /**
  * @todo unit test me
@@ -345,7 +345,22 @@ class NodeIndexer implements NodeIndexerInterface
             $nidList[] = $node->id();
         }
 
-        $this->client->bulk($params);
+        $response = $this->client->bulk($params);
+        if ($response['errors']) {
+            // Remove the failing nodes and display a warning
+            foreach($response['items'] as $item) {
+                $values = $item['index'];
+                if (!empty($values['error'])) {
+                    $error = $values['error'];
+                    $index = array_search($values['_id'], $nidList);
+                    unset($nidList[$index]);
+                    trigger_error(
+                        sprintf("[nid:%s] %s: %s", $values['_id'], $error['type'], $error['reason']),
+                        E_USER_WARNING
+                    );
+                }
+            }
+        }
 
         $this
             ->db
