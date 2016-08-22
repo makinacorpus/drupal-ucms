@@ -85,6 +85,7 @@ mappings:
           site_id:
             type: category
             path: site_id
+            default: ["0"]
 
       attachment:
         type:         attachment
