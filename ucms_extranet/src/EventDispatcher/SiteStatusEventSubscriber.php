@@ -48,11 +48,11 @@ class SiteStatusEventSubscriber implements EventSubscriberInterface
         $user = \Drupal::currentUser();
 
         $valid_paths = implode(PHP_EOL, [
-            'extranet/register',
-            'extranet/register/confirm',
             'set-password/*',
             'sso/login',
             'user/login',
+            'user/register',
+            'user/register/confirm',
         ]);
 
         if (

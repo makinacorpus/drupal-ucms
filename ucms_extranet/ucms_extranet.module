@@ -17,20 +17,12 @@ use MakinaCorpus\Ucms\Site\Site;
 function ucms_extranet_menu() {
   $items = [];
 
-  // Registration form
-  $items['extranet/register'] = [
-    'title'             => "Register on the extranet",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Extranet\Form\RegisterForm'],
-    'access callback'   => true,
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
   // Registration confirmation page
-  $items['extranet/register/confirm'] = [
+  $items['user/register/confirm'] = [
     'title'             => "Confirmation of your registration",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => ['MakinaCorpus\Ucms\Extranet\Controller\ExtranetController::confirm'],
-    'access callback'   => true,
+    'access callback'   => 'ucms_extranet_access_registration',
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -54,6 +46,33 @@ function ucms_extranet_menu() {
   ];
 
   return $items;
+}
+
+
+/**
+ * Implements hook_menu_alter().
+ */
+function ucms_extranet_menu_alter(&$items) {
+  $items['user/register']['title'] = "Register on the extranet";
+  $items['user/register']['page callback'] = 'sf_dic_page_form';
+  $items['user/register']['page arguments'] = ['MakinaCorpus\Ucms\Extranet\Form\RegisterForm'];
+  $items['user/register']['access callback'] = 'ucms_extranet_access_registration';
+  $items['user/register']['type'] = MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB;
+}
+
+
+/**
+ * Checks access to the registration form.
+ *
+ * @return boolean
+ */
+function ucms_extranet_access_registration() {
+
+  if (user_is_anonymous() && ucms_site_manager()->hasContext()) {
+    return !ucms_site_manager()->getContext()->isPublic();
+  }
+
+  return false;
 }
 
 
@@ -110,12 +129,13 @@ function ucms_extranet_init() {
       return;
     }
 
+    // Redirects anonymous users on the login form, except for a few paths.
     $valid_paths = implode(PHP_EOL, [
-      'extranet/register',
-      'extranet/register/confirm',
       'set-password/*',
       'sso/login',
       'user/login',
+      'user/register',
+      'user/register/confirm',
     ]);
 
     if (user_is_anonymous() && !drupal_match_path(current_path(), $valid_paths)) {
@@ -123,6 +143,27 @@ function ucms_extranet_init() {
     }
   }
 }
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ucms_extranet_form_user_login_alter(&$form, &$form_state) {
+  $siteManager = ucms_site_manager();
+
+  if ($siteManager->hasContext() && !$siteManager->getContext()->isPublic()) {
+    $form['actions']['register'] = [
+      '#theme' => 'link',
+      '#text' => t("Register"),
+      '#path' => 'user/register',
+      '#options' => [
+        'html' => false,
+        'attributes' => [],
+      ],
+    ];
+  }
+}
+
 
 /**
  * Implements hook_user_login().
@@ -135,6 +176,7 @@ function ucms_extranet_user_login(&$edit, $account) {
     $edit['redirect'] = '<front>';
   }
 }
+
 
 /**
  * Implements hook_mail().

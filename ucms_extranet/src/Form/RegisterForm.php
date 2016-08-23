@@ -178,7 +178,7 @@ class RegisterForm extends FormBase
         $event = new ExtranetMemberEvent($user, $site);
         $this->dispatcher->dispatch(ExtranetMemberEvent::EVENT_REGISTER, $event);
 
-        $formState->setRedirect('extranet/register/confirm');
+        $formState->setRedirect('user/register/confirm');
     }
 }
 
