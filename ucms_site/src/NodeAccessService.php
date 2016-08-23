@@ -428,7 +428,7 @@ class NodeAccessService
                 }
             }
 
-            return NODE_ACCESS_DENY;
+            return NODE_ACCESS_IGNORE;
 
         } elseif (Access::OP_DELETE === $op) {
             // Locked types

@@ -6,16 +6,28 @@
       </button>
       <ul class="nav navbar-nav">
         <li>
-          <a class="navbar-brand" href="{{ url('admin') }}">
-            <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
-            <span class="sr-only">{{ "Administration"|t }}</span>
-          </a>
+          {% if user.hasPermission('access administration pages') %}
+            <a class="navbar-brand" href="{{ url('admin') }}">
+              <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
+              <span class="sr-only">{{ "Administration"|t }}</span>
+            </a>
+          {% else %}
+            <span class="navbar-text">
+              <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
+            </span>
+          {% endif %}
         </li>
         {% if user.authenticated %}
           <li>
-            <a href="{{ url('admin/dashboard') }}">
-              {{ "Welcome @user"|t({'@user':user.displayName}) }}
-            </a>
+            {% if user.hasPermission('access administration pages') %}
+              <a href="{{ url('admin/dashboard') }}">
+                {{ "Welcome @user"|t({'@user':user.displayName}) }}
+              </a>
+            {% else %}
+              <span class="navbar-text">
+                {{ "Welcome @user"|t({'@user':user.displayName}) }}
+              </span>
+            {% endif %}
           </li>
           {% if site %}
             <li>

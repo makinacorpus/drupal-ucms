@@ -112,7 +112,7 @@ class ContextPaneEventListener
         // Add a backlink
         //   @todo find a solution for path_is_admin() and current_path()
         //     maybe bring in the RequestStack
-        if (!path_is_admin(current_path())) {
+        if (!path_is_admin(current_path()) && user_access('access administration pages')) {
             $backlink = new Action($this->t("Go to dashboard"), 'admin/dashboard', null, 'dashboard');
             $contextPane->addActions([$backlink], null, 'dashboard', false);
         }
