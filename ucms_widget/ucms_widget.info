@@ -1,0 +1,5 @@
+name = "UCMS - Widget"
+description = "Provide base widget API"
+core = 7.x
+package = UCMS Extras
+php = 5.5

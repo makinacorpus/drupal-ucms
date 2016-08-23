@@ -1,0 +1,18 @@
+<?php
+/**
+ * µCMS widget base API module.
+ */
+
+/**
+ * Field API integration.
+ */
+require_once __DIR__ . '/ucms_widget.field.inc';
+
+/**
+ * Get widget registry
+ *
+ * @return \MakinaCorpus\Ucms\Widget\DependencyInjection\WidgetRegistry
+ */
+function ucms_widget_registry() {
+  return \Drupal::service('ucms_widget.registry');
+}

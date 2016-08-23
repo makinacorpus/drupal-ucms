@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * Implements hook_field_schema().
+ */
+function ucms_widget_field_schema($field) {
+  switch ($field['type']) {
+
+    case 'ucms_widget':
+      return [
+        'columns' => [
+          'options' => [
+            'description' => "Implementation specific options storage",
+            'type'        => 'text',
+            'not null'    => false,
+            'default'     => null,
+          ],
+        ],
+        'indexes' => [],
+      ];
+  }
+}

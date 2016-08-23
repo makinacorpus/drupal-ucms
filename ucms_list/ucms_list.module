@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function ucms_list_theme() {
+  return [
+    'ucms_list' => [
+      'template'  => 'ucms-typelist',
+      'variables' => ['nodes' => [], 'type' => [], 'view_mode' => 'teaser', 'pager' => null, 'limit' => 3, 'count' => 0],
+    ],
+  ];
+}
+
+/**
+ * Element validate callback that will filter non selected values in option
+ * list (multiple or not).
+ */
+function ucms_list_element_validate_filter($element, &$form_state) {
+  time();
+}
+
+/**
+ * Implements template_preprocess_HOOK().
+ */
+function template_preprocess_ucms_list(&$variables) {
+  if (!empty($variables['view_mode'])) {
+    $variables['theme_hook_suggestions'][] = 'ucms_list__' . str_replace('-', '_', $variables['view_mode']);
+  }
+}

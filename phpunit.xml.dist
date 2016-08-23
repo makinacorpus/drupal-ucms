@@ -18,6 +18,7 @@
             <directory>./ucms_seo/src/Tests/</directory>
             <directory>./ucms_search/src/Tests/</directory>
             <directory>./ucms_site/src/Tests/</directory>
+            <directory>./ucms_widget/src/Tests/</directory>
         </testsuite>
     </testsuites>
 

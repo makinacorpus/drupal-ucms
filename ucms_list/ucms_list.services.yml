@@ -1,0 +1,5 @@
+services:
+  ucms_list.widget.list_type:
+    class: MakinaCorpus\Ucms\ContentList\Impl\TypeContentListWidget
+    arguments: ['@entity.manager', '@ucms_contrib.type_handler', '@?ucms_label.manager']
+    tags: [{name: ucms_widget, type: list_type}]
