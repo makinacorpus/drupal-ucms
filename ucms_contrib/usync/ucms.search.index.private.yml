@@ -10,11 +10,42 @@ settings:
   number_of_shards:   1
   number_of_replicas: 0
   analysis:
+    # redo the french filters
+    filter:
+      french_elision:
+        type: elision
+        articles_case: true
+        articles:
+        - l
+        - m
+        - t
+        - qu
+        - n
+        - s
+        - j
+        - d
+        - c
+        - jusqu
+        - quoiqu
+        - lorsqu
+        - puisqu
+      french_stop:
+        type: stop
+        stopwords: _french_
+      french_stemmer:
+        type: stemmer
+        language: light_french
     analyzer:
+      # Take the french analyzer to customize it and add html_strip
       html_analyzer:
         type: custom
         tokenizer: standard
-        char_filter : [html_strip]
+        filter:
+          - french_elision
+          - lowercase
+          - french_stop
+          - french_stemmer
+        char_filter: [html_strip]
 
 mappings:
   node:
@@ -22,7 +53,7 @@ mappings:
 
       title:
         type:         string
-        analyzer:     standard
+        analyzer:     french
         term_vector:  yes
         copy_to:      [combined, autocomplete]
         fields:
