@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Search\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+
 use MakinaCorpus\Ucms\Search\IndexStorage;
 use MakinaCorpus\Ucms\Search\Lucene\Query;
 use MakinaCorpus\Ucms\Search\Search;

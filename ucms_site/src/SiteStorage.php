@@ -3,12 +3,11 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 
 /**
  * Site storage service

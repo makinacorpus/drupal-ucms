@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Label\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -9,22 +8,12 @@ use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\APubSub\Notification\NotificationService;
 use MakinaCorpus\Ucms\Label\LabelManager;
 
-
-class LabelEventListener
+final class LabelEventListener
 {
     use StringTranslationTrait;
 
-
-    /**
-     * @var LabelManager
-     */
-    protected $labelManager;
-
-    /**
-     * @var NotificationService
-     */
-    protected $notifService;
-
+    private $labelManager;
+    private $notifService;
 
     /**
      * Constructor
@@ -37,7 +26,6 @@ class LabelEventListener
         $this->labelManager = $labelManager;
         $this->notifService = $notifService;
     }
-
 
     /**
      * label:add events handler method.
@@ -60,7 +48,6 @@ class LabelEventListener
             $this->notifService->getBackend()->createChannels($channels);
         }
     }
-
 
     /**
      * label:edit events handler method.
@@ -90,7 +77,6 @@ class LabelEventListener
         }
     }
 
-
     /**
      * label:delete events handler method.
      *
@@ -104,9 +90,7 @@ class LabelEventListener
         foreach ($labelIdList as $labelId) {
             $channels[] = 'label:' . $labelId;
         }
-        
+
         $this->notifService->getBackend()->deleteChannels($channels, true);
     }
 }
-
-

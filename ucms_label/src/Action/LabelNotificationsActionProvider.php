@@ -8,8 +8,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Label\LabelManager;
+use MakinaCorpus\Ucms\Notification\NotificationService;
 
-class LabelActionProvider implements ActionProviderInterface
+class LabelNotificationsActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
 
@@ -22,11 +23,13 @@ class LabelActionProvider implements ActionProviderInterface
      *
      * @param LabelManager $manager
      * @param AccountInterface $currentUser
+     * @param NotificationService $notifService
      */
-    public function __construct(LabelManager $manager, AccountInterface $currentUser)
+    public function __construct(LabelManager $manager, AccountInterface $currentUser, NotificationService $notifService)
     {
         $this->manager = $manager;
         $this->currentUser = $currentUser;
+        $this->notifService = $notifService;
     }
 
     /**
@@ -36,9 +39,12 @@ class LabelActionProvider implements ActionProviderInterface
     {
         $actions = [];
 
-        if ($this->manager->canEditLabel($item)) {
-            $actions[] = new Action($this->t("Edit"), 'admin/dashboard/label/' . $item->tid . '/edit', 'dialog', 'pencil', -20, true, true);
-            $actions[] = new Action($this->t("Delete"), 'admin/dashboard/label/' . $item->tid . '/delete', 'dialog', 'trash', -10, true, true, $this->manager->hasChildren($item));
+        if (!$this->manager->isRootLabel($item)) {
+            if (!$this->notifService->isSubscribedTo($this->currentUser->id(), 'label:' . $item->tid)) {
+                $actions[] = new Action($this->t("Subscribe to the notifications"), 'admin/dashboard/label/' . $item->tid . '/subscribe', 'dialog', 'bell', -30, true, true);
+            } else {
+                $actions[] = new Action($this->t("Unsubscribe from the notifications"), 'admin/dashboard/label/' . $item->tid . '/unsubscribe', 'dialog', 'remove', -30, true, true);
+            }
         }
 
         return $actions;

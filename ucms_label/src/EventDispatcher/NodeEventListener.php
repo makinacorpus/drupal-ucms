@@ -1,13 +1,11 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Label\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
-
 
 class NodeEventListener
 {

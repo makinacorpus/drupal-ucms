@@ -71,15 +71,17 @@ function ucms_site_menu() {
     'title'             => "Details",
     'type'              => MENU_DEFAULT_LOCAL_TASK,
   ];
-  $items['admin/dashboard/site/%ucms_site/log'] = [
-    'title'             => "Log",
-    'page callback'     => 'ucms_site_dashboard_site_page_log',
-    'page arguments'    => [3],
-    'access callback'   => 'ucms_site_menu_access_overview',
-    'access arguments'  => [3],
-    'type'              => MENU_LOCAL_TASK,
-    'file'              => 'ucms_site.dashboard.inc',
-  ];
+  if (module_exists('ucms_notification')) {
+    $items['admin/dashboard/site/%ucms_site/log'] = [
+      'title'             => "Log",
+      'page callback'     => 'ucms_site_dashboard_site_page_log',
+      'page arguments'    => [3],
+      'access callback'   => 'ucms_site_menu_access_overview',
+      'access arguments'  => [3],
+      'type'              => MENU_LOCAL_TASK,
+      'file'              => 'ucms_site.dashboard.inc',
+    ];
+  }
   $items['admin/dashboard/site/%ucms_site/edit'] = [
     'title'             => "Site edit",
     'page callback'     => 'sf_dic_page_form',

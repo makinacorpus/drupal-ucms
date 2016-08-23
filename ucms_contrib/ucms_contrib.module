@@ -688,7 +688,7 @@ function ucms_contrib_library() {
 /**
  * Implements hook_field_attach_view_alter().
  *
- * @TODO move to a HSM module?
+ * @TODO move to a custom module!
  */
 function ucms_contrib_field_attach_view_alter(&$output, $context) {
   $mapping = [
