@@ -233,6 +233,8 @@ It expires after one day and nothing will happen if it's not used.
 function ucms_extranet_replace_tokens(&$replacements, $data, $options) {
 
   if (isset($data['site'])) {
+    $replacements['[site:name]'] = $data['site']->getTitle();
+
     $replacements['[site:users-management-url]'] = url('admin/dashboard/site/' . $data['site']->getId() . '/webmaster', [
       'absolute' => true,
       'base_url' => ucms_site_master_absolute_url(),
@@ -241,7 +243,7 @@ function ucms_extranet_replace_tokens(&$replacements, $data, $options) {
     if (isset($data['token'])) {
       $replacements['[user:set-password-url]'] = url('set-password/' . $data['token']->token, [
         'absolute' => true,
-        'base_url' => ($GLOBALS['is_https'] ? 'https' : 'http') . $data['site']->http_host,
+        'base_url' => ($GLOBALS['is_https'] ? 'https://' : 'http://') . $data['site']->http_host,
       ]);
     }
   }
