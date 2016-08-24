@@ -7,11 +7,14 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class NodeEventSubscriber implements EventSubscriberInterface
+final class NodeEventSubscriber implements EventSubscriberInterface
 {
     private $db;
     private $manager;
 
+    /**
+     * {@inheritdoc}
+     */
     static public function getSubscribedEvents()
     {
         return [
@@ -21,6 +24,12 @@ class NodeEventSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * Default constructor
+     *
+     * @param \DatabaseConnection $db
+     * @param SiteManager $manager
+     */
     public function __construct(\DatabaseConnection $db, SiteManager $manager)
     {
         $this->db = $db;

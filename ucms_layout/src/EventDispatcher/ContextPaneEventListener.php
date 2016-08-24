@@ -4,21 +4,15 @@ namespace MakinaCorpus\Ucms\Layout\EventDispatcher;
 
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager;
+use MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
- * Class ContextPaneEventListener
- * @package MakinaCorpus\Ucms\Contrib\EventDispatcher
+ * Adds layout edit actions and form to UI.
  */
-class ContextPaneEventListener
+final class ContextPaneEventListener
 {
-    /**
-     * @var SiteManager
-     */
     private $siteManager;
-    /**
-     * @var \MakinaCorpus\Ucms\Layout\ContextManager
-     */
     private $contextManager;
 
     /**
@@ -44,7 +38,7 @@ class ContextPaneEventListener
         $account = \Drupal::currentUser();
         // @todo this should check for any layout at all being here
         if (!path_is_admin(current_path()) && $site && $manager->getAccess()->userIsWebmaster($account, $site)) {
-            $form = \Drupal::formBuilder()->getForm('MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm');
+            $form = \Drupal::formBuilder()->getForm(LayoutContextEditForm::class);
             $contextPane->addActions($form);
         }
 

@@ -5,54 +5,38 @@ namespace MakinaCorpus\Ucms\Layout\EventDispatcher;
 use Drupal\Core\Entity\EntityManager;
 
 use MakinaCorpus\Ucms\Layout\ContextManager;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 
-class SiteEventSubscriber implements EventSubscriberInterface
+final class SiteEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var ContextManager
-     */
     private $contextManager;
-
-    /**
-     * @var SiteManager
-     */
     private $siteManager;
-
-    /**
-     * @var EntityManager
-     */
     private $entityManager;
-
-    /**
-     * @var RequestStack
-     */
     private $requestStack;
 
- 
     /**
      * {@inheritdoc}
      */
     static public function getSubscribedEvents()
     {
         return [
-            SiteEvents::EVENT_ATTACH => [
-                ['onAttach', -64] // Must happen after the reference has been done
+            SiteEvents::EVENT_INIT => [
+                ['onSiteInit', 0]
+            ],
+            SiteEvents::EVENT_CLONE => [
+                ['onSiteClone', 0]
             ],
         ];
     }
-
 
     /**
      * Default constructor
@@ -76,58 +60,115 @@ class SiteEventSubscriber implements EventSubscriberInterface
         $this->requestStack = $requestStack;
     }
 
-
     /**
-     * When referencing a node on site, we clone its original layout the same
-     * time so the user does not get an empty page.
+     * Home page handling mostly.
      */
-    public function onAttach(SiteAttachEvent $event)
+    public function onSiteInit(SiteEvent $event)
     {
-        $siteIdList = $event->getSiteIdList();
-        /* @var \Drupal\node\NodeInterface[] $nodeList */
-        $nodeList = $this->entityManager->getStorage('node')->loadMultiple($event->getNodeIdList());
+        // @todo Ugly... The best would be to not use drupal_valid_token()
+        require_once DRUPAL_ROOT . '/includes/common.inc';
 
-        $pageContext = $this->contextManager->getPageContext();
-        $storage = $pageContext->getStorage();
+        $request      = $this->requestStack->getCurrentRequest();
+        $pageContext  = $this->contextManager->getPageContext();
+        $transContext = $this->contextManager->getSiteContext();
+        $site         = $event->getSite();
+        $token        = null;
+        $matches      = [];
 
-        // @todo Find a better way
-        foreach ($siteIdList as $siteId) {
-            foreach ($nodeList as $node) {
+        // Column is nullable, so this is possible
+        if ($siteHomeNid = $site->getHomeNodeId()) {
+            if (($token = $request->get(ContextManager::PARAM_SITE_TOKEN)) && drupal_valid_token($token)) {
+                $transContext->setToken($token);
+            }
+            $transContext->setCurrentLayoutNodeId($siteHomeNid, $site->getId());
+        }
 
-                if (!$node->site_id) {
-                    continue;
-                }
+        // @todo $_GET['q']: cannot use Request::get() here since Drupal
+        // alters the 'q' variable directly in the $_GET array
+        if (preg_match('/^node\/([0-9]+)$/', $_GET['q'], $matches) === 1) {
+            if (($token = $request->get(ContextManager::PARAM_PAGE_TOKEN)) && drupal_valid_token($token)) {
+                $pageContext->setToken($token);
+            }
+            $pageContext->setCurrentLayoutNodeId((int)$matches[1], $site->getId());
+        }
 
-                // Ensure a layout does not already exists (for example when
-                // cloning a node, the layout daaa already has been inserted
-                // if the original was existing)
-                $exists = (bool)$this
-                    ->db
-                    ->query(
-                        "SELECT 1 FROM {ucms_layout} WHERE nid = :nid AND site_id = :sid",
-                        [':nid' => $node->id(), ':sid' => $siteId]
-                    )
-                    ->fetchField()
-                ;
-
-                if ($exists) {
-                    return;
-                }
-
-                $layout = $storage->findForNodeOnSite($node->id(), $node->site_id);
-
-                if ($layout) {
-                    $clone = clone $layout;
-                    $clone->setId(null);
-                    $clone->setSiteId($siteId);
-
-                    foreach ($clone->getAllRegions() as $region) {
-                        $region->toggleUpdateStatus(true);
-                    }
-
-                    $storage->save($clone);
-                }
+        if (($token = $request->get(ContextManager::PARAM_AJAX_TOKEN)) && drupal_valid_token($token) && ($region = $request->get('region'))) {
+            if ($this->contextManager->isPageContextRegion($region, $site->theme)) {
+                $pageContext->setToken($token);
+            } else if ($this->contextManager->isTransversalContextRegion($region, $site->theme)) {
+                $transContext->setToken($token);
             }
         }
+    }
+
+    /**
+     * When cloning a site, we need to clone all layouts as well.
+     */
+    public function onSiteClone(SiteCloneEvent $event)
+    {
+        $source = $event->getTemplateSite();
+        $target = $event->getSite();
+
+        // First copy node layouts
+        $this
+            ->db
+            ->query(
+                "
+                INSERT INTO {ucms_layout} (site_id, nid)
+                SELECT
+                    :target, usn.nid
+                FROM {ucms_layout} ul
+                JOIN {ucms_site_node} usn ON
+                    ul.nid = usn.nid
+                    AND usn.site_id = :target
+                WHERE
+                    ul.site_id = :source
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM {ucms_layout} s_ul
+                        WHERE
+                            s_ul.nid = ul.nid
+                            AND s_ul.site_id = :target3
+                    )
+            ",
+                [
+                    ':target'  => $target->getId(),
+                    ':target2' => $target->getId(),
+                    ':source'  => $source->getId(),
+                    ':target3' => $target->getId(),
+                ]
+            )
+        ;
+
+        // Then duplicate layout data
+        $this
+            ->db
+            ->query(
+                "
+                INSERT INTO {ucms_layout_data}
+                    (layout_id, region, nid, weight, view_mode)
+                SELECT
+                    target_ul.id,
+                    uld.region,
+                    uld.nid,
+                    uld.weight,
+                    uld.view_mode
+                FROM {ucms_layout} source_ul
+                JOIN {ucms_layout_data} uld ON
+                    source_ul.id = uld.layout_id
+                    AND source_ul.site_id = :source
+                JOIN {node} n ON n.nid = uld.nid
+                JOIN {ucms_layout} target_ul ON
+                    target_ul.nid = source_ul.nid
+                    AND target_ul.site_id = :target
+                WHERE
+                    (n.status = 1 OR n.is_global = 0)
+            ",
+                [
+                    ':source' => $source->getId(),
+                    ':target' => $target->getId(),
+                ]
+            )
+        ;
     }
 }

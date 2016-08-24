@@ -15,18 +15,15 @@ services:
     class: MakinaCorpus\Ucms\Layout\ContextManager
     arguments: ["@ucms_layout.storage", "@ucms_layout.storage.temporary", "@ucms_site.manager"]
 
-  ucms_layout.site_event_subscriber:
-    class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteEventSubscriber
+  ucms_layout.site_node_event_subscriber:
+    class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteNodeEventSubscriber
     arguments: ["@database", "@ucms_layout.context_manager", "@ucms_site.manager", "@entity.manager", "@request_stack"]
     tags: [{name: event_subscriber }]
 
-  # @todo this one is deprecated, port listeners to the subscriber instead
-  ucms_layout.site_event_listener:
-    class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteEventListener
+  ucms_layout.site_event_subscriber:
+    class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteEventSubscriber
     arguments: ["@database", "@ucms_layout.context_manager", "@ucms_site.manager", "@entity.manager", "@request_stack"]
-    tags:
-      - {name: event_listener, event: "site:init"}
-      - {name: event_listener, event: "site:clone"}
+    tags: [{name: event_subscriber}]
 
   ucms_layout.node_event_subscriber:
     public: true
