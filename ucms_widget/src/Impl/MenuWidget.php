@@ -12,6 +12,10 @@ use MakinaCorpus\Umenu\TreeManager;
 
 /**
  * Display a menu where you want it to be
+ *
+ * @todo this should be moved into the ucms_tree module, but Drupal 8 does
+ *   not allow to conditionnaly load services definitions files since they
+ *   don't have symfony's extensions
  */
 class MenuWidget implements WidgetInterface
 {
