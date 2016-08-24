@@ -95,6 +95,16 @@ class ContextPaneEventListener
                     ->add(ucms_contrib_favorite_render(), 'cart')
                 ;
 
+                $contextPane
+                    ->addTab('search', $this->t("Search"), 'search')
+                    ->add(ucms_contrib_favorite_search_render(), 'search')
+                ;
+
+                $contextPane
+                    ->addTab('recent', $this->t("Recent"), 'time')
+                    ->add(ucms_contrib_favorite_recent_render(), 'recent')
+                ;
+
                 // Set as default tab on lists
                 $defaultTabRoutes = [
                     'admin/dashboard/content',

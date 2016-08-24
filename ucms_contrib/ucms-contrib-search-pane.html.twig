@@ -1,0 +1,11 @@
+<div id="search-pane">
+  <input type="text" value="" placeholder="{{ "Type something here..."|trans }}"/>
+  <div class="results" class="clearfix">
+    {% for item in items %}
+      {{ item }}
+    {% endfor %}
+  </div>
+  <p class="tip">
+    {{ "Tip: use the above search bar to search content in your site"|trans }}
+  </p>
+</div>

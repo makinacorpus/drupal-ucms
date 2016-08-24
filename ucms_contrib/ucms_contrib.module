@@ -15,12 +15,10 @@
 
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Contrib\Controller\SearchPaneController;
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeCollectionEvent;
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEvent;
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeReferenceCollectEvent;
 use MakinaCorpus\Ucms\Site\Access;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * View mode for content display.
@@ -276,6 +274,12 @@ function ucms_contrib_menu() {
     'title'             => "Content",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::remove', 2],
+    'access arguments'  => ['use favorites'],
+  ];
+
+  $items['context-pane/contrib/search'] = [
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [SearchPaneController::class . '::search'],
     'access arguments'  => ['use favorites'],
   ];
 
@@ -641,6 +645,44 @@ function ucms_contrib_favorite_render() {
 
   return $controller
     ->renderAction(
+      \Drupal::requestStack()->getCurrentRequest(),
+      \Drupal::currentUser()->id()
+    )
+  ;
+}
+
+/**
+ * Render context pane search machin
+ *
+ * @todo move this out to some king of ContextPaneInterface stuff registered
+ *   throught the DIC
+ */
+function ucms_contrib_favorite_search_render() {
+  $ret = ['#markup' => sf_dic_twig_render('module:ucms_contrib:ucms-contrib-search-pane.html.twig', ['items' => []])];
+  drupal_add_js(drupal_get_path('module', 'ucms_contrib') . '/js/jquery.typewatch.js');
+  drupal_add_js(drupal_get_path('module', 'ucms_contrib') . '/js/pane-search.js');
+  drupal_add_js([
+    'UcmsContrib' => [
+      'searchPaneUrl' => url('context-pane/contrib/search'),
+    ],
+  ], 'setting');
+//   $ret['#attached']['js'][] = ['system', 'ui.droppable'];
+//   $ret['#attached']['library'][] = ['system', 'ui.draggable'];
+  return $ret;
+}
+
+/**
+ * Render context pane recent truc machin
+ *
+ * @todo
+ *   move this out to some king of ContextPaneInterface stuff registered throught the DIC
+ *   (needs a node history for user)
+ */
+function ucms_contrib_favorite_recent_render() {
+  $controller = new SearchPaneController();
+  $controller->setContainer(\Drupal::getContainer());
+  return $controller
+    ->recentAction(
       \Drupal::requestStack()->getCurrentRequest(),
       \Drupal::currentUser()->id()
     )
