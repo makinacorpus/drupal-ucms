@@ -271,15 +271,15 @@ class Search
     }
 
     /**
-     * Set fulltext roaming and fuziness value, should be between 0 and 1
+     * Set fulltext roaming and fuziness value, should be between 0 and 1, or null to disable
      *
-     * @param float $value
+     * @param float|null $value
      *
      * @return $this
      */
     public function setFulltextRoaming($value)
     {
-        $this->fulltextRoaming = (float)$value;
+        $this->fulltextRoaming = !is_null($value) ? (float)$value : null;
 
         return $this;
     }
