@@ -182,34 +182,46 @@ function ucms_extranet_user_login(&$edit, $account) {
  * Implements hook_mail().
  */
 function ucms_extranet_mail($key, &$message, $params) {
-  $langcode = isset($message['language']) ? $message['language']->language : null;
+  $langcode = $message['language']->language;
 
   switch ($key) {
     case 'new-member-registered':
-      $message['subject'] = t("New registration on [site:name]", [], ['langcode' => $langcode]);
-      $message['body'][] = t("Webmasters,
+      $message['subject'] = variable_get(
+        'ucms_extranet_mail_new_member_registered_subject_' . $langcode,
+        t("New registration on [site:name]", [], ['langcode' => $langcode])
+      );
+
+      $message['body'][] = variable_get(
+        'ucms_extranet_mail_new_member_registered_body_' . $langcode,
+        t("Webmasters,
 
 The registration of [user:name] is waiting for your validation on [site:name].
 You can accept or reject it from the users management page:
 [site:users-management-url]
 
-See you soon!", [], ['langcode' => $langcode]);
+See you soon!", [], ['langcode' => $langcode]));
       break;
 
     case 'new-member-accepted':
-      $message['subject'] = t("New registration on [site:name]", [], ['langcode' => $langcode]);
-      $message['body'][] = t("[user:name],
+      $message['subject'] = variable_get(
+        'ucms_extranet_mail_new_member_accepted_subject_' . $langcode,
+        t("Your registration on [site:name]", [], ['langcode' => $langcode])
+      );
+
+      $message['body'][] = variable_get(
+        'ucms_extranet_mail_new_member_accepted_body_' . $langcode,
+        t("[user:name],
 
 Your registration on [site:name] has been accepted.
 
 You may now set your password by clicking this link or copying and pasting it to your browser:
 
-[user:set-password-url]
+[user:password-url]
 
 This link can only be used once and will lead you to a page where you can set your password.
-It expires after one day and nothing will happen if it's not used.
+It expires after [user:password-url-lifespan] and nothing will happen if it's not used.
 
---  [site:name] team", [], ['langcode' => $langcode]);
+--  [site:name] team", [], ['langcode' => $langcode]));
       break;
   }
 
@@ -232,6 +244,8 @@ It expires after one day and nothing will happen if it's not used.
  */
 function ucms_extranet_replace_tokens(&$replacements, $data, $options) {
 
+  ucms_user_replace_tokens($replacements, [], $options);
+
   if (isset($data['site'])) {
     $replacements['[site:name]'] = $data['site']->getTitle();
 
@@ -241,7 +255,7 @@ function ucms_extranet_replace_tokens(&$replacements, $data, $options) {
     ]);
 
     if (isset($data['token'])) {
-      $replacements['[user:set-password-url]'] = url('set-password/' . $data['token']->token, [
+      $replacements['[user:password-url]'] = url('set-password/' . $data['token']->token, [
         'absolute' => true,
         'base_url' => ($GLOBALS['is_https'] ? 'https://' : 'http://') . $data['site']->http_host,
       ]);
