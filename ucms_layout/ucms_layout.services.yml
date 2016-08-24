@@ -1,3 +1,6 @@
+parameters:
+  ucms_layout_region_edit: true
+
 services:
 
   ucms_layout.storage:

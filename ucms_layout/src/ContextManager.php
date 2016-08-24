@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Layout;
 
 use MakinaCorpus\Ucms\Layout\Context;
@@ -15,19 +14,8 @@ class ContextManager
     const PARAM_PAGE_TOKEN  = 'edit';
     const PARAM_SITE_TOKEN  = 'site_edit';
 
-    /**
-     * @var SiteManager $siteManager
-     */
     private $siteManager;
-
-    /**
-     * @var Context $pageContext
-     */
     private $pageContext;
-
-    /**
-     * @var Context $transversalContext
-     */
     private $transversalContext;
 
     /**
@@ -158,4 +146,3 @@ class ContextManager
         return array_map('intval', $regions);
     }
 }
-

@@ -17,11 +17,10 @@
  *   - unit testing (sorry should have done that earlier).
  */
 
-use Drupal\user\UserInterface;
 use MakinaCorpus\Ucms\Layout\ContextManager;
+use MakinaCorpus\Ucms\Layout\Controller\LayoutAjaxController;
 use MakinaCorpus\Ucms\Layout\DrupalPageInjector;
 use MakinaCorpus\Ucms\Layout\Layout;
-use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
  * Implements hook_menu().
@@ -50,21 +49,18 @@ function ucms_layout_menu() {
   // AJAX endpoints.
   $items['ajax/ucms/layout/%ucms_layout_temporary/add'] = [
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Controller\LayoutAjaxController::addItem', 3],
-    'access callback'   => 'ucms_layout_access',
-    'access arguments'  => ['update', 3],
+    'page arguments'    => [LayoutAjaxController::class . '::addItem', 3],
+    'access callback'   => true,
   ];
   $items['ajax/ucms/layout/%ucms_layout_temporary/remove'] = [
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Controller\LayoutAjaxController::removeItem', 3],
-    'access callback'   => 'ucms_layout_access',
-    'access arguments'  => ['update', 3],
+    'page arguments'    => [LayoutAjaxController::class . '::removeItem', 3],
+    'access callback'   => true,
   ];
   $items['ajax/ucms/layout/%ucms_layout_temporary/move'] = [
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['MakinaCorpus\Ucms\Layout\Controller\LayoutAjaxController::moveItem', 3],
-    'access callback'   => 'ucms_layout_access',
-    'access arguments'  => ['update', 3],
+    'page arguments'    => [LayoutAjaxController::class . '::moveItem', 3],
+    'access callback'   => true,
   ];
 
   return $items;
@@ -102,25 +98,6 @@ function ucms_layout_theme_title($theme) {
   }
 
   return t("Edit theme regions");
-}
-
-/**
- * Access callback for operations on layouts.
- *
- * @param string $op
- * @param Layout $layout
- *
- * @return boolean
- */
-function ucms_layout_access($op, Layout $layout) {
-  /* @var UserInterface $currentUser */
-  $currentUser = \Drupal::service('current_user');
-  /* @var SiteManager $siteManager */
-  $siteManager = ucms_site_manager();
-
-  $site = $siteManager->getStorage()->findOne($layout->getSiteId());
-
-  return $siteManager->getAccess()->userIsWebmaster($currentUser, $site);
 }
 
 /**

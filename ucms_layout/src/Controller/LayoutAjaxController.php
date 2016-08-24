@@ -74,6 +74,20 @@ class LayoutAjaxController extends Controller
         return $site;
     }
 
+    private function guard(Layout $layout, $op)
+    {
+        /** @var \Drupal\Core\Session\AccountInterface $currentUser */
+        $currentUser = $this->get('current_user');
+        /** @var \MakinaCorpus\Ucms\Site\SiteManager $siteManager */
+        $siteManager = $this->get('ucms_site.manager');
+
+        $site = $siteManager->getStorage()->findOne($layout->getSiteId());
+
+        if (!$siteManager->getAccess()->userIsWebmaster($currentUser, $site)) {
+            throw $this->createAccessDeniedException();
+        }
+    }
+
     private function renderNode(NodeInterface $node, Region $region, $viewMode)
     {
         $build = [
@@ -92,6 +106,8 @@ class LayoutAjaxController extends Controller
      */
     public function addItemAction(Request $request, Layout $layout)
     {
+        $this->guard($layout, 'update');
+
         $region = $this->validateInputAndGetRegionName($request);
 
         $nid = $request->get('nid');
@@ -130,6 +146,8 @@ class LayoutAjaxController extends Controller
      */
     public function removeItemAction(Request $request, Layout $layout)
     {
+        $this->guard($layout, 'update');
+
         $region   = $this->validateInputAndGetRegionName($request);
         $position = $request->get('position', 0);
         $manager  = $this->getContextManager();
@@ -154,6 +172,8 @@ class LayoutAjaxController extends Controller
      */
     public function moveItemAction(Request $request, Layout $layout)
     {
+        $this->guard($layout, 'update');
+
         $region = $this->validateInputAndGetRegionName($request);
 
         $nid = $request->get('nid');

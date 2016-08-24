@@ -13,6 +13,10 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Subscribes to node within sites specific events in order to provide
+ * additional layout handling logic.
+ */
 final class SiteNodeEventSubscriber implements EventSubscriberInterface
 {
     private $db;
