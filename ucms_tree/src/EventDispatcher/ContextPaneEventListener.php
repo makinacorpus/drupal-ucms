@@ -82,19 +82,6 @@ class ContextPaneEventListener
             ];
         }
 
-        // Add an edit button
-        if ($this->siteManager->getAccess()->userCanEditTree(\Drupal::currentUser(), $site)) {
-            $build['edit_link'] = [
-                '#theme'   => 'link',
-                '#path'    => 'admin/dashboard/tree',
-                '#text'    => $this->t('Edit tree for this site'),
-                '#options' => [
-                    'attributes' => ['class' => ['btn btn-primary']],
-                    'html' => false,
-                ],
-            ];
-        }
-
         return $build;
     }
 }

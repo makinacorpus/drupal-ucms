@@ -5,6 +5,7 @@
  */
 
 use MakinaCorpus\Umenu\Menu;
+use MakinaCorpus\Ucms\Tree\Controller\TreeAdminController;
 
 /**
  * Implements hook_menu().
@@ -12,86 +13,55 @@ use MakinaCorpus\Umenu\Menu;
 function ucms_tree_menu() {
   $items = [];
 
-  // @todo this one is wrong
   $items['admin/dashboard/tree'] = [
-    'title'           => 'Tree',
-    'page callback'   => 'sf_dic_page_form',
-    'page arguments'  => ['MakinaCorpus\Ucms\Tree\Form\TreeForm'],
-    'access callback' => 'ucms_tree_check_access_admin',
-    'type'            => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['admin/dashboard/tree-list'] = [
     'title'             => "All tress",
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['MakinaCorpus\Ucms\Tree\Controller\TreeAdmin::treeList', 1],
-    'access callback'   => 'ucms_tree_check_access_admin',
+    'page arguments'    => [TreeAdminController::class . '::treeList'],
+    'access callback'   => true,
     'type'              => MENU_NORMAL_ITEM,
   ];
   $items['admin/dashboard/tree/add'] = [
     'title'             => 'Add new menu',
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Tree\Form\TreeEditForm'],
-    'access callback'   => 'ucms_tree_check_access_create',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [TreeAdminController::class . '::menuAdd'],
+    'access callback'   => true,
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/tree/%umenu'] = [
+    'title'             => 'Edit menu',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [TreeAdminController::class . '::menuTree', 3],
+    'access callback'   => true,
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['admin/dashboard/tree/%umenu/edit'] = [
     'title'             => 'Edit menu',
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Tree\Form\TreeEditForm', 3],
-    'access callback'   => 'ucms_tree_check_access_edit',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [TreeAdminController::class . '::menuEdit', 3],
+    'access callback'   => true,
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
   $items['node/add/here'] = [
-    'title'           => 'Add content at position',
-    'page callback'   => 'sf_dic_page',
-    'page arguments'  => ['MakinaCorpus\Ucms\Tree\Controller\TreeController::addContentHere'],
-    'access callback' => ['ucms_tree_check_access_admin'],
-    'type'            => MENU_CALLBACK,
+    'title'             => 'Add content at position',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [TreeAdminController::class . '::addContentHere'],
+    'access callback'   => true,
+    'type'              => MENU_CALLBACK,
   ];
 
   return $items;
 }
 
 /**
- * Menu access helper
+ * Return role list for menus.
+ *
+ * @return string[]
+ *   Keys are roles, values are localized human readable names.
  */
-function ucms_tree_check_access_admin() {
-  $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Tree\MenuAccess $helper */
-  $helper = \Drupal::service('ucms_tree.menu_access');
-  $manager = ucms_site_manager();
-  if ($manager->hasContext()) {
-    return $helper->canAccessMenuAdmin($account, $manager->getContext());
-  } else {
-    return $helper->canAccessMenuAdmin($account);
-  }
-}
-
-/**
- * Menu access helper
- */
-function ucms_tree_check_access_create() {
-  $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Tree\MenuAccess $helper */
-  $helper = \Drupal::service('ucms_tree.menu_access');
-  $manager = ucms_site_manager();
-  if ($manager->hasContext()) {
-    return $helper->canCreateMenu($account, $manager->getContext());
-  } else {
-    return $helper->canCreateMenu($account);
-  }
-}
-
-/**
- * Menu access helper
- */
-function ucms_tree_check_access_edit(Menu $menu) {
-  $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Tree\MenuAccess $helper */
-  $helper = \Drupal::service('ucms_tree.menu_access');
-  return $helper->canEditTree($menu, $account);
+function ucms_tree_role_list() {
+  return variable_get('ucms_tree_role_list', []);
 }
 
 /**

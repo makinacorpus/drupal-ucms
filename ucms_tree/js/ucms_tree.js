@@ -15,7 +15,7 @@
           for (var i in toArray) {
             toArray[i].title = $('[data-mlid="' + toArray[i].id + '"] input').val();
           }
-          $('[name*="' + $menu.data('menu') + '"]').val(JSON.stringify(toArray));
+          $menu.closest('form').find('input[name=values]').val(JSON.stringify(toArray));
         }
 
         /**

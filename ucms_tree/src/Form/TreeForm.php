@@ -4,13 +4,16 @@ namespace MakinaCorpus\Ucms\Tree\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
+use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\TreeBase;
 use MakinaCorpus\Umenu\TreeManager;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TreeForm extends FormBase
 {
@@ -38,8 +41,9 @@ class TreeForm extends FormBase
      * @param TreeManager $treeManager
      * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(TreeManager $treeManager, SiteManager $siteManager, \DatabaseConnection $db, EventDispatcher $dispatcher)
+    public function __construct(TreeManager $treeManager, SiteManager $siteManager, \DatabaseConnection $db, EventDispatcherInterface $dispatcher)
     {
         $this->treeManager = $treeManager;
         $this->siteManager = $siteManager;
@@ -58,13 +62,13 @@ class TreeForm extends FormBase
     /**
      * {@inheritDoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state)
+    public function buildForm(array $form, FormStateInterface $formState, Menu $menu = null)
     {
-        // Load all menus for site.
-        $site = $this->siteManager->getContext();
-        $form_state->setTemporaryValue('site', $site);
+        if (!$menu) {
+            return $form;
+        }
 
-        $menus = $this->treeManager->getMenuStorage()->loadWithConditions(['site_id' => $site->getId()]);
+        $formState->setTemporaryValue('menu', $menu);
 
         $form['#attached']['library'][] = ['ucms_tree', 'nested-sortable'];
         $form['#attached']['js'][] = [
@@ -72,27 +76,20 @@ class TreeForm extends FormBase
           'type' => 'setting'
         ];
 
-        rsort($menus);
+        $form['menu']['#tree'] = true;
 
-        $form['menus']['#tree'] = true;
+        $tree = $this->treeManager->buildTree($menu->getId(), false);
 
-        foreach ($menus as $menu) {
-            $tree = $this->treeManager->buildTree($menu->getId(), false);
-
-            $form['menus'][$menu->getName()] = [
-                '#type' => 'hidden',
-                // '#value' => '', // Will be filled in Javascript
-            ];
-
-            // This is ugly, but it happens sometime that when menu is empty
-            // output goes "", making crashes happen in sf_dic form processing
-            // dues to array type hint in form processing functions
-            $output = $this->treeOutput($tree, $menu);
-            if (!is_array($output)) {
-                $output = ['#markup' => $output];
-            }
-            $form['menus'][$menu->getName().'_list'] = $output;
+        // This is ugly, but it happens sometime that when menu is empty
+        // output goes "", making crashes happen in sf_dic form processing
+        // dues to array type hint in form processing functions
+        $output = $this->treeOutput($tree, $menu);
+        if (!is_array($output)) {
+            $output = ['#markup' => $output];
         }
+        $form['items'] = $output;
+        // Will be filled by JavaScript
+        $form['values'] = ['#type' => 'hidden'];
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
@@ -110,11 +107,10 @@ class TreeForm extends FormBase
      * @param mixed[] $items
      * @param Site $site
      */
-    protected function saveMenuItems($menuName, $items, Site $site = null)
+    protected function saveMenuItems(Menu $menu, $items)
     {
         $itemStorage  = $this->treeManager->getItemStorage();
-        $currentTree  = $this->treeManager->buildTree($menuName, false);
-        $menu         = $this->treeManager->getMenuStorage()->load($menuName);
+        $currentTree  = $this->treeManager->buildTree($menu->getId(), false);
         $menuId       = $menu->getId();
 
         // First, get all elements so that we can delete those that are removed
@@ -185,22 +181,27 @@ class TreeForm extends FormBase
             $deleteItems[$itemId] = $deleted;
         }
 
-        $this->dispatcher->dispatch('menu:tree', new MenuEvent($menuName, $newTree, $deleteItems, $site));
+        $this->dispatcher->dispatch(
+            'menu:tree',
+            new MenuEvent(
+                $menu->getName(),
+                $newTree,
+                $deleteItems,
+                $menu->hasSiteId() ? $this->siteManager->getStorage()->findOne($menu->getSiteId()) : null
+            )
+        );
     }
 
     /**
      * {@inheritDoc}
      */
-    public function submitForm(array &$form, FormStateInterface $form_state)
+    public function submitForm(array &$form, FormStateInterface $formState)
     {
         try {
             $tx = $this->db->startTransaction();
 
-            $site = $form_state->getTemporaryValue('site');
-
-            foreach ($form_state->getValue('menus') as $menuName => $items) {
-                $this->saveMenuItems($menuName, drupal_json_decode($items), $site);
-            }
+            $menu = $formState->getTemporaryValue('menu');
+            $this->saveMenuItems($menu, json_decode($formState->getValue('values'), true));
 
             unset($tx);
 
@@ -225,11 +226,11 @@ class TreeForm extends FormBase
      * Recursively outputs a tree as nested item lists.
      *
      * @param TreeBase $tree
-     * @param string[] $menu
+     * @param Menu $menu
      *
      * @return string
      */
-    private function treeOutput(TreeBase $tree, $menu = null)
+    private function treeOutput(TreeBase $tree, Menu $menu = null)
     {
         $items = [];
 

@@ -69,7 +69,7 @@ class TreeSetMainProcessor extends AbstractActionProcessor
     public function processAll($items)
     {
         foreach ($items as $item) {
-            $this->menuStorage->setMainMenuStatus($item->getName(), true);
+            $this->menuStorage->toggleMainStatus($item->getName(), true);
         }
 
         return $this->formatPlural(

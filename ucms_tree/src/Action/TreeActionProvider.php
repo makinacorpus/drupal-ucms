@@ -40,6 +40,7 @@ class TreeActionProvider implements ActionProviderInterface
         }
 
         if ($canUpdate) {
+            $ret[] = new Action($this->t("Tree"), 'admin/dashboard/tree/' . $item->getId(), [], 'th-list', -10, true, true);
             $ret[] = new Action($this->t("Edit"), 'admin/dashboard/tree/' . $item->getId() . '/edit', [], 'pencil', 0, true, true);
         }
 

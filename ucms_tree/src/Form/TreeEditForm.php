@@ -6,10 +6,10 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\TreeManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use MakinaCorpus\Umenu\Menu;
 
 class TreeEditForm extends FormBase
 {
@@ -93,6 +93,17 @@ class TreeEditForm extends FormBase
             '#maxlength'      => 1024,
         ];
 
+        $allowedRoles = ucms_tree_role_list();
+        if ($allowedRoles) {
+            $form['role'] = [
+                '#type'           => 'select',
+                '#title'          => $this->t("Menu role in site"),
+                '#empty_option'   => $this->t("None"),
+                '#options'        => $allowedRoles,
+                '#default_value'  => $menu->getRole(),
+            ];
+        }
+
         $form['is_main'] = [
             '#type'           => 'checkbox',
             '#title'          => $this->t("Is this menu the site main menu?"),
@@ -124,6 +135,7 @@ class TreeEditForm extends FormBase
             $values = [
                 'title'       => $form_state->getValue('title'),
                 'description' => $form_state->getValue('description'),
+                'role'        => $form_state->getValue('role'),
             ];
 
             if ($this->siteManager->hasContext()) {
@@ -144,7 +156,7 @@ class TreeEditForm extends FormBase
             } else {
                 $storage->update($name, $values);
             }
-            $storage->setMainMenuStatus($name, (bool)$form_state->getValue('is_main'));
+            $storage->toggleMainStatus($name, (bool)$form_state->getValue('is_main'));
 
             unset($tx);
 

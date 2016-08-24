@@ -62,7 +62,7 @@ class TreeAdminDatasource extends AbstractDatasource
         }
 
         return [
-            (new LinksFilterDisplay('site_id', $this->t("Site")))->setChoicesMap($sites),
+            (new LinksFilterDisplay('site', $this->t("Site")))->setChoicesMap($sites),
         ];
     }
 
@@ -106,12 +106,12 @@ class TreeAdminDatasource extends AbstractDatasource
 
         $conditions = [];
 
-        if (isset($query['site_id'])) {
+        if (isset($query['site'])) {
             // User is not webmaster of the current site, disallow
-            if (!isset($sites[$query['site_id']])) {
+            if (!isset($sites[$query['site']])) {
                 return [];
             }
-            $conditions['site_id'] = $query['site_id'];
+            $conditions['site_id'] = $query['site'];
         } else {
             $conditions['site_id'] = array_keys($sites);
         }

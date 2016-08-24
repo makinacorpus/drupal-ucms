@@ -4,9 +4,9 @@ namespace MakinaCorpus\Ucms\Tree;
 
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;
-use MakinaCorpus\Ucms\Site\Site;
 
 /**
  * Menu access check helper
@@ -31,6 +31,15 @@ class MenuAccess
     public function __construct(SiteManager $siteManager)
     {
         $this->siteManager = $siteManager;
+    }
+
+    private function ensureSiteContext(Site $site = null)
+    {
+        if (!$site && $this->siteManager->hasContext()) {
+            $site = $this->siteManager->getContext();
+        }
+
+        return $site;
     }
 
     /**
@@ -109,6 +118,8 @@ class MenuAccess
             return true;
         }
 
+        $site = $this->ensureSiteContext($site);
+
         if ($site) {
             return $this->siteManager->getAccess()->userIsWebmaster($account, $site);
         } else {
@@ -128,9 +139,7 @@ class MenuAccess
      */
     public function canCreateMenu(AccountInterface $account, Site $site = null)
     {
-        if (!$site) {
-            return false;
-        }
+        $site = $this->ensureSiteContext($site);
 
         return $account->hasPermission(self::PERM_MANAGE_ALL_MENU) || $this->siteManager->getAccess()->userIsWebmaster($account, $site);
     }

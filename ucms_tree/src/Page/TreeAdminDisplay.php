@@ -26,6 +26,8 @@ class TreeAdminDisplay extends AbstractDisplay
     {
         $rows = [];
 
+        $allowedRoles = ucms_tree_role_list();
+
         /** @var \MakinaCorpus\Umenu\Menu[] $menus */
         foreach ($menus as $menu) {
 
@@ -43,12 +45,20 @@ class TreeAdminDisplay extends AbstractDisplay
                 $siteMain = '<em>' . $this->t("N/A") . '</em>';
             }
 
+            $role = $menu->getRole();
+            if ($role) {
+                if (isset($allowedRoles[$role])) {
+                    $role = $allowedRoles[$role];
+                }
+            }
+
             $rows[] = [
                 check_plain($menu->getId()),
                 check_plain($menu->getName()),
                 check_plain($menu->getTitle()),
                 check_plain($menu->getDescription()),
                 check_plain($siteName),
+                check_plain($role),
                 $siteMain,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($menu), 'mode' => 'icon']),
             ];
@@ -64,6 +74,7 @@ class TreeAdminDisplay extends AbstractDisplay
                 $this->t("Title"),
                 $this->t("Description"),
                 $this->t("Site"),
+                $this->t("Role"),
                 $this->t("Site main"),
                 '',
             ],

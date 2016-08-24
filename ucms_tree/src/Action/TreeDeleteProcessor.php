@@ -6,7 +6,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
-use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\MenuStorageInterface;
@@ -22,7 +21,8 @@ class TreeDeleteProcessor extends AbstractActionProcessor
     /**
      * Default constructor
      *
-     * @param SeoService $service
+     * @param MenuStorageInterface $menuStorage
+     * @param SiteManager $siteManager
      * @param AccountInterface $currentUser
      */
     public function __construct(MenuStorageInterface $menuStorage, SiteManager $siteManager, AccountInterface $currentUser)
@@ -68,6 +68,7 @@ class TreeDeleteProcessor extends AbstractActionProcessor
      */
     public function processAll($items)
     {
+        /** @var \MakinaCorpus\Umenu\Menu $item */
         foreach ($items as $item) {
             $this->menuStorage->delete($item->getId());
         }
