@@ -146,6 +146,34 @@ function ucms_extranet_init() {
 
 
 /**
+ * Implements hook_node_access().
+ *
+ * @todo Refactor this code when the new access control system will be available.
+ */
+function ucms_extranet_node_access($node, $op, $account) {
+  $siteManager = ucms_site_manager();
+  $site = $siteManager->getContext();
+
+  if ($site && $siteManager->getAccess()->userHasRole($account, $site, ExtranetAccess::ROLE_EXTRANET_CONTRIB)) {
+    if ($op == 'create' && $node == 'blogpost') {
+      return NODE_ACCESS_ALLOW;
+    }
+
+    if ($op == 'update' && $node->site_id == $site->getId()) {
+      if ($node->type == 'blogpost' && $node->uid == $account->uid) {
+        return NODE_ACCESS_ALLOW;
+      }
+      if ($node->type == 'gallery') {
+        return NODE_ACCESS_ALLOW;
+      }
+    }
+  }
+
+  return NODE_ACCESS_IGNORE;
+}
+
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function ucms_extranet_form_user_login_alter(&$form, &$form_state) {

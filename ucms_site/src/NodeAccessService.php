@@ -441,7 +441,7 @@ class NodeAccessService
 
         // Simple shortcut, if you have no roles, just get out.
         if (empty($grants)) {
-            return NODE_ACCESS_DENY;
+            return NODE_ACCESS_IGNORE;
         }
 
         $records = $this->getNodeGrants($node);
@@ -474,7 +474,7 @@ class NodeAccessService
             }
         }
 
-        return NODE_ACCESS_DENY;
+        return NODE_ACCESS_IGNORE;
     }
 
     /**
