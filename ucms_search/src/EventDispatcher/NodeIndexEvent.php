@@ -59,7 +59,7 @@ class NodeIndexEvent extends Event
         if (field_get_items('node', $this->node, $name)) {
             $build = field_view_field('node', $this->node, $name, 'full');
 
-            $this->add($target, strip_tags(drupal_render($build)));
+            $this->add($target, drupal_render($build));
         }
     }
 
