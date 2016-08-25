@@ -223,7 +223,7 @@ function ucms_extranet_mail($key, &$message, $params) {
         'ucms_extranet_mail_new_member_registered_body_' . $langcode,
         t("Webmasters,
 
-The registration of [user:name] is waiting for your validation on [site:name].
+The registration of [user:name] on [site:name] is waiting for your validation.
 You can accept or reject it from the users management page:
 [site:users-management-url]
 
