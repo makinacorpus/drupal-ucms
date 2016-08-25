@@ -119,7 +119,6 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     public function resetCache()
     {
         drupal_static_reset('node_access');
-
         drupal_static_reset('ucms_site_node_grants');
         $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
     }

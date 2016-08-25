@@ -11,7 +11,17 @@ class GroupAccessTest extends AbstractDrupalTest
     use GroupTestTrait;
     use SiteTestTrait;
 
-    public function tearDown()
+    protected function setUp()
+    {
+        parent::setUp();
+
+        if (!$this->moduleExists('ucms_group')) {
+            $this->markTestSkipped("You must enable the ucms_group module to run this test");
+            return;
+        }
+    }
+
+    protected function tearDown()
     {
         $this->eraseGroupData();
         $this->eraseAllData();

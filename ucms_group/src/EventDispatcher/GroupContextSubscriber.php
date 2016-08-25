@@ -2,10 +2,13 @@
 
 namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
+use Drupal\Core\Session\AccountInterface;
+
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessEventSubscriber as NodeAccess;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
@@ -40,7 +43,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
     const REALM_GROUP_GLOBAL_READONLY = 'ucms_group_global_ro';
 
     /**
-     * Read only on any content in group
+     * Read/write on global content in group
      */
     const REALM_GROUP_OTHER = 'ucms_group_other';
 
@@ -53,6 +56,11 @@ class GroupContextSubscriber implements EventSubscriberInterface
      * @var GroupManager
      */
     private $groupManager;
+
+    /**
+     * @var mixed[]
+     */
+    private $userGrantCache;
 
     /**
      * {@inheritdoc}
@@ -87,6 +95,18 @@ class GroupContextSubscriber implements EventSubscriberInterface
     {
         $this->siteManager = $siteManager;
         $this->groupManager = $groupManager;
+        // Sorry for this, but we do need it to behave with Drupal internals
+        $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
+    }
+
+    /**
+     * Reset internal cache
+     */
+    public function resetCache()
+    {
+        drupal_static_reset('node_access');
+        drupal_static_reset('ucms_site_node_grants');
+        $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
     }
 
     /**
@@ -102,6 +122,11 @@ class GroupContextSubscriber implements EventSubscriberInterface
         }
     }
 
+    private function buildNodeAccessGrant(AccountInterface $account, $op)
+    {
+        // @todo implement me
+    }
+
     /**
      * Compute node access records
      */
@@ -109,47 +134,53 @@ class GroupContextSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
-        // Nodes are node, records are not contextual, just lookup for every
-        // group the node belongs to and set those.
-        $groupIdList = $this->groupManager->getAccess()->getNodeGroups($node);
-
-        if (!$groupIdList) {
+        if (empty($node->group_id)) {
             return;
         }
 
-        // You should read the following method documentation, but we are going
-        // to do exactly the same, in order to isolate nodes from the global
-        // (no group) context, we are going to remove the 'ucms_site' global
-        // default permissions.
-        foreach ([
-            NodeAccess::REALM_GLOBAL,
-            NodeAccess::REALM_GLOBAL_READONLY,
-            NodeAccess::REALM_GROUP,
-            NodeAccess::REALM_GROUP_READONLY,
-            NodeAccess::REALM_OTHER,
-        ] as $realm) {
-            $event->removeWholeRealm($realm);
+        /*
+         * Here are our specification and use cases:
+         *
+         *   - node has 'group_id' set (it belongs to the group): add visibility
+         *     for the group users, depending on their roles (see realms);
+         *
+         *   - node has a 'group_id' and 'is_ghost': all visibility permissions
+         *     should be dropped outside of sites where it's being referenced;
+         *
+         *   - node has NO 'group_id', nothing changes for it, group members
+         *     will not have the global permissions, so they will not be able
+         *     to see anywhere except in sites they can see it;
+         *
+         *   - there is a special use case group but no sites
+         */
+
+        // Node has 'is_ghost' drop global visibility
+        // Otherwise, global visibility remains
+        if ($node->is_ghost) {
+            foreach ([
+                NodeAccess::REALM_GLOBAL,
+                NodeAccess::REALM_GLOBAL_READONLY,
+                NodeAccess::REALM_GROUP,
+                NodeAccess::REALM_GROUP_READONLY,
+                NodeAccess::REALM_OTHER,
+            ] as $realm) {
+                $event->removeWholeRealm($realm);
+            }
         }
 
         // And set back the real realms for our nodes!
-        foreach ($groupIdList as $groupId) {
-            $isPublished = $node->isPublished();
+        $isPublished = $node->isPublished();
 
-            if ($node->is_global) {
-                $event->add(self::REALM_GROUP_GLOBAL, $groupId, true, true, true);
-                if ($isPublished) { // Avoid data volume exploding
-                    $event->add(self::REALM_GROUP_GLOBAL_READONLY, $groupId, $node->isPublished());
-                }
+        if ($node->is_global) {
+            $event->add(self::REALM_GROUP_GLOBAL, $node->group_id, true, true, true);
+            if ($isPublished) { // Avoid data volume exploding
+                $event->add(self::REALM_GROUP_GLOBAL_READONLY, $node->group_id, $node->isPublished());
             }
-            if ($node->is_group) {
-                $event->add(self::REALM_GROUP_GROUP, $groupId, true, true, true);
-                if ($isPublished) { // Avoid data volume exploding
-                    $event->add(self::REALM_GROUP_GROUP_READONLY, $groupId, $node->isPublished());
-                }
-            }
-
-            if ($isPublished) {
-                $event->add(self::REALM_GROUP_OTHER, $groupId);
+        }
+        if ($node->is_group) {
+            $event->add(self::REALM_GROUP_GROUP, $node->group_id, true, true, true);
+            if ($isPublished) { // Avoid data volume exploding
+                $event->add(self::REALM_GROUP_GROUP_READONLY, $node->group_id, $node->isPublished());
             }
         }
 
@@ -164,13 +195,13 @@ class GroupContextSubscriber implements EventSubscriberInterface
      */
     public function onNodeAccessGrant(NodeAccessGrantEvent $event)
     {
-        $userAccessList = $this->groupManager->getAccess()->getUserGroups($event->getAccount());
+        $account = $event->getAccount();
+        $userAccessList = $this->groupManager->getAccess()->getUserGroups($account);
 
         // A user with groups may only see content from his own group whereas
         // a user with no group may only see all content; it's the site admin
         // responsabilities to ensure that no one has no groups.
         if (!$userAccessList) {
-            // User has no group, leave it unchanged
             return;
         }
 
@@ -207,18 +238,16 @@ class GroupContextSubscriber implements EventSubscriberInterface
             /** @var \MakinaCorpus\Ucms\Group\GroupMember $access */
             $groupId = $access->getGroupId();
 
-            if (false) { // can edit global
-                $event->add(self::REALM_GLOBAL, $groupId);
-            } else if (false) { // van view global
-                $event->add(self::REALM_GLOBAL_READONLY, $groupId);
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) { // can edit global
+                $event->add(self::REALM_GROUP_GLOBAL, $groupId);
+            } else if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) { // van view global
+                $event->add(self::REALM_GROUP_GLOBAL_READONLY, $groupId);
             }
-            if (false) { // can edit group
-                $event->add(self::REALM_GROUP, $groupId);
-            } else if (false) { // can view group
-                $event->add(self::REALM_GROUP_READONLY, $groupId);
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) { // can edit group
+                $event->add(self::REALM_GROUP_GROUP, $groupId);
+            } else if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) { // can view group
+                $event->add(self::REALM_GROUP_GROUP_READONLY, $groupId);
             }
-
-            $event->add(self::REALM_GROUP_OTHER, $groupId);
         }
     }
 
@@ -232,5 +261,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
         if ($accessList) {
             $this->siteManager->setDependentContext('group', $accessList);
         }
+
+        $this->resetCache();
     }
 }

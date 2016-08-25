@@ -112,7 +112,7 @@ trait NodeAccessTestTrait
         return $account;
     }
 
-    protected function createDrupalNode($status = 0, $site = null, $otherSites = [], $isGlobal = false, $isGroup = false, $isClonable = false)
+    protected function createDrupalNode($status = 0, $site = null, $otherSites = [], $isGlobal = false, $isGroup = false, $isClonable = false, $other = [])
     {
         $node = new Node();
         $node->nid = $this->nidSeq++;
@@ -133,6 +133,11 @@ trait NodeAccessTestTrait
             $node->ucms_sites[] = $this->getSite($label)->id;
         }
         $node->ucms_sites = array_unique($node->ucms_sites);
+        if ($other) {
+            foreach ($other as $key => $value) {
+                $node->{$key} = $value;
+            }
+        }
         return $node;
     }
 

@@ -24,6 +24,14 @@ class GroupAccessService
     }
 
     /**
+     * Reset user access cache
+     */
+    public function resetCache()
+    {
+        $this->accessCache = [];
+    }
+
+    /**
      * Get site groups
      *
      * @param Site $site

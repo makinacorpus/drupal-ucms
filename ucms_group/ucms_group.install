@@ -142,6 +142,13 @@ function ucms_group_schema_alter(&$schema) {
       'not null'    => true,
       'default'     => 0,
     ];
+    $schema['node']['fields']['group_id'] = [
+      'description' => "Group identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ];
   }
 }
 
@@ -160,6 +167,23 @@ function ucms_group_install_schema_fix() {
       'default'     => 0,
     ]);
   }
+  // Adds {node}.group_id column.
+  if (db_table_exists('node') && !db_field_exists('node', 'group_id')) {
+    db_add_field('node', 'group_id', [
+      'description' => "Group identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+  if (db_table_exists('node')) {
+    db_constraint_add('node', 'fk', 'node_group', [
+      'table'   => 'ucms_group',
+      'columns' => ['group_id' => 'id'],
+      'delete'  => 'set null'
+    ]);
+  }
 }
 
 /**
@@ -168,6 +192,9 @@ function ucms_group_install_schema_fix() {
 function ucms_group_uninstall_schema_fix() {
   if (db_table_exists('node') && db_field_exists('node', 'is_ghost')) {
     db_drop_field('node', 'is_ghost');
+  }
+  if (db_table_exists('node') && db_field_exists('node', 'group_id')) {
+    db_drop_field('node', 'group_id');
   }
 }
 
@@ -190,4 +217,11 @@ function ucms_group_install() {
  */
 function ucms_group_uninstall() {
   ucms_group_uninstall_schema_fix();
+}
+
+/**
+ * Adds missing database table columns.
+ */
+function ucms_group_update_7001() {
+  ucms_group_install_schema_fix();
 }
