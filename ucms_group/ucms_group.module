@@ -189,3 +189,66 @@ function ucms_group_menu_access_edit(Group $group) {
 function ucms_group_menu_title(Group $group) {
   return $group->getTitle();
 }
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Implement site visibility access control for the admin UI, this is the only
+ * query alteration for business purpose this module will ever do.
+ */
+function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query) {
+
+  if (!$query instanceof SelectQueryInterface) {
+    return;
+  }
+
+  /* @var $account AccountInterface */
+  if (!$account = $query->getMetaData('account')) {
+    $account = \Drupal::currentUser();
+  }
+
+  $siteAlias  = null;
+  $groupAlias = null;
+
+  // If no base table is specified explicitly, search for one.
+  foreach ($query->getTables() as $alias => $table_info) {
+    if (!($table_info instanceof SelectQueryInterface)) {
+      // If the node table is in the query, it wins immediately.
+      if ('ucms_site' === $table_info['table']) {
+        $siteAlias = $alias;
+      }
+      if ('ucms_group_site' === $table_info['table']) {
+        $groupAlias = $alias;
+      }
+    }
+  }
+
+  if (!$siteAlias && !$groupAlias) {
+    return;
+  }
+
+  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
+  $groupManager = \Drupal::service('ucms_group.manager');
+  $accessList   = $groupManager->getAccess()->getUserGroups($account);
+
+  // Normal user rights coming in!
+  if (!$accessList) {
+    return;
+  }
+
+  $groupList = [];
+  foreach ($accessList as $access) {
+      $groupList[] = $access->getGroupId();
+  }
+
+  if (!$groupAlias) {
+    $query->join(
+      'ucms_group_site',
+      'access_sg',
+      "access_sg.site_id = " . $siteAlias . ".id AND access_sg.group_id IN (:access_sg_group)",
+      [':access_sg_group' => $groupList]
+    );
+  } else {
+    $query->condition($groupAlias . '.group_id', $groupList);
+  }
+}

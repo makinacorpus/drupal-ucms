@@ -43,6 +43,11 @@ class GroupContextSubscriber implements EventSubscriberInterface
     const REALM_GROUP_GLOBAL_READONLY = 'ucms_group_global_ro';
 
     /**
+     * View all content, god realm
+     */
+    const REALM_GROUP_READONLY = 'ucms_group_ro';
+
+    /**
      * Read/write on global content in group
      */
     const REALM_GROUP_OTHER = 'ucms_group_other';
@@ -168,6 +173,9 @@ class GroupContextSubscriber implements EventSubscriberInterface
             }
         }
 
+        // People with the view all content permission should be able to see it
+        $event->add(self::REALM_GROUP_READONLY, $node->group_id, true);
+
         // And set back the real realms for our nodes!
         $isPublished = $node->isPublished();
 
@@ -228,7 +236,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
             NodeAccess::REALM_GLOBAL_READONLY,
             NodeAccess::REALM_GROUP,
             NodeAccess::REALM_GROUP_READONLY,
-            NodeAccess::REALM_OTHER,
+            NodeAccess::REALM_READONLY,
         ] as $realm) {
             $event->removeWholeRealm($realm);
         }
@@ -237,15 +245,20 @@ class GroupContextSubscriber implements EventSubscriberInterface
         foreach ($userAccessList as $access) {
             /** @var \MakinaCorpus\Ucms\Group\GroupMember $access */
             $groupId = $access->getGroupId();
+            $viewAll = $account->hasPermission(Access::PERM_CONTENT_VIEW_ALL);
+
+            if ($viewAll) {
+                $event->add(self::REALM_GROUP_READONLY, $groupId);
+            }
 
             if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) { // can edit global
                 $event->add(self::REALM_GROUP_GLOBAL, $groupId);
-            } else if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) { // van view global
+            } else if (!$viewAll && $account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) { // van view global
                 $event->add(self::REALM_GROUP_GLOBAL_READONLY, $groupId);
             }
             if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) { // can edit group
                 $event->add(self::REALM_GROUP_GROUP, $groupId);
-            } else if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) { // can view group
+            } else if (!$viewAll && $account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) { // can view group
                 $event->add(self::REALM_GROUP_GROUP_READONLY, $groupId);
             }
         }
