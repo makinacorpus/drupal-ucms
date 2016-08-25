@@ -116,7 +116,7 @@ class NodeTransfer extends FormBase
                 // have the good permissions (then we check the access to the
                 // update operation).
                 if (empty($node->site_id) && !$node->access(Access::OP_UPDATE, $account)) {
-                    $formState->setErrorByName('user', $this->t("%user user is not allowed to manage this type of content.", ['%user' => $account->getDisplayName()]));
+                    $formState->setErrorByName('user', $this->t("The user %user is not allowed to manage this type of content.", ['%user' => $account->getDisplayName()]));
                 } else {
                     $formState->setTemporaryValue('account', $account);
                 }

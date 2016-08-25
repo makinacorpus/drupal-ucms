@@ -14,7 +14,7 @@ function ucms_tree_menu() {
   $items = [];
 
   $items['admin/dashboard/tree'] = [
-    'title'             => "All tress",
+    'title'             => "All trees",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [TreeAdminController::class . '::treeList'],
     'access callback'   => true,

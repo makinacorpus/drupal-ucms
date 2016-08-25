@@ -68,7 +68,7 @@ class TreeEditForm extends FormBase
         $form['name'] = [
             '#type'           => 'textfield',
             '#attributes'     => ['placeholder' => 'site-42-main'],
-            '#description'    => $this->t("Leave this empty for auto-generation"),
+            '#description'    => $this->t("Leave this field empty for auto-generation"),
             '#default_value'  => $menu->getName(),
             '#maxlength'      => 255,
             '#disabled'       => !$isCreation,
@@ -106,10 +106,9 @@ class TreeEditForm extends FormBase
 
         $form['is_main'] = [
             '#type'           => 'checkbox',
-            '#title'          => $this->t("Is this menu the site main menu?"),
-            '#attributes'     => ['placeholder' => $this->t("Something about this menu...")],
+            '#title'          => $this->t("Set as the site main menu?"),
             '#default_value'  => $menu->isSiteMain(),
-            '#description'    => $this->t("If the site already has a main menu, this will change it."),
+            '#description'    => $this->t("If the site already has a main menu, this choice will change it."),
         ];
 
         $form['actions']['#type'] = 'actions';

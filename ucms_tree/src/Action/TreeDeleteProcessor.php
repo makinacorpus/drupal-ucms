@@ -49,7 +49,7 @@ class TreeDeleteProcessor extends AbstractActionProcessor
     {
         return $this->formatPlural(
             $totalCount,
-            "Delete this page menu tree?",
+            "Delete this menu tree?",
             "Delete those @count menu trees?"
         );
     }
