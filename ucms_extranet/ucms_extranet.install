@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function ucms_extranet_install() {
+  ucms_extranet_update_7001();
+}
+
+/**
+ * Already created sites should be public.
+ */
+function ucms_extranet_update_7001() {
+  // By default, already created sites are public.
+  if (db_table_exists('ucms_site')) {
+    db_update('ucms_site')->fields(['is_public' => 1])->execute();
+  }
+}
