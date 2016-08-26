@@ -237,6 +237,8 @@ class GroupContextSubscriber implements EventSubscriberInterface
             NodeAccess::REALM_GROUP,
             NodeAccess::REALM_GROUP_READONLY,
             NodeAccess::REALM_READONLY,
+            // Disallow non-group/non-site/non-global nodes to be seen
+            NodeAccess::REALM_OTHER,
         ] as $realm) {
             $event->removeWholeRealm($realm);
         }
