@@ -531,7 +531,7 @@ function ucms_contrib_preprocess_node(&$variables) {
 /**
  * Implements hook_form_node_form_alter().
  */
-function ucms_contrib_form_node_form_alter(&$form, &$form_state, $form_id) {
+function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
 
   $node         = $form_state['node'];
   $user         = \Drupal::currentUser();

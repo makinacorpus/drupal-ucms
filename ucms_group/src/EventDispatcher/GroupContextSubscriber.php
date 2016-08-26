@@ -6,7 +6,6 @@ use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessEventSubscriber as NodeAccess;
@@ -75,9 +74,6 @@ class GroupContextSubscriber implements EventSubscriberInterface
         // Priority here ensures it happens after the 'ucms_site' node event
         // subscriber, and that we will have all site information set
         return [
-            NodeEvent::EVENT_PREPARE => [
-                ['onPrepare', 10]
-            ],
             NodeAccessRecordEvent::EVENT_NODE_ACCESS_RECORD => [
                 ['onNodeAccessRecord', -128],
             ],
@@ -112,19 +108,6 @@ class GroupContextSubscriber implements EventSubscriberInterface
         drupal_static_reset('node_access');
         drupal_static_reset('ucms_site_node_grants');
         $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
-    }
-
-    /**
-     * Set ghost property on nodes depending on group context
-     */
-    public function onPrepare(NodeEvent $event)
-    {
-        $node = $event->getNode();
-
-        if ($node->isNew() && $this->siteManager->hasContext()) {
-            // Set the is_ghost property according to site it's being inserted in
-            // @todo
-        }
     }
 
     private function buildNodeAccessGrant(AccountInterface $account, $op)

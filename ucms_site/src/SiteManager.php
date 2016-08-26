@@ -88,7 +88,7 @@ class SiteManager
     {
         $doDispatch = false;
 
-        if (!$doDispatch && !$this->context || $this->context->getId() !== $site->getId()) {
+        if (!$disableDispatch && (!$this->context || $this->context->getId() !== $site->getId())) {
             $doDispatch = true;
         }
 

@@ -191,6 +191,30 @@ function ucms_group_menu_title(Group $group) {
 }
 
 /**
+ * Implements hook_form_node_form_alter().
+ */
+function ucms_group_form_node_form_alter(&$form, &$form_state) {
+  $node = $form_state['node'];
+
+  if ($node->group_id) {
+
+    // Add the group options fieldset in node vertical tabs
+    $form['group_information'] = [
+      '#type'           => 'fieldset',
+      '#title'          => t("Group options"),
+      '#group'          => 'additional_settings',
+    ];
+
+    $form['group_information']['is_ghost'] = [
+      '#type'           => 'checkbox',
+      '#title'          => t("Content is hidden outside of this group"),
+      '#default_value'  => $node->is_ghost,
+      '#description'    => t("If you check this option, this content will be invisible outside of this group, except in sites it's being displayed into."),
+    ];
+  }
+}
+
+/**
  * Implements hook_query_TAG_alter().
  *
  * Implement site visibility access control for the admin UI, this is the only

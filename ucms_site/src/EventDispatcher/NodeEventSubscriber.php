@@ -52,7 +52,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 ['onLoad', 0]
             ],
             NodeEvent::EVENT_PREPARE => [
-                ['onPrepare', 0]
+                ['onPrepare', 128]
             ],
             NodeEvent::EVENT_PREINSERT => [
                 ['onPreInsert', 0]

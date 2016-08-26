@@ -32,6 +32,11 @@ services:
   # Various listeners and subscribers
   ucms_group.node_event_subscriber:
     public: true
+    class: MakinaCorpus\Ucms\Group\EventDispatcher\NodeEventSubscriber
+    arguments: ["@ucms_group.manager", "@ucms_site.manager"]
+    tags: [{ name: event_subscriber }]
+  ucms_group.context_event_subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextSubscriber
     arguments: ["@ucms_site.manager", "@ucms_group.manager"]
     tags: [{ name: event_subscriber }]
