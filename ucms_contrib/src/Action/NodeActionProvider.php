@@ -56,7 +56,7 @@ class NodeActionProvider implements ActionProviderInterface
 
         // Select the most revelant site to view node in, avoiding the user to
         // view nodes on master site.
-        $siteId = $this->access->findMostRevelantSiteFor($item);
+        $siteId = $this->access->findMostRelevantSiteFor($item);
         if ($siteId) {
             $ret[] = new Action($this->t("View"), 'sso/goto/' . $siteId, ['query' => ['destination' => 'node/' . $item->id()]], 'eye-open');
         } else {

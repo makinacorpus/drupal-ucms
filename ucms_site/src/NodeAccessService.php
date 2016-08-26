@@ -47,7 +47,7 @@ final class NodeAccessService
      *   The site identifier is returned, we don't need to load it to build
      *   a node route
      */
-    public function findMostRevelantSiteFor(NodeInterface $node)
+    public function findMostRelevantSiteFor(NodeInterface $node)
     {
         if (empty($node->ucms_allowed_sites)) {
             return; // Node cannot be viewed

@@ -779,7 +779,7 @@ function ucms_site_init_node_redirect() {
     return;
   }
   if ($node = menu_get_object()) {
-    $siteId = ucms_site_node_access_helper()->findMostRevelantSiteFor($node);
+    $siteId = ucms_site_node_access_helper()->findMostRelevantSiteFor($node);
     if ($siteId) {
       drupal_goto('sso/goto/' . $siteId, ['query' => ['destination' => current_path()]]);
     }
