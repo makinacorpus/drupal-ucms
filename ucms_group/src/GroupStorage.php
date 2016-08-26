@@ -269,4 +269,22 @@ class GroupStorage
 
         $this->dispatch($group, 'delete', [], $userId);
     }
+
+    /**
+     * Touch (flag as modified, no other modifications) a group
+     *
+     * @param int $groupId
+     */
+    public function touch($groupId)
+    {
+        $now = new \DateTime();
+
+        $this
+            ->database
+            ->query(
+                "UPDATE {ucms_group} SET ts_changed = :time WHERE id = :id",
+                [':time' => $now->format('Y-m-d H:i:s'), ':id' => $groupId]
+            )
+        ;
+    }
 }

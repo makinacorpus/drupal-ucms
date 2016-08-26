@@ -18,9 +18,10 @@ class GroupAccessService
      *
      * @param \DatabaseConnection $database
      */
-    public function __construct(\DatabaseConnection $database)
+    public function __construct(\DatabaseConnection $database, GroupStorage $storage)
     {
         $this->database = $database;
+        $this->storage = $storage;
     }
 
     /**
@@ -133,6 +134,8 @@ class GroupAccessService
             ->execute()
         ;
 
+        $this->storage->touch($groupId);
+
         // @todo dispatch event
 
         return true;
@@ -155,6 +158,8 @@ class GroupAccessService
         ;
 
         // @todo dispatch event
+
+        $this->storage->touch($groupId);
     }
 
     /**
@@ -259,6 +264,8 @@ class GroupAccessService
 
         // @todo dispatch event
 
+        $this->storage->touch($groupId);
+
         return true;
     }
 
@@ -281,6 +288,8 @@ class GroupAccessService
         ;
 
         // @todo dispatch event
+
+        $this->storage->touch($groupId);
     }
 
     /**

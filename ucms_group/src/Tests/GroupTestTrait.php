@@ -24,8 +24,8 @@ trait GroupTestTrait
     {
         $database   = $this->getDatabaseConnection();
         $dispatcher = new EventDispatcher();
-        $access     = new GroupAccessService($database);
         $storage    = new GroupStorage($database, $dispatcher);
+        $access     = new GroupAccessService($database, $storage);
 
         $listener = function (GroupEvent $event) {
             $this->groups[] = $event->getGroup();
