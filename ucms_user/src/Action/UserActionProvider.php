@@ -8,6 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
+use MakinaCorpus\Ucms\User\UserAccess;
 
 class UserActionProvider implements ActionProviderInterface
 {
@@ -55,6 +56,10 @@ class UserActionProvider implements ActionProviderInterface
      */
     public function getActions($item)
     {
+        if (!$this->currentUser->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
+            return [];
+        }
+
         $actions = [];
 
         $userId = $this->getUserIdFrom($item);
@@ -82,7 +87,6 @@ class UserActionProvider implements ActionProviderInterface
 
         return $actions;
     }
-
 
     /**
      * {@inheritdoc}
