@@ -65,7 +65,7 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
      *
      * @return string
      */
-    protected function buildWebmasterUri($item, $op)
+    protected function buildWebmasterUri(SiteAccessRecord $item, $op)
     {
         return 'admin/dashboard/site/' . $item->getSiteId()
             . '/webmaster/' . $item->getUserId() . '/' . $op;
@@ -79,10 +79,24 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
      *
      * @return Action
      */
-    protected function createDeleteAction($item)
+    protected function createDeleteAction(SiteAccessRecord $item)
     {
         $path = $this->buildWebmasterUri($item, 'delete');
         return new Action($this->t("Delete from this site"), $path, 'dialog', 'remove', 100, true, true);
+    }
+
+
+    /**
+     * Creates the action to change the role of a user.
+     *
+     * @param SiteAccessRecord $item
+     *
+     * @return Action
+     */
+    protected function createChangeRoleAction(SiteAccessRecord $item)
+    {
+        $path = $this->buildWebmasterUri($item, 'change-role');
+        return new Action($this->t("Change user's role"), $path, 'dialog', 'edit', 50, true, true);
     }
 }
 

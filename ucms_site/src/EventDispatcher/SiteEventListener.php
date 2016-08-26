@@ -124,61 +124,51 @@ class SiteEventListener
     }
 
 
-    public function onSiteWebmasterPromote(SiteEvent $event)
+    public function onSiteWebmasterChangeRole(SiteEvent $event)
     {
         $userStorage = $this->entityManager->getStorage('user');
 
-        /* @var UserInterface $webmaster */
-        $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
-        $roles      = $this->manager->getAccess()->getRolesAssociations();
+        /* @var UserInterface $user */
+        $user   = $userStorage->load($event->getArgument('webmaster_id'));
+        $roles  = $this->manager->getAccess()->getRolesAssociations();
+        $access = $this->manager->getAccess()->getUserRole($user, $event->getSite());
 
-        if (($rid = array_search(Access::ROLE_WEBMASTER, $roles)) && !$webmaster->hasRole($rid)) {
-            $webmaster->addRole($rid);
+        if (($rid = array_search($access->getRole(), $roles)) && !$user->hasRole($rid)) {
+            $user->addRole($rid);
         }
 
-        $deleteContributorRole = true;
+        $deleteOldRole = true;
+        $previousRoleId = $event->getArgument('previous_role');
 
-        foreach ($this->manager->getAccess()->getUserRoles($webmaster) as $access) {
-            if ($access->getRole() == Access::ROLE_CONTRIB && $access->getSiteId() != $event->getSite()->id) {
-                $deleteContributorRole = false;
+        foreach ($this->manager->getAccess()->getUserRoles($user) as $access) {
+            if (
+                $access->getRole() == $previousRoleId &&
+                $access->getSiteId() != $event->getSite()->id
+            ) {
+                $deleteOldRole = false;
                 break;
             }
         }
 
-        if ($deleteContributorRole && ($rid = array_search(Access::ROLE_CONTRIB, $roles))) {
-            $webmaster->removeRole($rid);
+        if ($deleteOldRole && ($rid = array_search($previousRoleId, $roles))) {
+            $user->removeRole($rid);
         }
 
-        $userStorage->save($webmaster);
+        $userStorage->save($user);
+    }
+
+
+    public function onSiteWebmasterPromote(SiteEvent $event)
+    {
+        $event->setArgument('previous_role', Access::ROLE_CONTRIB);
+        $this->onSiteWebmasterChangeRole($event);
     }
 
 
     public function onSiteWebmasterDemote(SiteEvent $event)
     {
-        $userStorage = $this->entityManager->getStorage('user');
-
-        /* @var UserInterface $webmaster */
-        $webmaster  = $userStorage->load($event->getArgument('webmaster_id'));
-        $roles      = $this->manager->getAccess()->getRolesAssociations();
-
-        if (($rid = array_search(Access::ROLE_CONTRIB, $roles)) && !$webmaster->hasRole($rid)) {
-            $webmaster->addRole($rid);
-        }
-
-        $deleteWebmasterRole = true;
-
-        foreach ($this->manager->getAccess()->getUserRoles($webmaster) as $access) {
-            if ($access->getRole() == Access::ROLE_WEBMASTER && $access->getSiteId() != $event->getSite()->id) {
-                $deleteWebmasterRole = false;
-                break;
-            }
-        }
-
-        if ($deleteWebmasterRole && ($rid = array_search(Access::ROLE_WEBMASTER, $roles))) {
-            $webmaster->removeRole($rid);
-        }
-
-        $userStorage->save($webmaster);
+        $event->setArgument('previous_role', Access::ROLE_WEBMASTER);
+        $this->onSiteWebmasterChangeRole($event);
     }
 
 

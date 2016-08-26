@@ -59,6 +59,8 @@ class WebmasterActionProvider extends AbstractWebmasterActionProvider
             $path = $this->buildWebmasterUri($item, 'reject');
             $actions[] = new Action($this->t("Reject registration"), $path, 'dialog', 'remove-circle', 50, true, true);
         } else {
+            // Change role action
+            $actions[] = $this->createChangeRoleAction($item);
             // Delete action
             $actions[] = $this->createDeleteAction($item);
         }
