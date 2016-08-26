@@ -494,6 +494,13 @@ function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $web
 
   if ($manager->getAccess()->userCanManageWebmasters($account, $site)) {
     switch ($op) {
+      case 'change-role':
+        // Prevents to give a role to a user which doesn't belong to the site
+        if (!$manager->getAccess()->userHasRole($webmaster, $site)) {
+          return false;
+        }
+        break;
+
       case 'promote':
         // Prevents to promote a user which is not a contributor of the site
         if (!$manager->getAccess()->userIsContributor($webmaster, $site)) {
