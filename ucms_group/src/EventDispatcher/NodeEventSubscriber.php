@@ -32,9 +32,6 @@ class NodeEventSubscriber implements EventSubscriberInterface
             NodeEvent::EVENT_PRESAVE => [
                 ['onNodePresave', 0]
             ],
-            FormEvent::EVENT_ALTER_PREFIX . 'node_form' => [
-                ['onNodeForm', 10]
-            ],
         ];
     }
 
@@ -142,15 +139,5 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 $node->is_ghost = 0;
             }
         }
-    }
-
-    /**
-     * Alters node form to add the 'is_ghost' form widget
-     */
-    public function onNodeForm(FormEvent $event)
-    {
-        $form = $event->getForm();
-
-        time();
     }
 }
