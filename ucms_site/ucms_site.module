@@ -224,6 +224,9 @@ function ucms_site_menu() {
  */
 function ucms_site_permission() {
   return [
+    Access::PERM_CONTENT_MANAGE_ALL => [ // @todo name is so wrong
+      'title' => t("Manage locked content"),
+    ],
     Access::PERM_CONTENT_MANAGE_GLOBAL => [
       'title' => t("Manage global content"),
     ],
