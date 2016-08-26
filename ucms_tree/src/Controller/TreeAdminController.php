@@ -7,7 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Dashboard\Page\PageFactory;
+use MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\Form\TreeEditForm;
 use MakinaCorpus\Ucms\Tree\Form\TreeForm;
@@ -77,11 +77,11 @@ class TreeAdminController extends Controller
     }
 
     /**
-     * @return PageFactory
+     * @return AdminWidgetFactory
      */
-    private function getPageFactory()
+    private function getAdminWidgetFactory()
     {
-        return $this->get('ucms_dashboard.page_factory');
+        return $this->get('ucms_dashboard.admin_widget_factory');
     }
 
     /**
@@ -138,7 +138,7 @@ class TreeAdminController extends Controller
             $query['site'] = $siteManager->getContext()->getId();
         }
 
-        $page = $this->getPageFactory()->get($datasource, $display, ['tree-admin']);
+        $page = $this->getAdminWidgetFactory()->getPage($datasource, $display, ['tree-admin']);
         $page->setBaseQuery($query);
 
         return $page->render($request->query->all(), current_path()); //@todo current_path()
