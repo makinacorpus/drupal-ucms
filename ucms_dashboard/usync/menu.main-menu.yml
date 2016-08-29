@@ -7,26 +7,12 @@ item:
     expanded: true
     options:
       icon: 'file'
-    item:
-      - {name: "Créer une page éditoriale", path: "node/add/editorial-page"}
-      - {name: "Créer une actualité", path: "node/add/news"}
-      - {name: "Créer un événement", path: "node/add/event"}
-      - {name: "Créer un témoignage", path: "node/add/testimony"}
-      - {name: "Créer un formulaire", path: "node/add/webform"}
-      - {name: "Créer un établissement", path: "node/add/locality"}
-      - {name: "Créer une offre d'emploi", path: "node/add/job-offer"}
   -
     name: "Media"
     path: "admin/dashboard/media"
     expanded: true
     options:
       icon: 'picture'
-    item:
-      - {name: "Créer une image", path: "node/add/image"}
-      - {name: "Créer une galerie d'images", path: "node/add/gallery"}
-      - {name: "Créer une vidéo", path: "node/add/video"}
-      - {name: "Créer un document", path: "node/add/document"}
-      - {name: "Créer un flux twitter", path: "node/add/twitter"}
   -
     name: "Étiquettes"
     path: "admin/dashboard/label"
