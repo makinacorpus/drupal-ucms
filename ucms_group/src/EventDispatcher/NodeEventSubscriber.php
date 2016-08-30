@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Drupal\Sf\EventDispatcher\FormEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupSite;
