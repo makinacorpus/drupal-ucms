@@ -285,6 +285,8 @@ function ucms_contrib_menu_alter(&$items) {
   // No tabs but real callback now
   $items['node/%node/edit']['type'] = MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB;
   $items['node/%node/revisions']['type'] = MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB;
+  $items['node/%node/revisions']['access callback'] = 'node_access';
+  $items['node/%node/revisions']['access arguments'] = ['update', 1];
 }
 
 /**

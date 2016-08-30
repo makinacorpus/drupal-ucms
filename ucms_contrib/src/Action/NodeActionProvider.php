@@ -82,9 +82,7 @@ class NodeActionProvider implements ActionProviderInterface
                 }
             }
 
-            if (_node_revision_access($item)) {
-                $ret[] = new Action($this->t("Revisions"), 'node/' . $item->id() . '/revisions', null, 'th-list', -10, false, false, false, 'view');
-            }
+            $ret[] = new Action($this->t("Revisions"), 'node/' . $item->id() . '/revisions', null, 'th-list', -10, false, false, false, 'view');
         }
 
         if (
