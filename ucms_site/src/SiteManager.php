@@ -25,35 +25,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SiteManager
 {
-    /**
-     * @var SiteAccessService
-     */
     private $access;
-
-    /**
-     * @var SiteStorage
-     */
     private $storage;
-
-    /**
-     * @var Site
-     */
     private $context;
-
-    /**
-     * @var mixed[]
-     */
     private $dependentContext = [];
-
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var EventDispatcherInterface
-     */
     private $dispatcher;
+    private $postInitRun = false;
 
     /**
      * Default constructor
@@ -79,24 +57,46 @@ class SiteManager
      * Set current site context
      *
      * @param Site $site
-     * @param bool $disableDispatch
+     * @param bool $disablePostDispatch
      *   If set, no event will be raised, please note this should never ever
      *   be used, except during ucms_site_boot() which will pre-set the site
      *   without knowing if the context is valid or not
      */
-    public function setContext(Site $site, $disableDispatch = false)
+    public function setContext(Site $site, $disablePostDispatch = false)
     {
         $doDispatch = false;
 
-        if (!$disableDispatch && (!$this->context || $this->context->getId() !== $site->getId())) {
+        if (!$this->context || $this->context->getId() !== $site->getId()) {
             $doDispatch = true;
         }
 
         $this->context = $site;
 
         // Dispatch the context init event
-        if (!$disableDispatch && $doDispatch) {
+        if ($doDispatch) {
             $this->dispatcher->dispatch(SiteEvents::EVENT_INIT, new SiteEvent($this->context));
+
+            if ($disablePostDispatch) {
+                // We are in hook_boot(), set post-init to run later during
+                // hook_init() ensuring that Drupal is fully bootstrapped,
+                // it fixes lots of bugs such has the layout manager may use
+                // the Drupal menu to find the current node context
+                $this->postInitRun = false;
+            } else {
+                $this->dispatchPostInit();
+            }
+        }
+    }
+
+    /**
+     * This is public because it must be run manually from Drupal code, but
+     * please never, ever, run this manually or I'll do kill you. Slowly.
+     */
+    public function dispatchPostInit()
+    {
+        if (!$this->postInitRun && $this->context) {
+            $this->postInitRun = true;
+            $this->dispatcher->dispatch(SiteEvents::EVENT_POST_INIT, new SiteEvent($this->context));
         }
     }
 

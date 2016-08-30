@@ -12,6 +12,8 @@ final class SiteEvents
     // Admin screens events
     const SITE_DISPLAY_TABLE = 'ucms_site_table_display';
 
-    // Site initialization
+    // Site initialization, happens at hook_boot().
     const EVENT_INIT = 'site:init';
+    // Happens at hook_init() instead of hook_boot().
+    const EVENT_POST_INIT = 'site:post-init';
 }

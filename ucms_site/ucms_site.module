@@ -569,7 +569,7 @@ function ucms_site_boot() {
   if (!empty($_SERVER['HTTP_HOST'])) {
     if ($site = ucms_site_manager()->getStorage()->findByHostname($_SERVER['HTTP_HOST'])) {
       // @todo find a better way then disabling the init event
-      $manager->setContext($site);
+      $manager->setContext($site, true);
 
       // This has to be done before drupal_path_initialize() which is run right
       // before the hook_init(), so this will be the one and only alteration
@@ -831,6 +831,8 @@ function ucms_site_init() {
       if ($site->title) {
         $GLOBALS['conf']['site_name'] = $site->title;
       }
+
+      $manager->dispatchPostInit();
     }
   } else if (user_is_logged_in() && !ucms_site_is_master()) {
     ucms_site_redirect_to_master(); // Site does not exists.

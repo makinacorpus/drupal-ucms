@@ -29,8 +29,8 @@ final class SiteEventSubscriber implements EventSubscriberInterface
     static public function getSubscribedEvents()
     {
         return [
-            SiteEvents::EVENT_INIT => [
-                ['onSiteInit', 0]
+            SiteEvents::EVENT_POST_INIT => [
+                ['onSitePostInit', 0]
             ],
             SiteEvents::EVENT_CLONE => [
                 ['onSiteClone', 0]
@@ -63,7 +63,7 @@ final class SiteEventSubscriber implements EventSubscriberInterface
     /**
      * Home page handling mostly.
      */
-    public function onSiteInit(SiteEvent $event)
+    public function onSitePostInit(SiteEvent $event)
     {
         // @todo Ugly... The best would be to not use drupal_valid_token()
         require_once DRUPAL_ROOT . '/includes/common.inc';
