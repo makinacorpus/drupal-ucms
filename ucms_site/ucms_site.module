@@ -857,11 +857,15 @@ function ucms_site_custom_theme() {
   // site has been rightly set, and if we are in admin site has been removed,
   // so if we have a site structure, we are 100% sure we are not in an admin
   // path.
-  $site = ucms_site_manager()->getContext();
+  $manager = ucms_site_manager();
+  $site = $manager->getContext();
 
   if (!$site) {
     return;
   }
+
+  $manager->dispatchPostInit();
+
   if (!$site->theme) {
     return;
   }
