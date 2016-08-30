@@ -72,10 +72,12 @@
         "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-umenu" : "^1.1.4",
         "makinacorpus/drupal-sf-dic" : "^3.0.29",
-        "makinacorpus/drush-progressbar" : "^1.0"
+        "makinacorpus/drush-progressbar" : "^1.0",
+        "makinacorpus/php-bloom" : "^2.0.1"
     },
     "suggests" : {
-        "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs"
+        "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs",
+        "drupal/redis" : "Activates a few Redis-based caches"
     },
     "minimum-stability" : "dev"
 }

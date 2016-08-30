@@ -6,7 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Ucms\Contrib\CartStorage;
+use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
@@ -33,11 +33,11 @@ class NodeActionProvider implements ActionProviderInterface
     private $account;
 
     /**
-     * @var CartStorage
+     * @var CartStorageInterface
      */
     private $cart;
 
-    public function __construct(NodeAccessService $access, SiteManager $siteManager, AccountInterface $account, CartStorage $cart)
+    public function __construct(NodeAccessService $access, SiteManager $siteManager, AccountInterface $account, CartStorageInterface $cart)
     {
         $this->access = $access;
         $this->siteManager = $siteManager;

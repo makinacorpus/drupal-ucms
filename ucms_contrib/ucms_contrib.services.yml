@@ -5,9 +5,15 @@ parameters:
 services:
 
   # Site storage responsible for loading and updating site data
-  ucms_contrib.cart:
-    class: MakinaCorpus\Ucms\Contrib\CartStorage
+  ucms_contrib.cart.default:
+    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
     arguments: ["@database"]
+  ucms_contrib.cart.bloom:
+    class: MakinaCorpus\Ucms\Contrib\Cart\BloomCartStorage
+    arguments: ["@ucms_contrib.cart.default", "@cache.default"]
+  ucms_contrib.cart:
+    alias: ucms_contrib.cart.bloom
+    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage 
 
   ucms_contrib.node_action_provider:
     public: false

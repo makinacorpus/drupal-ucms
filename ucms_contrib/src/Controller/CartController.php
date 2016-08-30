@@ -8,7 +8,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Contrib\CartStorage;
+use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Contrib\NodeCartDisplay;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,7 +25,7 @@ class CartController extends Controller
     }
 
     /**
-     * @return CartStorage
+     * @return CartStorageInterface
      */
     private function getCartStorage()
     {

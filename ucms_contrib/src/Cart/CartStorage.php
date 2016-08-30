@@ -1,10 +1,13 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib;
+namespace MakinaCorpus\Ucms\Contrib\Cart;
 
 use MakinaCorpus\Ucms\Site\Access;
 
-class CartStorage
+/**
+ * Default cart implementation using database
+ */
+final class CartStorage implements CartStorageInterface
 {
     /**
      * @var \DatabaseConnection
@@ -22,12 +25,7 @@ class CartStorage
     }
 
     /**
-     * Add content to favorites
-     *
-     * @param int $uid
-     * @param int $nid
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function addFor($uid, $nid)
     {
@@ -58,12 +56,7 @@ class CartStorage
     }
 
     /**
-     * Current user has item?
-     *
-     * @param int $uid
-     * @param int $nid
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function has($uid, $nid)
     {
@@ -78,10 +71,7 @@ class CartStorage
     }
 
     /**
-     * Remove content from favorites
-     *
-     * @param int $uid
-     * @param int $nid
+     * {@inheritdoc}
      */
     public function removeFor($uid, $nid)
     {
@@ -95,12 +85,7 @@ class CartStorage
     }
 
     /**
-     * List favorite content
-     *
-     * @param int $uid
-     *
-     * @return int[]
-     *   Ordered list of node identifiers.
+     * {@inheritdoc}
      */
     public function listFor($uid)
     {
