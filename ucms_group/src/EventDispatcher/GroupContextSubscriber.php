@@ -110,11 +110,6 @@ class GroupContextSubscriber implements EventSubscriberInterface
         $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
     }
 
-    private function buildNodeAccessGrant(AccountInterface $account, $op)
-    {
-        // @todo implement me
-    }
-
     /**
      * Compute node access records
      */
