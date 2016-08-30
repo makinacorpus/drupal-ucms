@@ -107,7 +107,7 @@ function drush_ucms_search_index_run() {
     $progress = drush_create_progress();
     $progress->setProgress($total, 0);
     do {
-      $done = ucms_search_index()->indexer($index)->bulkDequeue();
+      $done = ucms_search_index()->indexer($index)->bulkDequeue(50);
       $count += $done;
       $progress->setProgress($total, $count);
     } while ($done);
