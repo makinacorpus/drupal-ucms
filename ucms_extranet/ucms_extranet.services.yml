@@ -9,7 +9,12 @@ services:
   ucms_extranet.roles_collection_event_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Extranet\EventDispatcher\RolesCollectionEventSubscriber
-    arguments: []
+    tags: [{ name: event_subscriber }]
+
+  ucms_extranet.node_access_event_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Extranet\EventDispatcher\NodeAccessEventSubscriber
+    arguments: ["@ucms_site.manager"]
     tags: [{ name: event_subscriber }]
 
   ucms_extranet.webmaster_action_provider:
