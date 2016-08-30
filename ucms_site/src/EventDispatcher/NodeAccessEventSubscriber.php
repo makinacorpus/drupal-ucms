@@ -7,6 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessSubscriber as NodeAccessCache;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
@@ -76,20 +77,19 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     private $siteManager;
 
     /**
-     * @var mixed[]
+     * @var NodeAccessCache
      */
-    private $userGrantCache;
+    private $nodeAccessCache;
 
     /**
      * Default constructor
      *
      * @param SiteManager $manager
      */
-    public function __construct(SiteManager $siteManager)
+    public function __construct(SiteManager $siteManager, NodeAccessCache $nodeAccessCache)
     {
         $this->siteManager = $siteManager;
-        // Sorry for this, but we do need it to behave with Drupal internals
-        $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
+        $this->nodeAccessCache = $nodeAccessCache;
     }
 
     /**
@@ -110,23 +110,35 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
             SiteEvents::EVENT_INIT => [
                 ['onSiteInit', 0],
             ],
+            SiteEvents::EVENT_DROP => [
+                ['onSiteDrop', 0],
+            ],
         ];
     }
 
     /**
-     * Reset internal cache
+     * Reset node access caches
      */
-    public function resetCache()
+    private function resetCache()
     {
         drupal_static_reset('node_access');
-        drupal_static_reset('ucms_site_node_grants');
-        $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
+        drupal_static_reset('user_access');
+
+        $this->nodeAccessCache->resetCache();
     }
 
     /**
-     * Resets internal cache on site init
+     * On site init clear node access caches
      */
     public function onSiteInit(SiteEvent $event)
+    {
+        $this->resetCache();
+    }
+
+    /**
+     * On site drop clear node access caches
+     */
+    public function onSiteDrop(SiteEvent $event)
     {
         $this->resetCache();
     }
@@ -278,16 +290,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
      */
     public function onNodeAccessGrant(NodeAccessGrantEvent $event)
     {
-        $account  = $event->getAccount();
-        $userId   = $account->id();
-        $op       = $event->getOperation();
-
-        // Proceed with cache lookup attempt first
-        if (!isset($this->userGrantCache[$userId][$op])) {
-            $this->userGrantCache[$userId][$op] = $this->buildNodeAccessGrant($account, $op);
-        }
-
-        $ret = $this->userGrantCache[$userId][$op];
+        $ret = $this->buildNodeAccessGrant($event->getAccount(), $event->getOperation());
 
         foreach ($ret as $realm => $gids) {
             foreach ($gids as $gid) {

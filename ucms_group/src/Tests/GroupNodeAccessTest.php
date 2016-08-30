@@ -25,14 +25,6 @@ class GroupNodeAccessTest extends AbstractDrupalTest
     }
 
     /**
-     * @return GroupContextSubscriber
-     */
-    private function getGroupSubscriber()
-    {
-        return $this->getDrupalContainer()->get('ucms_group.node_event_subscriber');
-    }
-
-    /**
      * @return Group
      */
     protected function getGroup($name)
@@ -49,7 +41,6 @@ class GroupNodeAccessTest extends AbstractDrupalTest
     protected function whenIAmMember($group, $permissionList = [], $siteMap = [])
     {
         $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap);
-        $this->getNodeHelper()->resetCache();
 
         $instance = $this->getGroup($group);
         $this->getGroupManager()->getAccess()->addMember($instance->getId(), $this->contextualAccount->id());
@@ -112,7 +103,6 @@ class GroupNodeAccessTest extends AbstractDrupalTest
 
         $this->getSiteManager()->dropContext();
         $this->getGroupManager()->getAccess()->resetCache();
-        $this->getGroupSubscriber()->resetCache();
     }
 
     public function testPrettyMuchEverything()

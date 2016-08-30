@@ -497,6 +497,11 @@ class NodeAccessTest extends AbstractDrupalTest
                 //->canDoNone('reference')
         ;
 
+        $this->getSiteManager()->dropContext();
+    }
+
+    public function testNoRoleAuthRightsOnDisabled()
+    {
         $this->getSiteManager()->setContext($this->getSite('off'));
 
         $this

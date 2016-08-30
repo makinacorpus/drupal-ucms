@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\user\UserInterface;
 
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Access;

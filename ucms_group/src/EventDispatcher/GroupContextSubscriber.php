@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
-use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
 use MakinaCorpus\Ucms\Group\GroupManager;
@@ -62,11 +60,6 @@ class GroupContextSubscriber implements EventSubscriberInterface
     private $groupManager;
 
     /**
-     * @var mixed[]
-     */
-    private $userGrantCache;
-
-    /**
      * {@inheritdoc}
      */
     static public function getSubscribedEvents()
@@ -96,18 +89,6 @@ class GroupContextSubscriber implements EventSubscriberInterface
     {
         $this->siteManager = $siteManager;
         $this->groupManager = $groupManager;
-        // Sorry for this, but we do need it to behave with Drupal internals
-        $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
-    }
-
-    /**
-     * Reset internal cache
-     */
-    public function resetCache()
-    {
-        drupal_static_reset('node_access');
-        drupal_static_reset('ucms_site_node_grants');
-        $this->userGrantCache = &drupal_static('ucms_site_node_grants', []);
     }
 
     /**
@@ -209,6 +190,9 @@ class GroupContextSubscriber implements EventSubscriberInterface
         // own site, he can see everything.
 
         // 1. Remove global permissions from 'ucms_site' module.
+        // Note that we intentionally left the REALM_PUBLIC realm in order for
+        // the user to public sites normally, it would not make any sense to
+        // drop that for him.
         foreach ([
             NodeAccess::REALM_GLOBAL,
             NodeAccess::REALM_GLOBAL_READONLY,
@@ -254,7 +238,5 @@ class GroupContextSubscriber implements EventSubscriberInterface
         if ($accessList) {
             $this->siteManager->setDependentContext('group', $accessList);
         }
-
-        $this->resetCache();
     }
 }

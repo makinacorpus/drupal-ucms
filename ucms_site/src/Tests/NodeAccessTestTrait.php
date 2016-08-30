@@ -107,8 +107,6 @@ trait NodeAccessTestTrait
             }
         }
 
-        $this->getNodeHelper()->resetCache();
-
         return $account;
     }
 
@@ -174,7 +172,9 @@ trait NodeAccessTestTrait
     protected function whenIAm($permissionList = [], $siteMap = [])
     {
         $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap);
-        $this->getNodeHelper()->resetCache();
+
+        $this->getSiteManager()->getAccess()->resetCache();
+        //$this->get('sf_dic.node_access.subscriber')->resetCache();
 
         return $this;
     }
@@ -182,7 +182,8 @@ trait NodeAccessTestTrait
     protected function whenIAmAnonymous()
     {
         $this->contextualAccount = $this->getAnonymousUser();
-        $this->getNodeHelper()->resetCache();
+
+        $this->getSiteManager()->getAccess()->resetCache();
 
         return $this;
     }

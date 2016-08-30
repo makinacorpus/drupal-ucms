@@ -115,8 +115,18 @@ class SiteManager
      */
     public function dropContext()
     {
+        $oldContext = false;
+
+        if ($this->context) {
+            $oldContext = $this->context;
+        }
+
         $this->context = null;
         $this->dependentContext = [];
+
+        if ($oldContext) {
+            $this->dispatcher->dispatch(SiteEvents::EVENT_DROP, new SiteEvent($oldContext));
+        }
     }
 
     /**

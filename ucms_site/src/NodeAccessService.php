@@ -5,35 +5,21 @@ namespace MakinaCorpus\Ucms\Site;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessEventSubscriber;
-
 /**
  * Drupal ACL builder for usage with node_access() related hooks
  */
 final class NodeAccessService
 {
     private $manager;
-    private $subscriber;
 
     /**
      * Default constructor
      *
      * @param SiteManager $manager
-     * @param NodeAccessEventSubscriber $subscriber
      */
-    public function __construct(SiteManager $manager, NodeAccessEventSubscriber $subscriber)
+    public function __construct(SiteManager $manager)
     {
         $this->manager = $manager;
-        $this->subscriber = $subscriber;
-    }
-
-    /**
-     * Reset internal cache
-     */
-    public function resetCache()
-    {
-        $this->subscriber->resetCache();
-        $this->manager->getAccess()->resetCache();
     }
 
     /**

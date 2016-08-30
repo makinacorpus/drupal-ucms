@@ -20,7 +20,7 @@ services:
   # Node access helper
   ucms_site.node_access_helper:
     class: MakinaCorpus\Ucms\Site\NodeAccessService
-    arguments: ["@ucms_site.manager", "@ucms_site.node_access.subscriber"]
+    arguments: ["@ucms_site.manager"]
 
   # Node manager, handles node attach/detach/clone to sites
   ucms_site.node_manager:
@@ -80,7 +80,7 @@ services:
   ucms_site.node_access.subscriber:
     public: true
     class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessEventSubscriber
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@ucms_site.manager", "@sf_dic.node_access.subscriber"]
     tags: [{ name: event_subscriber }]
 
   ucms_site.node_event_subscriber:

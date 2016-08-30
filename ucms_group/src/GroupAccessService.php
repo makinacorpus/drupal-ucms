@@ -266,6 +266,8 @@ class GroupAccessService
 
         $this->storage->touch($groupId);
 
+        $this->resetCache();
+
         return true;
     }
 
@@ -290,6 +292,8 @@ class GroupAccessService
         // @todo dispatch event
 
         $this->storage->touch($groupId);
+
+        $this->resetCache();
     }
 
     /**
