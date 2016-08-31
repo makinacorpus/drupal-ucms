@@ -122,7 +122,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // there is no contextual group, case in which this code will wrongly
         // run, but hopefuly since it is just setting defaults, it won't change
         // the normal behavior.
-        if (!$node->group_id) {
+        if (empty($node->group_id)) {
             $groupId = $this->findMostRelevantGroupId();
 
             if ($groupId) {
