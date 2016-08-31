@@ -63,7 +63,7 @@ class GroupSiteAdd extends FormBase
             '#type'               => 'textfield',
             '#title'              => $this->t("Title, administrative title, hostname..."),
             '#description'        => $this->t("Please make your choice in the suggestions list."),
-            '#autocomplete_path'  => 'admin/dashboard/site/sites-ac',
+            '#autocomplete_path'  => 'admin/dashboard/group/' . $group->getId() . '/sites-add-ac',
             '#required'           => true,
         ];
 

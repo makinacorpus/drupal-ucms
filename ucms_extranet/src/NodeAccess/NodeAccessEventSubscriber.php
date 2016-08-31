@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Extranet\EventDispatcher;
+namespace MakinaCorpus\Ucms\Extranet\NodeAccess;
 
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;

@@ -162,7 +162,7 @@ class DashboardController extends Controller
     /**
      * Site list action for group
      */
-    public function siteListAction(Request $request)
+    public function siteListAction(Request $request, Group $group)
     {
         return $this
             ->createTemplatePage(
@@ -170,7 +170,7 @@ class DashboardController extends Controller
                 'module:ucms_group:views/Page/groupSiteAdmin.html.twig'
             )
             ->setBaseQuery([
-                'uid' => $this->getCurrentUserId(),
+                'group' => $group->getId(),
             ])
             ->render($request->query->all())
         ;

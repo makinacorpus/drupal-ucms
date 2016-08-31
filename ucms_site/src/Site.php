@@ -85,6 +85,11 @@ class Site
      */
     public $home_nid = null;
 
+    /**
+     * @var int
+     */
+    public $group_id;
+
     public function getId()
     {
         return (int)$this->id;
@@ -128,5 +133,17 @@ class Site
     public function isPublic()
     {
         return (bool)$this->is_public;
+    }
+
+    /**
+     * Get group identifier
+     *
+     * If the 'ucms_group' module is not enabled, this will always be null
+     *
+     * @return int
+     */
+    public function getGroupId()
+    {
+        return $this->group_id;
     }
 }

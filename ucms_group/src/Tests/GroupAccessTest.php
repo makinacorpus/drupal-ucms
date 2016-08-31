@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Group\Tests;
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Site\Tests\SiteTestTrait;
+use MakinaCorpus\Ucms\Group\Error\GroupMoveDisallowedException;
 
 class GroupAccessTest extends AbstractDrupalTest
 {
@@ -120,18 +121,21 @@ class GroupAccessTest extends AbstractDrupalTest
         $this->assertSiteInGroup($group2->getId(), $site2->getId());
         $this->assertSiteNotInGroup($group2->getId(), $site3->getId());
 
-        // Delete some sites, first one is not in group
-        $access->removeSite($group2->getId(), $site1->getId());
-        // Second one is a real group site
-        $access->removeSite($group1->getId(), $site3->getId());
-        // Add another back so we have at least 2 groups for him
-        $access->addSite($group1->getId(), $site2->getId());
+        // Attempt to move a site
+        try {
+            $access->addSite($group1->getId(), $site2->getId());
+            $this->fail();
+        } catch (GroupMoveDisallowedException $e) {}
 
-        $this->assertSiteInGroup($group1->getId(), $site1->getId());
-        $this->assertSiteInGroup($group1->getId(), $site2->getId());
-        $this->assertSiteNotInGroup($group1->getId(), $site3->getId());
-        $this->assertSiteNotInGroup($group2->getId(), $site1->getId());
+        // Ensure nothing has changed
         $this->assertSiteInGroup($group2->getId(), $site2->getId());
-        $this->assertSiteNotInGroup($group2->getId(), $site3->getId());
+        $this->assertSiteNotInGroup($group1->getId(), $site2->getId());
+
+        // Attempt to move a site
+        $access->addSite($group1->getId(), $site2->getId(), true);
+
+        // Ensure everything has changed
+        $this->assertSiteNotInGroup($group2->getId(), $site2->getId());
+        $this->assertSiteInGroup($group1->getId(), $site2->getId());
     }
 }

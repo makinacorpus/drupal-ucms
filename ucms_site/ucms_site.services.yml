@@ -79,7 +79,7 @@ services:
 
   ucms_site.node_access.subscriber:
     public: true
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessEventSubscriber
+    class: MakinaCorpus\Ucms\Site\NodeAccess\NodeAccessEventSubscriber
     arguments: ["@ucms_site.manager", "@sf_dic.node_access.subscriber"]
     tags: [{ name: event_subscriber }]
 
