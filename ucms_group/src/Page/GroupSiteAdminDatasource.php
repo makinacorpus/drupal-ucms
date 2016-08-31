@@ -61,7 +61,7 @@ class GroupSiteAdminDatasource extends AbstractDatasource
     public function getSortFields($query)
     {
         return [
-            'gs.site_id'    => $this->t("identifier"),
+            's.id'          => $this->t("identifier"),
             's.title'       => $this->t("title"),
             's.title_admin' => $this->t("administrative title"),
             's.state'       => $this->t("state"),
@@ -85,17 +85,18 @@ class GroupSiteAdminDatasource extends AbstractDatasource
     {
         $q = $this
             ->database
-            ->select('ucms_group_site', 'gs')
-            ->fields('gs', ['site_id', 'group_id'])
+            ->select('ucms_site', 's')
         ;
 
-        $q->join('ucms_site', 's', "s.id = gs.site_id");
+        // We need aliases
+        $q->addField('s', 'id', 'site_id');
+        $q->addField('s', 'group_id', 'group_id');
 
         if (!empty($query['group'])) {
-            $q->condition('gs.group_id', $query['group']);
+            $q->condition('s.group_id', $query['group']);
         }
         if (!empty($query['site'])) {
-            $q->condition('gs.site_id', $query['site']);
+            $q->condition('s.id', $query['site']);
         }
 
         // Filters
@@ -127,7 +128,7 @@ class GroupSiteAdminDatasource extends AbstractDatasource
         $r = $q
             ->addTag('ucms_group_access')
             ->addTag('ucms_site_access')
-            ->groupBy('gs.site_id')
+            ->groupBy('s.id')
             ->extend('PagerDefault')
             ->limit($pageState->getLimit())
             ->execute()

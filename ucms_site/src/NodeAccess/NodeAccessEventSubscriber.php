@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\EventDispatcher;
+namespace MakinaCorpus\Ucms\Site\NodeAccess;
 
 use Drupal\Core\Session\AccountInterface;
 
@@ -9,6 +9,8 @@ use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessSubscriber as NodeAccessCache;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -302,7 +304,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     /**
      * Check node access event listener
      *
-     * @see \MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeAccessEventSubscriber
+     * @see \MakinaCorpus\Ucms\Contrib\NodeAccess\NodeAccessEventSubscriber
      *   Important note: if you are looking for CREATION ACCESS, please look
      *   into the 'ucms_contrib' module, which drives creation access rights
      *   using the type handler.

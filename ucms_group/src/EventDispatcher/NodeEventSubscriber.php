@@ -6,8 +6,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
+use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupSite;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -59,19 +59,19 @@ class NodeEventSubscriber implements EventSubscriberInterface
     /**
      * Find most relevant group in context
      *
-     * @return GroupSite
+     * @return Group
      *   May be null if nothing found
      */
     private function findMostRelevantGroup()
     {
         if ($this->siteManager->hasDependentContext('group')) {
 
-            /** @var \MakinaCorpus\Ucms\Group\GroupSite $accessList */
-            $accessList = $this->siteManager->getDependentContext('group');
+            /** @var \MakinaCorpus\Ucms\Group\Group $accessList */
+            $group = $this->siteManager->getDependentContext('group');
 
             // @todo Should we filter using the current user groups?
-            if ($accessList) {
-                return reset($accessList);
+            if ($group) {
+                return $group;
             }
         }
     }
@@ -102,12 +102,12 @@ class NodeEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $access = $this->findMostRelevantGroup();
-        if (!$access) {
+        $group = $this->findMostRelevantGroup();
+        if (!$group) {
             return;
         }
 
-        $node->group_id = $access->getGroupId();
+        $node->group_id = $group->getId();
         $node->is_ghost = (int)$this->findMostRelevantGhostValue($node);
     }
 

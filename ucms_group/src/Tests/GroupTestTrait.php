@@ -105,7 +105,7 @@ trait GroupTestTrait
      */
     final protected function assertSiteInGroup($groupId, $siteId)
     {
-        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_site} WHERE site_id = :s AND group_id = :g", [':s' => $siteId, ':g' => $groupId])->fetchField();
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_site} WHERE id = :s AND group_id = :g", [':s' => $siteId, ':g' => $groupId])->fetchField();
 
         $this->assertTrue($exists);
     }
@@ -115,7 +115,7 @@ trait GroupTestTrait
      */
     final protected function assertSiteNotInGroup($groupId, $siteId)
     {
-        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_site} WHERE site_id = :s AND group_id = :g", [':s' => $siteId, ':g' => $groupId])->fetchField();
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_site} WHERE id = :s AND group_id = :g", [':s' => $siteId, ':g' => $groupId])->fetchField();
 
         $this->assertFalse($exists);
     }

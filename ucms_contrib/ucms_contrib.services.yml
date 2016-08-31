@@ -81,7 +81,7 @@ services:
 
   ucms_contrib.node_access.subscriber:
     public: true
-    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeAccessEventSubscriber
+    class: MakinaCorpus\Ucms\Contrib\NodeAccess\NodeAccessEventSubscriber
     arguments: ["@ucms_site.manager", "@ucms_contrib.type_handler"]
     tags: [{ name: event_subscriber }]
 

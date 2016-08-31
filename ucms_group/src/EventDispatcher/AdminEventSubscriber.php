@@ -41,14 +41,12 @@ class AdminEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $groups = $this->groupManager->getAccess()->getSiteGroups($site);
-        if (!$groups) {
+        $group = $this->groupManager->getAccess()->getSiteGroup($site);
+        if (!$group) {
             return;
         }
 
-        $table->addHeader($this->t("Groups"));
-        foreach ($this->groupManager->loadGroupsFrom($groups) as $group) {
-            $table->addRow($this->t("Title"), l($group->getTitle(), 'admin/dashboard/group/' . $group->getId()));
-        }
+        $table->addHeader($this->t("Group"));
+        $table->addRow($this->t("Title"), l($group->getTitle(), 'admin/dashboard/group/' . $group->getId()));
     }
 }

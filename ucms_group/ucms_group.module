@@ -10,6 +10,8 @@
 use MakinaCorpus\Ucms\Group\Controller\DashboardController;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupAccess;
+use MakinaCorpus\Ucms\Group\Controller\AutocompleteController;
+use MakinaCorpus\Ucms\Site\Access;
 
 /**
  * Implements hook_permission().
@@ -22,7 +24,10 @@ function ucms_group_permission() {
     GroupAccess::PERM_MANAGE_ALL => [
       'title' => t("Manage all groups"),
     ],
-    GroupAccess::PERM_VIEW_ALL => [
+    GroupAccess::PERM_MANAGE_ORPHAN => [
+      'title' => t("Manage orphan content"),
+    ],
+      GroupAccess::PERM_VIEW_ALL => [
       'title' => t("View all groups"),
     ],
   ];
@@ -116,6 +121,11 @@ function ucms_group_menu() {
     'access callback'   => 'ucms_group_menu_access_manage_members',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/group/%ucms_group_menu/sites-add-ac'] = [
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [AutocompleteController::class . '::siteAddAutocompleteAction', 3],
+    'type'              => MENU_CALLBACK,
   ];
 
   return $items;
@@ -226,13 +236,16 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
     return;
   }
 
-  /* @var $account AccountInterface */
+  /** @var \Drupal\Core\Session\AccountInterface $account */
   if (!$account = $query->getMetaData('account')) {
     $account = \Drupal::currentUser();
   }
 
+  if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
+    return;
+  }
+
   $siteAlias  = null;
-  $groupAlias = null;
 
   // If no base table is specified explicitly, search for one.
   foreach ($query->getTables() as $alias => $table_info) {
@@ -241,13 +254,10 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
       if ('ucms_site' === $table_info['table']) {
         $siteAlias = $alias;
       }
-      if ('ucms_group_site' === $table_info['table']) {
-        $groupAlias = $alias;
-      }
     }
   }
 
-  if (!$siteAlias && !$groupAlias) {
+  if (!$siteAlias) {
     return;
   }
 
@@ -262,17 +272,8 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
 
   $groupList = [];
   foreach ($accessList as $access) {
-      $groupList[] = $access->getGroupId();
+    $groupList[] = $access->getGroupId();
   }
 
-  if (!$groupAlias) {
-    $query->join(
-      'ucms_group_site',
-      'access_sg',
-      "access_sg.site_id = " . $siteAlias . ".id AND access_sg.group_id IN (:access_sg_group)",
-      [':access_sg_group' => $groupList]
-    );
-  } else {
-    $query->condition($groupAlias . '.group_id', $groupList);
-  }
+  $query->condition($siteAlias . '.group_id', $groupList);
 }

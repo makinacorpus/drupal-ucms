@@ -1,14 +1,12 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\Controller;
+namespace MakinaCorpus\Ucms\Group\Controller;
 
 use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
-use MakinaCorpus\Ucms\User\UserAccess;
+use MakinaCorpus\Ucms\Group\Group;
+use MakinaCorpus\Ucms\Group\GroupManager;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,11 +26,11 @@ class AutocompleteController extends Controller
     /**
      * Get site manager
      *
-     * @return SiteManager
+     * @return GroupManager
      */
-    private function getSiteManager()
+    private function getGroupManager()
     {
-        return $this->get('ucms_site.manager');
+        return $this->get('ucms_group.manager');
     }
 
     /**
@@ -46,44 +44,14 @@ class AutocompleteController extends Controller
     }
 
     /**
-     * User autocomplete callback
+     * Autocomplete action for adding sites into group
      */
-    public function userAutocompleteAction($string)
+    public function siteAddAutocompleteAction(Request $request, Group $group, $string)
     {
-        $manager = $this->getSiteManager();
+        $manager = $this->getGroupManager();
         $account = $this->getCurrentUser();
 
-        if (!$manager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $database = $this->getDatabaseConnection();
-        $q = $database
-            ->select('users', 'u')
-            ->fields('u', ['uid', 'name'])
-            ->condition('u.name', '%' . $database->escapeLike($string) . '%', 'LIKE')
-            ->condition('u.uid', [0, 1], 'NOT IN')
-            ->orderBy('u.name', 'asc')
-            ->range(0, 16)
-            ->addTag('ucms_user_access')
-        ;
-
-        $suggest = [];
-
-        foreach ($q->execute()->fetchAll() as $record) {
-            $key = $record->name . ' [' . $record->uid . ']';
-            $suggest[$key] = check_plain($record->name);
-        }
-
-        return new JsonResponse($suggest);
-    }
-
-    public function siteAutocompleteAction(Request $request, $string)
-    {
-        $manager = $this->getSiteManager();
-        $account = $this->getCurrentUser();
-
-        if (!$manager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
+        if (!$manager->getAccess()->userCanManageSites($account, $group)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -91,6 +59,7 @@ class AutocompleteController extends Controller
         $q = $database
             ->select('ucms_site', 's')
             ->fields('s', ['id', 'title_admin'])
+            ->isNull('s.group_id')
             ->condition(
                 (new \DatabaseCondition('OR'))
                     ->condition('s.title', '%' . $database->escapeLike($string) . '%', 'LIKE')

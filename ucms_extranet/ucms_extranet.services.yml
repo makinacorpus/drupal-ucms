@@ -13,7 +13,7 @@ services:
 
   ucms_extranet.node_access_event_subscriber:
     public: true
-    class: MakinaCorpus\Ucms\Extranet\EventDispatcher\NodeAccessEventSubscriber
+    class: MakinaCorpus\Ucms\Extranet\NodeAccess\NodeAccessEventSubscriber
     arguments: ["@ucms_site.manager"]
     tags: [{ name: event_subscriber }]
 

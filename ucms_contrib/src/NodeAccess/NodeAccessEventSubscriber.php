@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
+namespace MakinaCorpus\Ucms\Contrib\NodeAccess;
 
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 

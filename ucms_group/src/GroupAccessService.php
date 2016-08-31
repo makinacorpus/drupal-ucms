@@ -3,8 +3,8 @@
 namespace MakinaCorpus\Ucms\Group;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Ucms\Group\Error\GroupMoveDisallowedException;
 use MakinaCorpus\Ucms\Site\Site;
 
 class GroupAccessService
@@ -36,68 +36,16 @@ class GroupAccessService
      * Get site groups
      *
      * @param Site $site
-     * @param bool $withAccess
      *
-     * @return GroupSite[]
+     * @return Group
      */
-    public function getSiteGroups(Site $site, $withAccess = false)
+    public function getSiteGroup(Site $site)
     {
-        $ret = [];
+        $groupId = $site->getGroupId();
 
-        $q = $this
-            ->database
-            ->select('ucms_group_site', 'gs')
-            ->fields('gs', ['group_id', 'site_id'])
-            ->condition('gs.site_id', $site->getId())
-            ->groupBy('gs.site_id')
-        ;
-
-        if ($withAccess) {
-            $q
-                ->addTag('ucms_group_access')
-                ->addTag('ucms_site_access')
-            ;
+        if ($groupId) {
+            return $this->storage->findOne($groupId);
         }
-
-        $r = $q->execute();
-        $r->setFetchMode(\PDO::FETCH_CLASS, GroupSite::class);
-
-        /** @var \MakinaCorpus\Ucms\Group\GroupSite $record */
-        foreach ($r as $record) {
-            $record->setSite($site);
-            $ret[] = $record;
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Get node groups
-     *
-     * This implementation can only return group identifiers, since sites
-     * might have more than one group, case in which duplicates are possible
-     * and it is not revelant for node access implementation to know about
-     * that.
-     *
-     * @param NodeInterface $node
-     *
-     * @return int[]
-     */
-    public function getNodeGroups(NodeInterface $node)
-    {
-        if (empty($node->ucms_sites)) {
-            return [];
-        }
-
-        return $this
-            ->database
-            ->select('ucms_group_site', 'gs')
-            ->fields('gs', ['group_id'])
-            ->condition('gs.site_id', $node->ucms_sites)
-            ->groupBy('gs.group_id')
-            ->execute()
-            ->fetchCol()
-        ;
     }
 
     /**
@@ -105,40 +53,47 @@ class GroupAccessService
      *
      * @param int $groupId
      * @param int $siteId
+     * @param boolean $allowChange
+     *   If set to false and site does already belong to a group, throw
+     *   an exception
      *
      * @return bool
      *   True if user was really added, false if site is already in group
      */
-    public function addSite($groupId, $siteId)
+    public function addSite($groupId, $siteId, $allowChange = false)
     {
-        $exists = (bool)$this
+        $ret = false;
+
+        $currentGroupId = (int)$this
             ->database
             ->query(
-                "SELECT 1 FROM {ucms_group_site} WHERE group_id = :group AND site_id = :site",
-                [':group' => $groupId, ':site' => $siteId]
+                "SELECT group_id FROM {ucms_site} WHERE id = :site",
+                [':site' => $siteId]
             )
             ->fetchField()
         ;
 
-        if ($exists) {
-            return false;
+        if (!$allowChange && $currentGroupId && $currentGroupId !== (int)$groupId) {
+            throw new GroupMoveDisallowedException("site group change is not allowed");
         }
 
-        $this
-            ->database
-            ->merge('ucms_group_site')
-            ->key([
-                'group_id'  => $groupId,
-                'site_id'   => $siteId,
-            ])
-            ->execute()
-        ;
+        if ($currentGroupId !== (int)$groupId) {
+            $this
+                ->database
+                ->query(
+                    "UPDATE {ucms_site} SET group_id = :group WHERE id = :site",
+                    [':site' => $siteId, ':group' => $groupId]
+                )
+            ;
+
+            $ret = true;
+        }
 
         $this->storage->touch($groupId);
 
         // @todo dispatch event
 
-        return true;
+        return $ret;
     }
 
     /**
@@ -149,12 +104,25 @@ class GroupAccessService
      */
     public function removeSite($groupId, $siteId)
     {
+        $currentGroupId = (int)$this
+            ->database
+            ->query(
+                "SELECT group_id FROM {ucms_site} WHERE id = :site",
+                [':site' => $siteId]
+            )
+            ->fetchField()
+        ;
+
+        if ($currentGroupId !== (int)$groupId) {
+            throw new GroupMoveDisallowedException(sprintf("%s site is not in group %s", $siteId, $groupId));
+        }
+
         $this
             ->database
-            ->delete('ucms_group_site')
-            ->condition('group_id', $groupId)
-            ->condition('site_id', $siteId)
-            ->execute()
+            ->query(
+                "UPDATE {ucms_site} SET group_id = NULL WHERE id = :site",
+                [':site' => $siteId]
+            )
         ;
 
         // @todo dispatch event
@@ -347,6 +315,10 @@ class GroupAccessService
      */
     public function userCanDelete(AccountInterface $account, Group $group)
     {
+        if ($group->isMeta()) {
+            return false;
+        }
+
         return $this->userCanManageAll($account);
     }
 

@@ -75,8 +75,8 @@ class GroupAdminDatasource extends AbstractDatasource
             $q->condition('gu.user_id', $query['uid']);
         }
         if (!empty($query['site'])) {
-            $q->join('ucms_group_site', 'gs', "gs.group_id = g.id");
-            $q->condition('gs.site_id', $query['site']);
+            $q->join('ucms_site', 'gs', "gs.group_id = g.id");
+            $q->condition('gs.id', $query['site']);
         }
 
         if ($pageState->hasSortField()) {
