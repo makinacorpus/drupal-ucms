@@ -246,6 +246,7 @@ class SiteStorage
             'type',
             'home_nid',
             'attributes',
+            'group_id',
         ];
 
         if (null === $fields) {

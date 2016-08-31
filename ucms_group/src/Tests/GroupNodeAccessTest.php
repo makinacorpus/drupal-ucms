@@ -3,13 +3,20 @@
 namespace MakinaCorpus\Ucms\Group\Tests;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
-use MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextSubscriber;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\Site\Tests\NodeAccessTestTrait;
 use MakinaCorpus\Ucms\Site\Access;
 
+/**
+ * Please note that there is actually not much to test, since that the global
+ * NodeAccessTest from 'ucms_site' will do it for us: if it detects that the
+ * 'ucms_group' module is enable, it will implictely use the meta group to
+ * attach everything (sites, nodes, users) onto and test within the group
+ * transparently: this will validate pretty much everything. Only stuff we do
+ * have to test here is the fact the users can NOT see other groups' content.
+ */
 class GroupNodeAccessTest extends AbstractDrupalTest
 {
     use NodeAccessTestTrait;
@@ -48,6 +55,17 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         return $this;
     }
 
+    protected function tearDown()
+    {
+        foreach ($this->groups as $group) {
+            $this->getGroupManager()->getStorage()->delete($group);
+        }
+
+        $this->eraseAll();
+
+        parent::tearDown();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -75,8 +93,8 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         $manager->getStorage()->save($groupA);
         $manager->getStorage()->save($groupB);
         // Set sites in groups
-        $manager->getAccess()->addSite($groupA->getId(), $this->sites['on']->getId());
-        $manager->getAccess()->addSite($groupB->getId(), $this->sites['off']->getId());
+        $manager->getAccess()->addSite($groupA->getId(), $this->sites['on']->getId(), true);
+        $manager->getAccess()->addSite($groupB->getId(), $this->sites['off']->getId(), true);
 
         // Create false set of nodes, a lot of them.
         $this->nodes['nogroup_site_on_published']   = $this->createDrupalNode(1, 'no_on', [], false, false, false);

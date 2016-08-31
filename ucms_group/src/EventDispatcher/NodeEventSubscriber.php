@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
@@ -17,8 +17,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class NodeEventSubscriber implements EventSubscriberInterface
 {
-    use StringTranslationTrait;
-
     /**
      * {@inheritdoc}
      */
@@ -34,60 +32,62 @@ class NodeEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @var GroupManager
-     */
     private $groupManager;
-
-    /**
-     * @var SiteManager
-     */
     private $siteManager;
+    private $currentUser;
 
     /**
      * Default constructor
      *
      * @param GroupManager $groupManager
      * @param SiteManager $siteManager
+     * @param AccountInterface $currentUser
      */
-    public function __construct(GroupManager $groupManager, SiteManager $siteManager)
+    public function __construct(GroupManager $groupManager, SiteManager $siteManager, AccountInterface $currentUser)
     {
         $this->groupManager = $groupManager;
         $this->siteManager = $siteManager;
+        $this->currentUser = $currentUser;
     }
 
     /**
      * Find most relevant group in context
      *
-     * @return Group
+     * @return int
      *   May be null if nothing found
      */
-    private function findMostRelevantGroup()
+    private function findMostRelevantGroupId()
     {
         if ($this->siteManager->hasDependentContext('group')) {
 
-            /** @var \MakinaCorpus\Ucms\Group\Group $accessList */
+            /** @var \MakinaCorpus\Ucms\Group\Group $group */
             $group = $this->siteManager->getDependentContext('group');
 
-            // @todo Should we filter using the current user groups?
             if ($group) {
-                return $group;
+                return (int)$group->getId();
             }
+        }
+
+        // There is no context, this means we need to check with user current
+        // groups instead; and set the first one we find onto the node
+        $accessList = $this->groupManager->getAccess()->getUserGroups($this->currentUser);
+        if ($accessList) {
+            return (int)reset($accessList)->getGroupId();
         }
     }
 
     /**
      * Find most relevant ghost value for node
      *
-     * @return bool
+     * @return int
      */
     private function findMostRelevantGhostValue(NodeInterface $node)
     {
         if ($node->group_id) {
-            return $this->groupManager->getStorage()->findOne($node->group_id)->isGhost();
+            return (int)$this->groupManager->getStorage()->findOne($node->group_id)->isGhost();
         }
 
-        return true;
+        return 1;
     }
 
     /**
@@ -98,16 +98,10 @@ class NodeEventSubscriber implements EventSubscriberInterface
         $node = $event->getNode();
 
         if ($node->group_id) {
-            // Someone took care of this for us
-            return;
+            return; // Someone took care of this for us
         }
 
-        $group = $this->findMostRelevantGroup();
-        if (!$group) {
-            return;
-        }
-
-        $node->group_id = $group->getId();
+        $node->group_id = $this->findMostRelevantGroupId();
         $node->is_ghost = (int)$this->findMostRelevantGhostValue($node);
     }
 
@@ -129,14 +123,13 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // run, but hopefuly since it is just setting defaults, it won't change
         // the normal behavior.
         if (!$node->group_id) {
-            $access = $this->findMostRelevantGroup();
+            $groupId = $this->findMostRelevantGroupId();
 
-            if ($access) {
-                $node->is_ghost = (int)$this->findMostRelevantGhostValue($node);
-            } else {
-                // Sorry, but I do must reset that for data consistency
-                $node->is_ghost = 0;
+            if ($groupId) {
+                $node->group_id = $groupId;
             }
+
+            $node->is_ghost = $this->findMostRelevantGhostValue($node);
         }
     }
 }

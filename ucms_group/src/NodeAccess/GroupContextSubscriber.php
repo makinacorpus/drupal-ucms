@@ -85,6 +85,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
             NodeAccess::REALM_GROUP,
             NodeAccess::REALM_GROUP_READONLY,
             NodeAccess::REALM_OTHER,
+            NodeAccess::REALM_READONLY,
         ];
     }
 
@@ -98,12 +99,10 @@ class GroupContextSubscriber implements EventSubscriberInterface
         // We will re-use the realms from 'ucms_site' but changing the default
         // gid to group identifiers instead, and make the whole isolation thing
         // completly transparent.
-        if ($node->is_ghost) {
-            if ($node->group_id) {
-                $event->replaceGroupId($this->getAlteredRealms(), NodeAccess::GID_DEFAULT, $node->group_id);
-            } else {
-                $event->removeWholeRealm($this->getAlteredRealms());
-            }
+        if ($node->group_id) {
+            $event->replaceGroupId($this->getAlteredRealms(), NodeAccess::GID_DEFAULT, $node->group_id);
+        } else {
+            $event->removeWholeRealm($this->getAlteredRealms());
         }
 
         if (empty($node->group_id)) {
@@ -140,25 +139,32 @@ class GroupContextSubscriber implements EventSubscriberInterface
 
             /** @var \MakinaCorpus\Ucms\Group\GroupMember $access */
             $groupId = $access->getGroupId();
+            // @todo view all permission is global
             $viewAll = $account->hasPermission(Access::PERM_CONTENT_VIEW_ALL);
 
             if ($viewAll) {
                 $event->add(NodeAccess::REALM_READONLY, $groupId);
             }
 
-            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) { // can edit global
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
                 $event->add(NodeAccess::REALM_GLOBAL, $groupId);
-            } else if (!$viewAll && $account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) { // van view global
-                $event->add(NodeAccess::REALM_GLOBAL_READONLY, $groupId);
             }
-            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) { // can edit group
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
                 $event->add(NodeAccess::REALM_GROUP, $groupId);
-            } else if (!$viewAll && $account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) { // can view group
-                $event->add(NodeAccess::REALM_GROUP_READONLY, $groupId);
             }
 
-            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
-                $event->add(NodeAccess::REALM_OTHER, $groupId);
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
+                $event->add(NodeAccess::REALM_READONLY, $groupId);
+            } else {
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
+                    $event->add(NodeAccess::REALM_GLOBAL_READONLY, $groupId);
+                }
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
+                    $event->add(NodeAccess::REALM_GROUP_READONLY, $groupId);
+                }
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
+                    $event->add(NodeAccess::REALM_OTHER, $groupId);
+                }
             }
         }
     }
