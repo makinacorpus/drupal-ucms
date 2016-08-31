@@ -40,14 +40,14 @@ class GroupActionProvider implements ActionProviderInterface
         $canView = $this->groupManager->getAccess()->userCanView($this->currentUser, $item);
 
         if ($canView) {
-            $ret[] = new Action($this->t("All members"), 'admin/dashboard/group/' . $item->getId() . '/members', [], 'user', 100, true, false, false, 'user');
+            $ret[] = new Action($this->t("All members"), 'admin/dashboard/group/' . $item->getId() . '/members', [], 'user', 100, false, false, false, 'user');
         }
         if ($this->groupManager->getAccess()->userCanManageMembers($this->currentUser, $item)) {
             $ret[] = new Action($this->t("Add existing member"), 'admin/dashboard/group/' . $item->getId() . '/members/add', 'dialog', 'user', 110, false, true, false, 'user');
         }
 
         if ($canView) {
-            $ret[] = new Action($this->t("All sites"), 'admin/dashboard/group/' . $item->getId() . '/sites', [], 'cloud', 200, true, false, false, 'site');
+            $ret[] = new Action($this->t("All sites"), 'admin/dashboard/group/' . $item->getId() . '/sites', [], 'cloud', 200, false, false, false, 'site');
         }
         if ($this->groupManager->getAccess()->userCanManageSites($this->currentUser, $item)) {
             $ret[] = new Action($this->t("Add site"), 'admin/dashboard/group/' . $item->getId() . '/sites/add', 'dialog', 'cloud', 210, false, true, false, 'site');
