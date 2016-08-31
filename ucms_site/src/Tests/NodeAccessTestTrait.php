@@ -36,6 +36,11 @@ trait NodeAccessTestTrait
     protected $contextualAccount;
 
     /**
+     * @var int
+     */
+    private $defaultGroupId;
+
+    /**
      * Get site manager
      *
      * @return SiteManager
@@ -107,6 +112,16 @@ trait NodeAccessTestTrait
             }
         }
 
+        // In case the 'ucms_group' module is enabled, tests will fail due
+        // to restrictive group node access rights, add the user to a default
+        // group
+        $groupId = $this->getDefaultGroupId();
+        if ($groupId) {
+            /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
+            $groupManager = $this->getDrupalContainer()->get('ucms_group.manager');
+            $groupManager->getAccess()->addMember($groupId, $account->id());
+        }
+
         return $account;
     }
 
@@ -136,7 +151,21 @@ trait NodeAccessTestTrait
                 $node->{$key} = $value;
             }
         }
+        $node->group_id = $this->getDefaultGroupId();
         return $node;
+    }
+
+    private function getDefaultGroupId()
+    {
+        if (module_exists('ucms_group')) {
+            // In case the 'ucms_group' module is enabled, tests will fail due
+            // to restrictive group node access rights, set them right
+            if (!$this->defaultGroupId) {
+                $this->defaultGroupId = $this->getDrupalContainer()->get('database')->query("SELECT id FROM {ucms_group} WHERE is_meta = 1 ORDER BY id ASC")->fetchField();
+            }
+        }
+
+        return $this->defaultGroupId;
     }
 
     protected function createDrupalSite($state)
@@ -147,7 +176,10 @@ trait NodeAccessTestTrait
         $site->title = $stupidHash;
         $site->title_admin = $stupidHash;
         $site->http_host = $stupidHash . '.example.com';
+        $site->group_id = $this->getDefaultGroupId();
+
         $this->getSiteManager()->getStorage()->save($site);
+
         return $site;
     }
 
@@ -174,7 +206,6 @@ trait NodeAccessTestTrait
         $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap);
 
         $this->getSiteManager()->getAccess()->resetCache();
-        //$this->get('sf_dic.node_access.subscriber')->resetCache();
 
         return $this;
     }

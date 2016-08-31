@@ -31,12 +31,17 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     /**
      * Grants for local webmasters
      */
-    const REALM_WEBMASTER = 'ucms_site';
+    const REALM_SITE_WEBMASTER = 'ucms_site';
+
+    /**
+     * Grants for site members that cannot edit content
+     */
+    const REALM_SITE_READONLY = 'ucms_site_ro';
 
     /**
      * Grants for local contributors
      */
-    const REALM_READONLY = 'ucms_site_ro';
+    const REALM_READONLY = 'ucms_site_all_ro';
 
     /**
      * Grants for other sites
@@ -208,13 +213,13 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 //   - user is a webmaster on a readonly site
                 if ($isNotLocal) {
                     if ($isPublished) {
-                        $event->add(self::REALM_READONLY, $siteId);
-                        $event->add(self::REALM_WEBMASTER, $siteId);
+                        $event->add(self::REALM_SITE_READONLY, $siteId);
+                        $event->add(self::REALM_SITE_WEBMASTER, $siteId);
                     }
                 } else  {
-                    $event->add(self::REALM_READONLY, $siteId);
+                    $event->add(self::REALM_SITE_READONLY, $siteId);
                     if ($siteId === $node->site_id) { // Avoid data volume exploding
-                        $event->add(self::REALM_WEBMASTER, $siteId, true, true);
+                        $event->add(self::REALM_SITE_WEBMASTER, $siteId, true, true);
                     }
                 }
             }
@@ -260,17 +265,17 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
         foreach ($grants as $grant) {
             $siteId = $grant->getSiteId();
-            if (Access::ROLE_WEBMASTER == $grant->getRole()) {
+            if (Access::ROLE_WEBMASTER === $grant->getRole()) {
                 switch ($grant->getSiteState()) {
 
                     case SiteState::ON:
                     case SiteState::OFF:
                     case SiteState::INIT:
-                        $ret[self::REALM_WEBMASTER][] = $siteId;
+                        $ret[self::REALM_SITE_WEBMASTER][] = $siteId;
                         break;
 
                     case SiteState::ARCHIVE:
-                        $ret[self::REALM_READONLY][] = $siteId;
+                        $ret[self::REALM_SITE_READONLY][] = $siteId;
                         break;
                 }
             } else {
@@ -278,7 +283,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
                     case SiteState::ON:
                     case SiteState::OFF:
-                        $ret[self::REALM_READONLY][] = $siteId;
+                        $ret[self::REALM_SITE_READONLY][] = $siteId;
                         break;
                 }
             }

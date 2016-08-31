@@ -33,7 +33,7 @@ services:
   ucms_group.node_event_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Group\EventDispatcher\NodeEventSubscriber
-    arguments: ["@ucms_group.manager", "@ucms_site.manager"]
+    arguments: ["@ucms_group.manager", "@ucms_site.manager", "@current_user"]
     tags: [{ name: event_subscriber }]
   ucms_group.context_event_subscriber:
     public: true

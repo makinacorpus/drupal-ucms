@@ -74,6 +74,11 @@ class SiteManager
 
         // Dispatch the context init event
         if ($doDispatch) {
+
+            // On context change, we need to remove the older contextes else we
+            // would experience strict fails on dependent context set
+            $this->dependentContext = [];
+
             $this->dispatcher->dispatch(SiteEvents::EVENT_INIT, new SiteEvent($this->context));
 
             if ($disablePostDispatch) {
