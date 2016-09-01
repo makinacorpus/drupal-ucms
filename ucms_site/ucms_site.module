@@ -334,6 +334,7 @@ function ucms_site_admin_path_is_allowed($path) {
         switch ($action) {
           case 'clone':
           case 'edit':
+          case 'gallery':
           case 'seo-aliases':
           case 'seo-edit':
             return true;
