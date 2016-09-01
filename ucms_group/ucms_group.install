@@ -1,7 +1,5 @@
 <?php
 
-use MakinaCorpus\Ucms\Group\Group;
-
 /**
  * Implements hook_schema().
  */
@@ -198,9 +196,9 @@ function ucms_group_uninstall_schema_fix() {
 }
 
 /**
- * Implements hook_module_installed().
+ * Implements hook_modules_installed().
  */
-function ucms_group_module_installed($modules) {
+function ucms_group_modules_installed($modules) {
   ucms_group_install_schema_fix();
 }
 
@@ -208,27 +206,26 @@ function ucms_group_module_installed($modules) {
  * Creates the default plateform-wide group.
  */
 function ucms_group_install_default_group() {
+  if (!db_query('SELECT 1 FROM {ucms_group} WHERE is_meta = 1')->fetchField()) {
+    $id = db_insert('ucms_group')->fields([
+      'title'      => "Default group",
+      // This group cannot be deleted
+      'is_meta'    => 1,
+      // Per default, already existing content will no be visible
+      'is_ghost'   => 1,
+      'ts_created' => (new DateTime())->format('Y-m-d H:i:s'),
+      'ts_changed' => (new DateTime())->format('Y-m-d H:i:s'),
+    ])->execute();
 
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
-  $groupManager = \Drupal::service('ucms_group.manager');
-
-  $group = new Group();
-  $group->setTitle(t("Default group"));
-  // This group cannot be deleted
-  $group->setIsMeta(true);
-  // Per default, already existing content will no be visible
-  $group->setIsGhost(true);
-
-  $groupManager->getStorage()->save($group);
-
-  // Set all sites with no groups into this group
-  db_query("UPDATE {ucms_site} SET group_id = ? WHERE group_id IS NULL", [$group->getId()]);
-  // Give all nodes without any group to this group
-  db_query("UPDATE {node} SET group_id = ? WHERE group_id IS NULL", [$group->getId()]);
+    // Set all sites with no groups into this group
+    db_query("UPDATE {ucms_site} SET group_id = ? WHERE group_id IS NULL", [$id]);
+    // Give all nodes without any group to this group
+    db_query("UPDATE {node} SET group_id = ? WHERE group_id IS NULL", [$id]);
+  }
 }
 
 /**
- * Implements hook_install().
+ * Implements hook_enable().
  */
 function ucms_group_install() {
   ucms_group_install_schema_fix();
@@ -236,7 +233,7 @@ function ucms_group_install() {
 }
 
 /**
- * Implements hook_install().
+ * Implements hook_uninstall().
  */
 function ucms_group_uninstall() {
   ucms_group_uninstall_schema_fix();
