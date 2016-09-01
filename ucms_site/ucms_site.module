@@ -325,14 +325,17 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('admin/cart' === substr($path, 0, 10)) {
       return true;
     }
-    if (arg(0) === 'node') {
+
+    $arg = explode('/', $path);
+
+    if ($arg[0] === 'node') {
       // Allow our own node actions.
-      if (menu_get_object() && ($action = arg(2))) {
+      if (is_numeric($arg[1]) && ($action = $arg[2])) {
         switch ($action) {
-          case 'edit':
           case 'clone':
-          case 'seo-edit':
+          case 'edit':
           case 'seo-aliases':
+          case 'seo-edit':
             return true;
         }
       }
