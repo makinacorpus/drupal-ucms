@@ -83,7 +83,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
      */
     private function findMostRelevantGhostValue(NodeInterface $node)
     {
-        if ($node->group_id) {
+        if (!empty($node->group_id)) {
             return (int)$this->groupManager->getStorage()->findOne($node->group_id)->isGhost();
         }
 
@@ -97,7 +97,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
-        if ($node->group_id) {
+        if (!empty($node->group_id)) {
             return; // Someone took care of this for us
         }
 
