@@ -99,7 +99,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
         // We will re-use the realms from 'ucms_site' but changing the default
         // gid to group identifiers instead, and make the whole isolation thing
         // completly transparent.
-        if ($node->group_id) {
+        if (!empty($node->group_id)) {
             $event->replaceGroupId($this->getAlteredRealms(), NodeAccess::GID_DEFAULT, $node->group_id);
         } else {
             $event->removeWholeRealm($this->getAlteredRealms());
