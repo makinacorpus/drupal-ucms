@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Form to assign a member to a group
  */
-class GroupSiteAdd extends FormBase
+class SiteGroupAttach extends FormBase
 {
     /**
      * {inheritdoc}
@@ -45,15 +46,15 @@ class GroupSiteAdd extends FormBase
      */
     public function getFormId()
     {
-        return 'ucms_group_site_add_existing';
+        return 'ucms_group_site_attach';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, Group $group = null)
+    public function buildForm(array $form, FormStateInterface $form_state, Site $site = null)
     {
-        if (null === $group) {
+        if (null === $site) {
             return $form;
         }
 
@@ -61,21 +62,21 @@ class GroupSiteAdd extends FormBase
 
         $form['name'] = [
             '#type'               => 'textfield',
-            '#title'              => $this->t("Title, administrative title, hostname..."),
+            '#title'              => $this->t("Group title..."),
             '#description'        => $this->t("Please make your choice in the suggestions list."),
-            '#autocomplete_path'  => 'admin/dashboard/group/' . $group->getId() . '/sites-add-ac',
+            '#autocomplete_path'  => 'admin/dashboard/site/' . $site->getId() . '/group-attach/ac',
             '#required'           => true,
         ];
 
-        $form['group'] = [
+        $form['site'] = [
             '#type'     => 'value',
-            '#value'    => $group->getId(),
+            '#value'    => $site->getId(),
         ];
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'     => 'submit',
-            '#value'    => $this->t("Add"),
+            '#value'    => $this->t("Attach"),
         ];
 
         return $form;
@@ -90,13 +91,13 @@ class GroupSiteAdd extends FormBase
 
         $matches = [];
         if (preg_match('/\[(\d+)\]$/', $string, $matches) !== 1 || $matches[1] < 2) {
-            $form_state->setErrorByName('name', $this->t("The site can't be identified."));
+            $form_state->setErrorByName('name', $this->t("The group can't be identified."));
         } else {
-            $site = $this->siteManager->getStorage()->findOne($matches[1]);
-            if (null === $site) {
-                $form_state->setErrorByName('name', $this->t("The site doesn't exist."));
+            $group = $this->groupManager->getStorage()->findOne($matches[1]);
+            if (null === $group) {
+                $form_state->setErrorByName('name', $this->t("The group doesn't exist."));
             } else {
-                $form_state->setTemporaryValue('site', $site);
+                $form_state->setTemporaryValue('group', $group);
             }
         }
     }
@@ -106,12 +107,12 @@ class GroupSiteAdd extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        /** @var \MakinaCorpus\Ucms\Site\Site $site */
-        $site     = $form_state->getTemporaryValue('site');
-        $groupÎd  = $form_state->getValue('group');
-        $group    = $this->groupManager->getStorage()->findOne($groupÎd);
+        /** @var \MakinaCorpus\Ucms\Group\Group $group */
+        $group  = $form_state->getTemporaryValue('group');
+        $siteId = $form_state->getValue('site');
+        $site   = $this->siteManager->getStorage()->findOne($siteId);
 
-        if ($this->groupManager->getAccess()->addSite($groupÎd, $site->getId())) {
+        if ($this->groupManager->getAccess()->addSite($group->getId(), $siteId, true)) {
             drupal_set_message($this->t("%name has been added to group %group.", [
                 '%name' => $site->getAdminTitle(),
                 '%group'  => $group->getTitle(),

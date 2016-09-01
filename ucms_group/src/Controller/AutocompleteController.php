@@ -10,6 +10,7 @@ use MakinaCorpus\Ucms\Group\GroupManager;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use MakinaCorpus\Ucms\Site\Site;
 
 class AutocompleteController extends Controller
 {
@@ -77,6 +78,42 @@ class AutocompleteController extends Controller
         foreach ($q->execute()->fetchAll() as $record) {
             $key = $record->title_admin . ' [' . $record->id . ']';
             $suggest[$key] = check_plain($record->title_admin);
+        }
+
+        return new JsonResponse($suggest);
+    }
+
+    /**
+     * Autocomplete action for attaching group to site
+     */
+    public function siteAttachAutocompleteAction(Request $request, Site $site, $string)
+    {
+        $manager = $this->getGroupManager();
+        $account = $this->getCurrentUser();
+
+        if (!$manager->getAccess()->userCanManageAll($account)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $database = $this->getDatabaseConnection();
+        $q = $database
+            ->select('ucms_group', 'g')
+            ->fields('g', ['id', 'title'])
+            ->condition(
+                (new \DatabaseCondition('OR'))
+                    ->condition('g.title', '%' . $database->escapeLike($string) . '%', 'LIKE')
+            )
+            ->orderBy('g.title', 'asc')
+            ->groupBy('g.id')
+            ->range(0, 16)
+            ->addTag('ucms_group_access')
+        ;
+
+        $suggest = [];
+
+        foreach ($q->execute()->fetchAll() as $record) {
+            $key = $record->title_admin . ' [' . $record->id . ']';
+            $suggest[$key] = check_plain($record->title);
         }
 
         return new JsonResponse($suggest);

@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Group\Controller;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Drupal\Sf\Controller;
@@ -10,6 +11,7 @@ use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Form\GroupMemberAddExisting;
 use MakinaCorpus\Ucms\Group\Form\GroupSiteAdd;
+use MakinaCorpus\Ucms\Group\Form\SiteGroupAttach;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Site;
@@ -54,11 +56,19 @@ class DashboardController extends Controller
     }
 
     /**
+     * @return AccountInterface
+     */
+    private function getCurrentUser()
+    {
+        return $this->get('current_user');
+    }
+
+    /**
      * @return int
      */
     private function getCurrentUserId()
     {
-        return $this->get('current_user')->id();
+        return $this->getCurrentUser()->id();
     }
 
     /**
@@ -157,6 +167,20 @@ class DashboardController extends Controller
     public function siteAddAction(Group $group)
     {
         return \Drupal::formBuilder()->getForm(GroupSiteAdd::class, $group);
+    }
+
+    /**
+     * Add site action
+     */
+    public function siteAttachAction(Site $site)
+    {
+        $account = $this->getCurrentUser();
+
+        if (!$this->getGroupManager()->getAccess()->userCanManageAll($account)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return \Drupal::formBuilder()->getForm(SiteGroupAttach::class, $site);
     }
 
     /**
