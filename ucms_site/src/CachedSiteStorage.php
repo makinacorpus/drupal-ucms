@@ -60,8 +60,8 @@ class CachedSiteStorage extends SiteStorage
      */
     public function findOne($id)
     {
-        if (isset($this->hostCache[$id])) {
-            return $this->hostCache[$id];
+        if (isset($this->idCache[$id])) {
+            return $this->idCache[$id];
         }
 
         return $this->add(parent::findOne($id));
