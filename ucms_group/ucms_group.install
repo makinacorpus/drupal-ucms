@@ -230,7 +230,7 @@ function ucms_group_install_default_group() {
 function ucms_group_install() {
   ucms_group_install_schema_fix();
   ucms_group_install_default_group();
-  variable_set('node_access_rebuild_needed', 1);
+  variable_set('node_access_needs_rebuild', 1);
 }
 
 /**
@@ -273,5 +273,5 @@ function ucms_group_update_7002() {
  * Mark node access for rebuild.
  */
 function ucms_group_update_7003() {
-  variable_set('node_access_rebuild_needed', 1);
+  variable_set('node_access_needs_rebuild', 1);
 }
