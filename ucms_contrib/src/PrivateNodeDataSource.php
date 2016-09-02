@@ -2,8 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
@@ -29,6 +31,11 @@ class PrivateNodeDataSource extends AbstractDatasource
     private $manager;
 
     /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
      * @var AccountInterface
      */
     private $account;
@@ -41,10 +48,11 @@ class PrivateNodeDataSource extends AbstractDatasource
      * @param AccountInterface $account
      * @param string $index
      */
-    public function __construct(SearchFactory $searchFactory, SiteManager $manager, AccountInterface $account, $index = 'private')
+    public function __construct(SearchFactory $searchFactory, SiteManager $manager, EntityManager $entityManager, AccountInterface $account, $index = 'private')
     {
         $this->search = $searchFactory->create($index);
         $this->manager = $manager;
+        $this->entityManager = $entityManager;
         $this->account = $account;
     }
 
@@ -173,6 +181,31 @@ class PrivateNodeDataSource extends AbstractDatasource
     }
 
     /**
+     * Preload pretty much everything to make admin listing faster
+     *
+     * @param NodeInterface[]
+     */
+    private function preloadDependencies(array $nodeList)
+    {
+        $userIdList = [];
+        $siteIdList = [];
+
+        foreach ($nodeList as $node) {
+            $userIdList[$node->uid] = $node->uid;
+            foreach ($node->ucms_sites as $siteId) {
+                $siteIdList[$siteId] = $siteId;
+            }
+        }
+
+        if ($userIdList) {
+            $this->entityManager->getStorage('user')->loadMultiple($userIdList);
+        }
+        if ($siteIdList) {
+            $this->manager->getStorage()->loadAll($siteIdList);
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getItems($query, PageState $pageState)
@@ -191,7 +224,10 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         $pageState->setTotalItemCount($response->getTotal());
 
-        return node_load_multiple($response->getAllNodeIdentifiers());
+        $nodeList = $this->entityManager->getStorage('node')->loadMultiple($response->getAllNodeIdentifiers());
+        $this->preloadDependencies($nodeList);
+
+        return $nodeList;
     }
 
     /**
