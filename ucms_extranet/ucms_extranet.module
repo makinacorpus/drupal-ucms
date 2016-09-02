@@ -135,6 +135,7 @@ function ucms_extranet_init() {
       'set-password/*',
       'sso/login',
       'user/login',
+      'user/password',
       'user/register',
       'user/register/confirm',
     ]);
@@ -157,6 +158,16 @@ function ucms_extranet_form_user_login_alter(&$form, &$form_state) {
       '#theme' => 'link',
       '#text' => t("Register"),
       '#path' => 'user/register',
+      '#options' => [
+        'html' => false,
+        'attributes' => [],
+      ],
+    ];
+
+    $form['actions']['password'] = [
+      '#theme' => 'link',
+      '#text' => t("Request new password"),
+      '#path' => 'user/password',
       '#options' => [
         'html' => false,
         'attributes' => [],

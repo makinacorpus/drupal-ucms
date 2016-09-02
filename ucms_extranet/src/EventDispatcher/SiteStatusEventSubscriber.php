@@ -51,6 +51,7 @@ class SiteStatusEventSubscriber implements EventSubscriberInterface
             'set-password/*',
             'sso/login',
             'user/login',
+            'user/password',
             'user/register',
             'user/register/confirm',
         ]);
