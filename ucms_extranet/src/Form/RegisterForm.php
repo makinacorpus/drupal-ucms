@@ -122,24 +122,45 @@ class RegisterForm extends FormBase
      */
     public function validateForm(array &$form, FormStateInterface $formState)
     {
+        // Validate the name and check if it is already taken by an existing user.
+        $name = $formState->getValue('name');
+        $name = trim($name);
+        $formState->setValue('name', $name);
+
+        if (!$name) {
+            $formState->setErrorByName('name', $this->t('You must enter your name.'));
+        }
+        elseif (drupal_strlen($name) > USERNAME_MAX_LENGTH) {
+            $formState->setErrorByName('name', $this->t('Your name is too long: it must be %max characters at the most.', ['%max' => USERNAME_MAX_LENGTH]));
+        }
+        elseif ((bool) db_select('users')
+            ->fields('users', ['uid'])
+            ->condition('name', db_like($name), 'LIKE')
+            ->range(0, 1)
+            ->execute()
+            ->fetchField()
+        ) {
+            $formState->setErrorByName('name', $this->t('The name %name is already taken.', ['%name' => $name]));
+        }
+
         // Trim whitespace from mail, to prevent confusing 'e-mail not valid'
         // warnings often caused by cutting and pasting.
         $mail = $formState->getValue('mail');
         $mail = trim($mail);
         $formState->setValue('mail', $mail);
 
-        // Validate the e-mail address, and check if it is taken by an existing user.
+        // Validate the e-mail address and check if it is already taken by an existing user.
         if ($error = user_validate_mail($mail)) {
             $formState->setErrorByName('mail', $error);
         }
         elseif ((bool) db_select('users')
-            ->fields('users', array('uid'))
+            ->fields('users', ['uid'])
             ->condition('mail', db_like($mail), 'LIKE')
             ->range(0, 1)
             ->execute()
             ->fetchField()
         ) {
-            form_set_error('mail', $this->t('The e-mail address %email is already taken.', array('%email' => $mail)));
+            $formState->setErrorByName('mail', $this->t('The e-mail address %email is already taken.', ['%email' => $mail]));
         }
     }
 
