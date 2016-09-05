@@ -853,6 +853,18 @@ function ucms_site_init() {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ucms_site_form_user_login_alter(&$form, &$form_state) {
+  // Username is still a unique value but it's preferable to invite users
+  // to connect with its e-mail.
+  $form['name']['#title_force'] = true;
+  $form['name']['#title'] = t("Your e-mail address");
+  $form['name']['#description'] = t('Enter your @s e-mail address.', array('@s' => variable_get('site_name', 'Drupal')));
+  $form['password']['#description'] = t('Enter the password that accompanies your e-mail address.');
+}
+
+/**
  * Implements hook_custom_theme().
  */
 function ucms_site_custom_theme() {
