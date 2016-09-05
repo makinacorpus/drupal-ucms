@@ -38,8 +38,11 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     protected function getTitles($idList)
     {
         $titles = [];
+        
         foreach (node_load_multiple($idList) as $node) {
-            $titles[$node->nid] = $node->title;
+            if (!empty($node->title)) {
+                $titles[$node->nid] = $node->title;
+            }
         }
 
         return $titles;
@@ -69,7 +72,8 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     /**
      * {@inheritDoc}
      */
-    protected function getVariations(NotificationInterface $notification,array &$args = []) {
+    protected function getVariations(NotificationInterface $notification,array &$args = [])
+    {
         $idList = $notification->getResourceIdList();
         // This is already cached by $this->getTitles()
         foreach (node_load_multiple($idList) as $node) {
