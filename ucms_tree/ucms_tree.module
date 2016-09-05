@@ -134,7 +134,7 @@ function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
  */
 function ucms_tree_node_insert($node) {
   // We handle only insert
-  if (isset($node->menu)) {
+  if (isset($node->menu) && isset($node->menu['menu_name'])) {
     $link = &$node->menu;
     $link['link_title'] = $node->title;
     $link['link_path'] = "node/$node->nid";
