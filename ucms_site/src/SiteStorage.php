@@ -246,8 +246,12 @@ class SiteStorage
             'type',
             'home_nid',
             'attributes',
-            'group_id',
         ];
+
+        // @todo this should be hardcoded in here
+        if (module_exists('ucms_group')) {
+            $eligible[] = 'group_id';
+        }
 
         if (null === $fields) {
             $fields = $eligible;
