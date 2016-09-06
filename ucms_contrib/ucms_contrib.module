@@ -3,9 +3,6 @@
  * @file
  * UCMS  - Contribution.
  *
- * This module provides a full UI based upon drag'n'drop for editing content
- * and manipulating layouts.
- *
  * @todo
  *   - Keep cart items order same as insert
  *   - Add other possible cart view modes (grid, list, ...)

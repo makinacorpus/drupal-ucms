@@ -3,7 +3,6 @@ description = "Uses SolR for content search - provide Drag'n'Drop"
 core = 7.x
 package = UCMS
 php = 5.5
-dependencies[] = ucms_layout
 dependencies[] = ucms_search
 dependencies[] = ucms_site
 dependencies[] = usync

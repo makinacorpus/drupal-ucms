@@ -188,6 +188,16 @@ class ContextPane
     }
 
     /**
+     * Does this tab is set
+     *
+     * @param string $name
+     */
+    public function hasTab($name)
+    {
+        return isset($this->tabs[$name]);
+    }
+
+    /**
      * Get the default tab key, or first tab key if none set.
      *
      * @return null|string
