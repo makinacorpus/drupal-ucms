@@ -53,12 +53,13 @@ trait PageControllerTrait
      * @param string $name
      *   Name will be the template suggestion, and the event name, where the
      *   event name will be admin:table:NAME
+     * @param mixed $attributes
      *
      * @return AdminTable
      */
-    protected function createAdminTable($name)
+    protected function createAdminTable($name, array $attributes = [])
     {
-        return $this->getWidgetFactory()->getTable($name);
+        return $this->getWidgetFactory()->getTable($name, $attributes);
     }
 
     /**
