@@ -30,7 +30,7 @@ final class Access
     /**
      * Manage global content
      */
-    const PERM_CONTENT_MANAGE_ALL = 'content manage all';
+    const PERM_CONTENT_GOD = 'content god';
 
     /**
      * Manage global content
