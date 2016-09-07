@@ -716,3 +716,10 @@ function ucms_site_update_7018() {
 function ucms_site_update_7019() {
   ucms_site_install_schema_fix();
 }
+
+/**
+ * God mode needs rebuild.
+ */
+function ucms_site_update_7020() {
+  variable_set('node_access_needs_rebuild', 1);
+}
