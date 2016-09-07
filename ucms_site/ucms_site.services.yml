@@ -83,6 +83,12 @@ services:
     arguments: ["@ucms_site.manager", "@sf_dic.node_access.subscriber"]
     tags: [{ name: event_subscriber }]
 
+  ucms_site.admin_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Site\EventDispatcher\AdminEventSubscriber
+    arguments: ["@ucms_site.manager"]
+    tags: [{ name: event_subscriber }]
+
   ucms_site.node_event_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber

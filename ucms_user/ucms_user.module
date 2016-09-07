@@ -40,8 +40,8 @@ function ucms_user_menu() {
   $items['admin/dashboard/user/%user'] = [
     'title callback'    => 'ucms_user_menu_item_title',
     'title arguments'   => [3],
-    'page callback'     => 'ucms_user_dashboard_user_view',
-    'page arguments'    => [3],
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [AccountController::class . '::viewInfoAction', 3],
     'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_user.dashboard.inc',
@@ -174,83 +174,10 @@ function ucms_user_permission() {
  */
 function ucms_user_theme($existing, $type, $theme, $path) {
   return [
-    'ucms_user_profile' => array(
-      'variables' => ['account' => null],
-      'template' => 'ucms-user-profile',
-    ),
     'ucms_user_account_portlet' => array(
       'render element' => 'element',
     ),
   ];
-}
-
-
-/**
- * Implements template_preprocess_THEME().
- */
-function template_preprocess_ucms_user_profile(&$variables) {
-  $account = $variables['account'];
-
-  $manager = ucms_site_manager();
-
-  /* @var $account AccountInterface */
-  $access = $manager->getAccess();
-  $roles = array_map(
-    function ($role_id) use ($access) {
-      return $access->getDrupalRoleName($role_id);
-    },
-    $account->getRoles(true)
-  );
-
-  $sites = $manager->loadOwnSites($account);
-  $requests = [];
-  foreach ($sites as $id => $site) {
-    $site_name = l($site->title_admin, 'admin/dashboard/site/' . $site->id);
-
-    if ($site->state == SiteState::REQUESTED) {
-      $requests[] = $site_name;
-      unset($sites[$id]);
-    }
-    else {
-      $role_name = $access->getRelativeRoleName($access->getUserRole($account, $site)->getRole());
-      $sites[$id] = $site_name . ' (' . $role_name . ')';
-    }
-  }
-
-  $roles = [
-    '#theme'      => 'item_list',
-    '#items'      => $roles,
-    '#attributes' => ['class' => ['list-unstyled']],
-    '#empty_list' => t("No role"),
-  ];
-  $sites = [
-    '#theme'      => 'item_list',
-    '#items'      => $sites,
-    '#attributes' => ['class' => ['list-unstyled']],
-    '#empty_list' => t("No site"),
-  ];
-  $requests = [
-    '#theme'      => 'item_list',
-    '#items'      => $requests,
-    '#attributes' => ['class' => ['list-unstyled']],
-    '#empty_list' => t("No pending request"),
-  ];
-  $last_connection = ($account->login > 0) ? format_date($account->login) : t("Never");
-
-  $variables['details_table'] = [
-    '#theme' => 'table',
-    '#rows' => [
-      [['data' => t("Created at"), 'header' => true], format_date($account->created)],
-      [['data' => t("Last connection at"), 'header' => true], $last_connection],
-      [['data' => t("Roles"), 'header' => true], $roles],
-    ],
-  ];
-
-  if ($account->hasPermission(Access::PERM_SITE_REQUEST)) {
-    $variables['details_table']['#rows'][] = [['data' => t("Pending requests"), 'header' => true], $requests];
-  }
-
-  $variables['details_table']['#rows'][] = [['data' => t("Sites"), 'header' => true], $sites];
 }
 
 /**

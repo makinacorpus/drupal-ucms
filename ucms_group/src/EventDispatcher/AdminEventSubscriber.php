@@ -29,6 +29,9 @@ class AdminEventSubscriber implements EventSubscriberInterface
             'admin:table:ucms_site_details' => [
                 ['onSiteAdminDetails', 0]
             ],
+            'admin:table:ucms_user_profile' => [
+                ['onUserProfileDetails', 0]
+            ],
         ];
     }
 
@@ -47,6 +50,24 @@ class AdminEventSubscriber implements EventSubscriberInterface
         }
 
         $table->addHeader($this->t("Group"));
-        $table->addRow($this->t("Title"), l($group->getTitle(), 'admin/dashboard/group/' . $group->getId()));
+        $table->addRow($this->t("Groups"), l($group->getTitle(), 'admin/dashboard/group/' . $group->getId()));
+    }
+
+    public function onUserProfileDetails(AdminTableEvent $event)
+    {
+        $table = $event->getTable();
+
+        /** @var \Drupal\Core\Session\AccountInterface $account */
+        $account = $table->getAttribute('user');
+
+
+        $list = [];
+        $accessList = $this->groupManager->getAccess()->getUserGroups($account);
+        foreach ($this->groupManager->loadGroupsFrom($accessList) as $group) {
+            $list[] = l($group->getTitle(), 'admin/dashboard/group/' . $group->getId());
+        }
+
+        $table->addHeader($this->t("Group"));
+        $table->addRow($this->t("Groups"), implode('<br/>', $list));
     }
 }
