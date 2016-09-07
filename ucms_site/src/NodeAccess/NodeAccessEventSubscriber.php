@@ -272,6 +272,10 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                     case SiteState::OFF:
                     case SiteState::INIT:
                         $ret[self::REALM_SITE_WEBMASTER][] = $siteId;
+                        // It is required to set the readonly realm as well since there
+                        // might be content referenced in site, but not belonging to it,
+                        // which means they would then be invisibile to the webmasters.
+                        $ret[self::REALM_SITE_READONLY][] = $siteId;
                         break;
 
                     case SiteState::ARCHIVE:
