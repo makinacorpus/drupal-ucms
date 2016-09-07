@@ -96,16 +96,40 @@ class GroupContextSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
-        // We will re-use the realms from 'ucms_site' but changing the default
-        // gid to group identifiers instead, and make the whole isolation thing
-        // completly transparent.
-        if (!empty($node->group_id)) {
-            $event->replaceGroupId($this->getAlteredRealms(), NodeAccess::GID_DEFAULT, $node->group_id);
-        } else {
-            $event->removeWholeRealm($this->getAlteredRealms());
-        }
+        $alteredRealms = $this->getAlteredRealms();
 
-        if (empty($node->group_id)) {
+        if (!empty($node->group_id)) {
+
+            // We will re-use the realms from 'ucms_site' but changing the default
+            // gid to group identifiers instead, and make the whole isolation thing
+            // completly transparent. Ghost nodes cannot be seen in global realms,
+            // so we are just going to replace their realm identifiers using the
+            // ones from the group it's in.
+            $event->replaceGroupId($alteredRealms, NodeAccess::GID_DEFAULT, $node->group_id);
+
+            if (!$node->is_ghost && $node->isPublished()) {
+
+                // But sadly, non ghost nodes should be seen outside, so we
+                // actually do need to restore them rights, at least in
+                // readonly mode. Please see how the 'ucms_site' module sets
+                // them to understand, we are only going to deal with readonly
+                // rights.
+                $event->add(NodeAccess::REALM_READONLY, NodeAccess::GID_DEFAULT);
+
+                // This handles two grants in one:
+                //  - Webmasters can browse along published content of other sites
+                //  - People with global repository access may see this content
+                if ($node->is_group) {
+                    $event->add(NodeAccess::REALM_GROUP_READONLY, NodeAccess::GID_DEFAULT);
+                } else if ($node->is_global) {
+                    $event->add(NodeAccess::REALM_GLOBAL_READONLY, NodeAccess::GID_DEFAULT);
+                } else {
+                    $event->add(NodeAccess::REALM_OTHER, NodeAccess::GID_DEFAULT);
+                }
+            }
+        } else {
+            $event->removeWholeRealm($alteredRealms);
+
             // This node cannot be seen anywhere, we just give the global
             // platform administrators the right to see it
             return $event->add(self::REALM_GROUP_ORPHAN, NodeAccess::GID_DEFAULT);
@@ -131,13 +155,6 @@ class GroupContextSubscriber implements EventSubscriberInterface
         }
 
         // Note that we won't change anything about site rights.
-
-        // We will re-use the realms from 'ucms_site' but changing the default
-        // gid to group identifiers instead, and make the whole cloisoning
-        // thing completly transparent. But because we are changing the
-        // multiplicity (a user can have more than on group) we start by
-        // removing the user grants.
-        $event->removeWholeRealm($this->getAlteredRealms());
 
         // Then replicate all user permissions, but relative to groups.
         foreach ($this->groupManager->getAccess()->getUserGroups($account) as $access) {

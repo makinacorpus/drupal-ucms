@@ -262,10 +262,10 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
             $ret[self::REALM_READONLY][] = self::GID_DEFAULT;
         } else {
-            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL) || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
                 $ret[self::REALM_GLOBAL_READONLY][] = self::GID_DEFAULT;
             }
-            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP) || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
                 $ret[self::REALM_GROUP_READONLY][] = self::GID_DEFAULT;
             }
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
