@@ -28,7 +28,7 @@ final class Access
     const OP_DELETE = 'delete';
 
     /**
-     * Manage global content
+     * God mode for content, do anything with anything
      */
     const PERM_CONTENT_GOD = 'content god';
 
@@ -86,6 +86,11 @@ final class Access
      * Access the site dashboard
      */
     const PERM_SITE_DASHBOARD_ACCESS = 'site dashboard access';
+
+    /**
+     * God mode for site, do anything with anything
+     */
+    const PERM_SITE_GOD = 'site god';
 
     /**
      * Request a new site

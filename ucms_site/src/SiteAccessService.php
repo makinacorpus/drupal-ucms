@@ -393,12 +393,14 @@ class SiteAccessService
             case SiteState::ARCHIVE:
                 return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
                     || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)
+                    || $account->hasPermission(Access::PERM_SITE_GOD)
                     || $this->userIsWebmaster($account, $site)
                 ;
 
             case SiteState::OFF:
                 return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
                     || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)
+                    || $account->hasPermission(Access::PERM_SITE_GOD)
                     || $this->userIsWebmaster($account, $site)
                     || $this->userIsContributor($account, $site)
                 ;
@@ -415,7 +417,7 @@ class SiteAccessService
      */
     public function userCanOverview(AccountInterface $account, Site $site)
     {
-        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL)) {
+        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
             return true;
         }
 
@@ -444,7 +446,7 @@ class SiteAccessService
      */
     public function userCanManage(AccountInterface $account, Site $site)
     {
-        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL)) {
+        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
             return true;
         }
 
@@ -469,7 +471,7 @@ class SiteAccessService
      */
     public function userCanManageWebmasters(AccountInterface $account, Site $site)
     {
-        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $this->userIsWebmaster($account, $site);
+        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD) || $this->userIsWebmaster($account, $site);
     }
 
     /**
@@ -498,7 +500,7 @@ class SiteAccessService
      */
     public function userCanDelete(AccountInterface $account, Site $site)
     {
-        return SiteState::ARCHIVE == $site->state && $account->hasPermission(Access::PERM_SITE_MANAGE_ALL);
+        return SiteState::ARCHIVE == $site->state && $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD);
     }
 
     /**

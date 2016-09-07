@@ -277,7 +277,8 @@ class SiteRequest extends FormBase
         ];
 
         // Is template site
-        $canManage = $this->currentUser()->hasPermission(Access::PERM_SITE_MANAGE_ALL);
+        $currentUser = $this->currentUser();
+        $canManage = $currentUser->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $currentUser->hasPermission(Access::PERM_SITE_GOD);
         $form['is_template'] = [
             '#title'         => $this->t("Is template site?"),
             '#type'          => 'radios',
