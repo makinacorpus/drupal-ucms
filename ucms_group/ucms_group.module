@@ -255,11 +255,16 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
     $account = \Drupal::currentUser();
   }
 
-  if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
+  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
+  $groupManager = \Drupal::service('ucms_group.manager');
+  $accessList   = $groupManager->getAccess()->getUserGroups($account);
+
+  // Normal user rights coming in!
+  if (!$accessList) {
     return;
   }
 
-  $siteAlias  = null;
+  $siteAlias = null;
 
   // If no base table is specified explicitly, search for one.
   foreach ($query->getTables() as $alias => $table_info) {
@@ -272,15 +277,6 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
   }
 
   if (!$siteAlias) {
-    return;
-  }
-
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
-  $groupManager = \Drupal::service('ucms_group.manager');
-  $accessList   = $groupManager->getAccess()->getUserGroups($account);
-
-  // Normal user rights coming in!
-  if (!$accessList) {
     return;
   }
 
