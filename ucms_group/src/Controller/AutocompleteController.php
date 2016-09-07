@@ -112,7 +112,7 @@ class AutocompleteController extends Controller
         $suggest = [];
 
         foreach ($q->execute()->fetchAll() as $record) {
-            $key = $record->title_admin . ' [' . $record->id . ']';
+            $key = $record->title . ' [' . $record->id . ']';
             $suggest[$key] = check_plain($record->title);
         }
 
