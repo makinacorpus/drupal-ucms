@@ -45,6 +45,6 @@ class SitesPortlet extends AbstractAdminPortlet
      */
     public function userIsAllowed(AccountInterface $account)
     {
-        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL);
+        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD);
     }
 }

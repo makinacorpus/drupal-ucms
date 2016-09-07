@@ -11,7 +11,7 @@ use MakinaCorpus\Ucms\Group\Controller\DashboardController;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupAccess;
 use MakinaCorpus\Ucms\Group\Controller\AutocompleteController;
-use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Access as SiteAccess;
 
 /**
  * Implements hook_permission().
@@ -27,7 +27,7 @@ function ucms_group_permission() {
     GroupAccess::PERM_MANAGE_ORPHAN => [
       'title' => t("Manage orphan content"),
     ],
-      GroupAccess::PERM_VIEW_ALL => [
+    GroupAccess::PERM_VIEW_ALL => [
       'title' => t("View all groups"),
     ],
   ];
@@ -253,6 +253,11 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
   /** @var \Drupal\Core\Session\AccountInterface $account */
   if (!$account = $query->getMetaData('account')) {
     $account = \Drupal::currentUser();
+  }
+
+  // God mode.
+  if ($account->hasPermission(SiteAccess::PERM_SITE_GOD)) {
+    return;
   }
 
   /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
