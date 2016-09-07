@@ -1,5 +1,11 @@
+#####################################
+# This is an example file of
+# what could be your main menu
+#
+# This is the ne used in admin pages
+#####################################
+
 name: Backoffice
-drop_on_update: true
 item:
   -
     name: "Contenu"
