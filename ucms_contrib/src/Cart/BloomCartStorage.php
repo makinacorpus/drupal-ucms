@@ -98,11 +98,13 @@ final class BloomCartStorage implements CartStorageInterface
      */
     public function addFor($uid, $nid)
     {
-        $this->cart->addFor($uid, $nid);
+        $ret = $this->cart->addFor($uid, $nid);
 
         $filter = $this->getFilter($uid);
         $filter->set($nid);
         $this->cache->set($this->getCacheId($uid), $filter);
+
+        return $ret;
     }
 
     /**
