@@ -72,7 +72,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
             $type = is_string($node) ? $node : $node->bundle();
 
             // Locked types
-            if (in_array($type, $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_MANAGE_ALL)) {
+            if (in_array($type, $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
                 return $event->deny();
             }
 
@@ -104,7 +104,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
             }
         } else if (Access::OP_DELETE === $op) {
             // Locked types
-            if (in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_MANAGE_ALL)) {
+            if (in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
                 return $event->deny();
             }
         }

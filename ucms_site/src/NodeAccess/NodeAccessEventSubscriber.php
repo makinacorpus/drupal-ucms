@@ -29,6 +29,11 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     const REALM_PUBLIC = 'ucms_public';
 
     /**
+     * This is for technical administrators only
+     */
+    const REALM_GOD = 'god_mode';
+
+    /**
      * Grants for local webmasters
      */
     const REALM_SITE_WEBMASTER = 'ucms_site';
@@ -165,6 +170,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
         // People with "view all" permissions should view it
         $event->add(self::REALM_READONLY, self::GID_DEFAULT);
+        $event->add(self::REALM_GOD, self::GID_DEFAULT);
 
         // This handles two grants in one:
         //  - Webmasters can browse along published content of other sites
@@ -240,6 +246,12 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
             return $ret;
         }
 
+        // God mode.
+        if ($account->hasPermission(Access::PERM_CONTENT_GOD)) {
+            $ret[self::REALM_GOD][] = self::GID_DEFAULT;
+            return $ret;
+        }
+
         if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
             $ret[self::REALM_GLOBAL][] = self::GID_DEFAULT;
         }
@@ -265,6 +277,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
         foreach ($grants as $grant) {
             $siteId = $grant->getSiteId();
+
             if (Access::ROLE_WEBMASTER === $grant->getRole()) {
                 switch ($grant->getSiteState()) {
 

@@ -119,6 +119,11 @@ class GroupContextSubscriber implements EventSubscriberInterface
     {
         $account = $event->getAccount();
 
+        // God mode.
+        if ($account->hasPermission(Access::PERM_CONTENT_GOD)) {
+            return;
+        }
+
         // Some users have global permissions on the platform, we need to give
         // them the right to see orphan content.
         if ($account->hasPermission(GroupAccess::PERM_MANAGE_ORPHAN)) {
