@@ -85,15 +85,19 @@ class TreeAdminController extends Controller
     }
 
     /**
-     * Edit menu items action
+     * Overview menu access
      */
-    public function menuTreeAction(Menu $menu)
+    public function accessMenuOverview()
     {
-        if (!$this->getMenuAccess()->canEditTree($menu, $this->getCurrentUser())) {
-            throw $this->createAccessDeniedException();
-        }
+        return $this->getMenuAccess()->canAccessMenuAdmin($this->getCurrentUser());
+    }
 
-        return $this->getDrupalFormBuilder()->getForm(TreeForm::class, $menu);
+    /**
+     * Add menu access
+     */
+    public function accessMenuAdd()
+    {
+        return $this->getMenuAccess()->canCreateMenu($this->getCurrentUser());
     }
 
     /**
@@ -101,11 +105,15 @@ class TreeAdminController extends Controller
      */
     public function menuAddAction()
     {
-        if (!$this->getMenuAccess()->canCreateMenu($this->getCurrentUser())) {
-            throw $this->createAccessDeniedException();
-        }
-
         return $this->getDrupalFormBuilder()->getForm(TreeEditForm::class);
+    }
+
+    /**
+     * Edit menu access
+     */
+    public function accessMenuEdit(Menu $menu)
+    {
+        return $this->getMenuAccess()->canEditMenu($menu, $this->getCurrentUser());
     }
 
     /**
@@ -113,11 +121,23 @@ class TreeAdminController extends Controller
      */
     public function menuEditAction(Menu $menu)
     {
-        if (!$this->getMenuAccess()->canEditMenu($menu, $this->getCurrentUser())) {
-            throw $this->createAccessDeniedException();
-        }
-
         return $this->getDrupalFormBuilder()->getForm(TreeEditForm::class, $menu);
+    }
+
+    /**
+     * Edit menu items access
+     */
+    public function accessMenuTreeEdit(Menu $menu)
+    {
+        return $this->getMenuAccess()->canEditTree($menu, $this->getCurrentUser());
+    }
+
+    /**
+     * Edit menu items action
+     */
+    public function menuTreeAction(Menu $menu)
+    {
+        return $this->getDrupalFormBuilder()->getForm(TreeForm::class, $menu);
     }
 
     /**

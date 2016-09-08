@@ -4,7 +4,6 @@
  * UCMS Tree module.
  */
 
-use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Ucms\Tree\Controller\TreeAdminController;
 
 /**
@@ -17,29 +16,32 @@ function ucms_tree_menu() {
     'title'             => "All trees",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [TreeAdminController::class . '::treeList'],
-    'access callback'   => true,
+    'access callback'   => 'sf_dic_page_access',
+    'access arguments'  => [TreeAdminController::class . '::accessMenuOverview'],
     'type'              => MENU_NORMAL_ITEM,
   ];
   $items['admin/dashboard/tree/add'] = [
     'title'             => 'Add new menu',
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [TreeAdminController::class . '::menuAdd'],
-    'access callback'   => true,
+    'access callback'   => 'sf_dic_page_access',
+    'access arguments'  => [TreeAdminController::class . '::accessMenuAdd'],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['admin/dashboard/tree/%umenu'] = [
     'title'             => 'Edit menu',
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [TreeAdminController::class . '::menuTree', 3],
-    'access callback'   => true,
+    'access callback'   => 'sf_dic_page_access',
+    'access arguments'  => [TreeAdminController::class . '::accessMenuTreeEdit', 3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['admin/dashboard/tree/%umenu/edit'] = [
     'title'             => 'Edit menu',
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [TreeAdminController::class . '::menuEdit', 3],
-    'access callback'   => true,
-    'access arguments'  => [3],
+    'access callback'   => 'sf_dic_page_access',
+    'access arguments'  => [TreeAdminController::class . '::accessMenuEdit', 3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -52,6 +54,17 @@ function ucms_tree_menu() {
   ];
 
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_tree_permission() {
+  return [
+    'administer my module' => [
+      'title'       => 'Administer tree',
+    ],
+  ];
 }
 
 /**
