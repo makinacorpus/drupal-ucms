@@ -180,3 +180,49 @@ function ucms_layout_update_7004() {
 
   ucms_layout_install_schema_fix();
 }
+
+/**
+ * Restores node references in sites.
+ *
+ * After this update, you do need to rebuild node access.
+ */
+function ucms_layout_update_7005() {
+
+  $countQuery = <<<EOT
+      SELECT
+          COUNT(d.nid)
+      FROM {ucms_layout} l
+      JOIN {ucms_layout_data} d
+          ON d.layout_id = l.id
+      LEFT JOIN {ucms_site_node} s
+          ON s.site_id = l.site_id
+          AND s.nid = d.nid
+      WHERE
+          s.site_id IS NULL
+EOT;
+
+  $count = (int)db_query($countQuery)->fetchField();
+
+  if (!$count) {
+    return;
+  }
+
+  $updateQuery = <<<EOT
+      INSERT INTO {ucms_site_node}
+          (nid, site_id)
+      SELECT DISTINCT
+          d.nid, l.site_id
+      FROM {ucms_layout} l
+      JOIN {ucms_layout_data} d
+          ON d.layout_id = l.id
+      LEFT JOIN {ucms_site_node} s
+          ON s.site_id = l.site_id
+          AND s.nid = d.nid
+      WHERE
+          s.site_id IS NULL
+EOT;
+
+  db_query($updateQuery);
+
+  variable_set('node_access_needs_rebuild', true);
+}
