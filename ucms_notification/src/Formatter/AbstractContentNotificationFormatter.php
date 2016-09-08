@@ -38,7 +38,7 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     protected function getTitles($idList)
     {
         $titles = [];
-        
+
         foreach (node_load_multiple($idList) as $node) {
             if (!empty($node->title)) {
                 $titles[$node->nid] = $node->title;
@@ -79,5 +79,10 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
         foreach (node_load_multiple($idList) as $node) {
             $args['@type'] = t(node_type_get_name($node));
         }
+    }
+
+    function getTranslations()
+    {
+        $this->formatPlural(1, "@count content", "@count contents");
     }
 }
