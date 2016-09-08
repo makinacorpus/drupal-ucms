@@ -17,6 +17,7 @@
  *   - global configuration (administer path, canonicals)
  */
 
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
@@ -157,7 +158,7 @@ function ucms_seo_init() {
       }
       elseif (!drupal_is_front_page()) {
         // Verify that we are on the best alias
-        $best_alias = ucms_seo_service()->getNodeCanonicalAlias($node);
+        $best_alias = ucms_seo_service()->getNodeCanonicalAlias($node, LanguageInterface::LANGCODE_NOT_SPECIFIED, TRUE);
         if ($best_alias && $best_alias->alias !== request_path()) {
           drupal_goto($best_alias->alias, [
             'query' => drupal_get_query_parameters(),
