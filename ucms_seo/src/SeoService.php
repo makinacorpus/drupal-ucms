@@ -272,8 +272,10 @@ class SeoService
      *
      * @param NodeInterface $node
      * @param string $langcode
+     * @param bool $restricToCurrentSite
+     * @return
      */
-    public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
+    public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $restricToCurrentSite = false)
     {
         // We need to directly query the path alias table from here.
         $query = $this
@@ -282,6 +284,10 @@ class SeoService
             ->fields('u', ['alias', 'site_id'])
             ->condition('node_id', $node->id())
         ;
+
+        if ($restricToCurrentSite && $this->siteManager->hasContext()) {
+            $query->condition('site_id', $this->siteManager->getContext()->getId());
+        }
 
         // Always lower the priority for expiring items.
         $query->orderBy('u.expires', 'IS NULL DESC');
