@@ -136,6 +136,12 @@ class NodeTransfer extends FormBase
         $account = $formState->getTemporaryValue('account');
 
         $node->setOwner($account);
+
+        // User will be redirected in the admin, in most cases, nodes must be
+        // reindexed right away to ensure that the admin will reflect the
+        // change.
+        $node->ucms_index_now = true;
+
         $this->entityManager->getStorage('node')->save($node);
 
         if ($node->site_id != null) {
