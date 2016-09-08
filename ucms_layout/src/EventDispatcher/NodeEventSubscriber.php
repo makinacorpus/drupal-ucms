@@ -78,6 +78,7 @@ final class NodeEventSubscriber implements EventSubscriberInterface
                 // layout, it must be replaced by the new one, IF AND ONLY IF
                 // the site is the same
                 switch ($this->db->driver()) {
+
                     case 'mysql':
                         $sql = "
                             UPDATE {ucms_layout_data} d
@@ -89,6 +90,7 @@ final class NodeEventSubscriber implements EventSubscriberInterface
                                 AND l.site_id = :site
                         ";
                         break;
+
                     default:
                         $sql = "
                             UPDATE {ucms_layout_data} AS d
@@ -102,6 +104,7 @@ final class NodeEventSubscriber implements EventSubscriberInterface
                         ";
                         break;
                 }
+
                 $this->db->query($sql, [
                     ':clone'  => $node->id(),
                     ':parent' => $node->parent_nid,

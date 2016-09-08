@@ -7,7 +7,7 @@ services:
     # public: false
     # FIXME This is being used by a few unit tests, but this should be private
     class: MakinaCorpus\Ucms\Layout\DrupalStorage
-    arguments: ["@database"]
+    arguments: ["@database", "@?ucms_site.node_manager"]
 
   ucms_layout.storage.temporary:
     public: false

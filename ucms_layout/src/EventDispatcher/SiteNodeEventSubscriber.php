@@ -65,6 +65,33 @@ final class SiteNodeEventSubscriber implements EventSubscriberInterface
      */
     public function onAttach(SiteAttachEvent $event)
     {
+        // On 08/09/2016, I stumbled upon this piece of code. Long story short:
+        // when you reference a node in a site, it duplicates the original site
+        // layout in the new site.
+        //
+        // While I could see some kind of use for this, I am not sure this is
+        // really necessary, moreover, when you save a layout, it triggers the
+        // node attach event, and run this in a potentially infinite loop.
+        //
+        // I am quite sure that the original wanted behavior was on node clone
+        // and not on node reference: when you want to edit a node that's not
+        // yours, on your site, the application propose that you may clone it on
+        // the site instead of editing the original node, at this exact point in
+        // time, you do need to duplicate layouts.
+        //
+        // Sad story about this code is when it attempts to get the current node
+        // storage, it resets the layout context internal token, which makes it
+        // angry and throw exception.
+        //
+        // This is why, at this very exact moment, I am not going to create any
+        // regression, and let this code live, I'll just put a failsafe that'll
+        // deactivate it during a layout save.
+        //
+        // See the next line. And prey. Or yell. Or just get over it.
+        if ($this->contextManager->isInEditMode()) {
+            return;
+        }
+
         $siteIdList = $event->getSiteIdList();
         /* @var \Drupal\node\NodeInterface[] $nodeList */
         $nodeList = $this->entityManager->getStorage('node')->loadMultiple($event->getNodeIdList());
@@ -81,8 +108,8 @@ final class SiteNodeEventSubscriber implements EventSubscriberInterface
                 }
 
                 // Ensure a layout does not already exists (for example when
-                // cloning a node, the layout daaa already has been inserted
-                // if the original was existing)
+                // cloning a node, the layout data already has been inserted
+                // if the original was existing).
                 $exists = (bool)$this
                     ->db
                     ->query(
