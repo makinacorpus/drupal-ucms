@@ -249,6 +249,15 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
   if (!$query instanceof SelectQueryInterface) {
     return;
   }
+  if (drupal_is_cli()) {
+    // In theory, we should not have to do this, but it happens that during
+    // drush upgrade, which runs all update functions altogether one by one,
+    // it may happen that this module gets enable during the same run, and
+    // that the 'sf_dic' container, even if correctly rebuilt, may not be
+    // used because older object references are being used by the code (old
+    // services still referenced into some other being in use).
+    return;
+  }
 
   /** @var \Drupal\Core\Session\AccountInterface $account */
   if (!$account = $query->getMetaData('account')) {
