@@ -13,7 +13,7 @@ services:
     arguments: ["@ucms_contrib.cart.default", "@cache.default"]
   ucms_contrib.cart:
     alias: ucms_contrib.cart.bloom
-    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage 
+    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
 
   ucms_contrib.node_action_provider:
     public: false
@@ -36,7 +36,6 @@ services:
   ucms_contrib.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
     arguments:
-      - "@ucms_layout.context_manager"
       - "@ucms_contrib.content_action_provider"
       - "@ucms_dashboard.action_provider_registry"
       - "@ucms_site.manager"

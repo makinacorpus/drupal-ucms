@@ -34,6 +34,23 @@ final class ContextPaneEventListener
         $contextPane = $event->getContextPane();
         $manager = $this->siteManager;
 
+        // Set the 'cart' tab as default tab as soon as the user is in edit mode
+        // or editing a content (unoderef and media fields) or when he is in
+        // content admin (to drag and drop content to his cart).
+        if ($contextPane->hasTab('cart')) {
+
+            $defaultTabRoutes = ['admin/dashboard/content', 'admin/dashboard/media', 'node/%/edit'];
+            $router_item = menu_get_item();
+
+            if (
+                $this->contextManager->isInEditMode() ||
+                in_array($router_item['path'], $defaultTabRoutes) ||
+                in_array($router_item['tab_parent'], $defaultTabRoutes)
+            ) {
+                $contextPane->setDefaultTab('cart');
+            }
+        }
+
         $site = $manager->getContext();
         $account = \Drupal::currentUser();
         // @todo this should check for any layout at all being here

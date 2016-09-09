@@ -2,24 +2,26 @@
 
 namespace MakinaCorpus\Ucms\Layout;
 
+use MakinaCorpus\Ucms\Site\NodeManager;
+
 /**
  * Layout storage using Drupal database.
  */
 class DrupalStorage implements StorageInterface
 {
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
+    private $nodeManager;
 
     /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
+     * @param NodeManager $nodeManager
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(\DatabaseConnection $db, NodeManager $nodeManager = null)
     {
         $this->db = $db;
+        $this->nodeManager = $nodeManager;
     }
 
     /**
@@ -126,6 +128,8 @@ class DrupalStorage implements StorageInterface
                 $q->execute();
             }
 
+            // And create the node references
+
             $region->toggleUpdateStatus(false);
 
             return true;
@@ -172,8 +176,17 @@ class DrupalStorage implements StorageInterface
                 $layout->setId((int)$id);
             }
 
+            $nodeIdList = [];
+
             foreach ($layout->getAllRegions() as $region) {
                 $this->regionUpdate($layout, $region);
+
+                // Collect nodes for referencing them
+                $nodeIdList = array_merge($nodeIdList, $region->getAllNodeIds());
+            }
+
+            if ($this->nodeManager && $nodeIdList) {
+                $this->nodeManager->createReferenceBulkInSite($layout->getSiteId(), $nodeIdList);
             }
 
             unset($tx); // Explicit commit

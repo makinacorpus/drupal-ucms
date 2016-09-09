@@ -305,3 +305,16 @@ function ucms_user_replace_tokens(&$replacements, $data, $options) {
   $lifespan = variable_get('user_password_reset_timeout', 86400);
   $replacements['[user:password-url-lifespan]'] = format_interval($lifespan, -1, $options['language']->language);
 }
+
+
+/**
+ * Just for translation.
+ */
+function ucms_user_translations() {
+  format_plural(1, "@count year", "@count years");
+  format_plural(1, "@count month", "@count monthes");
+  format_plural(1, "@count day", "@count days");
+  format_plural(1, "@count h", "@count h");
+  format_plural(1, "@count min", "@count min");
+  format_plural(1, "@count s", "@count s");
+}

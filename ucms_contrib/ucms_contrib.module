@@ -3,9 +3,6 @@
  * @file
  * UCMS  - Contribution.
  *
- * This module provides a full UI based upon drag'n'drop for editing content
- * and manipulating layouts.
- *
  * @todo
  *   - Keep cart items order same as insert
  *   - Add other possible cart view modes (grid, list, ...)
@@ -591,9 +588,9 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     $submit[] = 'ucms_contrib_form_node_form_submit_publish';
     $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
     $form['actions']['submit_publish_add_to_cart'] = [
-        '#type' => 'submit',
-        '#value' => t("Save, publish and add to cart"),
-        '#submit' => $submit,
+      '#type' => 'submit',
+      '#value' => t("Save, publish and add to cart"),
+      '#submit' => $submit,
     ];
   }
 }

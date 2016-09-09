@@ -3,26 +3,17 @@
 namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
-use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-/**
- * Class ContextPaneEventListener
- * @package MakinaCorpus\Ucms\Contrib\EventDispatcher
- */
 class ContextPaneEventListener
 {
     use StringTranslationTrait;
-
-    /**
-     * @var LayoutContextManager
-     */
-    private $layoutContextManager;
 
     /**
      * @var ActionRegistry
@@ -38,6 +29,7 @@ class ContextPaneEventListener
      * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
      */
     private $typeHandler;
+
     /**
      * @var ActionProviderInterface
      */
@@ -46,20 +38,17 @@ class ContextPaneEventListener
     /**
      * Default constructor
      *
-     * @param LayoutContextManager $layoutContextManager
      * @param ActionProviderInterface $contentActionProvider
      * @param ActionProviderInterface $actionProviderRegistry
      * @param SiteManager $siteManager
      * @param TypeHandler $typeHandler
      */
     public function __construct(
-        LayoutContextManager $layoutContextManager,
         ActionProviderInterface $contentActionProvider,
         ActionRegistry $actionRegistry,
         SiteManager $siteManager,
         TypeHandler $typeHandler
     ) {
-        $this->layoutContextManager = $layoutContextManager;
         $this->contentActionProvider = $contentActionProvider;
         $this->actionProviderRegistry = $actionRegistry;
         $this->siteManager = $siteManager;
@@ -76,37 +65,11 @@ class ContextPaneEventListener
 
         // Add the shopping cart
         if (user_access('use favorites')) {
-            // On admin lists, on content creation or on layout edit
-            $allowed_routes = [
-                'node/%',
-                'admin/dashboard/content',
-                'admin/dashboard/media',
-                'admin/dashboard/tree',
-                'admin/dashboard/tree/%',
-            ];
-            // @todo Inject services
-            if (
-                in_array($router_item['path'], $allowed_routes) ||
-                in_array($router_item['tab_parent'], $allowed_routes) ||
-                $this->layoutContextManager->isInEditMode()
-            ) {
-                $contextPane
-                    ->addTab('cart', $this->t("Cart"), 'shopping-cart')
-                    ->add(ucms_contrib_favorite_render(), 'cart')
-                ;
 
-                // Set as default tab on lists
-                $defaultTabRoutes = [
-                    'admin/dashboard/content',
-                    'admin/dashboard/media',
-                ];
-                if (
-                    in_array($router_item['path'], $defaultTabRoutes) ||
-                    in_array($router_item['tab_parent'], $defaultTabRoutes)
-                ) {
-                    $contextPane->setDefaultTab('cart');
-                }
-            }
+            $contextPane
+                ->addTab('cart', $this->t("Cart"), 'shopping-cart')
+                ->add(ucms_contrib_favorite_render(), 'cart')
+            ;
         }
 
         // Add a backlink
