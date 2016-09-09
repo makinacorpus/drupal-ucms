@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeReferenceCollectEvent;
-use MakinaCorpus\ULink\EntityLinkFilter;
+use MakinaCorpus\ULink\EntityLinkGenerator;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -33,12 +33,12 @@ class LinkReferenceEventListener implements EventSubscriberInterface
         foreach ($items as $values) {
 
             $matches = [];
-            if (preg_match_all(EntityLinkFilter::SCHEME_REGEX, $values['value'], $matches)) {
+            if (preg_match_all(EntityLinkGenerator::SCHEME_REGEX, $values['value'], $matches)) {
                 $ret = array_merge($ret, $matches[3]);
             }
 
             $matches = [];
-            if (preg_match_all(EntityLinkFilter::MOUSTACHE_REGEX, $values['value'], $matches)) {
+            if (preg_match_all(EntityLinkGenerator::STACHE_REGEX, $values['value'], $matches)) {
                 $ret = array_merge($ret, $matches[2]);
             }
         }

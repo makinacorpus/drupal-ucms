@@ -225,7 +225,7 @@ function ucms_group_install_default_group() {
 }
 
 /**
- * Implements hook_enable().
+ * Implements hook_install().
  */
 function ucms_group_install() {
   ucms_group_install_schema_fix();

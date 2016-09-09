@@ -71,6 +71,7 @@
         "elasticsearch/elasticsearch" : "2.2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-umenu" : "^1.1.4",
+        "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/drupal-sf-dic" : "^3.0.32",
         "makinacorpus/drush-progressbar" : "^1.0",
         "makinacorpus/php-bloom" : "^2.0.1"
