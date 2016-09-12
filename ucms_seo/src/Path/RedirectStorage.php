@@ -48,7 +48,7 @@ class RedirectStorage implements RedirectStorageInterface
 
         $redirect = [
             'path'    => $path,
-            'node_id' => $node_id,
+            'nid' => $node_id,
             'site_id' => $site_id,
         ];
 
@@ -138,7 +138,7 @@ class RedirectStorage implements RedirectStorageInterface
             ->db
             ->select('ucms_seo_redirect', 'u')
             ->condition('u.path', $this->db->escapeLike($path), 'LIKE')
-            ->condition('u.node_id', $node_id)
+            ->condition('u.nid', $node_id)
             ->condition('u.site_id', $site_id)
         ;
 
