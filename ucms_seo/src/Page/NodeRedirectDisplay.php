@@ -64,20 +64,10 @@ class NodeRedirectDisplay extends AbstractDisplay
                 $siteLabel = l($site->title, 'admin/dashboard/site/' . $site->getId());
             }
 
-            if (null === $item->language || 'und' === $item->language) {
-                $language = '<em>' . $this->t("default") . '</em>';;
-            } else {
-                $language = check_plain($item->language);
-            }
-
             $rows[] = [
-                check_plain($item->alias),
+                check_plain($item->path),
                 $siteLabel,
-                $language,
-                $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
-                $item->priority,
-                $item->expires ? format_date((new \DateTime($item->expires))->getTimestamp()) : $this->t("No"),
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
+                theme('ucms_dashboard_actions', ['actions' => $this->getActions($item)]),
             ];
         }
 
@@ -86,7 +76,7 @@ class NodeRedirectDisplay extends AbstractDisplay
             '#suffix' => '</div>',                  // FIXME should be in theme
             '#theme'  => 'table',
             '#header' => [
-                $this->t("Alias"),
+                $this->t("Old path"),
                 $this->t("Site"),
                 '',
             ],

@@ -52,7 +52,7 @@ class RedirectDeleteProcessor extends AbstractActionProcessor
 
     public function appliesTo($item)
     {
-        return true;
+        return $item instanceof \stdClass && property_exists($item, 'path') && (property_exists($item, 'node_id') || property_exists($item, 'site_id'));
     }
 
     public function processAll($items)
@@ -70,13 +70,13 @@ class RedirectDeleteProcessor extends AbstractActionProcessor
 
     public function getItemId($item)
     {
-        return $item->pid;
+        return $item->id;
     }
 
     public function loadItem($id)
     {
         // Convert the object to stdClass because the Drupal alias storage will
         // give us an array
-        return (object)$this->service->getAliasStorage()->load(['pid' => $id]);
+        return (object)$this->service->getRedirectStorage()->load(['id' => $id]);
     }
 }

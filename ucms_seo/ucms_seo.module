@@ -62,6 +62,14 @@ function ucms_seo_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
+  $items['node/%node/seo-add-redirect'] = [
+    'title'            => "Add a redirect for this node",
+    'page callback'    => 'sf_dic_page_form',
+    'page arguments'   => ['MakinaCorpus\Ucms\Seo\Form\RedirectForm', 1],
+    'access callback'  => 'ucms_seo_menu_access_node_edit',
+    'access arguments' => [1],
+    'type'             => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
 
   $items['admin/dashboard/site/%ucms_site/seo-aliases'] = [
     'title'             => "Site path aliases",
