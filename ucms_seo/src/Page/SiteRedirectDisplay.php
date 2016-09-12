@@ -54,11 +54,16 @@ class SiteRedirectDisplay extends AbstractDisplay
         }
 
         foreach ($items as $item) {
-            $nodeLabel = $nodes[$item->nid]->getTitle();
+            if (isset($nodes[$item->nid])) {
+                $nodeLabel = $nodes[$item->nid]->getTitle();
+            }
+            else {
+                $nodeLabel = $this->t("None");
+            }
 
             $rows[] = [
                 check_plain($item->path),
-                l($nodeLabel, 'node/'.$item->nid),
+                isset($nodes[$item->nid]) ? l($nodeLabel, 'node/'.$item->nid) : $nodeLabel,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }

@@ -58,7 +58,7 @@ class RedirectDeleteProcessor extends AbstractActionProcessor
     public function processAll($items)
     {
         foreach ($items as $item) {
-            $this->service->getAliasStorage()->delete(['id' => $item->id]);
+            $this->service->getRedirectStorage()->delete(['id' => $item->id]);
         }
 
         return $this->formatPlural(
