@@ -21,7 +21,7 @@ interface RedirectStorageInterface
      *   FALSE if the redirect could not be saved or an associative array containing
      *   the following keys:
      *   - path (string): The redirect path with a starting slash.
-     *   - node_id (int): The node identifier.
+     *   - nid (int): The node identifier.
      *   - site_id (int): The site identifier.
      *   - id (int): Unique path alias identifier.
      */
@@ -37,7 +37,7 @@ interface RedirectStorageInterface
      *   FALSE if no alias was found or an associative array containing the
      *   following keys:
      *   - path (string): The redirect path with a starting slash.
-     *   - node_id (int): The node identifier.
+     *   - nid (int): The node identifier.
      *   - site_id (int): The site identifier.
      *   - id (int): Unique path alias identifier.
      */
@@ -83,7 +83,7 @@ interface RedirectStorageInterface
     /**
      * Check if any redirect exists starting with $initial_substring.
      *
-     * @param string $initial_substring
+     * @param string $path
      *   Initial path substring to test against.
      * @param int|null $site_id
      *   (optional) The site the redirect belongs to.
@@ -91,5 +91,5 @@ interface RedirectStorageInterface
      * @return bool
      *   TRUE if any alias exists, FALSE otherwise.
      */
-    public function pathHasMatchingRedirect($initial_substring, $site_id = null);
+    public function pathHasMatchingRedirect($path, $site_id = null);
 }
