@@ -54,11 +54,27 @@ function ucms_seo_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
+  $items['node/%node/seo-redirects'] = [
+    'title'             => "Node redirects",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::nodeRedirectList', 1],
+    'access callback'   => 'ucms_seo_menu_access_node_edit',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
 
   $items['admin/dashboard/site/%ucms_site/seo-aliases'] = [
     'title'             => "Site path aliases",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::siteAliasList', 3],
+    'access callback'   => 'ucms_seo_menu_access_site_edit',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/site/%ucms_site/seo-redirect'] = [
+    'title'             => "Site redirects",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::siteRedirectList', 3],
     'access callback'   => 'ucms_seo_menu_access_site_edit',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
@@ -90,6 +106,7 @@ function ucms_seo_admin_paths() {
   return [
     'node/*/seo-edit' => true,
     'node/*/seo-aliases' => true,
+    'node/*/seo-redirect' => true,
   ];
 }
 

@@ -102,6 +102,51 @@ function ucms_seo_schema() {
     'primary key' => ['nid'],
   ];
 
+  $schema['ucms_seo_redirect'] = [
+    'description'  => 'Stores old node paths for redirect',
+    'fields'       => [
+      'id'      => [
+        'description' => "Redirect identifier",
+        'type'        => 'serial',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ],
+      'nid'     => [
+        'description' => "Node identifier",
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ],
+      'site_id' => [
+        'description' => "Site identifier this alias belongs to",
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ],
+      'path'    => [
+        'description' => "Old path to redirect from",
+        'type'        => 'varchar',
+        'length'      => 1024,
+        'not null'    => TRUE,
+        'default'     => '',
+      ],
+    ],
+    'foreign keys' => [
+      'nid'     => [
+        'table'   => 'node',
+        'columns' => ['node' => 'nid'],
+      ],
+      'site_id' => [
+        'table'   => 'ucms_site',
+        'columns' => ['ucms_site' => 'id'],
+      ],
+    ],
+    'indexes'      => [
+      'site' => ['site_id'],
+    ],
+    'primary key' => ['id'],
+  ];
+
   return $schema;
 }
 
@@ -376,4 +421,15 @@ function ucms_seo_update_7016() {
  */
 function ucms_seo_update_7017() {
   ucms_seo_install_schema_fix();
+}
+
+/**
+ * Install the ucms_seo_redirect table.
+ */
+function ucms_seo_update_7018() {
+  $table = 'ucms_seo_redirect';
+  if (!db_table_exists($table)) {
+    $schema = drupal_get_schema($table);
+    db_create_table($table, $schema);
+  }
 }
