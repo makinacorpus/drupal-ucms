@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -43,40 +42,23 @@ class SiteRedirectDisplay extends AbstractDisplay
      */
     protected function displayAs($mode, $items)
     {
-        $rows   = [];
-        $nodes  = [];
+        $rows = [];
+        $nodes = [];
 
         // Preload nodes
         foreach ($items as $item) {
-            if ($item->node_id) {
-                $nodes[$item->node_id] = $item->node_id;
-            }
+            $nodes[$item->nid] = $item->nid;
         }
         if ($nodes) {
             $nodes = $this->entityManager->getStorage('node')->loadMultiple($nodes);
         }
 
         foreach ($items as $item) {
-
-            if ($item->node_id && isset($nodes[$item->node_id])) {
-                $nodeLabel = $nodes[$item->node_id]->getTitle();
-            } else {
-                $nodeLabel = '<em>' . $this->t("None") . '</em>';
-            }
-
-            if (null === $item->language || 'und' === $item->language) {
-                $language = '<em>' . $this->t("default") . '</em>';;
-            } else {
-                $language = check_plain($item->language);
-            }
+            $nodeLabel = $nodes[$item->nid]->getTitle();
 
             $rows[] = [
-                check_plain($item->alias),
-                $nodeLabel,
-                $language,
-                $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
-                $item->priority,
-                $item->expires ? format_date((new \DateTime($item->expires))->getTimestamp()) : $this->t("No"),
+                check_plain($item->path),
+                l($nodeLabel, 'node/'.$item->nid),
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
@@ -86,12 +68,8 @@ class SiteRedirectDisplay extends AbstractDisplay
             '#suffix' => '</div>',                  // FIXME should be in theme
             '#theme'  => 'table',
             '#header' => [
-                $this->t("Alias"),
+                $this->t("Path"),
                 $this->t("Content"),
-                $this->t("Language"),
-                $this->t("Canonical"),
-                $this->t("Priority"),
-                $this->t("Expires"),
                 '',
             ],
             '#empty'  => $this->emptyMessage,

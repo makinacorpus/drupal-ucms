@@ -3,9 +3,7 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
@@ -32,31 +30,10 @@ class SiteRedirectDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
-    {
-        return [
-            (new LinksFilterDisplay('canonical', $this->t("Is canonical")))->setChoicesMap([
-                1 => $this->t("Yes"),
-                0 => $this->t("No"),
-            ]),
-            (new LinksFilterDisplay('expires', $this->t("Do expire")))->setChoicesMap([
-                1 => $this->t("Yes"),
-                0 => $this->t("No"),
-            ]),
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSortFields($query)
     {
         return [
-            'alias'         => $this->t("Alias"),
-            'is_canonical'  => $this->t("Canonical state"),
-            'language'      => $this->t("Language"),
-            'expires'       => $this->t("Expiry date"),
-            'priority'      => $this->t("Priority"),
+            'path' => $this->t("Path"),
         ];
     }
 
@@ -69,29 +46,21 @@ class SiteRedirectDatasource extends AbstractDatasource
             return [];
         }
 
-        $q = $this->db->select('ucms_seo_alias', 'u');
+        $q = $this->db->select('ucms_seo_redirect', 'u');
         $q->fields('u');
         $q->condition('u.site_id', $query['site']);
 
-        if (isset($query['canonical'])) {
-            $q->condition('u.is_canonical', (int)(bool)$query['canonical']);
-        }
-        if (isset($query['expires'])) {
-            if ($query['expires']) {
-                $q->isNotNull('u.expires');
-            } else {
-                $q->isNull('u.expires');
-            }
-        }
 
         if ($pageState->hasSortField()) {
-            $q->orderBy('u.' . $pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+            $q->orderBy(
+                'u.'.$pageState->getSortField(),
+                SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc'
+            );
         }
-        $q->orderBy('u.alias', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
         if (!empty($query[$sParam])) {
-            $q->condition('u.alias', '%' . db_like($query[$sParam]) . '%', 'LIKE');
+            $q->condition('u.alias', '%'.db_like($query[$sParam]).'%', 'LIKE');
         }
 
         return $q
@@ -99,7 +68,7 @@ class SiteRedirectDatasource extends AbstractDatasource
             ->limit($pageState->getLimit())
             ->execute()
             ->fetchAll()
-        ;
+            ;
     }
 
     /**
@@ -109,4 +78,4 @@ class SiteRedirectDatasource extends AbstractDatasource
     {
         return true;
     }
- }
+}

@@ -79,7 +79,7 @@ function ucms_seo_menu() {
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
-  $items['admin/dashboard/site/%ucms_site/seo-redirect'] = [
+  $items['admin/dashboard/site/%ucms_site/seo-redirects'] = [
     'title'             => "Site redirects",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::siteRedirectList', 3],
