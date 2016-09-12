@@ -98,7 +98,7 @@ class RedirectStorage implements RedirectStorageInterface
             ->orderBy('u.id', 'DESC')
             ->range(0, 1)
             ->execute()
-            ->fetchAssoc('id')
+            ->fetchObject()
             ;
     }
 
@@ -176,7 +176,7 @@ class RedirectStorage implements RedirectStorageInterface
             ;
     }
 
-    public function pathHasMatchingRedirect($initial_substring, $site_id = null)
+    public function pathHasMatchingRedirect($path, $site_id = null)
     {
         $query = $this->db->select('ucms_seo_redirect', 'u');
 
@@ -189,7 +189,7 @@ class RedirectStorage implements RedirectStorageInterface
         $query->addExpression(1);
 
         return (bool)$query
-            ->condition('u.path', $this->db->escapeLike($initial_substring).'%', 'LIKE')
+            ->condition('u.path', $path)
             ->condition('u.site_id', $site_id)
             ->range(0, 1)
             ->execute()

@@ -115,7 +115,7 @@ function ucms_seo_admin_paths() {
   return [
     'node/*/seo-edit' => true,
     'node/*/seo-aliases' => true,
-    'node/*/seo-redirect' => true,
+    'node/*/seo-redirects' => true,
   ];
 }
 
@@ -358,4 +358,31 @@ function ucms_seo_theme() {
       'template' => 'views/ucms-seo-store-locator-map',
     ],
   ];
+}
+
+/**
+ * Implements hook_page_delivery_callback_alter().
+ */
+function ucms_seo_page_delivery_callback_alter(&$callback) {
+  // Wrap the drupal_deliver_html_page() function to handle our own behavior.
+  if ($callback === 'drupal_deliver_html_page') {
+    $callback = 'ucms_seo_drupal_deliver_html_page';
+  }
+}
+
+/**
+ * Redirect to another node in case of 404 if the path matches a redirect.
+ *
+ * @param $page_callback_result
+ */
+function ucms_seo_drupal_deliver_html_page($page_callback_result) {
+  $storage = ucms_seo_service()->getRedirectStorage();
+  $uri = ltrim(request_uri(), '/');
+  if ($page_callback_result === MENU_NOT_FOUND && $storage->pathHasMatchingRedirect($uri)) {
+    $redirect = $storage->load(['path' => $uri]);
+    drupal_goto('node/' . $redirect->nid, [], 301);
+  }
+  else {
+    drupal_deliver_html_page($page_callback_result);
+  }
 }
