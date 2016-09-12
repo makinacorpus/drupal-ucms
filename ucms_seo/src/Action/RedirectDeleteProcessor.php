@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Seo\SeoService;
 
-class AliasDeleteProcessor extends AbstractActionProcessor
+class RedirectDeleteProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
 
@@ -38,34 +38,33 @@ class AliasDeleteProcessor extends AbstractActionProcessor
 
     public function getId()
     {
-        return 'alias_delete';
+        return 'redirect_delete';
     }
 
     public function getQuestion($items, $totalCount)
     {
         return $this->formatPlural(
             $totalCount,
-            "Delete this page alias?",
-            "Delete those @count page aliases?"
+            "Delete this node redirect?",
+            "Delete those @count node redirects?"
         );
     }
 
     public function appliesTo($item)
     {
-        // You may not delete the canonical alias
-        return $item instanceof \stdClass && property_exists($item, 'alias') && property_exists($item, 'source') && !$item->is_canonical;
+        return true;
     }
 
     public function processAll($items)
     {
         foreach ($items as $item) {
-            $this->service->getAliasStorage()->delete(['pid' => $item->pid]);
+            $this->service->getAliasStorage()->delete(['id' => $item->id]);
         }
 
         return $this->formatPlural(
             count($items),
-            "Alias has been deleted",
-            "@count aliases have been deleted"
+            "Redirect has been deleted",
+            "@count redirects have been deleted"
         );
     }
 

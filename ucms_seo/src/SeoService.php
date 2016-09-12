@@ -11,6 +11,7 @@ use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -72,6 +73,7 @@ class SeoService
      * @param EntityManager $entiyManager
      * @param AliasManagerInterface $aliasManager
      * @param AliasStorageInterface $aliasStorage
+     * @param RedirectStorageInterface $redirectStorage
      * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
      */
@@ -79,12 +81,14 @@ class SeoService
         EntityManager $entiyManager,
         AliasManagerInterface $aliasManager,
         AliasStorageInterface $aliasStorage,
+        RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
         \DatabaseConnection $db)
     {
         $this->entityManager = $entiyManager;
         $this->aliasManager = $aliasManager;
         $this->aliasStorage = $aliasStorage;
+        $this->redirectStorage = $redirectStorage;
         $this->siteManager = $siteManager;
         $this->db = $db;
     }
@@ -105,6 +109,16 @@ class SeoService
     public function getAliasStorage()
     {
         return $this->aliasStorage;
+    }
+
+    /**
+     * Get redirect storage
+     *
+     * @return RedirectStorageInterface
+     */
+    public function getRedirectStorage()
+    {
+        return $this->redirectStorage;
     }
 
     /**

@@ -2,8 +2,17 @@ services:
 
   ucms_seo.seo_service:
     class: MakinaCorpus\Ucms\Seo\SeoService
-    arguments: ["@entity.manager", "@path.alias_manager", "@path.alias_storage", "@ucms_site.manager", "@database"]
+    arguments:
+      - "@entity.manager"
+      - "@path.alias_manager"
+      - "@path.alias_storage"
+      - "@path.redirect_storage"
+      - "@ucms_site.manager"
+      - "@database"
 
+  path.redirect_storage:
+    class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
+    arguments: ['@database', '@module_handler', "@ucms_site.manager"]
   # This overrides the global one
   path.alias_storage:
     class: MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage
@@ -33,11 +42,18 @@ services:
     arguments: ["@ucms_seo.seo_service", "@current_user"]
     tags: [{name: ucms_dashboard.action}]
 
+  # Data sources
   ucms_seo.admin.node_alias_datasource:
     class: MakinaCorpus\Ucms\Seo\Page\NodeAliasDatasource
     arguments: ["@database"]
   ucms_seo.admin.site_alias_datasource:
     class: MakinaCorpus\Ucms\Seo\Page\SiteAliasDatasource
+    arguments: ["@database"]
+  ucms_seo.admin.node_redirect_datasource:
+    class: MakinaCorpus\Ucms\Seo\Page\NodeRedirectDatasource
+    arguments: ["@database"]
+  ucms_seo.admin.site_redirect_datasource:
+    class: MakinaCorpus\Ucms\Seo\Page\SiteRedirectDatasource
     arguments: ["@database"]
 
   twig.extension.ucms_seo:
