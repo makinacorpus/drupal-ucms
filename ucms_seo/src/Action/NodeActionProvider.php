@@ -44,10 +44,9 @@ class NodeActionProvider implements ActionProviderInterface
         $ret = [];
 
         if ($this->service->userCanEditNodeSeo($this->currentUser, $item)) {
-            $ret[] = new Action($this->t("SEO parameters"), 'node/' . $item->id() . '/seo-edit', null, 'globe', -2, false, true, false, 'seo');
-        }
-        if ($this->service->userCanEditNodeSeo($this->currentUser, $item)) {
-            $ret[] = new Action($this->t("SEO aliases"), 'node/' . $item->id() . '/seo-aliases', null, 'globe', -2, false, false, false, 'seo');
+            $ret[] = new Action($this->t("SEO parameters"), 'node/' . $item->id() . '/seo-edit', null, 'globe', 1, false, true, false, 'seo');
+            $ret[] = new Action($this->t("SEO aliases"), 'node/' . $item->id() . '/seo-aliases', null, 'link', 2, false, false, false, 'seo');
+            $ret[] = new Action($this->t("SEO redirects"), 'node/' . $item->id() . '/seo-redirects', null, 'random', 3, false, false, false, 'seo');
         }
 
         return $ret;

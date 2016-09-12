@@ -2,7 +2,17 @@ services:
 
   ucms_seo.seo_service:
     class: MakinaCorpus\Ucms\Seo\SeoService
-    arguments: ["@entity.manager", "@path.alias_manager", "@path.alias_storage", "@ucms_site.manager", "@database"]
+    arguments:
+      - "@entity.manager"
+      - "@path.alias_manager"
+      - "@path.alias_storage"
+      - "@ucms_seo.redirect_storage"
+      - "@ucms_site.manager"
+      - "@database"
+
+  ucms_seo.redirect_storage:
+    class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
+    arguments: ['@database', '@module_handler', "@ucms_site.manager"]
 
   # This overrides the global one
   path.alias_storage:
@@ -32,12 +42,24 @@ services:
     class: MakinaCorpus\Ucms\Seo\Action\AliasDeleteProcessor
     arguments: ["@ucms_seo.seo_service", "@current_user"]
     tags: [{name: ucms_dashboard.action}]
+  ucms_seo.action.redirect_delete:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Action\RedirectDeleteProcessor
+    arguments: ["@ucms_seo.seo_service", "@current_user"]
+    tags: [{name: ucms_dashboard.action}]
 
+  # Data sources
   ucms_seo.admin.node_alias_datasource:
     class: MakinaCorpus\Ucms\Seo\Page\NodeAliasDatasource
     arguments: ["@database"]
   ucms_seo.admin.site_alias_datasource:
     class: MakinaCorpus\Ucms\Seo\Page\SiteAliasDatasource
+    arguments: ["@database"]
+  ucms_seo.admin.node_redirect_datasource:
+    class: MakinaCorpus\Ucms\Seo\Page\NodeRedirectDatasource
+    arguments: ["@database"]
+  ucms_seo.admin.site_redirect_datasource:
+    class: MakinaCorpus\Ucms\Seo\Page\SiteRedirectDatasource
     arguments: ["@database"]
 
   twig.extension.ucms_seo:
@@ -60,6 +82,11 @@ services:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\NodeEventSubscriber
     arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
     tags: [{ name: event_subscriber }]
+  ucms_seo.context_pane_event_listener:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\ContextPaneEventListener
+    arguments: ["@ucms_seo.seo_service"]
+    tags:
+      - { name: event_listener, event: ucms_dashboard.context_init }
 
   # Store locator
   # @todo review the component
