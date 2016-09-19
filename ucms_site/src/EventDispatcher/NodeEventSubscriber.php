@@ -190,6 +190,11 @@ class NodeEventSubscriber implements EventSubscriberInterface
             $node->site_id = null;
         }
 
+        // Do not continue if we are creating a global node from a local one.
+        if ($node->is_global == 1 && !empty($node->parent_nid)) {
+            return;
+        }
+
         // If the node is created in a specific site context, then gives the
         // node ownership to this site, note this might change in the end, it
         // is mostly the node original site.
@@ -210,6 +215,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 $node->is_global = 1;
             }
         } else {
+            $node->site_id = null;
             $node->is_global = 1;
         }
     }
