@@ -54,7 +54,7 @@ function ucms_site_dashboard_site_list_archive() {
   $query      = ['state' => SiteState::ARCHIVE];
 
   if (!user_access(Access::PERM_SITE_GOD) &&
-      !user_access(Access::PERM_SITE_MANAGE_ALLL) &&
+      !user_access(Access::PERM_SITE_MANAGE_ALL) &&
       !user_access(Access::PERM_SITE_VIEW_ALL)
   ) {
       $query['uid'] = $user->uid;
