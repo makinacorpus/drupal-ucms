@@ -140,8 +140,7 @@ class MenuRoleWidget implements WidgetInterface
             '#type'           => 'checkbox',
             '#title'          => $this->t("Display all matching menus"),
             '#description'    => $this->t("If unchecked, only the first menu found with the given role in the current site will be displayed"),
-            '#maxlength'      => 64,
-            '#default_value'  => $options['role'],
+            '#default_value'  => $options['multiple'],
         ];
 
         return $form;
