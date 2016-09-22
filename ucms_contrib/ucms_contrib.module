@@ -542,8 +542,8 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
   // context defaults instead so that the user access functions will work
   // seamlessly with the non-persisted yet node object.
   if (!$node->id() || $node->isNew()) {
-    $node->is_global = $siteManager->hasContext();
-    $form['is_global'] = ['#type' => 'value', '#value' => (int)$siteManager->hasContext()];
+    $node->is_global = !$siteManager->hasContext();
+    $form['is_global'] = ['#type' => 'value', '#value' => (int)!$siteManager->hasContext()];
     if ($siteManager->hasContext()) {
       $siteId = $siteManager->getContext()->getId();
       $node->site_id = $siteId;

@@ -170,31 +170,36 @@ class NodeManager
         // All credits to https://stackoverflow.com/a/10831885/5826569
         $node = unserialize(serialize($original));
 
-        // Fetcth the new user identifier from the updates
-        $userId = isset($updates['uid']) ? $updates['uid'] : $original->getOwnerId();
-
         $node->nid      = null;
         $node->vid      = null;
         $node->tnid     = null;
         $node->log      = null;
-        $node->uid      = $userId;
         $node->created  = null;
         $node->changed  = null;
         $node->path     = null;
         $node->files    = [];
-        // Fills in the some default values
+        // Fills in the some default values.
         $node->status   = 0;
         $node->promote  = 0;
         $node->sticky   = 0;
         $node->revision = 1;
-        // Resets sites information
+        // Resets sites information.
         $node->site_id  = null;
         $node->ucms_sites = [];
-        // Sets the origin_id and parent_id
+        // Sets the origin_id and parent_id.
         $node->parent_nid = $original->id();
         $node->origin_nid = empty($original->origin_nid) ? $original->id() : $original->origin_nid;
-        // Forces node indexing
+        // Forces node indexing.
         $node->ucms_index_now = 1; // @todo find a better way
+
+        // Sets the node's owner.
+        if (isset($updates['uid'])) {
+            $account = $this->entityManager->getStorage('user')->load($updates['uid']);
+            $node->uid = $account->id();
+            $node->name = $account->getAccountName();
+            $node->revision_uid = $account->id();
+            unset($updates['uid']);
+        }
 
         foreach ($updates as $key => $value) {
             $node->{$key} = $value;
