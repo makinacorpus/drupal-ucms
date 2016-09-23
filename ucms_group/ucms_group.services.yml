@@ -48,7 +48,7 @@ services:
   ucms_group.context_pane_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Group\EventDispatcher\ContextPaneEventSubscriber
-    arguments: ["@ucms_dashboard.action_provider_registry"]
+    arguments: ["@current_user", "@ucms_dashboard.action_provider_registry"]
     tags: [{ name: event_subscriber }]
   ucms_group.admin_subscriber:
     public: true
