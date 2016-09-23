@@ -3,6 +3,8 @@
 
 namespace MakinaCorpus\Ucms\Notification\Formatter;
 
+use Drupal\Core\Session\AccountInterface;
+
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Ucms\Notification\Formatter\AbstractUserNotificationFormatter;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -18,10 +20,12 @@ class ExtranetMemberAccept extends AbstractUserNotificationFormatter
     /**
      * Constructor.
      *
+     * @param AccountInterface $account
      * @param SiteManager $siteManager
      */
-    public function __construct(SiteManager $siteManager)
+    public function __construct(AccountInterface $account, SiteManager $siteManager)
     {
+        parent::__construct($account);
         $this->siteManager = $siteManager;
     }
 
