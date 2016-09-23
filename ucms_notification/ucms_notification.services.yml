@@ -18,26 +18,32 @@ services:
   # User notifications
   ucms_notification.user_add:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserAdd
+    arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:add", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_edit:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserEdit
+    arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:edit", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_enable:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserEnable
+    arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:enable", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_disable:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserDisable
+    arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:disable", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_change_email:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserChangeEmail
+    arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:change_email", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_reset_password:
     class: MakinaCorpus\Ucms\Notification\Formatter\UserResetPassword
+    arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:reset_password", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_delete:
@@ -47,17 +53,17 @@ services:
   # Extranet notifications
   ucms_notification.member_register:
     class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberRegister
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@current_user", "@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "member:register" }]
 
   ucms_notification.member_accept:
     class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberAccept
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@current_user", "@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "member:accept" }]
 
   ucms_notification.member_reject:
     class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberReject
-    arguments: ["@ucms_site.manager"]
+    arguments: ["@current_user", "@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "member:reject" }]
 
   # Content notifications
