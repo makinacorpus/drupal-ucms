@@ -575,7 +575,7 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
   $add_and_publish = !$node->id() && (!$access || $access->userCanPublish($user, $node));
   if ($add_and_publish) {
     $submit = $form['actions']['submit']['#submit'];
-    $submit[] = 'ucms_contrib_form_node_form_submit_publish';
+    array_unshift($submit, 'ucms_contrib_form_node_form_submit_publish');
     $form['actions']['submit_publish'] = [
       '#type' => 'submit',
       '#value' => t("Save and publish"),
@@ -585,7 +585,7 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
 
   if ($add_to_cart && $add_and_publish) {
     $submit = $form['actions']['submit']['#submit'];
-    $submit[] = 'ucms_contrib_form_node_form_submit_publish';
+    array_unshift($submit, 'ucms_contrib_form_node_form_submit_publish');
     $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
     $form['actions']['submit_publish_add_to_cart'] = [
       '#type' => 'submit',
@@ -606,14 +606,11 @@ function ucms_contrib_form_node_form_submit_add_to_cart($form, &$form_state) {
   \Drupal::service('ucms_contrib.cart')->addFor(\Drupal::currentUser()->id(), $form_state['node']->id());
 }
 
+/**
+ * Publish action for node form.
+ */
 function ucms_contrib_form_node_form_submit_publish($form, &$form_state) {
-  // From this point, form builded node has been already saved, but form state
-  // and form data are not updated by core, so we need to do an explicit load
-  // instead to ensure we have the right node.
-  if ($node = node_load($form_state['nid'])) {
-    $node->status = NODE_PUBLISHED;
-    node_save($node);
-  }
+  $form_state['values']['status'] = NODE_PUBLISHED;
 }
 
 /**
