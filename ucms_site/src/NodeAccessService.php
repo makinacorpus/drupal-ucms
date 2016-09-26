@@ -276,14 +276,14 @@ final class NodeAccessService
     public function userCanCreateInAnySite(AccountInterface $account, $type)
     {
         // Check for global contribs
-        if ($this->userCanCreate($account, $type) !== NODE_ACCESS_DENY) {
+        if ($this->userCanCreate($account, $type)) {
             return true;
         }
 
         // Iterate over all sites, check if type creation is possible in context
         $sites = $this->manager->loadOwnSites($account);
         foreach ($sites as $site) {
-            if ($this->userCanCreateInSite($account, $type, $site) !== NODE_ACCESS_DENY) {
+            if ($this->userCanCreateInSite($account, $type, $site)) {
                 return true;
             }
         }
