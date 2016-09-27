@@ -86,7 +86,7 @@ class SiteEventSubscriber implements EventSubscriberInterface
     private function reindexAllNodes($nidList)
     {
         if ($nidList) {
-            if (count($nidList) < 50) { // Complètement au hasard (tm)
+            if (count($nidList) < UCMS_SEARCH_INDEX_NOW_LIMIT) {
                 $this->indexStorage->indexer()->enqueue($nidList);
             } else {
                 $this->indexStorage->indexer()->bulkMarkForReindex($nidList);
