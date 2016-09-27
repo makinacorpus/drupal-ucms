@@ -719,7 +719,8 @@ function ucms_site_update_7019() {
 
 /**
  * God mode needs rebuild.
+ * Node references between sites needs rebuild.
  */
-function ucms_site_update_7020() {
+function ucms_site_update_7021() {
   variable_set('node_access_needs_rebuild', 1);
 }
