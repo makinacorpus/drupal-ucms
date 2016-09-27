@@ -44,6 +44,11 @@ services:
     tags: [{name: ucms_dashboard.action}]
   ucms_seo.action.redirect_delete:
     public: false
+    class: MakinaCorpus\Ucms\Seo\Action\StoreLocatorAliasRebuildProcessor
+    arguments: ["@ucms_seo.store_locator_factory", "@entity.manager", "@current_user"]
+    tags: [{name: ucms_dashboard.action}]
+  ucms_seo.action.store_locator_aliases_rebuild:
+    public: false
     class: MakinaCorpus\Ucms\Seo\Action\RedirectDeleteProcessor
     arguments: ["@ucms_seo.seo_service", "@current_user"]
     tags: [{name: ucms_dashboard.action}]
@@ -72,8 +77,7 @@ services:
   ucms_seo.menu_event_listener:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventListener
     arguments: ["@ucms_seo.seo_service", "@entity.manager"]
-    tags:
-      - {name: event_listener, event: "menu:tree"}
+    tags: [{name: event_listener, event: "menu:tree"}]
   ucms_seo.site_attach.subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteAttachEventListener
     arguments: ["@ucms_seo.seo_service"]
