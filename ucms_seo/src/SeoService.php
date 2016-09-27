@@ -412,7 +412,7 @@ class SeoService
      *
      * @return string
      */
-    public function normalizeSegment($value, $maxLength = 255)
+    public function normalizeSegment($value, $maxLength = UCMS_SEO_SEGMENT_TRIM_LENGTH)
     {
         // Transliterate first
         if (class_exists('URLify')) {
