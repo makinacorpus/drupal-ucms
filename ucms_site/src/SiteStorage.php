@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
@@ -378,7 +379,7 @@ class SiteStorage
             ->execute()
             ->fetchCol();
 
-        $this->dispatcher->dispatch('node:access_change', new ResourceEvent('node', $nidList));
+        $this->dispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nidList));
 
         // Dispatch event for others.
         $this->dispatcher->dispatch(SiteEvents::EVENT_CLONE, new SiteCloneEvent($target, $source));
