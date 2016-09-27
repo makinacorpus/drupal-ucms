@@ -7,7 +7,6 @@
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
-
 use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
 use MakinaCorpus\Ucms\Site\Site;
 
@@ -173,9 +172,86 @@ function ucms_extranet_form_user_login_alter(&$form, &$form_state) {
         'attributes' => [],
       ],
     ];
+
+    // Insert our form handler as second of the password verification process.
+    array_splice($form['#validate'], 1, 0, ['ucms_extranet_form_user_login_validate_extranet']);
+  }
+  else {
+    // Insert our form handler as second of the password verification process.
+    array_splice($form['#validate'], 1, 0, ['ucms_extranet_form_user_login_validate_not_extranet']);
   }
 }
 
+/**
+ * Prevent backoffice users from logging into an extranet.
+ */
+function ucms_extranet_form_user_login_validate_extranet($form, $form_state) {
+  ucms_extranet_form_user_login_validate($form, $form_state, TRUE);
+}
+
+/**
+ * Prevent extraent users from logging into the backoffice.
+ */
+function ucms_extranet_form_user_login_validate_not_extranet($form, $form_state) {
+  ucms_extranet_form_user_login_validate($form, $form_state, FALSE);
+}
+
+/**
+ * Check user's extranet role when logging.
+ *
+ * @param $form
+ * @param $form_state
+ * @param $should_have_extranet_role
+ *  Boolean indicating if user should have extranet role in site.
+ */
+function ucms_extranet_form_user_login_validate($form, $form_state, $should_have_extranet_role) {
+  // Load the potential user.
+  $account = user_load_by_name($form_state['values']['name']);
+  $manager = ucms_site_manager();
+
+  if ($account && $manager->hasContext()) {
+
+    // Check if he has an extranet role in current site.
+    $record = $manager->getAccess()->getUserRole($account, $manager->getContext());
+
+    $has_extranet_role = $record && in_array($record->getRole(), [
+      ExtranetAccess::ROLE_EXTRANET_CONTRIB,
+      ExtranetAccess::ROLE_EXTRANET_MEMBER,
+    ]);
+
+  } else {
+
+    // Check if the user has a role other that extranet for dashboard.
+    $accessRecords = $manager->getAccess()->getUserRoles($account);
+
+    if (empty($accessRecords)) {
+      // User has no roles, we cannot determine if he is an extranet or not
+      // so in doubt, we must let him access the platform dashboard.
+      return;
+    }
+
+    // Warning: logic is inversed! We should not pass the test if we only have
+    // extranet roles. So we check if we have one of another roles.
+    $has_extranet_role = true;
+    foreach ($accessRecords as $record) {
+
+      $has_role_other_than_extranet = !in_array($record->getRole(), [
+        ExtranetAccess::ROLE_EXTRANET_CONTRIB,
+        ExtranetAccess::ROLE_EXTRANET_MEMBER,
+      ]);
+
+      if ($has_role_other_than_extranet) {
+        $has_extranet_role = false;
+        break;
+      }
+    }
+  }
+
+  if ($should_have_extranet_role !== $has_extranet_role) {
+    $query = isset($form_state['input']['name']) ? ['name' => $form_state['input']['name']] : [];
+    form_set_error('name', t('Sorry, unrecognized username or password. <a href="@password">Have you forgotten your password?</a>', ['@password' => url('user/password', ['query' => $query])]));
+  }
+}
 
 /**
  * Implements hook_user_login().

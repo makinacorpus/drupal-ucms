@@ -135,7 +135,11 @@ class NodeIndexer implements NodeIndexerInterface
             return;
         }
 
-        $this->bulkMarkForReindex($this->nodeQueue);
+        if (count($this->nodeQueue) < UCMS_SEARCH_INDEX_NOW_LIMIT) {
+            $this->bulkUpsert($this->nodeStorage->loadMultiple($this->nodeQueue));
+        } else {
+            $this->bulkMarkForReindex($this->nodeQueue);
+        }
 
         $this->nodeQueue = [];
     }

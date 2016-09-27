@@ -15,6 +15,7 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 
 /**
  * Uses the abstraction provided by the sf_dic module to collect node access

@@ -100,11 +100,6 @@ services:
       - "@event_dispatcher"
     tags: [{ name: event_subscriber }]
 
-  ucms_site.node_event_listener:
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventListener
-    arguments: ["@ucms_site.manager", "@entity.manager"]
-    tags: [{name: event_listener, event: "node:access_change"}]
-
   ucms_site.sites_portlet:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\SitesPortlet

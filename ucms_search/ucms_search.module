@@ -32,6 +32,11 @@ define('UCMS_SEARCH_CRON_INDEX_LIMIT', variable_get('ucms_search_elastic_index_l
 const UCMS_SEARCH_LIMIT = 100;
 
 /**
+ * Default search per page limit.
+ */
+const UCMS_SEARCH_INDEX_NOW_LIMIT = 50;
+
+/**
  * Cache key: index list.
  */
 const UCMS_SEARCH_CACHE_INDEX_LIST = 'ucms_search_index_list';

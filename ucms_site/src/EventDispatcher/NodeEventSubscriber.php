@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeCollectionEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
@@ -63,6 +64,9 @@ class NodeEventSubscriber implements EventSubscriberInterface
             ],
             NodeEvent::EVENT_SAVE => [
                 ['onSave', 0]
+            ],
+            NodeEvents::ACCESS_CHANGE => [
+                ['onNodeAccessChange', 0],
             ],
         ];
     }
@@ -283,5 +287,22 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         // We do not need to delete from the {ucms_site_node} table since it's
         // being done by ON DELETE CASCADE deferred constraints
+    }
+
+    /**
+     * @todo move this somewhere else, maybe generic in 'sf_dic' module
+     */
+    public function onNodeAccessChange(ResourceEvent $event)
+    {
+        // Rebuild node access rights
+        $nodes = $this
+            ->entityManager
+            ->getStorage('node')
+            ->loadMultiple($event->getResourceIdList())
+        ;
+
+        foreach ($nodes as $node) {
+            node_access_acquire_grants($node);
+        }
     }
 }

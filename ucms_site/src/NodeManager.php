@@ -5,6 +5,8 @@ namespace MakinaCorpus\Ucms\Site;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 
@@ -83,18 +85,22 @@ class NodeManager
      */
     public function createReference(Site $site, NodeInterface $node)
     {
+        $nodeId = $node->id();
+        $siteId = $site->getId();
+
         $this
             ->db
             ->merge('ucms_site_node')
-            ->key(['nid' => $node->id(), 'site_id' => $site->id])
+            ->key(['nid' => $nodeId, 'site_id' => $siteId])
             ->execute()
         ;
 
-        if (!in_array($site->id, $node->ucms_sites)) {
-            $node->ucms_sites[] = $site->id;
+        if (!in_array($siteId, $node->ucms_sites)) {
+            $node->ucms_sites[] = $siteId;
         }
 
-        $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($site->getId(), $node->id()));
+        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
+        $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeId));
     }
 
     /**
@@ -121,6 +127,7 @@ class NodeManager
             ->resetCache([$nodeId])
         ;
 
+        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteIdList, $nodeId));
     }
 
@@ -148,6 +155,7 @@ class NodeManager
             ->resetCache($nodeIdList)
         ;
 
+        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nodeIdList));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 
@@ -255,6 +263,7 @@ class NodeManager
             ->resetCache($nodeIdList)
         ;
 
+        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nodeIdList));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_DETACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 
