@@ -19,8 +19,14 @@
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
+
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
+
+/**
+ * Default trim length for alias segments.
+ */
+const UCMS_SEO_SEGMENT_TRIM_LENGTH = 255;
 
 /**
  * Implements hook_menu().

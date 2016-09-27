@@ -143,11 +143,11 @@ class TreeEditForm extends FormBase
 
                 if (!$name) {
                     // Auto-generation for name
-                    $name = \URLify::filter('site-' . $siteId . '-' . $values['title'], 255);
+                    $name = \URLify::filter('site-' . $siteId . '-' . $values['title'], UCMS_SEO_SEGMENT_TRIM_LENGTH);
                 }
             } else if (!$name) {
                 // Auto-generation for name
-                $name = \URLify::filter($values['title'], 255);
+                $name = \URLify::filter($values['title'], UCMS_SEO_SEGMENT_TRIM_LENGTH);
             }
 
             if ($form_state->getValue('is_creation')) {
