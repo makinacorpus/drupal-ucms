@@ -1,0 +1,41 @@
+<?php
+/**
+ * @file
+ * µCMS debug module.
+ */
+
+use MakinaCorpus\Ucms\Debug\Access;
+use MakinaCorpus\Ucms\Debug\Controller\DebugInfoController;
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_debug_menu() {
+  $items = [];
+
+  $items['admin/dashboard/user/%user/debug'] = [
+    'title'             => 'User debug information',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DebugInfoController::class . '::viewAccountGrantsAction', 3],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['node/%node/debug'] = [
+    'title'             => 'Node debug information',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DebugInfoController::class . '::viewNodeGrantsAction', 1],
+    'type'              => MENU_CALLBACK,
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_debug_permission() {
+  return [
+    Access::PERM_ACCESS_DEBUG => [
+      'title' => "View debug information",
+    ],
+  ];
+}
