@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib;
+namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
@@ -16,7 +16,7 @@ use MakinaCorpus\Ucms\Search\Search;
 use MakinaCorpus\Ucms\Search\SearchFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class PrivateNodeDataSource extends AbstractDatasource
+class DefaultNodeDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
@@ -61,15 +61,45 @@ class PrivateNodeDataSource extends AbstractDatasource
      *
      * @return Search
      */
-    public function getSearch()
+    final public function getSearch()
     {
         return $this->search;
     }
 
     /**
+     * Get the site manager
+     *
+     * @return SiteManager
+     */
+    final protected function getSiteManager()
+    {
+        return $this->manager;
+    }
+
+    /**
+     * Get the entity manager
+     *
+     * @return EntityManager
+     */
+    final protected function getEntityManager()
+    {
+        return $this->entityManager;
+    }
+
+    /**
+     * Get the current user
+     *
+     * @return AccountInterface
+     */
+    final protected function getCurrentUser()
+    {
+        return $this->account;
+    }
+
+    /**
      * @return TermFacet[]
      */
-    private function createTermFacets()
+    protected function createTermFacets()
     {
         $ret = [];
 
@@ -78,20 +108,6 @@ class PrivateNodeDataSource extends AbstractDatasource
             ->createFacet('type', null)
             ->setChoicesMap(node_type_get_names())
             ->setTitle($this->t("Type"))
-        ;
-
-        $ret[] = $this
-            ->getSearch()
-            ->createFacet('owner', null)
-            ->setChoicesCallback(function ($values) {
-                if ($accounts = user_load_multiple($values)) {
-                    foreach ($accounts as $index => $account) {
-                        $accounts[$index] = filter_xss(format_username($account));
-                    }
-                    return $accounts;
-                }
-            })
-            ->setTitle($this->t("Owner"))
         ;
 
         $ret[] = $this
@@ -185,7 +201,7 @@ class PrivateNodeDataSource extends AbstractDatasource
      *
      * @param NodeInterface[]
      */
-    private function preloadDependencies(array $nodeList)
+    protected function preloadDependencies(array $nodeList)
     {
         $userIdList = [];
         $siteIdList = [];

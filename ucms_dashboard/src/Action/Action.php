@@ -61,7 +61,9 @@ class Action
      * @param string|array $options
      *   Link options, see the l() and url() functions altogether
      *   It can be one of those values:
-     *     'dialog' : load the page in a dialog
+     *     'dialog': load the page in a dialog
+     *     'ajax': just run the link using Drupal.ajax
+     *     'dialog-frame': load URL into an iframe, in a dialog
      * @param string $icon
      *   Something that is a bootstrap glyphicon name (easiest way of theming
      *   this, sorry)
@@ -104,6 +106,16 @@ class Action
                   $this->linkOptions = [
                       'attributes' => ['class' => ['use-ajax', 'minidialog']],
                       'query' => ['minidialog' => 1],
+                  ];
+                  if ($addCurrentDestination) {
+                      $this->linkOptions['query'] += drupal_get_destination();
+                  }
+                  break;
+
+              case 'dialog-frame':
+                  $this->linkOptions = [
+                      'attributes' => ['class' => ['use-ajax', 'minidialog']],
+                      'query' => ['iframe' => 1],
                   ];
                   if ($addCurrentDestination) {
                       $this->linkOptions['query'] += drupal_get_destination();

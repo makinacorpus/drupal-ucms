@@ -1,20 +1,20 @@
 <?php
 
 use MakinaCorpus\Ucms\Contrib\NodeAdminDisplay;
-use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
+use MakinaCorpus\Ucms\Contrib\Page\NodeAdminDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 
 function ucms_contrib_admin_content_page_mine($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  /* @var $datasource NodeAdminDatasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.admin');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('owner', $GLOBALS['user']->uid);
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 
 function ucms_contrib_admin_content_page_global($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  /* @var $datasource NodeAdminDatasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.admin');
   $search = $datasource->getSearch();
   $search
     ->getFilterQuery()
@@ -25,8 +25,8 @@ function ucms_contrib_admin_content_page_global($tab = null) {
 }
 
 function ucms_contrib_admin_content_page_group($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  /* @var $datasource NodeAdminDatasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.admin');
   $search = $datasource->getSearch();
   $search
     ->getFilterQuery()
@@ -35,24 +35,24 @@ function ucms_contrib_admin_content_page_group($tab = null) {
 }
 
 function ucms_contrib_admin_content_page_local($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  /* @var $datasource NodeAdminDatasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.admin');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_global', 0);
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 
 function ucms_contrib_admin_content_page_flagged($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  /* @var $datasource NodeAdminDatasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.admin');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_flagged', 1);
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 
 function ucms_contrib_admin_content_page_starred($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  /* @var $datasource NodeAdminDatasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.admin');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_starred', 1);
   return ucms_contrib_admin_content_page($datasource, $tab);
@@ -64,7 +64,7 @@ function ucms_contrib_admin_content_page_starred($tab = null) {
  * @param string $tab
  *   Tab name.
  */
-function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab = null) {
+function ucms_contrib_admin_content_page(NodeAdminDatasource $datasource, $tab = null) {
 
   $ret = [];
   $search = $datasource->getSearch();

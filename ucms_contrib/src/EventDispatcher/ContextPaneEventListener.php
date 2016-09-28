@@ -72,6 +72,9 @@ class ContextPaneEventListener
             ;
         }
 
+        // FIXME for debug
+        $contextPane->addActions([new Action($this->t("Content selector"), 'node/selector', 'dialog-frame', 'search')]);
+
         // Add a backlink
         //   @todo find a solution for path_is_admin() and current_path()
         //     maybe bring in the RequestStack

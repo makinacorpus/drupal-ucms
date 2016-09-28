@@ -13,6 +13,7 @@
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Contrib\Controller\NodeController as NodeActionController;
 use MakinaCorpus\Ucms\Site\Access;
 
 /**
@@ -235,6 +236,14 @@ function ucms_contrib_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
+  // Node selector dialog
+  $items['node/selector'] = [
+    'title'             => "Select content",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [NodeActionController::class . '::selector'],
+    'access arguments'  => ['access content'],
+  ];
+
   // Returns the rendered node in a JSON response.
   $items['node/%node/ajax'] = [
     'page callback'     => 'sf_dic_page',
@@ -256,19 +265,19 @@ function ucms_contrib_menu() {
   // Cart operations.
   $items['admin/cart/refresh'] = [
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::refresh'],
+    'page arguments'    => [CartController::class . '::refresh'],
     'access arguments'  => ['use favorites'],
   ];
   $items['admin/cart/%node/add'] = [
     'title'             => "Content",
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::add', 2],
+    'page arguments'    => [CartController::class . '::add', 2],
     'access arguments'  => ['use favorites'],
   ];
   $items['admin/cart/%node/remove'] = [
     'title'             => "Content",
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::remove', 2],
+    'page arguments'    => [CartController::class . '::remove', 2],
     'access arguments'  => ['use favorites'],
   ];
 
