@@ -78,14 +78,6 @@ function ucms_user_menu() {
     'weight'            => -10
   ];
 
-  $items['admin/dashboard/user/%user/grants'] = [
-    'title'             => 'User grants (debug)',
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [AccountController::class . '::viewGrantsAction', 3],
-    'access callback'   => 'user_is_logged_in',
-    'type'              => MENU_CALLBACK,
-  ];
-
   $items['admin/dashboard/user/%user/reset-password'] = [
     'title'             => 'Reset password',
     'page callback'     => 'sf_dic_page_form',
