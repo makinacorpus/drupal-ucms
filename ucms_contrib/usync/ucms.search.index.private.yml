@@ -53,7 +53,7 @@ mappings:
 
       title:
         type:         string
-        analyzer:     french
+        analyzer:     html_analyzer
         term_vector:  yes
         copy_to:      [combined, autocomplete]
         fields:

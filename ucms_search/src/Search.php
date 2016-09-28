@@ -24,9 +24,11 @@ class Search
     const PARAM_PAGE = 'page';
 
     /**
-     * Default fulltext search romain and fuziness value
+     * Default analyzer to use for incomming full text query string search.
+     *
+     * @todo Make this configurable, this has hardcoded french.
      */
-    const DEFAULT_ROAMING = 0.8;
+    const DEFAULT_QUERY_STRING_ANALYZER = 'html_analyzer';
 
     /**
      * @var \Elasticsearch\Client
@@ -37,11 +39,6 @@ class Search
      * @var string
      */
     private $index;
-
-    /**
-     * @var Query
-     */
-    private $query;
 
     /**
      * @var Query
@@ -81,6 +78,16 @@ class Search
     /**
      * @var string
      */
+    private $fulltextAnalyzer = self::DEFAULT_QUERY_STRING_ANALYZER;
+
+    /**
+     * @var string[]
+     */
+    private $fulltextFields = ["combined"];
+
+    /**
+     * @var string
+     */
     private $fulltextParameterName = self::PARAM_FULLTEXT_QUERY;
 
     /**
@@ -96,11 +103,6 @@ class Search
     private $pageDelta = 1;
 
     /**
-     * @var float
-     */
-    private $fulltextRoaming = self::DEFAULT_ROAMING;
-
-    /**
      * Default constructor
      *
      * @param \Elasticsearch\Client $client
@@ -108,7 +110,6 @@ class Search
     public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->query = new Query();
         $this->filterQuery = (new Query())->setOperator(Query::OP_AND);
         $this->postFilterQuery = (new Query())->setOperator(Query::OP_AND);
     }
@@ -184,16 +185,6 @@ class Search
      *
      * @return Query
      */
-    public function getQuery()
-    {
-        return $this->query;
-    }
-
-    /**
-     * Get query
-     *
-     * @return Query
-     */
     public function getFilterQuery()
     {
         return $this->filterQuery;
@@ -247,6 +238,20 @@ class Search
     }
 
     /**
+     * Set query string analyzer
+     *
+     * @param string $analyzer
+     *
+     * @return $this
+     */
+    public function setFulltextAnalyzer($analyzer)
+    {
+        if (!$analyzer) {
+            $this->fulltextAnalyzer = null;
+        }
+    }
+
+    /**
      * Set fulltext query parameter name
      *
      * @param string $parameterName
@@ -268,20 +273,6 @@ class Search
     public function getFulltextParameterName()
     {
         return $this->fulltextParameterName;
-    }
-
-    /**
-     * Set fulltext roaming and fuziness value, should be between 0 and 1, or null to disable
-     *
-     * @param float|null $value
-     *
-     * @return $this
-     */
-    public function setFulltextRoaming($value)
-    {
-        $this->fulltextRoaming = !is_null($value) ? (float)$value : null;
-
-        return $this;
     }
 
     /**
@@ -446,22 +437,6 @@ class Search
             $this->getQueryParam($query, $this->pageParameterName, 0)
                 + $this->pageDelta
         );
-
-        // Only process query when there is a value, in order to avoid sending
-        // an empty query string to ElasticSearch, its API is so weird that we
-        // probably would end up with exceptions
-        $value = $this->getQueryParam($query, $this->fulltextParameterName);
-        if ($value) {
-            $this
-                ->getQuery()
-                ->matchTerm(
-                    'combined',
-                    $value,
-                    null,
-                    $this->fulltextRoaming
-                )
-            ;
-        }
     }
 
     /**
@@ -478,7 +453,28 @@ class Search
 
         $this->prepare($query);
 
-        $isQueryEmpty = !count($this->query);
+        // Only process query when there is a value, in order to avoid sending
+        // an empty query string to ElasticSearch, its API is so weird that we
+        // probably would end up with exceptions
+        $value = $this->getQueryParam($query, $this->fulltextParameterName);
+        if ($value) {
+            $isQueryEmpty = false;
+
+            $queryPart = [
+                'query_string' => [
+                    'query' => (string)$value,
+                    'fields' => $this->fulltextFields,
+                 ],
+            ];
+
+            if ($this->fulltextAnalyzer) {
+                $queryPart['query_string']['analyzer'] = $this->fulltextAnalyzer;
+            }
+
+        } else {
+            $isQueryEmpty = true;
+            $queryPart = [];
+        }
 
         // This must be set before filter since filter query will be altered by
         // the applied aggregations
@@ -508,11 +504,7 @@ class Search
                 $body = [
                     'query' => [
                         'filtered' => [
-                            'query'  => [
-                               'query_string' => [
-                                   'query' => (string)$this->query
-                               ],
-                            ],
+                            'query'  => $queryPart,
                             'filter' => [
                                 'fquery' => [
                                     'query' => [
@@ -538,11 +530,7 @@ class Search
                 ];
             } else {
                 $body = [
-                    'query' => [
-                        'query_string' => [
-                            'query' => (string)$this->query,
-                        ]
-                    ],
+                    'query' => $queryPart,
                 ];
             }
         }
