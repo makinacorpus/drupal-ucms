@@ -200,7 +200,7 @@ class SiteRequest extends FormBase
     }
 
     /**
-     * Step B form validate
+     * Step A form validate
      */
     public function validateStepA(array $form, FormStateInterface $form_state)
     {
@@ -268,17 +268,31 @@ class SiteRequest extends FormBase
             $options[$theme] = $text;
         }
 
+        $defaultTheme = null;
+        if ($site->theme) {
+          $defaultTheme = $site->theme;
+        } elseif (count($options) == 1) {
+          reset($options);
+          $defaultTheme = key($options);
+        }
+
         $form['theme'] = [
             '#title'         => $this->t("Theme"),
             '#type'          => 'radios',
             '#options'       => $options,
-            '#default_value' => $site->theme,
+            '#default_value' => $defaultTheme,
             '#required'      => true,
+            '#disabled'      => (count($options) == 1),
         ];
 
         // Is template site
         $currentUser = $this->currentUser();
-        $canManage = $currentUser->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $currentUser->hasPermission(Access::PERM_SITE_GOD);
+
+        $canManage = (
+            $currentUser->hasPermission(Access::PERM_SITE_MANAGE_ALL) ||
+            $currentUser->hasPermission(Access::PERM_SITE_GOD)
+        );
+
         $form['is_template'] = [
             '#title'         => $this->t("Is template site?"),
             '#type'          => 'radios',
@@ -289,15 +303,26 @@ class SiteRequest extends FormBase
 
         // Template site (which will be duplicated)
         $templateList = $this->manager->getTemplateList();
+
         if ($canManage) {
             array_unshift($templateList, $this->t('- None -'));
         }
+
+        $defaultTemplate = null;
+        if ($site->template_id) {
+          $defaultTemplate = $site->template_id;
+        } elseif (count($templateList) == 1) {
+          reset($templateList);
+          $defaultTemplate = key($templateList);
+        }
+
         $form['template_id'] = [
             '#title'         => $this->t("Template site"),
             '#type'          => 'radios',
             '#options'       => $templateList,
+            '#default_value' => $defaultTemplate,
             '#required'      => !$canManage,
-            '#default_value' => $site->template_id ?: '',
+            '#disabled'      => (count($templateList) == 1),
         ];
 
         if ($form['is_template']['#access']) {
