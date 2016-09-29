@@ -36,6 +36,11 @@ class SeoExtension extends \Twig_Extension
                 [$this, 'renderGoogleAnalytics'],
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
+            new \Twig_SimpleFunction(
+                'piwik',
+                [$this, 'renderPiwik'],
+                ['is_safe' => ['html'], 'needs_environment' => true]
+            ),
         ];
     }
 
@@ -44,7 +49,25 @@ class SeoExtension extends \Twig_Extension
         if ($this->siteManager->hasContext()) {
             $site = $this->siteManager->getContext();
             if ($site->hasAttribute('seo.google.ga_id')) {
-                return $twig->render('module:ucms_seo:views/ga.html.twig',['googleAnalyticsId' => $site->getAttribute('seo.google.ga_id')]);
+                return $twig->render(
+                    'module:ucms_seo:views/ga.html.twig',
+                    ['googleAnalyticsId' => $site->getAttribute('seo.google.ga_id')]
+                );
+            }
+        }
+    }
+
+    public function renderPiwik(\Twig_Environment $twig)
+    {
+        if ($this->siteManager->hasContext()) {
+            $site = $this->siteManager->getContext();
+            if ($site->hasAttribute('seo.piwik.url') && $site->hasAttribute('seo.piwik.site_id')) {
+                return $twig->render(
+                    'module:ucms_seo:views/piwik.html.twig',
+                    ['url'     => $site->getAttribute('seo.piwik.url'),
+                     'site_id' => $site->getAttribute('seo.piwik.site_id'),
+                    ]
+                );
             }
         }
     }

@@ -72,6 +72,21 @@ class SeoSiteForm extends FormBase
             '#attributes'       => ['placeholder' => 'UA-123456'],
             '#default_value'    => $site->getAttribute('seo.google.ga_id'),
         ];
+
+        $form['piwik']['#tree'] = true;
+        $form['piwik']['url'] = [
+            '#title'            => t("Piwik URL"),
+            '#type'             => 'textfield',
+            '#attributes'       => ['placeholder' => 'http://demo.piwik.org/'],
+            '#default_value'    => $site->getAttribute('seo.piwik.url'),
+        ];
+        $form['piwik']['site_id'] = [
+            '#title'            => t("Piwik site identifier"),
+            '#type'             => 'textfield',
+            '#attributes'       => ['placeholder' => '123'],
+            '#default_value'    => $site->getAttribute('seo.piwik.site_id'),
+        ];
+
         $form['site_verification'] = [
             '#title'            => t("Google webmaster tools verification code"),
             '#type'             => 'textfield',
@@ -97,6 +112,17 @@ class SeoSiteForm extends FormBase
             $site->setAttribute('seo.google.ga_id', $gaId);
         } else {
             $site->deleteAttribute('seo.google.ga_id');
+        }
+
+        if ($url = $formState->getValue(['piwik', 'url'])) {
+            $site->setAttribute('seo.piwik.url', $url);
+        } else {
+            $site->deleteAttribute('seo.piwik.url');
+        }
+        if ($siteId = $formState->getValue(['piwik', 'site_id'])) {
+            $site->setAttribute('seo.piwik.site_id', $siteId);
+        } else {
+            $site->deleteAttribute('seo.piwik.site_id');
         }
 
         if ($siteVerif = $formState->getValue('site_verification')) {
