@@ -4,13 +4,11 @@ namespace MakinaCorpus\Ucms\Site\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -331,6 +329,8 @@ class SiteRequest extends FormBase
             ];
         }
 
+        $form['attributes']['#tree'] = true;
+
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type'   => 'submit',
@@ -377,7 +377,10 @@ class SiteRequest extends FormBase
         $site->theme = $form_state->getValue('theme');
         $site->template_id = $form_state->getValue('is_template') ? 0 : $form_state->getValue('template_id');
         $site->is_template = $form_state->getValue('is_template');
-        $site->setAttribute('thematic', $form_state->getValue('thematic'));
+        $attributes = $form_state->getValue('attributes', []);
+        foreach ($attributes as $name => $attribute) {
+            $site->setAttribute($name, $attribute);
+        }
 
         if ($site->template_id) {
             $site->type = $this->manager->getStorage()->findOne($site->template_id)->type;

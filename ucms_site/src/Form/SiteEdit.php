@@ -4,11 +4,9 @@ namespace MakinaCorpus\Ucms\Site\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -146,6 +144,8 @@ class SiteEdit extends FormBase
             '#description'    => $this->t("This will be used for the whole site and cannot be changed once set")
         ];
 
+        $form['attributes']['#tree'] = true;
+
         $form['actions']['#type'] = 'actions';
         $form['actions']['continue'] = [
             '#type'   => 'submit',
@@ -176,7 +176,10 @@ class SiteEdit extends FormBase
         $site->http_redirects = $values['http_redirects'];
         $site->replacement_of = $values['replacement_of'];
         $site->theme          = $values['theme'];
-        $site->setAttribute('thematic', $form_state->getValue('thematic'));
+        $attributes = $form_state->getValue('attributes', []);
+        foreach ($attributes as $name => $attribute) {
+            $site->setAttribute($name, $attribute);
+        }
 
         $this->manager->getStorage()->save($site);
         drupal_set_message($this->t("Site modifications have been saved"));
