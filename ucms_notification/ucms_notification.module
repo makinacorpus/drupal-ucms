@@ -10,16 +10,19 @@
  *   Handle role removal on users (role add is handled at login time)
  *
  * Complete list of channels we will use:
- *  - admin:client:   user account administration messages
- *  - admin:contenu:  content management messages
- *  - admin:label:    taxonomy management messages
- *  - admin:site:     site administration messages
- *  - client:X:       each user private messages
- *  - label:X:        each taxonomy term own channel
- *  - site:X:         each site management own channel
+ *  - admin:client              user account administration messages
+ *  - admin:content             content management messages
+ *  - admin:label               taxonomy management messages
+ *  - admin:site                site administration messages
+ *  - admin:client:X            user account administration messages in group X
+ *  - admin:content:X           content management messages in group X
+ *  - admin:label:X             taxonomy management messages in group X
+ *  - admin:site:X              site administration messages in group X
+ *  - client:X                  each user private messages
+ *  - label:X                   each taxonomy term own channel
+ *  - site:X                    each site management own channel
  */
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Notification\Access;
 
 /**
@@ -46,24 +49,14 @@ function ucms_notification_permission() {
 }
 
 /**
- * Get custom notification service.
- *
- * @return \MakinaCorpus\Ucms\Notification\NotificationService
- *
- * @deprecated
- *   Only services should access other services.
- */
-function ucms_notification_service() {
-  return \Drupal::service('ucms_notification.service');
-}
-
-/**
  * Implements hook_user_login().
  */
 function ucms_notification_user_login(&$edit, $account) {
   // This is called late at install, so filter out superadmin.
   if ($account->uid > 1) {
-    ucms_notification_service()->refreshSubscriptionsFor($account->uid);
+    /** @var \MakinaCorpus\Ucms\Notification\NotificationService $service */
+    $service = \Drupal::service('ucms_notification.service');
+    $service->refreshSubscriptionsFor($account->uid);
   }
 }
 
@@ -72,8 +65,10 @@ function ucms_notification_user_login(&$edit, $account) {
  */
 function ucms_notification_user_update(&$edit, $account, $category) {
   // This is called late at install, so filter out superadmin.
-  if ($account->uid > 1 && $account->original && array_intersect_key($account->roles, $account->original->roles)) {
-    ucms_notification_service()->refreshSubscriptionsFor($account->uid);
+  if ($account->uid > 1 && $account->original) {
+    /** @var \MakinaCorpus\Ucms\Notification\NotificationService $service */
+    $service = \Drupal::service('ucms_notification.service');
+    $service->refreshSubscriptionsFor($account->uid);
   }
 }
 
@@ -81,69 +76,18 @@ function ucms_notification_user_update(&$edit, $account, $category) {
  * Implements hook_user_cancel().
  */
 function ucms_notification_user_cancel($edit, $account, $method) {
-  ucms_notification_service()->deleteSubscriptionsFor($account->uid);
+  /** @var \MakinaCorpus\Ucms\Notification\NotificationService $service */
+  $service = \Drupal::service('ucms_notification.service');
+  $service->deleteSubscriptionsFor($account->id());
+  // $service->getNotificationService()->deleteSubscriber($account->uid);
 }
 
 /**
  * Implements hook_user_delete().
  */
 function ucms_notification_user_delete($account) {
-  ucms_notification_service()->deleteSubscriptionsFor($account->uid);
-}
-
-/**
- * Implements hook_node_insert().
- * Subscribe node author to its update.
- */
-function ucms_notification_node_insert($node) {
-  ucms_notification_service()->subscribe($node->uid, 'node:' . $node->nid);
-
-  global $user;
-  $dispatcher = \Drupal::service('event_dispatcher');
-  $dispatcher->dispatch('node:add', new ResourceEvent('node', $node->nid, $user->uid));
-}
-
-/**
- * Implements hook_node_udpate().
- */
-function ucms_notification_node_update($node) {
-  global $user;
-
-  $dispatcher = \Drupal::service('event_dispatcher');
-  $event = new ResourceEvent('node', $node->nid, $user->uid);
-
-  if ($node->is_flagged != $node->original->is_flagged) {
-    if ($node->is_flagged) {
-      $dispatcher->dispatch('node:flag', $event);
-    }
-  } else if ($node->status != $node->original->status) {
-    if ($node->status) {
-      $dispatcher->dispatch('node:publish', $event);
-    } else {
-      $dispatcher->dispatch('node:unpublish', $event);
-    }
-  } else {
-    $dispatcher->dispatch('node:edit', $event);
-
-    if ($oldLabels = field_get_items('node', $node->original, 'labels')) {
-      $oldLabels = array_column($oldLabels, 'tid');
-    } else {
-      $oldLabels = [];
-    }
-
-    if ($currentLabels = field_get_items('node', $node, 'labels')) {
-      if (is_array($currentLabels)) {
-        $currentLabels = array_column($currentLabels, 'tid');
-      }
-      else {
-        $currentLabels = (array) $currentLabels;
-      }
-    }
-
-    if ($currentLabels && ($newLabels = array_diff($currentLabels, $oldLabels))) {
-      $event = new ResourceEvent('node', $node->nid, $user->uid);
-      $event->setArgument('new_labels', $newLabels);
-      $dispatcher->dispatch('node:new_labels', $event);
-    }
-  }
+  /** @var \MakinaCorpus\Ucms\Notification\NotificationService $service */
+  $service = \Drupal::service('ucms_notification.service');
+  $service->deleteSubscriptionsFor($account->id());
+  // $service->getNotificationService()->deleteSubscriber($account->uid);
 }

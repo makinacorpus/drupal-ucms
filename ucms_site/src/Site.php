@@ -120,6 +120,11 @@ class Site
         return $this->theme;
     }
 
+    public function getOwnerUserId()
+    {
+        return $this->uid;
+    }
+
     public function setHomeNodeId($nodeId)
     {
         $this->home_nid = $nodeId;

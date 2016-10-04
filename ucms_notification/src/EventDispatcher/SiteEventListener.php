@@ -30,7 +30,8 @@ class SiteEventListener
     public function onSiteCreate(SiteEvent $event)
     {
         $site = $event->getSite();
-        $this->service->subscribe($site->uid, 'site:'.$site->getId());
+
+        $this->service->getNotificationService()->subscribe('site', $site->getId(), $site->getOwnerUserId());
     }
     /**
      * Event: On adding an user to a site.
@@ -40,8 +41,9 @@ class SiteEventListener
     public function onSiteWebmasteraddnew(SiteEvent $event)
     {
         $site = $event->getSite();
-        $uid = $event->getArgument('webmaster_id');
-        $this->service->subscribe($uid, 'site:'.$site->getId());
+        $uid  = $event->getArgument('webmaster_id');
+
+        $this->service->getNotificationService()->subscribe('site', $site->getId(), $uid);
     }
 
     /**
@@ -62,7 +64,8 @@ class SiteEventListener
     public function onSiteWebmasterdelete(SiteEvent $event)
     {
         $site = $event->getSite();
-        $uid = $event->getArgument('webmaster_id');
-        $this->service->deleteSubscriptionsFor($uid, ['site:'.$site->getId()]);
+        $uid  = $event->getArgument('webmaster_id');
+
+        $this->service->deleteSubscriptionsFor($uid, ['site:' . $site->getId()]);
     }
 }

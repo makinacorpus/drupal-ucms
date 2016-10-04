@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Notification\EventDispatcher;
 
 use MakinaCorpus\APubSub\Notification\NotificationService;
@@ -8,15 +7,8 @@ use MakinaCorpus\Ucms\Extranet\EventDispatcher\ExtranetMemberEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-
 class ExtranetMemberEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var NotificationService
-     */
-    private $notifService;
-
-
     /**
      * {@inheritdoc}
      */
@@ -24,28 +16,31 @@ class ExtranetMemberEventSubscriber implements EventSubscriberInterface
     {
         return [
             ExtranetMemberEvent::EVENT_REGISTER => [
-                ['onExtranetMemberRegister', 0]
+                ['onExtranetMemberRegister', 0],
             ],
             ExtranetMemberEvent::EVENT_ACCEPT => [
-                ['onExtranetMemberAccept', 0]
+                ['onExtranetMemberAccept', 0],
             ],
             ExtranetMemberEvent::EVENT_REJECT => [
-                ['onExtranetMemberReject', 0]
+                ['onExtranetMemberReject', 0],
             ],
         ];
     }
 
+    /**
+     * @var NotificationService
+     */
+    private $notificationService;
 
     /**
      * Constructor.
      *
      * @param NotificationService $notifService
      */
-    public function __construct(NotificationService $notifService)
+    public function __construct(NotificationService $notificationService)
     {
-        $this->notifService = $notifService;
+        $this->notificationService = $notificationService;
     }
-
 
     public function onExtranetMemberRegister(ExtranetMemberEvent $event)
     {
@@ -62,7 +57,6 @@ class ExtranetMemberEventSubscriber implements EventSubscriberInterface
         $this->notify($event, 'reject');
     }
 
-
     /**
      * Sends a notification on the site's channel.
      *
@@ -73,6 +67,7 @@ class ExtranetMemberEventSubscriber implements EventSubscriberInterface
     {
         $userId = $event->getSubject()->id();
         $siteId = $event->getSite()->getId();
-        $this->notifService->notifyChannel('site:' . $siteId, 'member', $userId, $action, $event->getArguments());
+
+        $this->notificationService->notifyChannel('site:' . $siteId, 'member', $userId, $action, $event->getArguments());
     }
 }

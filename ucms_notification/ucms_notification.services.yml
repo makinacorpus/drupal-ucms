@@ -2,7 +2,7 @@ services:
 
   ucms_notification.service:
     class: MakinaCorpus\Ucms\Notification\NotificationService
-    arguments: ["@apb.notification", "@entity.manager"]
+    arguments: ["@apb.notification", "@entity.manager", "@?ucms_group.manager"]
 
   # Site notifications
   ucms_notification.site_request:
@@ -124,6 +124,20 @@ services:
       - { name: event_listener, event: "site:webmaster_add_new" }
       - { name: event_listener, event: "site:webmaster_add_existing" }
       - { name: event_listener, event: "site:webmaster_delete" }
+
+  # Node events, raise correct resource events
+  ucms_notification.node_event_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Notification\EventDispatcher\NodeEventSubscriber
+    arguments: ["@ucms_notification.service", "@current_user", "@event_dispatcher"]
+    tags: [{ name: event_subscriber }]
+
+  # Alter channels depending on context event subscriber
+  ucms_notification.notification_context_event_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Notification\EventDispatcher\NotificationContextEventSubscriber
+    arguments: ["@entity.manager", "@ucms_site.manager", "@?ucms_group.manager"]
+    tags: [{ name: event_subscriber }]
 
   # Extranet member event subscriber
   ucms_notification.extranet_member_event_subscriber:
