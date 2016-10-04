@@ -17,8 +17,6 @@
  *   - Add Elastic search array query formatting (must, must not, etc...)
  */
 
-use MakinaCorpus\Ucms\Search\Search;
-
 /**
  * Default number of items index each cron run.
  *
@@ -50,6 +48,11 @@ require_once __DIR__ . '/ucms_search.batch.inc';
  * µSync integration.
  */
 require_once __DIR__ . '/ucms_search.usync.inc';
+
+/**
+ * Field formatter.
+ */
+require_once __DIR__ . '/ucms_search.field_formatters.inc';
 
 /**
  * Implements hook_menu().

@@ -4,13 +4,11 @@ namespace MakinaCorpus\Ucms\Site\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -200,7 +198,7 @@ class SiteRequest extends FormBase
     }
 
     /**
-     * Step B form validate
+     * Step A form validate
      */
     public function validateStepA(array $form, FormStateInterface $form_state)
     {
@@ -268,17 +266,31 @@ class SiteRequest extends FormBase
             $options[$theme] = $text;
         }
 
+        $defaultTheme = null;
+        if ($site->theme) {
+          $defaultTheme = $site->theme;
+        } elseif (count($options) == 1) {
+          reset($options);
+          $defaultTheme = key($options);
+        }
+
         $form['theme'] = [
             '#title'         => $this->t("Theme"),
             '#type'          => 'radios',
             '#options'       => $options,
-            '#default_value' => $site->theme,
+            '#default_value' => $defaultTheme,
             '#required'      => true,
+            '#disabled'      => (count($options) == 1),
         ];
 
         // Is template site
         $currentUser = $this->currentUser();
-        $canManage = $currentUser->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $currentUser->hasPermission(Access::PERM_SITE_GOD);
+
+        $canManage = (
+            $currentUser->hasPermission(Access::PERM_SITE_MANAGE_ALL) ||
+            $currentUser->hasPermission(Access::PERM_SITE_GOD)
+        );
+
         $form['is_template'] = [
             '#title'         => $this->t("Is template site?"),
             '#type'          => 'radios',
@@ -289,15 +301,26 @@ class SiteRequest extends FormBase
 
         // Template site (which will be duplicated)
         $templateList = $this->manager->getTemplateList();
+
         if ($canManage) {
             array_unshift($templateList, $this->t('- None -'));
         }
+
+        $defaultTemplate = null;
+        if ($site->template_id) {
+          $defaultTemplate = $site->template_id;
+        } elseif (count($templateList) == 1) {
+          reset($templateList);
+          $defaultTemplate = key($templateList);
+        }
+
         $form['template_id'] = [
             '#title'         => $this->t("Template site"),
             '#type'          => 'radios',
             '#options'       => $templateList,
+            '#default_value' => $defaultTemplate,
             '#required'      => !$canManage,
-            '#default_value' => $site->template_id ?: '',
+            '#disabled'      => (count($templateList) == 1),
         ];
 
         if ($form['is_template']['#access']) {
@@ -305,6 +328,8 @@ class SiteRequest extends FormBase
                 'visible' => [':input[name="is_template"]' => ['value' => 0]],
             ];
         }
+
+        $form['attributes']['#tree'] = true;
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
@@ -352,7 +377,10 @@ class SiteRequest extends FormBase
         $site->theme = $form_state->getValue('theme');
         $site->template_id = $form_state->getValue('is_template') ? 0 : $form_state->getValue('template_id');
         $site->is_template = $form_state->getValue('is_template');
-        $site->setAttribute('thematic', $form_state->getValue('thematic'));
+        $attributes = $form_state->getValue('attributes', []);
+        foreach ($attributes as $name => $attribute) {
+            $site->setAttribute($name, $attribute);
+        }
 
         if ($site->template_id) {
             $site->type = $this->manager->getStorage()->findOne($site->template_id)->type;

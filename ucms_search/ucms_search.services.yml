@@ -21,6 +21,9 @@ parameters:
   # disable this feature.
   ucms_search.elastic.attachment_enabled: true
 
+  # In full page, how many results should we limit
+  ucms_search.full_limit: 10
+
 services:
 
   ucms_search.index_storage:
@@ -122,3 +125,7 @@ services:
   ucms_search.autocomplete:
     class: MakinaCorpus\Ucms\Search\Autocomplete
     arguments: ["@ucms_search.elastic.client", "@ucms_search.index_storage", "@ucms_site.manager"]
+
+  ucms_search.formatter:
+    class: MakinaCorpus\Ucms\Search\Formatter
+    arguments: ["@ucms_search.search_factory", "@entity.manager", "@ucms_site.manager", "%ucms_search.full_limit%"]
