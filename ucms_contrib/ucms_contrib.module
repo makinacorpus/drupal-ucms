@@ -15,6 +15,8 @@ use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Site\Access;
 
+require_once __DIR__ . '/ucms_contrib.field.inc';
+
 /**
  * View mode for content display.
  */
