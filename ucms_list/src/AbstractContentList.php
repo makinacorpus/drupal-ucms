@@ -9,6 +9,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\Site;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * In most cases, all content list should extend this
  */
@@ -38,8 +40,9 @@ abstract class AbstractContentList implements ContentListInterface
         return $this->entityManager;
     }
 
-    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [])
+    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [], Request $request)
     {
+        // @todo User request to populate page task
         $pageState = new PageState();
         $pageState->setRange($formatterOptions['limit']);
         $pageState->setPagerElement(++\PagerDefault::$maxElement);
