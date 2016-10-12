@@ -3,12 +3,16 @@
 namespace MakinaCorpus\Ucms\Contrib\Filter;
 
 use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\filter\Plugin\FilterBase;
 
+use MakinaCorpus\Ucms\Site\NodeManager;
+use MakinaCorpus\Ucms\Site\SiteManager;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Logger\LoggerChannelInterface;
 
 class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
 {
@@ -22,13 +26,36 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
             $pluginId,
             $pluginDefinition,
             $container->get('entity.manager'),
+            $container->get('ucms_site.manager'),
+            $container->get('ucms_site.node_manager'),
             $container->get('logger.channel.default'),
             $container->getParameter('ucms_contrib.filter.view_mode.markup')
         );
     }
 
+    /**
+     * @var EntityManager
+     */
     private $entityManager;
+
+    /**
+     * @var SiteManager
+     */
+    private $siteManager;
+
+    /**
+     * @var NodeManager
+     */
+    private $nodeManager;
+
+    /**
+     * @var LoggerChannelInterface
+     */
     private $logger;
+
+    /**
+     * @var string
+     */
     private $viewMode = 'default';
 
     /**
@@ -38,6 +65,8 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
      * @param string $pluginId
      * @param string $pluginDefinition
      * @param EntityManager $entityManager
+     * @param SiteManager $siteManager
+     * @param NodeManager $nodeManager
      * @param LoggerChannelInterface $logger
      * @param string $viewMode
      */
@@ -46,12 +75,16 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
         $pluginId,
         $pluginDefinition,
         EntityManager $entityManager,
+        SiteManager $siteManager,
+        NodeManager $nodeManager,
         LoggerChannelInterface $logger = null,
-        $viewMode = 'default')
-    {
+        $viewMode = 'default'
+    ) {
         parent::__construct($configuration, $pluginId, $pluginDefinition);
 
         $this->entityManager = $entityManager;
+        $this->siteManager = $siteManager;
+        $this->nodeManager = $nodeManager;
         $this->logger = $logger;
         $this->viewMode = $viewMode;
     }
@@ -118,6 +151,13 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
         $done = false;
         $map = [];
 
+        $cloningMapping = [];
+        $cloneAwareFeature = variable_get('ucms_contrib_clone_aware_features', false);
+
+        if ($cloneAwareFeature && $this->siteManager->hasContext()) {
+            $cloningMapping = $this->nodeManager->getCloningMapping($this->siteManager->getContext());
+        }
+
         // Find any element containing data-media-nid, extract it and replace it
         // with the associated loaded node.
         $xpath = new \DOMXPath($d);
@@ -125,6 +165,11 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
         foreach ($nodeList as $node) {
             /** @var $node \DOMElement */
             $nodeId = $node->getAttribute('data-media-nid');
+
+            if (isset($cloningMapping[$nodeId])) {
+                $nodeId = $cloningMapping[$nodeId];
+            }
+
             $map[$nodeId][] = [
                 $node,
                 $node->getAttribute('data-media-width'),
