@@ -27,6 +27,22 @@ class NodeController extends Controller
             $viewMode = $this->getWysiwygViewMode();
         }
 
+        // Overwrites the node with its clone if there's one
+        // and if the feature is enabled.
+        if (variable_get('ucms_contrib_clone_aware_features', false)) {
+            $siteManager = $this->get('ucms_site.manager');
+            if ($siteManager->hasContext()) {
+                $nodeManager = $this->get('ucms_site.node_manager');
+                $mapping = $nodeManager->getCloningMapping($siteManager->getContext());
+
+                if (isset($mapping[$node->id()])) {
+                    $node = $this->get('entity.manager')
+                        ->getStorage('node')
+                        ->load($mapping[$node->id()]);
+                }
+            }
+        }
+
         $view = node_view($node, $viewMode);
 
         return new JsonResponse(['output' => drupal_render($view)]);
