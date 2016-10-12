@@ -946,7 +946,10 @@ function ucms_contrib_entity_load($entities, $type) {
     list(,, $bundle) = entity_extract_ids($type, $entity);
     foreach (field_info_instances($type, $bundle) as $name => $info) {
       $field = field_info_field($info['field_name']);
-      if (in_array($field['type'], ['text', 'text_long', 'text_with_summary'], true)) {
+      if (
+        in_array($field['type'], ['text', 'text_long', 'text_with_summary'], true) &&
+        !empty($entity->{$name}[LANGUAGE_NONE])
+      ) {
         foreach ($entity->{$name}[LANGUAGE_NONE] as &$item) {
           unset($item['safe_value']);
         }
