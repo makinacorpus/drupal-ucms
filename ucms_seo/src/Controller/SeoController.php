@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
+use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Dashboard\Page\PageFactory;
 use MakinaCorpus\Ucms\Seo\Page\NodeAliasDisplay;
 use MakinaCorpus\Ucms\Seo\Page\NodeRedirectDisplay;
@@ -87,7 +88,8 @@ class SeoController extends Controller
         $query  = ['node' => $node->id()];
 
         return $this
-            ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])
+            ->getPageFactory()
+            ->get($datasource, $display, ['dashboard', 'seo', 'redirect'])
             ->setBaseQuery($query)
             ->render(drupal_get_query_parameters(), current_path())
         ;
@@ -101,7 +103,8 @@ class SeoController extends Controller
         $query  = ['site' => $site->getId()];
 
         return $this
-            ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])
+            ->getPageFactory()
+            ->get($datasource, $display, ['dashboard', 'seo', 'redirect'])
             ->setBaseQuery($query)
             ->render(drupal_get_query_parameters(), current_path())
         ;
