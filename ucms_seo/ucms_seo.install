@@ -431,7 +431,7 @@ function ucms_seo_update_7017() {
 function ucms_seo_update_7018() {
   $table = 'ucms_seo_redirect';
   if (!db_table_exists($table)) {
-    $schema = drupal_get_schema($table);
+    $schema = drupal_get_schema_unprocessed('ucms_seo', $table);
     db_create_table($table, $schema);
   }
 }
