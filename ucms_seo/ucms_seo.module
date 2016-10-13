@@ -399,9 +399,9 @@ function ucms_seo_drupal_deliver_html_page($page_callback_result) {
 function ucms_seo_init() {
   $uri = request_uri();
   $manager = ucms_site_manager();
-  // We have an old path, starting with /?q=, Drupal won't detect it as front
-  // page, so we check for a redirect.
-  if ($manager->hasContext() && substr($uri, 0, 4) == '/?q=') {
+  // We have an old path, if starting with /?q=, Drupal won't detect it as front
+  // page, so we check for a redirect only on frontpage with a query argument.
+  if ($manager->hasContext() && substr($uri, 0, 2) == '/?') {
     $storage = ucms_seo_service()->getRedirectStorage();
     if ($storage->pathHasMatchingRedirect($uri)) {
       $redirect = $storage->load(['path' => $uri]);
