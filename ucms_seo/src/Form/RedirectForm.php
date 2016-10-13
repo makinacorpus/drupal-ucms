@@ -113,6 +113,9 @@ class RedirectForm extends FormBase
         $siteId = &$form_state->getValue('site_id');
         $path = &$form_state->getValue('path');
 
+        if (substr($path, 0, 1) !== '/') {
+            $form_state->setError($form['path'], $this->t('The path should begin by a slash ("/")'));
+        }
         if ($this->storage->redirectExists($path, $node->nid, $siteId)) {
             $form_state->setError($form['path'], $this->t("This redirect already exist for this node and this site"));
         }
