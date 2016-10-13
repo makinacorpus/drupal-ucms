@@ -383,7 +383,7 @@ function ucms_seo_page_delivery_callback_alter(&$callback) {
  */
 function ucms_seo_drupal_deliver_html_page($page_callback_result) {
   $storage = ucms_seo_service()->getRedirectStorage();
-  $uri = ltrim(request_uri(), '/');
+  $uri = request_uri();
   if ($page_callback_result === MENU_NOT_FOUND && $storage->pathHasMatchingRedirect($uri)) {
     $redirect = $storage->load(['path' => $uri]);
     drupal_goto('node/' . $redirect->nid, [], 301);
