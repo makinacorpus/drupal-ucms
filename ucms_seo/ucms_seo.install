@@ -435,3 +435,10 @@ function ucms_seo_update_7018() {
     db_create_table($table, $schema);
   }
 }
+
+/**
+ * Prefix redirects by a slash if needed.
+ */
+function ucms_seo_update_7019() {
+  db_query("UPDATE {ucms_seo_redirect} SET path = CONCAT('/', path) WHERE LEFT(path, 1) != '/'")->execute();
+}
