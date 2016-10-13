@@ -88,9 +88,3 @@ services:
     public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeIndexEventSubscriber
     tags: [{ name: event_subscriber }]
-
-  ucms_contrib.entity_link_filter_event_subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\EntityLinkFilterEventSubscriber
-    arguments: ["@ucms_site.manager", "@ucms_site.node_manager"]
-    tags: [{ name: event_subscriber }]
