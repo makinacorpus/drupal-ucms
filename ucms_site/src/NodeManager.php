@@ -45,6 +45,11 @@ class NodeManager
     private $eventDispatcher;
 
     /**
+     * @var array
+     */
+    private $cloningMapping = [];
+
+    /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
@@ -366,5 +371,44 @@ class NodeManager
         ;
 
         return $this->manager->getStorage()->loadAll($idList);
+    }
+
+    /**
+     * Provides a mapping array of parent identifiers to clone identifiers.
+     *
+     * If there is several clones for a same parent,
+     * the first created will be passed.
+     *
+     * @param Site $site
+     *
+     * @return integer[]
+     */
+    public function getCloningMapping(Site $site)
+    {
+        if (isset($this->cloningMapping[$site->getId()])) {
+            return $this->cloningMapping[$site->getId()];
+        }
+
+        $q = $this->db
+            ->select('node', 'n')
+            ->fields('n', ['parent_nid', 'nid'])
+            ->isNotNull('parent_nid')
+            ->condition('site_id', $site->id)
+            ->condition('status', NODE_PUBLISHED)
+            ->orderBy('created', 'ASC')
+        ;
+
+        $mapping = [];
+
+        foreach ($q->execute()->fetchAll() as $row) {
+            if (isset($mapping[(int) $row->parent_nid])) {
+                continue;
+            }
+            $mapping[(int) $row->parent_nid] = (int) $row->nid;
+        }
+
+        $this->cloningMapping[$site->getId()] = $mapping;
+
+        return $mapping;
     }
 }

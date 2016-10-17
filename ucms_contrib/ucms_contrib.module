@@ -13,7 +13,11 @@
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Contrib\Filter\EntityLinkFilter;
+use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Site\Access;
+
+require_once __DIR__ . '/ucms_contrib.field.inc';
 
 /**
  * View mode for content display.
@@ -812,16 +816,6 @@ function template_preprocess_ucms_contrib_content_result_grid(&$vars) {
 }
 
 /**
- * Implements hook_field_widget_WIDGET_TYPE_form_alter().
- */
-function ucms_contrib_field_widget_unoderef_form_alter(&$element, &$form_state, $context) {
-  // FIXME
-  \Drupal::service('ucms_dashboard.context')
-    ->addTab('cart', t("Cart"), 'shopping-cart')
-    ->add(ucms_contrib_favorite_render(), 'cart');
-}
-
-/**
  * Implements hook_admin_paths().
  */
 function ucms_contrib_admin_paths() {
@@ -913,12 +907,43 @@ function ucms_contrib_filter_info() {
  * Implements callback_filter_prepare().
  */
 function ucms_contrib_filter_media_prepare($text, $filter, $format, $langcode) {
-  return sf_dic_plugin_create('MakinaCorpus\Ucms\Contrib\Filter\MediaFilter', (array)$filter)->prepare($text, $langcode);
+  return sf_dic_plugin_create(MediaFilter::class, (array)$filter)->prepare($text, $langcode);
 }
 
 /**
  * Implements callback_filter_process().
  */
 function ucms_contrib_filter_media_process($text, $filter, $format, $langcode) {
-  return sf_dic_plugin_create('MakinaCorpus\Ucms\Contrib\Filter\MediaFilter', (array)$filter)->process($text, $langcode)->getProcessedText();
+  return sf_dic_plugin_create(MediaFilter::class, (array)$filter)->process($text, $langcode)->getProcessedText();
+}
+
+/**
+ * Implements hook_entity_load().
+ */
+function ucms_contrib_entity_load($entities, $type) {
+
+  if (!variable_get('ucms_contrib_clone_aware_features', false)) {
+    return;
+  }
+
+  // Removes the safe value of all text fields items to force the field API
+  // to rebuild it.
+  // We have to do that to ensure that our filters are well executed
+  // at each display of these fields.
+  // Unfortunately, implement hook_filter_info_alter() to disable the cacheable
+  // behavior of our filters doesn't work...
+  foreach ($entities as $entity) {
+    list(,, $bundle) = entity_extract_ids($type, $entity);
+    foreach (field_info_instances($type, $bundle) as $name => $info) {
+      $field = field_info_field($info['field_name']);
+      if (
+        in_array($field['type'], ['text', 'text_long', 'text_with_summary'], true) &&
+        !empty($entity->{$name}[LANGUAGE_NONE])
+      ) {
+        foreach ($entity->{$name}[LANGUAGE_NONE] as &$item) {
+          unset($item['safe_value']);
+        }
+      }
+    }
+  }
 }

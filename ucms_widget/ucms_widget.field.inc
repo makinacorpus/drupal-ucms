@@ -117,7 +117,7 @@ function ucms_widget_field_formatter_view($entity_type, $entity, $field, $instan
     foreach ($items as $delta => $item) {
       $settings = drupal_array_merge_deep($defaults, $item['options']);
 
-      $output = $widget->render($entity, $site, $settings, $formatterOptions);
+      $output = $widget->render($entity, $site, $settings, $formatterOptions, \Drupal::requestStack()->getCurrentRequest());
       if (!is_array($output)) {
         $output = ['#markup' => $output];
       }

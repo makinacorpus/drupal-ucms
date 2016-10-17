@@ -6,6 +6,8 @@ use Drupal\Core\Entity\EntityInterface;
 
 use MakinaCorpus\Ucms\Site\Site;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Common interface for all widgets that may be displayed in sites pages
  * layouts by the user
@@ -19,12 +21,13 @@ interface WidgetInterface
      * @param Site $site
      * @param mixed[] $options
      * @param mixed[] $formatterOptions
+     * @param Request $request
      *
      * @return mixed
      *   Anything that can be placed in a twig template or rendered via
      *   drupal_render()
      */
-    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = []);
+    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [], Request $request);
 
     /**
      * Get default options

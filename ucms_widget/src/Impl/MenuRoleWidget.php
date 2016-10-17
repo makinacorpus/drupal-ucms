@@ -11,6 +11,8 @@ use MakinaCorpus\Ucms\Widget\WidgetInterface;
 use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\TreeManager;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Display a menu where you want it to be.
  *
@@ -54,7 +56,7 @@ class MenuRoleWidget implements WidgetInterface
     /**
      * {@inheritdoc}
      */
-    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [])
+    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [], Request $request)
     {
         $ret = [];
 

@@ -6,6 +6,8 @@ use Drupal\Core\Entity\EntityInterface;
 
 use MakinaCorpus\Ucms\Site\Site;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Null object implementation for non-existing widget types at runtime
  */
@@ -14,7 +16,7 @@ class NullWidget implements WidgetInterface
     /**
      * {@inheritdoc}
      */
-    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [])
+    public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [], Request $request)
     {
         return '';
     }
