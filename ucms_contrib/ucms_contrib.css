@@ -1,3 +1,12 @@
+/* Tables */
+#ucms-contrib-results td > .btn-group {
+  white-space: nowrap;
+}
+#ucms-contrib-results td > .btn-group > * {
+  float: none;
+  display: inline-block;
+}
+
 .ucms-cart-item {
   display: block !important;
   width: 155px !important;
