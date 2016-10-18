@@ -1,0 +1,8 @@
+name = "UCMS - Harm"
+description = "Provide unmeaningful legacy features that will be dropped. Please, never use this module."
+core = 7.x
+package = UCMS
+php = 5.5
+dependencies[] = ucms_contrib
+dependencies[] = ucms_dashboard
+dependencies[] = ucms_site

@@ -112,7 +112,7 @@ class NodeTransfer extends FormBase
                 $node = $formState->getTemporaryValue('node');
                 // The node is a local content: no problem, the new owner will
                 // be added to the sites's contributors if needed.
-                // The node is a global or group content: the new owner must
+                // The node is a global: the new owner must
                 // have the good permissions (then we check the access to the
                 // update operation).
                 if (empty($node->site_id) && !$node->access(Access::OP_UPDATE, $account)) {

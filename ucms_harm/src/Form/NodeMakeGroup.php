@@ -1,12 +1,10 @@
 <?php
 
-
-namespace MakinaCorpus\Ucms\Contrib\Form;
+namespace MakinaCorpus\Ucms\Harm\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Form\AbstractEntityActionForm;
-
 
 class NodeMakeGroup extends AbstractEntityActionForm
 {
@@ -15,7 +13,7 @@ class NodeMakeGroup extends AbstractEntityActionForm
      */
     public function getFormId()
     {
-        return 'ucms_contrib_node_make_group_form';
+        return 'ucms_harm_node_make_group_form';
     }
 
     /**

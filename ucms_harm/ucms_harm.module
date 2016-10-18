@@ -1,0 +1,76 @@
+<?php
+/**
+ * @file
+ * UCMS - Unmeaningful legacy features that will be dropped.
+ *
+ * Please, never use this module.
+ */
+
+use Drupal\node\NodeInterface;
+
+use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Harm\Form\NodeMakeGroup;
+use MakinaCorpus\Ucms\Harm\Form\NodeUnmakeGroup;
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_harm_menu() {
+
+  // Prevent using service during install.
+  if (defined('MAINTENANCE_MODE')) {
+    return [];
+  }
+
+  $items = [];
+
+  // Main administration pages.
+  foreach (array_keys(ucms_contrib_type_handler_get()->getTabs()) as $key) {
+    $items['admin/dashboard/' . $key . '/group'] = [
+      'title'             => "Group",
+      'page callback'     => 'ucms_harm_admin_content_page_group',
+      'page arguments'    => [$key],
+      'access arguments'  => [Access::PERM_CONTENT_VIEW_GROUP],
+      'type'              => MENU_LOCAL_TASK,
+      'weight'            => 100,
+    ];
+  }
+
+  $items['node/%node/make-group'] = [
+    'title'             => "Define as group content",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [NodeMakeGroup::class, 1],
+    'access callback'   => 'ucms_harm_menu_node_access_group',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['node/%node/unmake-group'] = [
+    'title'             => "Remove from group contents",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [NodeUnmakeGroup::class, 1],
+    'access callback'   => 'ucms_harm_menu_node_access_group',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  return $items;
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_harm_menu_node_access_group(NodeInterface $node) {
+  return ucms_site_node_access_helper()->userCanPromoteToGroup(\Drupal::currentUser(), $node);
+}
+
+/**
+ * Group content admin.
+ */
+function ucms_harm_admin_content_page_group($tab = null) {
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
+  $search = $datasource->getSearch();
+  $search->getFilterQuery()->matchTerm('is_group', 1);
+  require_once drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.pages.inc';
+  return ucms_contrib_admin_content_page($datasource, $tab);
+}
