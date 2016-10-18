@@ -171,6 +171,7 @@ function ucms_seo_permission() {
  */
 function ucms_seo_init() {
   $manager = ucms_site_manager();
+
   // Globalredirect behavior
   if ($manager->hasContext()) {
     $site = $manager->getContext();
@@ -196,6 +197,18 @@ function ucms_seo_init() {
           ], 301);
         }
       }
+    }
+  }
+
+  // Redirect behavior for path with query strings
+  $uri = request_uri();
+  // We have an old path, if starting with /?q=, Drupal won't detect it as front
+  // page, so we check for a redirect only on frontpage with a query argument.
+  if ($manager->hasContext() && substr($uri, 0, 2) == '/?') {
+    $storage = ucms_seo_service()->getRedirectStorage();
+    if ($storage->pathHasMatchingRedirect($uri)) {
+      $redirect = $storage->load(['path' => $uri]);
+      drupal_goto('node/' . $redirect->nid, [], 301);
     }
   }
 }
@@ -390,22 +403,5 @@ function ucms_seo_drupal_deliver_html_page($page_callback_result) {
   }
   else {
     drupal_deliver_html_page($page_callback_result);
-  }
-}
-
-/**
- * Implements hook_init().
- */
-function ucms_seo_init() {
-  $uri = request_uri();
-  $manager = ucms_site_manager();
-  // We have an old path, if starting with /?q=, Drupal won't detect it as front
-  // page, so we check for a redirect only on frontpage with a query argument.
-  if ($manager->hasContext() && substr($uri, 0, 2) == '/?') {
-    $storage = ucms_seo_service()->getRedirectStorage();
-    if ($storage->pathHasMatchingRedirect($uri)) {
-      $redirect = $storage->load(['path' => $uri]);
-      drupal_goto('node/' . $redirect->nid, [], 301);
-    }
   }
 }
