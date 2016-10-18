@@ -70,7 +70,7 @@ class SiteRequest extends FormBase
         $form['#site'] = $site; // This is used in *_form_alter()
 
         if (empty($formData['step'])) {
-            $step = 'a';
+            $step = $formData['step'] = 'a';
         } else {
             $step = $formData['step'];
         }
