@@ -117,7 +117,6 @@ class RedirectStorage implements RedirectStorageInterface
         }
 
         $deleted = $query->execute();
-        // @todo Switch to using an event for this instead of a hook.
         $this->moduleHandler->invokeAll('redirect_delete', [$path]);
 
         return $deleted;
