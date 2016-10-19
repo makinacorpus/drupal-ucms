@@ -46,7 +46,7 @@ class UsersPortletDisplay extends AbstractDisplay
 
         foreach ($items as $item) {
             /* @var $item UserInterface */
-            $action = new Action($this->t("Voir"), 'admin/dashboard/user/' . $item->id(), null, 'eye-open');
+            $action = new Action($this->t("View"), 'admin/dashboard/user/' . $item->id(), null, 'eye-open');
 
             $roles = [];
             foreach ($item->getRoles(true) as $rid) {
