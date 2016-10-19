@@ -1,0 +1,3235 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2016-10-19 15:47+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "100% (default)"
+msgstr "100% (défaut)"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "25%"
+msgstr "25%"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "50%"
+msgstr "50%"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "75%"
+msgstr "75%"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "Left of text"
+msgstr "À gauche du texte"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "Media properties"
+msgstr "Propriétés du média"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "Normal"
+msgstr "Normal"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "Position"
+msgstr "Position"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "Properties"
+msgstr "Propriétés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "Right of text"
+msgstr "À droite du texte"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
+msgid "Width (remains at 100% if not left or right)"
+msgstr "Largeur (conservée à 100% en positionnement normal)"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/ContentActionProvider.php:77
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:103
+msgid "Refresh"
+msgstr "Rafraichir"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/ContentActionProvider.php:100;110
+msgid "Create !content_type"
+msgstr "Créer !content_type"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:75
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:194;202
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:40
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:25
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:90
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:66
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeActionProvider.php:44
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:73
+msgid "Edit"
+msgstr "Modifier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:79
+msgid "Unpublish"
+msgstr "Dépublier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:81
+msgid "Publish"
+msgstr "Publier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:85
+msgid "Revisions"
+msgstr "Révisions"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:93
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:234
+msgid "Transfer ownership"
+msgstr "Transférer la propriété"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:107
+msgid "Add to cart"
+msgstr "Ajouter au panier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:107
+msgid "Remove from cart"
+msgstr "Retirer du panier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:119
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:210
+msgid "Add to global contents"
+msgstr "Ajouter au contenu global"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:124
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:218
+msgid "Define as group content"
+msgstr "Définir comme contenu de groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:124
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:226
+msgid "Remove from group contents"
+msgstr "Retirer des contenus Groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:137
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:162
+msgid "Star"
+msgstr "Marquer comme important"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:137
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:170
+msgid "Unstar"
+msgstr "Retirer le marquage important"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:149
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:146
+msgid "Flag as inappropriate"
+msgstr "Signaler comme inapproprié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:151
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:154
+msgid "Un-flag as innappropriate"
+msgstr "Retirer le marquage comme inapproprié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:155
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:41
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:36
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/RedirectDeleteProcessor.php:36
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeDeleteProcessor.php:34
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:86
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:90
+msgid "Delete"
+msgstr "Supprimer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:61;63
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:56
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:68
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:49
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:67
+msgid "View"
+msgstr "Voir"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/SiteActionProvider.php:44
+msgid "Content in site"
+msgstr "Contenus du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/SiteActionProvider.php:46
+msgid "Medias in site"
+msgstr "Medias du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:49
+msgid "Media tab"
+msgstr "Onglet Média"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:59
+msgid "Content tab"
+msgstr "Onglet Contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:63
+msgid "Editorial content types"
+msgstr "Types de contenu éditoriaux"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:70
+msgid "Component content types"
+msgstr "Types de contenu composants"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:77
+msgid "Locked components"
+msgstr "Composant verrouillé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:86
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:103
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteStateTransitionForm.php:90
+msgid "Save configuration"
+msgstr "Enregistrer la configuration"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:103
+msgid "Media can't be content as well."
+msgstr ""
+"Les médias ne peuvent pas être des contenus éditoriaux ou des composants."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:108
+msgid "Editorial content can't be components as well."
+msgstr "Les contenus éditoriaux ne peuvent pas être des composants."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:123
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:97
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:129
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteStateTransitionForm.php:103
+msgid "The configuration options have been saved."
+msgstr "Les options de configuration ont été enregistrées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Controller/CartController.php:57
+msgid "%title is already a favorite"
+msgstr "%title est déjà un favori"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:70
+msgid "Cart"
+msgstr "Panier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:79
+msgid "Go to dashboard"
+msgstr "Aller au dashboard"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:94;98;112
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:141
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:159
+msgid "Create"
+msgstr "Créer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Filter/MediaFilter.php:240
+msgid "could not save generated HTML"
+msgstr "Impossible d’enregistrer le HTML généré"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Filter/MediaFilter.php:106;121;146
+msgid "markup contain invalid HTML, cannot parse medias"
+msgstr ""
+"Le balisage contient du HTML invalide, impossible de récupérer les médias"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:64
+msgid "No content type provided."
+msgstr "Aucun type de contenu n'a été fourni."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:84
+msgid "Where would you want to create this content ?"
+msgstr "Où voulez-vous créer ce contenu ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:87
+msgid "Create a global content"
+msgstr "Créer un contenu global"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:88
+msgid "Create a content in one of my sites"
+msgstr "Créer un contenu dans un de mes sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:98
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:121
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:69
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:81
+msgid "Select a site"
+msgstr "Sélectionner un site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:114
+msgid "Do you want to create a global content ?"
+msgstr "Voulez-vous créer un contenu global ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:130
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:143
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:163
+msgid "Continue"
+msgstr "Continuer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:136
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:148
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:66;78
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:100
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:95
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:156
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:168
+msgid "Cancel"
+msgstr "Annuler"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:163
+msgid "You are now creating a content into your site."
+msgstr "Vous êtes maintenant en train de créer un contenu dans votre site."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:167
+msgid "You are now creating a global content."
+msgstr "Vous êtes maintenant en train de créer un contenu global."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:91
+msgid "Do you want to duplicate this content within your site ?"
+msgstr "Voulez vous modifier ce contenu dans votre site ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:97
+msgid "Do you want to edit this content ?"
+msgstr "Voulez vous modifier ce contenu ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:107
+msgid "Duplicate in my site"
+msgstr "Copier et modifier pour mon site seulement"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:136
+msgid "Edit the content globally (affects all site the content is in)"
+msgstr ""
+"Modifier ce contenu (les modifications seront visibles sur tous les sites où "
+"il est partagé)"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:177
+msgid ""
+"You can now edit this node on this site, it will be automatically duplicated."
+msgstr ""
+"Vous pouvez maintenant modifier la nouvelle version de ce contenu à "
+"destination du site courant, la copie sera créé à la validation du "
+"formulaire."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:182
+msgid "You are now editing the global content for all sites."
+msgstr ""
+"Vous êtes en train de modifier le contenu, tous les sites où il est partagé "
+"verront les modifications que vous y apporterez."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeFlag.php:26
+msgid "Flag %title has innapropriate ?"
+msgstr "Signaler %title comme inapproprié ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeFlag.php:40
+msgid "%title has been flagged has innapropriate."
+msgstr "%title a été signalé comme inapproprié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeLock.php:26
+msgid "Lock %title ?"
+msgstr "Verouiller %title ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeLock.php:40
+msgid "%title has been locked."
+msgstr "%title a été verrouillé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGlobal.php:48
+msgid "Add %title to global contents?"
+msgstr "Ajouter %title aux contenus globaux ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGlobal.php:64
+msgid "%title has been added to global contents."
+msgstr "%title a été ajouté aux contenus globaux."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:27
+msgid "Define %title as group content?"
+msgstr "Définir %title comme contenu groupe ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:41
+msgid "%title has been added to the group contents."
+msgstr "%title a été ajouté aux contenus groupes."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodePublish.php:26
+msgid "Publish %title ?"
+msgstr "Publier %title ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodePublish.php:40
+msgid "%title has been published."
+msgstr "%title a été publié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeStar.php:26
+msgid "Star %title ?"
+msgstr "Marquer %title comme important ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeStar.php:40
+msgid "%title has been starred."
+msgstr "%title a été marqué comme important"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:84
+msgid "Transfer ownership to:"
+msgstr "Transférer la propriété à :"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:85
+msgid "Please enter a name and select the user in the suggestions list."
+msgstr "Veuillez faire votre choix parmi cette liste de suggestions."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:93
+msgid "Transfer"
+msgstr "Transférer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:106
+msgid "The user could not be identified."
+msgstr "Cet utilisateur ne peut pas être identifié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:110
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:136
+msgid "The user doesn't exist."
+msgstr "Cet utilisateur n'existe pas."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:119
+msgid "The user %user is not allowed to manage this type of content."
+msgstr "L'utilisateur %user n'est pas autorisé à modifier ce type de contenu."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:160
+msgid "The content %title has been transferred to %user."
+msgstr "%title a été transféré à %user."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnflag.php:26
+msgid "Un-flag %title ?"
+msgstr "Retirer le signalement sur %title ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnflag.php:40
+msgid "%title has been un-flagged."
+msgstr "Le signalement sur %title a été retiré."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnlock.php:26
+msgid "Unlock %title ?"
+msgstr "Déverrouiller %title ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnlock.php:40
+msgid "%title has been unlocked."
+msgstr "%title a été dévérouillé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:27
+msgid "Remove %title from group contents?"
+msgstr "Retirer %title des contenu Groupe ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:41
+msgid "%title has been removed from the group contents."
+msgstr "%title a été retiré des contenus Groupe."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnpublish.php:26
+msgid "Unpublish %title ?"
+msgstr "Dépublier %title ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnpublish.php:40
+msgid "%title has been unpublished."
+msgstr "%title a été dépublié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnstar.php:26
+msgid "Unstar %title ?"
+msgstr "Retirer l'importance de %title ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnstar.php:40
+msgid "%title has been unstarred."
+msgstr "%title n'est plus marqué comme important."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:18
+msgid "table"
+msgstr "table"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:19
+msgid "thumbnail grid"
+msgstr "grille de vignettes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:20
+msgid "teaser list"
+msgstr "liste d'accroches"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:62
+msgid "This has been flagged as innapropriate"
+msgstr "Ce contenu a été signalé comme étant innaproprié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:65
+msgid "This content has been flagged as important"
+msgstr "Ce conteny est marqué comme important"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:68
+msgid "This content may not be cloned"
+msgstr "Ce contenu ne peut pas être copié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:71
+msgid "This content is a copy of another content"
+msgstr "Ce contenu est la copie d'un autre contenu existant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:74
+msgid "This is a group content"
+msgstr "Ce contenu est un contenu groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:34
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:39
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:48
+msgid "Never"
+msgstr "Jamais"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:94
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:42
+msgid "published"
+msgstr "publié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:94
+msgid "unpublished"
+msgstr "dépublié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:107
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:50
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:80
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:89
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:61
+msgid "Type"
+msgstr "Type"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:108
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:49
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:85
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:58
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:63
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:62
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:81
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:74
+msgid "Title"
+msgstr "Titre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:109
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:53
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:116
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:62
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDisplay.php:50
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:64
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:71
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:60
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:71
+msgid "Status"
+msgstr "Statut"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:110
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:65
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:62
+msgid "Created"
+msgstr "Créé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:111
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:66
+msgid "Last update"
+msgstr "Dernière mise à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:112
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:94
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:67
+msgid "Owner"
+msgstr "Propriétaire"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:67
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:267;273
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:90
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:77
+msgid "Content"
+msgstr "Contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:101
+msgid "Create content"
+msgstr "Créer du contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:107
+msgid "Create component"
+msgstr "Créer un composant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:136
+msgid "You have no content yet."
+msgstr "Vous n'avez pas de contenu pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/MediaPortlet.php:68
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:38
+msgid "Media"
+msgstr "Média"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/MediaPortlet.php:96
+msgid "Create media"
+msgstr "Créer un média"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/MediaPortlet.php:124
+msgid "You have no media yet."
+msgstr "Vous n'avez pas de média pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:51
+msgid "Site(s)"
+msgstr "Site(s)"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:52
+msgid "Updated"
+msgstr "Mis à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:108
+msgid "Tags"
+msgstr "Tags"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:114
+msgid "Published"
+msgstr "Publié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:114
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:76
+msgid "Unpublished"
+msgstr "Dépublié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:130
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:24
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:41
+msgid "My sites"
+msgstr "Mes sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:158
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:74
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:85
+msgid "creation date"
+msgstr "date de création"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:159
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:73
+msgid "lastest update date"
+msgstr "dernière mise à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:160
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:75
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:84
+msgid "status"
+msgstr "statut"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:161
+msgid "owner"
+msgstr "propriétaire"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:162
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:68
+msgid "title"
+msgstr "titre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:163
+msgid "flag"
+msgstr "marquage"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms-contrib-cart.html.twig:4
+msgid "Your cart"
+msgstr "Votre panier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.field.inc:17
+msgid "Clone aware (first item only)"
+msgstr "Prise en compte du clonage (premier élément seulement)"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.field.inc:10;24
+msgid "Clone aware"
+msgstr "Prise en compte du clonage"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.info:0
+msgid "UCMS"
+msgstr "UCMS"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.info:0
+msgid "UCMS - Contribution"
+msgstr "UCMS - Contribution"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.info:0
+msgid "Uses SolR for content search - provide Drag'n'Drop"
+msgstr "Utilise SolR pour la recherche de contenu - fournit du GLissé-Déposé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:63
+msgid "My content"
+msgstr "Mon contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:68
+msgid "Global"
+msgstr "Global"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:77
+msgid "Group"
+msgstr "Groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:86
+msgid "Local"
+msgstr "Local"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:95
+msgid "Flagged"
+msgstr "Signalé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:104
+msgid "Starred"
+msgstr "Important"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:120
+msgid "New !type for my site"
+msgstr "Créer un(e) !type pour mon site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:130
+msgid "Publish content"
+msgstr "Publier le contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:138
+msgid "Unpublish content"
+msgstr "Dépublier le contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:178
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:69
+msgid "Lock"
+msgstr "Verrouiller"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:186
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:71
+msgid "Unlock"
+msgstr "Déverrouiller"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:252
+msgid "Contribution user interface"
+msgstr "Interface utilisateur de contribution"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:253
+msgid ""
+"Manage content types categorisation and how the main contribution user "
+"interface will look like and behave."
+msgstr ""
+"Gère la catégorisation des types de contenu et comment l'interface "
+"utilisateur se comporte."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:457
+msgid "Content admin display"
+msgstr "Affichage d'administration du contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:461
+msgid "Favorite in cart"
+msgstr "Favori dans le panier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:561
+msgid "Lock this content"
+msgstr "Vérrouiller ce contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:574
+msgid "Save and add to cart"
+msgstr "Enregistrer et ajouter au panier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:585
+msgid "Save and publish"
+msgstr "Enregistrer et publier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:596
+msgid "Save, publish and add to cart"
+msgstr "Enregistrer, publier et ajouter au panier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:878
+msgid "UCMS medias drop & paste management"
+msgstr "UCMS - gestion du copier-coller"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:897
+msgid "UCMS Media DnD"
+msgstr "UCMS Media DnD"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:898
+msgid "Will transform UCMS DnD markup into content"
+msgstr "Transforme le balisage UCMS  DnD en contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Form/ActionProcessForm.php:58
+msgid "Action was done"
+msgstr "L’action a été réalisée"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/AbstractDisplay.php:176
+msgid "Display as @mode"
+msgstr "Afficher comme @mode"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:55
+msgid "Clear"
+msgstr "Vider"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:48;62
+msgid "Search"
+msgstr "Rechercher"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:188
+msgid "Sort by"
+msgstr "Trier par"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:207
+msgid "ascending"
+msgstr "croissant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:207
+msgid "descending"
+msgstr "décroissant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:215
+msgid "Order by"
+msgstr "Trier par"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-actions.html.twig:35
+msgid "More actions"
+msgstr "Plus d'actions"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-page-list.html.twig:13
+msgid "Sort by:"
+msgstr "Trier par :"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-page.html.twig:12
+msgid "see all"
+msgstr "voir tous"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-top.html.twig:5
+msgid "Toggle navigation"
+msgstr "Afficher/masquer la navigation"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-top.html.twig:12
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.module:159
+msgid "Administration"
+msgstr "Administration"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-top.html.twig:24;28
+msgid "Welcome @user"
+msgstr "Bienvenue @user"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+msgid "Admin dashboard for users"
+msgstr "Tableau de bord d'administration pour les utilisateurs"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+msgid "UCMS - Dashboard"
+msgstr "UCMS - Dashboard"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.module:24
+msgid "Use contextual pane"
+msgstr "Utiliser le volet contextuel"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.module:96;51
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelNotificationsActionProvider.php:44
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:45
+msgid "Subscribe to the notifications"
+msgstr "S’abonner aux notifications"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelNotificationsActionProvider.php:46
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:53
+msgid "Unsubscribe from the notifications"
+msgstr "Se désabonner des notifications"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/EventDispatcher/ContextPaneEventListener.php:40
+msgid "Create label"
+msgstr "Créer une étiquette"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelDelete.php:71
+msgid "Do you really want to delete the \"@name\" label?"
+msgstr "Êtes-vous sûr de vouloir supprimer l'étiquette \"@name\" ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelDelete.php:84
+msgid "\"@name\" label has been deleted."
+msgstr "L'étiquette \"@name\" a été supprimée."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelDelete.php:88
+msgid ""
+"An error occured during the deletion of the \"@name\" label. Please try "
+"again."
+msgstr ""
+"Une erreur est survenue lors de la suppression de l'étiquette \"@name\". "
+"Veuillez réessayer."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:75
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:123
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:69
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:103
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:86
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:58
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:59
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:68
+msgid "Name"
+msgstr "Nom"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:111
+msgid "Parent label"
+msgstr "Catégorie"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:114
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:306
+msgid "- None -"
+msgstr "- Aucun -"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:121
+msgid ""
+"You must move or delete the children labels if you want to define a parent "
+"label for this one."
+msgstr ""
+"Vous devez déplacer ou supprimer les étiquettes enfant si vous voulez "
+"définir une catégorie pour celle-ci."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:128
+msgid "Non editable label"
+msgstr "Étiquette non modifiable"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:143
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:152
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:117
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:82
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:89
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:159
+msgid "Save"
+msgstr "Enregistrer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:166
+msgid "The new \"@name\" label has been created."
+msgstr "La nouvelle étiquette \"@name\" a été crée."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:169
+msgid "The \"@name\" label has been updated."
+msgstr "L'étiquette \"@name\" a été mise à jour."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:174
+msgid ""
+"An error occured during the edition of the \"@name\" label. Please try again."
+msgstr ""
+"Une erreur est survenue lors de la modification de l'étiquette \"@name\". "
+"Veuillez réessayer."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelSubscribe.php:76
+msgid "Subscribe to the %name label notifications?"
+msgstr "S’abonner aux notifications de l’étiquette %name ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelSubscribe.php:88
+msgid "You subscribed to the %name label notifications."
+msgstr "Vous vous êtes abonné aux notifications de l’étiquette %name."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelUnsubscribe.php:76
+msgid "Unsubscribe from the %name label notifications?"
+msgstr "Se désabonner des notifications de l’étiquette %name ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelUnsubscribe.php:88
+msgid "You unsubscribed from the %name label notifications."
+msgstr "Vous vous êtes désabonné des notifications de l’étiquette %name."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:56
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDisplay.php:41
+msgid "Editable"
+msgstr "Modifiable"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:57
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDisplay.php:41
+msgid "Non editable"
+msgstr "Non modifiable"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:61
+msgid "Category"
+msgstr "Catégorie"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:73
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:67
+msgid "identifier"
+msgstr "identifiant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:74
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:83
+msgid "name"
+msgstr "nom"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDisplay.php:50
+msgid "Label"
+msgstr "Étiquette"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.dashboard.inc:16
+msgid "There is not labels yet."
+msgstr "Il n'y pas d'étiquettes pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.info:0
+msgid "Provide a labels management interface."
+msgstr "Fournit une interface de gestion des étiquettes."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.info:0
+msgid "UCMS - Label"
+msgstr "UCMS - Label"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:18
+msgid "Labels"
+msgstr "Étiquettes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:26
+msgid "Add new label"
+msgstr "Ajouter une nouvelle étiquette"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:80
+msgid "View labels"
+msgstr "Voir les étiquettes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:83
+msgid "Edit locked labels"
+msgstr "Modifier les étiquettes vérouillées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:86
+msgid "Edit non locked labels"
+msgstr "Modifier les étiquettes non verrouillées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:126
+msgid "Edit \"@name\" label"
+msgstr "Modifier l'étiquette \"@name\""
+
+#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:128
+msgid "Delete \"@name\" label"
+msgstr "Supprimer l'étiquette \"@name\""
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:61
+msgid "Enable regions"
+msgstr "Activer les régions"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:64
+msgid ""
+"Disable all regions if you do not with layouts to be usable with this theme."
+msgstr ""
+"Désactiver toutes les régions si vous ne voulez pas de gestion de mise en "
+"page pour ce thème."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:72
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:66
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:45
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:60
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:73
+msgid "Page context"
+msgstr "Contexte de page"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:74
+msgid "Site context"
+msgstr "Contexte de site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:61
+msgid "Save composition"
+msgstr "Enregistrer la composition"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:73
+msgid "Save transversal composition"
+msgstr "Enregistrer la composition transverse"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:85
+msgid "Edit composition"
+msgstr "Modifier la composition"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:90
+msgid "Edit transversal composition"
+msgstr "Modifier la composition transverse"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:107;163
+msgid "Changed have been saved"
+msgstr "Les modifications ont été enregistrées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:124;180
+msgid "Changes have been dropped"
+msgstr "Les modifications ont été supprimées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:12
+msgid "Enabled regions"
+msgstr "Régions activées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:12
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:67
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:140
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:278
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:55
+msgid "Theme"
+msgstr "Thème"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:38
+msgid "No theme found."
+msgstr "Aucun thème trouvé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.info:0
+msgid "Custom per page layout configuration"
+msgstr "Configuration de la mise en page personnalisée"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.info:0
+msgid "UCMS - Layout"
+msgstr "UCMS - Layout"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.module:33
+msgid "Layout management"
+msgstr "Gestion de la mise en page"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.module:34
+msgid "Manage usable regions layouts and site wide configuration."
+msgstr "Gérer les régions de mise en page et la configuration du site."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.module:97
+msgid "Edit @theme theme regions"
+msgstr "Modifier les régions du thème &theme"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.module:100
+msgid "Edit theme regions"
+msgstr "Modifier les régions du thème"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/EventDispatcher/ContextPaneEventListener.php:69
+msgid "Notifications"
+msgstr "Notifications"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/AbstractContentNotificationFormatter.php:86
+msgid "@count content"
+msgid_plural "@count contents"
+msgstr[0] "@count contenu"
+msgstr[1] "@count contenus"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentAdd.php:34
+msgid "@title of type @type has been created by @name"
+msgstr "@title de type @type a été créé par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentAdd.php:35
+msgid "@title of type @type have been created by @name"
+msgstr "@title de type @type ont été créés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentAdd.php:36
+msgid "@title of type @type has been created"
+msgstr "@title de type @type a été créé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentAdd.php:37
+msgid "@title of type @type have been created"
+msgstr "@title de type @type ont été créés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentDelete.php:39
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDelete.php:46
+msgid "@title has been deleted by @name"
+msgstr "@title a été supprimé par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentDelete.php:40
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDelete.php:47
+msgid "@title have been deleted by @name"
+msgstr "@title ont été supprimés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentDelete.php:41
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDelete.php:48
+msgid "@title has been deleted"
+msgstr "@title a été supprimé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentDelete.php:42
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDelete.php:49
+msgid "@title have been deleted"
+msgstr "@title ont été supprimés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentEdit.php:34
+msgid "@title of type @type has been updated by @name"
+msgstr "@title de type @type a été mis à jour par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentEdit.php:35
+msgid "@title of type @type have been updated by @name"
+msgstr "@title de type @type ont été mis à jour par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentEdit.php:36
+msgid "@title of type @type has been updated"
+msgstr "@title de type @type a été mis à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentEdit.php:37
+msgid "@title of type @type have been updated"
+msgstr "@title de type @type ont été mis à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:36
+msgid "@title of type @type has been flagged by @name"
+msgstr "@title de type @type a été signalé par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:37
+msgid "@title of type @type have been flagged by @name"
+msgstr "@title de type @type ont été signalés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:38
+msgid "@title of type @type has been flagged"
+msgstr "@title de type @type a été signalé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:39
+msgid "@title of type @type have been flagged"
+msgstr "@title de type @type ont été signalés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentNewLabels.php:35
+msgid ""
+"@title of type @type has been associated with some of the labels you "
+"subscribed to by @name"
+msgstr ""
+"@title de type @type a été associé à une des étiquettes que vous suivez par "
+"@name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentNewLabels.php:36
+msgid ""
+"@title of type @type have been associated with some of the labels you "
+"subscribed to by @name"
+msgstr ""
+"@title de type @type ont été associé à une des étiquettes que vous suivez "
+"par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentNewLabels.php:37
+msgid ""
+"@title of type @type has been associated with some of the labels you "
+"subscribed to"
+msgstr ""
+"@title de type @type a été associé à des étiquettes auxquelles vous êtes "
+"abonnés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentNewLabels.php:38
+msgid ""
+"@title of type @type have been associated with some of the labels you "
+"subscribed to"
+msgstr ""
+"@title de type @type ont été associés à des étiquettes auxquelles vous êtes "
+"abonnés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentPublish.php:34
+msgid "@title of type @type has been published by @name"
+msgstr "@title de type @type a été publié par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentPublish.php:35
+msgid "@title of type @type have been published by @name"
+msgstr "@title de type @type ont été publiés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentPublish.php:36
+msgid "@title of type @type has been published"
+msgstr "@title de type @type a été publié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentPublish.php:37
+msgid "@title of type @type have been published"
+msgstr "@title de type @type ont été publié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentUnpublish.php:34
+msgid "@title of type @type has been unpublished by @name"
+msgstr "@title de type @type a été dépublié par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentUnpublish.php:35
+msgid "@title of type @type have been unpublished by @name"
+msgstr "@title de type @type ont été dépublié par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentUnpublish.php:36
+msgid "@title of type @type has been unpublished"
+msgstr "@title de type @type a été dépublié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentUnpublish.php:37
+msgid "@title of type @type have been unpublished"
+msgstr "@title de type @type ont été dépublié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ExtranetMemberAccept.php:49
+msgid "Registration of @title on @site has been accepted by !name"
+msgstr "L'inscription de @title sur @site a été acceptée par !name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ExtranetMemberAccept.php:50
+msgid "Registrations of @title on @site have been accepted by !name"
+msgstr "Les inscriptions de @title sur @site ont été acceptées par !name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ExtranetMemberRegister.php:48
+msgid "@title registered on @site"
+msgstr "@title a été inscrit sur @site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ExtranetMemberReject.php:51
+msgid "Registration of @title on @site has been rejected by !name"
+msgstr "L'inscription de @title sur @site a été rejetée par !name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ExtranetMemberReject.php:52
+msgid "Registrations of @title on @site have been rejected by !name"
+msgstr "Les inscriptions de @title sur @site ont été rejetées par !name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteRequest.php:78
+msgid "Site @title has been requested by @name"
+msgstr "Le site @title a été demandé par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteRequest.php:79
+msgid "Site @title have been requested by @name"
+msgstr "Les sites @title ont été demandés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteRequest.php:80
+msgid "Site @title has been requested"
+msgstr "Le site @title a été demandé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteRequest.php:81
+msgid "Site @title have been requested"
+msgstr "Le site @title a été demandé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteSwitch.php:97
+msgid "@name switched @title from @from to @to"
+msgstr "@name a passé le site @title de l'état @from à @to"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteSwitch.php:98
+msgid "@name switched @title from @from to @to: %reason"
+msgstr "@name a passé le site @title de l'état @from à @to: %reason"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteSwitch.php:99
+msgid "@title switched from @from to @to"
+msgstr "@title passé de l'état @from à @to"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/SiteSwitch.php:100
+msgid "@title switched from @from to @to: %reason"
+msgstr "@title passé de l'état @from à @to: %reason"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserAdd.php:33
+msgid "@title has been registered by @name"
+msgstr "@title a été inscrit par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserAdd.php:34
+msgid "@title have been registered by @name"
+msgstr "@title ont été inscrits par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserAdd.php:35
+msgid "@title has been registered"
+msgstr "@title a été inscrit"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserAdd.php:36
+msgid "@title have been registered"
+msgstr "@title a été inscrit"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserChangeEmail.php:33
+msgid "@title's email has been changed by @name"
+msgstr "L’adresse e-mail de @title a été modifiée par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserChangeEmail.php:34
+msgid "Emails of @title have been changed by @name"
+msgstr "Les e-mails de @title ont été modifiés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserChangeEmail.php:35
+msgid "@title's email has been changed"
+msgstr "L’adresse e-mail de @title a été modifiée"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserChangeEmail.php:36
+msgid "Emails of @title have been changed"
+msgstr "Les adresses e-mail de @title ont été modifiées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDisable.php:33
+msgid "@title has been disabled by @name"
+msgstr "@title a été désactivé par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDisable.php:34
+msgid "@title have been disabled by @name"
+msgstr "@title ont été désactivés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDisable.php:35
+msgid "@title has been disabled"
+msgstr "@title a été désactivé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserDisable.php:36
+msgid "@title have been disabled"
+msgstr "@title ont été désactivés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEdit.php:33
+msgid "@title's account has been updated by @name"
+msgstr "Le compte utilisateur de @title a été modifié par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEdit.php:34
+msgid "Accounts of @title have been updated by @name"
+msgstr "Les comptes utilisateur de @title ont été modifiés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEdit.php:35
+msgid "@title's account has been updated"
+msgstr "Les informations de compte de @title ont été mises à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEdit.php:36
+msgid "Accounts of @title have been updated"
+msgstr "Les informations de compte de @title ont été mises à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEnable.php:33
+msgid "@title has been enabled by @name"
+msgstr "@title a été activé par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEnable.php:34
+msgid "@title have been enabled by @name"
+msgstr "@title ont été activés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEnable.php:35
+msgid "@title has been enabled"
+msgstr "@title a été activé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserEnable.php:36
+msgid "@title have been enabled"
+msgstr "@title ont été activés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserResetPassword.php:33
+msgid "@title's password has been reset by @name"
+msgstr "Le mot de passe de @title a été réinitialisé par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserResetPassword.php:34
+msgid "Passwords of @title have been reset by @name"
+msgstr "Les mots de passe de @title ont été modifiés par @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserResetPassword.php:35
+msgid "@title's password has been reset"
+msgstr "Le mot de passe de @title a été réinitialisé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/UserResetPassword.php:36
+msgid "Passwords of @title have been reset"
+msgstr "Les mots de passe de @title ont été réinitialisés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.info:0
+msgid "Provide notification system"
+msgstr "Fournit le système de notification"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.info:0
+msgid "UCMS - Notification"
+msgstr "UCMS - Notifications"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.module:34
+msgid "Receive content admin notifications"
+msgstr "Recevoir les notifications d'administration des contenus"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.module:37
+msgid "Receive label admin notifications"
+msgstr "Recevoir les notifications d'administration des labels"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.module:40
+msgid "Receive SEO admin notifications"
+msgstr "Recevoir les notifications d'administration SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.module:43
+msgid "Receive site admin notifications"
+msgstr "Recevoir les notifications d'administration des sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.module:46
+msgid "Receive user admin notifications"
+msgstr "Recevoir les notifications d'administration des utilisateurs"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:122
+msgid "Id"
+msgstr "Id"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:124
+msgid "Total"
+msgstr "Total"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:125
+msgid "Queued"
+msgstr "Ajouté à la queue"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:126
+msgid "Indexed"
+msgstr "Indexé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:127
+msgid "Size"
+msgstr "Taille"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:180
+msgid "Error"
+msgstr "Erreur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:199
+msgid "Re-index selected"
+msgstr "Ré-indexer la sélection"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:204
+msgid "Index missing"
+msgstr "Indexer les manquants"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:224
+msgid "Re-indexing"
+msgstr "Ré-indexation"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:243
+msgid "Indexing missing documents"
+msgstr "Indexer les documents manquants"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Attachment/AbstractNodeAttachmentIndexer.php:161
+msgid "!nid attachments not indexed because max file size is exceed"
+msgstr "!nid pièces jointes non indexées car la taille totale a été atteinte"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Attachment/AbstractNodeAttachmentIndexer.php:161
+msgid "ucms_search_attachment"
+msgstr "ucms_search_attachment"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Form/SearchForm.php:68
+msgid "Specify your keywords"
+msgstr "Spécifier vos termes de recherche"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Formatter.php:79
+msgid "@count result for \"@keywords\""
+msgid_plural "@count results for \"@keywords\""
+msgstr[0] "@count résultat pour \"@keywords\""
+msgstr[1] "@count résultats pour \"@keywords\""
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Formatter.php:86
+msgid "@count result"
+msgid_plural "@count results"
+msgstr[0] "@count résultat"
+msgstr[1] "@count résultats"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.field_formatters.inc:11
+msgid "Search form and results"
+msgstr "Formulaire de recherche et résultats"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.info:0
+msgid "Integration with Elastic Search for back and front search"
+msgstr ""
+"Intégration d'Elastic Search pour la recherche dans le back-end et le front-"
+"end"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.info:0
+msgid "UCMS - Search"
+msgstr "UCMS - Search"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.module:71
+msgid "Search indices"
+msgstr "Index de recherche"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.module:75
+msgid "Manage search indices."
+msgstr "Gérer les index de recherche"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasCanonicalProcessor.php:36
+msgid "Set as canonical"
+msgstr "Définir comme canonique"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasCanonicalProcessor.php:46
+msgid "Set this item as canonical for the associated page?"
+msgid_plural ""
+"Set the selected @count items as canonical for their respectively associated "
+"pages?"
+msgstr[0] "Définir cet élément comme canonique pour la page associée ?"
+msgstr[1] "Définir ces éléments comme canoniques pour leur page associée ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasCanonicalProcessor.php:64
+msgid "Alias has been set as canonical for its associated page"
+msgid_plural "@count aliases have been set as canonical their associated pages"
+msgstr[0] "L'alias a été défini comme url canonique pour cette page associée"
+msgstr[1] ""
+"@count alias ont été définis comme url canonique pour cette page associée"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:46
+msgid "Delete this page alias?"
+msgid_plural "Delete those @count page aliases?"
+msgstr[0] "Supprimer cet alias de page ?"
+msgstr[1] "Supprimer ces @count alias de page ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:65
+msgid "Alias has been deleted"
+msgid_plural "@count aliases have been deleted"
+msgstr[0] "L'alias a été supprimé"
+msgstr[1] "@count alias ont été supprimé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/NodeActionProvider.php:47
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/SiteActionProvider.php:47
+msgid "SEO parameters"
+msgstr "Paramètres SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/NodeActionProvider.php:48
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/SiteActionProvider.php:48
+msgid "SEO aliases"
+msgstr "Alias SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/NodeActionProvider.php:49
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/SiteActionProvider.php:49
+msgid "SEO redirects"
+msgstr "Redirections SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/RedirectDeleteProcessor.php:46
+msgid "Delete this node redirect?"
+msgid_plural "Delete those @count node redirects?"
+msgstr[0] "Supprimer cette redirection de nœud ?"
+msgstr[1] "Supprimer ces @count redirections de nœud ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/RedirectDeleteProcessor.php:64
+msgid "Redirect has been deleted"
+msgid_plural "@count redirects have been deleted"
+msgstr[0] "La redirection a été supprimée"
+msgstr[1] "@count redirections on été supprimées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/StoreLocatorAliasRebuildProcessor.php:42
+msgid "Rebuild SEO aliases"
+msgstr "Reconstruire les alias SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/StoreLocatorAliasRebuildProcessor.php:58
+msgid "Rebuild all aliases for content linked to this store locator?"
+msgid_plural ""
+"Rebuild all aliases for content linked to these @count store locators?"
+msgstr[0] "Reconstruire tous les alias pour ce store locator ?"
+msgstr[1] "Reconstruire tous les alias pour ces @count store locator ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/StoreLocatorAliasRebuildProcessor.php:85
+msgid "All aliases have been rebuilt"
+msgstr "Tous les alias ont été reconstruits"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Controller/SeoController.php:49
+msgid "This content has no SEO alias."
+msgstr "Ce contenu n'a pas d’alias SEO."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Controller/SeoController.php:63
+msgid "This site has no SEO alias."
+msgstr "Ce contenu n'a pas d’alias SEO."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Controller/SeoController.php:77
+msgid "This content has no SEO redirect."
+msgstr "Ce contenu n'a pas de redirection SEO."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Controller/SeoController.php:91
+msgid "This site has no SEO redirect."
+msgstr "Ce site n'a pas de redirections SEO."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/EventDispatcher/ContextPaneEventListener.php:41;43
+msgid "Add SEO redirect"
+msgstr "Ajouter une redirection SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:56
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:52
+msgid "There is no node to reference!"
+msgstr "Il n’y a aucun nœud à référencer !"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDisplay.php:79
+msgid "Old path"
+msgstr "Ancien chemin"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:95
+msgid "Create redirect"
+msgstr "Créer une redirection"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:117
+msgid "The path should begin by a slash (\"/\")"
+msgstr "Le chemin doit commencer par un slash (\"/\")"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:120
+msgid "This redirect already exist for this node and this site"
+msgstr "Cette redirection existe déjà pour ce nœud et ce site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:137
+msgid "%path will redirect to %title"
+msgstr "%path redirigera vers %title"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:68
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:55
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:89
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:55
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:89
+msgid "Alias"
+msgstr "Alias"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:70
+msgid "about-us"
+msgstr "a-propos"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:73
+msgid ""
+"This is the content alias that will be used in order to build URLs for the "
+"menu of your site"
+msgstr ""
+"Ceci est l’alias du contenu qui sera utilisé pour construire les URL de menu "
+"de votre site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:80
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:341
+msgid "Meta title"
+msgstr "Meta title"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:82
+msgid "My page title"
+msgstr "Mon titre de page"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:84
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:345
+msgid "This title will be used by search engines to index you content"
+msgstr ""
+"Ce titre sera utilisé par les moteurs de recherche pour indexer votre contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:88
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:350
+msgid "Meta description"
+msgstr "Meta description"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:90
+msgid "Shortly, this page is about something that..."
+msgstr "Sommairement, cette page est à propos de…"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:92
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:354
+msgid ""
+"This text is what will appear as your page summary when searching in most "
+"search engines"
+msgstr ""
+"Ce texte apparaitra comme résumé de votre page dans la plupart des moteurs "
+"de recherche"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:101
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoSiteForm.php:100
+msgid "Submit"
+msgstr "Soumettre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:121
+msgid ""
+"The alias '%alias' is invalid and has been normalized to: <strong>"
+"%normalized</strong>, please change the value below."
+msgstr ""
+"L'alias '%alias' est invalide et a été normalisé : <strong>%normalized</"
+"strong>, veuillez modifier la valeur ci-dessous."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoSiteForm.php:70
+msgid "Google analytics identifier"
+msgstr "Identifiant Google Analytics"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoSiteForm.php:78
+msgid "Piwik URL"
+msgstr "URL Piwik"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoSiteForm.php:84
+msgid "Piwik site identifier"
+msgstr "Identifiant de site Piwik"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoSiteForm.php:91
+msgid "Google webmaster tools verification code"
+msgstr "Code de vérification de la console Google Webmaster"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:38
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:38
+msgid "Is canonical"
+msgstr "Est canonique"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:42
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:42
+msgid "Do expire"
+msgstr "Expire"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:56
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:56
+msgid "Canonical state"
+msgstr "Statut canonical"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:57
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:91
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:57
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:91
+msgid "Language"
+msgstr "Langue"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:58
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:58
+msgid "Expiry date"
+msgstr "Expire le"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:59
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:93
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:59
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:93
+msgid "Priority"
+msgstr "Priorité"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:39;43
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:77
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:39;43
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:77
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:297
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:38
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:46
+msgid "Yes"
+msgstr "Oui"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:40;44
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:77;79
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:40;44
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:77;79
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:68
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:297
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:40
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:46
+msgid "No"
+msgstr "Non"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:61
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDisplay.php:61
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:64
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:61
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:92
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/SiteManager.php:284
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:101
+msgid "None"
+msgstr "Aucun"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:68
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:68
+msgid "default"
+msgstr "par défaut"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:90
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDisplay.php:80
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDatasource.php:65
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:76
+msgid "Site"
+msgstr "Site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:92
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:92
+msgid "Canonical"
+msgstr "Canonical"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:94
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:94
+msgid "Expires"
+msgstr "Expire le"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDatasource.php:36
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDatasource.php:36
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:76
+msgid "Path"
+msgstr "Chemin"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortlet.php:28
+msgid "Dead links"
+msgstr "Liens morts"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:35
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:65
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:72
+msgid "Link"
+msgstr "Lien"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:41
+msgid "Undefined"
+msgstr "Indéfini"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:76
+msgid "Deleted"
+msgstr "Supprimé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:86
+msgid "Field"
+msgstr "Champ"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:87
+msgid "Destination"
+msgstr "Destination"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:88
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:87
+msgid "Reason"
+msgstr "Raison"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:93
+msgid "No dead link"
+msgstr "Aucun lien mort"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.info:0
+msgid ""
+"All you need is a bit of canonical magic and some fixed node aliases, menu "
+"will do the rest!"
+msgstr ""
+"Tout ce dont vous avez besoin est d'un peu de magie canonique et d'alias de "
+"nœud fixes, les menu feront le reste !"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.info:0
+msgid "UCMS - SEO"
+msgstr "UCMS - SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:38
+msgid "Sitemap"
+msgstr "Plan de site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:57
+msgid "Node path aliases"
+msgstr "Alias de chemin de nœud"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:65
+msgid "Node redirects"
+msgstr "Redirections de contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:73
+msgid "Add a redirect for this node"
+msgstr "Ajouter une redirection pour ce nœud"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:82
+msgid "Site path aliases"
+msgstr "Alias de chemin du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:90
+msgid "Site redirects"
+msgstr "Redirections de site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:158
+msgid "Access platform wide SEO data"
+msgstr "Accéder aux données SEO de la plateforme"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:161
+msgid "Manage SEO data for own content"
+msgstr "Gérer les données SEO de ses propres contenus"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:164
+msgid "Manage SEO data for all content"
+msgstr "Gérer les données SEO de tous les contenus"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:301
+msgid "SEO node alias cannot contain the / character"
+msgstr "L'alias SEO ne peut pas contenir le caractère slash (\"/\")"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:304
+msgid ""
+"SEO node alias can only contain non capital letters, numbers, _ and - "
+"characters"
+msgstr ""
+"L'alias ne peut contenir que des lettres minuscules, des nombres et des "
+"caractères _ et -"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:319
+msgid "SEO"
+msgstr "SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:330
+msgid "Node alias"
+msgstr "Alias de chemin de nœud"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:331
+msgid "This alias must not contain the / character"
+msgstr "Cet alias ne peut pas contenir le caractère slash (/)."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:335
+msgid "some/path/"
+msgstr "un/chemin/"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.module:49;98
+msgid "Edit SEO parameters"
+msgstr "Modifier les paramètres SEO"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/AbstractWebmasterActionProvider.php:85
+msgid "Delete from this site"
+msgstr "Supprimer de ce site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/AbstractWebmasterActionProvider.php:99
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:136
+msgid "Change user's role"
+msgstr "Modifier le rôle de l'utilisateur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:56
+msgid "Remove from the current site"
+msgstr "Retirer du site courant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:59
+msgid "Use on another site"
+msgstr "Utiliser sur un autre site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:64
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:90
+msgid "Use on my site"
+msgstr "Utiliser sur mon site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:75
+msgid "View in site"
+msgstr "Voir sur un autre site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:63
+msgid "Go to site"
+msgstr "Aller au site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:68
+msgid "History"
+msgstr "Historique"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:74
+msgid "Switch to @state"
+msgstr "Passer à @state"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:80
+msgid "Add existing user"
+msgstr "Ajouter un utilisateur existant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:81
+msgid "Create new user"
+msgstr "Créer un nouvel utilisateur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:82
+msgid "Manage users"
+msgstr "Gérer les utilisateurs"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/WebmasterActionProvider.php:31
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:152
+msgid "Demote as contributor"
+msgstr "Rétrograder en tant que contributeur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/WebmasterActionProvider.php:35
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:144
+msgid "Promote as webmaster"
+msgstr "Promouvoir en tant que webmestre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:54
+msgid "Default node type for site home page"
+msgstr "Type de contenu par défaut pour la page d'accueil du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:58
+msgid ""
+"When a site is created, a node with the given type will be automatically "
+"created and set as the site page"
+msgstr ""
+"Quand un site est créé, un nœud du type donné sera automatiquement créé et "
+"défini comme page d'accueil"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:72
+msgid "Allowed themes"
+msgstr "Thèmes autorisés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:76
+msgid ""
+"Themes available in the site request form to be choosen by the requester"
+msgstr "Les thèmes disponibles au choix dans le formulaire de création de site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteStateTransitionForm.php:70
+msgid "Allow @name to switch site state from @from to @to"
+msgstr "Autoriser @name à permuter l'état des sites de @from à @to"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:44
+msgid "Template does not exist anymore"
+msgstr "Le gabarit n’existe plus"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:55
+msgid "Identification"
+msgstr "Identification"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:56
+msgid "HTTP hostname"
+msgstr "Nom de domaine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:57
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:53
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:64
+msgid "State"
+msgstr "État"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:59
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:33
+msgid "Created at"
+msgstr "Créé le"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:60
+msgid "Lastest update"
+msgstr "Dernière mise à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:61
+msgid "Requester"
+msgstr "Demandeur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:64
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:89
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:133
+msgid "Replaces"
+msgstr "Remplace"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:65
+msgid "HTTP redirections"
+msgstr "Redirections HTTP"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:66
+msgid "Display information"
+msgstr "Afficher les informations"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:68
+msgid "Is a template"
+msgstr "Est un gabarit"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:68
+msgid "yes"
+msgstr "oui"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:72
+msgid "Site template"
+msgstr "Site gabarit"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:62;63
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:90
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:75
+msgid "Description"
+msgstr "Description"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:63
+msgid "No site"
+msgstr "Pas de site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:74
+msgid "No request"
+msgstr "Pas de requête"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:77
+msgid "Pending requests"
+msgstr "Demandes en attente"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:66;67
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:27;197
+msgid "Sites"
+msgstr "Sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/ContextPaneEventListener.php:26
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:43
+msgid "Request site"
+msgstr "Demander un site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/NodeEventSubscriber.php:255
+msgid "The site home page has been changed to the current content."
+msgstr ""
+"Le contenu qui vient d'être créé a été défini comme page d'accueil du site."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/NodeEventSubscriber.php:258
+msgid ""
+"The cloned content is now the current site home page, yet it is unpublished, "
+"you should probably publish it!"
+msgstr ""
+"Le contenu qui vient d'être créé est maintenant la page d'accueil du site, "
+"mais il n'est pas publié, vous devez le publier."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeDereferenceFrom.php:54
+msgid "There is no node to dereference!"
+msgstr "Il n’y a aucun nœud à déréférencer !"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeDereferenceFrom.php:59
+msgid "There is no site to remove reference from!"
+msgstr "Il n’y a aucun site sur lequel déréférencer !"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeDereferenceFrom.php:68
+msgid "Remove %title from the %site site?"
+msgstr "Retirer %title du site %site ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeDereferenceFrom.php:86
+msgid "%title has been removed from site %site"
+msgstr "%title a été retiré du site %site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:63
+msgid "This content is already used by all your sites."
+msgstr "Ce contenu est déjà utilisé dans tous vos sites."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:116
+msgid "%title has been added to site %site"
+msgstr "%title a été ajouté au site %site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:61
+msgid "There is not site to edit!"
+msgstr "Il n’y a aucun site à modifier !"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:73
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:107
+msgid "This will appear as the site's title on the frontoffice."
+msgstr "Ceci apparaîtra comme le titre du site sur le frontoffice."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:79
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:112
+msgid "Administrative title"
+msgstr "Titre administratif"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:116
+msgid "This will be the site's title for the backoffice."
+msgstr "Ceci sera le titre du site pour l'interface d'administration."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:93
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:137
+msgid ""
+"If the new site aims to replace an existing site, please copy/paste the site "
+"URI into this textarea, you may write more than one URI or any useful "
+"textual information."
+msgstr ""
+"Si le site a vocation à remplacer un site existant, copier-coller son URL "
+"dans cette zone, vous pouvez saisir plus d'une URL ou toute autre "
+"information textuelle."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:99
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:142
+msgid "Host name redirects"
+msgstr "Redirections de noms de domaine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:103
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:146
+msgid ""
+"List of domain names that should redirect on this site, this is, you may "
+"write more than one URI or any useful textual information."
+msgstr ""
+"Liste de noms de domaine qui doivent être redirigés vers ce site, vous "
+"pouvez saisir plus d'une URL ou toute autre information textuelle."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:128
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:258
+msgid "Screenshot for !theme theme"
+msgstr "Capture d'écran du thème !theme"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:144
+msgid "This will be used for the whole site and cannot be changed once set"
+msgstr ""
+"Ceci sera utilisé sur tout le site et ne peut être modifié une fois défini"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:185
+msgid "Site modifications have been saved"
+msgstr "Les modifications du site ont été enregistrées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:72;82
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:106;115
+msgid "Martray's optical"
+msgstr "Optique de Martray"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:92
+msgid "Invalid step @step"
+msgstr "Étape @step invalide"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:122
+msgid "Host name"
+msgstr "Nom de domaine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:127
+msgid "Type here the site URL"
+msgstr "Saisir l'URL du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:152
+msgid "Public site"
+msgstr "Site public"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:154
+msgid "Uncheck this field to limit access to the site."
+msgstr "Décochez ce champ pour limiter l'accès au site."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:185
+msgid "Host name cannot be empty"
+msgstr "Le nom de domaine ne peut pas être vide"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:190
+msgid "Host name already exists"
+msgstr "Le nom de domaine existe déjà"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:196
+msgid "Host name contains invalid characters or has a wrong format"
+msgstr ""
+"Le nom de domaine contient des caractères invalides ou n'est pas formatté "
+"correctement"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:295
+msgid "Is template site?"
+msgstr "Est un site gabarit ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:318
+msgid "Template site"
+msgstr "Site gabarit"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:337
+msgid "Request"
+msgstr "Demander"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:341
+msgid "Go back"
+msgstr "Retour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:390
+msgid "Your site creation request has been submitted"
+msgstr "La création de votre site a été soumise"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:76
+msgid "Switch site @site to state @state ?"
+msgstr "Passer le site @site à l'état @state ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:88
+msgid "Describe here why you're switching this site's state"
+msgstr "Expliquez ici pourquoi vous changez l'état du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:116
+msgid "Site @site has been switched from @from to @to"
+msgstr "Le site @site est passé de l'état @from à @to"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:136
+msgid "There was an error switching site @site from @from to @to"
+msgstr "Il y a une erreur pour passer le site @site de l'état @from à @to"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:87
+msgid "Please make your choice in the suggestions list."
+msgstr "Veuillez faire votre choix parmi cette liste de suggestions."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:104
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterChangeRole.php:104
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDatasource.php:62
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:60
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:77
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:70
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:66
+msgid "Role"
+msgstr "Rôle"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:117
+msgid "Add"
+msgstr "Ajouter"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:132
+msgid "The user can't be identified."
+msgstr "Cet utilisateur ne peut pas être identifié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:157
+msgid "!name has been added as %role."
+msgstr "!name a été ajouté comme %role."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:86
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:97
+msgid "Lastname / Firstname"
+msgstr "Nom / Prénom"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:94
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:59
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:74
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:106
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:58
+msgid "Email"
+msgstr "E-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:112
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:51
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:128
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:70
+msgid "Roles"
+msgstr "Rôles"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:119
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:136
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:99
+msgid "Enable the user"
+msgstr "Activer cet utilisateur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:121
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:138
+msgid ""
+"You will have to define a password and pass it on to the user by yourself."
+msgstr ""
+"Vous devrez définir un mot de passe et le transmettre à l’utilisateur par "
+"vos propres moyens."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:134
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:72
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:151
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEnable.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:135
+msgid ""
+"!count characters at least. Mix letters, digits and special characters for a "
+"better password."
+msgstr ""
+"Au moins !count caractères. Mélanger les lettres, chiffres et caractères "
+"spéciaux pour un mot de passe plus sûr."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:170
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:151
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:116
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:195
+msgid "The e-mail address %email is already taken."
+msgstr "L'adresse e-mail %email est déjà prise."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:175
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:212
+msgid "You must define a password to enable the user."
+msgstr "Vous devez définir un mot de passe pour activer l’utilisateur."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:178
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:215
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEnable.php:114
+msgid "The password must contain !count characters at least."
+msgstr "Le mot de passe doit contenir au moins !count caractères."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:213
+msgid "!name has been created and added as %role."
+msgstr "!name a été créé et ajouté comme %role."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterChangeRole.php:113
+msgid "Validate"
+msgstr "Valider"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterChangeRole.php:134
+msgid "!name is from now on %role."
+msgstr "!name est désormais %role."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterDelete.php:76
+msgid "Delete @name from webmasters / contributors?"
+msgstr "Supprimer @name des webmestres / contributeurs ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterDelete.php:93
+msgid "!name has been removed from the webmasters / contributors."
+msgstr "!name a été retiré des webmestres / contributeurs."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterDemote.php:77
+msgid "Demote @name as contributor?"
+msgstr "Rétrograder @name en tant que contributeur ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterDemote.php:93
+msgid "!name has been demoted as %role."
+msgstr "@name a été rétrogradé en tant que contributeur ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterPromote.php:77
+msgid "Promote @name as webmaster?"
+msgstr "Promouvoir @name en tant que webmestre ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterPromote.php:93
+msgid "!name has been promoted as %role."
+msgstr "@name a été promu en tant que webmestre."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:56
+msgid "Template"
+msgstr "Gabarit"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:57
+msgid "Other"
+msgstr "Autre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:69
+msgid "administrative title"
+msgstr "titre administratif"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:70
+msgid "hostname"
+msgstr "nom de domaine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:71
+msgid "state"
+msgstr "état"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:72
+msgid "type"
+msgstr "type"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:75
+msgid "owner name"
+msgstr "nom du propriétaire"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:62
+msgid "Hostname"
+msgstr "Nom de domaine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:65
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:45
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:60
+msgid "Enabled"
+msgstr "Activé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:51
+msgid ""
+"This is the global status for across the whole platform. Is a user is "
+"disabled, he/she won't be able to log in."
+msgstr ""
+"Ceci est le statut global pour toute la plateforme. Si un utilisateur est "
+"désactivé, il/elle ne pourra plus se connecter."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:62
+msgid "Global status"
+msgstr "Statut global"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:56
+msgid "No attached site yet."
+msgstr "Pas de site rattaché pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:63
+msgid "Request date"
+msgstr "Date de demande"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitesPortlet.php:22
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:34
+msgid "All sites"
+msgstr "Tous les sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitesPortlet.php:40
+msgid "No site created yet."
+msgstr "Pas de site créé pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/SiteAccessService.php:183
+msgid "Webmaster"
+msgstr "Webmestre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/SiteAccessService.php:184
+msgid "Contributor"
+msgstr "Contributeur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/SiteManager.php:227
+msgid "Default"
+msgstr "Défaut"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Twig/Extension/SiteExtension.php:54
+msgid "Unknown"
+msgstr "Inconnu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.dashboard.inc:23
+msgid "There is no sites yet."
+msgstr "Aucun site pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.dashboard.inc:37
+msgid "You have no site."
+msgstr "Vous n'avez pas de site."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.dashboard.inc:52
+msgid "There is no archives."
+msgstr "Il n'y a pas d'archives."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.dashboard.inc:83
+msgid "There is no history to display."
+msgstr "Il n'y a pas d'historique à afficher."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.dashboard.inc:96
+msgid "There is no webmaster or contributor yet."
+msgstr "Il n'y a pas de webmestre ou de contributeur pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.info:0
+msgid "Provide site entity, site workflow, site node access machinery"
+msgstr ""
+"Fournit les entités de site, le processus de création de site et le système "
+"d'accès au contenu par site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.info:0
+msgid "UCMS - Site"
+msgstr "UCMS - Site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:45
+msgid "Archives"
+msgstr "Archives"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:70
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:32
+msgid "Details"
+msgstr "Détails"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:75
+msgid "Log"
+msgstr "Journal"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:103
+msgid "Switch site state"
+msgstr "Changer l'état du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:111
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortlet.php:45
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:25
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:120
+msgid "Add an existing user"
+msgstr "Ajouter un utilisateur existant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:128
+msgid "Create a new webmaster or contributor"
+msgstr "Créer un nouveau webmestre ou contributeur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:160
+msgid "Delete the user from this site"
+msgstr "Supprimer l'utilisateur de ce site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:180
+msgid "Reference this content"
+msgstr "Référencer ce contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:188
+msgid "Dereference this content from current site"
+msgstr "Déréférencer ce contenu du site courant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:206
+msgid "Site factory configuration"
+msgstr "Configuration de l'usine à sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:207
+msgid "Global site configuration, such as allowed themes for sites"
+msgstr ""
+"La configuration globale du site, comme les thèmes autorisés pour les sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:214
+msgid "Settings"
+msgstr "Paramètres"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:218
+msgid "Transitions"
+msgstr "Transitions"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:234
+msgid "Content god mode"
+msgstr "God mode de contenu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:238
+msgid "Manage global content"
+msgstr "Gérer le contenu global"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:241
+msgid "Manage group content"
+msgstr "Gérer le contenu Groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:244
+msgid "Manage starred content"
+msgstr "Gérer le contenu important"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:247
+msgid "Flag content as inappropriate"
+msgstr "Signaler le contenu comme inapproprié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:250
+msgid "Unflag content flagged as inappropriate"
+msgstr "Retirer du contenu le marquage comme inapproprié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:253
+msgid "Transfer content ownership to another user"
+msgstr "Transférer la propriété du contenu à un autre utilisateur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:256
+msgid "View all content no matter where it stands"
+msgstr "Voir tous les contenus quel que soit où ils se trouvent"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:259
+msgid "View global published content"
+msgstr "Voir les contenus globaux publiés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:262
+msgid "View group published content"
+msgstr "Voir les contenus groupes publiés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:265
+msgid "View other site content"
+msgstr "Voir les autres contenus du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:268
+msgid "Site god mode"
+msgstr "God mode de site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:275
+msgid "Access to site dashboard"
+msgstr "Accéder au tableau de bord des sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:278
+msgid "Manage all sites no matter their state is"
+msgstr "Gérer tous les sites quels que soient leurs états"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:281
+msgid "View all sites no matter their state is"
+msgstr "Voir tous les sites quels que soient leurs états"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:879
+msgid "Your e-mail address"
+msgstr "Votre adresse e-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:880
+msgid "Enter your @s e-mail address."
+msgstr "Saisissez votre adresse e-mail pour @s."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:881
+msgid "Enter the password that accompanies your e-mail address."
+msgstr "Saisissez le mot de passe correspondant à votre adresse e-mail."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:1046
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:45
+msgid "N/A"
+msgstr "N/A"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:235;269
+msgid ""
+"This permission bypasses everything that can be bypassed, for technical "
+"administrators only"
+msgstr ""
+"Cette permission cout-circuite tout ce qui peut être court-circuité, pour "
+"les administrateur techniques seulement"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:272;53
+msgid "Request new site"
+msgstr "Demander un nouveau site."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:85;94
+msgid "Site edit"
+msgstr "Modification de site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_site/views/NodeInfo/siteList.html.twig:14
+msgid "Origin"
+msgstr "Origine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeActionProvider.php:43
+msgid "Tree"
+msgstr "Arborescence"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeDeleteProcessor.php:50
+msgid "Delete this menu tree?"
+msgid_plural "Delete those @count menu trees?"
+msgstr[0] "Supprimer cette arborescence de menu ?"
+msgstr[1] "Supprimer ces @count arborescences de menu ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeDeleteProcessor.php:76
+msgid "Menu tree has been deleted"
+msgid_plural "@count menu trees have been deleted"
+msgstr[0] "L'arborescence de menu a été supprimée"
+msgstr[1] "Les @count arborescences de menu ont été supprimées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeSetMainProcessor.php:34
+msgid "Set as main menu"
+msgstr "Définir comme menu principal"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeSetMainProcessor.php:50
+msgid "Set this menu as main site menu?"
+msgid_plural "Set those @count menus as main site menu?"
+msgstr[0] "Définir ce menu comme menu principal du site ?"
+msgstr[1] "Définir ces @count menus comme menu principal du site ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeSetMainProcessor.php:75
+msgid "Menu has been set as main site menu"
+msgid_plural "@count menus have been set as main site menu"
+msgstr[0] "Le menu a été défini comme menu principal du site"
+msgstr[1] "Les @count menus ont été défini comme menu principal du site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/EventDispatcher/ContextPaneEventListener.php:38
+msgid "Menu tree"
+msgstr "Arborescence de menu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:71
+msgid "Leave this field empty for auto-generation"
+msgstr "Laisser ce champ vide pour une génération automatique"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:82
+msgid "Main, Footer, ..."
+msgstr "Principal, pied de page, ..."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:91
+msgid "Something about this menu..."
+msgstr "Quelque chose à propos de ce menu..."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:100
+msgid "Menu role in site"
+msgstr "Rôle du menu dans le site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:109
+msgid "Set as the site main menu?"
+msgstr "Définir en tant que menu principal du site ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:111
+msgid "If the site already has a main menu, this choice will change it."
+msgstr "Si le site possède déjà un menu principal, ce choix le modifiera."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:162
+msgid "Tree has been saved"
+msgstr "L'arborescence a été enregistrée"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:173
+msgid "Could not save tree"
+msgstr "Impossible d'enregistrer l'arborescence"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeForm.php:97
+msgid "Save tree"
+msgstr "Enregistrer l’arborescence"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeForm.php:208
+msgid "Tree modifications have been saved"
+msgstr "Les modifications de l’arborescence ont été enregistrées"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeForm.php:219
+msgid "Could not save tree modifications"
+msgstr "Impossible d’enregistrer les modifications de l’arborescence"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:44
+msgid "unknown"
+msgstr "inconnu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:72
+msgid "Id."
+msgstr "Id."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:73
+msgid "Internal name"
+msgstr "Nom interne"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:78
+msgid "Site main"
+msgstr "Site principal"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.info:0
+msgid "Handles menu trees"
+msgstr "Gère les arborescences de menu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.info:0
+msgid "µCMS Tree"
+msgstr "µCMS Tree"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.module:16
+msgid "All trees"
+msgstr "Toutes les arborescences"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.module:24
+msgid "Add new menu"
+msgstr "Ajouter un nouveau menu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.module:49
+msgid "Add content at position"
+msgstr "Ajouter du contenu à la position"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.module:175
+msgid "There was an error saving the menu link."
+msgstr "Il y a une erreur lors de l’enregistrement du lien de menu."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.module:32;40
+msgid "Edit menu"
+msgstr "Modifier le menu"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:71
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEnable.php:89
+msgid "Enable"
+msgstr "Activer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:75
+msgid "Disable"
+msgstr "Désactiver"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:84
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:115
+msgid "Change email"
+msgstr "Modifier l'e-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:85
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:82
+msgid "Reset password"
+msgstr "Réinitialiser le mot de passe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:41
+msgid "Last connection at"
+msgstr "Dernière connexion le"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/EventDispatcher/ContextPaneEventListener.php:20
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortlet.php:64
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:33
+msgid "Create user"
+msgstr "Créer un utilisateur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:63
+msgid "Current password"
+msgstr "Mot de passe actuel"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:101
+msgid "Your current password is incorrect."
+msgstr "Votre mot de passe actuel est incorrect."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:106
+msgid "Your new password must contain !count characters at least."
+msgstr "Votre mot de passe doit contenir au moins !count caractères."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:123
+msgid "Your new password has been saved."
+msgstr "Votre nouveau mot de passe a été enregistré."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:58
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:54
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:60
+msgid ""
+"Spaces are allowed; punctuation is not allowed except for periods, hyphens, "
+"apostrophes, and underscores."
+msgstr ""
+"Les espaces sont autorisés, la ponctuation n'est pas autorisée à part les "
+"points, tirets, apostrophes et tirets bas."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:71
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserRequestNewPassword.php:83
+msgid "E-mail address"
+msgstr "Adresse e-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:78
+msgid "E-mail address confirmation"
+msgstr "Confirmation de l'adresse e-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:80
+msgid ""
+"A valid e-mail address. All e-mails from the system will be sent to this "
+"address. The e-mail address is not made public and will only be used if you "
+"wish to receive a new password or wish to receive certain news or "
+"notifications by e-mail."
+msgstr ""
+"Une adresse électronique valide. Le système enverra tous les courriels à "
+"cette adresse. L'adresse électronique ne sera pas rendue publique et ne sera "
+"utilisée que pour la réception d'un nouveau mot de passe ou pour la "
+"réception de certaines notifications."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:83
+msgid "Confirm the new e-mail address"
+msgstr "Confirmer la nouvelle adresse e-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:117
+msgid "The name %name is already taken."
+msgstr "Le nom %name est déjà pris"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:134
+msgid "The e-mail address %mail is not valid."
+msgstr "L'adresse e-mail %mail n'est pas valide."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:139
+msgid "The e-mail's confirmation doesn't match with the first supplied e-mail."
+msgstr ""
+"La confirmation de l'e-mail ne correspond pas au premier e-mail renseigné."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:175
+msgid "Your account information has been updated."
+msgstr "Les informations de votre compte ont été mises à jour."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:134
+msgid "@name's email address has been changed."
+msgstr "L’adresse e-mail de @name a été modifiée."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:137
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserDisable.php:91
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:274
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEnable.php:137
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserResetPassword.php:107
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:201
+msgid "An error occured. Please try again."
+msgstr "Une erreur est survenue. Veuillez réessayer."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserDelete.php:72
+msgid "Do you really want to delete the user @name?"
+msgstr "Voulez-vous vraiment supprimer l'utilisateur @name ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserDelete.php:88
+msgid "User @name has been deleted."
+msgstr "L'utilisateur @name a été supprimé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserDisable.php:72
+msgid "Do you really want to disable the user @name?"
+msgstr "Voulez-vous vraiment désactiver l'utilisateur @name ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserDisable.php:88
+msgid "User @name has been disabled."
+msgstr "L'utilisateur a été désactivé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:115
+msgid "Please use this form to edit your e-mail: !link"
+msgstr "Veuillez utiliser ce formulaire pour modifier votre e-mail : !link"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:116
+msgid "change my e-mail"
+msgstr "modifier mon e-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:206
+msgid "A user with the same user name already exists."
+msgstr "Un utilisateur avec le même nom existe déjà"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:260
+msgid "The new user @name has been created."
+msgstr "L'utilisateur @name a été créé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:270
+msgid "The user @name has been updated."
+msgstr "L'utilisateur @name a été mis à jour."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEnable.php:76
+msgid ""
+"This user has never been connected. You have to define a password and pass "
+"it on to the user by yourself."
+msgstr ""
+"Cet utilisateur ne s’est jamais connecté. Vous devez définir un mot de passe "
+"et le transmettre à l’utilisateur par vos propres moyens."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEnable.php:95
+msgid "Do you really want to enable the user @name?"
+msgstr "Voulez-vous vraiment activer l'utilisateur @name ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEnable.php:134
+msgid "User @name has been enabled."
+msgstr "L'utilisateur @name a été activé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserRequestNewPassword.php:84
+msgid "You must supply the same address as the one given in your account."
+msgstr ""
+"Vous devez fournir la même adresse que celle renseignée dans votre compte."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserRequestNewPassword.php:93
+msgid "Send my request"
+msgstr "Envoyer ma demande"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserRequestNewPassword.php:119
+msgid "Sorry, %mail is not a known e-mail address."
+msgstr "Désolé, %mail n'est pas une adresse e-mail connue."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserRequestNewPassword.php:135
+msgid "Further instructions have been sent to your e-mail address."
+msgstr "Plus d'informations ont été envoyée à votre adresse e-mail."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserResetPassword.php:83
+msgid "Do you really want to reset the password of the user @name?"
+msgstr ""
+"Voulez-vous vraiment réninitialiser le mot de passe de l’utilisateur @name ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserResetPassword.php:103
+msgid "@name's password has been resetted."
+msgstr "Le mot de passe de @name a été réinitialisé."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:97
+msgid ""
+"You are logged in as %user. <a href=\"!user_edit\">Change your password.</a>"
+msgstr ""
+"Vous êtes connectés en tant que %user. <a href=\"!user_edit\">Modifier votre "
+"mot de passe.</a>"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:107
+msgid ""
+"Another user (%other_user) is already logged into the site on this computer, "
+"but you tried to use a one-time link for user %resetting_user. Please <a "
+"href=\"!logout\">logout</a> and try using the link again."
+msgstr ""
+"Un autre utilisateur (%other_user) est déjà connecté au site depuis cet "
+"ordinateur, mais vous avez tenté d’utiliser un lien de connexion unique pour "
+"l’utilisateur %resetting_user. Veuillez <a href=\"!logout\">vous "
+"déconnecter</a> et utiliser sur le lien une nouvelle fois."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:142
+msgid "Save my password"
+msgstr "Enregistrer mon mot de passe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:165
+msgid "Your password must contain at least !count characters."
+msgstr "Votre mot de passe doit contenir au moins !count caractères."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:198
+msgid "Your password has been recorded."
+msgstr "Votre mot de passe a été enregistré."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserSetPassword.php:87;148
+msgid ""
+"You have tried to use a one-time login link that has either been used or is "
+"no longer valid. Please request a new one using the form below."
+msgstr ""
+"Vous avez tenté d’utiliser un lien de connexion unique qui a déjà utilisé ou "
+"qui est n’est plus valide. Veuillez demander un nouveau depuis le formulaire "
+"ci-dessous."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:82
+msgid "email"
+msgstr "e-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:86
+msgid "last connection date"
+msgstr "date de dernière connexion"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:61
+msgid "Is webmaster?"
+msgstr "Est webmestre ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:63
+msgid "Last connection"
+msgstr "Dernière connexion"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:21
+msgid "My account"
+msgstr "Mon compte"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:40
+msgid "Edit my information"
+msgstr "Modifier mes informations"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:41
+msgid "Edit my password"
+msgstr "Modifier mon mot de passe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:55
+msgid "E-mail"
+msgstr "E-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortlet.php:76
+msgid "No user created yet."
+msgstr "Aucun utilisateur créé pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:69
+msgid "Creation"
+msgstr "Création"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.dashboard.inc:12
+msgid "There is no users yet."
+msgstr "Pas d'utilisateurs pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.info:0
+msgid "Provides user management backoffice"
+msgstr "Fournit un backoffice de gestion d'utilisateurs"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.info:0
+msgid "UCMS - User management"
+msgstr "UCMS - User management"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:51
+msgid "Edit my account information"
+msgstr "Modifier les informations de mon compte"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:59
+msgid "Change my password"
+msgstr "Modifier mon mot de passe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:107
+msgid "Disable the user"
+msgstr "Désactiver cet utilisateur"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:123
+msgid "Set password"
+msgstr "Définir le mot de passe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:148
+msgid "User @name"
+msgstr "Utilisateur @name"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:158
+msgid "Manage all users"
+msgstr "Gérer tous les utilisateurs"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:196
+msgid ""
+"[user:name],\n"
+"\n"
+"An account has been created for you at [site:name].\n"
+"\n"
+"You can activate it by clicking this link or copying and pasting it to your "
+"browser:\n"
+"\n"
+"[user:password-url]\n"
+"\n"
+"This link can only be used once and will lead you to a page where you can "
+"set your password.\n"
+"\n"
+"After setting your password, you will be able to log in at [site:login-url] "
+"in the future using your username: [user:name].\n"
+"\n"
+"--  [site:name] team"
+msgstr ""
+"[user:name],\n"
+"\n"
+"Un compte a été créé pour vous sur le site [site:name].\n"
+"\n"
+"Vous pouvez l'activer en cliquant sur ce lien ou en le copiant dans votre "
+"navigateur :\n"
+"\n"
+"[user:password-url]\n"
+"\n"
+"Ce lien ne peut être utilisé qu'une seule fois et vous mènera sur la page de "
+"modification de votre mot de passe.\n"
+"\n"
+"Après avoir défini votre mot de passe, vous pourrez vous connecter sur [site:"
+"login-url] en utilisant votre nom d'utilisateur : [user:name].\n"
+"\n"
+"— L'équipe de [site:name]"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:218
+msgid ""
+"[user:name],\n"
+"\n"
+"An account has been created for you at [site:name].\n"
+"\n"
+"This account is already active, you will be able to log in at [site:login-"
+"url] using the password that we will provide you soon.\n"
+"\n"
+"--  [site:name] team"
+msgstr ""
+"[user:name],\n"
+"\n"
+"Un compte a été créé pour vous sur le site [site:name].\n"
+"\n"
+"Ce compte est déjà activé, vous pourrez vous y connecter sur [site:login-"
+"url] en utilisant le mot de passe que nous vous communiquerons "
+"prochainement.\n"
+"\n"
+"— L'équipe de [site:name]"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:230
+msgid "Your new password request at [site:name]"
+msgstr "Votre nouveau mot de passe pour [site:name]"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:234
+msgid ""
+"[user:name],\n"
+"\n"
+"A request to reset the password for your account has been made at [site:"
+"name].\n"
+"\n"
+"You may now set your new password by clicking this link or copying and "
+"pasting it to your browser:\n"
+"\n"
+"[user:password-url]\n"
+"\n"
+"This link can only be used once and will lead you to a page where you can "
+"set your password.\n"
+"It expires after [user:password-url-lifespan] and nothing will happen if "
+"it's not used.\n"
+"\n"
+"--  [site:name] team"
+msgstr ""
+"[user:name],\n"
+"\n"
+"Une demande de réinitialisation de mot de passe a été faite sur [site:"
+"name].\n"
+"\n"
+"Vous pouvez définir votre nouveau de passe en cliquant sur ce lien ou en le "
+"copiant dans votre navigateur :\n"
+"\n"
+"[user:password-url]\n"
+"\n"
+"Ce lien ne peut être utilisé qu'une seule fois et vous mènera sur la page de "
+"modification de votre mot de passe.\n"
+"Il expirera dans [user:password-url-lifespan] s'il n'est pas utilisé.\n"
+"\n"
+"— L'équipe de [site:name]"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:251
+msgid "Reset of your password at [site:name]"
+msgstr "Votre nouveau mot de passe pour [site:name]"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:255
+msgid ""
+"[user:name],\n"
+"\n"
+"Your password has been resetted by an administrator at [site:name].\n"
+"\n"
+"Please set your new password by clicking this link or copying and pasting it "
+"to your browser:\n"
+"\n"
+"[user:password-url]\n"
+"\n"
+"This link can only be used once and will lead you to a page where you can "
+"set your password.\n"
+"It expires after [user:password-url-lifespan] and nothing will happen if "
+"it's not used.\n"
+"\n"
+"--  [site:name] team"
+msgstr ""
+"[user:name],\n"
+"\n"
+"Une demande de réinitialisation de mot de passe a été faite sur [site:"
+"name].\n"
+"\n"
+"Vous pouvez définir votre nouveau de passe en cliquant sur ce lien ou en le "
+"copiant dans votre navigateur :\n"
+"\n"
+"[user:password-url]\n"
+"\n"
+"Ce lien ne peut être utilisé qu’une seule fois et vous mènera sur la page de "
+"modification de votre mot de passe.\n"
+"Il expirera dans [user:password-url-lifespan] s’il n’est pas utilisé.\n"
+"\n"
+"— L’équipe de [site:name]"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:306
+msgid "@count year"
+msgid_plural "@count years"
+msgstr[0] "@count année"
+msgstr[1] "@count années"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:307
+msgid "@count month"
+msgid_plural "@count monthes"
+msgstr[0] "@count mois"
+msgstr[1] "@count mois"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:308
+msgid "@count day"
+msgid_plural "@count days"
+msgstr[0] "@count jour"
+msgstr[1] "@count jours"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:309
+msgid "@count h"
+msgid_plural "@count h"
+msgstr[0] "@count h"
+msgstr[1] "@count h"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:310
+msgid "@count min"
+msgid_plural "@count min"
+msgstr[0] "@count min"
+msgstr[1] "@count min"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:311
+msgid "@count s"
+msgid_plural "@count s"
+msgstr[0] "@count s"
+msgstr[1] "@count s"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:192;214
+msgid "You have been registered at [site:name]"
+msgstr "Vous avez été rattaché au site [site:name]"
