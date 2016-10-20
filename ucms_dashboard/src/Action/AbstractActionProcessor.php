@@ -8,7 +8,7 @@ use MakinaCorpus\Ucms\Dashboard\Form\ActionProcessForm;
  * Represent a possible action over a certain item, this is just a value
  * object that will be used to build UI links or buttons
  */
-abstract class AbstractActionProcessor
+abstract class AbstractActionProcessor implements ActionProcessorInterface
 {
     private $title;
     private $icon;
@@ -28,6 +28,7 @@ abstract class AbstractActionProcessor
      * @param boolean $isPrimary
      * @param boolean $isDangerous
      * @param boolean $isDialog
+     * @param null $group
      * @param string $description
      */
     public function __construct($title, $icon = null, $priority = 0, $isPrimary = true, $isDangerous = false, $isDialog = true, $group = null, $description = null)
@@ -109,7 +110,7 @@ abstract class AbstractActionProcessor
      *
      * This will be used to build URLs.
      *
-     * @param mixed $items
+     * @param mixed $item
      *
      * @return int|string
      */

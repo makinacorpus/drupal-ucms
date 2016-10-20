@@ -14,7 +14,9 @@ services:
   ucms_contrib.cart:
     alias: ucms_contrib.cart.bloom
     class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
+    arguments: ['@database']
 
+  # Action providers
   ucms_contrib.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
@@ -32,6 +34,18 @@ services:
     arguments: ["@ucms_site.manager", "@current_user"]
     class: MakinaCorpus\Ucms\Contrib\Action\SiteActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
+
+  ucms_contrib.action.cart_add:
+    public: false
+    class: MakinaCorpus\Ucms\Contrib\Action\CartAddProcessor
+    arguments: ["@ucms_contrib.cart", "@current_user"]
+    tags: [{name: ucms_dashboard.action}]
+
+  ucms_contrib.action.cart_remove:
+    public: false
+    class: MakinaCorpus\Ucms\Contrib\Action\CartRemoveProcessor
+    arguments: ["@ucms_contrib.cart", "@current_user"]
+    tags: [{name: ucms_dashboard.action}]
 
   ucms_contrib.context_pane_event_listener:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener

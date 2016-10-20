@@ -4,6 +4,7 @@
  */
 
 use MakinaCorpus\Ucms\Dashboard\Controller\ActionProcessorController;
+use MakinaCorpus\Ucms\Dashboard\Controller\AjaxProcessorController;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
@@ -58,6 +59,13 @@ function ucms_dashboard_menu() {
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [ActionProcessorController::class .  '::process'],
     'type'              => MENU_CALLBACK,
+  ];
+  $items['admin/ajax/process'] = [
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [AjaxProcessorController::class .  '::process'],
+    'type'              => MENU_CALLBACK,
+    'delivery callback' => 'ajax_deliver',
+    'theme callback'    => 'ajax_base_page_theme',
   ];
 
   return $items;
@@ -299,6 +307,13 @@ function ucms_dashboard_theme() {
       ],
       'template'  => 'ucms_dashboard-actions',
     ],
+    'ucms_dashboard_ajax_icons' => [
+      'variables' => [
+        'item'        => null,
+        'actions'     => [],
+      ],
+      'template'  => 'ucms_dashboard-ajax-icons',
+    ],
     'ucms_dashboard_context' => [
       'variables' => [
         'tabs'        => [],
@@ -470,6 +485,31 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
 
   if ($variables['mode']) {
     $variables['mode'] === 'icon';
+  }
+}
+
+
+/**
+ * Render ajax icons.
+ *
+ * @param array $variables
+ */
+function template_preprocess_ucms_dashboard_ajax_icons(&$variables) {
+  foreach ($variables['actions'] as $key => $action) {
+    /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action */
+
+    $item = [];
+    $item['options']  = $action->getLinkOptions();
+    $item['options'] += ['attributes' => []];
+    if (isset($item['options']['attributes']['class'])) {
+      $item['options']['attributes']['class'] = implode(' ', $item['options']['attributes']['class']);
+    } else {
+      $item['options']['attributes']['class'] = '';
+    }
+    $item['href']     = $action->getURI();
+    $item['icon']     = $action->getIcon();
+
+    $variables['actions'][$key] = $item;
   }
 }
 

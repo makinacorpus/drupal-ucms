@@ -313,6 +313,9 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('admin/action/process' === substr($path, 0, 20)) {
       return true;
     }
+    if ('admin/ajax/process' === substr($path, 0, 18)) {
+      return true;
+    }
     if ('admin/dashboard/tree' === substr($path, 0, 20)) {
       return true;
     }

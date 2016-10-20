@@ -1,5 +1,46 @@
 <?php
+
 /**
  * @file
  * UCMS - Smart UI.
  */
+use MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider;
+use MakinaCorpus\Ucms\Dashboard\SmartObject;
+
+/**
+ * Ajax command to open a new page
+ *
+ * @param $uri
+ * @return array
+ */
+function ucms_smartui_command_new_page($uri) {
+  return [
+    'command' => 'newPage',
+    'method'  => 'replaceWith',
+    'uri'     => url($uri),
+  ];
+}
+
+/**
+ * Ajax command to reload cart
+ *
+ * @param $uri
+ */
+function ucms_smartui_command_cart_reload() {
+  // TODO take the existing action if possible
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function ucms_smartui_element_info_alter(&$type) {
+  $type['unoderef']['#process'][] = 'ucms_smartui_unoderef_icons';
+}
+
+function ucms_smartui_unoderef_icons($element) {
+  foreach($element['items'] as $index => $item) {
+    /** @var ProcessorActionProvider $registry */
+    $registry = Drupal::service('ucms_dashboard.processor_registry');
+    $item['icons'] = $registry->getActions(new SmartObject($item['#node'], SmartObject::CONTEXT_UNODEREF));
+  }
+}

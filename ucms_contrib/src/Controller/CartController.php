@@ -6,11 +6,10 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Contrib\NodeCartDisplay;
-
+use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -30,6 +29,14 @@ class CartController extends Controller
     private function getCartStorage()
     {
         return $this->get('ucms_contrib.cart');
+    }
+
+    /**
+     * @return ActionRegistry
+     */
+    private function getActionRegistry()
+    {
+        return $this->get('ucms_dashboard.action_provider_registry');
     }
 
     /**
@@ -135,7 +142,9 @@ class CartController extends Controller
         $nidList  = $this->getCartStorage()->listFor($userId);
         $nodes    = $nidList ? node_load_multiple($nidList) : [];
 
-        $display = (new NodeCartDisplay())
+        $nodeCartDisplay = new NodeCartDisplay();
+        $nodeCartDisplay->setActionRegistry($this->getActionRegistry());
+        $display = $nodeCartDisplay
             ->setParameterName('cd')
             ->prepareFromQuery(
                 $request->query->all()

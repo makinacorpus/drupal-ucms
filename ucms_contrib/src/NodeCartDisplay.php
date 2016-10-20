@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Contrib;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Ucms\Dashboard\SmartObject;
 
 class NodeCartDisplay extends AbstractDisplay
 {
@@ -20,6 +21,10 @@ class NodeCartDisplay extends AbstractDisplay
                 '#prefix' => '<div class="ucms-cart-item" draggable="true" data-nid="'.$nid.'" data-bundle="'.$node->getType().'">',
                 '#suffix' => '</div>',
                 'content' => $ret['nodes'][$nid],
+                'icons' => [
+                    '#theme' => 'ucms_dashboard_ajax_icons',
+                    '#actions' => $this->getActions(new SmartObject($node, SmartObject::CONTEXT_CART)),
+                ],
             ];
         }
         return $ret;

@@ -2,38 +2,18 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Controller;
 
-use Drupal\Core\Form\FormBuilderInterface;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider;
-use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
-
 use Symfony\Component\HttpFoundation\Request;
 
-class ActionProcessorController extends Controller
+class AjaxProcessorController extends Controller
 {
-    /**
-     * @return FormBuilderInterface
-     */
-    private function getFormBuilder()
-    {
-        return $this->get('form_builder');
-    }
-
     /**
      * @return ProcessorActionProvider
      */
     private function getActionProcessorRegistry()
     {
         return $this->get('ucms_dashboard.processor_registry');
-    }
-
-    /**
-     * @return TransactionHandler
-     */
-    private function getTransactionHandler()
-    {
-        return $this->get('ucms_dashboard.transaction_handler');
     }
 
     public function processAction(Request $request)
@@ -62,19 +42,12 @@ class ActionProcessorController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        if (!method_exists($processor, 'getFormClass')) {
-            // FIXME
-            print drupal_json_encode($processor->process($item));
-            exit;
-        }
+        $commands = $processor->process($item);
+        $result = [
+            '#type'     => 'ajax',
+            '#commands' => [$commands],
+        ];
 
-        $builder = $this->getFormBuilder();
-
-        return $this
-            ->getTransactionHandler()
-            ->run(function () use ($builder, $processor, $item) {
-                return $builder->getForm($processor->getFormClass(), $processor, $item);
-            })
-        ;
+        return $result;
     }
 }

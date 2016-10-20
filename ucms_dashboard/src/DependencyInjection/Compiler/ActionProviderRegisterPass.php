@@ -44,10 +44,10 @@ class ActionProviderRegisterPass implements CompilerPassInterface
 
             $class = $container->getParameterBag()->resolveValue($def->getClass());
             $refClass = new \ReflectionClass($class);
-            $parentClass = '\MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor';
+            $interface = '\MakinaCorpus\Ucms\Dashboard\Action\ActionProcessorInterface';
 
-            if (!$refClass->isSubclassOf($parentClass)) {
-                throw new \InvalidArgumentException(sprintf('Service "%s" must implement extend "%s".', $id, $parentClass));
+            if (!$refClass->implementsInterface($interface)) {
+                throw new \InvalidArgumentException(sprintf('Service "%s" must extend "%s".', $id, $interface));
             }
 
             $definition->addMethodCall('register', [new Reference($id)]);

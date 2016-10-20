@@ -7,53 +7,7 @@
   Drupal.ucmsIsSameContainer = false;
 
   var UcmsCart;
-  var currentSelection;
   var drupalSettings = {};
-
-  // Run this once, so this OK to do it from here
-  document.addEventListener("keydown", function (event) {
-    if (46 === event.keyCode) { // Delete key
-      onDeletePress(event);
-    }
-    if (27 === event.keyCode) {
-      onEscapePress(event);
-    }
-  });
-
-  /**
-   * Select element
-   */
-  function selectElement(element) {
-    if (currentSelection) {
-      currentSelection.removeAttribute('data-selected');
-    }
-    element.setAttribute('data-selected', true);
-    currentSelection = element;
-  }
-
-  /**
-   * Clear current selection
-   */
-  function clearSelection() {
-    if (currentSelection) {
-      currentSelection.removeAttribute('data-selected');
-      currentSelection = null;
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * On escape press, remove current selection
-   */
-  function onEscapePress(event) {
-    if (clearSelection()) {
-      // Cancel propagation only if we have something legitimate to do, but
-      // leave any other code do whatever it needs to do if we don't
-      event.stopPropagation();
-      event.preventDefault();
-    }
-  }
 
   /**
    * Get element position within parent
@@ -123,39 +77,6 @@
       });
       return true;
     }
-
-    return false;
-  }
-
-  /**
-   * Appy behaviors on items within the given container
-   */
-  function connectItems(container) {
-    var elements = container.querySelectorAll("[data-nid]");
-    elements = Array.prototype.slice.call(elements, 0);
-    elements.forEach(function (node) {
-      node.addEventListener("click", function (event) {
-        selectElement(node);
-        event.stopPropagation();
-        event.preventDefault();
-      });
-    });
-  }
-
-  /**
-   * Remove current item (move to trash)
-   */
-  function onDeletePress(event) {
-    if (currentSelection && trashElement(currentSelection)) {
-      // Cancel propagation only if we have something legitimate to do, but
-      // leave any other code do whatever it needs to do if we don't
-      event.stopPropagation();
-      event.preventDefault();
-      if (currentSelection) {
-        trashElement(currentSelection);
-      }
-      clearSelection();
-    }
   }
 
   /**
@@ -163,7 +84,6 @@
    */
   function refreshSortable(sortable) {
     $(sortable).sortable('refresh');
-    connectItems(sortable);
     Drupal.attachBehaviors(sortable);
   }
 
@@ -383,9 +303,6 @@
           $(this).removeClass('ucms-highlighted-hover');
         }
       }));
-
-      $('#ucms-cart-list').each(function () { connectItems(this); });
-      $('[data-can-receive]').each(function () { connectItems(this); });
     }
   };
 }(jQuery));

@@ -16,9 +16,9 @@ class ProcessorActionProvider implements ActionProviderInterface
     /**
      * Register processor instance
      *
-     * @param AbstractActionProcessor $processors
+     * @param ActionProcessorInterface $processor
      */
-    public function register(AbstractActionProcessor $processor)
+    public function register(ActionProcessorInterface $processor)
     {
         $this->processors[$processor->getId()] = $processor;
     }
@@ -26,7 +26,8 @@ class ProcessorActionProvider implements ActionProviderInterface
     /**
      * Get processor instance
      *
-     * @return AbstractActionProcessor
+     * @param string $id
+     * @return \MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor
      */
     public function get($id)
     {

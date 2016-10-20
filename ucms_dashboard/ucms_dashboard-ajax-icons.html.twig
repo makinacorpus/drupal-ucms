@@ -1,0 +1,17 @@
+{# No spaces between tags for inline-block override #}
+{% spaceless %}
+  <div class="ajax-icons">
+    {% for link in actions %}
+      <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
+        {% if link.icon %}
+          <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+        {% endif %}
+        {% if link.icon and not show_title %}
+          <span class="sr-only">{{ link.title|check_plain }}</span>
+        {% else %}
+          {{ link.title|check_plain }}
+        {% endif %}
+      </a>
+    {% endfor %}
+  </div>
+{% endspaceless %}

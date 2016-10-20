@@ -4,6 +4,8 @@ namespace MakinaCorpus\Ucms\Layout;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
+use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
+use MakinaCorpus\Ucms\Dashboard\SmartObject;
 
 class DrupalPageInjector
 {
@@ -28,21 +30,31 @@ class DrupalPageInjector
     private $nodes = [];
 
     /**
+     * @var \MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface
+     */
+    private $actionRegistry;
+
+    /**
      * Default constructor
      *
      * @param ContextManager $contextManager
      * @param EntityManager $entityManager
+     * @param \MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry $actionRegistry
      */
-    public function __construct(ContextManager $contextManager, EntityManager $entityManager)
+    public function __construct(ContextManager $contextManager, EntityManager $entityManager,
+        ActionRegistry $actionRegistry)
     {
         $this->contextManager = $contextManager;
         $this->entityManager = $entityManager;
+        $this->actionRegistry = $actionRegistry;
     }
 
     /**
      * Collect (preload) all visible nodes
      *
-     * @param Layout[] ...$layouts
+     * @param \MakinaCorpus\Ucms\Layout\Context $context
+     * @param array $filter
+     * @return \int[]|null
      */
     private function collectNodeIdList(Context $context, $filter = [])
     {
@@ -52,7 +64,7 @@ class DrupalPageInjector
 
         $layout = $context->getCurrentLayout();
         if (!$layout) {
-            return;
+            return null;
         }
 
         foreach ($layout->getAllRegions() as $name => $region) {
@@ -68,7 +80,8 @@ class DrupalPageInjector
     }
 
     /**
-     * @return NodeInterface $node
+     * @param $nodeId
+     * @return \Drupal\node\NodeInterface $node
      *   Can be null
      */
     private function getNode($nodeId)
@@ -76,6 +89,7 @@ class DrupalPageInjector
         if (isset($this->nodes[$nodeId])) {
             return $this->nodes[$nodeId];
         }
+        return null;
     }
 
     /**
@@ -121,6 +135,7 @@ class DrupalPageInjector
                         '#node'      => $node,
                         '#view_mode' => $item->getViewMode(),
                         '#region'    => $region,
+                        'icons'      => $this->actionRegistry->getActions(new SmartObject($node, SmartObject::CONTEXT_LAYOUT)),
                     ];
                 }
             }
@@ -140,6 +155,7 @@ class DrupalPageInjector
      * Inject given regions into the given page
      *
      * @param array $page
+     * @param $theme
      */
     public function inject(&$page, $theme)
     {
