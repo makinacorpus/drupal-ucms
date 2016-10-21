@@ -29,7 +29,7 @@ trait PageControllerTrait
      *
      * @return Page
      */
-    protected function createPage(DatasourceInterface $datasource, DisplayInterface $display, $suggestions = null)
+    protected function createPage(DatasourceInterface $datasource, DisplayInterface $display = null, $suggestions = null)
     {
         return $this->getWidgetFactory()->getPage($datasource, $display, $suggestions);
     }

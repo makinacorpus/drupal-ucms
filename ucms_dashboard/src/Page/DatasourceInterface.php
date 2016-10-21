@@ -19,7 +19,7 @@ interface DatasourceInterface
      * @param string[] $query
      *   Incomming query parameters
      *
-     * @return FilterDisplayInterface[]
+     * @return Filter[]
      *   Keys does not matter, while values should be render arrays
      */
     public function getFilters($query);
@@ -31,7 +31,7 @@ interface DatasourceInterface
      *   Incomming query parameters
      *
      * @return string[]
-     *   Keys are field names, values are human readable labels 
+     *   Keys are field names, values are human readable labels
      */
     public function getSortFields($query);
 

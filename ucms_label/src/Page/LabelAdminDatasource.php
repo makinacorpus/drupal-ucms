@@ -6,7 +6,7 @@ namespace MakinaCorpus\Ucms\Label\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\Filter;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
@@ -58,8 +58,8 @@ class LabelAdminDatasource extends AbstractDatasource
         ];
 
         return [
-            (new LinksFilterDisplay('category', $this->t("Category")))->setChoicesMap($categories),
-            (new LinksFilterDisplay('status', $this->t("Status")))->setChoicesMap($statuses),
+            (new Filter('category', $this->t("Category")))->setChoicesMap($categories),
+            (new Filter('status', $this->t("Status")))->setChoicesMap($statuses),
         ];
     }
 

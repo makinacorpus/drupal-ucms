@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Group\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\Filter;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
@@ -47,11 +47,11 @@ class GroupSiteAdminDatasource extends AbstractDatasource
         }
 
         return [
-            (new LinksFilterDisplay('state', $this->t("State")))->setChoicesMap($states),
+            (new Filter('state', $this->t("State")))->setChoicesMap($states),
             // @todo missing site type registry or variable somewhere
-            (new LinksFilterDisplay('theme', $this->t("Theme")))->setChoicesMap($this->siteManager->getAllowedThemesOptionList()),
-            (new LinksFilterDisplay('template', $this->t("Template")))->setChoicesMap($this->siteManager->getTemplateList()),
-            (new LinksFilterDisplay('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
+            (new Filter('theme', $this->t("Theme")))->setChoicesMap($this->siteManager->getAllowedThemesOptionList()),
+            (new Filter('template', $this->t("Template")))->setChoicesMap($this->siteManager->getTemplateList()),
+            (new Filter('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
         ];
     }
 

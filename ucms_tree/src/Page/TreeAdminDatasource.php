@@ -6,7 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\Filter;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -62,7 +62,7 @@ class TreeAdminDatasource extends AbstractDatasource
         }
 
         return [
-            (new LinksFilterDisplay('site', $this->t("Site")))->setChoicesMap($sites),
+            (new Filter('site', $this->t("Site")))->setChoicesMap($sites),
         ];
     }
 

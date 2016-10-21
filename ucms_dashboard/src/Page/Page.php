@@ -6,6 +6,10 @@ use Drupal\Core\Form\FormBuilderInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 
+/**
+ * @deprecated
+ *   Please use the PageBuilder object and service instead
+ */
 class Page
 {
     /**
@@ -108,11 +112,24 @@ class Page
         return $this->baseQuery + $query;
     }
 
+    /**
+     * Backward compatiblity, render page template block
+     *
+     * @param string $name
+     * @param mixed[] $context
+     *
+     * @return string
+     */
+    private function renderBlock($name, $context)
+    {
+        return \Drupal::service('twig')->loadTemplate('module:ucms_dashboard:views/Page/page.html.twig')->renderBlock($name, $context);
+    }
+
     public function render($query = [], $route = '/')
     {
         $query = $this->buildQuery($query);
         $state = new PageState();
-        $fixedQuery = LinksFilterDisplay::fixQuery($query); // @todo this is ugly
+        $fixedQuery = Filter::fixQuery($query); // @todo this is ugly
 
         $this->datasource->init($fixedQuery);
 
@@ -144,7 +161,7 @@ class Page
         }
 
         $items = $this->datasource->getItems($fixedQuery, $state);
- 
+
         // Initialize pager only after the query has been run, datasource is
         // responsible for setting the total count
         if ($state->hasTotalItemCount()) {
@@ -160,9 +177,10 @@ class Page
         ];
 
         if ($sortIsEnabled) {
+            $sortManager->prepare($route, $query);
             $build += [
-                '#sort_field' => $sortManager->buildFieldLinks($fixedQuery, $route),
-                '#sort_order' => $sortManager->builOrderLinks($fixedQuery, $route),
+                '#sort_field' => '<span style="position:relative;">' . $this->renderBlock('sort_links_field', ['sort' => $sortManager, 'query' => $query]) . '</span>',
+                '#sort_order' => '<span style="position:relative;">' . $this->renderBlock('sort_links_order', ['sort' => $sortManager, 'query' => $query]) . '</span>',
             ];
         }
 
@@ -172,7 +190,8 @@ class Page
                 if (isset($this->baseQuery[$filter->getField()])) {
                     continue; // Drop forced filters
                 }
-                $build['#filters'][$filter->getField()] = $filter->build($query, $route);
+                $filter->prepare($route, $query);
+                $build['#filters'][$filter->getField()] = $this->renderBlock('filter', ['filter' => $filter]);
             }
         }
 

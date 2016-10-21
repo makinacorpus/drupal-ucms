@@ -54,7 +54,7 @@ class AdminWidgetFactory
      *
      * @return Page
      */
-    public function getPage(DatasourceInterface $datasource, DisplayInterface $display, $suggestions = null)
+    public function getPage(DatasourceInterface $datasource, DisplayInterface $display = null, $suggestions = null)
     {
         return new Page($this->formBuilder, $this->actionRegistry, $datasource, $display, $suggestions);
     }

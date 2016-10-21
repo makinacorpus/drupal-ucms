@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\Filter;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
@@ -143,7 +143,7 @@ class PrivateNodeDataSource extends AbstractDatasource
 
         // Apply rendering stuff for it to work
         foreach ($this->getSearch()->getAggregations() as $facet) {
-            $ret[] = (new LinksFilterDisplay($facet->getField(), $facet->getTitle(), true))->setChoicesMap($facet->getFormattedChoices());
+            $ret[] = (new Filter($facet->getField(), $facet->getTitle(), true))->setChoicesMap($facet->getFormattedChoices());
         }
 
         return $ret;

@@ -3,6 +3,7 @@
 use MakinaCorpus\Ucms\Contrib\NodeAdminDisplay;
 use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
+use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 
 function ucms_contrib_admin_content_page_mine($tab = null) {
   /* @var $datasource PrivateNodeDataSource */
@@ -80,6 +81,12 @@ function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab
     $search->getFilterQuery()->matchTermCollection('type', $types);
   }
 
+  $builder = new PageBuilder(\Drupal::service('twig'));
+  $result = $builder->search($datasource, \Drupal::requestStack()->getCurrentRequest());
+
+  return $builder->render($result);
+
+  /*
   $display = new NodeAdminDisplay();
 
   $ret['page'] = ucms_dashboard_page_get($datasource, $display, ['dashboard', 'content'])
@@ -87,4 +94,5 @@ function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab
   ;
 
   return $ret;
+   */
 }

@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
+use MakinaCorpus\Ucms\Dashboard\Page\Filter;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
@@ -35,11 +35,11 @@ class SiteAliasDatasource extends AbstractDatasource
     public function getFilters($query)
     {
         return [
-            (new LinksFilterDisplay('canonical', $this->t("Is canonical")))->setChoicesMap([
+            (new Filter('canonical', $this->t("Is canonical")))->setChoicesMap([
                 1 => $this->t("Yes"),
                 0 => $this->t("No"),
             ]),
-            (new LinksFilterDisplay('expires', $this->t("Do expire")))->setChoicesMap([
+            (new Filter('expires', $this->t("Do expire")))->setChoicesMap([
                 1 => $this->t("Yes"),
                 0 => $this->t("No"),
             ]),
