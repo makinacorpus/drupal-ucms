@@ -8,24 +8,38 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
 class PageState
 {
     const SORT_DESC = 'desc';
-
     const SORT_ASC = 'asc';
-
     const LIMIT_DEFAULT = 50;
 
+    private $searchParameter = null;
+    private $currentSearch;
     private $sortField = null;
-
     private $sortOrder = self::SORT_DESC;
-
     private $limit = null;
-
     private $page = 1;
-
     private $pagerElement = 0;
-
     private $pageParameter = 'page';
-
     private $totalCount = null;
+
+    public function setSearchParameter($searchParameter)
+    {
+        $this->searchParameter = $searchParameter;
+    }
+
+    public function getSearchParameter()
+    {
+        return $this->searchParameter;
+    }
+
+    public function setCurrentSearch($searchString)
+    {
+        $this->currentSearch = $searchString;
+    }
+
+    public function getCurrentSearch()
+    {
+        return $this->currentSearch;
+    }
 
     public function setTotalItemCount($count)
     {

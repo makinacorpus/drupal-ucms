@@ -4,6 +4,7 @@ use MakinaCorpus\Ucms\Contrib\MediaAdminDisplay;
 use MakinaCorpus\Ucms\Contrib\NodeAdminDisplay;
 use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
+use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 
 function ucms_contrib_admin_content_page_mine($tab = null) {
   /* @var $datasource PrivateNodeDataSource */
@@ -71,6 +72,12 @@ function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab
     $search->getFilterQuery()->matchTermCollection('type', $types);
   }
 
+  $builder = new PageBuilder(\Drupal::service('twig'));
+  $result = $builder->search($datasource, \Drupal::requestStack()->getCurrentRequest());
+
+  return $builder->render($result);
+
+  /*
   $display = new NodeAdminDisplay();
 
   switch ($tab) {
@@ -89,4 +96,5 @@ function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab
   ;
 
   return $ret;
+   */
 }

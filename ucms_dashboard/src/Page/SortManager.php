@@ -9,9 +9,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  *
  * All constants are compatible with Drupal DBTNG sorts.
  */
-class SortManager
+class SortManager implements \Countable
 {
     use StringTranslationTrait;
+    use PrepareableTrait;
 
     /**
      * Descending order
@@ -121,6 +122,22 @@ class SortManager
     }
 
     /**
+     * Get current page sort field
+     *
+     * @param string[] $query
+     *
+     * @return string
+     */
+    public function getCurrentFieldTitle($query)
+    {
+        $field = $this->getCurrentField($query);
+
+        if ($field) {
+            return $this->allowed[$field];
+        }
+    }
+
+    /**
      * Get current page sort order
      *
      * @param string[] $query
@@ -138,82 +155,82 @@ class SortManager
         return $this->defaultOrder;
     }
 
-    private function buildLink($query, $route, $param, $value, $label, $current, $default)
+    /**
+     * Get current page sort order title
+     *
+     * @param string[] $query
+     *
+     * @return string
+     */
+    public function getCurrentOrderTitle($query)
     {
-        $link = [
-            'href'        => $route,
-            'title'       => $label,
-            'html'        => true,
-            'attributes'  => [],
-            // Forces the l() function to skip the 'active' class by adding empty
-            // attributes array and settings a stupid language onto the link (this
-            // is Drupal 7 specific and exploit a Drupal weird behavior)
-            'language'    => (object)['language' => 'und'],
-        ];
-
-        if ($value === $default) {
-            $link['query'] = $query;
-            unset($link['query'][$param]);
-        } else {
-            $link['query'] = [$param => $value] + $query;
-        }
-        if ($value === $current) {
-            $link['attributes']['class'][] = 'active';
-        }
-
-        return $link;
+        return $this->getCurrentOrder($query) === 'desc' ? t("descending") : t("ascending");
     }
 
     /**
-     * Build field links
+     * Build link
      *
-     * @param string[] $query
-     * @param string $href
-     *
-     * @return mixed
-     *   drupal_render() friendly structure
+     * @return Link
      */
-    public function buildFieldLinks($query, $route)
+    private function buildLink($query, $route, $param, $value, $label, $current, $default)
     {
-        $links = [];
+        if ($value === $default) {
+            unset($query[$param]);
+        } else {
+            $query = [$param => $value] + $query;
+        }
+
+        return new Link($label, $route, $query, $value === $current);
+    }
+
+    /**
+     * Get sort field links
+     *
+     * @return Link[]
+     */
+    public function getFieldLinks()
+    {
+        $ret = [];
+
+        $route = $this->getRoute();
+        $query = $this->getRouteParamaters();
 
         $current = $this->getCurrentField($query);
 
         foreach ($this->allowed as $value => $label) {
-            $links[$value] = $this->buildLink($query, $route, $this->paramField, $value, $label, $current, $this->defaultField);
+            $ret[$value] = $this->buildLink($query, $route, $this->paramField, $value, $label, $current, $this->defaultField);
         }
 
-        return [
-            '#theme'    => 'links__ucms_dashboard_sort__field',
-            '#heading'  => $this->t("Sort by"),
-            '#links'    => $links,
-        ];
+        return $ret;
     }
 
     /**
-     * Build order links
+     * Get sort order links
      *
-     * @param string[] $query
-     * @param string $href
-     *
-     * @return mixed
-     *   drupal_render() friendly structure
+     * @return Link[]
      */
-    public function builOrderLinks($query, $route)
+    public function getOrderLinks()
     {
-        $links  = [];
+        $ret = [];
+
+        $route = $this->getRoute();
+        $query = $this->getRouteParamaters();
 
         $current = $this->getCurrentOrder($query);
         $map = [self::ASC => $this->t("ascending"), self::DESC => $this->t("descending")];
 
         foreach ($map as $value => $label) {
-            $links[$value] = $this->buildLink($query, $route, $this->paramOrder, $value, $label, $current, $this->defaultOrder);;
+            $ret[$value] = $this->buildLink($query, $route, $this->paramOrder, $value, $label, $current, $this->defaultOrder);
         }
 
-        return [
-            '#theme'    => 'links__ucms_dashboard_sort__order',
-            '#heading'  => $this->t("Order by"),
-            '#links'    => $links,
-        ];
-    } 
+        return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        return count($this->allowed);
+    }
 }

@@ -5,9 +5,11 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
 /**
  * Default implementation that will convert a single hashmap to a set of links
  */
-class LinksFilterDisplay implements FilterDisplayInterface
+class Filter implements \Countable
 {
     const URL_VALUE_SEP = '|';
+
+    use PrepareableTrait;
 
     /**
      * Sure ugly has hell, but right now I have no clean solution
@@ -26,25 +28,10 @@ class LinksFilterDisplay implements FilterDisplayInterface
         return $query;
     }
 
-    /**
-     * @var string[]
-     */
     private $choicesMap = [];
-
-    /**
-     * @var string
-     */
     private $queryParameter;
-
-    /**
-     * @var string
-     */
     private $title;
-
-    /**
-     * @var string
-     */
-    private $safe_markup;
+    private $isSafe = false;
 
     /**
      * Default constructor
@@ -52,15 +39,15 @@ class LinksFilterDisplay implements FilterDisplayInterface
      * @param string $queryParameter
      *   Query parameter name
      * @param string $title
-     *   $title
-     * @param bool $safe_markup
-     *   Title is safe to output
+     *   Filter title
+     * @param boolean $isSafe
+     *   Filter title is safe (does not need escaping)
      */
-    public function __construct($queryParameter, $title = null, $safe_markup = false)
+    public function __construct($queryParameter, $title = null, $isSafe = false)
     {
         $this->queryParameter = $queryParameter;
         $this->title = $title;
-        $this->safe_markup = $safe_markup;
+        $this->isSafe = $isSafe;
     }
 
     /**
@@ -73,7 +60,7 @@ class LinksFilterDisplay implements FilterDisplayInterface
      * @param string[] $choicesMap
      *   Keys are filter value, values are human readable labels
      *
-     * @return LinksFilterDisplay
+     * @return Filter
      */
     public function setChoicesMap($choicesMap)
     {
@@ -109,7 +96,7 @@ class LinksFilterDisplay implements FilterDisplayInterface
      *
      * @return string[]
      */
-    protected function getSelectedValues($query)
+    private function getSelectedValues($query)
     {
         $values = [];
 
@@ -142,7 +129,7 @@ class LinksFilterDisplay implements FilterDisplayInterface
      * @return string[]
      *   New query with value added or removed
      */
-    protected function getParametersForLink($query, $value, $remove = false)
+    private function getParametersForLink($query, $value, $remove = false)
     {
         if (isset($query[$this->queryParameter])) {
             $actual = explode(self::URL_VALUE_SEP, $query[$this->queryParameter]);
@@ -170,46 +157,41 @@ class LinksFilterDisplay implements FilterDisplayInterface
     }
 
     /**
-     * {inheritdoc}
+     * Get links
+     *
+     * @return Link[]
      */
-    public function build($query, $route)
+    public function getLinks()
     {
-        $links = [];
+        $ret = [];
+
+        $route = $this->getRoute();
+        $query = $this->getRouteParamaters();
+
         $selectedValues = $this->getSelectedValues($query);
 
         foreach ($this->choicesMap as $value => $label) {
 
-            $link = [
-                'href'  => $route,
-                'title' => $this->safe_markup ? $label : check_plain($label),
-                'html'  => true,
-            ];
+            $isActive = in_array($value, $selectedValues);
 
-            if (in_array($value, $selectedValues)) {
-                $link['attributes']['class'][] = 'active';
-                $link['query'] = $this->getParametersForLink($query, $value, true);
+            if ($isActive) {
+                $linkQuery = $this->getParametersForLink($query, $value, true);
             } else {
-                $link['query'] = $this->getParametersForLink($query, $value);
+                $linkQuery = $this->getParametersForLink($query, $value);
             }
 
-            $links[$value] = $link;
+            $ret[] = new Link($label, $route, $linkQuery, $isActive);
         }
 
-        // Forces the l() function to skip the 'active' class by adding empty
-        // attributes array and settings a stupid language onto the link (this
-        // is Drupal 7 specific and exploit a Drupal weird behavior)
-        foreach ($links as &$link) {
-            if (empty($link['attributes'])) {
-                $link['attributes'] = [];
-            }
-            $link['language'] = (object)['language' => 'und'];
-        }
+        return $ret;
+    }
 
-        return [
-            '#theme'    => 'links__ucms_dashboard_filter',
-            '#heading'  => $this->getTitle(),
-            '#links'    => $links,
-        ];
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        return count($this->choicesMap);
     }
 }
 
