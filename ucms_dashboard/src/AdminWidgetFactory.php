@@ -8,6 +8,7 @@ use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
+use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Dashboard\Page\TemplateDisplay;
 use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
 
@@ -21,6 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class AdminWidgetFactory
 {
     private $formBuilder;
+    private $pageBuilder;
     private $actionRegistry;
     private $eventDispatcher;
     private $twig;
@@ -35,6 +37,7 @@ class AdminWidgetFactory
      */
     public function __construct(
         FormBuilderInterface $formBuilder,
+        PageBuilder $pageBuilder,
         ActionRegistry $actionRegistry,
         \Twig_Environment $twig,
         EventDispatcherInterface $eventDispatcher = null
@@ -46,6 +49,16 @@ class AdminWidgetFactory
     }
 
     /**
+     * Get the page builder
+     *
+     * @return PageBuilder
+     */
+    public function getPageBuilder()
+    {
+        return $this->pageBuilder;
+    }
+
+    /**
      * Get page
      *
      * @param DatasourceInterface $datasource
@@ -53,9 +66,14 @@ class AdminWidgetFactory
      * @param string[] $suggestions
      *
      * @return Page
+     *
+     * @deprecated
+     *   Please use the PageBuilder object and service instead
      */
     public function getPage(DatasourceInterface $datasource, DisplayInterface $display = null, $suggestions = null)
     {
+        trigger_error("Please use the PageBuilder instead.", E_USER_DEPRECATED);
+
         return new Page($this->formBuilder, $this->actionRegistry, $datasource, $display, $suggestions);
     }
 
@@ -63,9 +81,14 @@ class AdminWidgetFactory
      * Get page using a template
      *
      * @param DatasourceInterface $datasource
+     *
+     * @deprecated
+     *   Please use the PageBuilder object and service instead
      */
     public function getPageWithTemplate(DatasourceInterface $datasource, $templateName)
     {
+        trigger_error("Please use the PageBuilder instead.", E_USER_DEPRECATED);
+
         return new Page($this->formBuilder, $this->actionRegistry, $datasource, new TemplateDisplay($this->twig, $templateName));
     }
 

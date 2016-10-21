@@ -2,6 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Page;
 
+/**
+ * @deprecated
+ *   Please use the PageBuilder object and service instead
+ */
 interface DisplayInterface
 {
     /**

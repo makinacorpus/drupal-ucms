@@ -1,7 +1,5 @@
 <?php
 
-use MakinaCorpus\Ucms\Contrib\MediaAdminDisplay;
-use MakinaCorpus\Ucms\Contrib\NodeAdminDisplay;
 use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
@@ -58,7 +56,6 @@ function ucms_contrib_admin_content_page_starred($tab = null) {
  */
 function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab = null) {
 
-  $ret = [];
   $search = $datasource->getSearch();
 
   // Apply context, if any
@@ -72,29 +69,9 @@ function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab
     $search->getFilterQuery()->matchTermCollection('type', $types);
   }
 
-  $builder = new PageBuilder(\Drupal::service('twig'));
+  /** @var \MakinaCorpus\Ucms\Dashboard\Page\PageBuilder $builder */
+  $builder = \Drupal::service('ucms_dashboard.page_builder');
   $result = $builder->search($datasource, \Drupal::requestStack()->getCurrentRequest());
 
   return $builder->render($result);
-
-  /*
-  $display = new NodeAdminDisplay();
-
-  switch ($tab) {
-
-    case 'media':
-      $display = new MediaAdminDisplay();
-      break;
-
-    default:
-      $display = new NodeAdminDisplay();
-      break;
-  }
-
-  $ret['page'] = ucms_dashboard_page_get($datasource, $display, ['dashboard', 'content'])
-    ->render(drupal_get_query_parameters(), current_path())
-  ;
-
-  return $ret;
-   */
 }

@@ -127,6 +127,8 @@ class Page
 
     public function render($query = [], $route = '/')
     {
+        trigger_error("Please use the PageBuilder instead.", E_USER_DEPRECATED);
+
         $query = $this->buildQuery($query);
         $state = new PageState();
         $fixedQuery = Filter::fixQuery($query); // @todo this is ugly

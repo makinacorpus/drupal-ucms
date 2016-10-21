@@ -7,6 +7,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 
+/**
+ * @deprecated
+ *   Please use the PageBuilder object and service instead
+ */
 abstract class AbstractDisplay implements DisplayInterface
 {
     use StringTranslationTrait;
@@ -206,7 +210,7 @@ abstract class AbstractDisplay implements DisplayInterface
      * Render content
      *
      * @param string $mode
-     *   Current display mode (eg. 'list', 'table', ...) 
+     *   Current display mode (eg. 'list', 'table', ...)
      * @param mixed[] $items
      *
      * @return array
@@ -224,6 +228,8 @@ abstract class AbstractDisplay implements DisplayInterface
      */
     final public function render($items)
     {
+        trigger_error("Please use the PageBuilder instead.", E_USER_DEPRECATED);
+
         return $this->displayAs($this->currentMode, $items);
     }
 }
