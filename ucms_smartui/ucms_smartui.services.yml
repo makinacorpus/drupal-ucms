@@ -1,2 +1,7 @@
 services:
-  # Here will be the services.
+
+  # Datasource via elastic search
+  ucms_smartui.datasource.selector:
+    shared: false
+    class: MakinaCorpus\Ucms\SmartUI\Page\SelectorDatasource
+    arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@entity.manager", "@current_user"]

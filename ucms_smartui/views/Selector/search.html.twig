@@ -1,0 +1,16 @@
+{% extends 'module:ucms_dashboard:views/Page/page.html.twig' %}
+
+{% block item %}
+{% endblock %}
+
+{% block item_list %}
+  <div class="container-fluid">
+    <div class="row">
+      {% for item in items %}
+        <div data-nid="item.id" class="col-md-3 col-sm-6 col-xs-12">
+          {{ node_view(item, constant('UCMS_VIEW_MODE_FAVORITE')) }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

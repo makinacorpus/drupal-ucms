@@ -2,11 +2,14 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
-
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\Core\Session\AccountInterface;
+
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
 use MakinaCorpus\Ucms\SmartUI\Action\AbstractAjaxProcessor;
+use MakinaCorpus\Ucms\SmartUI\Ajax\CartRefreshCommand;
 
 /**
  * Class CartRemoveProcessor
@@ -51,15 +54,14 @@ class CartRemoveProcessor extends AbstractAjaxProcessor
     /**
      * {@inheritDoc}
      */
-    public function process($item)
+    public function process($item, AjaxResponse $response)
     {
         // Better re-check for cart
         if (!$this->cartStorage->has($this->currentUser->id(), $item->getNode()->id())) {
-            return ucms_smartui_command_cart_reload();
+            $response->addCommand(new CartRefreshCommand());
         } else {
             $this->cartStorage->removeFor($this->currentUser->id(), $item->getNode()->id());
-
-            return ajax_command_remove('#ucms-cart-list [data-nid='.$item->getNode()->id().']');
+            $response->addCommand(new RemoveCommand('#ucms-cart-list [data-nid='.$item->getNode()->id().']'));
         }
     }
 }

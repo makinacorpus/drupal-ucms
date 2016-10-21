@@ -1,33 +1,28 @@
 <?php
-
 /**
  * @file
  * UCMS - Smart UI.
  */
+
 use MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider;
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
+use MakinaCorpus\Ucms\SmartUI\Controller\SelectorController;
 
 /**
- * Ajax command to open a new page
- *
- * @param $uri
- * @return array
+ * Implements hook_menu().
  */
-function ucms_smartui_command_new_page($uri) {
-  return [
-    'command' => 'newPage',
-    'method'  => 'replaceWith',
-    'uri'     => url($uri),
+function ucms_smartui_menu() {
+  $items = [];
+
+  $items['admin/content-selector'] = [
+    'title'             => "Select content",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [SelectorController::class . '::search'],
+    'access arguments'  => ['access ucms content overview'],
+    'type'              => MENU_NORMAL_ITEM
   ];
-}
 
-/**
- * Ajax command to reload cart
- *
- * @param $uri
- */
-function ucms_smartui_command_cart_reload() {
-  // TODO take the existing action if possible
+  return $items;
 }
 
 /**
@@ -38,9 +33,26 @@ function ucms_smartui_element_info_alter(&$type) {
 }
 
 function ucms_smartui_unoderef_icons($element) {
-  foreach($element['items'] as $index => $item) {
-    /** @var ProcessorActionProvider $registry */
-    $registry = Drupal::service('ucms_dashboard.processor_registry');
-    $item['icons'] = $registry->getActions(new SmartObject($item['#node'], SmartObject::CONTEXT_UNODEREF));
+
+  /** @var ProcessorActionProvider $registry */
+  $registry = \Drupal::service('ucms_dashboard.processor_registry');
+
+  foreach ($element['items'] as $index => $item) {
+    // @todo PRI: I am not sure why, really, but SCO awaits for items
+    // to be loaded nodes, but in the use case I stumbled upon, it's not
+    // but an array of rendered stuff instead, so I just added this check
+    // to avoid we have the wrong items. I guess this is due to the node
+    // clone custom code we made, I'm quite sure actually, but I'll see
+    // into this later.
+    if (!isset($item['#node'])) {
+      // WTF. (I am really sorry for this).
+      if (isset($item['content'])) {
+        if (isset($item['content']['#node'])) {
+          $item['icons'] = $registry->getActions(new SmartObject($item['content']['#node'], SmartObject::CONTEXT_UNODEREF));
+        }
+      }
+    } else {
+      $item['icons'] = $registry->getActions(new SmartObject($item['#node'], SmartObject::CONTEXT_UNODEREF));
+    }
   }
 }

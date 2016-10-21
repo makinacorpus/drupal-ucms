@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Layout\Action;
 
+use Drupal\Core\Ajax\AjaxResponse;
 
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
 use MakinaCorpus\Ucms\SmartUI\Action\AbstractAjaxProcessor;
@@ -20,7 +21,7 @@ class LayoutViewModeProcessor extends AbstractAjaxProcessor
     /**
      * {@inheritDoc}
      */
-    public function process($item)
+    public function process($item, AjaxResponse $response)
     {
         // TODO: replace html of element
     }

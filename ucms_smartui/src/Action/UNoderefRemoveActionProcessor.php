@@ -2,6 +2,9 @@
 
 namespace MakinaCorpus\Ucms\SmartUI\Action;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\RemoveCommand;
+
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
 
 class UNoderefRemoveActionProcessor extends AbstractAjaxProcessor
@@ -17,11 +20,8 @@ class UNoderefRemoveActionProcessor extends AbstractAjaxProcessor
     /**
      * {@inheritDoc}
      */
-    public function process($item)
+    public function process($item, AjaxResponse $response)
     {
-        return [
-            // TODO handle context here
-            ajax_command_remove('[data-nid='.$this->getItemId($item).']'),
-        ];
+        $response->addCommand(new RemoveCommand('[data-nid='.$this->getItemId($item).']'));
     }
 }

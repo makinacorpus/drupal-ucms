@@ -2,11 +2,14 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
-
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\AppendCommand;
 use Drupal\Core\Session\AccountInterface;
+
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
 use MakinaCorpus\Ucms\SmartUI\Action\AbstractAjaxProcessor;
+use MakinaCorpus\Ucms\SmartUI\Ajax\CartRefreshCommand;
 
 /**
  * Class CartAddProcessor
@@ -43,22 +46,24 @@ class CartAddProcessor extends AbstractAjaxProcessor
     {
         // No need to add to cart if in cart context or already in cart
         return $item instanceof SmartObject
-        && $item->getContext() !== SmartObject::CONTEXT_CART
-        && !$this->cartStorage->has($this->currentUser->id(), $item->getNode()->id());
+            && $item->getContext() !== SmartObject::CONTEXT_CART
+            && !$this->cartStorage->has(
+                $this->currentUser->id(),
+                $item->getNode()->id())
+        ;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function process($item)
+    public function process($item, AjaxResponse $response)
     {
         // Better re-check for cart
         if ($this->cartStorage->has($this->currentUser->id(), $item->getNode()->id())) {
-            return ucms_smartui_command_cart_reload();
+            $response->addCommand(new CartRefreshCommand());
         } else {
             $this->cartStorage->addFor($this->currentUser->id(), $item->getNode()->id());
-
-            return ajax_command_append('##ucms-cart-list', node_view($item->getNode(), UCMS_VIEW_MODE_FAVORITE));
+            $response->addCommand(new AppendCommand('#ucms-cart-list', node_view($item->getNode(), UCMS_VIEW_MODE_FAVORITE)));
         }
     }
 }

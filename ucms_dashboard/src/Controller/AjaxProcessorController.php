@@ -2,8 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Controller;
 
+use Drupal\Core\Ajax\AjaxResponse;
+
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider;
+
 use Symfony\Component\HttpFoundation\Request;
 
 class AjaxProcessorController extends Controller
@@ -42,12 +45,9 @@ class AjaxProcessorController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $commands = $processor->process($item);
-        $result = [
-            '#type'     => 'ajax',
-            '#commands' => [$commands],
-        ];
+        $response = new AjaxResponse();
+        $processor->process($item, $response);
 
-        return $result;
+        return $response;
     }
 }

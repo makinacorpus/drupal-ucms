@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\SmartUI\Action;
 
+use Drupal\Core\Ajax\AjaxResponse;
+
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProcessorInterface;
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
@@ -75,10 +77,9 @@ abstract class AbstractAjaxProcessor implements ActionProcessorInterface
      * Process item
      *
      * @param SmartObject $item
-     *
-     * @return array An array of ajax callbacks
+     * @param AjaxResponse $response
      */
-    abstract public function process($item);
+    abstract public function process($item, AjaxResponse $response);
 
     /**
      * From the given item, get an identifier

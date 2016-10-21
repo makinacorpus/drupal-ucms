@@ -2,7 +2,10 @@
 
 namespace MakinaCorpus\Ucms\SmartUI\Action;
 
+use Drupal\Core\Ajax\AjaxResponse;
+
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
+use MakinaCorpus\Ucms\SmartUI\Ajax\NewPageCommand;
 
 class NodeViewProcessor extends AbstractAjaxProcessor
 {
@@ -17,10 +20,8 @@ class NodeViewProcessor extends AbstractAjaxProcessor
     /**
      * {@inheritDoc}
      */
-    public function process($item)
+    public function process($item, AjaxResponse $response)
     {
-        return [
-            ucms_smartui_command_new_page('node/'.$item->getNode()->id()),
-        ];
+        $response->addCommand(new NewPageCommand('node/'.$item->getNode()->id()));
     }
 }

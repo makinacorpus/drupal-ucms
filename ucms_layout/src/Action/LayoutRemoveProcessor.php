@@ -2,8 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Layout\Action;
 
-
+use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 use MakinaCorpus\Ucms\Dashboard\SmartObject;
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\SmartUI\Action\AbstractAjaxProcessor;
@@ -20,6 +21,7 @@ class LayoutRemoveProcessor extends AbstractAjaxProcessor
     public function __construct(ContextManager $contextManager)
     {
         $this->contextManager = $contextManager;
+
         parent::__construct($this->t('Remove from cart'), 'trash', 10);
     }
 
@@ -34,7 +36,7 @@ class LayoutRemoveProcessor extends AbstractAjaxProcessor
     /**
      * {@inheritDoc}
      */
-    public function process($item)
+    public function process($item, AjaxResponse $response)
     {
 
     }
