@@ -15,7 +15,7 @@ class PageBuilder
      * @param \Twig_Environment $twig
      * @param string $defaultTemplate
      */
-    public function __construct(\Twig_Environment $twig, $defaultTemplate = 'module:ucms_dashboard:views/Page/page.html.twig')
+    public function __construct(\Twig_Environment $twig, $defaultTemplate)
     {
         $this->twig = $twig;
         $this->defaultTemplate = $defaultTemplate;

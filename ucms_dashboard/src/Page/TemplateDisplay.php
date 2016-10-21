@@ -7,6 +7,9 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
  *
  * This implementation only needs a template identifier that Twig can link
  * to real a file using the template locator.
+ *
+ * @deprecated
+ *   Please use the PageBuilder object and service instead
  */
 class TemplateDisplay extends AbstractDisplay
 {
@@ -30,6 +33,8 @@ class TemplateDisplay extends AbstractDisplay
      */
     protected function displayAs($mode, $items)
     {
+        trigger_error("Please use the PageBuilder instead.", E_USER_DEPRECATED);
+
         return $this->twig->render($this->name, [
             'items' => $items,
             'mode'  => $mode,

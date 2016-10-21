@@ -242,6 +242,7 @@ function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_cod
  * @deprecated
  */
 function ucms_dashboard_page_get(DatasourceInterface $datasource, DisplayInterface $display, $suggestions) {
+  trigger_error("Please write controllers and services instead.", E_USER_DEPRECATED);
   /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory */
   $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
   return $factory->getPage($datasource, $display, $suggestions);
@@ -262,6 +263,7 @@ function ucms_dashboard_page_get(DatasourceInterface $datasource, DisplayInterfa
  * @deprecated
  */
 function ucms_dashboard_admin_table_get($name, array $attributes = []) {
+  trigger_error("Please write controllers and services instead.", E_USER_DEPRECATED);
   /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory */
   $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
   return $factory->getTable($name, $attributes);
@@ -276,6 +278,7 @@ function ucms_dashboard_admin_table_get($name, array $attributes = []) {
  *   Will be replaced by services one day.
  */
 function ucms_dashboard_context_get() {
+  trigger_error("Please write controllers and services instead.", E_USER_DEPRECATED);
   return \Drupal::service('ucms_dashboard.context');
 }
 
@@ -288,6 +291,7 @@ function ucms_dashboard_context_get() {
  *   Will be replaced by services one day.
  */
 function ucms_dashboard_portlet_registry_get() {
+  trigger_error("Please write controllers and services instead.", E_USER_DEPRECATED);
   return \Drupal::service('ucms_dashboard.portlet_registry');
 }
 

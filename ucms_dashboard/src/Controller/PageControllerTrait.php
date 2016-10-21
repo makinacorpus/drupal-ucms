@@ -7,6 +7,9 @@ use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
+use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
+
+use Symfony\Component\HttpFoundation\Request;
 
 trait PageControllerTrait
 {
@@ -28,9 +31,14 @@ trait PageControllerTrait
      * @param string[] $suggestions
      *
      * @return Page
+     *
+     * @deprecated
+     *   Please use the PageBuilder object and service instead
      */
     protected function createPage(DatasourceInterface $datasource, DisplayInterface $display = null, $suggestions = null)
     {
+        trigger_error("Please use the PageBuilder instead.", E_USER_DEPRECATED);
+
         return $this->getWidgetFactory()->getPage($datasource, $display, $suggestions);
     }
 
@@ -41,10 +49,36 @@ trait PageControllerTrait
      * @param string $templateName
      *
      * @return Page
+     *
+     * @deprecated
+     *   Please use the PageBuilder object and service instead
      */
     protected function createTemplatePage(DatasourceInterface $datasource, $templateName)
     {
+        trigger_error("Please use the PageBuilder instead.", E_USER_DEPRECATED);
+
         return $this->getWidgetFactory()->getPageWithTemplate($datasource, $templateName);
+    }
+
+    /**
+     * Get the page builder
+     *
+     * @return PageBuilder
+     */
+    protected function getPageBuilder()
+    {
+        return $this->getWidgetFactory()->getPageBuilder();
+    }
+
+    /**
+     * Render page
+     */
+    protected function renderPage(Request $request, DatasourceInterface $datasource, $templateName = null, array $arguments = [])
+    {
+        $builder = $this->getPageBuilder();
+        $result = $builder->search($datasource, $request);
+
+        return $builder->render($result, $arguments, $templateName);
     }
 
     /**
@@ -56,6 +90,7 @@ trait PageControllerTrait
      * @param mixed $attributes
      *
      * @return AdminTable
+     *
      */
     protected function createAdminTable($name, array $attributes = [])
     {
