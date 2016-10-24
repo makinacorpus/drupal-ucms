@@ -4,3 +4,5 @@ core = 7.x
 dependencies[] = sf_dic
 dependencies[] = umenu
 dependencies[] = ucms_site
+; @TODO: check; dependencie added by rle
+dependencies[] = ucms_seo
