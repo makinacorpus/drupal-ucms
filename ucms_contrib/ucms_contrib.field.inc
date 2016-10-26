@@ -76,7 +76,11 @@ function ucms_contrib_field_formatter_settings_summary($field, $instance, $view_
 function ucms_contrib_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = [];
   $settings = $display['settings'];
-  $view_mode = $settings['view_mode'];
+  if (isset($settings['view_mode'])) {
+    $view_mode = $settings['view_mode'];
+  } else {
+    $view_mode = 'default';
+  }
 
   switch ($display['type']) {
 
