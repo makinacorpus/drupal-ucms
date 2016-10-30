@@ -1,0 +1,16279 @@
+version: 1
+creator: xdebug 2.4.0 (PHP 7.0.8-1~dotdeb+8.1)
+cmd: /var/www/chlovet/web/index.php
+part: 1
+positions: line
+
+events: Time
+
+fl=(1) php:internal
+fn=(1) php::getcwd
+17 3
+
+fl=(1)
+fn=(2) php::define
+17 2
+
+fl=(1)
+fn=(2)
+11 1
+
+fl=(1)
+fn=(2)
+16 1
+
+fl=(1)
+fn=(2)
+21 0
+
+fl=(1)
+fn=(2)
+26 0
+
+fl=(1)
+fn=(2)
+31 0
+
+fl=(1)
+fn=(2)
+36 1
+
+fl=(1)
+fn=(2)
+41 0
+
+fl=(1)
+fn=(2)
+48 0
+
+fl=(1)
+fn=(2)
+53 1
+
+fl=(1)
+fn=(2)
+78 0
+
+fl=(1)
+fn=(2)
+83 0
+
+fl=(1)
+fn=(2)
+88 0
+
+fl=(1)
+fn=(2)
+93 1
+
+fl=(1)
+fn=(2)
+98 1
+
+fl=(1)
+fn=(2)
+103 1
+
+fl=(1)
+fn=(2)
+108 0
+
+fl=(1)
+fn=(2)
+113 0
+
+fl=(1)
+fn=(2)
+122 1
+
+fl=(1)
+fn=(2)
+127 1
+
+fl=(1)
+fn=(2)
+132 2
+
+fl=(1)
+fn=(2)
+137 1
+
+fl=(1)
+fn=(2)
+142 1
+
+fl=(1)
+fn=(2)
+147 1
+
+fl=(1)
+fn=(2)
+152 0
+
+fl=(1)
+fn=(2)
+157 0
+
+fl=(1)
+fn=(2)
+162 0
+
+fl=(1)
+fn=(2)
+167 0
+
+fl=(1)
+fn=(2)
+174 0
+
+fl=(1)
+fn=(2)
+181 0
+
+fl=(1)
+fn=(2)
+186 0
+
+fl=(1)
+fn=(2)
+191 1
+
+fl=(1)
+fn=(2)
+196 0
+
+fl=(1)
+fn=(2)
+201 0
+
+fl=(1)
+fn=(2)
+206 1
+
+fl=(1)
+fn=(2)
+218 0
+
+fl=(1)
+fn=(2)
+225 2
+
+fl=(1)
+fn=(2)
+232 0
+
+fl=(1)
+fn=(2)
+237 0
+
+fl=(1)
+fn=(2)
+242 1
+
+fl=(1)
+fn=(2)
+249 1
+
+fl=(1)
+fn=(2)
+258 1
+
+fl=(2) /var/www/chlovet/web/includes/bootstrap.inc
+fn=(3) require_once::/var/www/chlovet/web/includes/bootstrap.inc
+1 252
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+11 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+16 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+21 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+26 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+31 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+36 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+41 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+48 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+53 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+78 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+83 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+88 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+93 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+98 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+103 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+108 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+113 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+122 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+127 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+132 2
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+137 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+142 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+147 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+152 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+157 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+162 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+167 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+174 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+181 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+186 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+191 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+196 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+201 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+206 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+218 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+225 2
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+232 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+237 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+242 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+249 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+258 1
+
+fl=(1)
+fn=(4) php::array_shift
+2226 1
+
+fl=(1)
+fn=(5) php::set_error_handler
+2355 3
+
+fl=(1)
+fn=(6) php::set_exception_handler
+2356 1
+
+fl=(1)
+fn=(7) php::strtolower
+659 1
+
+fl=(1)
+fn=(8) php::substr_count
+716 1
+
+fl=(1)
+fn=(8)
+717 0
+
+fl=(1)
+fn=(9) php::preg_match
+718 4
+
+fl=(2)
+fn=(10) drupal_valid_http_host
+710 22
+cfl=(1)
+cfn=(8)
+calls=1 0 0
+716 1
+cfl=(1)
+cfn=(8)
+calls=1 0 0
+717 0
+cfl=(1)
+cfn=(9)
+calls=1 0 0
+718 4
+
+fl=(1)
+fn=(11) php::trim
+2857 1
+
+fl=(2)
+fn=(12) request_path
+2820 10
+cfl=(1)
+cfn=(11)
+calls=1 0 0
+2857 1
+
+fl=(1)
+fn=(13) php::error_reporting
+680 1
+
+fl=(1)
+fn=(13)
+680 1
+
+fl=(1)
+fn=(14) php::ini_set
+687 1
+
+fl=(1)
+fn=(14)
+690 2
+
+fl=(1)
+fn=(14)
+691 0
+
+fl=(1)
+fn=(14)
+692 1
+
+fl=(1)
+fn=(14)
+695 1
+
+fl=(1)
+fn=(14)
+697 0
+
+fl=(1)
+fn=(15) php::setlocale
+701 2
+
+fl=(2)
+fn=(16) drupal_environment_initialize
+647 89
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+659 1
+cfl=(2)
+cfn=(10)
+calls=1 0 0
+660 29
+cfl=(2)
+cfn=(12)
+calls=1 0 0
+677 11
+cfl=(1)
+cfn=(13)
+calls=1 0 0
+680 1
+cfl=(1)
+cfn=(13)
+calls=1 0 0
+680 1
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+687 1
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+690 2
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+691 0
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+692 1
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+695 1
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+697 0
+cfl=(1)
+cfn=(15)
+calls=1 0 0
+701 2
+
+fl=(1)
+fn=(17) php::microtime
+472 2
+
+fl=(2)
+fn=(18) timer_start
+469 11
+cfl=(1)
+cfn=(17)
+calls=1 0 0
+472 2
+
+fl=(1)
+fn=(19) php::array_key_exists
+3390 1
+
+fl=(2)
+fn=(20) drupal_static
+3387 11
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+3390 1
+
+fl=(1)
+fn=(21) php::file_exists
+559 9
+
+fl=(1)
+fn=(22) php::explode
+564 0
+
+fl=(1)
+fn=(23) php::rtrim
+565 1
+
+fl=(1)
+fn=(22)
+565 0
+
+fl=(1)
+fn=(24) php::array_reverse
+565 2
+
+fl=(1)
+fn=(25) php::implode
+565 0
+
+fl=(1)
+fn=(22)
+565 2
+
+fl=(1)
+fn=(26) php::count
+566 0
+
+fl=(1)
+fn=(26)
+567 1
+
+fl=(1)
+fn=(27) php::array_slice
+568 1
+
+fl=(1)
+fn=(25)
+568 1
+
+fl=(1)
+fn=(27)
+568 0
+
+fl=(1)
+fn=(25)
+568 1
+
+fl=(1)
+fn=(21)
+572 5
+
+fl=(1)
+fn=(27)
+568 0
+
+fl=(1)
+fn=(25)
+568 0
+
+fl=(1)
+fn=(27)
+568 0
+
+fl=(1)
+fn=(25)
+568 0
+
+fl=(1)
+fn=(21)
+572 2
+
+fl=(1)
+fn=(27)
+568 0
+
+fl=(1)
+fn=(25)
+568 0
+
+fl=(1)
+fn=(27)
+568 1
+
+fl=(1)
+fn=(25)
+568 0
+
+fl=(1)
+fn=(21)
+572 3
+
+fl=(2)
+fn=(28) conf_path
+549 172
+cfl=(2)
+cfn=(20)
+calls=1 0 0
+550 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+559 9
+cfl=(1)
+cfn=(22)
+calls=1 0 0
+564 0
+cfl=(1)
+cfn=(23)
+calls=1 0 0
+565 1
+cfl=(1)
+cfn=(22)
+calls=1 0 0
+565 0
+cfl=(1)
+cfn=(24)
+calls=1 0 0
+565 2
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+565 0
+cfl=(1)
+cfn=(22)
+calls=1 0 0
+565 2
+cfl=(1)
+cfn=(26)
+calls=1 0 0
+566 0
+cfl=(1)
+cfn=(26)
+calls=1 0 0
+567 1
+cfl=(1)
+cfn=(27)
+calls=1 0 0
+568 1
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+568 1
+cfl=(1)
+cfn=(27)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+568 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+572 5
+cfl=(1)
+cfn=(27)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(27)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+572 2
+cfl=(1)
+cfn=(27)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(27)
+calls=1 0 0
+568 1
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+568 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+572 3
+
+fl=(1)
+fn=(21)
+731 4
+
+fl=(2)
+fn=(20)
+3387 1
+
+fl=(2)
+fn=(28)
+549 8
+cfl=(2)
+cfn=(20)
+calls=1 0 0
+550 1
+
+fl=(3) /var/www/chlovet/vendor/composer/autoload_real.php
+fn=(29) require_once::/var/www/chlovet/vendor/composer/autoload_real.php
+1 0
+
+fl=(1)
+fn=(30) php::spl_autoload_register
+22 5
+
+fl=(4) /var/www/chlovet/vendor/composer/ClassLoader.php
+fn=(31) require::/var/www/chlovet/vendor/composer/ClassLoader.php
+1 2
+
+fl=(3)
+fn=(32) ComposerAutoloaderInit769dc30f435377bafa4ca02099ff01c5::loadClassLoader
+9 26
+cfl=(4)
+cfn=(31)
+calls=1 0 0
+12 2
+
+fl=(1)
+fn=(33) php::spl_autoload_call
+23 11
+cfl=(3)
+cfn=(32)
+calls=1 0 0
+23 28
+
+fl=(1)
+fn=(34) php::spl_autoload_unregister
+24 1
+
+fl=(5) /var/www/chlovet/vendor/composer/autoload_static.php
+fn=(35) require_once::/var/www/chlovet/vendor/composer/autoload_static.php
+1 0
+
+fl=(1)
+fn=(36) php::Closure::bind
+860 3
+
+fl=(5)
+fn=(37) Composer\Autoload\ComposerStaticInit769dc30f435377bafa4ca02099ff01c5::getInitializer
+852 11
+cfl=(1)
+cfn=(36)
+calls=1 0 0
+860 3
+
+fl=(5)
+fn=(38) Composer\Autoload\ClassLoader::Composer\Autoload\{closure}
+854 3
+
+fl=(1)
+fn=(30)
+281 2
+
+fl=(4)
+fn=(39) Composer\Autoload\ClassLoader->register
+279 8
+cfl=(1)
+cfn=(30)
+calls=1 0 0
+281 2
+
+fl=(1)
+fn=(40) php::function_exists
+14 2
+
+fl=(6) /var/www/chlovet/vendor/symfony/polyfill-mbstring/bootstrap.php
+fn=(41) require::/var/www/chlovet/vendor/symfony/polyfill-mbstring/bootstrap.php
+1 9
+cfl=(1)
+cfn=(40)
+calls=1 0 0
+14 2
+
+fl=(3)
+fn=(42) composerRequire769dc30f435377bafa4ca02099ff01c5
+63 34
+cfl=(6)
+cfn=(41)
+calls=1 0 0
+66 11
+
+fl=(1)
+fn=(43) php::class_exists
+16 2
+
+fl=(7) /var/www/chlovet/vendor/symfony/phpunit-bridge/bootstrap.php
+fn=(44) require::/var/www/chlovet/vendor/symfony/phpunit-bridge/bootstrap.php
+1 8
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+16 2
+
+fl=(3)
+fn=(42)
+63 21
+cfl=(7)
+cfn=(44)
+calls=1 0 0
+66 10
+
+fl=(8) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal.php
+fn=(45) require::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal.php
+1 1
+
+fl=(3)
+fn=(42)
+63 41
+cfl=(8)
+cfn=(45)
+calls=1 0 0
+66 1
+
+fl=(1)
+fn=(40)
+3 0
+
+fl=(9) /var/www/chlovet/vendor/react/promise/src/functions.php
+fn=(46) require::/var/www/chlovet/vendor/react/promise/src/functions.php
+1 0
+
+fl=(10) /var/www/chlovet/vendor/react/promise/src/functions_include.php
+fn=(47) require::/var/www/chlovet/vendor/react/promise/src/functions_include.php
+1 33
+cfl=(1)
+cfn=(40)
+calls=1 0 0
+3 0
+cfl=(9)
+cfn=(46)
+calls=1 0 0
+4 0
+
+fl=(3)
+fn=(42)
+63 25
+cfl=(10)
+cfn=(47)
+calls=1 0 0
+66 35
+
+fl=(1)
+fn=(40)
+14 1
+
+fl=(11) /var/www/chlovet/vendor/symfony/var-dumper/Resources/functions/dump.php
+fn=(48) require::/var/www/chlovet/vendor/symfony/var-dumper/Resources/functions/dump.php
+1 9
+cfl=(1)
+cfn=(40)
+calls=1 0 0
+14 1
+
+fl=(3)
+fn=(42)
+63 31
+cfl=(11)
+cfn=(48)
+calls=1 0 0
+66 10
+
+fl=(12) /var/www/chlovet/vendor/htmlawed/htmlawed/htmLawed.php
+fn=(49) require::/var/www/chlovet/vendor/htmlawed/htmlawed/htmLawed.php
+1 0
+
+fl=(3)
+fn=(42)
+63 25
+cfl=(12)
+cfn=(49)
+calls=1 0 0
+66 0
+
+fl=(3)
+fn=(50) ComposerAutoloaderInit769dc30f435377bafa4ca02099ff01c5::getLoader
+16 120
+cfl=(1)
+cfn=(30)
+calls=1 0 0
+22 5
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+23 40
+cfl=(1)
+cfn=(34)
+calls=1 0 0
+24 1
+cfl=(5)
+cfn=(35)
+calls=1 0 0
+28 0
+cfl=(5)
+cfn=(37)
+calls=1 0 0
+30 15
+cfl=(5)
+cfn=(38)
+calls=1 0 0
+30 3
+cfl=(4)
+cfn=(39)
+calls=1 0 0
+48 10
+cfl=(3)
+cfn=(42)
+calls=1 0 0
+56 46
+cfl=(3)
+cfn=(42)
+calls=1 0 0
+56 32
+cfl=(3)
+cfn=(42)
+calls=1 0 0
+56 43
+cfl=(3)
+cfn=(42)
+calls=1 0 0
+56 61
+cfl=(3)
+cfn=(42)
+calls=1 0 0
+56 42
+cfl=(3)
+cfn=(42)
+calls=1 0 0
+56 25
+
+fl=(13) /var/www/chlovet/vendor/autoload.php
+fn=(51) include_once::/var/www/chlovet/vendor/autoload.php
+1 37
+cfl=(3)
+cfn=(29)
+calls=1 0 0
+5 0
+cfl=(3)
+cfn=(50)
+calls=1 0 0
+7 449
+
+fl=(1)
+fn=(2)
+13 2
+
+fl=(1)
+fn=(5)
+161 3
+
+fl=(1)
+fn=(6)
+194 0
+
+fl=(1)
+fn=(52) php::register_shutdown_function
+202 1
+
+fl=(14) /var/www/chlovet/web/sites/all/modules/composer/drupal-ulog/ulog.error.inc
+fn=(53) include_once::/var/www/chlovet/web/sites/all/modules/composer/drupal-ulog/ulog.error.inc
+1 29
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+13 2
+cfl=(1)
+cfn=(5)
+calls=1 0 0
+161 3
+cfl=(1)
+cfn=(6)
+calls=1 0 0
+194 0
+cfl=(1)
+cfn=(52)
+calls=1 0 0
+202 1
+
+fl=(1)
+fn=(14)
+28 1
+
+fl=(1)
+fn=(14)
+29 2
+
+fl=(1)
+fn=(14)
+30 1
+
+fl=(1)
+fn=(14)
+31 2
+
+fl=(2)
+fn=(54) variable_get
+966 1
+
+fl=(1)
+fn=(9)
+2619 1
+
+fl=(2)
+fn=(54)
+966 2
+
+fl=(1)
+fn=(9)
+2621 1
+
+fl=(2)
+fn=(55) drupal_fast_404
+2617 29
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2618 1
+cfl=(1)
+cfn=(9)
+calls=1 0 0
+2619 1
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2620 2
+cfl=(1)
+cfn=(9)
+calls=1 0 0
+2621 1
+
+fl=(15) /var/www/chlovet/web/sites/default/settings.php
+fn=(56) include_once::/var/www/chlovet/web/sites/default/settings.php
+1 115
+cfl=(13)
+cfn=(51)
+calls=1 0 0
+2 488
+cfl=(14)
+cfn=(53)
+calls=1 0 0
+3 37
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+28 1
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+29 2
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+30 1
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+31 2
+cfl=(2)
+cfn=(55)
+calls=1 0 0
+37 36
+
+fl=(1)
+fn=(57) php::dirname
+755 2
+
+fl=(1)
+fn=(23)
+755 1
+
+fl=(1)
+fn=(58) php::str_replace
+764 2
+
+fl=(1)
+fn=(58)
+765 0
+
+fl=(1)
+fn=(22)
+774 2
+
+fl=(1)
+fn=(59) php::ltrim
+780 0
+
+fl=(1)
+fn=(60) php::strpos
+781 0
+
+fl=(1)
+fn=(22)
+784 2
+
+fl=(1)
+fn=(22)
+790 0
+
+fl=(1)
+fn=(26)
+790 1
+
+fl=(1)
+fn=(58)
+790 0
+
+fl=(1)
+fn=(61) php::is_numeric
+790 0
+
+fl=(1)
+fn=(14)
+791 1
+
+fl=(1)
+fn=(62) php::ini_get
+802 0
+
+fl=(1)
+fn=(63) php::hash
+803 4
+
+fl=(1)
+fn=(64) php::substr
+803 1
+
+fl=(1)
+fn=(65) php::session_name
+803 1
+
+fl=(2)
+fn=(66) drupal_settings_initialize
+724 186
+cfl=(2)
+cfn=(28)
+calls=1 0 0
+731 228
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+731 4
+cfl=(2)
+cfn=(28)
+calls=1 0 0
+732 10
+cfl=(15)
+cfn=(56)
+calls=1 0 0
+732 686
+cfl=(1)
+cfn=(57)
+calls=1 0 0
+755 2
+cfl=(1)
+cfn=(23)
+calls=1 0 0
+755 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+764 2
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+765 0
+cfl=(1)
+cfn=(22)
+calls=1 0 0
+774 2
+cfl=(1)
+cfn=(59)
+calls=1 0 0
+780 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+781 0
+cfl=(1)
+cfn=(22)
+calls=1 0 0
+784 2
+cfl=(1)
+cfn=(22)
+calls=1 0 0
+790 0
+cfl=(1)
+cfn=(26)
+calls=1 0 0
+790 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+790 0
+cfl=(1)
+cfn=(61)
+calls=1 0 0
+790 0
+cfl=(1)
+cfn=(14)
+calls=1 0 0
+791 1
+cfl=(1)
+cfn=(62)
+calls=1 0 0
+802 0
+cfl=(1)
+cfn=(63)
+calls=1 0 0
+803 4
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+803 1
+cfl=(1)
+cfn=(65)
+calls=1 0 0
+803 1
+
+fl=(2)
+fn=(67) _drupal_bootstrap_configuration
+2353 66
+cfl=(1)
+cfn=(5)
+calls=1 0 0
+2355 3
+cfl=(1)
+cfn=(6)
+calls=1 0 0
+2356 1
+cfl=(2)
+cfn=(16)
+calls=1 0 0
+2358 148
+cfl=(2)
+cfn=(18)
+calls=1 0 0
+2360 14
+cfl=(2)
+cfn=(66)
+calls=1 0 0
+2362 1142
+
+fl=(1)
+fn=(4)
+2226 0
+
+fl=(16) /var/www/chlovet/web/includes/cache.inc
+fn=(68) require_once::/var/www/chlovet/web/includes/cache.inc
+1 4
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(1)
+fn=(57)
+11 2
+
+fl=(1)
+fn=(2)
+11 0
+
+fl=(1)
+fn=(30)
+25 1
+
+fl=(17) /var/www/chlovet/web/sites/all/modules/contrib/redis/redis.autoload.inc
+fn=(69) require_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/redis.autoload.inc
+1 21
+cfl=(1)
+cfn=(57)
+calls=1 0 0
+11 2
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+11 0
+cfl=(1)
+cfn=(30)
+calls=1 0 0
+25 1
+
+fl=(2)
+fn=(54)
+966 2
+
+fl=(1)
+fn=(4)
+2226 0
+
+fl=(1)
+fn=(9)
+2552 1
+
+fl=(2)
+fn=(70) drupal_valid_test_ua
+2544 10
+cfl=(1)
+cfn=(9)
+calls=1 0 0
+2552 1
+
+fl=(18) /var/www/chlovet/web/includes/database/database.inc
+fn=(71) require_once::/var/www/chlovet/web/includes/database/database.inc
+1 10
+
+fl=(1)
+fn=(30)
+2469 1
+
+fl=(1)
+fn=(30)
+2470 2
+
+fl=(1)
+fn=(72) php::version_compare
+2471 3
+
+fl=(1)
+fn=(30)
+2472 1
+
+fl=(2)
+fn=(73) _drupal_bootstrap_database
+2424 87
+cfl=(2)
+cfn=(70)
+calls=1 0 0
+2436 11
+cfl=(18)
+cfn=(71)
+calls=1 0 0
+2463 10
+cfl=(1)
+cfn=(30)
+calls=1 0 0
+2469 1
+cfl=(1)
+cfn=(30)
+calls=1 0 0
+2470 2
+cfl=(1)
+cfn=(72)
+calls=1 0 0
+2471 3
+cfl=(1)
+cfn=(30)
+calls=1 0 0
+2472 1
+
+fl=(1)
+fn=(4)
+2226 0
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(19) /var/www/chlovet/web/includes/lock.inc
+fn=(74) require_once::/var/www/chlovet/web/includes/lock.inc
+1 1
+
+fl=(19)
+fn=(75) lock_initialize
+67 2
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(1)
+fn=(76) php::strtr
+347 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(77) php::strrpos
+370 0
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78) Composer\Autoload\ClassLoader->findFileWithExtension
+344 35
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79) php::defined
+332 1
+
+fl=(4)
+fn=(80) Composer\Autoload\ClassLoader->findFile
+314 26
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 39
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 1
+
+fl=(4)
+fn=(81) Composer\Autoload\ClassLoader->loadClass
+298 12
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 67
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(1)
+fn=(58)
+18 2
+
+fl=(20) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Cache.php
+fn=(82) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Cache.php
+1 2
+
+fl=(17)
+fn=(83) redis_autoload
+16 37
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 2
+cfl=(20)
+cfn=(82)
+calls=1 0 0
+19 2
+
+fl=(1)
+fn=(33)
+32 20
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+32 80
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+32 42
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 28
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 0
+
+fl=(4)
+fn=(80)
+314 19
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 32
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 0
+
+fl=(4)
+fn=(81)
+298 10
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 52
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(1)
+fn=(58)
+18 0
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 30
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 0
+
+fl=(4)
+fn=(80)
+314 18
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 34
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 0
+
+fl=(4)
+fn=(81)
+298 8
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 53
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(1)
+fn=(58)
+18 0
+
+fl=(21) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client/FactoryInterface.php
+fn=(84) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client/FactoryInterface.php
+1 1
+
+fl=(17)
+fn=(83)
+16 30
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 0
+cfl=(21)
+cfn=(84)
+calls=1 0 0
+19 1
+
+fl=(1)
+fn=(33)
+5 20
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+5 61
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+5 33
+
+fl=(1)
+fn=(85) php::interface_exists
+5 9
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+5 116
+
+fl=(22) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client.php
+fn=(86) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client.php
+1 10
+cfl=(1)
+cfn=(85)
+calls=1 0 0
+5 125
+
+fl=(17)
+fn=(83)
+16 31
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 0
+cfl=(22)
+cfn=(86)
+calls=1 0 0
+19 136
+
+fl=(1)
+fn=(33)
+174 17
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+174 63
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+174 169
+
+fl=(22)
+fn=(87) Redis_Client::getClientInterfaceName
+179 2
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 29
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 1
+
+fl=(4)
+fn=(80)
+314 18
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 32
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 1
+
+fl=(4)
+fn=(81)
+298 9
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 52
+
+fl=(1)
+fn=(64)
+17 1
+
+fl=(1)
+fn=(58)
+18 1
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 29
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 0
+
+fl=(4)
+fn=(80)
+314 18
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 32
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 0
+
+fl=(4)
+fn=(81)
+298 10
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 51
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(1)
+fn=(58)
+18 0
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 28
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 0
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 32
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 0
+
+fl=(4)
+fn=(81)
+298 10
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 51
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(1)
+fn=(58)
+18 0
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 27
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 0
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 31
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 0
+
+fl=(4)
+fn=(81)
+298 9
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 50
+
+fl=(1)
+fn=(64)
+17 1
+
+fl=(1)
+fn=(58)
+18 0
+
+fl=(23) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/BackendInterface.php
+fn=(88) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/BackendInterface.php
+1 2
+
+fl=(17)
+fn=(83)
+16 27
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 0
+cfl=(23)
+cfn=(88)
+calls=1 0 0
+19 2
+
+fl=(1)
+fn=(33)
+3 19
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+3 59
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+3 31
+
+fl=(24) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/AbstractBackend.php
+fn=(89) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/AbstractBackend.php
+1 10
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+3 111
+
+fl=(17)
+fn=(83)
+16 31
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 0
+cfl=(24)
+cfn=(89)
+calls=1 0 0
+19 121
+
+fl=(1)
+fn=(33)
+9 17
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+9 61
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+9 154
+
+fl=(25) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Cache/Base.php
+fn=(90) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Cache/Base.php
+1 11
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+9 233
+
+fl=(17)
+fn=(83)
+16 30
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 0
+cfl=(25)
+cfn=(90)
+calls=1 0 0
+19 244
+
+fl=(1)
+fn=(33)
+6 16
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+6 61
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+6 277
+
+fl=(26) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Cache/PhpRedis.php
+fn=(91) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Cache/PhpRedis.php
+1 10
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+6 355
+
+fl=(17)
+fn=(83)
+16 30
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 1
+cfl=(26)
+cfn=(91)
+calls=1 0 0
+19 365
+
+fl=(1)
+fn=(33)
+234 18
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+234 61
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+234 400
+
+fl=(1)
+fn=(43)
+234 9
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+234 480
+
+fl=(22)
+fn=(92) Redis_Client::getClass
+230 21
+cfl=(22)
+cfn=(87)
+calls=1 0 0
+232 2
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+234 489
+
+fl=(22)
+fn=(87)
+179 0
+
+fl=(1)
+fn=(76)
+347 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 25
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 0
+
+fl=(4)
+fn=(80)
+314 23
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 30
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 0
+
+fl=(4)
+fn=(81)
+298 8
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 55
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(1)
+fn=(58)
+18 1
+
+fl=(27) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client/PhpRedis.php
+fn=(93) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client/PhpRedis.php
+1 1
+
+fl=(17)
+fn=(83)
+16 29
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 1
+cfl=(27)
+cfn=(93)
+calls=1 0 0
+19 1
+
+fl=(1)
+fn=(33)
+234 20
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+234 63
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+234 33
+
+fl=(1)
+fn=(43)
+234 7
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+234 118
+
+fl=(22)
+fn=(92)
+230 17
+cfl=(22)
+cfn=(87)
+calls=1 0 0
+232 0
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+234 125
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 2
+
+fl=(1)
+fn=(76)
+376 0
+
+fl=(4)
+fn=(78)
+344 26
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 2
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+376 0
+
+fl=(1)
+fn=(79)
+332 0
+
+fl=(4)
+fn=(80)
+314 18
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 31
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 0
+
+fl=(4)
+fn=(81)
+298 9
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 51
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(1)
+fn=(58)
+18 1
+
+fl=(28) /var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client/Manager.php
+fn=(94) include_once::/var/www/chlovet/web/sites/all/modules/contrib/redis/lib/Redis/Client/Manager.php
+1 0
+
+fl=(17)
+fn=(83)
+16 31
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+18 1
+cfl=(28)
+cfn=(94)
+calls=1 0 0
+19 0
+
+fl=(1)
+fn=(33)
+159 17
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+159 60
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+159 35
+
+fl=(28)
+fn=(95) Redis_Client_Manager->__construct
+68 1
+
+fl=(22)
+fn=(96) Redis_Client::getManager
+141 48
+cfl=(22)
+cfn=(92)
+calls=1 0 0
+147 144
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+159 113
+cfl=(28)
+cfn=(95)
+calls=1 0 0
+168 1
+
+fl=(1)
+fn=(97) php::array_filter
+128 1
+
+fl=(28)
+fn=(98) Redis_Client_Manager->buildOptions
+110 10
+cfl=(1)
+cfn=(97)
+calls=1 0 0
+128 1
+
+fl=(1)
+fn=(99) php::Redis->__construct
+9 1
+
+fl=(1)
+fn=(100) php::Redis->connect
+14 82
+
+fl=(1)
+fn=(101) php::Redis->setOption
+28 3
+
+fl=(27)
+fn=(102) Redis_Client_PhpRedis->getClient
+8 34
+cfl=(1)
+cfn=(99)
+calls=1 0 0
+9 1
+cfl=(1)
+cfn=(100)
+calls=1 0 0
+14 82
+cfl=(1)
+cfn=(101)
+calls=1 0 0
+28 3
+
+fl=(28)
+fn=(103) Redis_Client_Manager->createClient
+134 21
+cfl=(28)
+cfn=(98)
+calls=1 0 0
+136 11
+cfl=(27)
+cfn=(102)
+calls=1 0 0
+142 122
+
+fl=(28)
+fn=(104) Redis_Client_Manager->getClient
+82 13
+cfl=(28)
+cfn=(103)
+calls=1 0 0
+85 155
+
+fl=(22)
+fn=(105) Redis_Client::getClient
+211 20
+cfl=(22)
+cfn=(96)
+calls=1 0 0
+213 307
+cfl=(28)
+cfn=(104)
+calls=1 0 0
+213 169
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(18)
+fn=(106) Database::parseConnectionInfo
+1519 5
+
+fl=(18)
+fn=(107) Database::getConnectionInfo
+1596 12
+cfl=(18)
+cfn=(106)
+calls=1 0 0
+1598 5
+
+fl=(1)
+fn=(108) php::md5
+80 2
+
+fl=(22)
+fn=(109) Redis_Client::getGlobalPrefix
+58 20
+cfl=(18)
+cfn=(107)
+calls=1 0 0
+78 18
+cfl=(1)
+cfn=(108)
+calls=1 0 0
+80 2
+
+fl=(22)
+fn=(110) Redis_Client::getDefaultPrefix
+94 20
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+101 1
+cfl=(22)
+cfn=(109)
+calls=1 0 0
+130 41
+
+fl=(24)
+fn=(111) Redis_AbstractBackend->__construct
+35 1
+
+fl=(2)
+fn=(54)
+966 2
+
+fl=(2)
+fn=(54)
+966 0
+
+fl=(20)
+fn=(112) Redis_Cache->refreshCapabilities
+185 15
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+187 2
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+194 0
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(20)
+fn=(113) Redis_Cache->refreshPermTtl
+207 14
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+210 1
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+211 1
+
+fl=(2)
+fn=(54)
+966 0
+
+fl=(20)
+fn=(114) Redis_Cache->refreshMaxTtl
+232 8
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+236 0
+
+fl=(20)
+fn=(115) Redis_Cache->__construct
+170 75
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+174 251
+cfl=(22)
+cfn=(92)
+calls=1 0 0
+174 514
+cfl=(22)
+cfn=(105)
+calls=1 0 0
+175 497
+cfl=(22)
+cfn=(110)
+calls=1 0 0
+175 63
+cfl=(24)
+cfn=(111)
+calls=1 0 0
+175 1
+cfl=(20)
+cfn=(112)
+calls=1 0 0
+177 18
+cfl=(20)
+cfn=(113)
+calls=1 0 0
+178 17
+cfl=(20)
+cfn=(114)
+calls=1 0 0
+179 9
+
+fl=(16)
+fn=(116) _cache_get_object
+23 41
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+28 1
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+30 1
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+32 144
+cfl=(20)
+cfn=(115)
+calls=1 0 0
+32 1447
+
+fl=(24)
+fn=(117) Redis_AbstractBackend->getClient
+50 1
+
+fl=(1)
+fn=(97)
+106 1
+
+fl=(1)
+fn=(25)
+106 1
+
+fl=(24)
+fn=(118) Redis_AbstractBackend->getKey
+83 16
+cfl=(1)
+cfn=(97)
+calls=1 0 0
+106 1
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+106 1
+
+fl=(1)
+fn=(119) php::Redis->hGetAll
+48 144
+
+fl=(26)
+fn=(120) Redis_Cache_PhpRedis->get
+44 33
+cfl=(24)
+cfn=(117)
+calls=1 0 0
+46 1
+cfl=(24)
+cfn=(118)
+calls=1 0 0
+47 20
+cfl=(1)
+cfn=(119)
+calls=1 0 0
+48 144
+
+fl=(24)
+fn=(117)
+50 2
+
+fl=(1)
+fn=(97)
+106 0
+
+fl=(1)
+fn=(25)
+106 0
+
+fl=(24)
+fn=(118)
+83 18
+cfl=(1)
+cfn=(97)
+calls=1 0 0
+106 0
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+106 0
+
+fl=(1)
+fn=(121) php::Redis->hMget
+27 54
+
+fl=(26)
+fn=(122) Redis_Cache_PhpRedis->getLastFlushTime
+23 30
+cfl=(24)
+cfn=(117)
+calls=1 0 0
+25 2
+cfl=(24)
+cfn=(118)
+calls=1 0 0
+26 20
+cfl=(1)
+cfn=(121)
+calls=1 0 0
+27 54
+
+fl=(20)
+fn=(123) Redis_Cache->getLastFlushTime
+286 15
+cfl=(26)
+cfn=(122)
+calls=1 0 0
+289 108
+
+fl=(1)
+fn=(124) php::unserialize
+385 54
+
+fl=(20)
+fn=(125) Redis_Cache->expandEntry
+351 18
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+385 54
+
+fl=(20)
+fn=(126) Redis_Cache->get
+394 35
+cfl=(26)
+cfn=(120)
+calls=1 0 0
+396 200
+cfl=(20)
+cfn=(123)
+calls=1 0 0
+402 123
+cfl=(20)
+cfn=(125)
+calls=1 0 0
+404 72
+
+fl=(16)
+fn=(127) cache_get
+56 26
+cfl=(16)
+cfn=(116)
+calls=1 0 0
+57 1636
+cfl=(20)
+cfn=(126)
+calls=1 0 0
+57 432
+
+fl=(2)
+fn=(128) variable_initialize
+918 15
+cfl=(16)
+cfn=(127)
+calls=1 0 0
+921 2095
+
+fl=(29) /var/www/chlovet/web/includes/module.inc
+fn=(129) require_once::/var/www/chlovet/web/includes/module.inc
+1 2
+
+fl=(1)
+fn=(19)
+3390 0
+
+fl=(2)
+fn=(20)
+3387 9
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+3390 0
+
+fl=(2)
+fn=(130) drupal_static_reset
+3428 10
+cfl=(2)
+cfn=(20)
+calls=1 0 0
+3429 10
+
+fl=(1)
+fn=(19)
+3390 0
+
+fl=(2)
+fn=(20)
+3387 8
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+3390 0
+
+fl=(16)
+fn=(116)
+23 0
+
+fl=(24)
+fn=(117)
+50 1
+
+fl=(1)
+fn=(97)
+106 1
+
+fl=(1)
+fn=(25)
+106 2
+
+fl=(24)
+fn=(118)
+83 15
+cfl=(1)
+cfn=(97)
+calls=1 0 0
+106 1
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+106 2
+
+fl=(1)
+fn=(119)
+48 65
+
+fl=(26)
+fn=(120)
+44 29
+cfl=(24)
+cfn=(117)
+calls=1 0 0
+46 1
+cfl=(24)
+cfn=(118)
+calls=1 0 0
+47 19
+cfl=(1)
+cfn=(119)
+calls=1 0 0
+48 65
+
+fl=(20)
+fn=(123)
+286 1
+
+fl=(1)
+fn=(124)
+385 5
+
+fl=(20)
+fn=(125)
+351 13
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+385 5
+
+fl=(20)
+fn=(126)
+394 29
+cfl=(26)
+cfn=(120)
+calls=1 0 0
+396 114
+cfl=(20)
+cfn=(123)
+calls=1 0 0
+402 1
+cfl=(20)
+cfn=(125)
+calls=1 0 0
+404 19
+
+fl=(16)
+fn=(127)
+56 18
+cfl=(16)
+cfn=(116)
+calls=1 0 0
+57 0
+cfl=(20)
+cfn=(126)
+calls=1 0 0
+57 164
+
+fl=(1)
+fn=(21)
+849 9
+
+fl=(2)
+fn=(131) drupal_get_filename
+835 10
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+849 9
+
+fl=(1)
+fn=(21)
+849 5
+
+fl=(2)
+fn=(131)
+835 8
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+849 5
+
+fl=(1)
+fn=(21)
+849 3
+
+fl=(2)
+fn=(131)
+835 8
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+849 3
+
+fl=(1)
+fn=(21)
+849 5
+
+fl=(2)
+fn=(131)
+835 8
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+849 5
+
+fl=(1)
+fn=(132) php::array_keys
+147 1
+
+fl=(29)
+fn=(133) system_list
+122 58
+cfl=(2)
+cfn=(20)
+calls=1 0 0
+123 9
+cfl=(16)
+cfn=(127)
+calls=1 0 0
+132 184
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+143 20
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+143 13
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+143 11
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+143 13
+cfl=(1)
+cfn=(132)
+calls=1 0 0
+147 1
+
+fl=(29)
+fn=(134) module_list
+66 24
+cfl=(2)
+cfn=(130)
+calls=1 0 0
+82 20
+cfl=(29)
+cfn=(133)
+calls=1 0 0
+85 312
+
+fl=(2)
+fn=(131)
+835 1
+
+fl=(30) /var/www/chlovet/web/modules/dblog/dblog.module
+fn=(135) include_once::/var/www/chlovet/web/modules/dblog/dblog.module
+1 1
+
+fl=(2)
+fn=(136) drupal_load
+1108 26
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+1117 1
+cfl=(30)
+cfn=(135)
+calls=1 0 0
+1120 1
+
+fl=(2)
+fn=(131)
+835 1
+
+fl=(31) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/sf_dic.module
+fn=(137) include_once::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/sf_dic.module
+1 3
+
+fl=(2)
+fn=(136)
+1108 310
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+1117 1
+cfl=(31)
+cfn=(137)
+calls=1 0 0
+1120 3
+
+fl=(2)
+fn=(131)
+835 1
+
+fl=(1)
+fn=(2)
+11 2
+
+fl=(1)
+fn=(2)
+16 2
+
+fl=(1)
+fn=(2)
+21 0
+
+fl=(1)
+fn=(2)
+26 1
+
+fl=(1)
+fn=(2)
+31 0
+
+fl=(1)
+fn=(2)
+36 1
+
+fl=(1)
+fn=(2)
+41 0
+
+fl=(1)
+fn=(2)
+46 1
+
+fl=(1)
+fn=(2)
+53 0
+
+fl=(1)
+fn=(2)
+60 0
+
+fl=(1)
+fn=(2)
+67 0
+
+fl=(32) /var/www/chlovet/web/modules/system/system.module
+fn=(138) include_once::/var/www/chlovet/web/modules/system/system.module
+1 79
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+11 2
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+16 2
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+21 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+26 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+31 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+36 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+41 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+46 1
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+53 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+60 0
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+67 0
+
+fl=(2)
+fn=(136)
+1108 47
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+1117 1
+cfl=(32)
+cfn=(138)
+calls=1 0 0
+1120 94
+
+fl=(2)
+fn=(131)
+835 2
+
+fl=(33) /var/www/chlovet/web/sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module
+fn=(139) include_once::/var/www/chlovet/web/sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module
+1 3
+
+fl=(2)
+fn=(136)
+1108 28
+cfl=(2)
+cfn=(131)
+calls=1 0 0
+1117 2
+cfl=(33)
+cfn=(139)
+calls=1 0 0
+1120 3
+
+fl=(29)
+fn=(140) module_load_all
+19 49
+cfl=(29)
+cfn=(134)
+calls=1 0 0
+23 356
+cfl=(2)
+cfn=(136)
+calls=1 0 0
+24 30
+cfl=(2)
+cfn=(136)
+calls=1 0 0
+24 315
+cfl=(2)
+cfn=(136)
+calls=1 0 0
+24 144
+cfl=(2)
+cfn=(136)
+calls=1 0 0
+24 34
+
+fl=(2)
+fn=(141) _drupal_bootstrap_variables
+2479 76
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2483 1
+cfl=(19)
+cfn=(74)
+calls=1 0 0
+2483 1
+cfl=(19)
+cfn=(75)
+calls=1 0 0
+2484 2
+cfl=(2)
+cfn=(128)
+calls=1 0 0
+2487 2111
+cfl=(29)
+cfn=(129)
+calls=1 0 0
+2489 2
+cfl=(29)
+cfn=(140)
+calls=1 0 0
+2490 930
+
+fl=(2)
+fn=(142) drupal_bootstrap
+2197 44
+cfl=(1)
+cfn=(4)
+calls=1 0 0
+2226 0
+cfl=(2)
+cfn=(73)
+calls=1 0 0
+2244 118
+cfl=(1)
+cfn=(4)
+calls=1 0 0
+2226 0
+cfl=(2)
+cfn=(141)
+calls=1 0 0
+2248 3126
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(1)
+fn=(19)
+3390 0
+
+fl=(2)
+fn=(20)
+3387 10
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+3390 0
+
+fl=(2)
+fn=(54)
+966 0
+
+fl=(2)
+fn=(143) ip_address
+2923 15
+cfl=(2)
+cfn=(20)
+calls=1 0 0
+2924 10
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2929 0
+
+fl=(2)
+fn=(54)
+966 0
+
+fl=(1)
+fn=(144) php::in_array
+1912 2
+
+fl=(2)
+fn=(145) drupal_is_denied
+1905 14
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+1909 0
+cfl=(1)
+cfn=(144)
+calls=1 0 0
+1912 2
+
+fl=(2)
+fn=(146) drupal_block_denied
+1932 10
+cfl=(2)
+cfn=(145)
+calls=1 0 0
+1934 17
+
+fl=(1)
+fn=(65)
+2388 1
+
+fl=(2)
+fn=(147) _drupal_bootstrap_page_cache
+2368 102
+cfl=(16)
+cfn=(68)
+calls=1 0 0
+2373 4
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2374 1
+cfl=(17)
+cfn=(69)
+calls=1 0 0
+2375 26
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2378 2
+cfl=(2)
+cfn=(142)
+calls=1 0 0
+2382 3290
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2383 1
+cfl=(2)
+cfn=(143)
+calls=1 0 0
+2385 27
+cfl=(2)
+cfn=(146)
+calls=1 0 0
+2385 27
+cfl=(1)
+cfn=(65)
+calls=1 0 0
+2388 1
+
+fl=(1)
+fn=(4)
+2226 1
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(34) /var/www/chlovet/web/includes/session.inc
+fn=(148) require_once::/var/www/chlovet/web/includes/session.inc
+1 1
+
+fl=(1)
+fn=(149) php::session_set_save_handler
+242 4
+
+fl=(1)
+fn=(65)
+246 1
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(2)
+fn=(20)
+3387 2
+
+fl=(2)
+fn=(143)
+2923 6
+cfl=(2)
+cfn=(20)
+calls=1 0 0
+2924 2
+
+fl=(2)
+fn=(150) drupal_anonymous_user
+2157 18
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2158 1
+cfl=(2)
+cfn=(143)
+calls=1 0 0
+2160 9
+
+fl=(1)
+fn=(72)
+1989 3
+
+fl=(1)
+fn=(40)
+1989 1
+
+fl=(1)
+fn=(151) php::openssl_random_pseudo_bytes
+1995 13
+
+fl=(1)
+fn=(64)
+2035 0
+
+fl=(1)
+fn=(64)
+2036 0
+
+fl=(2)
+fn=(152) drupal_random_bytes
+1979 38
+cfl=(1)
+cfn=(72)
+calls=1 0 0
+1989 3
+cfl=(1)
+cfn=(40)
+calls=1 0 0
+1989 1
+cfl=(1)
+cfn=(151)
+calls=1 0 0
+1995 13
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+2035 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+2036 0
+
+fl=(1)
+fn=(153) php::base64_encode
+1963 2
+
+fl=(1)
+fn=(76)
+1965 2
+
+fl=(2)
+fn=(154) drupal_base64_encode
+1962 20
+cfl=(1)
+cfn=(153)
+calls=1 0 0
+1963 2
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+1965 2
+
+fl=(2)
+fn=(155) drupal_random_key
+1950 52
+cfl=(2)
+cfn=(152)
+calls=1 0 0
+1951 58
+cfl=(2)
+cfn=(154)
+calls=1 0 0
+1951 25
+
+fl=(1)
+fn=(156) php::session_id
+266 1
+
+fl=(2)
+fn=(54)
+966 0
+
+fl=(1)
+fn=(157) php::date_default_timezone_get
+2285 6
+
+fl=(2)
+fn=(54)
+966 0
+
+fl=(2)
+fn=(158) drupal_get_user_timezone
+2277 23
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2279 0
+cfl=(1)
+cfn=(157)
+calls=1 0 0
+2285 6
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2285 0
+
+fl=(1)
+fn=(159) php::date_default_timezone_set
+273 0
+
+fl=(34)
+fn=(160) drupal_session_initialize
+239 60
+cfl=(1)
+cfn=(149)
+calls=1 0 0
+242 4
+cfl=(1)
+cfn=(65)
+calls=1 0 0
+246 1
+cfl=(2)
+cfn=(150)
+calls=1 0 0
+262 28
+cfl=(2)
+cfn=(155)
+calls=1 0 0
+266 136
+cfl=(1)
+cfn=(156)
+calls=1 0 0
+266 1
+cfl=(2)
+cfn=(158)
+calls=1 0 0
+273 31
+cfl=(1)
+cfn=(159)
+calls=1 0 0
+273 0
+
+fl=(1)
+fn=(4)
+2226 0
+
+fl=(29)
+fn=(134)
+66 1
+
+fl=(2)
+fn=(136)
+1108 1
+
+fl=(1)
+fn=(161) php::func_get_args
+921 0
+
+fl=(1)
+fn=(40)
+680 0
+
+fl=(2)
+fn=(142)
+2197 1
+
+fl=(29)
+fn=(162) module_hook_info
+841 8
+cfl=(2)
+cfn=(142)
+calls=1 0 0
+846 1
+
+fl=(29)
+fn=(163) module_hook
+678 17
+cfl=(1)
+cfn=(40)
+calls=1 0 0
+680 0
+cfl=(29)
+cfn=(162)
+calls=1 0 0
+685 10
+
+fl=(29)
+fn=(164) module_invoke
+920 19
+cfl=(1)
+cfn=(161)
+calls=1 0 0
+921 0
+cfl=(29)
+cfn=(163)
+calls=1 0 0
+924 28
+
+fl=(2)
+fn=(136)
+1108 1
+
+fl=(1)
+fn=(161)
+921 0
+
+fl=(1)
+fn=(40)
+680 0
+
+fl=(29)
+fn=(163)
+678 9
+cfl=(1)
+cfn=(40)
+calls=1 0 0
+680 0
+
+fl=(1)
+fn=(76)
+347 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 12
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 60
+
+fl=(4)
+fn=(78)
+344 196
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 12
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 60
+
+fl=(4)
+fn=(80)
+314 64
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 291
+
+fl=(1)
+fn=(76)
+347 2
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 15
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 28
+
+fl=(4)
+fn=(78)
+344 96
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 15
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 28
+
+fl=(4)
+fn=(80)
+314 21
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 152
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 59
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 73
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 62
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 76
+
+fl=(35) /var/www/chlovet/vendor/symfony/http-kernel/HttpKernelInterface.php
+fn=(165) include::/var/www/chlovet/vendor/symfony/http-kernel/HttpKernelInterface.php
+1 2
+
+fl=(4)
+fn=(166) Composer\Autoload\includeFile
+410 32
+cfl=(35)
+cfn=(165)
+calls=1 0 0
+412 2
+
+fl=(4)
+fn=(81)
+298 18
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 92
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 35
+
+fl=(1)
+fn=(33)
+25 13
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+25 146
+
+fl=(36) /var/www/chlovet/vendor/symfony/http-kernel/KernelInterface.php
+fn=(167) include::/var/www/chlovet/vendor/symfony/http-kernel/KernelInterface.php
+1 15
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+25 159
+
+fl=(4)
+fn=(166)
+410 73
+cfl=(36)
+cfn=(167)
+calls=1 0 0
+412 175
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 91
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 249
+
+fl=(1)
+fn=(33)
+45 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+45 356
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 6
+
+fl=(4)
+fn=(78)
+344 58
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 6
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 73
+
+fl=(37) /var/www/chlovet/vendor/symfony/http-kernel/TerminableInterface.php
+fn=(168) include::/var/www/chlovet/vendor/symfony/http-kernel/TerminableInterface.php
+1 2
+
+fl=(4)
+fn=(166)
+410 21
+cfl=(37)
+cfn=(168)
+calls=1 0 0
+412 2
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 90
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 24
+
+fl=(1)
+fn=(33)
+45 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+45 130
+
+fl=(38) /var/www/chlovet/vendor/symfony/http-kernel/Kernel.php
+fn=(169) include::/var/www/chlovet/vendor/symfony/http-kernel/Kernel.php
+1 30
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+45 366
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+45 140
+
+fl=(4)
+fn=(166)
+410 40
+cfl=(38)
+cfn=(169)
+calls=1 0 0
+412 538
+
+fl=(4)
+fn=(81)
+298 21
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 174
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 578
+
+fl=(1)
+fn=(33)
+19 12
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+19 774
+
+fl=(39) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/src/Kernel.php
+fn=(170) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/src/Kernel.php
+1 20
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+19 787
+
+fl=(4)
+fn=(166)
+410 62
+cfl=(39)
+cfn=(170)
+calls=1 0 0
+412 807
+
+fl=(4)
+fn=(81)
+298 22
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 355
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 869
+
+fl=(1)
+fn=(33)
+37 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+37 1248
+
+fl=(1)
+fn=(171) php::realpath
+50 9
+
+fl=(38)
+fn=(172) Symfony\Component\HttpKernel\Kernel->getRootDir
+296 2
+
+fl=(1)
+fn=(173) php::basename
+271 4
+
+fl=(1)
+fn=(174) php::preg_replace
+271 5
+
+fl=(38)
+fn=(175) Symfony\Component\HttpKernel\Kernel->getName
+268 21
+cfl=(1)
+cfn=(173)
+calls=1 0 0
+271 4
+cfl=(1)
+cfn=(174)
+calls=1 0 0
+271 5
+
+fl=(1)
+fn=(17)
+86 4
+
+fl=(38)
+fn=(176) Symfony\Component\HttpKernel\Kernel->__construct
+78 27
+cfl=(38)
+cfn=(172)
+calls=1 0 0
+82 2
+cfl=(38)
+cfn=(175)
+calls=1 0 0
+83 30
+cfl=(1)
+cfn=(17)
+calls=1 0 0
+86 4
+
+fl=(39)
+fn=(177) MakinaCorpus\Drupal\Sf\Kernel->__construct
+42 28
+cfl=(1)
+cfn=(171)
+calls=1 0 0
+50 9
+cfl=(38)
+cfn=(176)
+calls=1 0 0
+65 65
+
+fl=(8)
+fn=(178) Drupal::_buildKernel
+31 25
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+37 1258
+cfl=(39)
+cfn=(177)
+calls=1 0 0
+37 102
+
+fl=(8)
+fn=(179) Drupal::_getKernel
+64 12
+cfl=(8)
+cfn=(178)
+calls=1 0 0
+66 1386
+
+fl=(8)
+fn=(178)
+31 0
+
+fl=(8)
+fn=(179)
+64 8
+cfl=(8)
+cfn=(178)
+calls=1 0 0
+66 0
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 7
+
+fl=(4)
+fn=(78)
+344 116
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 7
+
+fl=(4)
+fn=(80)
+314 30
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 144
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 57
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 15
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 71
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 89
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 20
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 107
+
+fl=(40) /var/www/chlovet/vendor/symfony/dependency-injection/ContainerAwareTrait.php
+fn=(180) include::/var/www/chlovet/vendor/symfony/dependency-injection/ContainerAwareTrait.php
+1 0
+
+fl=(4)
+fn=(166)
+410 20
+cfl=(40)
+cfn=(180)
+calls=1 0 0
+412 0
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 127
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 21
+
+fl=(1)
+fn=(33)
+29 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+29 164
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 55
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 15
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 70
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 87
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 20
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 104
+
+fl=(41) /var/www/chlovet/vendor/symfony/dependency-injection/ContainerAwareInterface.php
+fn=(181) include::/var/www/chlovet/vendor/symfony/dependency-injection/ContainerAwareInterface.php
+1 1
+
+fl=(4)
+fn=(166)
+410 24
+cfl=(41)
+cfn=(181)
+calls=1 0 0
+412 1
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 124
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 25
+
+fl=(1)
+fn=(33)
+23 11
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+23 165
+
+fl=(42) /var/www/chlovet/vendor/symfony/http-kernel/Bundle/BundleInterface.php
+fn=(182) include::/var/www/chlovet/vendor/symfony/http-kernel/Bundle/BundleInterface.php
+1 9
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+23 177
+
+fl=(4)
+fn=(166)
+410 22
+cfl=(42)
+cfn=(182)
+calls=1 0 0
+412 186
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 85
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 209
+
+fl=(1)
+fn=(33)
+27 8
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+27 311
+
+fl=(43) /var/www/chlovet/vendor/symfony/http-kernel/Bundle/Bundle.php
+fn=(183) include::/var/www/chlovet/vendor/symfony/http-kernel/Bundle/Bundle.php
+1 23
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+29 174
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+27 319
+
+fl=(4)
+fn=(166)
+410 24
+cfl=(43)
+cfn=(183)
+calls=1 0 0
+412 518
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 87
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 542
+
+fl=(1)
+fn=(33)
+26 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+26 645
+
+fl=(44) /var/www/chlovet/vendor/symfony/twig-bundle/TwigBundle.php
+fn=(184) include::/var/www/chlovet/vendor/symfony/twig-bundle/TwigBundle.php
+1 10
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+26 656
+
+fl=(4)
+fn=(166)
+410 25
+cfl=(44)
+cfn=(184)
+calls=1 0 0
+412 666
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 174
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 692
+
+fl=(1)
+fn=(33)
+103 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+103 884
+
+fl=(1)
+fn=(43)
+103 9
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+103 893
+
+fl=(2)
+fn=(54)
+966 1
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 1
+
+fl=(4)
+fn=(78)
+344 160
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 1
+
+fl=(1)
+fn=(79)
+332 3
+
+fl=(4)
+fn=(80)
+314 46
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 185
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 3
+
+fl=(4)
+fn=(81)
+298 11
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 235
+
+fl=(1)
+fn=(64)
+17 1
+
+fl=(17)
+fn=(83)
+16 10
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 1
+
+fl=(1)
+fn=(43)
+3157 3
+
+fl=(16)
+fn=(116)
+23 2
+
+fl=(24)
+fn=(117)
+50 2
+
+fl=(1)
+fn=(97)
+106 2
+
+fl=(1)
+fn=(25)
+106 1
+
+fl=(24)
+fn=(118)
+83 24
+cfl=(1)
+cfn=(97)
+calls=1 0 0
+106 2
+cfl=(1)
+cfn=(25)
+calls=1 0 0
+106 1
+
+fl=(1)
+fn=(119)
+48 176
+
+fl=(26)
+fn=(120)
+44 50
+cfl=(24)
+cfn=(117)
+calls=1 0 0
+46 2
+cfl=(24)
+cfn=(118)
+calls=1 0 0
+47 28
+cfl=(1)
+cfn=(119)
+calls=1 0 0
+48 176
+
+fl=(20)
+fn=(123)
+286 4
+
+fl=(1)
+fn=(124)
+385 7
+
+fl=(20)
+fn=(125)
+351 25
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+385 7
+
+fl=(20)
+fn=(126)
+394 44
+cfl=(26)
+cfn=(120)
+calls=1 0 0
+396 257
+cfl=(20)
+cfn=(123)
+calls=1 0 0
+402 4
+cfl=(20)
+cfn=(125)
+calls=1 0 0
+404 32
+
+fl=(16)
+fn=(127)
+56 25
+cfl=(16)
+cfn=(116)
+calls=1 0 0
+57 2
+cfl=(20)
+cfn=(126)
+calls=1 0 0
+57 339
+
+fl=(2)
+fn=(185) _registry_check_code
+3154 31
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+3157 3
+cfl=(16)
+cfn=(127)
+calls=1 0 0
+3163 367
+
+fl=(2)
+fn=(186) drupal_autoload_class
+3119 16
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3120 402
+
+fl=(1)
+fn=(85)
+3157 2
+
+fl=(2)
+fn=(185)
+3154 15
+cfl=(1)
+cfn=(85)
+calls=1 0 0
+3157 2
+
+fl=(2)
+fn=(187) drupal_autoload_interface
+3103 12
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3104 17
+
+fl=(1)
+fn=(188) php::trait_exists
+3157 2
+
+fl=(2)
+fn=(185)
+3154 13
+cfl=(1)
+cfn=(188)
+calls=1 0 0
+3157 2
+
+fl=(2)
+fn=(189) drupal_autoload_trait
+3135 10
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3136 15
+
+fl=(1)
+fn=(33)
+111 62
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+111 247
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+111 11
+cfl=(2)
+cfn=(186)
+calls=1 0 0
+111 419
+cfl=(2)
+cfn=(187)
+calls=1 0 0
+111 30
+cfl=(2)
+cfn=(189)
+calls=1 0 0
+111 25
+
+fl=(1)
+fn=(43)
+111 17
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+111 797
+
+fl=(1)
+fn=(76)
+347 2
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 2
+
+fl=(4)
+fn=(78)
+344 193
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 2
+
+fl=(1)
+fn=(79)
+332 2
+
+fl=(4)
+fn=(80)
+314 46
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 224
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 2
+
+fl=(4)
+fn=(81)
+298 14
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 273
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(17)
+fn=(83)
+16 10
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+
+fl=(1)
+fn=(43)
+3157 1
+
+fl=(2)
+fn=(185)
+3154 24
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+3157 1
+
+fl=(2)
+fn=(186)
+3119 10
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3120 25
+
+fl=(1)
+fn=(85)
+3157 1
+
+fl=(2)
+fn=(185)
+3154 9
+cfl=(1)
+cfn=(85)
+calls=1 0 0
+3157 1
+
+fl=(2)
+fn=(187)
+3103 7
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3104 10
+
+fl=(1)
+fn=(188)
+3157 0
+
+fl=(2)
+fn=(185)
+3154 9
+cfl=(1)
+cfn=(188)
+calls=1 0 0
+3157 0
+
+fl=(2)
+fn=(189)
+3135 7
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3136 10
+
+fl=(1)
+fn=(33)
+115 45
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+115 288
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+115 11
+cfl=(2)
+cfn=(186)
+calls=1 0 0
+115 36
+cfl=(2)
+cfn=(187)
+calls=1 0 0
+115 18
+cfl=(2)
+cfn=(189)
+calls=1 0 0
+115 17
+
+fl=(1)
+fn=(43)
+115 13
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+115 418
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 0
+
+fl=(4)
+fn=(78)
+344 187
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 0
+
+fl=(1)
+fn=(79)
+332 1
+
+fl=(4)
+fn=(80)
+314 43
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 211
+cfl=(1)
+cfn=(79)
+calls=1 0 0
+332 1
+
+fl=(4)
+fn=(81)
+298 9
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 257
+
+fl=(1)
+fn=(64)
+17 0
+
+fl=(17)
+fn=(83)
+16 7
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+17 0
+
+fl=(1)
+fn=(43)
+3157 1
+
+fl=(2)
+fn=(185)
+3154 10
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+3157 1
+
+fl=(2)
+fn=(186)
+3119 8
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3120 12
+
+fl=(1)
+fn=(85)
+3157 2
+
+fl=(2)
+fn=(185)
+3154 8
+cfl=(1)
+cfn=(85)
+calls=1 0 0
+3157 2
+
+fl=(2)
+fn=(187)
+3103 9
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3104 10
+
+fl=(1)
+fn=(188)
+3157 1
+
+fl=(2)
+fn=(185)
+3154 9
+cfl=(1)
+cfn=(188)
+calls=1 0 0
+3157 1
+
+fl=(2)
+fn=(189)
+3135 7
+cfl=(2)
+cfn=(185)
+calls=1 0 0
+3136 10
+
+fl=(1)
+fn=(33)
+118 41
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+118 266
+cfl=(17)
+cfn=(83)
+calls=1 0 0
+118 8
+cfl=(2)
+cfn=(186)
+calls=1 0 0
+118 20
+cfl=(2)
+cfn=(187)
+calls=1 0 0
+118 20
+cfl=(2)
+cfn=(189)
+calls=1 0 0
+118 18
+
+fl=(1)
+fn=(43)
+118 13
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+118 375
+
+fl=(39)
+fn=(190) MakinaCorpus\Drupal\Sf\Kernel->registerBundles
+95 46
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+103 902
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+110 1
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+111 814
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+115 432
+cfl=(1)
+cfn=(43)
+calls=1 0 0
+118 389
+
+fl=(1)
+fn=(191) php::get_class
+149 2
+
+fl=(1)
+fn=(77)
+150 0
+
+fl=(1)
+fn=(64)
+152 0
+
+fl=(43)
+fn=(192) Symfony\Component\HttpKernel\Bundle\Bundle->getName
+143 23
+cfl=(1)
+cfn=(191)
+calls=1 0 0
+149 2
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+150 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+152 0
+
+fl=(43)
+fn=(193) Symfony\Component\HttpKernel\Bundle\Bundle->getParent
+134 1
+
+fl=(1)
+fn=(194) php::array_pop
+437 1
+
+fl=(38)
+fn=(195) Symfony\Component\HttpKernel\Kernel->initializeBundles
+389 53
+cfl=(39)
+cfn=(190)
+calls=1 0 0
+396 2587
+cfl=(43)
+cfn=(192)
+calls=1 0 0
+397 27
+cfl=(43)
+cfn=(193)
+calls=1 0 0
+403 1
+cfl=(1)
+cfn=(194)
+calls=1 0 0
+437 1
+
+fl=(1)
+fn=(196) php::ucfirst
+449 2
+
+fl=(38)
+fn=(197) Symfony\Component\HttpKernel\Kernel->getContainerClass
+447 9
+cfl=(1)
+cfn=(196)
+calls=1 0 0
+449 2
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 10
+
+fl=(4)
+fn=(78)
+344 110
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 10
+
+fl=(4)
+fn=(80)
+314 25
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 139
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 113
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 26
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 133
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 104
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 21
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 124
+
+fl=(45) /var/www/chlovet/vendor/symfony/config/ConfigCacheInterface.php
+fn=(198) include::/var/www/chlovet/vendor/symfony/config/ConfigCacheInterface.php
+1 2
+
+fl=(4)
+fn=(166)
+410 16
+cfl=(45)
+cfn=(198)
+calls=1 0 0
+412 2
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 146
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 19
+
+fl=(1)
+fn=(33)
+24 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+24 181
+
+fl=(46) /var/www/chlovet/vendor/symfony/config/ResourceCheckerConfigCache.php
+fn=(199) include::/var/www/chlovet/vendor/symfony/config/ResourceCheckerConfigCache.php
+1 11
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+24 191
+
+fl=(4)
+fn=(166)
+410 19
+cfl=(46)
+cfn=(199)
+calls=1 0 0
+412 202
+
+fl=(4)
+fn=(81)
+298 25
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 160
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 221
+
+fl=(1)
+fn=(33)
+26 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+26 408
+
+fl=(47) /var/www/chlovet/vendor/symfony/config/ConfigCache.php
+fn=(200) include::/var/www/chlovet/vendor/symfony/config/ConfigCache.php
+1 11
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+26 417
+
+fl=(4)
+fn=(166)
+410 24
+cfl=(47)
+cfn=(200)
+calls=1 0 0
+412 429
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 164
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 453
+
+fl=(1)
+fn=(33)
+473 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+473 635
+
+fl=(38)
+fn=(201) Symfony\Component\HttpKernel\Kernel->getCacheDir
+350 0
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 103
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 20
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 124
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 4
+
+fl=(4)
+fn=(78)
+344 103
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 4
+
+fl=(4)
+fn=(80)
+314 23
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 123
+
+fl=(48) /var/www/chlovet/vendor/symfony/config/ResourceCheckerInterface.php
+fn=(202) include::/var/www/chlovet/vendor/symfony/config/ResourceCheckerInterface.php
+1 0
+
+fl=(4)
+fn=(166)
+410 17
+cfl=(48)
+cfn=(202)
+calls=1 0 0
+412 0
+
+fl=(4)
+fn=(81)
+298 17
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 146
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 18
+
+fl=(1)
+fn=(33)
+24 8
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+24 183
+
+fl=(49) /var/www/chlovet/vendor/symfony/config/Resource/SelfCheckingResourceChecker.php
+fn=(203) include::/var/www/chlovet/vendor/symfony/config/Resource/SelfCheckingResourceChecker.php
+1 10
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+24 191
+
+fl=(4)
+fn=(166)
+410 21
+cfl=(49)
+cfn=(203)
+calls=1 0 0
+412 202
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 145
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 224
+
+fl=(1)
+fn=(33)
+37 8
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+37 385
+
+fl=(46)
+fn=(204) Symfony\Component\Config\ResourceCheckerConfigCache->__construct
+40 1
+
+fl=(47)
+fn=(205) Symfony\Component\Config\ConfigCache->__construct
+34 19
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+37 394
+cfl=(46)
+cfn=(204)
+calls=1 0 0
+37 1
+
+fl=(1)
+fn=(206) php::is_file
+67 8
+
+fl=(46)
+fn=(207) Symfony\Component\Config\ResourceCheckerConfigCache->getMetaFile
+136 0
+
+fl=(1)
+fn=(206)
+76 5
+
+fl=(1)
+fn=(208) php::filemtime
+80 4
+
+fl=(1)
+fn=(209) php::file_get_contents
+81 728
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 10
+
+fl=(4)
+fn=(78)
+344 108
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 10
+
+fl=(4)
+fn=(80)
+314 25
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 135
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 105
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 22
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 127
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 108
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 24
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 128
+
+fl=(50) /var/www/chlovet/vendor/symfony/config/Resource/ResourceInterface.php
+fn=(210) include::/var/www/chlovet/vendor/symfony/config/Resource/ResourceInterface.php
+1 2
+
+fl=(4)
+fn=(166)
+410 21
+cfl=(50)
+cfn=(210)
+calls=1 0 0
+412 2
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 153
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 23
+
+fl=(1)
+fn=(33)
+20 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+20 192
+
+fl=(51) /var/www/chlovet/vendor/symfony/config/Resource/SelfCheckingResourceInterface.php
+fn=(211) include::/var/www/chlovet/vendor/symfony/config/Resource/SelfCheckingResourceInterface.php
+1 10
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+20 202
+
+fl=(4)
+fn=(166)
+410 21
+cfl=(51)
+cfn=(211)
+calls=1 0 0
+412 213
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 149
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 235
+
+fl=(1)
+fn=(33)
+21 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+21 401
+
+fl=(52) /var/www/chlovet/vendor/symfony/config/Resource/FileResource.php
+fn=(212) include::/var/www/chlovet/vendor/symfony/config/Resource/FileResource.php
+1 12
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+21 410
+
+fl=(4)
+fn=(166)
+410 26
+cfl=(52)
+cfn=(212)
+calls=1 0 0
+412 422
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 160
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 449
+
+fl=(1)
+fn=(33)
+81 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+81 626
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213) Symfony\Component\Config\Resource\FileResource->unserialize
+77 9
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 8
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 57
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 15
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 72
+
+fl=(53) /var/www/chlovet/vendor/symfony/http-kernel/Config/EnvParametersResource.php
+fn=(214) include::/var/www/chlovet/vendor/symfony/http-kernel/Config/EnvParametersResource.php
+1 3
+
+fl=(4)
+fn=(166)
+410 23
+cfl=(53)
+cfn=(214)
+calls=1 0 0
+412 3
+
+fl=(4)
+fn=(81)
+298 17
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 87
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 26
+
+fl=(1)
+fn=(33)
+81 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+81 132
+
+fl=(1)
+fn=(124)
+75 2
+
+fl=(53)
+fn=(215) Symfony\Component\HttpKernel\Config\EnvParametersResource->unserialize
+73 9
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+75 2
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 8
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 8
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 12
+
+fl=(52)
+fn=(213)
+77 9
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 12
+
+fl=(1)
+fn=(124)
+79 2
+
+fl=(52)
+fn=(213)
+77 9
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 2
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 8
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 5
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 2
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 2
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 2
+
+fl=(52)
+fn=(213)
+77 25
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 2
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 8
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 1
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 1
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 8
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(124)
+79 0
+
+fl=(52)
+fn=(213)
+77 6
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+79 0
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 7
+
+fl=(4)
+fn=(78)
+344 102
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 7
+
+fl=(4)
+fn=(80)
+314 28
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 128
+
+fl=(54) /var/www/chlovet/vendor/symfony/config/Resource/FileExistenceResource.php
+fn=(216) include::/var/www/chlovet/vendor/symfony/config/Resource/FileExistenceResource.php
+1 2
+
+fl=(4)
+fn=(166)
+410 23
+cfl=(54)
+cfn=(216)
+calls=1 0 0
+412 2
+
+fl=(4)
+fn=(81)
+298 18
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 156
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 25
+
+fl=(1)
+fn=(33)
+81 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+81 200
+
+fl=(1)
+fn=(124)
+76 1
+
+fl=(54)
+fn=(217) Symfony\Component\Config\Resource\FileExistenceResource->unserialize
+74 9
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+76 1
+
+fl=(1)
+fn=(124)
+76 0
+
+fl=(54)
+fn=(217)
+74 8
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+76 0
+
+fl=(1)
+fn=(124)
+76 1
+
+fl=(54)
+fn=(217)
+74 7
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+76 1
+
+fl=(1)
+fn=(124)
+81 583
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+81 636
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 11
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+81 142
+cfl=(53)
+cfn=(215)
+calls=1 0 0
+81 11
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 22
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 11
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 6
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 27
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 9
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 8
+cfl=(52)
+cfn=(213)
+calls=1 0 0
+81 7
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+81 211
+cfl=(54)
+cfn=(217)
+calls=1 0 0
+81 10
+cfl=(54)
+cfn=(217)
+calls=1 0 0
+81 9
+cfl=(54)
+cfn=(217)
+calls=1 0 0
+81 9
+
+fl=(49)
+fn=(218) Symfony\Component\Config\Resource\SelfCheckingResourceChecker->supports
+26 2
+
+fl=(1)
+fn=(21)
+69 9
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219) Symfony\Component\Config\Resource\FileResource->isFresh
+67 16
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 9
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220) Symfony\Component\Config\Resource\SelfCheckingResourceChecker->isFresh
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 30
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 15
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 11
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 2
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 2
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 6
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 32
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 6
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 42
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(60)
+86 1
+
+fl=(1)
+fn=(60)
+86 0
+
+fl=(1)
+fn=(221) php::ksort
+91 2
+
+fl=(53)
+fn=(222) Symfony\Component\HttpKernel\Config\EnvParametersResource->findVariables
+81 217
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+86 0
+cfl=(1)
+cfn=(221)
+calls=1 0 0
+91 2
+
+fl=(53)
+fn=(223) Symfony\Component\HttpKernel\Config\EnvParametersResource->isFresh
+63 42
+cfl=(53)
+cfn=(222)
+calls=1 0 0
+65 255
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(53)
+cfn=(223)
+calls=1 0 0
+34 297
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 24
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 23
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 11
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 6
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 6
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 23
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 6
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 6
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 24
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 11
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 7
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 7
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 24
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 16
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 25
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 6
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 6
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 24
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 7
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 7
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 25
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 23
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 23
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 22
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 7
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 7
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 25
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 23
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 6
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 6
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 24
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 6
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 6
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 25
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 6
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 6
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 25
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 24
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 7
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 7
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 25
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 0
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 0
+
+fl=(49)
+fn=(220)
+31 24
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 18
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 11
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 19
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+69 2
+
+fl=(1)
+fn=(208)
+69 2
+
+fl=(52)
+fn=(219)
+67 15
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 2
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 2
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 11
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 4
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 4
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 2
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 12
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 8
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 21
+
+fl=(49)
+fn=(218)
+26 2
+
+fl=(1)
+fn=(21)
+69 3
+
+fl=(1)
+fn=(208)
+69 3
+
+fl=(52)
+fn=(219)
+67 13
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 3
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 3
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 20
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 4
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 25
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 4
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 11
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 34
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 14
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 11
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 24
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 16
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 27
+
+fl=(49)
+fn=(218)
+26 0
+
+fl=(1)
+fn=(21)
+69 5
+
+fl=(1)
+fn=(208)
+69 5
+
+fl=(52)
+fn=(219)
+67 15
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+69 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+69 5
+
+fl=(49)
+fn=(220)
+31 32
+cfl=(52)
+cfn=(219)
+calls=1 0 0
+34 25
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+60 5
+
+fl=(54)
+fn=(224) Symfony\Component\Config\Resource\FileExistenceResource->isFresh
+58 10
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+60 5
+
+fl=(49)
+fn=(220)
+31 13
+cfl=(54)
+cfn=(224)
+calls=1 0 0
+34 15
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+60 3
+
+fl=(54)
+fn=(224)
+58 10
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+60 3
+
+fl=(49)
+fn=(220)
+31 10
+cfl=(54)
+cfn=(224)
+calls=1 0 0
+34 14
+
+fl=(49)
+fn=(218)
+26 1
+
+fl=(1)
+fn=(21)
+60 2
+
+fl=(54)
+fn=(224)
+58 9
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+60 2
+
+fl=(49)
+fn=(220)
+31 9
+cfl=(54)
+cfn=(224)
+calls=1 0 0
+34 12
+
+fl=(46)
+fn=(225) Symfony\Component\Config\ResourceCheckerConfigCache->isFresh
+65 1110
+cfl=(1)
+cfn=(206)
+calls=1 0 0
+67 8
+cfl=(46)
+cfn=(207)
+calls=1 0 0
+75 0
+cfl=(1)
+cfn=(206)
+calls=1 0 0
+76 5
+cfl=(1)
+cfn=(208)
+calls=1 0 0
+80 4
+cfl=(1)
+cfn=(209)
+calls=1 0 0
+81 728
+cfl=(1)
+cfn=(124)
+calls=1 0 0
+81 2186
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 2
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 41
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 29
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 29
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 53
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 308
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 32
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 33
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 32
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 32
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 31
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 31
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 33
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 31
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 35
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 31
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 35
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 33
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 32
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 32
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 33
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 31
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 34
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 29
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 43
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 29
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 29
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 29
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 28
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 2
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 30
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 2
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 31
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 46
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 36
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 36
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 0
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 57
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 29
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 24
+cfl=(49)
+cfn=(218)
+calls=1 0 0
+86 1
+cfl=(49)
+cfn=(220)
+calls=1 0 0
+89 21
+
+fl=(47)
+fn=(226) Symfony\Component\Config\ConfigCache->isFresh
+50 169
+cfl=(46)
+cfn=(225)
+calls=1 0 0
+56 6655
+
+fl=(46)
+fn=(227) Symfony\Component\Config\ResourceCheckerConfigCache->getPath
+49 1
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 6
+
+fl=(4)
+fn=(78)
+344 105
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 6
+
+fl=(4)
+fn=(80)
+314 26
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 128
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 107
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 23
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 128
+
+fl=(1)
+fn=(76)
+347 2
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 4
+
+fl=(4)
+fn=(78)
+344 98
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 4
+
+fl=(4)
+fn=(80)
+314 20
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 118
+
+fl=(55) /var/www/chlovet/vendor/symfony/dependency-injection/ContainerInterface.php
+fn=(228) include::/var/www/chlovet/vendor/symfony/dependency-injection/ContainerInterface.php
+1 0
+
+fl=(4)
+fn=(166)
+410 19
+cfl=(55)
+cfn=(228)
+calls=1 0 0
+412 0
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 138
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 20
+
+fl=(1)
+fn=(33)
+21 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+21 174
+
+fl=(56) /var/www/chlovet/vendor/symfony/dependency-injection/ResettableContainerInterface.php
+fn=(229) include::/var/www/chlovet/vendor/symfony/dependency-injection/ResettableContainerInterface.php
+1 12
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+21 185
+
+fl=(4)
+fn=(166)
+410 19
+cfl=(56)
+cfn=(229)
+calls=1 0 0
+412 197
+
+fl=(4)
+fn=(81)
+298 18
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 151
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 216
+
+fl=(1)
+fn=(33)
+59 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+59 386
+
+fl=(57) /var/www/chlovet/vendor/symfony/dependency-injection/Container.php
+fn=(230) include::/var/www/chlovet/vendor/symfony/dependency-injection/Container.php
+1 11
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+59 396
+
+fl=(4)
+fn=(166)
+410 25
+cfl=(57)
+cfn=(230)
+calls=1 0 0
+412 408
+
+fl=(4)
+fn=(81)
+298 17
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 155
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 434
+
+fl=(1)
+fn=(33)
+16 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+16 607
+
+fl=(58) /var/www/chlovet/app/cache/dev/appDevDebugProjectContainer.php
+fn=(231) require_once::/var/www/chlovet/app/cache/dev/appDevDebugProjectContainer.php
+1 13
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+16 617
+
+fl=(1)
+fn=(57)
+28 1
+
+fl=(1)
+fn=(57)
+28 0
+
+fl=(1)
+fn=(57)
+28 0
+
+fl=(1)
+fn=(57)
+28 0
+
+fl=(58)
+fn=(232) appDevDebugProjectContainer->getDefaultParameters
+2348 4
+
+fl=(58)
+fn=(233) appDevDebugProjectContainer->__construct
+24 37
+cfl=(1)
+cfn=(57)
+calls=1 0 0
+28 1
+cfl=(1)
+cfn=(57)
+calls=1 0 0
+28 0
+cfl=(1)
+cfn=(57)
+calls=1 0 0
+28 0
+cfl=(1)
+cfn=(57)
+calls=1 0 0
+28 0
+cfl=(58)
+cfn=(232)
+calls=1 0 0
+30 4
+
+fl=(1)
+fn=(7)
+164 1
+
+fl=(57)
+fn=(234) Symfony\Component\DependencyInjection\Container->set
+162 10
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+164 1
+
+fl=(38)
+fn=(235) Symfony\Component\HttpKernel\Kernel->initializeContainer
+470 107
+cfl=(38)
+cfn=(197)
+calls=1 0 0
+472 11
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+473 645
+cfl=(38)
+cfn=(201)
+calls=1 0 0
+473 0
+cfl=(47)
+cfn=(205)
+calls=1 0 0
+473 416
+cfl=(47)
+cfn=(226)
+calls=1 0 0
+475 6824
+cfl=(46)
+cfn=(227)
+calls=1 0 0
+483 1
+cfl=(58)
+cfn=(231)
+calls=1 0 0
+483 631
+cfl=(58)
+cfn=(233)
+calls=1 0 0
+485 46
+cfl=(57)
+cfn=(234)
+calls=1 0 0
+486 12
+
+fl=(38)
+fn=(236) Symfony\Component\HttpKernel\Kernel->getBundles
+185 0
+
+fl=(40)
+fn=(237) Symfony\Component\HttpKernel\Bundle\Bundle->setContainer
+31 2
+
+fl=(43)
+fn=(238) Symfony\Component\HttpKernel\Bundle\Bundle->boot
+38 0
+
+fl=(38)
+fn=(239) Symfony\Component\HttpKernel\Kernel->boot
+103 57
+cfl=(38)
+cfn=(195)
+calls=1 0 0
+114 2671
+cfl=(38)
+cfn=(235)
+calls=1 0 0
+117 8697
+cfl=(38)
+cfn=(236)
+calls=1 0 0
+119 0
+cfl=(40)
+cfn=(237)
+calls=1 0 0
+120 2
+cfl=(43)
+cfn=(238)
+calls=1 0 0
+121 0
+
+fl=(38)
+fn=(240) Symfony\Component\HttpKernel\Kernel->getContainer
+309 0
+
+fl=(8)
+fn=(241) Drupal::getContainer
+74 28
+cfl=(8)
+cfn=(179)
+calls=1 0 0
+76 9
+cfl=(38)
+cfn=(239)
+calls=1 0 0
+79 11431
+cfl=(38)
+cfn=(240)
+calls=1 0 0
+81 0
+
+fl=(1)
+fn=(19)
+237 0
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 6
+
+fl=(4)
+fn=(78)
+344 63
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 6
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 79
+
+fl=(59) /var/www/chlovet/vendor/symfony/http-foundation/RequestStack.php
+fn=(242) include::/var/www/chlovet/vendor/symfony/http-foundation/RequestStack.php
+1 0
+
+fl=(4)
+fn=(166)
+410 20
+cfl=(59)
+cfn=(242)
+calls=1 0 0
+412 0
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 95
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 21
+
+fl=(1)
+fn=(33)
+677 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+677 133
+
+fl=(58)
+fn=(243) appDevDebugProjectContainer->getRequestStackService
+675 10
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+677 144
+
+fl=(57)
+fn=(244) Symfony\Component\DependencyInjection\Container->get
+223 22
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+237 0
+cfl=(58)
+cfn=(243)
+calls=1 0 0
+275 154
+
+fl=(8)
+fn=(245) Drupal::requestStack
+226 21
+cfl=(8)
+cfn=(241)
+calls=1 0 0
+228 11471
+cfl=(57)
+cfn=(244)
+calls=1 0 0
+228 178
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 1
+
+fl=(1)
+fn=(21)
+354 6
+
+fl=(4)
+fn=(78)
+344 132
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 6
+
+fl=(4)
+fn=(80)
+314 26
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 160
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 3
+
+fl=(4)
+fn=(78)
+344 64
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 3
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 75
+
+fl=(60) /var/www/chlovet/vendor/symfony/http-foundation/Request.php
+fn=(246) include::/var/www/chlovet/vendor/symfony/http-foundation/Request.php
+1 1
+
+fl=(4)
+fn=(166)
+410 30
+cfl=(60)
+cfn=(246)
+calls=1 0 0
+412 1
+
+fl=(4)
+fn=(81)
+298 14
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 92
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 32
+
+fl=(1)
+fn=(33)
+12 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+12 139
+
+fl=(61) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/src/Http/Request.php
+fn=(247) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/src/Http/Request.php
+1 17
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+12 149
+
+fl=(4)
+fn=(166)
+410 25
+cfl=(61)
+cfn=(247)
+calls=1 0 0
+412 167
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 187
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 193
+
+fl=(1)
+fn=(33)
+40 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+40 396
+
+fl=(1)
+fn=(76)
+347 2
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 60
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 77
+
+fl=(62) /var/www/chlovet/vendor/symfony/http-foundation/ParameterBag.php
+fn=(248) include::/var/www/chlovet/vendor/symfony/http-foundation/ParameterBag.php
+1 4
+
+fl=(4)
+fn=(166)
+410 21
+cfl=(62)
+cfn=(248)
+calls=1 0 0
+412 4
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 94
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 25
+
+fl=(1)
+fn=(33)
+240 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+240 137
+
+fl=(62)
+fn=(249) Symfony\Component\HttpFoundation\ParameterBag->__construct
+33 0
+
+fl=(62)
+fn=(249)
+33 1
+
+fl=(62)
+fn=(249)
+33 0
+
+fl=(62)
+fn=(249)
+33 1
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 4
+
+fl=(4)
+fn=(78)
+344 61
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 4
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 75
+
+fl=(63) /var/www/chlovet/vendor/symfony/http-foundation/FileBag.php
+fn=(250) include::/var/www/chlovet/vendor/symfony/http-foundation/FileBag.php
+1 0
+
+fl=(4)
+fn=(166)
+410 23
+cfl=(63)
+cfn=(250)
+calls=1 0 0
+412 0
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 92
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 24
+
+fl=(1)
+fn=(33)
+244 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+244 131
+
+fl=(63)
+fn=(251) Symfony\Component\HttpFoundation\FileBag->add
+60 0
+
+fl=(63)
+fn=(252) Symfony\Component\HttpFoundation\FileBag->replace
+39 9
+cfl=(63)
+cfn=(251)
+calls=1 0 0
+42 0
+
+fl=(63)
+fn=(253) Symfony\Component\HttpFoundation\FileBag->__construct
+31 9
+cfl=(63)
+cfn=(252)
+calls=1 0 0
+33 10
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 61
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 74
+
+fl=(64) /var/www/chlovet/vendor/symfony/http-foundation/ServerBag.php
+fn=(254) include::/var/www/chlovet/vendor/symfony/http-foundation/ServerBag.php
+1 1
+
+fl=(4)
+fn=(166)
+410 20
+cfl=(64)
+cfn=(254)
+calls=1 0 0
+412 1
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 92
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 22
+
+fl=(1)
+fn=(33)
+245 12
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+245 130
+
+fl=(62)
+fn=(249)
+33 2
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(64)
+354 0
+
+fl=(1)
+fn=(21)
+354 5
+
+fl=(4)
+fn=(78)
+344 70
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+354 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+354 5
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 83
+
+fl=(65) /var/www/chlovet/vendor/symfony/http-foundation/HeaderBag.php
+fn=(255) include::/var/www/chlovet/vendor/symfony/http-foundation/HeaderBag.php
+1 1
+
+fl=(4)
+fn=(166)
+410 22
+cfl=(65)
+cfn=(255)
+calls=1 0 0
+412 1
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 101
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 24
+
+fl=(1)
+fn=(33)
+246 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+246 140
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 1
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(64)
+34 1
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 1
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(64)
+34 1
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 1
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 1
+
+fl=(1)
+fn=(64)
+34 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 1
+
+fl=(1)
+fn=(60)
+33 1
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 1
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(1)
+fn=(60)
+33 0
+
+fl=(64)
+fn=(256) Symfony\Component\HttpFoundation\ServerBag->getHeaders
+28 274
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+34 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+33 0
+
+fl=(1)
+fn=(7)
+140 1
+
+fl=(1)
+fn=(58)
+140 0
+
+fl=(1)
+fn=(257) php::array_values
+142 0
+
+fl=(1)
+fn=(258) php::preg_match_all
+317 6
+
+fl=(1)
+fn=(7)
+319 1
+
+fl=(65)
+fn=(259) Symfony\Component\HttpFoundation\HeaderBag->parseCacheControl
+314 16
+cfl=(1)
+cfn=(258)
+calls=1 0 0
+317 6
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+319 1
+
+fl=(65)
+fn=(260) Symfony\Component\HttpFoundation\HeaderBag->set
+138 40
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+cfl=(65)
+cfn=(259)
+calls=1 0 0
+151 24
+
+fl=(1)
+fn=(7)
+140 1
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 1
+
+fl=(65)
+fn=(260)
+138 19
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 1
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 0
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 19
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 0
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 19
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 18
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 1
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 17
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 18
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 18
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 18
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 0
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 19
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 0
+
+fl=(1)
+fn=(58)
+140 0
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 18
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 0
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 1
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 18
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(1)
+fn=(7)
+140 1
+
+fl=(1)
+fn=(58)
+140 1
+
+fl=(1)
+fn=(257)
+142 0
+
+fl=(65)
+fn=(260)
+138 18
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+140 1
+cfl=(1)
+cfn=(257)
+calls=1 0 0
+142 0
+
+fl=(65)
+fn=(261) Symfony\Component\HttpFoundation\HeaderBag->__construct
+29 122
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 67
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 24
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 20
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 22
+cfl=(65)
+cfn=(260)
+calls=1 0 0
+32 21
+
+fl=(60)
+fn=(262) Symfony\Component\HttpFoundation\Request->initialize
+238 141
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+240 146
+cfl=(62)
+cfn=(249)
+calls=1 0 0
+240 0
+cfl=(62)
+cfn=(249)
+calls=1 0 0
+241 1
+cfl=(62)
+cfn=(249)
+calls=1 0 0
+242 0
+cfl=(62)
+cfn=(249)
+calls=1 0 0
+243 1
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+244 140
+cfl=(63)
+cfn=(253)
+calls=1 0 0
+244 19
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+245 143
+cfl=(62)
+cfn=(249)
+calls=1 0 0
+245 2
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+246 149
+cfl=(64)
+cfn=(256)
+calls=1 0 0
+246 320
+cfl=(65)
+cfn=(261)
+calls=1 0 0
+246 456
+
+fl=(60)
+fn=(263) Symfony\Component\HttpFoundation\Request->__construct
+220 21
+cfl=(60)
+cfn=(262)
+calls=1 0 0
+222 1524
+
+fl=(60)
+fn=(264) Symfony\Component\HttpFoundation\Request::createRequestFromFactory
+1917 13
+cfl=(60)
+cfn=(263)
+calls=1 0 0
+1929 1546
+
+fl=(1)
+fn=(7)
+114 0
+
+fl=(1)
+fn=(58)
+114 0
+
+fl=(1)
+fn=(19)
+116 0
+
+fl=(1)
+fn=(26)
+125 0
+
+fl=(65)
+fn=(265) Symfony\Component\HttpFoundation\HeaderBag->get
+112 30
+cfl=(1)
+cfn=(7)
+calls=1 0 0
+114 0
+cfl=(1)
+cfn=(58)
+calls=1 0 0
+114 0
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+116 0
+cfl=(1)
+cfn=(26)
+calls=1 0 0
+125 0
+
+fl=(1)
+fn=(60)
+283 0
+
+fl=(60)
+fn=(266) Symfony\Component\HttpFoundation\Request::createFromGlobals
+266 32
+cfl=(60)
+cfn=(264)
+calls=1 0 0
+281 1559
+cfl=(65)
+cfn=(265)
+calls=1 0 0
+283 33
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+283 0
+
+fl=(59)
+fn=(267) Symfony\Component\HttpFoundation\RequestStack->push
+32 3
+
+fl=(60)
+fn=(268) Symfony\Component\HttpFoundation\Request->isFromTrustedProxy
+1940 0
+
+fl=(1)
+fn=(19)
+88 0
+
+fl=(62)
+fn=(269) Symfony\Component\HttpFoundation\ParameterBag->get
+86 8
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+88 0
+
+fl=(60)
+fn=(270) Symfony\Component\HttpFoundation\Request->isSecure
+1177 18
+cfl=(60)
+cfn=(268)
+calls=1 0 0
+1179 0
+cfl=(62)
+cfn=(269)
+calls=1 0 0
+1183 9
+
+fl=(1)
+fn=(19)
+88 0
+
+fl=(62)
+fn=(269)
+86 8
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+88 0
+
+fl=(1)
+fn=(64)
+86 0
+
+fl=(61)
+fn=(271) MakinaCorpus\Drupal\Sf\Http\Request->isSecure
+61 26
+cfl=(60)
+cfn=(270)
+calls=1 0 0
+66 28
+cfl=(62)
+cfn=(269)
+calls=1 0 0
+73 9
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+86 0
+
+fl=(1)
+fn=(40)
+52 0
+
+fl=(1)
+fn=(171)
+53 1
+
+fl=(1)
+fn=(64)
+53 0
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(64)
+372 1
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 0
+
+fl=(1)
+fn=(60)
+381 1
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(21)
+383 10
+
+fl=(4)
+fn=(78)
+344 66
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 10
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 86
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(64)
+372 1
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 1
+
+fl=(1)
+fn=(60)
+381 1
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(21)
+383 7
+
+fl=(4)
+fn=(78)
+344 62
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 7
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 81
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 2
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(21)
+383 6
+
+fl=(4)
+fn=(78)
+344 68
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 6
+
+fl=(4)
+fn=(80)
+314 18
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 84
+
+fl=(66) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Session/AccountInterface.php
+fn=(272) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Session/AccountInterface.php
+1 1
+
+fl=(4)
+fn=(166)
+410 36
+cfl=(66)
+cfn=(272)
+calls=1 0 0
+412 1
+
+fl=(4)
+fn=(81)
+298 26
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 102
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 37
+
+fl=(1)
+fn=(33)
+8 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+8 167
+
+fl=(67) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Session/Account.php
+fn=(273) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Session/Account.php
+1 29
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+8 176
+
+fl=(4)
+fn=(166)
+410 41
+cfl=(67)
+cfn=(273)
+calls=1 0 0
+412 205
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 97
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 247
+
+fl=(1)
+fn=(33)
+16 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+16 361
+
+fl=(1)
+fn=(76)
+347 2
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(64)
+372 1
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(60)
+381 1
+
+fl=(1)
+fn=(21)
+383 9
+
+fl=(4)
+fn=(78)
+344 72
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 2
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 9
+
+fl=(4)
+fn=(80)
+314 18
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 92
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 1
+
+fl=(1)
+fn=(76)
+373 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(60)
+381 1
+
+fl=(1)
+fn=(21)
+383 9
+
+fl=(4)
+fn=(78)
+344 76
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 1
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 9
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 95
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 1
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(60)
+381 1
+
+fl=(1)
+fn=(21)
+383 6
+
+fl=(4)
+fn=(78)
+344 66
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 1
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 6
+
+fl=(4)
+fn=(80)
+314 16
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 82
+
+fl=(68) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Access/AccessibleInterface.php
+fn=(274) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Access/AccessibleInterface.php
+1 0
+
+fl=(4)
+fn=(166)
+410 36
+cfl=(68)
+cfn=(274)
+calls=1 0 0
+412 0
+
+fl=(4)
+fn=(81)
+298 17
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 98
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 36
+
+fl=(1)
+fn=(33)
+15 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+15 153
+
+fl=(69) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Entity/EntityInterface.php
+fn=(275) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Entity/EntityInterface.php
+1 10
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+15 163
+
+fl=(4)
+fn=(166)
+410 36
+cfl=(69)
+cfn=(275)
+calls=1 0 0
+412 173
+
+fl=(4)
+fn=(81)
+298 17
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 112
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 209
+
+fl=(1)
+fn=(33)
+16 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+16 339
+
+fl=(70) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/user/UserInterface.php
+fn=(276) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/user/UserInterface.php
+1 13
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+16 349
+
+fl=(4)
+fn=(166)
+410 34
+cfl=(70)
+cfn=(276)
+calls=1 0 0
+412 362
+
+fl=(4)
+fn=(81)
+298 16
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 111
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 396
+
+fl=(1)
+fn=(33)
+16 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+16 524
+
+fl=(71) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/user/User.php
+fn=(277) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/user/User.php
+1 25
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+16 372
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+16 535
+
+fl=(4)
+fn=(166)
+410 34
+cfl=(71)
+cfn=(277)
+calls=1 0 0
+412 932
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 102
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 967
+
+fl=(1)
+fn=(33)
+64 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+64 1085
+
+fl=(8)
+fn=(178)
+31 1
+
+fl=(8)
+fn=(179)
+64 8
+cfl=(8)
+cfn=(178)
+calls=1 0 0
+66 1
+
+fl=(38)
+fn=(239)
+103 1
+
+fl=(38)
+fn=(240)
+309 0
+
+fl=(8)
+fn=(241)
+74 23
+cfl=(8)
+cfn=(179)
+calls=1 0 0
+76 10
+cfl=(38)
+cfn=(239)
+calls=1 0 0
+79 1
+cfl=(38)
+cfn=(240)
+calls=1 0 0
+81 0
+
+fl=(1)
+fn=(19)
+237 0
+
+fl=(1)
+fn=(76)
+347 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 1
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(21)
+383 8
+
+fl=(4)
+fn=(78)
+344 76
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 1
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 8
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 92
+
+fl=(72) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Session/AccountProxy.php
+fn=(278) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Session/AccountProxy.php
+1 3
+
+fl=(4)
+fn=(166)
+410 35
+cfl=(72)
+cfn=(278)
+calls=1 0 0
+412 3
+
+fl=(4)
+fn=(81)
+298 15
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 110
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 38
+
+fl=(1)
+fn=(33)
+371 10
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+371 164
+
+fl=(1)
+fn=(19)
+237 0
+
+fl=(1)
+fn=(76)
+347 1
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(60)
+352 0
+
+fl=(1)
+fn=(77)
+370 0
+
+fl=(1)
+fn=(64)
+372 0
+
+fl=(1)
+fn=(64)
+373 0
+
+fl=(1)
+fn=(76)
+373 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(60)
+381 0
+
+fl=(1)
+fn=(21)
+383 7
+
+fl=(4)
+fn=(78)
+344 61
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+347 1
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+352 0
+cfl=(1)
+cfn=(77)
+calls=1 0 0
+370 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+372 0
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(76)
+calls=1 0 0
+373 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(60)
+calls=1 0 0
+381 0
+cfl=(1)
+cfn=(21)
+calls=1 0 0
+383 7
+
+fl=(4)
+fn=(80)
+314 17
+cfl=(4)
+cfn=(78)
+calls=1 0 0
+329 77
+
+fl=(73) /var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Entity/EntityManager.php
+fn=(279) include::/var/www/chlovet/web/sites/all/modules/composer/drupal-sf-dic/lib/Drupal/Core/Entity/EntityManager.php
+1 1
+
+fl=(4)
+fn=(166)
+410 34
+cfl=(73)
+cfn=(279)
+calls=1 0 0
+412 1
+
+fl=(4)
+fn=(81)
+298 14
+cfl=(4)
+cfn=(80)
+calls=1 0 0
+300 95
+cfl=(4)
+cfn=(166)
+calls=1 0 0
+301 36
+
+fl=(1)
+fn=(33)
+397 9
+cfl=(4)
+cfn=(81)
+calls=1 0 0
+397 145
+
+fl=(58)
+fn=(280) appDevDebugProjectContainer->getEntity_ManagerService
+395 9
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+397 155
+
+fl=(57)
+fn=(244)
+223 19
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+237 0
+cfl=(58)
+cfn=(280)
+calls=1 0 0
+275 164
+
+fl=(72)
+fn=(281) Drupal\Core\Session\AccountProxy->__construct
+39 2
+
+fl=(58)
+fn=(282) appDevDebugProjectContainer->getCurrentUserService
+369 26
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+371 174
+cfl=(57)
+cfn=(244)
+calls=1 0 0
+371 185
+cfl=(72)
+cfn=(281)
+calls=1 0 0
+371 2
+
+fl=(57)
+fn=(244)
+223 25
+cfl=(1)
+cfn=(19)
+calls=1 0 0
+237 0
+cfl=(58)
+cfn=(282)
+calls=1 0 0
+275 389
+
+fl=(8)
+fn=(283) Drupal::service
+118 20
+cfl=(8)
+cfn=(241)
+calls=1 0 0
+120 36
+cfl=(57)
+cfn=(244)
+calls=1 0 0
+120 416
+
+fl=(72)
+fn=(284) Drupal\Core\Session\AccountProxy->setOriginalAccount
+84 1
+
+fl=(31)
+fn=(285) sf_dic_boot
+25 123
+cfl=(8)
+cfn=(179)
+calls=1 0 0
+35 1399
+cfl=(8)
+cfn=(245)
+calls=1 0 0
+36 11670
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+40 406
+cfl=(60)
+cfn=(266)
+calls=1 0 0
+40 1626
+cfl=(59)
+cfn=(267)
+calls=1 0 0
+40 3
+cfl=(61)
+cfn=(271)
+calls=1 0 0
+45 65
+cfl=(1)
+cfn=(40)
+calls=1 0 0
+52 0
+cfl=(1)
+cfn=(171)
+calls=1 0 0
+53 1
+cfl=(1)
+cfn=(64)
+calls=1 0 0
+53 0
+cfl=(1)
+cfn=(33)
+calls=1 0 0
+64 1096
+cfl=(8)
+cfn=(283)
+calls=1 0 0
+75 472
+cfl=(72)
+cfn=(284)
+calls=1 0 0
+76 1
+
+fl=(29)
+fn=(164)
+920 33
+cfl=(1)
+cfn=(161)
+calls=1 0 0
+921 0
+cfl=(29)
+cfn=(163)
+calls=1 0 0
+924 10
+cfl=(31)
+cfn=(285)
+calls=1 0 0
+925 16869
+
+fl=(2)
+fn=(286) bootstrap_invoke_all
+1081 41
+cfl=(29)
+cfn=(134)
+calls=1 0 0
+1089 1
+cfl=(2)
+cfn=(136)
+calls=1 0 0
+1090 1
+cfl=(29)
+cfn=(164)
+calls=1 0 0
+1091 48
+cfl=(2)
+cfn=(136)
+calls=1 0 0
+1090 1
+cfl=(29)
+cfn=(164)
+calls=1 0 0
+1091 16913
+
+fl=(2)
+fn=(287) _drupal_bootstrap_page_header
+2516 14
+cfl=(2)
+cfn=(286)
+calls=1 0 0
+2517 17009
+
+fl=(2)
+fn=(142)
+2197 121
+cfl=(1)
+cfn=(4)
+calls=1 0 0
+2226 1
+cfl=(2)
+cfn=(67)
+calls=1 0 0
+2236 1375
+cfl=(1)
+cfn=(4)
+calls=1 0 0
+2226 0
+cfl=(2)
+cfn=(147)
+calls=1 0 0
+2240 3487
+cfl=(1)
+cfn=(4)
+calls=1 0 0
+2226 1
+cfl=(2)
+cfn=(54)
+calls=1 0 0
+2252 1
+cfl=(34)
+cfn=(148)
+calls=1 0 0
+2252 1
+cfl=(34)
+cfn=(160)
+calls=1 0 0
+2253 265
+cfl=(1)
+cfn=(4)
+calls=1 0 0
+2226 0
+cfl=(2)
+cfn=(287)
+calls=1 0 0
+2257 17023
+
+fl=(74) /var/www/chlovet/web/index.php
+fn=(288) {main}
+
+summary: 22707
+
+1 114
+cfl=(1)
+cfn=(1)
+calls=1 0 0
+17 3
+cfl=(1)
+cfn=(2)
+calls=1 0 0
+17 2
+cfl=(2)
+cfn=(3)
+calls=1 0 0
+19 303
+cfl=(2)
+cfn=(142)
+calls=1 0 0
+20 22284
+
+fl=(1)
+fn=(289) php::error_get_last
+198 0
+
+fl=(14)
+fn=(290) {closure:/var/www/chlovet/web/sites/all/modules/composer/drupal-ulog/ulog.error.inc:197-202}
+197 10
+cfl=(1)
+cfn=(289)
+calls=1 0 0
+198 0
+
+fl=(1)
+fn=(291) php::Redis->__destruct
+1 2
+

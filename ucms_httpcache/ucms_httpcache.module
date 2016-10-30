@@ -1,0 +1,55 @@
+<?php
+/**
+ * @file
+ * Advanced HTTP caching for µCMS.
+ *
+ * @todo
+ *   - replace node page with a controller
+ *   - use Symfony's Request/Response for http caching
+ *   - last modified backend interface
+ *      - database implementation
+ *      - redis implementation for speed / cache implementation
+ *   - shortcut on hook_boot whenever possible?
+ *   - event and listeners on node related changes to store last modified
+ *      - add a touch() function for nodes
+ *   - event for non node pages to determine caching options
+ *   - prevent drupal from using its own cache
+ *   - implement vary whenever possible
+ *   - implement cache tagging?
+ *   - do not bother on non-node pages, leave them alone, and see how to
+ *     deal with on a per-use-case basis if they cause performance problems
+ *   - menus need to invalidate site-level caches (we have no other choice)
+ *   - transversal layout need to invalide site-level caches (idem)
+ *   - add X- headers for Vary
+ *     - X-User-Role / user role on site
+ *     - X-User-Language / current user browse language (is there a specified
+ *       http header already for this?)
+ *     - X-Site-Id / site identifier (should not be necessary, since the
+ *       hostname will vary depending on site, and caching is primarily
+ *       per-URI)
+ *     - others?
+ *
+ * To consider:
+ *   - do not mess up too much with caches, http cache should be sufficient
+ *     by itself for most use cases
+ *   - find a way to make it more efficient for logged in users, but this
+ *     is more for applicative caches and it does not make sense in this
+ *     modules (enity_cache?, rendered layout cache?)
+ *
+ * Reference:
+ *   - see provided cachegrind traces, where:
+ *     .node-full is the full page reference
+ *     .node-boot is when you stop at hook_boot() (ideal execution time)
+ *     .node-init is when you stop after hook_init()
+ *     .node-start is when you stop on executing controller callback
+ *     .node-end is when you stop after executing controller, skipping theme
+ *   - looking at the afformentioned stack traces, we can safely say that:
+ *     - stopping at hook_boot() avoid completely database
+ *     - not stopping there, we can affort to go throught node-start
+ *     - or node-end, but using complex fields rendering it would be bad
+ *     - theming is what costs us most CPU/Backend time (due to layout
+ *       rendering mostly)
+ *   - conclusion: we need to be able to cache layouts, for this we need
+ *     to touch() the node on layout changes, or on other node in the
+ *     layout changes
+ */
