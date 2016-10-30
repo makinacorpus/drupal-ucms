@@ -24,7 +24,7 @@ function ucms_site_drush_node_access_rebuild() {
     return;
   }
 
-  $total  = db_query("SELECT COUNT(*) FROM {node} ORDER BY nid ASC")->fetchField();
+  $total  = db_query("SELECT COUNT(*) FROM {node}")->fetchField();
   if (!$total) {
     drush_print("No node access to rebuild.");
     return;
