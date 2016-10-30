@@ -1,0 +1,6 @@
+name = "UCMS - Tag"
+description = "Allow user to arbitrary create custom tags on nodes, and use them; tags are stored per-user."
+core = 7.x
+package = UCMS
+php = 5.5
+dependencies[] = plusql

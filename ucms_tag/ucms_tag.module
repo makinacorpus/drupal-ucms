@@ -1,0 +1,6 @@
+<?php
+/**
+ * µCMS tag custom module.
+ *
+ * Each user will only see tags he created, and others are left alone.
+ */

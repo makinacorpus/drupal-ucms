@@ -46,6 +46,7 @@
             "/ucms_seo/src/Tests/",
             "/ucms_site/src/Tests/",
             "/ucms_sso/src/Tests/",
+            "/ucms_tag/src/Tests/",
             "/ucms_tree/src/Tests/",
             "/ucms_user/src/Tests/",
             "/ucms_widget/src/Tests/"
@@ -64,6 +65,7 @@
             "MakinaCorpus\\Ucms\\Search\\" : "ucms_search/src",
             "MakinaCorpus\\Ucms\\Seo\\" : "ucms_seo/src",
             "MakinaCorpus\\Ucms\\Site\\" : "ucms_site/src",
+            "MakinaCorpus\\Ucms\\Tag\\" : "ucms_tag/src",
             "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
             "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src",

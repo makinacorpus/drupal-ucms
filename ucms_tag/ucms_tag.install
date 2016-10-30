@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_tag_schema() {
+  $schema = [];
+
+  $schema['ucms_tag'] = [
+    'description' => 'Tags',
+    'fields' => [
+      'id' => [
+        'description' => "Primary key",
+        'type'        => 'serial',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'name' => [
+        'description' => 'Tag name',
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  $schema['ucms_tag_node'] = [
+    'description' => 'Tags per node',
+    'fields' => [
+      'tag_id' => [
+        'description' => "Tag identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'node_id' => [
+        'description' => "Node identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'tag_id' => [
+        'table'   => 'ucms_tag',
+        'columns' => ['tag_id' => 'id'],
+        'delete'  => 'cascade',
+      ],
+      'node_id' => [
+        'table'   => 'node',
+        'columns' => ['node_id' => 'nid'],
+        'delete'  => 'cascade',
+      ],
+    ],
+    'primary key' => ['tag_id', 'node_id'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Adds missing database table columns and constraints.
+ */
+function ucms_tag_install_schema_fix() {
+  drupal_get_complete_schema(true);
+  db_constraint_add_all('ucms_tag', drupal_get_schema('ucms_tag'));
+  db_constraint_add_all('ucms_tag_node', drupal_get_schema('ucms_tag_node'));
+}
+
+/**
+ * Removes extra database table columns and constraints.
+ */
+function ucms_tag_install_schema_unfix() {
+  $schema = ucms_tag_schema();
+  db_constraint_drop_all('ucms_tag_node', $schema['ucms_tag_node']);
+  db_constraint_drop_all('ucms_tag', $schema['ucms_tag']);
+}
+
+/**
+ * Implements hook_install().
+ */
+function ucms_tag_install() {
+  ucms_tag_install_schema_fix();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function ucms_tag_uninstall() {
+  ucms_tag_install_schema_unfix();
+}

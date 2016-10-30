@@ -1,0 +1,5 @@
+services:
+
+  ucms_tag.storage:
+    class: MakinaCorpus\Ucms\Tag\TagStorage
+    arguments: ["@database"]
