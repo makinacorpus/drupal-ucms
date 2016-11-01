@@ -76,6 +76,18 @@ class TreeEditForm extends FormBase
 
         $form['is_creation'] = ['#type' => 'value', '#value' => $isCreation];
 
+        if ($roles = variable_get('umenu_allowed_roles', [])) {
+            $form['role'] = [
+                '#type'           => 'select',
+                '#title'          => $this->t("Role"),
+                '#options'        => $roles,
+                '#default_value'  => $menu->getRole(),
+                '#empty_option'   => $this->t("None"),
+                '#required'       => true,
+                '#maxlength'      => 255,
+            ];
+        }
+
         $form['title'] = [
             '#type'           => 'textfield',
             '#title'          => $this->t("Title"),
