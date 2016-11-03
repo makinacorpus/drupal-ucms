@@ -719,7 +719,7 @@ msgstr "Favori dans le panier"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:561
 msgid "Lock this content"
-msgstr "Vérrouiller ce contenu"
+msgstr "Verrouiller ce contenu"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:574
 msgid "Save and add to cart"
