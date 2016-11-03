@@ -195,9 +195,9 @@ function ucms_seo_page_build(&$page) {
         // Do not set a canonical for home pages, just the site URL.
         $canonical = url('http://' . $site->http_host . '/');
       } else if ('node' === arg(0) && !arg(3)) {
-        $canonical = ucms_seo_service()->getNodeCanonical($node) . '/';
+        $canonical = ucms_seo_service()->getNodeCanonical($node);
         if (!$canonical) {
-          $canonical = url('node/' . $node->nid, ['absolute' => true]) . '/';
+          $canonical = url('node/' . $node->nid, ['absolute' => true]);
         }
       }
 
