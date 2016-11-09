@@ -108,17 +108,18 @@ function ucms_tree_library() {
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
-  if (!empty($_GET['menu_name'])) {
 
+  if (!empty($_GET['menu_name'])) {
     // Verify access to menu
-    $matches = [];
-    preg_match('@.*-(\d+)@', $_GET['menu_name'], $matches);
     $manager = ucms_site_manager();
     $site = $manager->getContext();
     $account = \Drupal::currentUser();
+
     if (!$site
-      || $site->getId() !== $matches[1]
-      || !$manager->getAccess()->userIsWebmaster($account, $site)) {
+      || !preg_match('@.*-(\d+)@', $_GET['menu_name'], $matches)
+      || ($site->getId() !== (int) $matches[1])
+      || !$manager->getAccess()->userIsWebmaster($account, $site)
+    ) {
       drupal_access_denied();
       exit;
     }
