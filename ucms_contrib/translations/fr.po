@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-10-19 15:47+0200\n"
+"POT-Creation-Date: 2016-11-09 11:46+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -67,7 +67,7 @@ msgid "Create !content_type"
 msgstr "Créer !content_type"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:75
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:194;202
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:185;193
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:40
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:25
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:90
@@ -91,7 +91,7 @@ msgid "Revisions"
 msgstr "Révisions"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:93
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:234
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:209
 msgid "Transfer ownership"
 msgstr "Transférer la propriété"
 
@@ -104,41 +104,31 @@ msgid "Remove from cart"
 msgstr "Retirer du panier"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:119
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:210
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:201
 msgid "Add to global contents"
 msgstr "Ajouter au contenu global"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:124
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:218
-msgid "Define as group content"
-msgstr "Définir comme contenu de groupe"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:124
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:226
-msgid "Remove from group contents"
-msgstr "Retirer des contenus Groupe"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:137
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:162
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:153
 msgid "Star"
 msgstr "Marquer comme important"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:137
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:170
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:124
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:161
 msgid "Unstar"
 msgstr "Retirer le marquage important"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:149
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:146
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:136
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:137
 msgid "Flag as inappropriate"
 msgstr "Signaler comme inapproprié"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:151
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:154
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:138
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:145
 msgid "Un-flag as innappropriate"
 msgstr "Retirer le marquage comme inapproprié"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:155
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:142
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:41
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:36
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/RedirectDeleteProcessor.php:36
@@ -341,14 +331,6 @@ msgstr "Ajouter %title aux contenus globaux ?"
 msgid "%title has been added to global contents."
 msgstr "%title a été ajouté aux contenus globaux."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:27
-msgid "Define %title as group content?"
-msgstr "Définir %title comme contenu groupe ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:41
-msgid "%title has been added to the group contents."
-msgstr "%title a été ajouté aux contenus groupes."
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodePublish.php:26
 msgid "Publish %title ?"
 msgstr "Publier %title ?"
@@ -409,14 +391,6 @@ msgstr "Déverrouiller %title ?"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnlock.php:40
 msgid "%title has been unlocked."
 msgstr "%title a été dévérouillé."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:27
-msgid "Remove %title from group contents?"
-msgstr "Retirer %title des contenu Groupe ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:41
-msgid "%title has been removed from the group contents."
-msgstr "%title a été retiré des contenus Groupe."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnpublish.php:26
 msgid "Unpublish %title ?"
@@ -496,7 +470,7 @@ msgstr "Type"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:58
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:63
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:62
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:81
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:93
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:74
 msgid "Title"
 msgstr "Titre"
@@ -531,7 +505,7 @@ msgid "Owner"
 msgstr "Propriétaire"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:67
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:267;273
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:242;248
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:90
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:77
 msgid "Content"
@@ -633,6 +607,7 @@ msgstr "Prise en compte du clonage"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.info:0
@@ -660,48 +635,44 @@ msgid "Global"
 msgstr "Global"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:77
-msgid "Group"
-msgstr "Groupe"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:86
 msgid "Local"
 msgstr "Local"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:95
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:86
 msgid "Flagged"
 msgstr "Signalé"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:104
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:95
 msgid "Starred"
 msgstr "Important"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:120
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:111
 msgid "New !type for my site"
 msgstr "Créer un(e) !type pour mon site"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:130
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:121
 msgid "Publish content"
 msgstr "Publier le contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:138
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:129
 msgid "Unpublish content"
 msgstr "Dépublier le contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:178
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:169
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:69
 msgid "Lock"
 msgstr "Verrouiller"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:186
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:177
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/NodeActionProvider.php:71
 msgid "Unlock"
 msgstr "Déverrouiller"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:252
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:227
 msgid "Contribution user interface"
 msgstr "Interface utilisateur de contribution"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:253
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:228
 msgid ""
 "Manage content types categorisation and how the main contribution user "
 "interface will look like and behave."
@@ -709,39 +680,39 @@ msgstr ""
 "Gère la catégorisation des types de contenu et comment l'interface "
 "utilisateur se comporte."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:457
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:425
 msgid "Content admin display"
 msgstr "Affichage d'administration du contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:461
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:429
 msgid "Favorite in cart"
 msgstr "Favori dans le panier"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:561
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:529
 msgid "Lock this content"
 msgstr "Vérrouiller ce contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:574
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:542
 msgid "Save and add to cart"
 msgstr "Enregistrer et ajouter au panier"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:585
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:553
 msgid "Save and publish"
 msgstr "Enregistrer et publier"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:596
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:564
 msgid "Save, publish and add to cart"
 msgstr "Enregistrer, publier et ajouter au panier"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:878
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:846
 msgid "UCMS medias drop & paste management"
 msgstr "UCMS - gestion du copier-coller"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:897
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:865
 msgid "UCMS Media DnD"
 msgstr "UCMS Media DnD"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:898
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:866
 msgid "Will transform UCMS DnD markup into content"
 msgstr "Transforme le balisage UCMS  DnD en contenu"
 
@@ -818,6 +789,48 @@ msgstr "Utiliser le volet contextuel"
 msgid "Dashboard"
 msgstr "Dashboard"
 
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Action/NodeActionProvider.php:39
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:40
+msgid "Define as group content"
+msgstr "Définir comme contenu de groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Action/NodeActionProvider.php:39
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:48
+msgid "Remove from group contents"
+msgstr "Retirer des contenus Groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeMakeGroup.php:25
+msgid "Define %title as group content?"
+msgstr "Définir %title comme contenu groupe ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeMakeGroup.php:39
+msgid "%title has been added to the group contents."
+msgstr "%title a été ajouté aux contenus groupes."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeUnmakeGroup.php:25
+msgid "Remove %title from group contents?"
+msgstr "Retirer %title des contenu Groupe ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeUnmakeGroup.php:39
+msgid "%title has been removed from the group contents."
+msgstr "%title a été retiré des contenus Groupe."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
+msgid ""
+"Provide unmeaningful legacy features that will be dropped. Please, never use "
+"this module."
+msgstr ""
+"Fournit des fonctionnalités historiques dépréciées qui seront retirées. "
+"N'utilisez jamais ce module."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
+msgid "UCMS - Harm"
+msgstr "UCMS - Harm"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:30
+msgid "Group"
+msgstr "Groupe"
+
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelNotificationsActionProvider.php:44
 #: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:45
 msgid "Subscribe to the notifications"
@@ -882,7 +895,7 @@ msgstr "Étiquette non modifiable"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:143
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:152
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:117
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:129
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:82
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:89
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:83
@@ -1746,7 +1759,7 @@ msgstr "Non"
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:61
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:92
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/SiteManager.php:284
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:101
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:85;113
 msgid "None"
 msgstr "Aucun"
 
@@ -2036,7 +2049,7 @@ msgid "Site template"
 msgstr "Site gabarit"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:62;63
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:90
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:102
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:75
 msgid "Description"
 msgstr "Description"
@@ -2159,7 +2172,6 @@ msgid "Site modifications have been saved"
 msgstr "Les modifications du site ont été enregistrées"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:72;82
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:106;115
 msgid "Martray's optical"
 msgstr "Optique de Martray"
 
@@ -2217,6 +2229,10 @@ msgstr "Retour"
 msgid "Your site creation request has been submitted"
 msgstr "La création de votre site a été soumise"
 
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:106;115
+msgid "Martin's blog"
+msgstr "Le blog de Martin"
+
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:76
 msgid "Switch site @site to state @state ?"
 msgstr "Passer le site @site à l'état @state ?"
@@ -2241,6 +2257,7 @@ msgstr "Veuillez faire votre choix parmi cette liste de suggestions."
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterChangeRole.php:104
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDatasource.php:62
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:60
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:82
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:77
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:70
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:66
@@ -2670,31 +2687,31 @@ msgstr "Arborescence de menu"
 msgid "Leave this field empty for auto-generation"
 msgstr "Laisser ce champ vide pour une génération automatique"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:82
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:94
 msgid "Main, Footer, ..."
 msgstr "Principal, pied de page, ..."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:91
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:103
 msgid "Something about this menu..."
 msgstr "Quelque chose à propos de ce menu..."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:100
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:112
 msgid "Menu role in site"
 msgstr "Rôle du menu dans le site"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:109
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:121
 msgid "Set as the site main menu?"
 msgstr "Définir en tant que menu principal du site ?"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:111
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:123
 msgid "If the site already has a main menu, this choice will change it."
 msgstr "Si le site possède déjà un menu principal, ce choix le modifiera."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:162
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:174
 msgid "Tree has been saved"
 msgstr "L'arborescence a été enregistrée"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:173
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:185
 msgid "Could not save tree"
 msgstr "Impossible d'enregistrer l'arborescence"
 
