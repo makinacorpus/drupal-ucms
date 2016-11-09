@@ -129,6 +129,10 @@ class CloningNodeTest extends AbstractDrupalTest
 
     public function testLayoutIsChanged()
     {
+        if (!$this->moduleExists('ucms_layout')) {
+            $this->markTestSkipped("You must enable the 'ucms_layout' module");
+        }
+
         $site1 = $this->createDrupalSite();
         $site2 = $this->createDrupalSite();
 
@@ -165,6 +169,10 @@ class CloningNodeTest extends AbstractDrupalTest
 
     public function testOtherLayoutsAreChanged()
     {
+        if (!$this->moduleExists('ucms_layout')) {
+            $this->markTestSkipped("You must enable the 'ucms_layout' module");
+        }
+
         $site1 = $this->createDrupalSite();
         $site2 = $this->createDrupalSite();
 

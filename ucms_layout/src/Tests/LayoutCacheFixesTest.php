@@ -12,6 +12,18 @@ class LayoutCacheFixesTest extends AbstractDrupalTest
     use SiteTestTrait;
 
     /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        if (!$this->moduleExists('ucms_layout')) {
+            $this->markTestSkipped("You must enable the 'ucms_layout' module");
+        }
+
+        parent::setUp();
+    }
+
+    /**
      * This actually check for a but that might not even exists anymore, but
      * the test still is interesting to keep since it will ensure some of this
      * module features
