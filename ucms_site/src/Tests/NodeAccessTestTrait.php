@@ -87,17 +87,19 @@ trait NodeAccessTestTrait
      *   Permission string list
      * @param string[] $siteMap
      *   Keys are site labels, values are Access::ROLE_* constants
+     * @param string $name
+     *   Account name for debugging purpose
      *
      * @return AccountInterface
      */
-    protected function createDrupalUser($permissionList = [], $siteMap = [])
+    protected function createDrupalUser($permissionList = [], $siteMap = [], $name = null)
     {
         // Ahah, 2 hours debugging. No matter how hard you attempt to implement
         // node_access API, if the user has no 'access content' permission, bye
         // bye custom implementations and hooks!
         $permissionList[] = 'access content';
 
-        $account = parent::createDrupalUser($permissionList);
+        $account = parent::createDrupalUser($permissionList, $name);
 
         if ($siteMap) {
             foreach ($siteMap as $label => $role) {
@@ -201,9 +203,9 @@ trait NodeAccessTestTrait
         throw new \InvalidArgumentException(sprintf("Please be serious while writing tests, %s is not a mocked node", $label));
     }
 
-    protected function whenIAm($permissionList = [], $siteMap = [])
+    protected function whenIAm($permissionList = [], $siteMap = [], $name = null)
     {
-        $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap);
+        $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap, $name);
 
         $this->getSiteManager()->getAccess()->resetCache();
 
@@ -219,6 +221,15 @@ trait NodeAccessTestTrait
         return $this;
     }
 
+    protected function whoIAm()
+    {
+        if (!$this->contextualAccount || $this->contextualAccount->isAnonymous()) {
+            return 'Anonymous';
+        } else {
+            return $this->contextualAccount->getAccountName();
+        }
+    }
+
     protected function canSee($label)
     {
         $site = $this->getSiteManager()->getContext();
@@ -232,7 +243,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $this->getNode($label)
                     ),
-                sprintf("Can see %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -252,7 +263,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $this->getNode($label)
                     ),
-                sprintf("Can not see %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can not see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -305,7 +316,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $this->getNode($label)
                     ),
-                sprintf("Can edit %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -325,7 +336,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $this->getNode($label)
                     ),
-                sprintf("Can not edit %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can not edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -369,7 +380,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $label
                     ),
-                sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can NOT create %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -389,7 +400,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $label
                     ),
-                sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>' )
+                sprintf("%s can NOT create %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>' )
             )
         ;
 
@@ -458,7 +469,7 @@ trait NodeAccessTestTrait
     {
         $site = $this->getSiteManager()->getContext();
 
-        $this->assertTrue($this->canDoReally($op, $label), sprintf("Can %s %s on site %s", $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+        $this->assertTrue($this->canDoReally($op, $label), sprintf("%s can %s %s on site %s", $this->whoIAm(), $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
 
         return $this;
     }
@@ -467,7 +478,7 @@ trait NodeAccessTestTrait
     {
         $site = $this->getSiteManager()->getContext();
 
-        $this->assertFalse($this->canDoReally($op, $label), sprintf("Cannot %s %s on site %s", $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+        $this->assertFalse($this->canDoReally($op, $label), sprintf("%s can NOT %s %s on site %s", $this->whoIAm(), $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
 
         return $this;
     }
