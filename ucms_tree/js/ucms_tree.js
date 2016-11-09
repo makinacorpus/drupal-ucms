@@ -84,6 +84,7 @@
               };
               return '/node/add/here?' + jQuery.param(params);
             };
+
             $('<a class="add-here add-before use-ajax minidialog fade">Ajouter un contenu ici</a>')
               .wrapInner('<span class="btn btn-danger">')
               .attr('href', buildUrl.apply(this, [$element, false]))
@@ -104,34 +105,60 @@
          * Display node add buttons
          */
         var dragging = false;
-        $('body').mousedown(function () {
-          dragging = true;
-        }).mouseup(function () {
-          dragging = false;
-        }).mousemove(function (event) {
-          if (dragging) {
-            return;
-          }
-          function isNear($element, distance, event) {
-            var left = $element.offset().left - distance,
-              top = $element.offset().top - distance,
-              right = left + $element.outerWidth() + ( 2 * distance ),
-              bottom = top + $element.outerHeight() + ( 2 * distance ),
-              x = event.pageX,
-              y = event.pageY;
-            return ( x > left && x < right && y > top && y < bottom );
-          }
+        var currentItemIndex = null;
 
-          $menu.find('li').each(function () {
-            var $element = $(this);
-            // If mouse is around element by 18 pixels
-            if (isNear($element, 18, event)) {
-              $element.find('a.add-here').addClass('in');
-            } else {
-              $element.find('a.add-here').removeClass('in');
-            }
+        $('body')
+          .mousedown(function () {
+            dragging = true;
+          })
+          .mouseup(function () {
+            dragging = false;
           });
-        });
+
+        $menu
+          .mousemove(function (event) {
+            if (dragging) {
+              return;
+            }
+
+            var $menuItems = $menu.find('.tree-item');
+
+            function toggleButtons(itemIndex) {
+              if (typeof itemIndex === 'number') {
+                $item = $menuItems.eq(itemIndex);
+                $nextItem = $menuItems.eq(itemIndex + 1);
+
+                $item.find('a.add-here').toggleClass('in');
+                if ($nextItem) {
+                  $nextItem.find('a.add-here').toggleClass('in');
+                }
+              }
+            }
+
+            $menuItems.each(function (index) {
+              if (
+                index !== currentItemIndex &&
+                event.pageY >= $(this).offset().top &&
+                event.pageY <= $(this).offset().top + $(this).outerHeight()
+              ) {
+                toggleButtons(currentItemIndex);
+                toggleButtons(index);
+                currentItemIndex = index;
+                return false; // Stops the loop.
+              }
+            });
+          })
+          .on('mouseenter mouseup', function (event) {
+            $menu.triggerHandler($.Event('mousemove', {
+              pageX: event.pageX,
+              pageY: event.pageY
+            }));
+          })
+          .on('mouseleave mousedown', function () {
+            // If the cursor leaves the tree region, hides buttons.
+            $menu.find('a.add-here').removeClass('in');
+            currentItemIndex = null;
+          })
       });
     }
   };
