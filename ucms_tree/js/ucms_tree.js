@@ -149,16 +149,23 @@
             });
           })
           .on('mouseenter mouseup', function (event) {
+            if (event.type === 'mouseup') {
+              dragging = false;
+            }
             $menu.triggerHandler($.Event('mousemove', {
               pageX: event.pageX,
               pageY: event.pageY
             }));
           })
-          .on('mouseleave mousedown', function () {
-            // If the cursor leaves the tree region, hides buttons.
+          .on('mouseleave mousedown', function (event) {
+            // Hides buttons if the cursor leaves the tree region or the user
+            // press mouse's button (maybe to drag).
+            if (event.type === 'mousedown' && $(event.target).hasClass('btn')) {
+              return;
+            }
             $menu.find('a.add-here').removeClass('in');
             currentItemIndex = null;
-          })
+          });
       });
     }
   };
