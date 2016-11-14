@@ -1,16 +1,20 @@
 ol.sortable {
   border: dashed 2px #018fe2;
   min-height: 100px;
-  padding: 10px;
+  /*padding: 10px;*/
 }
 ol.ucms-highlighted-over {
   box-shadow: inset 0 0 5px 10px #018fe2;
 }
 ol.sortable, ol.sortable ol {
   list-style-type: none;
+  padding-left: 25px;
 }
 ol.sortable li {
   position: relative;
+}
+li.ui-sortable-helper {
+  width: 400px !important;
 }
 .sortable li div,
 .sortable .ucms-placeholder {
@@ -71,7 +75,7 @@ ol.sortable li {
   font-weight: bold;
 }
 
-/* Disable animation */
-#ucms-tree-tree-form .ui-sortable-helper {
-  animation: none;
+/* Cart - Force to be static, else it's messing with DnD */
+#ucms-cart {
+  position: static !important;
 }

@@ -195,3 +195,15 @@ function ucms_tree_node_delete($node) {
     menu_link_delete($mlid);
   }
 }
+
+/**
+ * Implements hook_js_alter().
+ */
+function ucms_tree_js_alter(&$js) {
+  if (preg_match('@^admin/dashboard/tree/(\d+)$@', current_path())) {
+    $path = drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js';
+    if (isset($js[$path])) {
+      unset($js[$path]);
+    }
+  }
+}

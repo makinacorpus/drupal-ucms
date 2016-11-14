@@ -9,6 +9,9 @@
         // Remove any empty element that was added by Drupal
         $menu.find('li:empty').remove();
 
+        // We won't handle the trash on the page
+        $('#ucms-cart-trash').hide();
+
         function updateHiddenField() {
           var toArray = $menu.nestedSortable('toArray', {startDepthCount: 0});
           // Add menu labels
@@ -26,38 +29,56 @@
         });
 
         /**
+         * Cart sortable
+         */
+        var listIndex = 0;
+        $('#ucms-cart-list', context).sortable({
+          // Connect with others lists and trash
+          connectWith: '[data-can-receive]',
+          items: '.ucms-cart-item',
+          placeholder: 'ucms-placeholder', // Placeholder class = CSS background
+          tolerance: 'pointer',
+          toleranceElement: '> div',
+          remove: function (event, ui) {
+            var $cart = $('#ucms-cart-list');
+            if (listIndex - 1 >= 0) {
+              ui.item.clone().insertAfter($cart.children().get(listIndex - 1));
+            }
+            else {
+              $cart.prepend(ui.item.clone());
+            }
+            $cart.sortable('refresh');
+          },
+          start: function(event, ui) {
+            // Retain element position in cart when moving out
+            listIndex = $(ui.item).index();
+          }
+        });
+
+        /**
          * Tree sortable
          */
-        $menu.filter('[data-can-receive]').nestedSortable($.extend({}, Drupal.ucmsSortableDefaults, {
+        $menu.filter('[data-can-receive]').nestedSortable({
           connectWith: '[data-menu][data-can-receive]',
           tabSize: 25,
           maxLevels: settings.ucmsTree.menuNestingLevel || 2,
-          isTree: true,
-          expandOnHover: 700,
-          startCollapsed: false,
           items: 'li',
+          placeholder: 'ucms-placeholder', // Placeholder class = CSS background
+          tolerance: "pointer",
           toleranceElement: '> div',
-          forcePlaceholderSize: false,
           attribute: 'data-mlid',
           excludeRoot: true,
           expression: /()([new_\d]+)/,
           receive: function (event, ui) {
-            // Only replace element if coming from cart
-            if ($(ui.item).closest('#ucms-cart-list').length) {
-              var elem = Drupal.theme('menuItem', ui.item);
-              var olderBrother = $(this).find("> *:nth-child(" + (Drupal.ucmsTempReceivedPos + 1) + ")");
-              if (olderBrother.length) {
-                olderBrother.before(elem);
-              } else {
-                $(this).append(elem);
-              }
-              $(this).sortable('refresh');
-            }
+            // Replace element coming from cart
+            var elem = Drupal.theme('menuItem', ui.item);
+            ui.item.replaceWith(elem);
+            $(this).sortable('refresh');
             updateHiddenField.call(this);
           },
           update: updateHiddenField,
           create: updateHiddenField
-        }));
+        });
 
         /**
          * Close buttons
