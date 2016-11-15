@@ -30,7 +30,7 @@
         parent.$.innerHTML = data.output;
       } else {
         if (console) {
-          parent.$.innerHTML = "Loading the element failed";
+          parent.$.innerHTML = Drupal.t("Failed to load the element");
           console.log("error while rendering element, wrong content loaded from ajax");
         }
       }
@@ -166,7 +166,7 @@
             createAndPlaceMedia(editorEvent.editor, nid, data.output);
           } else {
             if (console) {
-              parent.$.innerHTML = "Loading the element failed";
+              parent.$.innerHTML = Drupal.t("Failed to load the element");
               console.log("error while rendering element, wrong content loaded from ajax");
             }
           }
@@ -262,7 +262,7 @@
 
         editor.addMenuGroup('ucmsMediaGroup');
         editor.addMenuItem('ucmsMediaEdit', {
-          label: 'Edit media display',
+          label: Drupal.t('Edit media display'),
           icon: this.path + 'icons/left.png',
           command: 'ucmsMediaDialog',
           group: 'ucmsMediaGroup'

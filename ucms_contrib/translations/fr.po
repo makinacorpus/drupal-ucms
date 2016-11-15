@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-11-09 11:46+0100\n"
+"POT-Creation-Date: 2016-11-15 11:54+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -56,6 +56,14 @@ msgstr "À droite du texte"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
 msgid "Width (remains at 100% if not left or right)"
 msgstr "Largeur (conservée à 100% en positionnement normal)"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/plugin.js:0
+msgid "Edit media display"
+msgstr "Modifier l'affichage du média"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/plugin.js:0;0
+msgid "Failed to load the element"
+msgstr "Impossible de charger l'élement"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/ContentActionProvider.php:77
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:103
@@ -2172,8 +2180,9 @@ msgid "Site modifications have been saved"
 msgstr "Les modifications du site ont été enregistrées"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:72;82
-msgid "Martray's optical"
-msgstr "Optique de Martray"
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:106;115
+msgid "Martin's blog"
+msgstr "Le blog de Martin"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:92
 msgid "Invalid step @step"
@@ -2228,10 +2237,6 @@ msgstr "Retour"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:390
 msgid "Your site creation request has been submitted"
 msgstr "La création de votre site a été soumise"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:106;115
-msgid "Martin's blog"
-msgstr "Le blog de Martin"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:76
 msgid "Switch site @site to state @state ?"
@@ -2763,7 +2768,7 @@ msgstr "Ajouter un nouveau menu"
 msgid "Add content at position"
 msgstr "Ajouter du contenu à la position"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.module:175
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/ucms_tree.module:176
 msgid "There was an error saving the menu link."
 msgstr "Il y a une erreur lors de l’enregistrement du lien de menu."
 
