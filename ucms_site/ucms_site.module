@@ -10,6 +10,7 @@
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Controller\AutocompleteController;
 use MakinaCorpus\Ucms\Site\Controller\DashboardController;
@@ -451,10 +452,7 @@ function ucms_site_menu_access_view($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
   }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return ucms_site_manager()->getAccess()->userCanView($account, $site);
+  return sf_acl_is_granted($site, Permission::VIEW);
 }
 
 /**
@@ -464,10 +462,7 @@ function ucms_site_menu_access_overview($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
   }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return ucms_site_manager()->getAccess()->userCanOverview($account, $site);
+  return sf_acl_is_granted($site, Permission::OVERVIEW);
 }
 
 /**
@@ -477,10 +472,7 @@ function ucms_site_menu_access_manage($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
   }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return ucms_site_manager()->getAccess()->userCanManage($account, $site);
+  return sf_acl_is_granted($site, Permission::UPDATE);
 }
 
 /**
@@ -513,7 +505,7 @@ function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $web
 
   $manager = ucms_site_manager();
 
-  if ($manager->getAccess()->userCanManageWebmasters($account, $site)) {
+  if (sf_acl_is_granted($site, Access::ACL_PERM_SITE_MANAGE_USERS)) {
     switch ($op) {
       case 'change-role':
         // Prevents to give a role to a user which doesn't belong to the site
@@ -638,8 +630,6 @@ function ucms_site_module_implements_alter(&$implementations, $hook) {
  */
 function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
 
-  $account = \Drupal::currentUser();
-
   if (drupal_is_cli()) {
     return; // Make drush happy.
   }
@@ -664,10 +654,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     return; // No site in context, nothing to check for.
   }
 
-  if (
-    SiteState::ON != $site->state &&
-    !ucms_site_manager()->getAccess()->userCanView($account, $site)
-  ) {
+  if (SiteState::ON != $site->state && !sf_acl_is_granted($site, Permission::VIEW)) {
     $menu_site_status = MENU_SITE_OFFLINE;
     // State off means that the site is valid and up, but in maintainance mode,
     // case in which we should just set the maintainance mode and leave,

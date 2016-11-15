@@ -53,12 +53,12 @@ class TypeRegistry
      *
      * @return \TypeRegistry
      */
-    public function register($type, $definition)
-    {
-        $this->instances[$type] = $definition;
+//     public function register($type, $definition)
+//     {
+//         $this->instances[$type] = $definition;
 
-        return $this;
-    }
+//         return $this;
+//     }
 
     /**
      * Find converter for given ElasticSearch type

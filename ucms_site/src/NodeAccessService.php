@@ -49,32 +49,6 @@ final class NodeAccessService
     }
 
     /**
-     * Can the user publish (and unpublish) this node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
-     *
-     * @return boolean
-     */
-    public function userCanPublish(AccountInterface $account, NodeInterface $node)
-    {
-        if ($node->is_global && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
-            return true;
-        }
-        if ($node->is_group && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
-            return true;
-        }
-        if (!empty($node->site_id) && ($userSites = $this->manager->loadWebmasterSites($account))) {
-            foreach ($userSites as $site) {
-                if ($node->site_id == $site->id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Can the user reference this node on one of his sites
      *
      * @param AccountInterface $account
@@ -102,72 +76,12 @@ final class NodeAccessService
     }
 
     /**
-     * Can user promote or unpromote this node as a group node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
-     *
-     * @return boolean
-     */
-    public function userCanPromoteToGroup(AccountInterface $account, NodeInterface $node)
-    {
-        return ($node->is_group || $node->is_global) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
-    }
-
-    /**
-     * Can user view the given node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
-     *
-     * @return bool
-     *
-     * @deprecated
-     */
-    public function userCanView(AccountInterface $account, NodeInterface $node)
-    {
-        return node_access(Access::OP_VIEW, $node, $account);
-    }
-
-    /**
-     * Can user edit the given node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
-     *
-     * @return bool
-     *
-     * @deprecated
-     */
-    public function userCanEdit(AccountInterface $account, NodeInterface $node)
-    {
-        return node_access(Access::OP_UPDATE, $node, $account);
-    }
-
-    /**
-     * Can user delete the given node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
-     *
-     * @return bool
-     *
-     * @deprecated
-     */
-    public function userCanDelete(AccountInterface $account, NodeInterface $node)
-    {
-        return node_access(Access::OP_DELETE, $node, $account);
-    }
-
-    /**
      * Can user create nodes with the given type
      *
      * @param AccountInterface $account
      * @param string $type
      *
      * @return bool
-     *
-     * @deprecated
      */
     public function userCanCreate(AccountInterface $account, $type)
     {
@@ -199,71 +113,6 @@ final class NodeAccessService
             $this->manager->dropContext();
         }
         return $result;
-    }
-
-    /**
-     * Can user lock or unlock this node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
-     *
-     * @return boolean
-     */
-    public function userCanLock(AccountInterface $account, NodeInterface $node)
-    {
-        if ($node->is_group) {
-            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
-        }
-
-        if ($node->is_global) {
-            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL);
-        }
-
-        if ($node->site_id) {
-            // Got a site !
-            // @todo I must find a shortcut for this...
-            return $this
-                ->manager
-                ->getAccess()
-                ->userIsWebmaster(
-                    $account,
-                    $this
-                        ->manager
-                        ->getStorage()
-                        ->findOne($node->site_id)
-                )
-            ;
-        }
-
-        return false;
-    }
-
-    /**
-     * Can user copy this node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
-     *
-     * @return boolean
-     */
-    public function userCanDuplicate(AccountInterface $account, NodeInterface $node)
-    {
-        if (!$node->is_clonable) {
-            return false;
-        }
-        if (empty($node->ucms_sites)) {
-            return false;
-        }
-
-        $roles = $this->manager->getAccess()->getUserRoles($account);
-
-        foreach (array_intersect_key($roles, array_flip($node->ucms_sites)) as $role) {
-            if ($role->getRole() == Access::ROLE_WEBMASTER) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

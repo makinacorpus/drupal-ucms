@@ -5,8 +5,9 @@ namespace MakinaCorpus\Ucms\Group\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Group\GroupSite;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -14,7 +15,7 @@ use MakinaCorpus\Ucms\Site\SiteManager;
  * We only partially implement the site action provider, we do not want to
  * display irrelevant information in contextual actions
  */
-class GroupSiteActionProvider implements ActionProviderInterface
+class GroupSiteActionProvider extends AbstractActionProvider
 {
     use StringTranslationTrait;
 
@@ -40,13 +41,10 @@ class GroupSiteActionProvider implements ActionProviderInterface
     {
         $ret = [];
 
-        $account  = $this->currentUser;
-        $access   = $this->siteManager->getAccess();
-
         /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
         $site = $item->getSite();
 
-        if ($access->userCanOverview($account, $site)) {
+        if ($this->isGranted($site, $this->currentUser, Permission::OVERVIEW)) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $site->getId(), null, 'eye-open', -10);
         }
 

@@ -16,6 +16,7 @@ use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\Filter\EntityLinkFilter;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\ACL\Permission;
 
 require_once __DIR__ . '/ucms_contrib.field.inc';
 
@@ -306,7 +307,7 @@ function ucms_contrib_menu_node_access_global() {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_publish(NodeInterface $node) {
-  return ucms_site_node_access_helper()->userCanPublish(\Drupal::currentUser(), $node);
+  return sf_acl_is_granted($node, Permission::PUBLISH);
 }
 
 /**
@@ -334,15 +335,14 @@ function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
-  return ucms_site_node_access_helper()->userCanLock(\Drupal::currentUser(), $node);
+  return sf_acl_is_granted($node, Permission::LOCK);
 }
 
 /**
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
-  $account = \Drupal::currentUser();
-  return ucms_site_node_access_helper()->userCanDuplicate($account, $node) || $node->access(Access::OP_UPDATE, $account);
+  return sf_acl_is_granted($node, [Permission::EDIT, Permission::PUBLISH]);
 }
 
 /**
@@ -544,7 +544,7 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     ];
   }
 
-  $add_and_publish = !$node->id() && (!$access || $access->userCanPublish($user, $node));
+  $add_and_publish = !$node->id() && (!$access || sf_acl_is_granted($node, Permission::PUBLISH));
   if ($add_and_publish) {
     $submit = $form['actions']['submit']['#submit'];
     array_unshift($submit, 'ucms_contrib_form_node_form_submit_publish');

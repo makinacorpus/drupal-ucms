@@ -8,9 +8,9 @@
 
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Harm\Form\NodeMakeGroup;
 use MakinaCorpus\Ucms\Harm\Form\NodeUnmakeGroup;
+use MakinaCorpus\Ucms\Site\Access;
 
 /**
  * Implements hook_menu().
@@ -60,7 +60,7 @@ function ucms_harm_menu() {
  * Menu access helper.
  */
 function ucms_harm_menu_node_access_group(NodeInterface $node) {
-  return ucms_site_node_access_helper()->userCanPromoteToGroup(\Drupal::currentUser(), $node);
+  sf_acl_is_granted($node, Access::ACL_PERM_CONTENT_PROMOTE_GROUP);
 }
 
 /**

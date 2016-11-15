@@ -1,13 +1,18 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\NodeAccess;
+namespace MakinaCorpus\Ucms\Site\ACL;
 
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Collector\EntryCollectorInterface;
+use MakinaCorpus\ACL\Collector\EntryListBuilderInterface;
+use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
+use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
+use MakinaCorpus\ACL\Manager;
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessSubscriber as NodeAccessCache;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
@@ -16,92 +21,27 @@ use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * Uses the abstraction provided by the sf_dic module to collect node access
- * grants and user grants, so benefit from the generic method it provides
- * to intersect those at runtime.
- */
-final class NodeAccessEventSubscriber implements EventSubscriberInterface
+final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollectorInterface, EventSubscriberInterface
 {
-    /**
-     * Grants for anonymous users
-     */
-    const REALM_PUBLIC = 'ucms_public';
-
-    /**
-     * This is for technical administrators only
-     */
-    const REALM_GOD = 'god_mode';
-
-    /**
-     * Grants for local webmasters
-     */
-    const REALM_SITE_WEBMASTER = 'ucms_site';
-
-    /**
-     * Grants for site members that cannot edit content
-     */
-    const REALM_SITE_READONLY = 'ucms_site_ro';
-
-    /**
-     * Grants for local contributors
-     */
-    const REALM_READONLY = 'ucms_site_all_ro';
-
-    /**
-     * Grants for other sites
-     */
-    const REALM_OTHER = 'ucms_site_other';
-
-    /**
-     * Grants for people accessing the dashboard
-     */
-    const REALM_GLOBAL_READONLY = 'ucms_global_ro';
-
-    /**
-     * Grants for global content
-     */
-    const REALM_GLOBAL = 'ucms_global';
-
-    /**
-     * Grants for group content
-     */
-    const REALM_GROUP_READONLY = 'ucms_group_ro';
-
-    /**
-     * Grants for group content
-     */
-    const REALM_GROUP = 'ucms_group';
-
-    /**
-     * Default group identifier for grants where it does not make sense
-     */
-    const GID_DEFAULT = 0;
-
-    /**
-     * Default priority for grants
-     */
-    const PRIORITY_DEFAULT = 1;
-
-    /**
-     * @var SiteManager
-     */
+    private $entityManager;
     private $siteManager;
-
-    /**
-     * @var NodeAccessCache
-     */
-    private $nodeAccessCache;
 
     /**
      * Default constructor
      *
      * @param SiteManager $manager
      */
-    public function __construct(SiteManager $siteManager, NodeAccessCache $nodeAccessCache)
+    public function __construct(EntityManager $entityManager, SiteManager $siteManager)
     {
+        $this->entityManager = $entityManager;
         $this->siteManager = $siteManager;
-        $this->nodeAccessCache = $nodeAccessCache;
+
+        // Easy and ulgy way (@todo fix me, do this at compile time)
+        \Drupal::service('acl.permission_map')->addPermissions([
+            Access::ACL_PERM_CONTENT_PROMOTE_GROUP => 32768,
+            Access::ACL_PERM_SITE_EDIT_TREE => 65536,
+            Access::ACL_PERM_SITE_MANAGE_USERS => 131072,
+        ]);
     }
 
     /**
@@ -112,12 +52,6 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         return [
             NodeAccessEvent::EVENT_NODE_ACCESS => [
                 ['onNodeAccess', 128],
-            ],
-            NodeAccessRecordEvent::EVENT_NODE_ACCESS_RECORD => [
-                ['onNodeAccessRecord', 128],
-            ],
-            NodeAccessGrantEvent::EVENT_NODE_ACCESS_GRANT => [
-                ['onNodeAccessGrant', 128],
             ],
             SiteEvents::EVENT_INIT => [
                 ['onSiteInit', 0],
@@ -135,8 +69,6 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     {
         drupal_static_reset('node_access');
         drupal_static_reset('user_access');
-
-        $this->nodeAccessCache->resetCache();
     }
 
     /**
@@ -156,45 +88,85 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Collect node grants event listener
+     * {@inheritdoc}
      */
-    public function onNodeAccessRecord(NodeAccessRecordEvent $event)
+    public function supports($type, $permission)
     {
-        $node = $event->getNode();
+        return 'node' === $type /* && in_array($permission, [Permission::VIEW, Permission::UPDATE, Permission::DELETE]) */;
+    }
+
+    /**
+     * Collect entries for resource
+     *
+     * @param EntryListBuilderInterface $entries
+     */
+    public function collectEntryLists(EntryListBuilderInterface $builder)
+    {
+        $resource = $builder->getResource();
+
+        $node = $builder->getObject();
+        if (!$node instanceof NodeInterface) {
+            $node = $this->entityManager->getStorage('node')->load($resource->getId());
+            if (!$node) {
+                return;
+            }
+        }
 
         // This is where it gets complicated.
+        $readOnly     = [Permission::VIEW];
+        $readWrite    = [Permission::VIEW, Permission::UPDATE, Permission::DELETE];
+        $readUpdate   = [Permission::VIEW, Permission::UPDATE];
         $isGlobal     = $node->is_global;
         $isGroup      = $node->is_group;
         $isNotLocal   = $isGlobal || $isGroup;
         $isPublished  = $node->isPublished();
 
         // People with "view all" permissions should view it
-        $event->add(self::REALM_READONLY, self::GID_DEFAULT);
-        $event->add(self::REALM_GOD, self::GID_DEFAULT);
+        $builder->add(Access::PROFILE_READONLY, Access::ID_ALL, $readOnly);
+        $builder->add(Access::PROFILE_GOD, Access::ID_ALL, $readWrite);
 
         // This handles two grants in one:
         //  - Webmasters can browse along published content of other sites
         //  - People with global repository access may see this content
 
         if ($isGroup) {
-            $event->add(self::REALM_GROUP, self::GID_DEFAULT, true, true, true);
+            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, $readWrite);
+            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, [Permission::LOCK, Permission::PUBLISH]);
+            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, Access::ACL_PERM_CONTENT_PROMOTE_GROUP);
             if ($isPublished) { // Avoid data volume exploding
-                $event->add(self::REALM_GROUP_READONLY, self::GID_DEFAULT);
+                $builder->add(Access::PROFILE_GROUP_READONLY, Access::ID_ALL, $readOnly);
             }
         } else if ($isGlobal) {
-            $event->add(self::REALM_GLOBAL, self::GID_DEFAULT, true, true, true);
+            $builder->add(Access::PROFILE_GLOBAL, Access::ID_ALL, $readWrite);
+            $builder->add(Access::PROFILE_GLOBAL, Access::ID_ALL, [Permission::LOCK, Permission::PUBLISH]);
+            // Beware that when the node is global, only "group" profile can
+            // promote it to group, so no, this is a not typo error:
+            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, Access::ACL_PERM_CONTENT_PROMOTE_GROUP);
             if ($isPublished) { // Avoid data volume exploding
-                $event->add(self::REALM_GLOBAL_READONLY, self::GID_DEFAULT);
+                $builder->add(Access::PROFILE_GLOBAL_READONLY, Access::ID_ALL, $readOnly);
             }
         }
 
-        // This allows other webmasters to see other site content, but please
-        // beware that it drops out the site's state from the equation, there
-        // is no easy way of doing this except by rewriting all site content
-        // node access rights on each site status change, and that's sadly a
-        // no-go.
-        if (!$isNotLocal && $isPublished) {
-            $event->add(self::REALM_OTHER, self::GID_DEFAULT);
+        if (!$isNotLocal) {
+
+            // This allows other webmasters to see other site content, but please
+            // beware that it drops out the site's state from the equation, there
+            // is no easy way of doing this except by rewriting all site content
+            // node access rights on each site status change, and that's sadly a
+            // no-go.
+            if ($isPublished) {
+                $builder->add(Access::PROFILE_OTHER, Access::ID_ALL, $readOnly);
+            }
+
+            // Every local node must be updateable for their authors, especially
+            // for the contributor case, which don't have any other rights.
+            $builder->add(Access::PROFILE_SITE_CONTRIBUTOR, $node->getOwnerId(), $readUpdate);
+
+            // Node is neither global nor local, then it's webmasters that can
+            // only do the following things over it
+            if ($node->site_id) {
+                $builder->add(Access::PROFILE_SITE_WEBMASTER, $node->site_id, [Permission::LOCK]);
+            }
         }
 
         // Inject an entry for each site, even when the node is a global node, this
@@ -210,7 +182,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 // as long as it exists, not may show up anytime when the site
                 // state is on
                 if ($isPublished) {
-                    $event->add(self::REALM_PUBLIC, $siteId);
+                    $builder->add(Access::PROFILE_PUBLIC, $siteId, $readOnly);
                 }
 
                 // This grand allows multiple business use cases:
@@ -219,57 +191,66 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 //   - user is a webmaster on a readonly site
                 if ($isNotLocal) {
                     if ($isPublished) {
-                        $event->add(self::REALM_SITE_READONLY, $siteId);
-                        $event->add(self::REALM_SITE_WEBMASTER, $siteId);
+                        $builder->add(Access::PROFILE_SITE_READONLY, $siteId, $readOnly);
+                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, $readOnly);
                     }
                 } else  {
-                    $event->add(self::REALM_SITE_READONLY, $siteId);
+                    $builder->add(Access::PROFILE_SITE_READONLY, $siteId, $readOnly);
                     if ($siteId === $node->site_id) { // Avoid data volume exploding
-                        $event->add(self::REALM_SITE_WEBMASTER, $siteId, true, true);
+                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, $readWrite);
+                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, Permission::PUBLISH);
                     }
                 }
             }
         }
     }
 
-    private function buildNodeAccessGrant(AccountInterface $account, $op)
+    /**
+     * Collect entries for resource
+     *
+     * @param ProfileSetBuilder $builder
+     */
+    public function collectProfiles(ProfileSetBuilder $builder)
     {
-        $ret = [];
+        $account = $builder->getObject();
+        if (!$account instanceof AccountInterface) {
+            return;
+        }
 
         // This should always be true anyway.
         if (($site = $this->siteManager->getContext()) && SiteState::ON === $site->getState()) {
-            $ret[self::REALM_PUBLIC][] = $site->getId();
+            $builder->add(Access::PROFILE_PUBLIC, $site->getId());
         }
 
         // Shortcut for anonymous users, or users with no specific roles
         if ($account->isAnonymous()) {
-            return $ret;
+            return;
         }
 
         // God mode.
         if ($account->hasPermission(Access::PERM_CONTENT_GOD)) {
-            $ret[self::REALM_GOD][] = self::GID_DEFAULT;
-            return $ret;
+            $builder->add(Access::PROFILE_GOD, Access::ID_ALL);
+            return;
         }
 
         if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
-            $ret[self::REALM_GLOBAL][] = self::GID_DEFAULT;
+            $builder->add(Access::PROFILE_GLOBAL, Access::ID_ALL);
         }
         if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
-            $ret[self::REALM_GROUP][] = self::GID_DEFAULT;
+            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL);
         }
 
         if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
-            $ret[self::REALM_READONLY][] = self::GID_DEFAULT;
+            $builder->add(Access::PROFILE_READONLY, Access::ID_ALL);
         } else {
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL) || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
-                $ret[self::REALM_GLOBAL_READONLY][] = self::GID_DEFAULT;
+                $builder->add(Access::PROFILE_GLOBAL_READONLY, Access::ID_ALL);
             }
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP) || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
-                $ret[self::REALM_GROUP_READONLY][] = self::GID_DEFAULT;
+                $builder->add(Access::PROFILE_GROUP_READONLY, Access::ID_ALL);
             }
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
-                $ret[self::REALM_OTHER][] = self::GID_DEFAULT;
+                $builder->add(Access::PROFILE_OTHER, Access::ID_ALL);
             }
         }
 
@@ -284,15 +265,15 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                     case SiteState::ON:
                     case SiteState::OFF:
                     case SiteState::INIT:
-                        $ret[self::REALM_SITE_WEBMASTER][] = $siteId;
+                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId);
                         // It is required to set the readonly realm as well since there
                         // might be content referenced in site, but not belonging to it,
                         // which means they would then be invisibile to the webmasters.
-                        $ret[self::REALM_SITE_READONLY][] = $siteId;
+                        $builder->add(Access::PROFILE_SITE_READONLY, $siteId);
                         break;
 
                     case SiteState::ARCHIVE:
-                        $ret[self::REALM_SITE_READONLY][] = $siteId;
+                        $builder->add(Access::PROFILE_SITE_READONLY, $siteId);
                         break;
                 }
             } else {
@@ -300,25 +281,10 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
                     case SiteState::ON:
                     case SiteState::OFF:
-                        $ret[self::REALM_SITE_READONLY][] = $siteId;
+                        $builder->add(Access::PROFILE_SITE_READONLY, $siteId);
+                        $builder->add(Access::PROFILE_SITE_CONTRIBUTOR, $account->id());
                         break;
                 }
-            }
-        }
-
-        return $ret;
-    }
-
-    /**
-     * Collect user grants method
-     */
-    public function onNodeAccessGrant(NodeAccessGrantEvent $event)
-    {
-        $ret = $this->buildNodeAccessGrant($event->getAccount(), $event->getOperation());
-
-        foreach ($ret as $realm => $gids) {
-            foreach ($gids as $gid) {
-                $event->add($realm, $gid);
             }
         }
     }
@@ -365,6 +331,16 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 foreach ($access->getUserRoles($account) as $grant) {
                     if (in_array($grant->getSiteId(), $node->ucms_sites)) {
                         return $event->allow();
+                    }
+                }
+            }
+        }
+
+        if (Permission::CLONE === $op) {
+            if ($node->ucms_sites) {
+                foreach (array_intersect_key($access->getUserRoles($account), array_flip($node->ucms_sites)) as $role) {
+                    if ($role->getRole() == Access::ROLE_WEBMASTER) {
+                        return true;
                     }
                 }
             }

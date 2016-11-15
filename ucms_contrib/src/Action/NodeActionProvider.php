@@ -12,11 +12,11 @@ use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
+use MakinaCorpus\ACL\Permission;
 
-class NodeActionProvider implements ActionProviderInterface
+class NodeActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
     /**
      * @var NodeAccessService
      */
@@ -71,10 +71,10 @@ class NodeActionProvider implements ActionProviderInterface
         //      - if can edit, just display "edit" and NOT "copy on edit"
         //      - if can not edit, don't care, the user has "use on my site" do NOT "copy on edit"
 
-        if ($item->access(Access::OP_UPDATE, $this->account) || $this->access->userCanDuplicate($this->account, $item)) {
+        if ($this->isGranted($item, $this->account, [Permission::UPDATE, Permission::CLONE])) {
             $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/duplicate', 'dialog', 'pencil', -100, false, !$this->siteManager->hasContext(), false, 'edit');
 
-            if ($this->access->userCanPublish($this->account, $item)) {
+            if ($this->isGranted($item, $this->account, Permission::PUBLISH)) {
                 if ($item->status) {
                     $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', -50, false, true, false, 'edit');
                 } else {

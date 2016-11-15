@@ -5,12 +5,13 @@ namespace MakinaCorpus\Ucms\Contrib\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class SiteActionProvider implements ActionProviderInterface
+class SiteActionProvider extends AbstractActionProvider
 {
     use StringTranslationTrait;
 
@@ -36,10 +37,9 @@ class SiteActionProvider implements ActionProviderInterface
         /** @var $item Site */
         $ret = [];
 
-        $account  = $this->currentUser;
-        $access   = $this->manager->getAccess();
+        $account = $this->currentUser;
 
-        if ($access->userCanOverview($account, $item)) {
+        if ($this->isGranted($item, $account, Permission::OVERVIEW)) {
             list($path, $options) = $this->manager->getUrlInSite($item->getId(), 'admin/dashboard/content');
             $ret[] = new Action($this->t("Content in site"), $path, $options, 'file', 100, false, false, false, 'content');
             list($path, $options) = $this->manager->getUrlInSite($item->getId(), 'admin/dashboard/media');

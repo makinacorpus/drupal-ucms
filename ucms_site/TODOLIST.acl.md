@@ -1,0 +1,5 @@
+
+# Site ACL
+
+userCanEditTree|userCanManage|userCanManageWebmasters|userCanOverview|userCanView
+userCanView|userCanEdit|userCanDelete

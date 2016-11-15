@@ -6,12 +6,15 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Node;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
+
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 trait NodeAccessTestTrait
 {
@@ -61,13 +64,13 @@ trait NodeAccessTestTrait
     }
 
     /**
-     * Get node access helper
+     * Get authorization checker
      *
-     * @return NodeAccessService
+     * @return AuthorizationCheckerInterface
      */
-    protected function getNodeAccessSubscriber()
+    protected function getAuthorizationChecker()
     {
-        return $this->getDrupalContainer()->get('ucms_site.node_access.subscriber');
+        return \Drupal::service('security.authorization_checker');
     }
 
     /**
@@ -132,6 +135,27 @@ trait NodeAccessTestTrait
         $node = new Node();
         $node->nid = $this->nidSeq++;
         $node->status = (int)(bool)$status;
+
+        // Create a sensible title on which you can break or watch using your
+        // favorite debugger, go go XDebug!
+        $title = [];
+        if ($status) {
+            $title[] = 'published';
+        }
+        if ($isGlobal) {
+            $title[] = 'global';
+        }
+        if ($isGroup) {
+            $title[] = 'group';
+        }
+        if (!$isClonable) {
+            $title[] = 'locked';
+        }
+        if ($site) {
+            $title[] = 'on ' . $site;
+        }
+        $node->title = implode(' ', $title);
+
         $node->ucms_sites = [];
         if ($site) {
             $site = $this->getSite($site);
@@ -141,19 +165,24 @@ trait NodeAccessTestTrait
             $node->site_id = null;
             $node->ucms_sites = [];
         }
+
         $node->is_global = (int)(bool)$isGlobal;
         $node->is_group = (int)(bool)$isGroup;
         $node->is_clonable = (int)(bool)$isClonable;
+
         foreach ($otherSites as $label) {
             $node->ucms_sites[] = $this->getSite($label)->id;
         }
         $node->ucms_sites = array_unique($node->ucms_sites);
+
         if ($other) {
             foreach ($other as $key => $value) {
                 $node->{$key} = $value;
             }
         }
+
         $node->group_id = $this->getDefaultGroupId();
+
         return $node;
     }
 
@@ -238,10 +267,11 @@ trait NodeAccessTestTrait
             ->assertSame(
                 true,
                 $this
-                    ->getNodeHelper()
-                    ->userCanView(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::VIEW,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
                 sprintf("%s can see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
@@ -258,10 +288,11 @@ trait NodeAccessTestTrait
             ->assertSame(
                 false,
                 $this
-                    ->getNodeHelper()
-                    ->userCanView(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::VIEW,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
                 sprintf("%s can not see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
@@ -311,10 +342,11 @@ trait NodeAccessTestTrait
             ->assertSame(
                 true,
                 $this
-                    ->getNodeHelper()
-                    ->userCanEdit(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::UPDATE,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
                 sprintf("%s can edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
@@ -331,10 +363,11 @@ trait NodeAccessTestTrait
             ->assertSame(
                 false,
                 $this
-                    ->getNodeHelper()
-                    ->userCanEdit(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::UPDATE,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
                 sprintf("%s can not edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
@@ -431,38 +464,19 @@ trait NodeAccessTestTrait
         return $this;
     }
 
-    protected function canDoReally($op, $label)
+    protected function canDoReally($permission, $label)
     {
         $node = $this->getNode($label);
         $account = $this->contextualAccount;
 
-        switch ($op) {
-
-            case 'clone':
-                $success = $this->getNodeHelper()->userCanDuplicate($account, $node);
-                break;
-
-            case 'lock':
-                $success = $this->getNodeHelper()->userCanLock($account, $node);
-                break;
-
-            case 'promote':
-                $success = $this->getNodeHelper()->userCanPromoteToGroup($account, $node);
-                break;
-
-            case 'reference':
-                $success = $this->getNodeHelper()->userCanReference($account, $node);
-                break;
-
-            case 'dereference':
-                $success = $this->getNodeHelper()->userCanDereference($account, $node);
-                break;
-
-            default:
-                throw new \InvalidArgumentException("\$op can be only one of 'lock', 'clone', 'promote', 'reference'");
-        }
-
-        return $success;
+        return $this
+            ->getAuthorizationChecker()
+            ->isGranted(
+                $permission,
+                $node,
+                $account
+            )
+        ;
     }
 
     protected function canDo($op, $label)

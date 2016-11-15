@@ -3,17 +3,16 @@
 namespace MakinaCorpus\Ucms\Site\Action;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class SiteActionProvider implements ActionProviderInterface
+class SiteActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
     /**
      * @var SiteManager
      */
@@ -52,9 +51,14 @@ class SiteActionProvider implements ActionProviderInterface
         $account  = $this->currentUser;
         $access   = $this->manager->getAccess();
 
-        if ($access->userCanOverview($account, $item)) {
+        $canOverview    = $this->isGranted($item, $account, Permission::OVERVIEW);
+        $canView        = $this->isGranted($item, $account, Permission::VIEW);
+        $canManage      = $this->isGranted($item, $account, Permission::UPDATE);
+        $canManageUsers = $this->isGranted($item, $account, Access::ACL_PERM_SITE_MANAGE_USERS);
+
+        if ($canOverview) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
-            if ($access->userCanView($account, $item)) {
+            if ($canView) {
                 if ($this->ssoEnabled) {
                     $uri = url('sso/goto/' . $item->id);
                 } else {
@@ -62,7 +66,7 @@ class SiteActionProvider implements ActionProviderInterface
                 }
                 $ret[] = new Action($this->t("Go to site"), $uri, null, 'share-alt', -5, true);
             }
-            if ($access->userCanManage($account, $item)) {
+            if ($canManage) {
                 $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -2, false, true);
             }
             $ret[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->id . '/log', null, 'list-alt', -1, false);
@@ -75,7 +79,7 @@ class SiteActionProvider implements ActionProviderInterface
         }
 
         // @todo Consider delete as a state
-        if ($access->userCanManageWebmasters($account, $item)) {
+        if ($canManageUsers) {
             // 100 as priority is enough to be number of states there is ($i)
             $ret[] = new Action($this->t("Add existing user"), 'admin/dashboard/site/' . $item->id . '/webmaster/add-existing', 'dialog', 'user', 100, false, true, false, 'user');
             $ret[] = new Action($this->t("Create new user"), 'admin/dashboard/site/' . $item->id . '/webmaster/add-new', null, 'user', 101, false, true, false, 'user');

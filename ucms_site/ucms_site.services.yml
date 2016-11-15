@@ -11,6 +11,13 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Site\SiteAccessService
     arguments: ["@database", "@event_dispatcher"]
+  ucms_site.acl.site_collector:
+    class: MakinaCorpus\Ucms\Site\ACL\SiteEntryCollector
+    arguments: ["@ucms_site.manager"]
+    tags:
+      - {name: acl.entry_collector}
+      - {name: acl.profile_collector}
+      - {name: acl.resource_converter}
 
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:
@@ -21,6 +28,13 @@ services:
   ucms_site.node_access_helper:
     class: MakinaCorpus\Ucms\Site\NodeAccessService
     arguments: ["@ucms_site.manager"]
+  ucms_site.acl.node_collector:
+    class: MakinaCorpus\Ucms\Site\ACL\NodeEntryCollector
+    arguments: ["@entity.manager", "@ucms_site.manager"]
+    tags:
+      - {name: acl.entry_collector}
+      - {name: acl.profile_collector}
+      - {name: event_subscriber}
 
   # Node manager, handles node attach/detach/clone to sites
   ucms_site.node_manager:
@@ -76,12 +90,6 @@ services:
     class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventListener
     arguments: ["@ucms_site.node_manager"]
     tags: [{name: event_listener, event: "menu:tree"}]
-
-  ucms_site.node_access.subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Site\NodeAccess\NodeAccessEventSubscriber
-    arguments: ["@ucms_site.manager", "@sf_dic.node_access.subscriber"]
-    tags: [{ name: event_subscriber }]
 
   ucms_site.admin_subscriber:
     public: true
