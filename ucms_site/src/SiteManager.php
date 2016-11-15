@@ -255,10 +255,21 @@ class SiteManager
         $realpath = 'sso/goto/' . $site;
 
         if (isset($_GET['destination'])) {
-            $options['query']['form_redirect'] = $_GET['destination'];
+            $destination = $_GET['destination'];
             unset($_GET['destination']);
-        } else if (isset($options['query']['destination'])) {
-            $options['query']['form_redirect'] = $options['query']['destination'];
+        }
+        else if (isset($options['query']['destination'])) {
+            $destination = $options['query']['destination'];
+        }
+
+        if (isset($destination)) {
+            if ($this->hasContext()) {
+                // Not supposed to happen.
+                $contextId = $this->getContext()->getId();
+                $options['query']['form_redirect'] = $contextId . '|' . $destination;
+            } else {
+                $options['query']['form_redirect'] = 'master|' . $destination;
+            }
         }
 
         $options['query']['destination'] = $path;
