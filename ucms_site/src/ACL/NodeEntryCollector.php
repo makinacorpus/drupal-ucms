@@ -349,12 +349,6 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             return $event->ignore();
         }
 
-        // Very specific use case where a site contributor from the ACL cannot
-        // actually edit its own content, where he should be able to:
-//         if (Permission::) {
-
-//         }
-
         // For some reasons, and because we don't care about the 'update'
         // operation in listings, we are going to hardcode a few behaviors
         // in this method, which won't affect various listings
