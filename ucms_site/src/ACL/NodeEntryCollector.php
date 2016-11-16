@@ -183,11 +183,12 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             // no-go.
             if ($isPublished) {
                 $builder->add(Access::PROFILE_OTHER, Access::ID_ALL, $readOnly);
+
             }
 
             // Every local node must be updateable for their authors, especially
             // for the contributor case, which don't have any other rights.
-            $builder->add(Access::PROFILE_SITE_CONTRIBUTOR, $node->getOwnerId(), $readUpdate);
+            $builder->add(Access::PROFILE_OWNER, $node->getOwnerId(), $readUpdate);
 
             // Node is neither global nor local, then it's webmasters that can
             // only do the following things over it
@@ -309,7 +310,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
                     case SiteState::ON:
                     case SiteState::OFF:
                         $builder->add(Access::PROFILE_SITE_READONLY, $siteId);
-                        $builder->add(Access::PROFILE_SITE_CONTRIBUTOR, $account->id());
+                        $builder->add(Access::PROFILE_OWNER, $account->id());
                         break;
                 }
             }

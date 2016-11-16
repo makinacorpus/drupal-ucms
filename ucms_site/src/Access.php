@@ -25,7 +25,7 @@ final class Access
     /**
      * Grants for local webmasters
      */
-    const PROFILE_SITE_CONTRIBUTOR = 'site_contributor';
+    const PROFILE_OWNER = 'owner';
 
     /**
      * Grants for site members that cannot edit content
@@ -40,7 +40,7 @@ final class Access
     /**
      * Grants for other sites
      */
-    const PROFILE_OTHER = 'webmaster';
+    const PROFILE_OTHER = 'other';
 
     /**
      * Grants for people accessing the dashboard
