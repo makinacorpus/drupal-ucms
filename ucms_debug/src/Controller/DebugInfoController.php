@@ -4,11 +4,11 @@ namespace MakinaCorpus\Ucms\Debug\Controller;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Debug\Access;
-use Drupal\node\NodeInterface;
 
 class DebugInfoController extends Controller
 {
@@ -16,25 +16,13 @@ class DebugInfoController extends Controller
     use StringTranslationTrait;
 
     /**
-     * @return AccountInterface
-     */
-    private function getCurrentUser()
-    {
-        return $this->get('current_user');
-    }
-
-    /**
      * Debug screen that displays user grants.
      */
     public function viewAccountGrantsAction(AccountInterface $account)
     {
-        $user = $this->getCurrentUser();
-        if (!$user->hasPermission(Access::PERM_ACCESS_DEBUG)) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted(Access::PERM_ACCESS_DEBUG);
 
         $table = $this->createAdminTable('user_grants');
-
         $table->addHeader($this->t("Grants"), 'basic');
 
         foreach (node_access_grants('view', $account) as $realm => $gids) {
@@ -73,13 +61,9 @@ class DebugInfoController extends Controller
      */
     public function viewNodeGrantsAction(NodeInterface $node)
     {
-        $user = $this->getCurrentUser();
-        if (!$user->hasPermission(Access::PERM_ACCESS_DEBUG)) {
-            throw $this->createAccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted(Access::PERM_ACCESS_DEBUG);
 
         $table = $this->createAdminTable('node_grants');
-
         $table->addHeader($this->t("Grants"), 'basic');
 
         foreach ($this->nodeAcquireGrants($node) as $grant) {

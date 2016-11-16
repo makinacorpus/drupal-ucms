@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\Controller;
 
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Drupal\Sf\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,7 +19,7 @@ class NodeController extends Controller
 
     public function viewAction(Request $request, NodeInterface $node)
     {
-        if (!$node->access('view')) {
+        if (!$this->isGranted(Permission::VIEW, $node)) {
             throw $this->createAccessDeniedException();
         }
 

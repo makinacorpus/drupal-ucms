@@ -57,6 +57,7 @@
  *  TODO: remove the js retry loop?
  */
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Site\Site;
 
 /**
@@ -128,7 +129,7 @@ function ucms_sso_origin_get() {
   if (!empty($_SERVER['HTTP_ORIGIN'])) {
     $manager = ucms_site_manager();
     $site = $manager->getStorage()->findByHostname($_SERVER['HTTP_ORIGIN']);
-    if ($site && $manager->getAccess()->userCanView(\Drupal::currentUser(), $site)) {
+    if ($site && sf_acl_is_granted(Permission::VIEW, $site)) {
       return $site->http_host;
     }
   }

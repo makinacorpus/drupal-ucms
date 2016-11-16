@@ -7,6 +7,8 @@
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
+
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
 use MakinaCorpus\Ucms\Site\Site;
 
@@ -102,7 +104,7 @@ function ucms_extranet_access_registration_validation(Site $site, UserInterface 
   $siteAccessService = ucms_site_manager()->getAccess();
 
   return (
-    $siteAccessService->userCanManage($user, $site) &&
+    sf_acl_is_granted(Permission::OVERVIEW, $site, $user) &&
     $siteAccessService->userHasRole($account, $site, ExtranetAccess::ROLE_EXTRANET_MEMBER) &&
     $account->getLastAccessedTime() == 0 &&
     $account->isBlocked()

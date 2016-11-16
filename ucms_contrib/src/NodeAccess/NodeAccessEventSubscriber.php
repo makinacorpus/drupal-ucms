@@ -7,6 +7,7 @@ use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -63,7 +64,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         $op       = $event->getOperation();
         $access   = $this->siteManager->getAccess();
 
-        if (Access::OP_CREATE === $op) {
+        if ('create' === $op) {
 
             // Drupal gave a wrong input, this may happen
             if (!is_string($node) && !$node instanceof NodeInterface) {
@@ -102,7 +103,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                     return $event->allow();
                 }
             }
-        } else if (Access::OP_DELETE === $op) {
+        } else if (Permission::DELETE === $op) {
             // Locked types
             if (in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
                 return $event->deny();

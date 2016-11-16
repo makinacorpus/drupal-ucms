@@ -6,6 +6,7 @@ use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\ACL\Permission;
 
 class NodeAccessTest extends AbstractDrupalTest
 {
@@ -69,7 +70,7 @@ class NodeAccessTest extends AbstractDrupalTest
     public function testGlobalAdminRights()
     {
         $this
-            ->whenIAm([Access::PERM_CONTENT_VIEW_ALL])
+            ->whenIAm([Access::PERM_CONTENT_VIEW_ALL], [], 'user that can see all')
 
                 ->canSeeAll()
                 ->canEditNone()
@@ -80,12 +81,12 @@ class NodeAccessTest extends AbstractDrupalTest
                 // you cannot.
                 // THIS IS TRUE FOR ALL OTHER TEST CASES. NO NEED TO REPEAT
                 // THOSE TESTS IN EACH SITE CONTEXT, IT WONT CHANGE A THING!
-                ->canDoNone('clone')
-                ->canDoNone('lock')
-                ->canDoNone('promote')
+                ->canDoNone(Permission::CLONE)
+                ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
 
-            ->whenIAm([Access::PERM_CONTENT_MANAGE_GLOBAL])
+            ->whenIAm([Access::PERM_CONTENT_MANAGE_GLOBAL], [], 'global contributor')
 
                 ->canSeeOnly([
                     'global_locked_published',
@@ -108,8 +109,8 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_global_unpublished',
                 ])
                 ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
-                ->canDoNone('clone')
-                ->canDoOnly('lock', [
+                ->canDoNone(Permission::CLONE)
+                ->canDoOnly(Permission::LOCK, [
                     'global_locked_published',
                     'global_locked_unpublished',
                     'global_published',
@@ -119,10 +120,10 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_global_published',
                     'in_on_global_unpublished',
                 ])
-                ->canDoNone('promote')
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
 
-           ->whenIAm([Access::PERM_CONTENT_MANAGE_GROUP])
+           ->whenIAm([Access::PERM_CONTENT_MANAGE_GROUP], [], 'group administrator')
 
                 ->canSeeOnly([
                     'group_locked_published',
@@ -145,8 +146,8 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_group_unpublished',
                 ])
                 ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
-                ->canDoNone('clone')
-                ->canDoOnly('lock', [
+                ->canDoNone(Permission::CLONE)
+                ->canDoOnly(Permission::LOCK, [
                     'group_locked_published',
                     'group_locked_unpublished',
                     'group_published',
@@ -156,7 +157,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_group_published',
                     'in_on_group_unpublished',
                 ])
-                ->canDoOnly('promote', [
+                ->canDoOnly(Access::ACL_PERM_CONTENT_PROMOTE_GROUP, [
                     'global_locked_published',
                     'global_locked_unpublished',
                     'global_published',
@@ -176,7 +177,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 //->canDoNone('reference')
 
-            ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL])
+            ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL], [], 'user that can see global content')
 
                 ->canSeeOnly([
                     'global_locked_published',
@@ -186,12 +187,12 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canEditNone()
                 ->canCreateNone()
-                ->canDoNone('clone')
-                ->canDoNone('lock')
-                ->canDoNone('promote')
+                ->canDoNone(Permission::CLONE)
+                ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
 
-            ->whenIAm([Access::PERM_CONTENT_VIEW_GROUP])
+            ->whenIAm([Access::PERM_CONTENT_VIEW_GROUP], [], 'user that can see group content')
 
                 ->canSeeOnly([
                     'group_locked_published',
@@ -201,9 +202,9 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canEditNone()
                 ->canCreateNone()
-                ->canDoNone('clone')
-                ->canDoNone('lock')
-                ->canDoNone('promote')
+                ->canDoNone(Permission::CLONE)
+                ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
     }
@@ -212,31 +213,31 @@ class NodeAccessTest extends AbstractDrupalTest
     {
         $this->getSiteManager()->setContext($this->getSite('init'));
         $this
-            ->whenIAm([], ['init' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['init' => Access::ROLE_WEBMASTER], 'init webmaster')
                 ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
         ;
 
         $this->getSiteManager()->setContext($this->getSite('on'));
         $this
-            ->whenIAm([], ['on' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['on' => Access::ROLE_WEBMASTER], 'on webmaster')
                 ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
         ;
 
         $this->getSiteManager()->setContext($this->getSite('off'));
         $this
-            ->whenIAm([], ['off' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['off' => Access::ROLE_WEBMASTER], 'off webmaster')
                 ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
         ;
 
         $this->getSiteManager()->setContext($this->getSite('archive'));
         $this
-            ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER], 'archive webmaster')
                 ->canCreateNone()
         ;
 
         $this->getSiteManager()->setContext($this->getSite('pending'));
         $this
-            ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER], 'pending webmaster')
                 ->canCreateNone()
         ;
     }
@@ -244,7 +245,7 @@ class NodeAccessTest extends AbstractDrupalTest
     public function testWebmasterRights()
     {
         $this
-            ->whenIAm([], ['on' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['on' => Access::ROLE_WEBMASTER], 'on webmaster')
                 ->canSeeOnly([
                     'site_on_published',
                     'site_on_unpublished',
@@ -263,20 +264,20 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canCreateNone()
                 // FIXME: I need some referenced nodes
-                // ->canDoOnly('clone')
-                ->canDoOnly('lock', [
+                // ->canDoOnly(Permission::CLONE)
+                ->canDoOnly(Permission::LOCK, [
                     'site_on_published',
                     'site_on_unpublished',
                     'site_on_locked_published',
                     'site_on_locked_unpublished',
                 ])
-                ->canDoNone('promote')
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
 
         // Another site's webmaster may only see his content
         $this
-            ->whenIAm([], ['off' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['off' => Access::ROLE_WEBMASTER], 'off webmaster')
 
                 ->canSeeOnly([
                     'site_off_published',
@@ -288,12 +289,12 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canCreateNone()
                 // FIXME: I need some referenced nodes
-                // ->canDoOnly('clone')
-                ->canDoOnly('lock', [
+                // ->canDoOnly(Permission::CLONE)
+                ->canDoOnly(Permission::LOCK, [
                     'site_off_published',
                     'site_off_unpublished',
                 ])
-                ->canDoNone('promote')
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
 
@@ -305,7 +306,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 Access::PERM_CONTENT_VIEW_GLOBAL,
                 Access::PERM_CONTENT_VIEW_GROUP,
                 Access::PERM_CONTENT_VIEW_OTHER
-            ], ['off' => Access::ROLE_WEBMASTER])
+            ], ['off' => Access::ROLE_WEBMASTER], 'off webmaster that can see global and group content')
                 ->canSeeOnly([
                     'site_on_published',
                     'site_on_locked_published',
@@ -334,17 +335,17 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canCreateNone()
                 // FIXME: I need some referenced nodes
-                // ->canDoOnly('clone')
-                ->canDoOnly('lock', [
+                // ->canDoOnly(Permission::CLONE)
+                ->canDoOnly(Permission::LOCK, [
                     'site_off_published',
                     'site_off_unpublished',
                 ])
-                ->canDoNone('promote')
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
 
         $this
-            ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['archive' => Access::ROLE_WEBMASTER], 'archive webmaster')
 
                 ->canSeeOnly([
                     'site_archive_published',
@@ -353,25 +354,25 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canEditNone()
                 ->canCreateNone()
                 // FIXME: I need some referenced nodes
-                // ->canDoOnly('clone')
-                ->canDoOnly('lock', [
-                    'site_archive_published',
-                    'site_archive_unpublished',
+                // ->canDoOnly(Permission::CLONE)
+                ->canDoOnly(Permission::LOCK, [
+                    //'site_archive_published',
+                    //'site_archive_unpublished',
                 ])
-                ->canDoNone('promote')
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
 
-            ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER])
+            ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER], 'pending webmaster')
 
                 ->canSeeNone()
                 ->canEditNone()
                 ->canCreateNone()
                 // FIXME: I need some referenced nodes
-                // ->canDoOnly('clone')
+                // ->canDoOnly(Permission::CLONE)
                 // FIXME: Node site target should be checked for
                 // [init, off, on] states upon those methods
-                // ->canDoNone('lock')
-                ->canDoNone('promote')
+                // ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
     }
@@ -379,7 +380,7 @@ class NodeAccessTest extends AbstractDrupalTest
     public function testContributorRights()
     {
         $this
-            ->whenIAm([], ['on' => Access::ROLE_CONTRIB])
+            ->whenIAm([], ['on' => Access::ROLE_CONTRIB], 'on contributor')
 
                 ->canSeeOnly([
                     'site_on_published',
@@ -393,12 +394,12 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canEditNone()
                 ->canCreateNone()
-                ->canDoNone('clone')
-                ->canDoNone('lock')
-                ->canDoNone('promote')
+                ->canDoNone(Permission::CLONE)
+                ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
 
-            ->whenIAm([], ['off' => Access::ROLE_CONTRIB])
+            ->whenIAm([], ['off' => Access::ROLE_CONTRIB], 'off contributor')
 
                 ->canSeeOnly([
                     'site_off_published',
@@ -406,13 +407,13 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canEditNone()
 
-            ->whenIAm([], ['archive' => Access::ROLE_CONTRIB])
+            ->whenIAm([], ['archive' => Access::ROLE_CONTRIB], 'archive contributor')
 
                 ->canSeeNone()
                 ->canEditNone()
                 ->canCreateNone()
 
-            ->whenIAm([], ['pending' => Access::ROLE_CONTRIB])
+            ->whenIAm([], ['pending' => Access::ROLE_CONTRIB], 'pending contributor')
 
                 ->canSeeNone()
                 ->canEditNone()
@@ -422,7 +423,7 @@ class NodeAccessTest extends AbstractDrupalTest
 
     public function testContributorCanEditHisOwnContent()
     {
-        $this->whenIAm([], ['off' => Access::ROLE_CONTRIB]);
+        $this->whenIAm([], ['off' => Access::ROLE_CONTRIB], 'off contributor');
         $contibutor = $this->contextualAccount;
 
         // Site the user is into with content belonging to him
@@ -453,9 +454,9 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canEditNone()
                 ->canCreateNone()
-                ->canDoNone('clone')
-                ->canDoNone('lock')
-                ->canDoNone('promote')
+                ->canDoNone(Permission::CLONE)
+                ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
 
@@ -466,9 +467,9 @@ class NodeAccessTest extends AbstractDrupalTest
             ->canSeeNone()
             ->canEditNone()
             ->canCreateNone()
-            ->canDoNone('clone')
-            ->canDoNone('lock')
-            ->canDoNone('promote')
+            ->canDoNone(Permission::CLONE)
+            ->canDoNone(Permission::LOCK)
+            ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
             //->canDoNone('reference')
         ;
 
@@ -480,7 +481,7 @@ class NodeAccessTest extends AbstractDrupalTest
         $this->getSiteManager()->setContext($this->getSite('on'));
 
         $this
-            ->whenIAm([])
+            ->whenIAm([], [], 'authenticated with no rights')
                 ->canSeeOnly([
                     'site_on_published',
                     'site_on_locked_published',
@@ -491,9 +492,9 @@ class NodeAccessTest extends AbstractDrupalTest
                 ])
                 ->canEditNone()
                 ->canCreateNone()
-                ->canDoNone('clone')
-                ->canDoNone('lock')
-                ->canDoNone('promote')
+                ->canDoNone(Permission::CLONE)
+                ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
 
@@ -505,13 +506,13 @@ class NodeAccessTest extends AbstractDrupalTest
         $this->getSiteManager()->setContext($this->getSite('off'));
 
         $this
-            ->whenIAm([])
+            ->whenIAm([], [], 'authenticated with no rights')
                 ->canSeeNone()
                 ->canEditNone()
                 ->canCreateNone()
-                ->canDoNone('clone')
-                ->canDoNone('lock')
-                ->canDoNone('promote')
+                ->canDoNone(Permission::CLONE)
+                ->canDoNone(Permission::LOCK)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
                 //->canDoNone('reference')
         ;
 

@@ -6,28 +6,20 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Copy a node on a site
  */
 class NodeDuplicate extends FormBase
 {
-    /**
-     * @var NodeManager
-     */
-    private $nodeManager;
-
-    /**
-     * @var SiteManager
-     */
-    private $siteManager;
-
     /**
      * {@inheritDoc}
      */
@@ -36,9 +28,13 @@ class NodeDuplicate extends FormBase
         return new static(
             $container->get('ucms_site.node_manager'),
             $container->get('ucms_site.manager'),
-            $container->get('module_handler')
+            $container->get('security.authorization_checker')
         );
     }
+
+    private $nodeManager;
+    private $siteManager;
+    private $authorizationChecker;
 
     /**
      * Constructor.
@@ -47,10 +43,11 @@ class NodeDuplicate extends FormBase
      * @param SiteManager $siteManager
      * @param ModuleHandlerInterface $moduleHandler
      */
-    public function __construct(NodeManager $nodeManager, SiteManager $siteManager, ModuleHandlerInterface $moduleHandler)
+    public function __construct(NodeManager $nodeManager, SiteManager $siteManager, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->nodeManager = $nodeManager;
         $this->siteManager = $siteManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -70,8 +67,8 @@ class NodeDuplicate extends FormBase
         $candidates   = $this->nodeManager->findSiteCandidatesForCloning($node, $this->currentUser()->id());
         $siteContext  = $this->siteManager->hasContext() ? $this->siteManager->getContext() : null;
         $isNodeInSite = $siteContext && ($node->site_id == $siteContext->getId());
-        $canEditAll   = $node->access(Access::OP_UPDATE, $account);
-        $canDuplicate = $candidates && !$isNodeInSite && $this->nodeManager->getAccessService()->userCanDuplicate($account, $node);
+        $canEditAll   = $node->access(Permission::UPDATE, $account);
+        $canDuplicate = $candidates && !$isNodeInSite && $this->authorizationChecker->isGranted(Permission::CLONE, $node, $account);
 
         $form_state->setTemporaryValue('node', $node);
 

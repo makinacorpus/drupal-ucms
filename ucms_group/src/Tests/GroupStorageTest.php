@@ -11,12 +11,11 @@ class GroupStorageTest extends AbstractDrupalTest
 
     protected function setUp()
     {
-        parent::setUp();
-
         if (!$this->moduleExists('ucms_group')) {
             $this->markTestSkipped("You must enable the ucms_group module to run this test");
-            return;
         }
+
+        parent::setUp();
     }
 
     public function testBasicStorage()

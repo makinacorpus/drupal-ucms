@@ -6,12 +6,15 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Node;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
+
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 trait NodeAccessTestTrait
 {
@@ -61,13 +64,13 @@ trait NodeAccessTestTrait
     }
 
     /**
-     * Get node access helper
+     * Get authorization checker
      *
-     * @return NodeAccessService
+     * @return AuthorizationCheckerInterface
      */
-    protected function getNodeAccessSubscriber()
+    protected function getAuthorizationChecker()
     {
-        return $this->getDrupalContainer()->get('ucms_site.node_access.subscriber');
+        return \Drupal::service('security.authorization_checker');
     }
 
     /**
@@ -87,17 +90,19 @@ trait NodeAccessTestTrait
      *   Permission string list
      * @param string[] $siteMap
      *   Keys are site labels, values are Access::ROLE_* constants
+     * @param string $name
+     *   Account name for debugging purpose
      *
      * @return AccountInterface
      */
-    protected function createDrupalUser($permissionList = [], $siteMap = [])
+    protected function createDrupalUser($permissionList = [], $siteMap = [], $name = null)
     {
         // Ahah, 2 hours debugging. No matter how hard you attempt to implement
         // node_access API, if the user has no 'access content' permission, bye
         // bye custom implementations and hooks!
         $permissionList[] = 'access content';
 
-        $account = parent::createDrupalUser($permissionList);
+        $account = parent::createDrupalUser($permissionList, $name);
 
         if ($siteMap) {
             foreach ($siteMap as $label => $role) {
@@ -130,6 +135,27 @@ trait NodeAccessTestTrait
         $node = new Node();
         $node->nid = $this->nidSeq++;
         $node->status = (int)(bool)$status;
+
+        // Create a sensible title on which you can break or watch using your
+        // favorite debugger, go go XDebug!
+        $title = [];
+        if ($status) {
+            $title[] = 'published';
+        }
+        if ($isGlobal) {
+            $title[] = 'global';
+        }
+        if ($isGroup) {
+            $title[] = 'group';
+        }
+        if (!$isClonable) {
+            $title[] = 'locked';
+        }
+        if ($site) {
+            $title[] = 'on ' . $site;
+        }
+        $node->title = implode(' ', $title);
+
         $node->ucms_sites = [];
         if ($site) {
             $site = $this->getSite($site);
@@ -139,19 +165,29 @@ trait NodeAccessTestTrait
             $node->site_id = null;
             $node->ucms_sites = [];
         }
+
         $node->is_global = (int)(bool)$isGlobal;
         $node->is_group = (int)(bool)$isGroup;
         $node->is_clonable = (int)(bool)$isClonable;
+
         foreach ($otherSites as $label) {
             $node->ucms_sites[] = $this->getSite($label)->id;
         }
         $node->ucms_sites = array_unique($node->ucms_sites);
+
         if ($other) {
             foreach ($other as $key => $value) {
                 $node->{$key} = $value;
             }
         }
-        $node->group_id = $this->getDefaultGroupId();
+
+        // property_exists() cannot be replaced with isset() or empty() because
+        // callers might explicitely set it to 0 or null; since we don't call
+        // node_object_preprare() the property will no be set.
+        if (!property_exists($node, 'group_id')) {
+            $node->group_id = $this->getDefaultGroupId();
+        }
+
         return $node;
     }
 
@@ -201,9 +237,9 @@ trait NodeAccessTestTrait
         throw new \InvalidArgumentException(sprintf("Please be serious while writing tests, %s is not a mocked node", $label));
     }
 
-    protected function whenIAm($permissionList = [], $siteMap = [])
+    protected function whenIAm($permissionList = [], $siteMap = [], $name = null)
     {
-        $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap);
+        $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap, $name);
 
         $this->getSiteManager()->getAccess()->resetCache();
 
@@ -219,6 +255,15 @@ trait NodeAccessTestTrait
         return $this;
     }
 
+    protected function whoIAm()
+    {
+        if (!$this->contextualAccount || $this->contextualAccount->isAnonymous()) {
+            return 'Anonymous';
+        } else {
+            return $this->contextualAccount->getAccountName();
+        }
+    }
+
     protected function canSee($label)
     {
         $site = $this->getSiteManager()->getContext();
@@ -227,12 +272,13 @@ trait NodeAccessTestTrait
             ->assertSame(
                 true,
                 $this
-                    ->getNodeHelper()
-                    ->userCanView(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::VIEW,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
-                sprintf("Can see %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -247,12 +293,13 @@ trait NodeAccessTestTrait
             ->assertSame(
                 false,
                 $this
-                    ->getNodeHelper()
-                    ->userCanView(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::VIEW,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
-                sprintf("Can not see %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can not see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -300,12 +347,13 @@ trait NodeAccessTestTrait
             ->assertSame(
                 true,
                 $this
-                    ->getNodeHelper()
-                    ->userCanEdit(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::UPDATE,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
-                sprintf("Can edit %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -320,12 +368,13 @@ trait NodeAccessTestTrait
             ->assertSame(
                 false,
                 $this
-                    ->getNodeHelper()
-                    ->userCanEdit(
-                        $this->contextualAccount,
-                        $this->getNode($label)
+                    ->getAuthorizationChecker()
+                    ->isGranted(
+                        Permission::UPDATE,
+                        $this->getNode($label),
+                        $this->contextualAccount
                     ),
-                sprintf("Can not edit %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can not edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -369,7 +418,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $label
                     ),
-                sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can NOT create %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -389,7 +438,7 @@ trait NodeAccessTestTrait
                         $this->contextualAccount,
                         $label
                     ),
-                sprintf("Cannot create %s on site %s", $label, $site ? SiteState::getList()[$site->state] : '<None>' )
+                sprintf("%s can NOT create %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>' )
             )
         ;
 
@@ -420,45 +469,26 @@ trait NodeAccessTestTrait
         return $this;
     }
 
-    protected function canDoReally($op, $label)
+    protected function canDoReally($permission, $label)
     {
         $node = $this->getNode($label);
         $account = $this->contextualAccount;
 
-        switch ($op) {
-
-            case 'clone':
-                $success = $this->getNodeHelper()->userCanDuplicate($account, $node);
-                break;
-
-            case 'lock':
-                $success = $this->getNodeHelper()->userCanLock($account, $node);
-                break;
-
-            case 'promote':
-                $success = $this->getNodeHelper()->userCanPromoteToGroup($account, $node);
-                break;
-
-            case 'reference':
-                $success = $this->getNodeHelper()->userCanReference($account, $node);
-                break;
-
-            case 'dereference':
-                $success = $this->getNodeHelper()->userCanDereference($account, $node);
-                break;
-
-            default:
-                throw new \InvalidArgumentException("\$op can be only one of 'lock', 'clone', 'promote', 'reference'");
-        }
-
-        return $success;
+        return $this
+            ->getAuthorizationChecker()
+            ->isGranted(
+                $permission,
+                $node,
+                $account
+            )
+        ;
     }
 
     protected function canDo($op, $label)
     {
         $site = $this->getSiteManager()->getContext();
 
-        $this->assertTrue($this->canDoReally($op, $label), sprintf("Can %s %s on site %s", $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+        $this->assertTrue($this->canDoReally($op, $label), sprintf("%s can %s %s on site %s", $this->whoIAm(), $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
 
         return $this;
     }
@@ -467,7 +497,7 @@ trait NodeAccessTestTrait
     {
         $site = $this->getSiteManager()->getContext();
 
-        $this->assertFalse($this->canDoReally($op, $label), sprintf("Cannot %s %s on site %s", $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+        $this->assertFalse($this->canDoReally($op, $label), sprintf("%s can NOT %s %s on site %s", $this->whoIAm(), $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
 
         return $this;
     }

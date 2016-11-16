@@ -8,24 +8,74 @@ namespace MakinaCorpus\Ucms\Site;
 final class Access
 {
     /**
-     * View operation
+     * Grants for anonymous users
      */
-    const OP_VIEW = 'view';
+    const PROFILE_PUBLIC = 'ucms_public';
 
     /**
-     * Update operation
+     * This is for technical administrators only
      */
-    const OP_CREATE = 'create';
+    const PROFILE_GOD = 'god_mode';
 
     /**
-     * Update operation
+     * Grants for local webmasters
      */
-    const OP_UPDATE = 'update';
+    const PROFILE_SITE_WEBMASTER = 'site_webmaster';
 
     /**
-     * Delete operation
+     * Grants for local webmasters
      */
-    const OP_DELETE = 'delete';
+    const PROFILE_OWNER = 'owner';
+
+    /**
+     * Grants for site members that cannot edit content
+     */
+    const PROFILE_SITE_READONLY = 'site_ro';
+
+    /**
+     * Grants for local contributors
+     */
+    const PROFILE_READONLY = 'site_all_ro';
+
+    /**
+     * Grants for other sites
+     */
+    const PROFILE_OTHER = 'other';
+
+    /**
+     * Grants for people accessing the dashboard
+     */
+    const PROFILE_GLOBAL_READONLY = 'content_global_ro';
+
+    /**
+     * Grants for global content
+     */
+    const PROFILE_GLOBAL = 'content_global_editor';
+
+    /**
+     * Grants for group content
+     */
+    const PROFILE_GROUP_READONLY = 'content_group_ro';
+
+    /**
+     * Grants for group content
+     */
+    const PROFILE_GROUP = 'content_group_editor';
+
+    /**
+     * Users that can manage all sites
+     */
+    const PROFILE_SITE_ADMIN = 'site_admin_editor';
+
+    /**
+     * Users that can see all sites
+     */
+    const PROFILE_SITE_ADMIN_RO = 'site_admin_ro';
+
+    /**
+     * Default group identifier for grants where it does not make sense
+     */
+    const ID_ALL = 0;
 
     /**
      * God mode for content, do anything with anything
@@ -106,6 +156,21 @@ final class Access
      * View all sites no matter the state permission
      */
     const PERM_SITE_VIEW_ALL = 'site view all';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_CONTENT_PROMOTE_GROUP = 'promote to group';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_SITE_MANAGE_USERS = 'manage users';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_SITE_EDIT_TREE = 'edit tree';
 
     /**
      * Site relative role: none

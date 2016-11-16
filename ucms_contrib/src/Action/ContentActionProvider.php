@@ -1,27 +1,21 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 
 /**
  * Class ContentActionProvider
  * @package MakinaCorpus\Ucms\Contrib\Action
  */
-class ContentActionProvider implements ActionProviderInterface
+class ContentActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
-
     /**
      * @var TypeHandler
      */

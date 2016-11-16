@@ -42,7 +42,7 @@ services:
     tags: [{ name: event_subscriber }]
   ucms_group.context_event_subscriber:
     public: true
-    class: MakinaCorpus\Ucms\Group\NodeAccess\GroupContextSubscriber
+    class: MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextSubscriber
     arguments: ["@ucms_site.manager", "@ucms_group.manager"]
     tags: [{ name: event_subscriber }]
   ucms_group.context_pane_subscriber:
@@ -55,6 +55,15 @@ services:
     class: MakinaCorpus\Ucms\Group\EventDispatcher\AdminEventSubscriber
     arguments: ["@ucms_group.manager"]
     tags: [{ name: event_subscriber }]
+
+  # Node ACL collector
+  ucms_group.acl.node_collector:
+    class: MakinaCorpus\Ucms\Group\ACL\NodeEntryCollector
+    arguments: ["@ucms_group.manager", "@entity.manager"]
+    tags:
+      # Those must run after the ucms_site node collector
+      - {name: acl.entry_collector, priority: -32}
+      - {name: acl.profile_collector, priority: -32}
 
   # Action processors and providers
   ucms_group.action.group_delete:

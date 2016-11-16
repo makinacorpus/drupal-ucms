@@ -2,12 +2,12 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -16,10 +16,8 @@ use MakinaCorpus\Ucms\Site\SiteManager;
  * The site module will add node actions, corresponding to reference
  * and cloning operations
  */
-class NodeActionProvider implements ActionProviderInterface
+class NodeActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
     private $siteManager;
     private $nodeAccess;
     private $currentUser;
@@ -64,7 +62,7 @@ class NodeActionProvider implements ActionProviderInterface
             $ret[] = new Action($this->t("Use on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
         }
 
-        if ($this->nodeAccess->userCanLock($account, $item)) {
+        if ($this->isGranted(Permission::LOCK, $item)) {
             if ($item->is_clonable) {
                 $ret[] = new Action($this->t("Lock"), 'node/' . $item->id() . '/lock', 'dialog', 'lock', 2, false, true, false, 'edit');
             } else {

@@ -11,9 +11,14 @@ use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareInterface;
+use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareTrait;
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
+
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Main access point for SEO information, all Drupal-7-ish stuff will be
@@ -25,8 +30,10 @@ use MakinaCorpus\Ucms\Site\SiteManager;
  *
  * @see \Drupal\node\Entity\NodeRouteProvider
  */
-class SeoService
+class SeoService implements AuthorizationAwareInterface
 {
+    use AuthorizationAwareTrait;
+
     /**
      * Manage SEO parameters on all content
      */
@@ -66,6 +73,11 @@ class SeoService
      * @var \DatabaseConnection
      */
     private $db;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
 
     /**
      * Default constructor
@@ -199,13 +211,11 @@ class SeoService
      */
     public function userCanEditSiteSeo(AccountInterface $account, Site $site)
     {
-        $access = $this->siteManager->getAccess();
-
         return
-            $access->userCanView($account, $site) && (
+            $this->isGranted(Permission::VIEW, $site, $account) && (
                 $account->hasPermission(SeoService::PERM_SEO_GLOBAL) ||
                 $account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) ||
-                $access->userIsWebmaster($account, $site)
+                $this->siteManager->getAccess()->userIsWebmaster($account, $site)
             )
         ;
     }

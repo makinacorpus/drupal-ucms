@@ -77,7 +77,8 @@
         "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/drupal-sf-dic" : "^3.0.32 <3.2",
         "makinacorpus/drush-progressbar" : "^1.0",
-        "makinacorpus/php-bloom" : "^2.0.1"
+        "makinacorpus/php-bloom" : "^2.0.1",
+        "symfony/security" : "3.*"
     },
     "suggests" : {
         "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs",

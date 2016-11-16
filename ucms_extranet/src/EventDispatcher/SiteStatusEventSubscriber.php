@@ -1,22 +1,23 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Extranet\EventDispatcher;
 
+use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareInterface;
+use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareTrait;
 use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-
-class SiteStatusEventSubscriber implements EventSubscriberInterface
+class SiteStatusEventSubscriber implements EventSubscriberInterface, AuthorizationAwareInterface
 {
+    use AuthorizationAwareTrait;
+
     /**
      * @var SiteManager
      */
     protected $manager;
-
 
     public static function getSubscribedEvents()
     {
@@ -27,7 +28,6 @@ class SiteStatusEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-
     /**
      * Constructor.
      *
@@ -37,7 +37,6 @@ class SiteStatusEventSubscriber implements EventSubscriberInterface
     {
         $this->manager = $manager;
     }
-
 
     public function onSiteStatusAlter(SiteStatusEvent $event)
     {
@@ -58,7 +57,7 @@ class SiteStatusEventSubscriber implements EventSubscriberInterface
 
         if (
             !drupal_match_path($event->getPath(), $valid_paths) &&
-            !$user->hasPermission(ExtranetAccess::PERM_EXTRANET_ACCESS_ALL) &&
+            !$this->isGranted(ExtranetAccess::PERM_EXTRANET_ACCESS_ALL) &&
             !$this->manager->getAccess()->userHasRole($user, $event->getSite())
         ) {
             $event->setStatus(MENU_ACCESS_DENIED);

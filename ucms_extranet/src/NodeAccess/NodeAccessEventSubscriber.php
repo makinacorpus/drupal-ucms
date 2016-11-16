@@ -3,8 +3,6 @@
 namespace MakinaCorpus\Ucms\Extranet\NodeAccess;
 
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
 use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -12,24 +10,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class NodeAccessEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            NodeAccessGrantEvent::EVENT_NODE_ACCESS_GRANT => [
-                ['onNodeAccessGrant', 0],
-            ],
-            NodeAccessRecordEvent::EVENT_NODE_ACCESS_RECORD => [
-                ['onNodeAccessRecord', 0],
-            ],
-            NodeAccessEvent::EVENT_NODE_ACCESS => [
-                ['onNodeAccess', 0],
-            ],
-        ];
-    }
-
     /**
      * @var SiteManager
      */
@@ -43,22 +23,6 @@ class NodeAccessEventSubscriber implements EventSubscriberInterface
     public function __construct(SiteManager $siteManager)
     {
         $this->siteManager = $siteManager;
-    }
-
-    /**
-     * Collect user grants
-     */
-    public function onNodeAccessGrant(NodeAccessGrantEvent $event)
-    {
-        // @todo
-    }
-
-    /**
-     * Collect node grants
-     */
-    public function onNodeAccessRecord(NodeAccessRecordEvent $event)
-    {
-        // @todo
     }
 
     public function onNodeAccess(NodeAccessEvent $event)

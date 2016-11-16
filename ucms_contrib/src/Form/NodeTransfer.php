@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteAccessRecord;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -102,6 +103,7 @@ class NodeTransfer extends FormBase
      */
     public function validateForm(array &$form, FormStateInterface $formState)
     {
+        $matches = [];
         if (preg_match('/\[(\d+)\]$/', $formState->getValue('user'), $matches) !== 1 || $matches[1] < 2) {
             $formState->setErrorByName('user', $this->t("The user could not be identified."));
         } else {
@@ -115,7 +117,7 @@ class NodeTransfer extends FormBase
                 // The node is a global: the new owner must
                 // have the good permissions (then we check the access to the
                 // update operation).
-                if (empty($node->site_id) && !$node->access(Access::OP_UPDATE, $account)) {
+                if (empty($node->site_id) && !$node->access(Permission::UPDATE, $account)) {
                     $formState->setErrorByName('user', $this->t("The user %user is not allowed to manage this type of content.", ['%user' => $account->getDisplayName()]));
                 } else {
                     $formState->setTemporaryValue('account', $account);
