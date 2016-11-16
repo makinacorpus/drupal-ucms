@@ -341,7 +341,7 @@ function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
-  return sf_acl_is_granted([Permission::EDIT, Permission::PUBLISH], $node);
+  return sf_acl_is_granted([Permission::UPDATE, Permission::PUBLISH], $node);
 }
 
 /**
