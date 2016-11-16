@@ -12,11 +12,10 @@
 
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
-use MakinaCorpus\Ucms\Contrib\Filter\EntityLinkFilter;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\ACL\Permission;
 
 require_once __DIR__ . '/ucms_contrib.field.inc';
 
@@ -328,7 +327,7 @@ function ucms_contrib_menu_node_access_flag(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_UNFLAG) && $node->access(Access::OP_UPDATE);
+  return user_access(Access::PERM_CONTENT_UNFLAG) && $node->access(Permission::UPDATE);
 }
 
 /**
@@ -352,7 +351,7 @@ function ucms_contrib_menu_node_access_transfer(NodeInterface $node) {
   $user = \Drupal::currentUser();
   return (
     $user->hasPermission(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) &&
-    $node->access(Access::OP_UPDATE, $user)
+    $node->access(Permission::UPDATE, $user)
   );
 }
 

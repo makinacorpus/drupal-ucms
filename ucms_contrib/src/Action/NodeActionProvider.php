@@ -3,17 +3,15 @@
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
-use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
-use MakinaCorpus\ACL\Permission;
 
 class NodeActionProvider extends AbstractActionProvider
 {
@@ -87,7 +85,7 @@ class NodeActionProvider extends AbstractActionProvider
 
         if (
             $this->account->hasPermission(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) &&
-            $item->access(Access::OP_UPDATE, $this->account)
+            $item->access(Permission::UPDATE, $this->account)
         ) {
             $ret[] = Action::create([
                 'title'     => $this->t("Transfer ownership"),
@@ -134,7 +132,7 @@ class NodeActionProvider extends AbstractActionProvider
 
         if (empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_FLAG)) {
             $ret[] = new Action($this->t("Flag as inappropriate"), 'node/' . $item->id() . '/report', 'dialog', 'flag', -10, false, true, false, 'mark');
-        } else if (!empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_UNFLAG) && $item->access(Access::OP_UPDATE))  {
+        } else if (!empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_UNFLAG) && $item->access(Permission::UPDATE))  {
             $ret[] = new Action($this->t("Un-flag as innappropriate"), 'node/' . $item->id() . '/unreport', 'dialog', 'flag', -10, false, true, false, 'mark');
         }
 

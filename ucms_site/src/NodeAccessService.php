@@ -5,6 +5,8 @@ namespace MakinaCorpus\Ucms\Site;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\ACL\Permission;
+
 /**
  * Drupal ACL builder for usage with node_access() related hooks
  */
@@ -58,7 +60,7 @@ final class NodeAccessService
      */
     public function userCanReference(AccountInterface $account, NodeInterface $node)
     {
-        return $node->access(Access::OP_VIEW, $account) && $this->manager->getAccess()->userIsWebmaster($account);
+        return $node->access(Permission::VIEW, $account) && $this->manager->getAccess()->userIsWebmaster($account);
     }
 
     /**
@@ -72,7 +74,7 @@ final class NodeAccessService
      */
     public function userCanDereference(AccountInterface $account, NodeInterface $node, Site $site)
     {
-        return $node->access(Access::OP_VIEW, $account) && in_array($site->getId(), $node->ucms_sites) && $this->manager->getAccess()->userIsWebmaster($account, $site);
+        return $node->access(Permission::VIEW, $account) && in_array($site->getId(), $node->ucms_sites) && $this->manager->getAccess()->userIsWebmaster($account, $site);
     }
 
     /**
@@ -85,7 +87,7 @@ final class NodeAccessService
      */
     public function userCanCreate(AccountInterface $account, $type)
     {
-        return node_access(Access::OP_CREATE, $type, $account);
+        return node_access('create', $type, $account);
     }
 
     /**

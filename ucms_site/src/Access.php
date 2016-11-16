@@ -8,26 +8,6 @@ namespace MakinaCorpus\Ucms\Site;
 final class Access
 {
     /**
-     * View operation
-     */
-    const OP_VIEW = 'view';
-
-    /**
-     * Update operation
-     */
-    const OP_CREATE = 'create';
-
-    /**
-     * Update operation
-     */
-    const OP_UPDATE = 'update';
-
-    /**
-     * Delete operation
-     */
-    const OP_DELETE = 'delete';
-
-    /**
      * Grants for anonymous users
      */
     const PROFILE_PUBLIC = 'ucms_public';

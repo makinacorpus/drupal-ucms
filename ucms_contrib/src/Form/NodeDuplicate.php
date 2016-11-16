@@ -67,7 +67,7 @@ class NodeDuplicate extends FormBase
         $candidates   = $this->nodeManager->findSiteCandidatesForCloning($node, $this->currentUser()->id());
         $siteContext  = $this->siteManager->hasContext() ? $this->siteManager->getContext() : null;
         $isNodeInSite = $siteContext && ($node->site_id == $siteContext->getId());
-        $canEditAll   = $node->access(Access::OP_UPDATE, $account);
+        $canEditAll   = $node->access(Permission::UPDATE, $account);
         $canDuplicate = $candidates && !$isNodeInSite && $this->authorizationChecker->isGranted(Permission::CLONE, $node, $account);
 
         $form_state->setTemporaryValue('node', $node);

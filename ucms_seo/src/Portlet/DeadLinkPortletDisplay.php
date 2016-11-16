@@ -5,10 +5,10 @@ namespace MakinaCorpus\Ucms\Seo\Portlet;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\NodeReference;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
-use MakinaCorpus\Ucms\Site\Access;
 
 class DeadLinkPortletDisplay extends AbstractDisplay
 {
@@ -53,7 +53,7 @@ class DeadLinkPortletDisplay extends AbstractDisplay
             $source = $nodeStorage->load($item->getSourceId());
             $target = $item->targetExists() ? $nodeStorage->load($item->getTargetId()) : null;
 
-            if ($source->access(Access::OP_UPDATE)) {
+            if ($source->access(Permission::UPDATE)) {
                 $actions = [
                     '#theme' => 'ucms_dashboard_actions',
                     '#actions' => [

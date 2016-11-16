@@ -14,6 +14,7 @@ use MakinaCorpus\ACL\Manager;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Group\GroupAccess;
 use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\ACL\NodeEntryCollector as BaseEntryCollector;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -38,7 +39,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
      */
     public function supports($type, $permission)
     {
-        return 'node' === $type /* && in_array($permission, [Permission::VIEW, Permission::UPDATE, Permission::DELETE]) */;
+        return 'node' === $type  && isset(BaseEntryCollector::getSupportedPermissions()[$permission]);
     }
 
     /**

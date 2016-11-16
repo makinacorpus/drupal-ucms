@@ -23,6 +23,25 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollectorInterface, EventSubscriberInterface
 {
+    /**
+     * Get supported permissions
+     *
+     * @return string[]
+     */
+    static public function getSupportedPermissions()
+    {
+        return [
+            Access::ACL_PERM_CONTENT_PROMOTE_GROUP => true,
+            Access::ACL_PERM_SITE_EDIT_TREE => true,
+            Access::ACL_PERM_SITE_MANAGE_USERS => true,
+            Permission::DELETE => true,
+            Permission::LOCK => true,
+            Permission::PUBLISH => true,
+            Permission::UPDATE => true,
+            Permission::VIEW => true,
+        ];
+    }
+
     private $entityManager;
     private $siteManager;
 
@@ -92,7 +111,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
      */
     public function supports($type, $permission)
     {
-        return 'node' === $type /* && in_array($permission, [Permission::VIEW, Permission::UPDATE, Permission::DELETE]) */;
+        return 'node' === $type && isset(self::getSupportedPermissions()[$permission]);
     }
 
     /**
@@ -312,7 +331,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         $op       = $event->getOperation();
         $access   = $this->siteManager->getAccess();
 
-        if (Access::OP_CREATE === $op) {
+        if ('create' === $op) {
 
             if ($this->siteManager->hasContext()) {
                 $site = $this->siteManager->getContext();
@@ -330,10 +349,16 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             return $event->ignore();
         }
 
+        // Very specific use case where a site contributor from the ACL cannot
+        // actually edit its own content, where he should be able to:
+//         if (Permission::) {
+
+//         }
+
         // For some reasons, and because we don't care about the 'update'
         // operation in listings, we are going to hardcode a few behaviors
         // in this method, which won't affect various listings
-        if ('update' === $op && $account->uid && $node->uid == $account->uid) {
+        if (Permission::UPDATE === $op && $account->uid && $node->uid == $account->uid) {
             if ($node->ucms_sites) {
                 // Site contributors can update their own content in sites
                 foreach ($access->getUserRoles($account) as $grant) {
