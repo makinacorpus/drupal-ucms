@@ -42,6 +42,14 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
     /**
      * {@inheritdoc}
      */
+    public function supportsType($type)
+    {
+        return 'site' === $type;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function convert($object)
     {
         if ($object instanceof Site) {

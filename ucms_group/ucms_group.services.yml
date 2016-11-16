@@ -57,12 +57,13 @@ services:
     tags: [{ name: event_subscriber }]
 
   # Node ACL collector
-  ucms_site.acl.node_collector:
-    class: MakinaCorpus\Ucms\Group\ACL\NodeACL
-    arguments: ["@entity.manager"]
+  ucms_group.acl.node_collector:
+    class: MakinaCorpus\Ucms\Group\ACL\NodeEntryCollector
+    arguments: ["@ucms_group.manager", "@entity.manager"]
     tags:
-      - {name: acl.entry_collector}
-      - {name: acl.profile_collector}
+      # Those must run after the ucms_site node collector
+      - {name: acl.entry_collector, priority: -32}
+      - {name: acl.profile_collector, priority: -32}
 
   # Action processors and providers
   ucms_group.action.group_delete:

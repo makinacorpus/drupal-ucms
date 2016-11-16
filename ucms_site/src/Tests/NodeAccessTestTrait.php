@@ -181,7 +181,12 @@ trait NodeAccessTestTrait
             }
         }
 
-        $node->group_id = $this->getDefaultGroupId();
+        // property_exists() cannot be replaced with isset() or empty() because
+        // callers might explicitely set it to 0 or null; since we don't call
+        // node_object_preprare() the property will no be set.
+        if (!property_exists($node, 'group_id')) {
+            $node->group_id = $this->getDefaultGroupId();
+        }
 
         return $node;
     }

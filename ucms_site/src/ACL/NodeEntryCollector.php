@@ -96,6 +96,14 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function supportsType($type)
+    {
+        return 'node' === $type;
+    }
+
+    /**
      * Collect entries for resource
      *
      * @param EntryListBuilderInterface $entries

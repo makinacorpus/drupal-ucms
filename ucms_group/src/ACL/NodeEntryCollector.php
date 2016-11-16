@@ -12,12 +12,14 @@ use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
 use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
 use MakinaCorpus\ACL\Manager;
 use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Group\GroupAccess;
+use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
-use MakinaCorpus\Ucms\Group\GroupAccess;
 
-final class NodeACL implements EntryCollectorInterface, ProfileCollectorInterface
+final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollectorInterface
 {
+    private $groupManager;
     private $entityManager;
 
     /**
@@ -25,8 +27,9 @@ final class NodeACL implements EntryCollectorInterface, ProfileCollectorInterfac
      *
      * @param SiteManager $manager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(GroupManager $groupManager, EntityManager $entityManager)
     {
+        $this->groupManager = $groupManager;
         $this->entityManager = $entityManager;
     }
 
@@ -35,7 +38,15 @@ final class NodeACL implements EntryCollectorInterface, ProfileCollectorInterfac
      */
     public function supports($type, $permission)
     {
-        return 'node' === $type && in_array($permission, [Permission::VIEW, Permission::UPDATE, Permission::DELETE]);
+        return 'node' === $type /* && in_array($permission, [Permission::VIEW, Permission::UPDATE, Permission::DELETE]) */;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsType($type)
+    {
+        return 'node' === $type;
     }
 
     /**
@@ -64,11 +75,6 @@ final class NodeACL implements EntryCollectorInterface, ProfileCollectorInterfac
     {
         $resource = $builder->getResource();
 
-        if ('node' !== $resource->getType()) {
-            // @todo warn or fail?
-            return;
-        }
-
         $node = $builder->getObject();
         if (!$node instanceof NodeInterface) {
             $node = $this->entityManager->getStorage('node')->load($resource->getId());
@@ -78,18 +84,18 @@ final class NodeACL implements EntryCollectorInterface, ProfileCollectorInterfac
         }
 
         $readOnly = [Permission::VIEW];
-        $alteredRealms = $this->getAlteredProfiles();
+        $alteredProfiles = $this->getAlteredProfiles();
 
         if (!empty($node->group_id)) {
 
-            // We will re-use the realms from 'ucms_site' but changing the default
+            // We will re-use the profiles from ucms_site but changing the default
             // gid to group identifiers instead, and make the whole isolation thing
             // completly transparent. Ghost nodes cannot be seen in global realms,
             // so we are just going to replace their realm identifiers using the
             // ones from the group it's in.
-            $builder->relocateProfile(Access::ID_ALL, $node->group_id, $alteredRealms);
+            $builder->relocateProfile(Access::ID_ALL, $node->group_id, $alteredProfiles);
 
-            if (!$node->is_ghost && $node->isPublished()) {
+            if (empty($node->is_ghost) && $node->isPublished()) {
 
                 // But sadly, non ghost nodes should be seen outside, so we
                 // actually do need to restore them rights, at least in
@@ -110,7 +116,7 @@ final class NodeACL implements EntryCollectorInterface, ProfileCollectorInterfac
                 }
             }
         } else {
-            foreach ($alteredRealms as $type) {
+            foreach ($alteredProfiles as $type) {
                 $builder->remove($type);
             }
 

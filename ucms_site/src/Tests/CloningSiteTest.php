@@ -19,6 +19,17 @@ class CloningSiteTest extends AbstractDrupalTest
      */
     private $layout;
 
+    private function findOrCreateMenu($name, $siteId)
+    {
+        $treeManager = $this->getTreeManager();
+
+        try {
+            return $treeManager->getMenuStorage()->load($name);
+        } catch (\InvalidArgumentException $e) {
+            return $treeManager->getMenuStorage()->create($name, ['site_id' => $siteId]);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -41,12 +52,14 @@ class CloningSiteTest extends AbstractDrupalTest
         $itemStorage  = $treeManager->getItemStorage();
 
         $menuName     = 'site-main-'.$this->sites['template']->getId();
-        $menuId       = $treeManager->getMenuStorage()->load($menuName)['id'];
+        $menu         = $this->findOrCreateMenu($menuName, $this->sites['template']->getId());
+        $menuId       = $menu['id'];
         $itemStorage->insert($menuId, $this->nodes['ref_homepage']->id(), $this->nodes['ref_homepage']->getTitle());
         $itemStorage->insert($menuId, $this->nodes['ref_news']->id(), $this->nodes['ref_news']->getTitle());
 
         $menuName     = 'site-main-'.$this->sites['not_relevant']->getId();
-        $menuId       = $treeManager->getMenuStorage()->load($menuName)['id'];
+        $menu         = $this->findOrCreateMenu($menuName, $this->sites['not_relevant']->getId());
+        $menuId       = $menu['id'];
         $itemStorage->insert($menuId, $this->nodes['ref_news']->id(), $this->nodes['ref_news']->getTitle());
 
         // Create some layout on it
