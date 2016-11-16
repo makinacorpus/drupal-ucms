@@ -69,10 +69,10 @@ class NodeActionProvider extends AbstractActionProvider
         //      - if can edit, just display "edit" and NOT "copy on edit"
         //      - if can not edit, don't care, the user has "use on my site" do NOT "copy on edit"
 
-        if ($this->isGranted($item, $this->account, [Permission::UPDATE, Permission::CLONE])) {
+        if ($this->isGranted([Permission::UPDATE, Permission::CLONE], $item)) {
             $ret[] = new Action($this->t("Edit"), 'node/' . $item->id() . '/duplicate', 'dialog', 'pencil', -100, false, !$this->siteManager->hasContext(), false, 'edit');
 
-            if ($this->isGranted($item, $this->account, Permission::PUBLISH)) {
+            if ($this->isGranted(Permission::PUBLISH, $item)) {
                 if ($item->status) {
                     $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', -50, false, true, false, 'edit');
                 } else {

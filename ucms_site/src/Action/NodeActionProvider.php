@@ -62,7 +62,7 @@ class NodeActionProvider extends AbstractActionProvider
             $ret[] = new Action($this->t("Use on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
         }
 
-        if ($this->isGranted($item, $account, Permission::LOCK)) {
+        if ($this->isGranted(Permission::LOCK, $item)) {
             if ($item->is_clonable) {
                 $ret[] = new Action($this->t("Lock"), 'node/' . $item->id() . '/lock', 'dialog', 'lock', 2, false, true, false, 'edit');
             } else {

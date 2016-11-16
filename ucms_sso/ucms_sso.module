@@ -129,7 +129,7 @@ function ucms_sso_origin_get() {
   if (!empty($_SERVER['HTTP_ORIGIN'])) {
     $manager = ucms_site_manager();
     $site = $manager->getStorage()->findByHostname($_SERVER['HTTP_ORIGIN']);
-    if ($site && sf_acl_is_granted($site, Permission::VIEW)) {
+    if ($site && sf_acl_is_granted(Permission::VIEW, $site)) {
       return $site->http_host;
     }
   }

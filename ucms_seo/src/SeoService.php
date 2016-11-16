@@ -212,7 +212,7 @@ class SeoService implements AuthorizationAwareInterface
     public function userCanEditSiteSeo(AccountInterface $account, Site $site)
     {
         return
-            $this->isGranted($site, $account, Permission::VIEW) && (
+            $this->isGranted(Permission::VIEW, $site, $account) && (
                 $account->hasPermission(SeoService::PERM_SEO_GLOBAL) ||
                 $account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) ||
                 $this->siteManager->getAccess()->userIsWebmaster($account, $site)

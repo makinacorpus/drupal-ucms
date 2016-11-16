@@ -452,7 +452,7 @@ function ucms_site_menu_access_view($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
   }
-  return sf_acl_is_granted($site, Permission::VIEW);
+  return sf_acl_is_granted(Permission::VIEW, $site);
 }
 
 /**
@@ -462,7 +462,7 @@ function ucms_site_menu_access_overview($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
   }
-  return sf_acl_is_granted($site, Permission::OVERVIEW);
+  return sf_acl_is_granted(Permission::OVERVIEW, $site);
 }
 
 /**
@@ -472,7 +472,7 @@ function ucms_site_menu_access_manage($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
   }
-  return sf_acl_is_granted($site, Permission::UPDATE);
+  return sf_acl_is_granted(Permission::UPDATE, $site);
 }
 
 /**
@@ -505,7 +505,7 @@ function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $web
 
   $manager = ucms_site_manager();
 
-  if (sf_acl_is_granted($site, Access::ACL_PERM_SITE_MANAGE_USERS)) {
+  if (sf_acl_is_granted(Access::ACL_PERM_SITE_MANAGE_USERS, $site)) {
     switch ($op) {
       case 'change-role':
         // Prevents to give a role to a user which doesn't belong to the site
@@ -654,7 +654,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     return; // No site in context, nothing to check for.
   }
 
-  if (SiteState::ON != $site->state && !sf_acl_is_granted($site, Permission::VIEW)) {
+  if (SiteState::ON != $site->state && !sf_acl_is_granted(Permission::VIEW, $site)) {
     $menu_site_status = MENU_SITE_OFFLINE;
     // State off means that the site is valid and up, but in maintainance mode,
     // case in which we should just set the maintainance mode and leave,

@@ -306,7 +306,7 @@ function ucms_contrib_menu_node_access_global() {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_publish(NodeInterface $node) {
-  return sf_acl_is_granted($node, Permission::PUBLISH);
+  return sf_acl_is_granted(Permission::PUBLISH, $node);
 }
 
 /**
@@ -334,14 +334,14 @@ function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
-  return sf_acl_is_granted($node, Permission::LOCK);
+  return sf_acl_is_granted(Permission::LOCK, $node);
 }
 
 /**
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
-  return sf_acl_is_granted($node, [Permission::EDIT, Permission::PUBLISH]);
+  return sf_acl_is_granted([Permission::EDIT, Permission::PUBLISH], $node);
 }
 
 /**
@@ -543,7 +543,7 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     ];
   }
 
-  $add_and_publish = !$node->id() && (!$access || sf_acl_is_granted($node, Permission::PUBLISH));
+  $add_and_publish = !$node->id() && (!$access || sf_acl_is_granted(Permission::PUBLISH, $node));
   if ($add_and_publish) {
     $submit = $form['actions']['submit']['#submit'];
     array_unshift($submit, 'ucms_contrib_form_node_form_submit_publish');

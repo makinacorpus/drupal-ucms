@@ -2,9 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Tree\Action;
 
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
@@ -13,15 +10,11 @@ use MakinaCorpus\Umenu\Menu;
 
 class TreeActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
     private $siteManager;
-    private $account;
 
-    public function __construct(SiteManager $siteManager, AccountInterface $account)
+    public function __construct(SiteManager $siteManager)
     {
         $this->siteManager = $siteManager;
-        $this->account = $account;
     }
 
     /**
@@ -37,7 +30,7 @@ class TreeActionProvider extends AbstractActionProvider
 
         if ($item->getSiteId()) {
             $site = $this->siteManager->getStorage()->findOne($item->getSiteId());
-            $canUpdate = $this->isGranted($site, $this->account, Access::ACL_PERM_SITE_EDIT_TREE);
+            $canUpdate = $this->isGranted(Access::ACL_PERM_SITE_EDIT_TREE, $site);
         }
 
         if ($canUpdate) {
