@@ -83,10 +83,7 @@ class NodeActionProvider extends AbstractActionProvider
             $ret[] = new Action($this->t("Revisions"), 'node/' . $item->id() . '/revisions', null, 'th-list', -10, false, false, false, 'view');
         }
 
-        if (
-            $this->account->hasPermission(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) &&
-            $item->access(Permission::UPDATE, $this->account)
-        ) {
+        if ($this->isGranted(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) && $this->isGranted(Permission::UPDATE, $item)) {
             $ret[] = Action::create([
                 'title'     => $this->t("Transfer ownership"),
                 'uri'       => 'node/' . $item->id() . '/transfer',
@@ -99,7 +96,7 @@ class NodeActionProvider extends AbstractActionProvider
             ]);
         }
 
-        if ($this->account->hasPermission('use favorites')) { // @todo constant or helper ?
+        if ($this->isGranted('use favorites')) { // @todo constant or helper ?
             $inCart = $this->cart->has($this->account->id(), $item->id());
             $ret[] = Action::create([
                 'title'     => $inCart ? $this->t("Remove from cart") : $this->t("Add to cart"),
@@ -113,11 +110,11 @@ class NodeActionProvider extends AbstractActionProvider
             ]);
         }
 
-        if (!$item->is_global && user_access(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
+        if (!$item->is_global && $this->isGranted(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
             $ret[] = new Action($this->t("Add to global contents"), 'node/' . $item->id() . '/make-global', 'dialog', 'globe', -30, false, true, false, 'edit');
         }
 
-        if ($this->account->hasPermission(Access::PERM_CONTENT_MANAGE_STARRED)) {
+        if ($this->isGranted(Access::PERM_CONTENT_MANAGE_STARRED)) {
             $ret[] = Action::create([
                 'title'     => $item->is_starred ? $this->t("Unstar") : $this->t("Star"),
                 'uri'       => 'node/' . $item->id() . ($item->is_starred ? '/unstar' : '/star'),
@@ -130,13 +127,13 @@ class NodeActionProvider extends AbstractActionProvider
             ]);
         }
 
-        if (empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_FLAG)) {
+        if (empty($item->is_flagged) && $this->isGranted(Access::PERM_CONTENT_FLAG)) {
             $ret[] = new Action($this->t("Flag as inappropriate"), 'node/' . $item->id() . '/report', 'dialog', 'flag', -10, false, true, false, 'mark');
-        } else if (!empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_UNFLAG) && $item->access(Permission::UPDATE))  {
+        } else if (!empty($item->is_flagged) && $this->isGranted(Access::PERM_CONTENT_UNFLAG) && $this->isGranted(Permission::UPDATE, $item))  {
             $ret[] = new Action($this->t("Un-flag as innappropriate"), 'node/' . $item->id() . '/unreport', 'dialog', 'flag', -10, false, true, false, 'mark');
         }
 
-        if ($item->access('delete')) {
+        if ($this->isGranted(Permission::DELETE, $item)) {
             $ret[] = new Action($this->t("Delete"), 'node/' . $item->id() . '/delete', 'dialog', 'trash', 500, false, true, false, 'delete');
         }
 

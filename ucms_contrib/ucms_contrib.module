@@ -299,7 +299,7 @@ function ucms_contrib_menu_node_access_add_to_site($type) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_global() {
-  return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL);
+  return sf_acl_is_granted(Access::PERM_CONTENT_MANAGE_GLOBAL);
 }
 
 /**
@@ -313,21 +313,21 @@ function ucms_contrib_menu_node_access_publish(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_star(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_MANAGE_STARRED);
+  return sf_acl_is_granted(Access::PERM_CONTENT_MANAGE_STARRED);
 }
 
 /**
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_flag(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_FLAG);
+  return sf_acl_is_granted(Access::PERM_CONTENT_FLAG);
 }
 
 /**
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_UNFLAG) && $node->access(Permission::UPDATE);
+  return sf_acl_is_granted(Access::PERM_CONTENT_UNFLAG) && sf_acl_is_granted(Permission::UPDATE, $node);
 }
 
 /**
@@ -348,11 +348,7 @@ function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_transfer(NodeInterface $node) {
-  $user = \Drupal::currentUser();
-  return (
-    $user->hasPermission(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) &&
-    $node->access(Permission::UPDATE, $user)
-  );
+  return sf_acl_is_granted(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) && sf_acl_is_granted(Permission::UPDATE, $node);
 }
 
 /**

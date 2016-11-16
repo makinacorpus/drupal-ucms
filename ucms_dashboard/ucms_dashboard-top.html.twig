@@ -6,7 +6,7 @@
       </button>
       <ul class="nav navbar-nav">
         <li>
-          {% if user.hasPermission('access administration pages') %}
+          {% if is_granted('access administration pages') %}
             <a class="navbar-brand" href="{{ url('admin') }}">
               <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
               <span class="sr-only">{{ "Administration"|t }}</span>
@@ -19,7 +19,7 @@
         </li>
         {% if user.authenticated %}
           <li>
-            {% if user.hasPermission('access administration pages') %}
+            {% if is_granted('access administration pages') %}
               <a href="{{ url('admin/dashboard') }}">
                 {{ "Welcome @user"|t({'@user':user.displayName}) }}
               </a>
