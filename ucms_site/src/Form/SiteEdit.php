@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Site\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -83,6 +84,18 @@ class SiteEdit extends FormBase
             '#description'    => $this->t("This will be the site's title for the backoffice."),
             '#maxlength'      => 255,
             '#required'       => true,
+        ];
+
+        $form['http_host'] = [
+            '#title'            => $this->t("Host name"),
+            '#type'             => 'textfield',
+            '#field_prefix'     => "http://",
+            '#default_value'    => $site->http_host,
+            '#attributes'       => ['placeholder' => "martin-blog.fr"],
+            '#description'      => $this->t("Type here the site URL"),
+            '#element_validate' => ['::validateHttpHost'],
+            '#required'         => true,
+            '#disabled'         => !user_access(Access::PERM_SITE_GOD),
         ];
 
         $form['replacement_of'] = [
@@ -175,6 +188,7 @@ class SiteEdit extends FormBase
         $site->title_admin    = $values['title_admin'];
         $site->http_redirects = $values['http_redirects'];
         $site->replacement_of = $values['replacement_of'];
+        $site->http_host      = $values['http_host'];
         $site->theme          = $values['theme'];
         $attributes = $form_state->getValue('attributes', []);
         foreach ($attributes as $name => $attribute) {
@@ -187,5 +201,33 @@ class SiteEdit extends FormBase
         $this->dispatcher->dispatch('site:update', new SiteEvent($site, $this->currentUser()->uid));
 
         $form_state->setRedirect('admin/dashboard/site/' . $site->id);
+    }
+
+    /**
+     * Validate HTTP host (must be unique and valid)
+     *
+     * @param $element
+     * @param \Drupal\Core\Form\FormStateInterface $form_state
+     */
+    public function validateHttpHost(&$element, FormStateInterface $form_state)
+    {
+        $value = $form_state->getValue($element['#parents']);
+
+        if (empty($value)) {
+            $form_state->setError($element, $this->t("Host name cannot be empty"));
+
+            return;
+        }
+
+        $existing = $this->manager->getStorage()->findByHostname($value);
+        if ($existing && $existing->getId() != $form_state->getTemporaryValue('site')->getId()) {
+            $form_state->setError($element, $this->t("Host name already exists"));
+        }
+
+        // Validate host name format
+        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@i';
+        if (!preg_match($regex, $value)) {
+            $form_state->setError($element, $this->t("Host name contains invalid characters or has a wrong format"));
+        }
     }
 }
