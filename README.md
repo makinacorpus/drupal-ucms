@@ -1,5 +1,6 @@
 # µCMS
 
-Site factory based upon a single Drupal instance and Elastic Search.
+Site factory based upon a single Drupal instance.
 
-You will need Elastic Search 2.2.x version, with the 'attachment' plugin enabled.
+This still needs to be document, it will be.
+
