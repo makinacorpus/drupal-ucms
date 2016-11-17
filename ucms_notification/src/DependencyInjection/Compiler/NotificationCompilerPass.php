@@ -27,5 +27,18 @@ class NotificationCompilerPass implements CompilerPassInterface
                 );
             }
         }
+
+        if ($container->hasDefinition('ucms_site.manager')) {
+            $taggedServices = $container->findTaggedServiceIds('ucms_site.manager');
+
+            foreach ($taggedServices as $id => $attributes) {
+                $definition = $container->getDefinition($id);
+
+                $definition->addMethodCall(
+                    'setSiteManager',
+                    [new Reference('ucms_site.manager')]
+                );
+            }
+        }
     }
 }

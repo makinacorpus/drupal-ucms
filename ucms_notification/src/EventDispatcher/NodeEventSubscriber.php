@@ -3,13 +3,11 @@
 namespace MakinaCorpus\Ucms\Notification\EventDispatcher;
 
 use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Notification\NotificationService;
-
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * This subscriber raises additional events on node changes, but does not
@@ -48,15 +46,32 @@ class NodeEventSubscriber implements EventSubscriberInterface
     private $dispatcher;
 
     /**
+     * @var \MakinaCorpus\Ucms\Site\SiteManager null
+     */
+    private $siteManager = null;
+
+    /**
      * Default constructor
      *
      * @param NotificationService $service
+     * @param AccountInterface $currentUser
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(NotificationService $service, AccountInterface $currentUser, EventDispatcherInterface $dispatcher)
     {
         $this->service = $service;
         $this->currentUser = $currentUser;
         $this->dispatcher = $dispatcher;
+    }
+
+    /**
+     * Set site manager
+     *
+     * @param \MakinaCorpus\Ucms\Site\SiteManager $siteManager
+     */
+    public function setSiteManager($siteManager)
+    {
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -75,6 +90,14 @@ class NodeEventSubscriber implements EventSubscriberInterface
         }
         if ($userId = $this->currentUser->id()) {
             $followers[] = $userId;
+        }
+
+        if ($this->siteManager) {
+            // Notify all webmasters for the site, useful for content modified by local contributors.
+            $site = $this->siteManager->getStorage()->findOne($node->site_id);
+            foreach ($this->siteManager->getAccess()->listWebmasters($site) as $webmaster) {
+                $followers[] = $webmaster->getUserId();
+            }
         }
 
         $this->service->getNotificationService()->subscribe('node', $node->id(), $followers);

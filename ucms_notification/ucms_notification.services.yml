@@ -130,7 +130,9 @@ services:
     public: true
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\NodeEventSubscriber
     arguments: ["@ucms_notification.service", "@current_user", "@event_dispatcher"]
-    tags: [{ name: event_subscriber }]
+    tags:
+      - { name: event_subscriber }
+      - { name: ucms_site.manager }
 
   # Alter channels depending on context event subscriber
   ucms_notification.notification_context_event_subscriber:
