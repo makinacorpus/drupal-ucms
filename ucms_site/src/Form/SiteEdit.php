@@ -112,7 +112,7 @@ class SiteEdit extends FormBase
             '#title'          => $this->t("Host name redirects"),
             '#type'           => 'textarea',
             '#default_value'  => $site->http_redirects,
-            '#attributes'     => ['placeholder' => "www.martray-optique.fr, martraylunettes.fr"],
+            '#attributes'     => ['placeholder' => "www.my-domain.com, example.fr"],
             '#description'    => $this->t("List of domain names that should redirect on this site, this is, you may write more than one URI or any useful textual information."),
             '#required'       => false,
             '#rows'           => 2,
