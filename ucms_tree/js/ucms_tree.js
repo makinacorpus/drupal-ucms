@@ -100,7 +100,7 @@
                 position: isAfter ? $li.index() + 1 : $li.index(),
                 menu: $element.parents('[data-menu]').data('menu'),
                 parent: $element.parents('li').data('mlid'),
-                destination: 'admin/dashboard/tree',
+                destination: settings.currentPath,
                 minidialog: 1
               };
               return '/node/add/here?' + jQuery.param(params);

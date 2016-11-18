@@ -369,14 +369,33 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
  * Implements hook_drupal_goto_alter().
  */
 function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
-  if (ucms_site_is_master()) {
-    $moduleHandler = \Drupal::service('module_handler');
+
+  $moduleHandler = \Drupal::service('module_handler');
+
+  if ($moduleHandler->moduleExists('ucms_sso')) {
     $matches = [];
-    if ($moduleHandler->moduleExists('ucms_sso') && preg_match('@^node/(\d+)(/view)?$@', $path, $matches)) {
+
+    if (ucms_site_is_master() && preg_match('@^node/(\d+)(/view)?$@', $path, $matches)) {
       $node = \Drupal::service('entity.manager')->getStorage('node')->load($matches[1]);
       if (!empty($node->site_id)) {
         $options['query'] = ['destination' => $path];
         $path = 'sso/goto/' . $node->site_id;
+      }
+    }
+
+    if (
+      !empty($path) &&
+      strpos($path, '://') === false &&
+      strpos($path, '|') !== false
+    ) {
+      list($site, $path) = explode('|', $path);
+
+      if ($site === 'master') {
+        $options['external'] = true;
+        $path = ucms_site_master_absolute_url() . '/' . $path;
+      } else {
+        $options['query'] = ['destination' => $path];
+        $path = 'sso/goto/' . $site;
       }
     }
   }
@@ -1039,6 +1058,23 @@ function theme_ucms_site_state_transition_form($variables) {
   return theme('table', ['header' => $header, 'rows' => $rows]) . drupal_render_children($form);
 }
 
+/**
+ * Implements hook_preprocess_html().
+ */
+function ucms_site_preprocess_html(&$vars) {
+  // Adds some global JS settings.
+  drupal_add_js(
+    [
+      'currentPath' => current_path(),
+    ],
+    [
+      'type' => 'setting',
+      'scope' => 'header',
+      'group' => JS_LIBRARY,
+      'every_page' => true,
+    ]
+  );
+}
 
 /**
  * Preprocess dashboard top bar.

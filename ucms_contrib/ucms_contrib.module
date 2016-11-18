@@ -560,6 +560,39 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
       '#submit' => $submit,
     ];
   }
+
+  // Adds a button to cancel the edition.
+  if (isset($_GET['destination'])) {
+    $moduleHandler = \Drupal::service('module_handler');
+    $options = [];
+
+    if (
+      $moduleHandler->moduleExists('ucms_sso') &&
+      strpos($_GET['destination'], '://') === false &&
+      strpos($_GET['destination'], '|') !== false
+    ) {
+      list($site, $path) = explode('|', $_GET['destination']);
+
+      if ($site === 'master') {
+        $options['external'] = true;
+        $path = ucms_site_master_absolute_url() . '/' . $path;
+      } else {
+        $options['query'] = ['destination' => $path];
+        $path = 'sso/goto/' . $site;
+      }
+    }
+    else {
+      $path = $_GET['destination'];
+    }
+
+    $form['actions']['cancel'] = [
+      '#type' => 'link',
+      '#title' => t("Cancel"),
+      '#href' => $path,
+      '#options' => $options,
+      '#attributes' => ['class' => ['btn']],
+    ];
+  }
 }
 
 /**
