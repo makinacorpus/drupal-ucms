@@ -27,11 +27,8 @@ And when you are on the master:
 
  *  admin URLs will always be generated on the master site;
 
- *  content URLs will be generated on the master site if there is revelant
-    local site to display it into;
-
  *  content URLs will be generated on the most revelant local site if one
-    found the user can go to.
+    if found where the user has access to.
 
 Please note that as long as you build absolute URL by yourselves, all the
 consistency checks are skipped. **It is important that in case you need to**
@@ -52,8 +49,8 @@ Forcing the site hostname for an URL can be useful is some edge cases:
 
  *  you are generating a node canonical URL;
 
- *  you need to present to the user a form a site context that will alter
-    its behavior and allow the user a specific action.
+ *  you need to redirect the user on a form in a specific site context that
+    will alter its behavior and allow the user a specific action.
 
 Behaviour you should be aware of:
 
