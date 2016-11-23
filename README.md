@@ -1,6 +1,7 @@
 # µCMS
 
-Site factory based upon a single Drupal instance.
+Multi-site Drupal based upon a single Drupal instance.
 
-This still needs to be document, it will be.
+This product is not yet fully documented:
 
+ *  [Cross-site URL management](docs/url.md)
