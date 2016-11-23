@@ -2,7 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
@@ -20,11 +19,6 @@ class SiteActionProvider implements ActionProviderInterface
     private $manager;
 
     /**
-     * @var boolean
-     */
-    private $ssoEnabled = false;
-
-    /**
      * @var AccountInterface
      */
     private $currentUser;
@@ -34,10 +28,9 @@ class SiteActionProvider implements ActionProviderInterface
      *
      * @param SiteManager $manager
      */
-    public function __construct(SiteManager $manager, ModuleHandlerInterface $moduleHandler = null)
+    public function __construct(SiteManager $manager)
     {
         $this->manager = $manager;
-        $this->ssoEnabled = $moduleHandler ? $moduleHandler->moduleExists('ucms_sso') : false;
         // @todo FIXME
         $this->currentUser = \Drupal::currentUser();
     }
@@ -55,11 +48,7 @@ class SiteActionProvider implements ActionProviderInterface
         if ($access->userCanOverview($account, $item)) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
             if ($access->userCanView($account, $item)) {
-                if ($this->ssoEnabled) {
-                    $uri = url('sso/goto/' . $item->id);
-                } else {
-                    $uri = url('http://' . $item->http_host);
-                }
+                $uri = $this->manager->getUrlGenerator()->generateUrl($item->id);
                 $ret[] = new Action($this->t("Go to site"), $uri, null, 'share-alt', -5, true);
             }
             if ($access->userCanManage($account, $item)) {

@@ -38,11 +38,12 @@ class SiteActionProvider implements ActionProviderInterface
 
         $account  = $this->currentUser;
         $access   = $this->manager->getAccess();
+        $urlGenerator = $this->manager->getUrlGenerator();
 
         if ($access->userCanOverview($account, $item)) {
-            list($path, $options) = $this->manager->getUrlInSite($item->getId(), 'admin/dashboard/content');
+            list($path, $options) = $urlGenerator->getRouteAndParams($item->getId(), 'admin/dashboard/content');
             $ret[] = new Action($this->t("Content in site"), $path, $options, 'file', 100, false, false, false, 'content');
-            list($path, $options) = $this->manager->getUrlInSite($item->getId(), 'admin/dashboard/media');
+            list($path, $options) = $urlGenerator->getRouteAndParams($item->getId(), 'admin/dashboard/media');
             $ret[] = new Action($this->t("Medias in site"), $path, $options, 'picture', 100, false, false, false, 'content');
         }
 

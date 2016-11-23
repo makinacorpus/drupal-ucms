@@ -2,11 +2,11 @@
   {% for site in sites %}
     <li>
       {% if site.id in allowed %}
-        <a href="{{ url('sso/goto/' ~ site.id, {'query':{'destination': 'node/' ~ node.id}}) }}">
+        <a href="{{ ucms_site_url(site, 'node/' ~ node.id) }}">
           {{ site.title|escape }}
         </a>
       {% else %}
-        <a disabled="disabled" class="disabled" href="{{ url('sso/goto/' ~ site.id, {'query':{'destination': 'node/' ~ node.id}}) }}">
+        <a disabled="disabled" class="disabled" href="{{ ucms_site_url(site, 'node/' ~ node.id) }}">
           {{ site.title|escape }}
         </a>
       {% endif %}

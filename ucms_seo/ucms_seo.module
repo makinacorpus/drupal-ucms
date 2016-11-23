@@ -219,9 +219,10 @@ function ucms_seo_init() {
 function ucms_seo_page_build(&$page) {
   $site = null;
 
+  $manager = ucms_site_manager();
+
   // This be better to be listener onResponse but hey, what Drupal can and
   // cannot do is way beyond the human comprehension level...
-  $manager = ucms_site_manager();
   if ($manager->hasContext()) {
     $site = $manager->getContext();
     if ($site->hasAttribute('seo.google.site_verification')) {
@@ -237,6 +238,8 @@ function ucms_seo_page_build(&$page) {
 
   if ($site && !ucms_site_is_master() && !path_is_admin(current_path())) {
     if ($node = menu_get_object()) {
+
+      $urlGenerator = $manager->getUrlGenerator();
 
       // Add metadata on node view
       foreach (ucms_seo_service()->getNodeMeta($node) as $name => $content) {
@@ -257,12 +260,12 @@ function ucms_seo_page_build(&$page) {
 
       if (drupal_is_front_page()) {
         // Do not set a canonical for home pages, just the site URL.
-        $canonical = url('http://' . $site->http_host . '/');
+        $canonical = $urlGenerator->generateUrl($site, null, ['absolute' => true]);
       } else if ('node' === arg(0) && !arg(2)) {
         // Set the canonical url
         $canonical = ucms_seo_service()->getNodeCanonical($node);
         if (!$canonical) {
-          $canonical = url('node/' . $node->nid, ['absolute' => true]);
+          $canonical = $urlGenerator->generateUrl($site, 'node/' . $node->nid, ['absolute' => true]);
         }
       }
 
@@ -280,6 +283,13 @@ function ucms_seo_page_build(&$page) {
  */
 function ucms_seo_html_head_alter(&$elements) {
   unset($elements['system_meta_generator']);
+  // Remove the 'node' module generated canonical since we are going to
+  // handle it by ourselves.
+  foreach ($elements as $key => $item) {
+    if ('canonical' !== $key && (isset($item['#attributes']['rel']) && 'canonical' === $item['#attributes']['rel'])) {
+      unset($elements[$key]);
+    }
+  }
 }
 
 /**

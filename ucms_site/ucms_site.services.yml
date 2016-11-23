@@ -27,6 +27,10 @@ services:
     class: MakinaCorpus\Ucms\Site\NodeManager
     arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
 
+  ucms_site.url_generator:
+    class: MakinaCorpus\Ucms\Site\SiteUrlGenerator
+    factory: ["@ucms_site.manager", getUrlGenerator]
+
   ucms_site.admin.datasource:
     class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
     arguments: ["@database", "@ucms_site.manager"]
@@ -38,7 +42,7 @@ services:
   ucms_site.site_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider
-    arguments: ["@ucms_site.manager", "@module_handler"]
+    arguments: ["@ucms_site.manager"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_site.node_action_provider:

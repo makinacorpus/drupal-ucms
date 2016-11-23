@@ -58,7 +58,8 @@ class NodeActionProvider implements ActionProviderInterface
         // view nodes on master site.
         $siteId = $this->access->findMostRelevantSiteFor($item);
         if ($siteId) {
-            $ret[] = new Action($this->t("View"), 'sso/goto/' . $siteId, ['query' => ['destination' => 'node/' . $item->id()]], 'eye-open');
+            $uri = $this->siteManager->getUrlGenerator()->generateUrl($siteId, 'node/' . $item->id());
+            $ret[] = new Action($this->t("View"), $uri, [], 'eye-open');
         } else {
             $ret[] = new Action($this->t("View"), 'node/' . $item->id(), null, 'eye-open', 0, true, false, true); // disabled link
         }

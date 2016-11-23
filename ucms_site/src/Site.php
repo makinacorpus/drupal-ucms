@@ -12,6 +12,11 @@ use MakinaCorpus\Ucms\Site\Structure\DatesTrait;
  */
 class Site
 {
+    const ALLOWED_PROTOCOL_PASS = 0;
+    const ALLOWED_PROTOCOL_HTTP = 1;
+    const ALLOWED_PROTOCOL_HTTPS = 2;
+    const ALLOWED_PROTOCOL_ALL = 3;
+
     use AttributesTrait;
     use DatesTrait;
 
@@ -44,6 +49,11 @@ class Site
      * @var string
      */
     public $theme = null;
+
+    /**
+     * @var int
+     */
+    public $allowed_protocols = self::ALLOWED_PROTOCOL_PASS;
 
     /**
      * @var string
@@ -118,6 +128,35 @@ class Site
     public function getTheme()
     {
         return $this->theme;
+    }
+
+    /**
+     * Is the 'https' secure protocol allowed
+     */
+    public function isHttpsAllowed()
+    {
+        return self::ALLOWED_PROTOCOL_HTTP != $this->allowed_protocols;
+    }
+
+    /**
+     * Is the 'http' protocol allowed
+     *
+     * @return boolean
+     */
+    public function isHttpAllowed()
+    {
+        return self::ALLOWED_PROTOCOL_HTTPS != $this->allowed_protocols;
+    }
+
+    /**
+     * Get the default site scheme
+     *
+     * @return int
+     *   One of the Site::ALLOWED_PROTOCOL_* constants
+     */
+    public function getAllowedProtocols()
+    {
+        return (int)$this->allowed_protocols;
     }
 
     public function getOwnerUserId()
