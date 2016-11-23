@@ -93,13 +93,12 @@ function ucms_site_menu() {
     'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/delete'] = [
-    'title'             => "Site edit",
-    'page callback'     => 'drupal_get_form',
-    'page arguments'    => ['ucms_site_dashboard_site_delete_form', 3],
+    'title'             => "Site delete",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\SiteDelete', 3],
     'access callback'   => 'ucms_site_menu_access_manage',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/switch/%'] = [
     'title'             => "Switch site state",
