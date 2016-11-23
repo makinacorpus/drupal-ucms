@@ -239,6 +239,7 @@ class SiteStorage
             'theme',
             'http_host',
             'http_redirects',
+            'allowed_protocols',
             'replacement_of',
             'uid',
             'template_id',
