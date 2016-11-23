@@ -10,7 +10,6 @@ use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -297,6 +296,7 @@ class SeoService
             ->select('ucms_seo_alias', 'u')
             ->fields('u', ['alias', 'site_id'])
             ->condition('node_id', $node->id())
+            ->condition('source', 'node/'.$node->id())
         ;
 
         if ($restricToCurrentSite && $this->siteManager->hasContext()) {
