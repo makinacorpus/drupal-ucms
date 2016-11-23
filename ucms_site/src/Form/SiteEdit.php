@@ -98,6 +98,20 @@ class SiteEdit extends FormBase
             '#disabled'         => !user_access(Access::PERM_SITE_GOD),
         ];
 
+        $form['allowed_protocols'] = [
+            '#title'            => $this->t("Allowed protocols"),
+            '#type'             => 'select',
+            '#options'          => [
+                Site::ALLOWED_PROTOCOL_HTTPS  => $this->t("Secure HTTPS only"),
+                Site::ALLOWED_PROTOCOL_HTTP   => $this->t("Unsecure HTTP only"),
+                Site::ALLOWED_PROTOCOL_ALL    => $this->t("Both secure HTTPS and unsecure HTTP"),
+                Site::ALLOWED_PROTOCOL_PASS   => $this->t("Let Drupal decide depending on the environment")
+            ],
+            '#default_value'    => $site->allowed_protocols,
+            '#description'      => $this->t("This is a technical setting that depends on the web server configuration, the technical administrators might change it."),
+            '#required'         => !user_access(Access::PERM_SITE_GOD),
+        ];
+
         $form['replacement_of'] = [
             '#title'          => $this->t("Replaces"),
             '#type'           => 'textarea',
@@ -189,6 +203,7 @@ class SiteEdit extends FormBase
         $site->http_redirects = $values['http_redirects'];
         $site->replacement_of = $values['replacement_of'];
         $site->http_host      = $values['http_host'];
+        $site->allowed_protocols = $values['allowed_protocols'];
         $site->theme          = $values['theme'];
         $attributes = $form_state->getValue('attributes', []);
         foreach ($attributes as $name => $attribute) {
