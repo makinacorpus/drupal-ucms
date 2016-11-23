@@ -159,7 +159,7 @@ class NodeAddToSite extends FormBase
         switch ($action) {
 
             case 'local':
-                list($path, $options) = $this->siteManager->getUrlInSite($siteId, $path, $options);
+                list($path, $options) = $this->siteManager->getUrlGenerator()->getRouteAndParams($siteId, $path, $options);
                 drupal_set_message($this->t("You are now creating a content into your site."));
                 break;
 

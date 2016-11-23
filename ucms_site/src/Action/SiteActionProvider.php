@@ -2,7 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
+<<<<<<< HEAD
 use Drupal\Core\Extension\ModuleHandlerInterface;
+=======
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+>>>>>>> 0a1d8ab... site, seo: site allowed protocol handling, better url generation
 
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
@@ -19,11 +23,6 @@ class SiteActionProvider extends AbstractActionProvider
     private $manager;
 
     /**
-     * @var boolean
-     */
-    private $ssoEnabled = false;
-
-    /**
      * @var AccountInterface
      */
     private $currentUser;
@@ -33,10 +32,9 @@ class SiteActionProvider extends AbstractActionProvider
      *
      * @param SiteManager $manager
      */
-    public function __construct(SiteManager $manager, ModuleHandlerInterface $moduleHandler = null)
+    public function __construct(SiteManager $manager)
     {
         $this->manager = $manager;
-        $this->ssoEnabled = $moduleHandler ? $moduleHandler->moduleExists('ucms_sso') : false;
         // @todo FIXME
         $this->currentUser = \Drupal::currentUser();
     }
@@ -59,11 +57,7 @@ class SiteActionProvider extends AbstractActionProvider
         if ($canOverview) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
             if ($canView) {
-                if ($this->ssoEnabled) {
-                    $uri = url('sso/goto/' . $item->id);
-                } else {
-                    $uri = url('http://' . $item->http_host);
-                }
+                $uri = $this->manager->getUrlGenerator()->generateUrl($item->id);
                 $ret[] = new Action($this->t("Go to site"), $uri, null, 'share-alt', -5, true);
             }
             if ($canManage) {

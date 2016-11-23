@@ -15,6 +15,7 @@ use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Controller\AutocompleteController;
 use MakinaCorpus\Ucms\Site\Controller\DashboardController;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
+use MakinaCorpus\Ucms\Site\PublicStreamWrapper;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -354,13 +355,52 @@ function ucms_site_admin_path_is_allowed($path) {
  * Implements hook_url_outbound_alter().
  */
 function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
-  // Enforce master-only (administration pages) links to be absolute with the
-  // master hostname instead of being directed to the current site.
-  if ($path && !$options['absolute'] && ucms_site_manager()->hasContext()) {
-    if (!ucms_site_admin_path_is_allowed($path)) {
+
+  // Skip external URLs, we cannot proceed them on both fronts, since other
+  // sites in the platform will actually be dealt as external by Drupal core
+  // let them pass, if you need to generate other site's URLs, please use
+  // the 'ucms_site.url_generator' service manually or the 'ucms_site_url'
+  // twig function.
+  if ($options['external']) {
+    return;
+  }
+
+  // Avoid reentrancy, especially if the URL was generated using the site
+  // manager, case in which we don't need to process it.
+  if (isset($options['ucms_processed'])) {
+    return;
+  }
+
+  $options['ucms_processed'] = true;
+  $manager = ucms_site_manager();
+
+  if ($manager->hasContext()) {
+    // Enforce master-only (administration pages) links to be absolute with the
+    // master hostname instead of being directed to the current site.
+    if ($path && !ucms_site_admin_path_is_allowed($path)) {
       $options['absolute'] = true;
       $options['external'] = true;
       $path = ucms_site_master_absolute_url() . '/' . $path;
+    }
+  } else {
+    // In case we have no site context, and we are actually trying to render a
+    // node link, we must enforce a local site to display it when relevant,
+    // especially that most nodes can't be seen on master.
+    $matches = [];
+    if (preg_match('/^node\/(\d+)/', $original_path, $matches)) {
+      // Please note that the following algorith will probably be very heavy
+      // in term of performances, but it can only happens in the administration
+      // pages, in which nodes will almost always be preloaded one prior to
+      // generating links to it.
+      $node = node_load($matches[1]);
+      if ($node) {
+        /** @var \MakinaCorpus\Ucms\Site\NodeAccessService $nodeAccessService */
+        $nodeAccessService = \Drupal::service('ucms_site.node_access_helper');
+        $mostRelevantSite = $nodeAccessService->findMostRelevantSiteFor($node);
+        if ($mostRelevantSite) {
+          $manager->getUrlGenerator()->forceSiteUrl($options, $mostRelevantSite);
+        }
+      }
     }
   }
 }
@@ -370,9 +410,8 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
  */
 function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
   if (ucms_site_is_master()) {
-    $moduleHandler = \Drupal::service('module_handler');
     $matches = [];
-    if ($moduleHandler->moduleExists('ucms_sso') && preg_match('@^node/(\d+)(/view)?$@', $path, $matches)) {
+    if (module_exists('ucms_sso') && preg_match('@^node/(\d+)(/view)?$@', $path, $matches)) {
       $node = \Drupal::service('entity.manager')->getStorage('node')->load($matches[1]);
       if (!empty($node->site_id)) {
         $options['query'] = ['destination' => $path];
@@ -682,7 +721,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
 function ucms_site_stream_wrappers_alter(&$wrappers) {
   // Connect our override of the public:// stream wrapper for
   // static file CDN redirection (if any)
-  $wrappers['public']['class'] = '\MakinaCorpus\Ucms\Site\UCPublicStreamWrapper';
+  $wrappers['public']['class'] = PublicStreamWrapper::class;
 }
 
 /**
@@ -710,33 +749,31 @@ function ucms_site_file_url_alter(&$original_uri) {
       || (drupal_substr($original_uri, 0, 2) == '//')
       || (in_array(drupal_substr($original_uri, -11), array('favicon.ico', 'sitemap.xml')))
       || (drupal_substr($original_uri, -10) == 'robots.txt')
-     )
-  {
+  ) {
     return;
   }
-  elseif ($scheme) {
+  else if ($scheme) {
 
-      // Explicitly exclude the local private:// stream wrapper.
-      // as we do not want it managed like public files
-      // And also remove the public:// stream wrapper as it is managed by
-      // ucms_site_stream_wrappers_alter
-      if ($scheme === 'private' || $scheme === 'public') {
-        return;
-      }
+    // Explicitly exclude the local private:// stream wrapper.
+    // as we do not want it managed like public files
+    // And also remove the public:// stream wrapper as it is managed by
+    // ucms_site_stream_wrappers_alter
+    if ($scheme === 'private' || $scheme === 'public') {
+      return;
+    }
 
-      // We work only on file delivered locally (not rewriting imgur things, for example)
-      $local_schemes = array_keys(file_get_stream_wrappers(STREAM_WRAPPERS_LOCAL));
-      if (!in_array($scheme, $local_schemes)) {
-        return;
-      }
+    // We work only on file delivered locally (not rewriting imgur things, for example)
+    $local_schemes = array_keys(file_get_stream_wrappers(STREAM_WRAPPERS_LOCAL));
+    if (!in_array($scheme, $local_schemes)) {
+      return;
+    }
 
-      // Attempt to get an external URL using the appropriate wrapper.
-      if ($wrapper = file_stream_wrapper_get_instance_by_uri($original_uri)) {
-        $original_uri = str_replace($GLOBALS['base_url'] . '/', $cdn, $wrapper->getExternalUrl());
-      }
-      else {
-        return;
-      }
+    // Attempt to get an external URL using the appropriate wrapper.
+    if ($wrapper = file_stream_wrapper_get_instance_by_uri($original_uri)) {
+      $original_uri = str_replace($GLOBALS['base_url'] . '/', $cdn, $wrapper->getExternalUrl());
+    } else {
+      return;
+    }
   } else {
     // classical file paths like '/foo/css/toto.css'
     $original_uri = $cdn . '/' . $original_uri;

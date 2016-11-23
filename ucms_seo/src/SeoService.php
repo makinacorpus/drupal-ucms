@@ -392,7 +392,7 @@ class SeoService implements AuthorizationAwareInterface
             return url($row->alias, ['absolute' => true]);
         }
 
-        return ($GLOBALS['is_https'] ? 'https://' : 'http://') . $site->http_host . '/' . $row->alias;
+        return $this->siteManager->getUrlGenerator()->generateUrl($site, $row->alias, ['absolute' => true], true);
     }
 
     /**

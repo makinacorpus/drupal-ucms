@@ -170,7 +170,7 @@ class NodeDuplicate extends FormBase
         switch ($action) {
 
             case 'duplicate':
-                list($path, $options) = $this->siteManager->getUrlInSite($siteId, 'node/' . $node->id(). '/clone', $options);
+                list($path, $options) = $this->siteManager->getUrlGenerator()->getRouteAndParams($siteId, 'node/' . $node->id(). '/clone', $options);
                 drupal_set_message($this->t("You can now edit this node on this site, it will be automatically duplicated."));
                 break;
 

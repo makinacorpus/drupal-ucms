@@ -37,6 +37,16 @@ class SiteExtension extends \Twig_Extension
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction('ucms_site_url', [$this, 'renderSiteUrl']),
+        ];
+    }
+
+    /**
      * Render state
      *
      * @param int $state
@@ -52,6 +62,23 @@ class SiteExtension extends \Twig_Extension
         }
 
         return $this->t("Unknown");
+    }
+
+    /**
+     * Render site link
+     *
+     * @param int|Site $site
+     *   Site identifier, if site is null
+     * @param string $path
+     *   Drupal path to hit in site
+     * @param mixed[] $options
+     *   Link options, see url()
+     *
+     * @return string
+     */
+    public function renderSiteUrl($site, $path = null, array $options = [], $ignoreSso = false, $dropDestination = true)
+    {
+        return $this->siteManager->getUrlGenerator()->generateUrl($site, $path, $options, $ignoreSso, $dropDestination);
     }
 
     /**
