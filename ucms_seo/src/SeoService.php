@@ -307,6 +307,7 @@ class SeoService implements AuthorizationAwareInterface
             ->select('ucms_seo_alias', 'u')
             ->fields('u', ['alias', 'site_id'])
             ->condition('node_id', $node->id())
+            ->condition('source', 'node/'.$node->id())
         ;
 
         if ($restricToCurrentSite && $this->siteManager->hasContext()) {
