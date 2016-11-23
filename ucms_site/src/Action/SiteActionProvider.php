@@ -71,6 +71,10 @@ class SiteActionProvider implements ActionProviderInterface
             $ret[] = new Action($this->t("Manage users"), 'admin/dashboard/site/' . $item->id . '/webmaster', null, 'user', 102, false, false, false, 'user');
         }
 
+        if ($access->userCanDelete($account, $item)) {
+            $ret[] = new Action($this->t("Delete"), 'admin/dashboard/site/' . $item->id . '/delete', 'dialog', 'trash', 1000, false, true, false, 'switch');
+        }
+
         return $ret;
     }
 

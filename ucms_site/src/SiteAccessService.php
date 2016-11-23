@@ -500,7 +500,7 @@ class SiteAccessService
      */
     public function userCanDelete(AccountInterface $account, Site $site)
     {
-        return SiteState::ARCHIVE == $site->state && $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD);
+        return SiteState::ARCHIVE == $site->state && ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD));
     }
 
     /**
