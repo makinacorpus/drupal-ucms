@@ -155,7 +155,7 @@ function ucms_widget_field_widget_settings_form($field, $instance) {
 function ucms_widget_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $widget = ucms_widget_registry()->get($field['settings']['type']);
 
-  if (!$items) {
+  if (!$items || !isset($items[$delta])) {
     // This happens in Field UI for default value, let's make it happy
     $items[$delta] = ['options' => []];
   }
