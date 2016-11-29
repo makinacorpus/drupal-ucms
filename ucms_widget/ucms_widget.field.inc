@@ -233,5 +233,9 @@ function ucms_widget_field_load($entity_type, $entities, $field, $instances, $la
  * Implements hook_field_is_empty().
  */
 function ucms_widget_field_is_empty($item, $field) {
-  return false;
+  $widget = ucms_widget_registry()->get($field['settings']['type']);
+  if (method_exists($widget, 'isEmpty')) {
+    return $widget->isEmpty($item);
+  }
+  return FALSE;
 }
