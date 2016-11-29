@@ -68,4 +68,15 @@ interface WidgetInterface
      *   if an array is given, it must be a valid Drupal form array.
      */
     public function getFormatterOptionsForm($options = []);
+
+    /**
+     * Optional, get if item is empty for widget
+     *
+     * @param mixed[] $item
+     *   Current item
+     *
+     * @return bool
+     *   True if the field does not hold any value.
+     */
+    // public function isEmpty($item);
 }
