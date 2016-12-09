@@ -7,7 +7,9 @@ use Drupal\Core\Entity\EntityManager;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
 
-class MenuEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class MenuEventSubscriber implements EventSubscriberInterface
 {
     /**
      * @var SeoService
@@ -29,6 +31,18 @@ class MenuEventListener
     {
         $this->service = $service;
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            MenuEvent::EVENT_TREE => [
+                ['onMenuTree', 0],
+            ],
+        ];
     }
 
     /**

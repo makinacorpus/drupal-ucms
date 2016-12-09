@@ -4,10 +4,13 @@ namespace MakinaCorpus\Ucms\Site\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -108,7 +111,7 @@ class SiteSwitch extends FormBase
 
             $site->state = $state;
             $this->manager->getStorage()->save($site, ['state']);
-            $this->dispatcher->dispatch('site:switch', new SiteEvent($site, $this->currentUser()->uid, $data));
+            $this->dispatcher->dispatch(SiteEvents::EVENT_SWITCH, new SiteEvent($site, $this->currentUser()->uid, $data));
 
             unset($tx);
 

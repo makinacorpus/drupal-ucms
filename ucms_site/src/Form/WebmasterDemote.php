@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -95,7 +96,7 @@ class WebmasterDemote extends FormBase
             '%role' => $this->manager->getAccess()->getRelativeRoleName(Access::ROLE_CONTRIB),
         ]));
         $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
-        $this->dispatcher->dispatch('site:webmaster_demote', $event);
+        $this->dispatcher->dispatch(SiteEvents::EVENT_WEBMASTER_DEMOTE, $event);
     }
 }
 

@@ -11,7 +11,9 @@ use MakinaCorpus\APubSub\Notification\NotificationService;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
 
-class ContextPaneEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -42,6 +44,18 @@ class ContextPaneEventListener
         $this->layoutContextManager = $layoutContextManager;
         $this->currentUser = $currentUser;
         $this->notificationService = $notificationService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onUcmsdashboardContextinit', 0],
+            ],
+        ];
     }
 
     /**

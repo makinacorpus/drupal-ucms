@@ -33,15 +33,14 @@ services:
     class: MakinaCorpus\Ucms\Contrib\Action\SiteActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 
-  ucms_contrib.context_pane_event_listener:
-    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
+  ucms_contrib.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventSubscriber
     arguments:
       - "@ucms_contrib.content_action_provider"
       - "@ucms_dashboard.action_provider_registry"
       - "@ucms_site.manager"
       - "@ucms_contrib.type_handler"
-    tags:
-      - { name: event_listener, event: ucms_dashboard.context_init }
+    tags: [{ name: event_subscriber }]
 
   # Datasource via elastic search
   ucms_contrib.datasource.elastic:
@@ -69,7 +68,7 @@ services:
 
   ucms_contrib.media.subscriber:
     public: true
-    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\MediaReferenceEventListener
+    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\MediaReferenceEventSubscriber
     tags: [{ name: event_subscriber }]
 
   ucms_contrib.node_subscriber:

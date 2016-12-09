@@ -7,7 +7,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 
-class NodeEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class NodeEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -26,6 +28,28 @@ class NodeEventListener
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            'node:add' => [
+                ['onNodeAdd', 0],
+            ],
+//            'node:edit' => [
+//                ['onNodeEdit', 0],
+//            ],
+//            'node:delete' => [
+//                ['onNodeDelete', 0],
+//            ],
+            'node:new_labels' => [
+                ['onNodeNewLabels', 0],
+            ],
+        ];
     }
 
 

@@ -11,7 +11,9 @@ use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class ContextPaneEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -39,7 +41,7 @@ class ContextPaneEventListener
      * Default constructor
      *
      * @param ActionProviderInterface $contentActionProvider
-     * @param ActionProviderInterface $actionProviderRegistry
+     * @param ActionProviderInterface $actionRegistry
      * @param SiteManager $siteManager
      * @param TypeHandler $typeHandler
      */
@@ -53,6 +55,18 @@ class ContextPaneEventListener
         $this->actionProviderRegistry = $actionRegistry;
         $this->siteManager = $siteManager;
         $this->typeHandler = $typeHandler;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onUcmsdashboardContextinit', 0],
+            ],
+        ];
     }
 
     /**

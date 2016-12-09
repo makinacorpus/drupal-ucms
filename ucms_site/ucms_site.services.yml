@@ -71,29 +71,20 @@ services:
     arguments: ["@ucms_site.manager", "@current_user"]
     tags: [{name: ucms_dashboard.action_provider}]
 
-  ucms_site.context_pane_event_listener:
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventListener
+  ucms_site.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventSubscriber
     arguments: ["@ucms_dashboard.action_provider_registry"]
-    tags: [{name: event_listener, event: ucms_dashboard.context_init}]
+    tags: [{ name: event_subscriber }]
 
-  ucms_site.site_event_listener:
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventListener
+  ucms_site.site_event_subscriber:
+    class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventSubscriber
     arguments: ["@ucms_site.manager", "@entity.manager"]
-    tags:
-      - { name: event_listener, event: "site:create" }
-      - { name: event_listener, event: "site:save" }
-      - { name: event_listener, event: "site:switch" }
-      - { name: event_listener, event: "site:webmaster_add_new" }
-      - { name: event_listener, event: "site:webmaster_add_existing" }
-      - { name: event_listener, event: "site:webmaster_change_role" }
-      - { name: event_listener, event: "site:webmaster_promote" }
-      - { name: event_listener, event: "site:webmaster_demote" }
-      - { name: event_listener, event: "site:webmaster_delete" }
+    tags: [{ name: event_subscriber }]
 
-  ucms_site.menu_event_listener:
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventListener
+  ucms_site.menu_event_subscriber:
+    class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventSubscriber
     arguments: ["@ucms_site.node_manager"]
-    tags: [{name: event_listener, event: "menu:tree"}]
+    tags: [{ name: event_subscriber }]
 
   ucms_site.admin_subscriber:
     public: true

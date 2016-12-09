@@ -10,7 +10,9 @@ use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Umenu\MenuStorageInterface;
 
-class SiteEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class SiteEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -35,6 +37,39 @@ class SiteEventListener
     {
         $this->manager = $manager;
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            SiteEvents::EVENT_CREATE => [
+                ['onSiteCreate', 0],
+            ],
+            SiteEvents::EVENT_SWITCH => [
+                ['onSiteSwitch', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_CREATE => [
+                ['onSiteWebmasterCreate', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_ATTACH => [
+                ['onSiteWebmasterAttach', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_CHANGE_ROLE => [
+                ['onSiteWebmasterChangeRole', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_PROMOTE => [
+                ['onSiteWebmasterPromote', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_DEMOTE => [
+                ['onSiteWebmasterDemote', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_REMOVE => [
+                ['onSiteWebmasterRemove', 0],
+            ],
+        ];
     }
 
     public function onSiteCreate(SiteEvent $event)
@@ -68,13 +103,6 @@ class SiteEventListener
         }
     }
 
-
-    public function onSiteSave(SiteEvent $event)
-    {
-        // @todo ?
-    }
-
-
     public function onSiteSwitch(SiteEvent $event)
     {
         // If site is switching from PENDING to INIT and has a template
@@ -88,8 +116,7 @@ class SiteEventListener
         }
     }
 
-
-    public function onSiteWebmasterAddNew(SiteEvent $event)
+    public function onSiteWebmasterCreate(SiteEvent $event)
     {
         $userStorage = $this->entityManager->getStorage('user');
 
@@ -105,8 +132,7 @@ class SiteEventListener
         }
     }
 
-
-    public function onSiteWebmasterAddExisting(SiteEvent $event)
+    public function onSiteWebmasterAttach(SiteEvent $event)
     {
         $userStorage = $this->entityManager->getStorage('user');
 
@@ -121,7 +147,6 @@ class SiteEventListener
             $userStorage->save($webmaster);
         }
     }
-
 
     public function onSiteWebmasterChangeRole(SiteEvent $event)
     {
@@ -156,13 +181,11 @@ class SiteEventListener
         $userStorage->save($user);
     }
 
-
     public function onSiteWebmasterPromote(SiteEvent $event)
     {
         $event->setArgument('previous_role', Access::ROLE_CONTRIB);
         $this->onSiteWebmasterChangeRole($event);
     }
-
 
     public function onSiteWebmasterDemote(SiteEvent $event)
     {
@@ -170,8 +193,7 @@ class SiteEventListener
         $this->onSiteWebmasterChangeRole($event);
     }
 
-
-    public function onSiteWebmasterDelete(SiteEvent $event)
+    public function onSiteWebmasterRemove(SiteEvent $event)
     {
         $userStorage = $this->entityManager->getStorage('user');
 

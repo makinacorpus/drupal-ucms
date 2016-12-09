@@ -8,7 +8,9 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 
-class ContextPaneEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -17,6 +19,18 @@ class ContextPaneEventListener
     public function __construct(ActionRegistry $actionRegistry)
     {
         $this->actionRegistry = $actionRegistry;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onUcmsdashboardContextinit', 0],
+            ],
+        ];
     }
 
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)

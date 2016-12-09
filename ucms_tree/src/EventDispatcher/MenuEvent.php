@@ -10,6 +10,8 @@ use Symfony\Component\EventDispatcher\Event;
 
 class MenuEvent extends Event
 {
+    const EVENT_TREE = 'menu:tree';
+
     private $menuName;
     private $items;
     private $deletedItems;

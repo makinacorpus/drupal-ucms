@@ -14,17 +14,12 @@ services:
     arguments: ["@ucms_label.manager", "@current_user"]
     tags: [{name: ucms_dashboard.action_provider}]
 
-  ucms_label.context_pane_event_listener:
-    class: MakinaCorpus\Ucms\Label\EventDispatcher\ContextPaneEventListener
+  ucms_label.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\Label\EventDispatcher\ContextPaneEventSubscriber
     arguments: ["@ucms_label.manager"]
-    tags:
-      - { name: event_listener, event: ucms_dashboard.context_init }
+    tags: [{ name: event_subscriber }]
 
-  ucms_label.node_event_listener:
-    class: MakinaCorpus\Ucms\Label\EventDispatcher\NodeEventListener
+  ucms_label.node_event_subscriber:
+    class: MakinaCorpus\Ucms\Label\EventDispatcher\NodeEventSubscriber
     arguments: ["@entity.manager"]
-    tags:
-      - { name: event_listener, event: "node:add" }
-      #- { name: event_listener, event: "node:edit" }
-      #- { name: event_listener, event: "node:delete" }
-      - { name: event_listener, event: "node:new_labels" }
+    tags: [{ name: event_subscriber }]

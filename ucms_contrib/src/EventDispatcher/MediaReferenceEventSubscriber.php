@@ -7,20 +7,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * This subscriber will collect media references within text fields.
  */
-class MediaReferenceEventListener implements EventSubscriberInterface
+class MediaReferenceEventSubscriber implements EventSubscriberInterface
 {
-    private function getSearchableFields($bundle)
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
     {
-        $ret = [];
-
-        foreach (field_info_instances('node', $bundle) as $name => $info) {
-            $field = field_info_field($info['field_name']);
-            if (in_array($field['type'], ['text', 'text_long', 'text_with_summary'], true)) {
-                $ret[] = $name;
-            }
-        }
-
-        return $ret;
+        return [
+            NodeReferenceCollectEvent::EVENT_NAME => [
+                ['onCollect', 0]
+            ],
+        ];
     }
 
     public function onCollect(NodeReferenceCollectEvent $event)
@@ -43,15 +41,17 @@ class MediaReferenceEventListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    static public function getSubscribedEvents()
+    private function getSearchableFields($bundle)
     {
-        return [
-            NodeReferenceCollectEvent::EVENT_NAME => [
-                ['onCollect', 0]
-            ],
-        ];
+        $ret = [];
+
+        foreach (field_info_instances('node', $bundle) as $name => $info) {
+            $field = field_info_field($info['field_name']);
+            if (in_array($field['type'], ['text', 'text_long', 'text_with_summary'], true)) {
+                $ret[] = $name;
+            }
+        }
+
+        return $ret;
     }
 }

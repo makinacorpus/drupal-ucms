@@ -4,8 +4,11 @@ namespace MakinaCorpus\Ucms\Notification\EventDispatcher;
 
 use MakinaCorpus\Ucms\Notification\NotificationService;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 
-class SiteEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class SiteEventSubscriber implements EventSubscriberInterface
 {
     /**
      * @var NotificationService
@@ -23,7 +26,28 @@ class SiteEventListener
     }
 
     /**
-     * Event: On adding a site.
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            SiteEvents::EVENT_CREATE => [
+                ['onSiteCreate', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_CREATE => [
+                ['onWebmasterCreate', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_ATTACH => [
+                ['onWebmasterAttach', 0],
+            ],
+            SiteEvents::EVENT_WEBMASTER_REMOVE => [
+                ['onWebmasterRemove', 0],
+            ],
+        ];
+    }
+
+    /**
+     * Event: when adding a site.
      *
      * @param SiteEvent $event
      */
@@ -34,11 +58,11 @@ class SiteEventListener
         $this->service->getNotificationService()->subscribe('site', $site->getId(), $site->getOwnerUserId());
     }
     /**
-     * Event: On adding an user to a site.
+     * Event: when adding an user to a site.
      *
      * @param SiteEvent $event
      */
-    public function onSiteWebmasteraddnew(SiteEvent $event)
+    public function onWebmasterCreate(SiteEvent $event)
     {
         $site = $event->getSite();
         $uid  = $event->getArgument('webmaster_id');
@@ -47,21 +71,21 @@ class SiteEventListener
     }
 
     /**
-     * Event: On adding an user to a site.
+     * Event: when adding an user to a site.
      *
      * @param SiteEvent $event
      */
-    public function onSiteWebmasteraddexisting(SiteEvent $event)
+    public function onWebmasterAttach(SiteEvent $event)
     {
-        $this->onSiteWebmasteraddnew($event);
+        $this->onWebmasterCreate($event);
     }
 
     /**
-     * Event: On deleting an user to a site.
+     * Event: when removing an user from a site.
      *
      * @param SiteEvent $event
      */
-    public function onSiteWebmasterdelete(SiteEvent $event)
+    public function onWebmasterRemove(SiteEvent $event)
     {
         $site = $event->getSite();
         $uid  = $event->getArgument('webmaster_id');

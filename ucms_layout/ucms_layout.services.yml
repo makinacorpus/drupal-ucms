@@ -34,8 +34,7 @@ services:
     arguments: ["@database", "@ucms_site.manager"]
     tags: [{ name: event_subscriber }]
 
-  ucms_layout.context_pane_event_listener:
-    class: MakinaCorpus\Ucms\Layout\EventDispatcher\ContextPaneEventListener
+  ucms_layout.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\Layout\EventDispatcher\ContextPaneEventSubscriber
     arguments: ["@ucms_site.manager", "@ucms_layout.context_manager"]
-    tags:
-      - {name: event_listener, event: ucms_dashboard.context_init }
+    tags: [{ name: event_subscriber }]

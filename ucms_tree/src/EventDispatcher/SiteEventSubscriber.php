@@ -6,11 +6,14 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
 
-class SiteEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class SiteEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -38,39 +41,29 @@ class SiteEventListener
     }
 
     /**
-     * @param TreeManager $menuStorage
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            SiteEvents::EVENT_CREATE => [
+                ['onSiteCreate', 0],
+            ],
+            SiteEvents::EVENT_INIT => [
+                ['onSiteInit', 0],
+            ],
+            SiteEvents::EVENT_CLONE => [
+                ['onSiteClone', 0],
+            ],
+        ];
+    }
+
+    /**
+     * @param TreeManager $treeManager
      */
     public function setTreeManager(TreeManager $treeManager)
     {
         $this->treeManager = $treeManager;
-    }
-
-    /**
-     * Create missing menus for site
-     *
-     * @param Site $site
-     *
-     * @return string[][]
-     *   Newly created menus
-     */
-    private function ensureSiteMenus(Site $site)
-    {
-        $ret = [];
-
-        if ($this->treeManager && $this->allowedMenus) {
-            $storage = $this->treeManager->getMenuStorage();
-
-            foreach ($this->allowedMenus as $prefix => $title) {
-
-                $name = $prefix.'-'.$site->getId();
-
-                if (!$storage->exists($name)) {
-                    $ret[$name] = $storage->create($name, ['title' => $this->t($title), 'site_id' => $site->getId()]);
-                }
-            }
-        }
-
-        return $ret;
     }
 
     /**
@@ -137,5 +130,33 @@ class SiteEventListener
                 $this->treeManager->cloneMenuIn($sourceName, $targetName);
             }
         }
+    }
+
+    /**
+     * Create missing menus for site
+     *
+     * @param Site $site
+     *
+     * @return string[][]
+     *   Newly created menus
+     */
+    private function ensureSiteMenus(Site $site)
+    {
+        $ret = [];
+
+        if ($this->treeManager && $this->allowedMenus) {
+            $storage = $this->treeManager->getMenuStorage();
+
+            foreach ($this->allowedMenus as $prefix => $title) {
+
+                $name = $prefix.'-'.$site->getId();
+
+                if (!$storage->exists($name)) {
+                    $ret[$name] = $storage->create($name, ['title' => $this->t($title), 'site_id' => $site->getId()]);
+                }
+            }
+        }
+
+        return $ret;
     }
 }

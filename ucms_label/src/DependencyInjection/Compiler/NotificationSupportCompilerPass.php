@@ -17,11 +17,26 @@ class NotificationSupportCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('ucms_notification.service') && !$container->hasAlias('ucms_notification.service')) {
+            // Remove everything notification-related.
+            if ($container->hasDefinition('ucms_label.label_event_subscriber')) {
+                $container->removeDefinition('ucms_label.label_event_subscriber');
+            }
+            if ($container->hasAlias('ucms_label.label_event_subscriber')) {
+                $container->removeAlias('ucms_label.label_event_subscriber');
+            }
+
+            if ($container->hasDefinition('ucms_label.label_notification_action_provider')) {
+                $container->removeDefinition('ucms_label.label_notification_action_provider');
+            }
+            if ($container->hasAlias('ucms_label.label_notification_action_provider')) {
+                $container->removeAlias('ucms_label.label_notification_action_provider');
+            }
+            
             return;
         }
 
         $container->addDefinitions([
-            'ucms_label.label_notificiation_action_provider' =>
+            'ucms_label.label_notification_action_provider' =>
                 (new Definition(
                     'MakinaCorpus\Ucms\Label\Action\LabelNotificationsActionProvider',
                     [
@@ -32,33 +47,16 @@ class NotificationSupportCompilerPass implements CompilerPassInterface
                 ))
                 ->addTag('ucms_dashboard.action_provider')
             ,
-            'ucms_label.label_notificiation_action_provider' => (new Definition(
+            'ucms_label.label_event_subscriber' => (new Definition(
                 (new Definition(
-                    'MakinaCorpus\Ucms\Label\EventDispatcher\LabelEventListener',
+                    'MakinaCorpus\Ucms\Label\EventDispatcher\LabelEventSubscriber',
                     [
                         new Reference('ucms_label.manager'),
                         new Reference('apb.notification'),
                     ]
                 ))
-                ->addTag('event_listener', ['event' => 'label:add'])
-                ->addTag('event_listener', ['event' => 'label:edit'])
-                ->addTag('event_listener', ['event' => 'label:delete'])
+                ->addTag('event_subscriber')
             ))
         ]);
-
-        // Remove everything notification-related.
-        if ($container->hasDefinition('ucms_label.label_event_listener')) {
-            $container->removeDefinition('ucms_label.label_event_listener');
-        }
-        if ($container->hasAlias('ucms_label.label_event_listener')) {
-            $container->removeAlias('ucms_label.label_event_listener');
-        }
-
-        if ($container->hasDefinition('ucms_label.label_notificiation_action_provider')) {
-            $container->removeDefinition('ucms_label.label_notificiation_action_provider');
-        }
-        if ($container->hasAlias('ucms_label.label_notificiation_action_provider')) {
-            $container->removeAlias('ucms_label.label_notificiation_action_provider');
-        }
     }
 }

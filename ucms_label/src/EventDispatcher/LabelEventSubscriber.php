@@ -8,7 +8,9 @@ use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\APubSub\Notification\NotificationService;
 use MakinaCorpus\Ucms\Label\LabelManager;
 
-final class LabelEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+final class LabelEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -25,6 +27,24 @@ final class LabelEventListener
     {
         $this->labelManager = $labelManager;
         $this->notifService = $notifService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            'label:add' => [
+                ['onLabelAdd', 0],
+            ],
+            'label:edit' => [
+                ['onLabelEdit', 0],
+            ],
+            'label:delete' => [
+                ['onLabelDelete', 0],
+            ],
+        ];
     }
 
     /**

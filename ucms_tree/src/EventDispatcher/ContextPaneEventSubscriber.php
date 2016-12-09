@@ -8,7 +8,9 @@ use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
 
-class ContextPaneEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
@@ -19,6 +21,18 @@ class ContextPaneEventListener
     {
         $this->siteManager = $siteManager;
         $this->treeManager = $treeManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onUcmsdashboardContextinit', 0],
+            ],
+        ];
     }
 
     /**

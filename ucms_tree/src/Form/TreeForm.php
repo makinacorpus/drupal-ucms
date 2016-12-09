@@ -182,7 +182,7 @@ class TreeForm extends FormBase
         }
 
         $this->dispatcher->dispatch(
-            'menu:tree',
+            MenuEvent::EVENT_TREE,
             new MenuEvent(
                 $menu->getName(),
                 $newTree,

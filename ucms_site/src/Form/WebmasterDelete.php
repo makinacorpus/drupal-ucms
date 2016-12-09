@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -93,7 +94,7 @@ class WebmasterDelete extends FormBase
         drupal_set_message($this->t("!name has been removed from the webmasters / contributors.", ['!name' => $user->getDisplayName()]));
 
         $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id(), 'role' => $access->getRole()]);
-        $this->dispatcher->dispatch('site:webmaster_delete', $event);
+        $this->dispatcher->dispatch(SiteEvents::EVENT_WEBMASTER_REMOVE, $event);
     }
 }
 

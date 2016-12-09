@@ -5,7 +5,9 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
 
-class MenuEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class MenuEventSubscriber implements EventSubscriberInterface
 {
     /**
      * @var NodeManager
@@ -21,6 +23,18 @@ class MenuEventListener
     public function __construct(NodeManager $nodeManager)
     {
         $this->nodeManager = $nodeManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            MenuEvent::EVENT_TREE => [
+                ['onMenuTree', 0]
+            ],
+        ];
     }
 
     /**

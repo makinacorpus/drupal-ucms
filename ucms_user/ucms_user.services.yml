@@ -5,12 +5,6 @@ services:
     class: MakinaCorpus\Ucms\User\TokenManager
     arguments: ["@database"]
 
-  ucms_user.user_event_listener:
-    class: MakinaCorpus\Ucms\User\EventDispatcher\UserEventListener
-    arguments: ["@entity.manager", "@ucms_user.token_manager"]
-    tags:
-      - {name: event_listener, event: "site:webmaster_add_new"}
-
   # Data source service for listing page
   ucms_user.admin.datasource:
     class: MakinaCorpus\Ucms\User\Page\UserAdminDatasource
@@ -21,17 +15,22 @@ services:
     public: false
     class: MakinaCorpus\Ucms\User\Action\UserActionProvider
     arguments: ["@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{ name: ucms_dashboard.action_provider }]
 
-  # Context pane event listener to provide the user creation button
-  ucms_user.context_pane_event_listener:
-    class: MakinaCorpus\Ucms\User\EventDispatcher\ContextPaneEventListener
-    tags: [{ name: event_listener, event: ucms_dashboard.context_init }]
+  ucms_user.user_event_subscriber:
+    class: MakinaCorpus\Ucms\User\EventDispatcher\UserEventSubscriber
+    arguments: ["@entity.manager", "@ucms_user.token_manager"]
+    tags: [{ name: event_subscriber }]
 
-  # Dashboard event listener to provide portlets
-  ucms_user.dashboard_event_listener:
-    class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventListener
-    tags: [{name: event_listener, event: ucms_dashboard.dashboard_init}]
+  # Context pane event subscriber to provide the user creation button
+  ucms_user.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\User\EventDispatcher\ContextPaneEventSubscriber
+    tags: [{ name: event_subscriber }]
+
+  # Dashboard event subscriber to provide portlets
+#  ucms_user.dashboard_event_subscriber:
+#    class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventSubscriber
+#    tags: [{ name: event_subscriber }]
 
   # Account portlet
   ucms_user.account_portlet:

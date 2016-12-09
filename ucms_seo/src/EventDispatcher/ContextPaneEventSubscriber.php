@@ -7,9 +7,12 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Seo\SeoService;
 
-class ContextPaneEventListener
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
+
     /**
      * @var \MakinaCorpus\Ucms\Seo\SeoService
      */
@@ -20,8 +23,19 @@ class ContextPaneEventListener
      */
     public function __construct(SeoService $seoService)
     {
-
         $this->seoService = $seoService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onUcmsdashboardContextinit', 0],
+            ],
+        ];
     }
 
     /**

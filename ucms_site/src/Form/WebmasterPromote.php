@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -96,7 +97,7 @@ class WebmasterPromote extends FormBase
         ]));
 
         $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
-        $this->dispatcher->dispatch('site:webmaster_promote', $event);
+        $this->dispatcher->dispatch(SiteEvents::EVENT_WEBMASTER_PROMOTE, $event);
     }
 }
 

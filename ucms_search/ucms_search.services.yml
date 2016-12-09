@@ -116,11 +116,10 @@ services:
     arguments: ["@ucms_search.index_storage", "@database"]
     tags: [{ name: event_subscriber }]
 
-  ucms_search.node_access_event_listener:
-    class: MakinaCorpus\Ucms\Search\EventDispatcher\SearchAccessEventListener
+  ucms_search.node_access_event_subscriber:
+    class: MakinaCorpus\Ucms\Search\EventDispatcher\SearchAccessEventSubscriber
     arguments: ["@ucms_search.index_storage", "@entity.manager"]
-    tags:
-      - { name: event_listener, event: ucms_search.search_create }
+    tags: [{ name: event_subscriber }]
 
   ucms_search.autocomplete:
     class: MakinaCorpus\Ucms\Search\Autocomplete

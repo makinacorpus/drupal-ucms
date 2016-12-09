@@ -9,19 +9,15 @@ services:
     class: MakinaCorpus\Ucms\Tree\MenuAccess
     arguments: ['@ucms_site.manager']
 
-  ucms_tree.context_pane_event_listener:
-    class: MakinaCorpus\Ucms\Tree\EventDispatcher\ContextPaneEventListener
+  ucms_tree.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\Tree\EventDispatcher\ContextPaneEventSubscriber
     arguments: ["@ucms_site.manager", "@umenu.manager"]
-    tags: [{name: event_listener, event: ucms_dashboard.context_init}]
+    tags: [{ name: event_subscriber }]
 
-
-  ucms_tree.site_event_listener:
-    class: MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventListener
+  ucms_tree.site_event_subscriber:
+    class: MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventSubscriber
     arguments: ["@database", "@ucms_site.manager", "%ucms_tree_site_menu%"]
-    tags:
-      - {name: event_listener, event: "site:create"}
-      - {name: event_listener, event: "site:init"}
-      - {name: event_listener, event: "site:clone"}
+    tags: [{ name: event_subscriber }]
 
   ucms_tree.node_event_subscriber:
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
@@ -32,6 +28,7 @@ services:
   ucms_tree.admin.datasource:
     class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDatasource
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
+
   ucms_tree.admin.display:
     class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDisplay
     arguments: ["@ucms_site.manager"]
@@ -42,11 +39,13 @@ services:
     class: MakinaCorpus\Ucms\Tree\Action\TreeDeleteProcessor
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
     tags: [{name: ucms_dashboard.action}]
+
   ucms_tree.action.tree_set_main:
     public: false
     class: MakinaCorpus\Ucms\Tree\Action\TreeSetMainProcessor
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
     tags: [{name: ucms_dashboard.action}]
+
   ucms_tree.tree_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Tree\Action\TreeActionProvider

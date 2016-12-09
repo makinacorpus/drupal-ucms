@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -140,7 +141,7 @@ class WebmasterChangeRole extends FormBase
             'webmaster_id' => $user->id(),
             'previous_role' => $oldAccess->getRole(),
         ]);
-        $this->dispatcher->dispatch('site:webmaster_change_role', $event);
+        $this->dispatcher->dispatch(SiteEvents::EVENT_WEBMASTER_CHANGE_ROLE, $event);
     }
 }
 

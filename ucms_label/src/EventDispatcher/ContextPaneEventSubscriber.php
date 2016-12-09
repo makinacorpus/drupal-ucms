@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Label\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -9,17 +8,16 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Label\LabelManager;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ContextPaneEventListener
+class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
-
 
     /**
      * @var LabelManager
      */
     protected $manager;
-
 
     /**
      * Constructor
@@ -30,6 +28,17 @@ class ContextPaneEventListener
         $this->manager = $manager;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onUcmsdashboardContextinit', 0],
+            ],
+        ];
+    }
 
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)
     {

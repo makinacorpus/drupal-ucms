@@ -8,9 +8,10 @@ use MakinaCorpus\Ucms\Search\IndexStorage;
 use MakinaCorpus\Ucms\Search\Lucene\Query;
 use MakinaCorpus\Ucms\Search\Search;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class SearchAccessEventListener
+class SearchAccessEventSubscriber implements EventSubscriberInterface
 {
     /**
      * @var EntityManager
@@ -23,7 +24,7 @@ class SearchAccessEventListener
     private $storage;
 
     /**
-     * SearchAccessEventListener constructor.
+     * Constructor.
      *
      * @param IndexStorage $storage
      * @param EntityManager $entityManager
@@ -32,6 +33,18 @@ class SearchAccessEventListener
     {
         $this->storage = $storage;
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            'ucms_search.search_create' => [
+                ['onUcmsSearchsearchCreate', 0],
+            ],
+        ];
     }
 
     public function onUcmsSearchsearchCreate(GenericEvent $event)

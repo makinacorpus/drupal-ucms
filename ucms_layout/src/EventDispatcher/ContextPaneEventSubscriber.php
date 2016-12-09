@@ -7,10 +7,12 @@ use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 /**
  * Adds layout edit actions and form to UI.
  */
-final class ContextPaneEventListener
+final class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     private $siteManager;
     private $contextManager;
@@ -24,6 +26,18 @@ final class ContextPaneEventListener
     {
         $this->siteManager = $siteManager;
         $this->contextManager = $contextManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onUcmsdashboardContextinit', 0],
+            ],
+        ];
     }
 
     /**

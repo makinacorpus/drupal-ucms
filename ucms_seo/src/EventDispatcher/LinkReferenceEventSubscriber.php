@@ -10,8 +10,37 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * This subscriber will collect linked content within text fields.
  */
-class LinkReferenceEventListener implements EventSubscriberInterface
+class LinkReferenceEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            NodeReferenceCollectEvent::EVENT_NAME => [
+                ['onCollect', 0]
+            ],
+        ];
+    }
+
+    public function onCollect(NodeReferenceCollectEvent $event)
+    {
+        $node = $event->getNode();
+
+        foreach ($this->getSearchableFields($node->bundle()) as $field) {
+
+            if (!$items = field_get_items('node', $node, $field)) {
+                continue;
+            }
+
+            $idList = $this->extractData($items);
+            if ($idList) {
+                $event->addReferences('link', $idList, $field);
+            }
+        }
+    }
+
     private function getSearchableFields($bundle)
     {
         $ret = [];
@@ -44,34 +73,5 @@ class LinkReferenceEventListener implements EventSubscriberInterface
         }
 
         return array_unique($ret);
-    }
-
-    public function onCollect(NodeReferenceCollectEvent $event)
-    {
-        $node = $event->getNode();
-
-        foreach ($this->getSearchableFields($node->bundle()) as $field) {
-
-            if (!$items = field_get_items('node', $node, $field)) {
-                continue;
-            }
-
-            $idList = $this->extractData($items);
-            if ($idList) {
-                $event->addReferences('link', $idList, $field);
-            }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    static public function getSubscribedEvents()
-    {
-        return [
-            NodeReferenceCollectEvent::EVENT_NAME => [
-                ['onCollect', 0]
-            ],
-        ];
     }
 }

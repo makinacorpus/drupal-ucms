@@ -11,13 +11,28 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * This subscriber will collect linked content within text fields.
  */
-class SiteAttachEventListener implements EventSubscriberInterface
+class SiteAttachEventSubscriber implements EventSubscriberInterface
 {
     private $service;
 
     public function __construct(SeoService $service)
     {
         $this->service = $service;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    static public function getSubscribedEvents()
+    {
+        return [
+            SiteEvents::EVENT_ATTACH => [
+                ['onAttach', 0]
+            ],
+            SiteEvents::EVENT_DETACH => [
+                ['onDetach', 0]
+            ],
+        ];
     }
 
     public function onAttach(SiteAttachEvent $event)
@@ -38,20 +53,5 @@ class SiteAttachEventListener implements EventSubscriberInterface
     {
         // @todo me like one of your friench girl
         //   we actually have nothing to do, just leaving the comment for fun
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    static public function getSubscribedEvents()
-    {
-        return [
-            SiteEvents::EVENT_ATTACH => [
-                ['onAttach', 0]
-            ],
-            SiteEvents::EVENT_DETACH => [
-                ['onDetach', 0]
-            ],
-        ];
     }
 }
