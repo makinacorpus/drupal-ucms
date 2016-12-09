@@ -32,7 +32,7 @@ class SiteActionProvider extends AbstractActionProvider
 
         $urlGenerator = $this->manager->getUrlGenerator();
 
-	if ($this->isGranted(Permission::OVERVIEW, $item)) {
+        if ($this->isGranted(Permission::OVERVIEW, $item)) {
             list($path, $options) = $urlGenerator->getRouteAndParams($item->getId(), 'admin/dashboard/content');
             $ret[] = new Action($this->t("Content in site"), $path, $options, 'file', 100, false, false, false, 'content');
             list($path, $options) = $urlGenerator->getRouteAndParams($item->getId(), 'admin/dashboard/media');

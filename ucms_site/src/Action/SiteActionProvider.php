@@ -2,12 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-<<<<<<< HEAD
-use Drupal\Core\Extension\ModuleHandlerInterface;
-=======
-use Drupal\Core\StringTranslation\StringTranslationTrait;
->>>>>>> 0a1d8ab... site, seo: site allowed protocol handling, better url generation
-
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
