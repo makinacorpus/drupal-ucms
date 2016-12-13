@@ -158,6 +158,10 @@ function ucms_widget_field_widget_form(&$form, &$form_state, $field, $instance, 
   if (!$items) {
     // This happens in Field UI for default value, let's make it happy
     $items[$delta] = ['options' => []];
+  } else if (!is_array($items[$delta]['options'])) {
+    // This should not happen, but I don't trust the Form API for keeping
+    // consistency in this. This avoids a few PHP warnings.
+    $items[$delta]['options'] = [];
   }
 
   // Compute defaults
