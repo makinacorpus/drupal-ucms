@@ -483,6 +483,7 @@ function ucms_contrib_preprocess_node(&$variables) {
   //   - remove custom template for cart items
   if ('favorite' !== $variables['view_mode']) {
     $variables['attributes_array']['data-nid'] = $variables['node']->nid;
+    $variables['attributes_array']['data-viewmode'] = $variables['view_mode'];
   }
 
   switch ($variables['view_mode']) {
