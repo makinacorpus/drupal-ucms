@@ -382,6 +382,9 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
       $path = ucms_site_master_absolute_url() . '/' . $path;
     }
   } else {
+    if (drupal_is_cli()) {
+      return;
+    }
     // In case we have no site context, and we are actually trying to render a
     // node link, we must enforce a local site to display it when relevant,
     // especially that most nodes can't be seen on master.
