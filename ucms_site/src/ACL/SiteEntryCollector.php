@@ -95,7 +95,7 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
 
             case SiteState::ON:
             case SiteState::OFF:
-                $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, [Permission::VIEW, Permission::UPDATE]);
+                $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, [Permission::VIEW, Permission::UPDATE, Access::ACL_PERM_SITE_EDIT_TREE]);
                 $builder->add(Access::PROFILE_SITE_READONLY, $siteId, [Permission::VIEW, Permission::OVERVIEW]);
                 break;
 
