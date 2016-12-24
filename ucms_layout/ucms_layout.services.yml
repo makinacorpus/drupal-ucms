@@ -18,6 +18,10 @@ services:
     class: MakinaCorpus\Ucms\Layout\ContextManager
     arguments: ["@ucms_layout.storage", "@ucms_layout.storage.temporary", "@ucms_site.manager"]
 
+  ucms_layout.page_injector:
+    class: MakinaCorpus\Ucms\Layout\DrupalPageInjector
+    arguments: ['@ucms_layout.context_manager', '@entity.manager']
+
   ucms_layout.site_node_event_subscriber:
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteNodeEventSubscriber
     arguments: ["@database", "@ucms_layout.context_manager", "@ucms_site.manager", "@entity.manager", "@request_stack"]

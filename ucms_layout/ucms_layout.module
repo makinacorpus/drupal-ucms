@@ -19,7 +19,6 @@
 
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\Controller\LayoutAjaxController;
-use MakinaCorpus\Ucms\Layout\DrupalPageInjector;
 use MakinaCorpus\Ucms\Layout\Layout;
 
 /**
@@ -153,13 +152,8 @@ function ucms_layout_theme() {
  * Implements hook_page_build().
  */
 function ucms_layout_page_build(&$page) {
-  $site = ucms_site_manager()->getContext();
-
-  if ($site) {
-    (new DrupalPageInjector(ucms_layout_context_manager(), \Drupal::service('entity.manager')))->inject(
-      $page,
-      $site->getTheme()
-    );
+  if ($site = ucms_site_manager()->getContext()) {
+    \Drupal::service('ucms_layout.page_injector')->inject($page, $site->getTheme());
   }
 }
 

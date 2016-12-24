@@ -112,14 +112,18 @@ class DrupalPageInjector
 
             /* @var $item Item */
             foreach ($region as $item) {
+
                 // Nodes are preloaded before
-                $node = $this->getNode($item->getNodeId());
+                $nodeId = $item->getNodeId();
+                $node   = $this->getNode($nodeId);
+                $mode   = $item->getViewMode();
+
                 if ($node && $node->access('view')) {
                     $items[] = [
                         '#theme'     => 'ucms_layout_item',
-                        '#nid'       => $item->getNodeId(),
+                        '#nid'       => $nodeId,
                         '#node'      => $node,
-                        '#view_mode' => $item->getViewMode(),
+                        '#view_mode' => $mode,
                         '#region'    => $region,
                     ];
                 }
