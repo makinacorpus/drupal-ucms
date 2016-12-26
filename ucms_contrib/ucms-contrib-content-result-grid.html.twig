@@ -1,10 +1,7 @@
 <div class="col-md-12" data-mode="{{ mode }}">
   {% for nid, node in nodes %}
-    {% if loop.index0 % 4 == 0 %}
-      <div class="row">
-    {% endif %}
     {% if constant('UCMS_VIEW_MODE_CONTENTADMIN') == view_mode %}
-      <div class="ucms-contrib-result col-md-3" data-nid="{{ nid }}">
+      <div class="ucms-contrib-result col-lg-2 col-md-3" data-nid="{{ nid }}">
         <div class="ucms-contrib-result-inner">
           {{ node }}
         </div>
@@ -12,9 +9,6 @@
     {% else %}
       <div class="ucms-contrib-result" data-nid="{{ nid }}">
         {{ node }}
-      </div>
-    {% endif %}
-    {% if loop.index0 % 4 == 3 or loop.last %}
       </div>
     {% endif %}
   {% endfor %}

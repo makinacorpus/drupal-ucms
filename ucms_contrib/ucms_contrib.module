@@ -648,22 +648,24 @@ function ucms_contrib_library() {
 /**
  * Implements hook_field_attach_view_alter().
  *
- * @TODO move to a custom module!
+ * @todo move to a custom module!
  */
 function ucms_contrib_field_attach_view_alter(&$output, $context) {
+
   $mapping = [
     UCMS_VIEW_MODE_CONTENTADMIN => UCMS_STYLE_CONTENTADMIN,
     UCMS_VIEW_MODE_FAVORITE     => UCMS_STYLE_FAVORITE,
   ];
 
   // Only work on nodes and some view modes.
-  if ($context['entity_type'] != 'node' || !isset($mapping[$context['view_mode']])) {
+  if ('node' !== $context['entity_type'] || empty($mapping[$context['view_mode']])) {
     return;
   }
+
   $view_mode = $mapping[$context['view_mode']];
 
   // Force image style on content viewed in admin mode
-  $image_found = FALSE;
+  $image_found = false;
   if (in_array($context['view_mode'], array_keys($mapping))) {
     foreach (element_children($output) as $field_name) {
       $element = &$output[$field_name];
@@ -696,23 +698,19 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
       $markup .= '<span>' . node_type_get_name($context['entity']) . '</span>';
     }
     $markup .= '</div></div></div>';
-    $output['default_icon'] = [
-      '#markup' => $markup,
-    ];
+    $output['default_icon'] = ['#markup' => $markup];
   }
 
   // Add icon relative to meta content type
-  $icon_mapping = [
-    'content' => 'file',
-    'media'   => 'picture',
-  ];
-  $meta_type = NULL;
+  $icon_mapping = ['content' => 'file', 'media'   => 'picture'];
+  $meta_type = null;
   $typeHandler = ucms_contrib_type_handler_get();
   foreach ($typeHandler->getTabs() as $tab => $label) {
     if (in_array($output['#bundle'], $typeHandler->getTabTypes($tab))) {
       $meta_type = $tab;
     }
   }
+
   $output['metadata']['#prefix'] = '<div class="ucms-metadata">';
   $output['metadata']['#suffix'] = '</div>';
   if (!$context['entity']->status) {
@@ -735,22 +733,21 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
  * @return bool
  */
 function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
-  $image_found = FALSE;
-  if (isset($element['#field_type']) && $element['#field_type'] == 'image' && $element['#formatter'] == 'image') {
+  $image_found = false;
+
+  if (isset($element['#field_type']) && $element['#field_type'] == 'image' && ($element['#formatter'] == 'image' || $element['#formatter'] == 'iresponsive')) {
     foreach (element_children($element) as $delta) {
       if ($delta === 0) {
-        $image_found = TRUE;
+        $image_found = true;
         // Force image style related to view mode.
         $element[$delta]['#image_style'] = $view_mode;
         $element[$delta]['#item']['attributes']['class'] = 'img-responsive img-rounded';
-      }
-      else {
+      } else {
         // Hide other image for slideshows.
-        $element[$delta]['#access'] = FALSE;
+        $element[$delta]['#access'] = false;
       }
     }
-  }
-  elseif (count(element_children($element))) {
+  } else if (count(element_children($element))) {
     foreach (element_children($element) as $key) {
       $image_found = _ucms_contrib_find_image_recursive($element[$key], $view_mode);
       if ($image_found) {
@@ -758,10 +755,10 @@ function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
         return TRUE;
       }
     }
+  } else {
+    $element['#access'] = false;
   }
-  else {
-    $element['#access'] = FALSE;
-  }
+
   return $image_found;
 }
 
@@ -772,6 +769,9 @@ function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
  * @param $vars
  */
 function template_preprocess_ucms_contrib_content_result_grid(&$vars) {
+  if (empty($vars['nodes'])) {
+    return;
+  }
   $node_views = node_view_multiple($vars['nodes'], $vars['view_mode']);
   $vars['nodes'] = [];
   foreach(element_children($node_views['nodes']) as $child_key) {

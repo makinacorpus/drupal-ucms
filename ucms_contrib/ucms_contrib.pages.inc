@@ -1,5 +1,6 @@
 <?php
 
+use MakinaCorpus\Ucms\Contrib\MediaAdminDisplay;
 use MakinaCorpus\Ucms\Contrib\NodeAdminDisplay;
 use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
@@ -71,6 +72,17 @@ function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab
   }
 
   $display = new NodeAdminDisplay();
+
+  switch ($tab) {
+
+    case 'media':
+      $display = new MediaAdminDisplay();
+      break;
+
+    default:
+      $display = new NodeAdminDisplay();
+      break;
+  }
 
   $ret['page'] = ucms_dashboard_page_get($datasource, $display, ['dashboard', 'content'])
     ->render(drupal_get_query_parameters(), current_path())
