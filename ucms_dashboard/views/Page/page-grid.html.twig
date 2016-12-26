@@ -1,0 +1,17 @@
+{% extends 'module:ucms_dashboard:views/Page/page.html.twig' %}
+
+{% block item %}
+  {{ node_view(item, constant('UCMS_VIEW_MODE_CONTENTADMIN')) }}
+{% endblock %}
+
+{% block item_list %}
+  <div class="col-md-12">
+    {% for item in items %}
+      <div class="ucms-contrib-result col-lg-2 col-md-3" data-nid="{{ item.id }}">
+        <div class="ucms-contrib-result-inner">
+          {{ block('item') }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

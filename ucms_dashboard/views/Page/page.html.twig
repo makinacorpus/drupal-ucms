@@ -1,5 +1,218 @@
-{% use 'module:ucms_dashboard:views/Page/page-blocks.html.twig' %}
+{#
+  Please note that items variable items type will vary depending on what you
+  are currently displaying, this template hanles nodes.
+
+  Variables:
+    state: PageState
+    route: string (current route)
+    filters: Filter[]
+    filters.ID.title: string (title)
+    filters.ID.links: Link[]
+    displays: Link[]
+    state.searchParam: string
+    state.currentSearch: string (raw user input)
+    query: string[] (current get query)
+    sort: SortManager
+    sort.currentField: string (current sort field)
+    sort.currentOrder: string (current sort order)
+    sort.fieldLinks: Link[]
+    sort.orderLinks: Link[]
+    sort.count: int (number of sort fields)
+    pager: string (an already rendered pager)
+    items: mixed[] the items (in most cases, nodes)
+ #}
+
+{% block display_mode_link %}
+  {% spaceless %}
+    <a class="{% if link.isActive %}active {% endif %}btn btn-default" href="{{ path(link.route, link.routeParams) }}" title="{{ link.title }}">
+      <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+      <span class="sr-only">{{ link.title }}</span>
+    </a>
+  {% endspaceless %}
+{% endblock %}
+
+{% block display_mode %}
+  <div class="clearfix">
+    <div class="btn-group">
+      {% for link in displays %}
+        {{ block('display_mode_link') }}
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block filter_link %}
+  {% spaceless %}
+    <div class="checkbox">
+      <label>
+        <a{% if link.isActive %} class="active"{% endif %} href="{{ path(link.route, link.routeParams) }}">
+          <input type="checkbox"{% if link.isActive %} checked="checked"{% endif %}>
+          {{ link.title }} {% if link.count %}<span class="badge">{{ link.count }}</span>{% endif %}
+        </a>
+      </label>
+    </div>
+  {% endspaceless %}
+{% endblock %}
+
+{% block filter %}
+  <strong>{{ filter.title }}</strong>
+  <ul class="list-unstyled">
+    {% for link in filter.links %}
+      <li>{{ block('filter_link') }}</li>
+    {% else %}
+      <li>{{ "No values"|trans }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block search_form %}
+  <form method="get" id="ucms-dashboard-search-form" accept-charset="UTF-8">
+    <div class="input-group">
+      <input placeholder="{{ "Search"|trans }}" class="form-control form-text" name="{{ state.searchParameter }}" value="{{ state.currentSearch|escape }}" maxlength="128" type="text">
+      {% for name, value in query %}
+        {% if name != state.searchParameter %}
+          <input type="hidden" name="{{ name }}" value="{{ value }}"/>
+        {% endif %}
+      {% endfor %}
+      <span class="input-group-btn">
+        <button type="submit" title="{{ "Search"|trans }}" class="btn btn-primary">
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </span>
+    </div>
+  </form>
+{% endblock %}
+
+{% block sort_link %}
+  {% spaceless %}
+    <a href="{{ path(link.route, link.routeParams) }}">
+      {{ link.title }}
+    </a>
+  {% endspaceless %}
+{% endblock %}
+
+{% block sort_links_field %}
+  <span class="text-muted">{{ "Sort by:"|trans }}</span>
+  <a href="#" class="dropdown-toggle" title="{{ "Sort by:"|trans }}" role="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">
+    {{ sort.currentFieldTitle(query) }} <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu">
+    {% for link in sort.fieldLinks %}
+      <li>{{ block('sort_link') }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block sort_links_order %}
+  <a href="#" class="dropdown-toggle" title="{{ "Order by:"|trans }}" role="button" aria-haspopup="true" aria-expanded="false" data-toggle="dropdown">
+    {{ sort.currentOrderTitle(query) }} <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu">
+    {% for link in sort.orderLinks %}
+      <li>{{ block('sort_link') }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block sort_links %}
+  <div class="pull-right sort-links">
+    <span style="position: relative;">
+      {{ block('sort_links_field') }}
+    </span>
+    <span style="position: relative;">
+      {{ block('sort_links_order') }}
+    </span>
+  </div>
+{% endblock %}
+
+{% block item %}
+  <tr>
+    <td>{{ item.type }}</td>
+    <td class="ui-sortable"><span class="pull-right"></span>
+      <div class="ucms-contrib-result" data-nid="{{ item.id }}">
+        <a href="{{ path('node/%node', {node: item.id}) }}">{{ item.title }}</a>
+      </div>
+    </td>
+    <td>{% if item.isPublished %}{{ "published"|trans }}{% endif %}</td>
+    <td>4 weeks 3 hours</td>
+    <td>4 weeks 24 min</td>
+    <td>fonctionnel</td>
+    <td>
+      {{ ucms_actions(item) }}
+    </td>
+  </tr>
+{% endblock %}
+
+{% block item_list %}
+  <table class="table table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>{{ "Type"|trans }}</th>
+        <th>{{ "Title"|trans }}</th>
+        <th>{{ "Status"|trans }}</th>
+        <th>{{ "Created at"|trans }}</th>
+        <th>{{ "Updated at"|trans }}</th>
+        <th>{{ "Owner"|trans }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        {{ block('item') }}
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block page_content %}
+  <div class="container-fluid">
+    {% if state.searchParameter %}
+      <div class="row">
+        <div class="col-md-12">
+          {{ block('search_form') }}
+        </div>
+      </div>
+    {% endif %}
+    {% if sort.count %}
+      <div class="row">
+        <div class="col-md-12">
+          {{ block('sort_links') }}
+        </div>
+      </div>
+    {% endif %}
+    <div class="row">
+      <div class="col-md-12">
+        {{ block('item_list') }}
+      </div>
+    </div>
+    {% if state.limit < state.totalItemCount %}
+      <div class="row">
+        <div class="col-md-12">
+          {{ pager(state.limit, state.totalItemCount, state.pageNumber, state.pagerElement) }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
 
 {% block page %}
-  {{ parent() }}
+  {% if displays or filters %}
+    <div class="col-md-2">
+      {% if displays %}
+        {{ block('display_mode') }}
+      {% endif %}
+      {% if filters %}
+        {% for filter in filters %}
+          {{ block('filter') }}
+        {% endfor %}
+     {% endif %}
+    </div>
+    <div id="ucms-contrib-results" class="col-md-10">
+      {{ block('page_content') }}
+    </div>
+  {% else %}
+    <div id="ucms-contrib-results" class="col-md-12">
+      {{ block('page_content') }}
+    </div>
+  {% endif %}
 {% endblock %}

@@ -13,6 +13,7 @@ class PageState
 
     private $searchParameter = null;
     private $currentSearch;
+    private $currentDisplay = null;
     private $sortField = null;
     private $sortOrder = self::SORT_DESC;
     private $limit = null;
@@ -29,6 +30,16 @@ class PageState
     public function getSearchParameter()
     {
         return $this->searchParameter;
+    }
+
+    public function setCurrentDisplay($currentDisplay)
+    {
+        $this->currentDisplay = $currentDisplay;
+    }
+
+    public function getCurrentDisplay()
+    {
+        return $this->currentDisplay;
     }
 
     public function setCurrentSearch($searchString)

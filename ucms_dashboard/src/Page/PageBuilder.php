@@ -7,7 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 class PageBuilder
 {
     private $twig;
-    private $defaultTemplate;
+    private $debug = false;
+    private $defaultTemplate = 'table';
+    private $templates = [];
 
     /**
      * Default constructor
@@ -15,10 +17,58 @@ class PageBuilder
      * @param \Twig_Environment $twig
      * @param string $defaultTemplate
      */
-    public function __construct(\Twig_Environment $twig, $defaultTemplate)
+    public function __construct(\Twig_Environment $twig, array $templates = [], $defaultTemplate = 'table')
     {
         $this->twig = $twig;
+        $this->debug = $twig->isDebug();
         $this->defaultTemplate = $defaultTemplate;
+        $this->templates = $templates;
+    }
+
+    /**
+     * Get default template
+     *
+     * @return string
+     */
+    private function getDefaultTemplate()
+    {
+        if (empty($this->templates)) {
+            throw new \InvalidArgumentException("page builder has no templates");
+        }
+
+        if (isset($this->templates[$this->defaultTemplate])) {
+            return $this->templates[$this->defaultTemplate];
+        }
+
+        if ($this->debug) {
+            trigger_error("page builder has no explicit 'default' template set, using first in array", E_USER_NOTICE);
+        }
+
+        return reset($this->templates);
+    }
+
+    /**
+     * Get template for given display name
+     *
+     * @param string $displayName
+     *
+     * @return string
+     */
+    private function getTemplateFor($displayName = null)
+    {
+        if (empty($displayName)) {
+            return $this->getDefaultTemplate();
+        }
+
+        if (!isset($this->templates[$displayName])) {
+            if ($this->debug) {
+                trigger_error(sprintf("%s: display has no associated template, switching to default", $displayName), E_USER_NOTICE);
+            }
+
+            return $this->getDefaultTemplate();
+        }
+
+        return $this->templates[$displayName];
     }
 
     /**
@@ -86,6 +136,9 @@ class PageBuilder
             }
         }
 
+        // Set current display
+        $state->setCurrentDisplay($request->get('display', $this->defaultTemplate));
+
         return new PageResult($route, $state, $items, $query, $filters, $sort);
     }
 
@@ -97,27 +150,32 @@ class PageBuilder
      * @param array $arguments
      *   Additional arguments for the template, please note they will not
      *   override defaults
-     * @param string $name
-     *   Template name
      */
-    public function render(PageResult $result, array $arguments = [], $name = null)
+    public function render(PageResult $result, array $arguments = [])
     {
-        if (null === $name) {
-            $name = $this->defaultTemplate;
-        }
-
         $state = $result->getState();
 
+        // Build display links
+        // @todo Do it better...
+        $displayLinks = [];
+        foreach ($this->templates as $display => $template) {
+            $displayLinks[] = new Link($display, $result->getRoute(), ['display' => $display] + $result->getQuery(), $state->getCurrentDisplay() === $display, $display);
+        }
+
         $arguments = [
-            'state' => $state,
-            'route' => $result->getRoute(),
-            'filters' => $result->getFilters(),
-            'display_mode_link' => [], // @todo
-            'query' => $result->getQuery(),
-            'sort' => $result->getSort(),
-            'items' => $result->getItems(),
+            'state'     => $state,
+            'route'     => $result->getRoute(),
+            'filters'   => $result->getFilters(),
+            'displays'  => $displayLinks,
+            'query'     => $result->getQuery(),
+            'sort'      => $result->getSort(),
+            'items'     => $result->getItems(),
         ] + $arguments;
 
-        return $this->twig->render($name, $arguments);
+        return $this
+            ->twig
+            ->load($this->getTemplateFor($state->getCurrentDisplay()))
+            ->renderBlock('page', $arguments)
+        ;
     }
 }
