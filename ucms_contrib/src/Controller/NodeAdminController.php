@@ -48,7 +48,13 @@ class NodeAdminController extends Controller
         $builder = $this->getPageBuilder();
         $result = $builder->search($datasource, $request);
 
-        return $builder->render($result);
+        // I don't see any valid reason NOT to do this.
+        $defaultDisplay = null;
+        if ('media' === $tab) {
+            $defaultDisplay = 'grid';
+        }
+
+        return $builder->render($result, [], $defaultDisplay);
     }
 
     /**

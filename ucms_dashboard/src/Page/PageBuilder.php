@@ -8,7 +8,7 @@ class PageBuilder
 {
     private $twig;
     private $debug = false;
-    private $defaultTemplate = 'table';
+    private $defaultDisplay = 'table';
     private $templates = [];
 
     /**
@@ -16,14 +16,14 @@ class PageBuilder
      *
      * @param \Twig_Environment $twig
      * @param string[] $templates
-     * @param string $defaultTemplate
+     * @param string $defaultDisplay
      *   Default template
      */
-    public function __construct(\Twig_Environment $twig, array $templates = [], $defaultTemplate = 'table')
+    public function __construct(\Twig_Environment $twig, array $templates = [], $defaultDisplay = 'table')
     {
         $this->twig = $twig;
         $this->debug = $twig->isDebug();
-        $this->defaultTemplate = $defaultTemplate;
+        $this->defaultDisplay = $defaultDisplay;
         $this->templates = $templates;
     }
 
@@ -38,8 +38,8 @@ class PageBuilder
             throw new \InvalidArgumentException("page builder has no templates");
         }
 
-        if (isset($this->templates[$this->defaultTemplate])) {
-            return $this->templates[$this->defaultTemplate];
+        if (isset($this->templates[$this->defaultDisplay])) {
+            return $this->templates[$this->defaultDisplay];
         }
 
         if ($this->debug) {
@@ -56,7 +56,7 @@ class PageBuilder
      *
      * @return string
      */
-    private function getTemplateFor($displayName = null)
+    private function getTemplateFor($displayName = null, $fallback = null)
     {
         if (empty($displayName)) {
             return $this->getDefaultTemplate();
@@ -65,6 +65,10 @@ class PageBuilder
         if (!isset($this->templates[$displayName])) {
             if ($this->debug) {
                 trigger_error(sprintf("%s: display has no associated template, switching to default", $displayName), E_USER_NOTICE);
+            }
+
+            if ($fallback) {
+                return $this->getTemplateFor($fallback);
             }
 
             return $this->getDefaultTemplate();
@@ -139,7 +143,7 @@ class PageBuilder
         }
 
         // Set current display
-        $state->setCurrentDisplay($request->get('display', $this->defaultTemplate));
+        $state->setCurrentDisplay($request->get('display'));
 
         return new PageResult($route, $state, $items, $query, $filters, $sort);
     }
@@ -152,16 +156,27 @@ class PageBuilder
      * @param array $arguments
      *   Additional arguments for the template, please note they will not
      *   override defaults
+     * @param string $defaultDisplay
+     *   Default display name if a specific one suits more for the content
      */
-    public function render(PageResult $result, array $arguments = [])
+    public function render(PageResult $result, array $arguments = [], $defaultDisplay = null)
     {
         $state = $result->getState();
+
+        $display = $state->getCurrentDisplay();
+        if (!$display) {
+            if ($defaultDisplay) {
+                $state->setCurrentDisplay($display = $defaultDisplay);
+            } else {
+                $state->setCurrentDisplay($display = $this->defaultDisplay);
+            }
+        }
 
         // Build display links
         // @todo Do it better...
         $displayLinks = [];
-        foreach (array_keys($this->templates) as $display) {
-            switch ($display) {
+        foreach (array_keys($this->templates) as $name) {
+            switch ($name) {
                 case 'grid':
                     $displayIcon = 'th';
                     break;
@@ -170,7 +185,7 @@ class PageBuilder
                     $displayIcon = 'th-list';
                     break;
             }
-            $displayLinks[] = new Link($display, $result->getRoute(), ['display' => $display] + $result->getQuery(), $state->getCurrentDisplay() === $display, $displayIcon);
+            $displayLinks[] = new Link($name, $result->getRoute(), ['display' => $name] + $result->getQuery(), $display === $name, $displayIcon);
         }
 
         $arguments = [
@@ -185,7 +200,7 @@ class PageBuilder
 
         return $this
             ->twig
-            ->load($this->getTemplateFor($state->getCurrentDisplay()))
+            ->load($this->getTemplateFor($display))
             ->renderBlock('page', $arguments)
         ;
     }
