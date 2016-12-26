@@ -10,6 +10,10 @@
       <div class="ucms-contrib-result col-lg-2 col-md-3" data-nid="{{ item.id }}">
         <div class="ucms-contrib-result-inner">
           {{ block('item') }}
+          {# We need an inner div because actions relies on relative/aboslute too #}
+          <div class="actions">
+            {{ ucms_actions(item) }}
+          </div>
         </div>
       </div>
     {% endfor %}

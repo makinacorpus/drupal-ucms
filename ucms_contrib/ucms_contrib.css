@@ -76,7 +76,7 @@
 .ucms-cart-item > .node,
 .ucms-contrib-result-inner {
   margin: 15px 0;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: relative;
   padding-left: 0;
   padding-right: 0;
@@ -239,7 +239,7 @@ body [data-region].ucms-highlighted-over {
 .ui-sortable [data-nid],
 .ui-sortable [data-nid] a {
   cursor: move;
-  z-index: 100;
+  /* z-index: 100; */
 }
 
 .ui-sortable-helper {
@@ -390,6 +390,17 @@ body [data-region].ucms-highlighted-over {
   font-size: 72px;
 }
 
+.ucms-contrib-result-inner .actions {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: none;
+}
+
+.ucms-contrib-result-inner:hover .actions {
+  display: block;
+}
+
 .node .content .ucms-metadata,
 .ucms-contrib-result-inner .ucms-metadata {
   position: absolute;
@@ -399,6 +410,9 @@ body [data-region].ucms-highlighted-over {
   background: #333;
   border-top-left-radius: 4px;
   color: #fff;
+}
+.ucms-contrib-result-inner media {
+  overflow: auto;
 }
 .node .content .ucms-metadata span,
 .ucms-contrib-result-inner .ucms-metadata span {
