@@ -9,8 +9,8 @@
     filters.ID.title: string (title)
     filters.ID.links: Link[]
     display_links: Link[]
-    search_param: string
-    search_current: string (raw user input)
+    state.searchParam: string
+    state.currentSearch: string (raw user input)
     query: string[] (current get query)
     sort: SortManager
     sort.currentField: string (current sort field)
@@ -68,7 +68,7 @@
 {% block search_form %}
   <form method="get" id="ucms-dashboard-search-form" accept-charset="UTF-8">
     <div class="input-group">
-      <input placeholder="{{ "Search"|trans }}" class="form-control form-text" name="{{ state.searchParameter }}" value="{{ state.currentSearch }}" maxlength="128" type="text">
+      <input placeholder="{{ "Search"|trans }}" class="form-control form-text" name="{{ state.searchParameter }}" value="{{ state.currentSearch|escape }}" maxlength="128" type="text">
       {% for name, value in query %}
         {% if name != state.searchParameter %}
           <input type="hidden" name="{{ name }}" value="{{ value }}"/>

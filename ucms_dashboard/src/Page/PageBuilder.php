@@ -68,7 +68,8 @@ class PageBuilder
         }
         // Same with search parameter and value
         $searchParameter = $datasource->getSearchFormParamName();
-        $state->setCurrentSearch($searchParameter);
+        $state->setSearchParameter($searchParameter);
+        $state->setCurrentSearch($request->get($searchParameter));
         if (!empty($query[$searchParameter])) {
             $state->setCurrentSearch($query[$searchParameter]);
         }
@@ -112,8 +113,6 @@ class PageBuilder
             'route' => $result->getRoute(),
             'filters' => $result->getFilters(),
             'display_mode_link' => [], // @todo
-            'search_param' => false, // @todo
-            'search_current' => false, // @todo
             'query' => $result->getQuery(),
             'sort' => $result->getSort(),
             'items' => $result->getItems(),
