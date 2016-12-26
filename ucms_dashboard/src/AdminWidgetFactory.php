@@ -43,6 +43,7 @@ class AdminWidgetFactory
         EventDispatcherInterface $eventDispatcher = null
     ) {
         $this->formBuilder = $formBuilder;
+        $this->pageBuilder = $pageBuilder;
         $this->actionRegistry = $actionRegistry;
         $this->eventDispatcher = $eventDispatcher;
         $this->twig = $twig;

@@ -72,5 +72,29 @@ function ucms_harm_admin_content_page_group($tab = null) {
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_group', 1);
   require_once drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.pages.inc';
-  return ucms_contrib_admin_content_page($datasource, $tab);
+  return ucms_harm_admin_content_page($datasource, $tab);
+}
+
+/**
+ * Legacy function to display an admin page.
+ *
+ * @deprecated
+ */
+function ucms_harm_admin_content_page($datasource, $tab) {
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $search */
+  $search = \Drupal::service('ucms_contrib.datasource.elastic');
+  /** @var \MakinaCorpus\Ucms\Site\SiteManager $siteManager */
+  $siteManager = \Drupal::service('ucms_site.manager');
+  // Apply context, if any
+  if ($siteManager->hasContext()) {
+    $search->getFilterQuery()->matchTerm('site_id', $siteManager->getContext()->getId());
+  }
+  $types = \Drupal::service('ucms_contrib.type_handler')->getTabTypes($tab);
+  if (!empty($types)) {
+    $search->getFilterQuery()->matchTermCollection('type', $types);
+  }
+  /** @var \MakinaCorpus\Ucms\Dashboard\Page\PageBuilder $builder */
+  $builder = \Drupal::service('ucms_dashboard.page_builder');
+  $result = $builder->search($datasource, \Drupal::request());
+  return $builder->render($result);
 }

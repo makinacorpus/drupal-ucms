@@ -14,6 +14,7 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Contrib\Controller\NodeAdminController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Site\Access;
 
@@ -53,10 +54,9 @@ function ucms_contrib_menu() {
   foreach (ucms_contrib_type_handler_get()->getTabs() as $key => $label) {
     $items['admin/dashboard/' . $key] = [
       'title'             => $label,
-      'page callback'     => 'ucms_contrib_admin_content_page_mine',
-      'page arguments'    => [$key],
+      'page callback'     => 'sf_dic_page',
+      'page arguments'    => [NodeAdminController::class . '::mine', $key],
       'access arguments'  => ['access ucms content overview'],
-      'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_NORMAL_ITEM
     ];
     $items['admin/dashboard/' . $key . '/mine'] = [
@@ -66,37 +66,33 @@ function ucms_contrib_menu() {
     ];
     $items['admin/dashboard/' . $key . '/global'] = [
       'title'             => "Global",
-      'page callback'     => 'ucms_contrib_admin_content_page_global',
-      'page arguments'    => [$key],
+      'page callback'     => 'sf_dic_page',
+      'page arguments'    => [NodeAdminController::class . '::global', $key],
       'access arguments'  => [Access::PERM_CONTENT_VIEW_GLOBAL],
-      'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 90,
     ];
     $items['admin/dashboard/' . $key . '/local'] = [
       'title'             => "Local",
-      'page callback'     => 'ucms_contrib_admin_content_page_local',
-      'page arguments'    => [$key],
+      'page callback'     => 'sf_dic_page',
+      'page arguments'    => [NodeAdminController::class . '::local', $key],
       'access arguments'  => ['access ucms content overview'], // @todo user has sites
-      'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 80,
     ];
     $items['admin/dashboard/' . $key . '/flagged'] = [
       'title'             => "Flagged",
-      'page callback'     => 'ucms_contrib_admin_content_page_flagged',
-      'page arguments'    => [$key],
+      'page callback'     => 'sf_dic_page',
+      'page arguments'    => [NodeAdminController::class . '::flagged', $key],
       'access callback'   => 'ucms_contrib_menu_node_access_global',
-      'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 200,
     ];
     $items['admin/dashboard/' . $key . '/starred'] = [
       'title'             => "Starred",
-      'page callback'     => 'ucms_contrib_admin_content_page_starred',
-      'page arguments'    => [$key],
+      'page callback'     => 'sf_dic_page',
+      'page arguments'    => [NodeAdminController::class . '::starred', $key],
       'access arguments'  => [Access::PERM_CONTENT_MANAGE_GLOBAL],
-      'file'              => 'ucms_contrib.pages.inc',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 210,
     ];
@@ -235,19 +231,19 @@ function ucms_contrib_menu() {
   // Cart operations.
   $items['admin/cart/refresh'] = [
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::refresh'],
+    'page arguments'    => [CartController::class . '::refresh'],
     'access arguments'  => ['use favorites'],
   ];
   $items['admin/cart/%node/add'] = [
     'title'             => "Content",
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::add', 2],
+    'page arguments'    => [CartController::class . '::add', 2],
     'access arguments'  => ['use favorites'],
   ];
   $items['admin/cart/%node/remove'] = [
     'title'             => "Content",
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::remove', 2],
+    'page arguments'    => [CartController::class . '::remove', 2],
     'access arguments'  => ['use favorites'],
   ];
 

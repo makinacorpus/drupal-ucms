@@ -15,7 +15,9 @@ class PageBuilder
      * Default constructor
      *
      * @param \Twig_Environment $twig
+     * @param string[] $templates
      * @param string $defaultTemplate
+     *   Default template
      */
     public function __construct(\Twig_Environment $twig, array $templates = [], $defaultTemplate = 'table')
     {
@@ -158,8 +160,17 @@ class PageBuilder
         // Build display links
         // @todo Do it better...
         $displayLinks = [];
-        foreach ($this->templates as $display => $template) {
-            $displayLinks[] = new Link($display, $result->getRoute(), ['display' => $display] + $result->getQuery(), $state->getCurrentDisplay() === $display, $display);
+        foreach (array_keys($this->templates) as $display) {
+            switch ($display) {
+                case 'grid':
+                    $displayIcon = 'th';
+                    break;
+                default:
+                case 'table':
+                    $displayIcon = 'th-list';
+                    break;
+            }
+            $displayLinks[] = new Link($display, $result->getRoute(), ['display' => $display] + $result->getQuery(), $state->getCurrentDisplay() === $display, $displayIcon);
         }
 
         $arguments = [

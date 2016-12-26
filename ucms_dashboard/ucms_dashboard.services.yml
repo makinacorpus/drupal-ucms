@@ -1,7 +1,7 @@
 parameters:
   ucms_dashboard.page_builder.templates:
-    th-list: module:ucms_dashboard:views/Page/page.html.twig
-    th: module:ucms_dashboard:views/Page/page-grid.html.twig
+    table: module:ucms_dashboard:views/Page/page.html.twig
+    grid: module:ucms_dashboard:views/Page/page-grid.html.twig
 
 services:
 
