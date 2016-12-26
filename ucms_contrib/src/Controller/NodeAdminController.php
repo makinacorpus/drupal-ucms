@@ -45,16 +45,13 @@ class NodeAdminController extends Controller
             $search->getFilterQuery()->matchTermCollection('type', $types);
         }
 
-        $builder = $this->getPageBuilder();
-        $result = $builder->search($datasource, $request);
-
         // I don't see any valid reason NOT to do this.
         $defaultDisplay = null;
         if ('media' === $tab) {
             $defaultDisplay = 'grid';
         }
 
-        return $builder->render($result, [], $defaultDisplay);
+        return $this->getPageBuilder()->searchAndRender($datasource, $request, [], $defaultDisplay);
     }
 
     /**

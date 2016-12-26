@@ -204,4 +204,19 @@ class PageBuilder
             ->renderBlock('page', $arguments)
         ;
     }
+
+    /**
+     * Shortcut for controllers
+     *
+     * @param DatasourceInterface $datasource
+     * @param Request $request
+     * @param array $baseQuery
+     * @param unknown $defaultDisplay
+     *
+     * @return string
+     */
+    public function searchAndRender(DatasourceInterface $datasource, Request $request, array $baseQuery = [], $defaultDisplay = null)
+    {
+        return $this->render($this->search($datasource, $request, $baseQuery), [], $defaultDisplay);
+    }
 }
