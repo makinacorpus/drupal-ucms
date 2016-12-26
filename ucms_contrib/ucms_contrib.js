@@ -237,6 +237,39 @@
       }));
 
       /**
+       * Immutable carts: can be connected, but not modified.
+       */
+      $('.ucms-cart-list:not(#ucms-cart-list)', context).sortable($.extend({}, Drupal.ucmsSortableDefaults, {
+
+        // Connect with others lists and trash
+        connectWith: '[data-can-receive]',
+
+        beforeStop: function (event, ui) {
+          Drupal.ucmsTempReceivedPos = ui.helper.index();
+          // Need to save the fact that we are receiving or not for update()
+          Drupal.ucmsIsSameContainer = !!$(ui.placeholder).closest(this).length;
+        },
+
+        // Ce hack de batard!
+        start: function (event, ui) {
+          $('iframe').hide();
+        },
+        stop: function (event, ui) {
+          $('iframe').show();
+        },
+
+        receive: function (event, ui) {
+          // Those are immutable
+          $(this).sortable('cancel');
+        },
+
+        update: function () {
+          // Cancel any sort as there is no point to retain positions
+          $(this).sortable('cancel');
+        }
+      }));
+
+      /**
        * Cart: accepting admin items, can be removed.
        */
       $('#ucms-cart-list', context).sortable($.extend({}, Drupal.ucmsSortableDefaults, {

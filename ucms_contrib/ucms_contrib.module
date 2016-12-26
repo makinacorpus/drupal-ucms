@@ -390,10 +390,12 @@ function ucms_contrib_theme() {
   return [
     'ucms_contrib_cart' => [
       'variables' => [
-        'account' => null,
-        'items'   => [],
-        'actions' => null,
-        'display' => null,
+        'css_id'      => 'ucms-cart-list',
+        'account'     => null,
+        'can_receive' => false,
+        'items'       => [],
+        'actions'     => null,
+        'display'     => null,
       ],
       'template'  => 'ucms-contrib-cart',
     ],

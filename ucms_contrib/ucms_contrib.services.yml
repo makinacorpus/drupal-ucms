@@ -36,6 +36,7 @@ services:
   ucms_contrib.context_pane_event_subscriber:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventSubscriber
     arguments:
+      - "@service_container"
       - "@ucms_contrib.content_action_provider"
       - "@ucms_dashboard.action_provider_registry"
       - "@ucms_site.manager"

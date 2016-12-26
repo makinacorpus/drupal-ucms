@@ -11,30 +11,20 @@ use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use MakinaCorpus\Ucms\Contrib\Controller\CartHistoryController;
 
 class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
-    /**
-     * @var ActionRegistry
-     */
+    private $container;
     private $contentActionProvider;
-
-    /**
-     * @var SiteManager
-     */
     private $siteManager;
-
-    /**
-     * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
-     */
     private $typeHandler;
-
-    /**
-     * @var ActionProviderInterface
-     */
     private $actionProviderRegistry;
 
     /**
@@ -46,11 +36,13 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      * @param TypeHandler $typeHandler
      */
     public function __construct(
+        ContainerInterface $container,
         ActionProviderInterface $contentActionProvider,
         ActionRegistry $actionRegistry,
         SiteManager $siteManager,
         TypeHandler $typeHandler
     ) {
+        $this->container = $container;
         $this->contentActionProvider = $contentActionProvider;
         $this->actionProviderRegistry = $actionRegistry;
         $this->siteManager = $siteManager;
@@ -70,6 +62,42 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * Render one's favorite cart.
+     * @todo Better way
+     */
+    private function renderCart()
+    {
+        $controller = new CartController();
+        $controller->setContainer($this->container);
+
+        return $controller->renderAction($this->container->get('request_stack')->getCurrentRequest());
+    }
+
+    /**
+     * Render one's favorite cart.
+     * @todo Better way
+     */
+    private function renderBrowseHistory()
+    {
+        $controller = new CartHistoryController();
+        $controller->setContainer($this->container);
+
+        return $controller->userReadHistoryAction($this->container->get('request_stack')->getCurrentRequest());
+    }
+
+    /**
+     * Render one's favorite cart.
+     * @todo Better way
+     */
+    private function renderUpdateHistory()
+    {
+        $controller = new CartHistoryController();
+        $controller->setContainer($this->container);
+
+        return $controller->userUpdateHistoryAction($this->container->get('request_stack')->getCurrentRequest());
+    }
+
+    /**
      * @param ContextPaneEvent $event
      */
     public function onUcmsdashboardContextinit(ContextPaneEvent $event)
@@ -82,7 +110,11 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
 
             $contextPane
                 ->addTab('cart', $this->t("Cart"), 'shopping-cart')
-                ->add(ucms_contrib_favorite_render(), 'cart')
+                ->add($this->renderCart(), 'cart')
+                ->addTab('history', $this->t("Your browse history"), 'bookmark')
+                ->add($this->renderBrowseHistory(), 'history')
+                ->addTab('bookmark', $this->t("Your recent modifications"), 'time')
+                ->add($this->renderUpdateHistory(), 'bookmark')
             ;
         }
 

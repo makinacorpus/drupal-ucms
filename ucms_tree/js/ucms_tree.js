@@ -32,7 +32,7 @@
          * Cart sortable
          */
         var listIndex = 0;
-        $('#ucms-cart-list', context).sortable({
+        $('.ucms-cart-list', context).sortable({
           // Connect with others lists and trash
           connectWith: '[data-can-receive]',
           items: '.ucms-cart-item',
@@ -40,7 +40,7 @@
           tolerance: 'pointer',
           toleranceElement: '> div',
           remove: function (event, ui) {
-            var $cart = $('#ucms-cart-list');
+            var $cart = $('.ucms-cart-list');
             if (listIndex - 1 >= 0) {
               ui.item.clone().insertAfter($cart.children().get(listIndex - 1));
             }

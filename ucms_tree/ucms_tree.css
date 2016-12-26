@@ -76,6 +76,6 @@ li.ui-sortable-helper {
 }
 
 /* Cart - Force to be static, else it's messing with DnD */
-#ucms-cart {
+.ucms-cart {
   position: static !important;
 }

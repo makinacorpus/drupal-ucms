@@ -130,8 +130,12 @@ class CartController extends Controller
         }
     }
 
-    public function renderAction(Request $request, $userId)
+    public function renderAction(Request $request, $userId = null)
     {
+        if (!$userId) {
+            $userId = $this->getCurrentUser()->id();
+        }
+
         $nidList  = $this->getCartStorage()->listFor($userId);
         $nodes    = $nidList ? node_load_multiple($nidList) : [];
 
@@ -143,10 +147,10 @@ class CartController extends Controller
         ;
 
         $ret = [
-            '#theme'    => 'ucms_contrib_cart',
-            '#account'  => $userId,
-            '#display'  => $display->renderLinks($request->getPathInfo()),
-            '#items'    => $display->render($nodes),
+            '#theme'        => 'ucms_contrib_cart',
+            '#account'      => $userId,
+            '#can_receive'  => true,
+            '#items'        => $display->render($nodes),
         ];
 
         $ret['#attached']['library'][] = ['system', 'ui.droppable'];
