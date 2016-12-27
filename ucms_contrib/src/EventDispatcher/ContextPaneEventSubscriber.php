@@ -4,22 +4,23 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
+use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
+use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use MakinaCorpus\Ucms\Contrib\Controller\CartController;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use MakinaCorpus\Ucms\Contrib\Controller\CartHistoryController;
 
 class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
+    use PageControllerTrait;
 
     private $container;
     private $contentActionProvider;
@@ -62,11 +63,25 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * Get service in container
+     *
+     * @param string $id
+     *
+     * @return object
+     */
+    final protected function get($id)
+    {
+        return $this->container->get($id);
+    }
+
+    /**
      * Render one's favorite cart.
      * @todo Better way
      */
     private function renderCart()
     {
+        // @todo keeping controller for now because it does handles the
+        //   javascript includes for Drupal, and we need it
         $controller = new CartController();
         $controller->setContainer($this->container);
 
@@ -79,10 +94,11 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      */
     private function renderBrowseHistory()
     {
-        $controller = new CartHistoryController();
-        $controller->setContainer($this->container);
+        // @todo we must find a more straight-foward way
+        $request    = $this->get('request_stack')->getCurrentRequest();
+        $datasource = new CartDatasource($this->get('current_user')->id(), $this->get('ucms_contrib.history_cart.browse'));
 
-        return $controller->userReadHistoryAction($this->container->get('request_stack')->getCurrentRequest());
+        return $this->getPageBuilder('cart')->searchAndRender($datasource, $request, [], 'cart-readonly');
     }
 
     /**
@@ -91,10 +107,11 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      */
     private function renderUpdateHistory()
     {
-        $controller = new CartHistoryController();
-        $controller->setContainer($this->container);
+        // @todo we must find a more straight-foward way
+        $request    = $this->get('request_stack')->getCurrentRequest();
+        $datasource = new CartDatasource($this->get('current_user')->id(), $this->get('ucms_contrib.history_cart.update'));
 
-        return $controller->userUpdateHistoryAction($this->container->get('request_stack')->getCurrentRequest());
+        return $this->getPageBuilder('cart')->searchAndRender($datasource, $request, [], 'cart-readonly');
     }
 
     /**
@@ -107,14 +124,13 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
 
         // Add the shopping cart
         if (user_access('use favorites')) {
-
             $contextPane
                 ->addTab('cart', $this->t("Cart"), 'shopping-cart')
                 ->add($this->renderCart(), 'cart')
-//                 ->addTab('history', $this->t("Your browse history"), 'bookmark')
-//                 ->add($this->renderBrowseHistory(), 'history')
-//                 ->addTab('bookmark', $this->t("Your recent modifications"), 'time')
-//                 ->add($this->renderUpdateHistory(), 'bookmark')
+                ->addTab('history_update', $this->t("Your recent modifications"), 'time')
+                ->add($this->renderUpdateHistory(), 'history_update')
+                ->addTab('history_browse', $this->t("Your browse history"), 'bookmark')
+                ->add($this->renderBrowseHistory(), 'history_browse')
             ;
         }
 

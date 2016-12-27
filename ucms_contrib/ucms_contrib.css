@@ -130,7 +130,7 @@
 #ucms-cart-trash {
   position: absolute;
   color: #fff;
-  bottom: 0;
+  bottom: -6em;
   text-align: center;
   z-index: 1;
   box-sizing: border-box;

@@ -142,7 +142,11 @@ class ContextPane
     public function add($value, $tab, $priority = 0)
     {
         if (!empty($value)) {
-            $this->items[$tab][$priority][] = $value;
+            if (is_string($value)) {
+                $this->items[$tab][$priority][] = ['#markup' => $value];
+            } else {
+                $this->items[$tab][$priority][] = $value;
+            }
         }
 
         return $this;

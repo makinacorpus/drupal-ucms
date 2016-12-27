@@ -8,12 +8,12 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
+use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
 
 class CartController extends Controller
 {

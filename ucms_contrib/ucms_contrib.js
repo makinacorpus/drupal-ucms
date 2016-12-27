@@ -239,7 +239,7 @@
       /**
        * Immutable carts: can be connected, but not modified.
        */
-      $('.ucms-cart-list:not(#ucms-cart-list)', context).sortable($.extend({}, Drupal.ucmsSortableDefaults, {
+      $('.ucms-cart-list:not([data-can-receive])', context).sortable($.extend({}, Drupal.ucmsSortableDefaults, {
 
         // Connect with others lists and trash
         connectWith: '[data-can-receive]',
@@ -417,7 +417,6 @@
         }
       }));
 
-      $('#ucms-cart-list').each(function () { connectItems(this); });
       $('[data-can-receive]').each(function () { connectItems(this); });
     }
   };
