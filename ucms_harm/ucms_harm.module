@@ -8,6 +8,8 @@
 
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Ucms\Dashboard\Page\DefaultNodePageType;
+use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Harm\Form\NodeMakeGroup;
 use MakinaCorpus\Ucms\Harm\Form\NodeUnmakeGroup;
 use MakinaCorpus\Ucms\Site\Access;
@@ -93,8 +95,9 @@ function ucms_harm_admin_content_page($datasource, $tab) {
   if (!empty($types)) {
     $search->getFilterQuery()->matchTermCollection('type', $types);
   }
-  /** @var \MakinaCorpus\Ucms\Dashboard\Page\PageBuilder $builder */
-  $builder = \Drupal::service('ucms_dashboard.page_builder');
+  $type = new DefaultNodePageType($datasource);
+  $builder = new PageBuilder(\Drupal::service('twig'));
+  $type->build($builder);
   $result = $builder->search($datasource, \Drupal::request());
   return $builder->render($result);
 }

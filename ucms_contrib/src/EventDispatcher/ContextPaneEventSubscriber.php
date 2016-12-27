@@ -94,11 +94,13 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      */
     private function renderBrowseHistory()
     {
-        // @todo we must find a more straight-foward way
-        $request    = $this->get('request_stack')->getCurrentRequest();
-        $datasource = new CartDatasource($this->get('current_user')->id(), $this->get('ucms_contrib.history_cart.browse'));
+        $request = $this->get('request_stack')->getCurrentRequest();
+        $builder = $this->getPageBuilder('history_browse', $request);
+        $userId  = $this->get('current_user')->id();
+        $builder->addBaseQueryParameter('user_id', $userId);
 
-        return $this->getPageBuilder('cart')->searchAndRender($datasource, $request, [], 'cart-readonly');
+        // @todo we must find a more straight-foward way
+        return $builder->searchAndRender($request);
     }
 
     /**
@@ -108,10 +110,12 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     private function renderUpdateHistory()
     {
         // @todo we must find a more straight-foward way
-        $request    = $this->get('request_stack')->getCurrentRequest();
-        $datasource = new CartDatasource($this->get('current_user')->id(), $this->get('ucms_contrib.history_cart.update'));
+        $request = $this->get('request_stack')->getCurrentRequest();
+        $builder = $this->getPageBuilder('history_update', $request);
+        $userId  = $this->get('current_user')->id();
+        $builder->addBaseQueryParameter('user_id', $userId);
 
-        return $this->getPageBuilder('cart')->searchAndRender($datasource, $request, [], 'cart-readonly');
+        return $builder->searchAndRender($request);
     }
 
     /**

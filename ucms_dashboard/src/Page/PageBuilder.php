@@ -4,27 +4,119 @@ namespace MakinaCorpus\Ucms\Dashboard\Page;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class PageBuilder
+/**
+ * @todo
+ *   - Remove buiseness methods from this oibject and move them to "Page"
+ *   - widget factory should return a page, not a builder
+ */
+final class PageBuilder
 {
+    private $id;
     private $twig;
     private $debug = false;
     private $defaultDisplay = 'table';
+    private $datasource;
     private $templates = [];
+    private $baseQuery = [];
 
     /**
      * Default constructor
      *
      * @param \Twig_Environment $twig
-     * @param string[] $templates
+     * @param string[] $displays
      * @param string $defaultDisplay
      *   Default template
      */
-    public function __construct(\Twig_Environment $twig, array $templates = [], $defaultDisplay = 'table')
+    public function __construct(\Twig_Environment $twig)
     {
         $this->twig = $twig;
         $this->debug = $twig->isDebug();
-        $this->defaultDisplay = $defaultDisplay;
-        $this->templates = $templates;
+    }
+
+    /**
+     * Set builder identifier
+     *
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        if ($this->id && $this->id !== $id) {
+            throw new \LogicException("cannot change a page builder identifier");
+        }
+
+        $this->id = $id;
+    }
+
+    /**
+     * Set datasource
+     *
+     * @param DatasourceInterface $datasource
+     *
+     * @return $this
+     */
+    public function setDatasource(DatasourceInterface $datasource)
+    {
+        $this->datasource = $datasource;
+
+        return $this;
+    }
+
+    /**
+     * Set default display
+     *
+     * @param string $defaultDisplay
+     *   Display identifier
+     *
+     * @return $this
+     */
+    public function setDefaultDisplay($display)
+    {
+        $this->defaultDisplay = $display;
+
+        return $this;
+    }
+
+    /**
+     * Set allowed templates
+     *
+     * @param string[] $displays
+     *
+     * @return $this
+     */
+    public function setAllowedTemplates(array $displays)
+    {
+        $this->templates = $displays;
+
+        return $this;
+    }
+
+    /**
+     * Set base query
+     *
+     * @param array $query
+     *
+     * @return $this
+     */
+    public function setBaseQuery(array $query)
+    {
+        $this->baseQuery = $query;
+
+        return $this;
+    }
+
+    /**
+     * Add base query parameter
+     *
+     * @param string $name
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function addBaseQueryParameter($name, $value)
+    {
+        $this->baseQuery[$name] = $value;
+
+        return $this;
     }
 
     /**
@@ -77,25 +169,38 @@ class PageBuilder
         return $this->templates[$displayName];
     }
 
+    private function computeId()
+    {
+        if (!$this->id) {
+            return null;
+        }
+
+        // @todo do better than that...
+        return $this->id;
+    }
+
     /**
      * Proceed to search and fetch state
      *
      * @param Request $request
      *   Incomming request
-     * @param string[] $baseQuery
-     *   Default non-changeable filters
      *
      * @return PageResult
      */
-    public function search(DatasourceInterface $datasource, Request $request, array $baseQuery = [])
+    public function search(Request $request)
     {
+        if (!$this->datasource) {
+            throw new \LogicException("cannot build page without a datasource");
+        }
+        $datasource = $this->datasource;
+
         $route = $request->attributes->get('_route');
         $state = new PageState();
 
         $query = array_merge(
             $request->query->all(),
             $request->attributes->get('_route_params', []),
-            $baseQuery
+            $this->baseQuery
         );
 
         $query = Filter::fixQuery($query); // @todo this is ugly
@@ -140,6 +245,8 @@ class PageBuilder
                 }
                 $filter->prepare($route, $query);
             }
+        } else { // Avoid possibly broken implementations
+            $filters = [];
         }
 
         // Set current display
@@ -156,20 +263,16 @@ class PageBuilder
      * @param array $arguments
      *   Additional arguments for the template, please note they will not
      *   override defaults
-     * @param string $defaultDisplay
-     *   Default display name if a specific one suits more for the content
+     *
+     * @return PageView
      */
-    public function render(PageResult $result, array $arguments = [], $defaultDisplay = null)
+    public function render(PageResult $result, array $arguments = [])
     {
         $state = $result->getState();
 
         $display = $state->getCurrentDisplay();
         if (!$display) {
-            if ($defaultDisplay) {
-                $state->setCurrentDisplay($display = $defaultDisplay);
-            } else {
-                $state->setCurrentDisplay($display = $this->defaultDisplay);
-            }
+            $state->setCurrentDisplay($display = $this->defaultDisplay);
         }
 
         // Build display links
@@ -189,34 +292,29 @@ class PageBuilder
         }
 
         $arguments = [
+            'uuid'      => $this->computeId(),
             'state'     => $state,
             'route'     => $result->getRoute(),
             'filters'   => $result->getFilters(),
+            'display'   => $display,
             'displays'  => $displayLinks,
             'query'     => $result->getQuery(),
             'sort'      => $result->getSort(),
             'items'     => $result->getItems(),
         ] + $arguments;
 
-        return $this
-            ->twig
-            ->load($this->getTemplateFor($display))
-            ->renderBlock('page', $arguments)
-        ;
+        return new PageView($this->twig, $this->getTemplateFor($arguments['display']), $arguments);
     }
 
     /**
      * Shortcut for controllers
      *
-     * @param DatasourceInterface $datasource
      * @param Request $request
-     * @param array $baseQuery
-     * @param unknown $defaultDisplay
      *
      * @return string
      */
-    public function searchAndRender(DatasourceInterface $datasource, Request $request, array $baseQuery = [], $defaultDisplay = null)
+    public function searchAndRender(Request $request)
     {
-        return $this->render($this->search($datasource, $request, $baseQuery), [], $defaultDisplay);
+        return $this->render($this->search($request))->render();
     }
 }

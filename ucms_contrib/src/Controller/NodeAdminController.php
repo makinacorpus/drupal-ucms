@@ -3,8 +3,13 @@
 namespace MakinaCorpus\Ucms\Contrib\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
+use MakinaCorpus\Ucms\Contrib\Page\FlaggedNodePageType;
+use MakinaCorpus\Ucms\Contrib\Page\GlobalNodePageType;
+use MakinaCorpus\Ucms\Contrib\Page\LocalNodePageType;
+use MakinaCorpus\Ucms\Contrib\Page\MyNodePageType;
+use MakinaCorpus\Ucms\Contrib\Page\StarredNodePageType;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,45 +18,31 @@ class NodeAdminController extends Controller
     use PageControllerTrait;
 
     /**
-     * Get node datasource
-     *
-     * @return PrivateNodeDataSource
-     */
-    private function getDatasource()
-    {
-        return $this->get('ucms_contrib.datasource.elastic');
-    }
-
-    /**
      * Main content page.
      *
      * @param string $tab
      *   Tab name.
      */
-    private function buildContentPage(Request $request, PrivateNodeDataSource $datasource, $tab = null)
+    private function buildContentPage(PageBuilder $builder, Request $request, $tab = null)
     {
-        $search = $datasource->getSearch();
-
         /** @var \MakinaCorpus\Ucms\Site\SiteManager $siteManager */
         $siteManager = $this->get('ucms_site.manager');
 
         // Apply context, if any
         if ($siteManager->hasContext()) {
-            $search->getFilterQuery()->matchTerm('site_id', $siteManager->getContext()->getId());
+            $builder->addBaseQueryParameter('site_id', $siteManager->getContext()->getId());
         }
 
         $types = $this->get('ucms_contrib.type_handler')->getTabTypes($tab);
         if (!empty($types)) {
-            $search->getFilterQuery()->matchTermCollection('type', $types);
+            //$search->getFilterQuery()->matchTermCollection('type', $types);
         }
 
-        // I don't see any valid reason NOT to do this.
-        $defaultDisplay = null;
         if ('media' === $tab) {
-            $defaultDisplay = 'grid';
+            $builder->setDefaultDisplay('grid');
         }
 
-        return $this->getPageBuilder()->searchAndRender($datasource, $request, [], $defaultDisplay);
+        return $builder->searchAndRender($request);
     }
 
     /**
@@ -59,16 +50,9 @@ class NodeAdminController extends Controller
      */
     public function mineAction(Request $request, $tab = null)
     {
-        /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
-        $datasource = $this->getDatasource();
-        $search = $datasource->getSearch();
+        $request->query->set('user_id', $this->getUser()->id());
 
-        $search
-            ->getFilterQuery()
-            ->matchTerm('owner', $this->getUser()->id())
-        ;
-
-        return $this->buildContentPage($request, $datasource, $tab);
+        return $this->buildContentPage($this->getPageBuilder(MyNodePageType::class, $request), $request, $tab);
     }
 
     /**
@@ -76,15 +60,7 @@ class NodeAdminController extends Controller
      */
     public function globalAction(Request $request, $tab = null)
     {
-        $datasource = $this->getDatasource();
-        $search = $datasource->getSearch();
-        $search
-            ->getFilterQuery()
-            ->matchTerm('is_global', 1)
-            ->matchTerm('is_group', 0)
-        ;
-
-        return $this->buildContentPage($request, $datasource, $tab);
+        return $this->buildContentPage($this->getPageBuilder(GlobalNodePageType::class, $request), $request, $tab);
     }
 
     /**
@@ -92,11 +68,7 @@ class NodeAdminController extends Controller
      */
     public function localAction(Request $request, $tab = null)
     {
-        $datasource = $this->getDatasource();
-        $search = $datasource->getSearch();
-        $search->getFilterQuery()->matchTerm('is_global', 0);
-
-        return $this->buildContentPage($request, $datasource, $tab);
+        return $this->buildContentPage($this->getPageBuilder(LocalNodePageType::class, $request), $request, $tab);
     }
 
     /**
@@ -104,11 +76,7 @@ class NodeAdminController extends Controller
      */
     public function flaggedAction(Request $request, $tab = null)
     {
-        $datasource = $this->getDatasource();
-        $search = $datasource->getSearch();
-        $search->getFilterQuery()->matchTerm('is_flagged', 1);
-
-        return $this->buildContentPage($request, $datasource, $tab);
+        return $this->buildContentPage($this->getPageBuilder(FlaggedNodePageType::class, $request), $request, $tab);
     }
 
     /**
@@ -116,10 +84,6 @@ class NodeAdminController extends Controller
      */
     public function starredAction(Request $request, $tab = null)
     {
-        $datasource = $this->getDatasource();
-        $search = $datasource->getSearch();
-        $search->getFilterQuery()->matchTerm('is_starred', 1);
-
-        return $this->buildContentPage($request, $datasource, $tab);
+        return $this->buildContentPage($this->getPageBuilder(StarredNodePageType::class, $request), $request, $tab);
     }
 }

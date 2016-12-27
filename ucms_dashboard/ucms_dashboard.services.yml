@@ -1,15 +1,4 @@
-parameters:
-  # @todo make this more dynamic
-  ucms_dashboard.page_builder.templates:
-    grid: module:ucms_dashboard:views/Page/page-grid.html.twig
-    table: module:ucms_dashboard:views/Page/page.html.twig
-
 services:
-
-  ucms_dashboard.page_builder:
-    public: false
-    class: MakinaCorpus\Ucms\Dashboard\Page\PageBuilder
-    arguments: ['@twig', '%ucms_dashboard.page_builder.templates%']
 
   ucms_dashboard.context:
     class: MakinaCorpus\Ucms\Dashboard\Context\ContextPane
@@ -17,7 +6,7 @@ services:
 
   ucms_dashboard.admin_widget_factory:
     class: MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory
-    arguments: ['@form_builder', '@ucms_dashboard.page_builder', '@ucms_dashboard.action_provider_registry', '@twig', '@event_dispatcher']
+    arguments: ['@service_container', '@form_builder', '@ucms_dashboard.action_provider_registry', '@twig', '@event_dispatcher']
 
   ucms_dashboard.processor_registry:
     class: MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider

@@ -8,15 +8,13 @@ use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 
 class CartDatasource extends AbstractDatasource
 {
-    private $userId;
     private $cart;
 
     /**
      * Default constructor
      */
-    public function __construct($userId, CartStorageInterface $cart)
+    public function __construct(CartStorageInterface $cart)
     {
-        $this->userId = $userId;
         $this->cart = $cart;
     }
 
@@ -25,7 +23,6 @@ class CartDatasource extends AbstractDatasource
      */
     public function getFilters($query)
     {
-        return [];
     }
 
     /**
@@ -51,8 +48,12 @@ class CartDatasource extends AbstractDatasource
      */
     public function getItems($query, PageState $pageState)
     {
+        if (empty($query['user_id'])) {
+            return [];
+        }
+
         // State is not supported yet, really.
-        return $this->cart->listFor($this->userId, $pageState->getLimit(), $pageState->getOffset());
+        return $this->cart->listFor($query['user_id'], $pageState->getLimit(), $pageState->getOffset());
     }
 
     /**

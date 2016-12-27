@@ -9,23 +9,23 @@
 
 {% block page %}
   {# @todo removed all filters and displays, will be restored later #}
-  <div class="ucms-contrib-cart">
+  <div class="ucms-contrib-cart" data-page="{{ uuid }}">
     <div class="ucms-cart">
       <h2 class="sr-only">{{ "Your cart"|t }}</h2>
-      {{ block('item_list') }}
+      <div {% block css_id %}id="ucms-cart-list" data-can-receive="1" {% endblock %}class="ucms-cart-list" data-page-block="item_list">
+        {{ block('item_list') }}
+      </div>
+      {% block trash %}
+        <div id="ucms-cart-trash" class="progress-bar-danger progress-bar-striped">
+          <span class="glyphicon glyphicon-trash"></span>
+        </div>
+      {% endblock %}
     </div>
   </div>
 {% endblock %}
 
 {% block item_list %}
-  <div {% block css_id %}id="ucms-cart-list" data-can-receive="1" {% endblock %}class="ucms-cart-list">
-    {% for item in items %}
-      {{ block('item') }}
-    {% endfor %}
-  </div>
-  {% block trash %}
-    <div id="ucms-cart-trash" class="progress-bar-danger progress-bar-striped">
-      <span class="glyphicon glyphicon-trash"></span>
-    </div>
-  {% endblock %}
+  {% for item in items %}
+    {{ block('item') }}
+  {% endfor %}
 {% endblock %}

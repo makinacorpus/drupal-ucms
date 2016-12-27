@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Dashboard\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
 
 class PageBuilderRegisterPass implements CompilerPassInterface
 {
@@ -16,24 +15,32 @@ class PageBuilderRegisterPass implements CompilerPassInterface
         }
         $definition = $container->getDefinition('ucms_dashboard.admin_widget_factory');
 
+        $types = [];
+
         // Register custom action providers
-        $taggedServices = $container->findTaggedServiceIds('ucms_dashboard.page_builder');
+        $taggedServices = $container->findTaggedServiceIds('ucms_dashboard.page_type');
         foreach ($taggedServices as $id => $attributes) {
             $def = $container->getDefinition($id);
 
             $class = $container->getParameterBag()->resolveValue($def->getClass());
             $refClass = new \ReflectionClass($class);
-            $interface = '\MakinaCorpus\Ucms\Dashboard\Page\PageBuilder';
+            $interface = '\MakinaCorpus\Ucms\Dashboard\Page\PageTypeInterface';
 
-            if (!$refClass->name === $interface) {
+            if (!$refClass->implementsInterface($interface)) {
                 throw new \InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, $interface));
             }
 
             if (empty($attributes[0]['id'])) {
-                throw new \InvalidArgumentException(sprintf('Service "%s" with tag "ucms_dashboard.page_builder" must have the "id" tag attribute.', $id, $interface));
+                $typeId = $def->getClass();
+            } else {
+                $typeId = $attributes[0]['id'];
             }
 
-            $definition->addMethodCall('registerPageBuilder', [$attributes[0]['id'], new Reference($id)]);
+            $types[$typeId] = $id;
+        }
+
+        if ($types) {
+            $definition->addMethodCall('registerPageTypes', [$types]);
         }
     }
 }

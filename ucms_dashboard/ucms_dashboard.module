@@ -472,8 +472,13 @@ function ucms_dashboard_library() {
     'ucms_dashboard' => [
       'title'        => 'UCMS - Dashboard',
       'version'      => '0.1',
-      'js'           => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js' => [],],
-      'css'          => [drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css' => ['type'  => 'file', 'media' => 'screen']],
+      'js'           => [
+        drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js' => [],
+        drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.page.js' => [],
+      ],
+      'css'          => [
+        drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.css' => ['type'  => 'file', 'media' => 'screen']
+      ],
       'dependencies' => [['system', 'jquery.cookie']],
     ],
   ];

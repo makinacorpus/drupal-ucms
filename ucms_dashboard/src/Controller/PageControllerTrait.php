@@ -67,9 +67,9 @@ trait PageControllerTrait
      *
      * @return PageBuilder
      */
-    protected function getPageBuilder($name = null)
+    protected function getPageBuilder($name = null, Request $request)
     {
-        return $this->getWidgetFactory()->getPageBuilder($name);
+        return $this->getWidgetFactory()->getPageBuilder($name, $request);
     }
 
     /**

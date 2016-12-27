@@ -3,6 +3,7 @@
   are currently displaying, this template hanles nodes.
 
   Variables:
+    uuid: page uuid, for security and ajax queries
     state: PageState
     route: string (current route)
     filters: Filter[]
@@ -164,55 +165,69 @@
   </table>
 {% endblock %}
 
+{% block pager %}
+  {{ pager(state.limit, state.totalItemCount, state.pageNumber, state.pagerElement) }}
+{% endblock %}
+
 {% block page_content %}
   <div class="container-fluid">
     {% if state.searchParameter %}
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" data-page-block="search_form">
           {{ block('search_form') }}
         </div>
       </div>
     {% endif %}
     {% if sort.count %}
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" data-page-block="sort_links">
           {{ block('sort_links') }}
         </div>
       </div>
     {% endif %}
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-12" data-page-block="item_list">
         {{ block('item_list') }}
       </div>
     </div>
     {% if state.limit < state.totalItemCount %}
       <div class="row">
-        <div class="col-md-12">
-          {{ pager(state.limit, state.totalItemCount, state.pageNumber, state.pagerElement) }}
+        <div class="col-md-12" data-page-block="pager">
+          {{ block('pager') }}
         </div>
       </div>
     {% endif %}
   </div>
 {% endblock %}
 
+{% block filters %}
+  {% for filter in filters %}
+    {{ block('filter') }}
+  {% endfor %}
+{% endblock %}
+
 {% block page %}
-  {% if displays or filters %}
-    <div class="col-md-2">
-      {% if displays %}
-        {{ block('display_mode') }}
-      {% endif %}
-      {% if filters %}
-        {% for filter in filters %}
-          {{ block('filter') }}
-        {% endfor %}
-     {% endif %}
-    </div>
-    <div id="ucms-contrib-results" class="col-md-10">
-      {{ block('page_content') }}
-    </div>
-  {% else %}
-    <div id="ucms-contrib-results" class="col-md-12">
-      {{ block('page_content') }}
-    </div>
-  {% endif %}
+  <div data-page="{{ uuid }}">
+    {% if displays or filters %}
+      <div class="col-md-2">
+        {% if displays %}
+          <div data-page-block="display_mode">
+            {{ block('display_mode') }}
+          </div>
+        {% endif %}
+        {% if filters %}
+          <div data-page-block="filters">
+            {{ block('filters') }}
+          </div>
+       {% endif %}
+      </div>
+      <div id="ucms-contrib-results" class="col-md-10">
+        {{ block('page_content') }}
+      </div>
+    {% else %}
+      <div id="ucms-contrib-results" class="col-md-12">
+        {{ block('page_content') }}
+      </div>
+    {% endif %}
+  </div>
 {% endblock %}

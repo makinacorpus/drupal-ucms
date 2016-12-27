@@ -9,21 +9,25 @@ use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Ucms\Dashboard\Page\PageTypeInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\TemplateDisplay;
 use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * God I hate to register more factories to the DIC, but we have some
  * dependencies that we should inject into pages, and only this allows
- * us to do ti properly
+ * us to do it properly
  */
 final class AdminWidgetFactory
 {
+    private $container;
     private $formBuilder;
-    private $defaultPageBuilder;
-    private $pageBuilders = [];
+    private $pageTypes = [];
     private $actionRegistry;
     private $eventDispatcher;
     private $debug;
@@ -32,6 +36,7 @@ final class AdminWidgetFactory
     /**
      * Default constructor
      *
+     * @param ContainerInterface $container
      * @param FormBuilderInterface $formBuilder
      * @param PageBuilder $defaultPageBuilder,
      * @param ActionRegistry $actionRegistry
@@ -39,14 +44,14 @@ final class AdminWidgetFactory
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
+        ContainerInterface $container,
         FormBuilderInterface $formBuilder,
-        PageBuilder $defaultPageBuilder,
         ActionRegistry $actionRegistry,
         \Twig_Environment $twig,
         EventDispatcherInterface $eventDispatcher = null
     ) {
+        $this->container = $container;
         $this->formBuilder = $formBuilder;
-        $this->defaultPageBuilder = $defaultPageBuilder;
         $this->actionRegistry = $actionRegistry;
         $this->eventDispatcher = $eventDispatcher;
         $this->debug = $twig->isDebug();
@@ -54,14 +59,52 @@ final class AdminWidgetFactory
     }
 
     /**
-     * Register a page builder instance
+     * Register page types
+     *
+     * @param string[] $types
+     *   Keys are names, values are service identifiers
+     */
+    public function registerPageTypes($types)
+    {
+        $this->pageTypes = $types;
+    }
+
+    /**
+     * Get page type
      *
      * @param string $name
-     * @param PageBuilder $pageBuilder
+     *
+     * @return PageTypeInterface
      */
-    public function registerPageBuilder($name, PageBuilder $pageBuilder)
+    public function getPageType($name)
     {
-        $this->pageBuilders[$name] = $pageBuilder;
+        // @todo rewrite this better
+        if (!isset($this->pageTypes[$name])) {
+            try {
+                $instance = $this->container->get($name);
+                if (!$instance instanceof PageTypeInterface) {
+                    throw new \InvalidArgumentException(sprintf("page builder with service id '%s' does not implement %s", $name, PageTypeInterface::class));
+                }
+                $this->pageTypes[$name] = $instance;
+
+                return $instance;
+
+            } catch (ServiceNotFoundException $e) {
+                throw new \InvalidArgumentException(sprintf("page builder with service id '%s' does not exist in container", $name));
+            }
+        }
+
+        $instance = $this->pageTypes[$name];
+
+        if (is_string($instance)) {
+            $instance = $this->container->get($instance);
+            if (!$instance instanceof PageTypeInterface) {
+                throw new \InvalidArgumentException(sprintf("page builder with service id '%s' does not implement %s", $name, PageTypeInterface::class));
+            }
+            $this->pageTypes[$name] = $instance;
+        }
+
+        return $instance;
     }
 
     /**
@@ -71,21 +114,14 @@ final class AdminWidgetFactory
      *
      * @return PageBuilder
      */
-    public function getPageBuilder($name = null)
+    public function getPageBuilder($name, Request $request)
     {
-        if (null === $name) {
-            return $this->defaultPageBuilder;
-        }
+        $type = $this->getPageType($name);
+        $builder = new PageBuilder($this->twig);
 
-        if (!isset($this->pageBuilders[$name])) {
-            if ($this->debug) {
-                trigger_error(sprintf("%s: page builder is not set, reverting to default", $name), E_USER_WARNING);
-            }
+        $type->build($builder, $request);
 
-            return $this->defaultPageBuilder;
-        }
-
-        return $this->pageBuilders[$name];
+        return $builder;
     }
 
     /**

@@ -5,6 +5,13 @@ namespace MakinaCorpus\Ucms\Contrib\Cart;
 interface CartStorageInterface
 {
     /**
+     * Is this storage readonly
+     *
+     * @return boolean
+     */
+    public function isReadonly();
+
+    /**
      * Add content to favorites
      *
      * @param int $uid

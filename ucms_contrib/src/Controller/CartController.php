@@ -8,7 +8,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 
@@ -139,10 +138,11 @@ class CartController extends Controller
             $userId = $this->getCurrentUser()->id();
         }
 
-        $datasource = new CartDatasource($userId, $this->getCartStorage());
+        $request->query->set('user_id', $userId);
+        $builder = $this->getPageBuilder('cart', $request);
 
         $ret = [];
-        $ret['#markup'] = $this->getPageBuilder('cart')->searchAndRender($datasource, $request);
+        $ret['#markup'] = $builder->searchAndRender($request);
         $ret['#attached']['library'][] = ['system', 'ui.droppable'];
         $ret['#attached']['library'][] = ['system', 'ui.draggable'];
         $ret['#attached']['library'][] = ['system', 'ui.sortable'];

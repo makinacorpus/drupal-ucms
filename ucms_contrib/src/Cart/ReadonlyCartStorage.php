@@ -7,6 +7,14 @@ abstract class ReadonlyCartStorage implements CartStorageInterface
     /**
      * {@inheritdoc}
      */
+    public function isReadonly()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function addFor($uid, $nid)
     {
         return false;

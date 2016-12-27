@@ -1,10 +1,6 @@
 parameters:
   ucms_contrib.filter.view_mode.wysiwyg: wysiwyg
   ucms_contrib.filter.view_mode.markup: default
-  ucms_contrib.page_builder.cart.templates:
-    cart: module:ucms_contrib:views/Page/page-cart.html.twig
-    cart-readonly: module:ucms_contrib:views/Page/page-cart-readonly.html.twig
-  ucms_contrib.page_builder.cart.default_template: cart
 
 services:
 
@@ -28,18 +24,13 @@ services:
     decorates: ucms_contrib.cart
     arguments: ["@entity.manager", "@ucms_contrib.cart.preloader.inner"]
 
-  # Cart specific page builder
-  ucms_contrib.page_builder.cart:
-    public: false
-    class: MakinaCorpus\Ucms\Dashboard\Page\PageBuilder
-    arguments: ['@twig', '%ucms_contrib.page_builder.cart.templates%', '%ucms_contrib.page_builder.cart.default_template%']
-    tags: [{name: ucms_dashboard.page_builder, id: cart}]
-
   # History carts
   ucms_contrib.history_cart.browse:
+    public: false
     class: MakinaCorpus\Ucms\Contrib\Cart\BrowseHistoryCart
     arguments: ['@database']
   ucms_contrib.history_cart.update:
+    public: false
     class: MakinaCorpus\Ucms\Contrib\Cart\UpdateHistoryCart
     arguments: ['@database']
   ucms_contrib.cart.history_cart.browse.preloader:
@@ -52,6 +43,42 @@ services:
     class: MakinaCorpus\Ucms\Contrib\Cart\LoaderCartStorageProxy
     decorates: ucms_contrib.history_cart.update
     arguments: ["@entity.manager", "@ucms_contrib.cart.history_cart.update.preloader.inner"]
+
+  # Cart page types
+  ucms_contrib.page_type.cart:
+    class: MakinaCorpus\Ucms\Contrib\Cart\CartPageType
+    arguments: ['@ucms_contrib.cart']
+    tags: [{name: ucms_dashboard.page_type, id: cart}]
+  ucms_contrib.page_type.history_browse:
+    class: MakinaCorpus\Ucms\Contrib\Cart\CartPageType
+    arguments: ['@ucms_contrib.history_cart.browse']
+    tags: [{name: ucms_dashboard.page_type, id: history_browse}]
+  ucms_contrib.page_type.history_update:
+    class: MakinaCorpus\Ucms\Contrib\Cart\CartPageType
+    arguments: ['@ucms_contrib.history_cart.update']
+    tags: [{name: ucms_dashboard.page_type, id: history_update}]
+
+  # Content page type
+  ucms_contrib.page_type.node.flagged:
+    class: MakinaCorpus\Ucms\Contrib\Page\FlaggedNodePageType
+    arguments: ['@ucms_contrib.datasource.elastic']
+    tags: [{name: ucms_dashboard.page_type}]
+  ucms_contrib.page_type.node.global:
+    class: MakinaCorpus\Ucms\Contrib\Page\GlobalNodePageType
+    arguments: ['@ucms_contrib.datasource.elastic']
+    tags: [{name: ucms_dashboard.page_type}]
+  ucms_contrib.page_type.node.local:
+    class: MakinaCorpus\Ucms\Contrib\Page\LocalNodePageType
+    arguments: ['@ucms_contrib.datasource.elastic']
+    tags: [{name: ucms_dashboard.page_type}]
+  ucms_contrib.page_type.node.mine:
+    class: MakinaCorpus\Ucms\Contrib\Page\MyNodePageType
+    arguments: ['@ucms_contrib.datasource.elastic']
+    tags: [{name: ucms_dashboard.page_type}]
+  ucms_contrib.page_type.node.starred:
+    class: MakinaCorpus\Ucms\Contrib\Page\StarredNodePageType
+    arguments: ['@ucms_contrib.datasource.elastic']
+    tags: [{name: ucms_dashboard.page_type}]
 
   # Action providers
   ucms_contrib.node_action_provider:
