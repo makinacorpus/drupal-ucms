@@ -1,11 +1,13 @@
 parameters:
+  # @todo make this more dynamic
   ucms_dashboard.page_builder.templates:
-    table: module:ucms_dashboard:views/Page/page.html.twig
     grid: module:ucms_dashboard:views/Page/page-grid.html.twig
+    table: module:ucms_dashboard:views/Page/page.html.twig
 
 services:
 
   ucms_dashboard.page_builder:
+    public: false
     class: MakinaCorpus\Ucms\Dashboard\Page\PageBuilder
     arguments: ['@twig', '%ucms_dashboard.page_builder.templates%']
 

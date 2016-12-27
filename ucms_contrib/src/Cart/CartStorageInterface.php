@@ -36,9 +36,11 @@ interface CartStorageInterface
      * List favorite content
      *
      * @param int $uid
+     * @param int $limit
+     * @param int $offset
      *
      * @return CartItem[]
      *   Ordered list of items.
      */
-    public function listFor($uid);
+    public function listFor($uid, $limit = 14, $offset = 0);
 }

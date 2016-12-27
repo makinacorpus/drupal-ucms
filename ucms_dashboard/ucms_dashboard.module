@@ -262,19 +262,6 @@ function ucms_dashboard_admin_table_get($name, array $attributes = []) {
 }
 
 /**
- * Get current context pane.
- *
- * @return \MakinaCorpus\Ucms\Dashboard\Context\ContextPane
- *
- * @deprecated
- *   Will be replaced by services one day.
- */
-function ucms_dashboard_context_get() {
-  trigger_error("Please write controllers and services instead.", E_USER_DEPRECATED);
-  return \Drupal::service('ucms_dashboard.context');
-}
-
-/**
  * Get dashboard.
  *
  * @return \MakinaCorpus\Ucms\Dashboard\Portlet\PortletRegistry
@@ -345,8 +332,8 @@ function ucms_dashboard_page_build(&$page) {
 
   if (user_access(UCMS_DASHBOARD_PERM_USE_CONTEXT_PANE)) {
 
-    $context = ucms_dashboard_context_get();
-
+    /** @var \MakinaCorpus\Ucms\Dashboard\Context\ContextPane $context */
+    $context = \Drupal::service('ucms_dashboard.context');
     $context->init();
 
     $actions = [];

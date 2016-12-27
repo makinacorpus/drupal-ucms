@@ -63,11 +63,13 @@ trait PageControllerTrait
     /**
      * Get the page builder
      *
+     * @param string $name
+     *
      * @return PageBuilder
      */
-    protected function getPageBuilder()
+    protected function getPageBuilder($name = null)
     {
-        return $this->getWidgetFactory()->getPageBuilder();
+        return $this->getWidgetFactory()->getPageBuilder($name);
     }
 
     /**

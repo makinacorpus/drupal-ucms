@@ -1,6 +1,9 @@
 parameters:
   ucms_contrib.filter.view_mode.wysiwyg: wysiwyg
   ucms_contrib.filter.view_mode.markup: default
+  ucms_contrib.page_builder.cart.templates:
+    cart: module:ucms_contrib:views/Page/page-cart.html.twig
+  ucms_contrib.page_builder.cart.default_template: cart
 
 services:
 
@@ -23,6 +26,13 @@ services:
     class: MakinaCorpus\Ucms\Contrib\Cart\LoaderCartStorageProxy
     decorates: ucms_contrib.cart
     arguments: ["@entity.manager", "@ucms_contrib.cart.preloader.inner"]
+
+  # Cart specific page builder
+  ucms_contrib.page_builder.cart:
+    public: false
+    class: MakinaCorpus\Ucms\Dashboard\Page\PageBuilder
+    arguments: ['@twig', '%ucms_contrib.page_builder.cart.templates%', '%ucms_contrib.page_builder.cart.default_template%']
+    tags: [{name: ucms_dashboard.page_builder, id: cart}]
 
   ucms_contrib.node_action_provider:
     public: false

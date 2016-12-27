@@ -5,6 +5,7 @@ namespace Drupal\Module\ucms_dashboard;
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 
 use MakinaCorpus\Ucms\Dashboard\DependencyInjection\Compiler\ActionProviderRegisterPass;
+use MakinaCorpus\Ucms\Dashboard\DependencyInjection\Compiler\PageBuilderRegisterPass;
 use MakinaCorpus\Ucms\Dashboard\DependencyInjection\Compiler\PortletRegisterPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,6 +22,7 @@ class ServiceProvider implements ServiceProviderInterface
     public function register(ContainerBuilder $container)
     {
         $container->addCompilerPass(new ActionProviderRegisterPass());
+        $container->addCompilerPass(new PageBuilderRegisterPass());
         $container->addCompilerPass(new PortletRegisterPass());
     }
 }

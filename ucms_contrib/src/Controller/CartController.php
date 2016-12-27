@@ -9,13 +9,16 @@ use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
-use MakinaCorpus\Ucms\Contrib\NodeCartDisplay;
+use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
 
 class CartController extends Controller
 {
+    use PageControllerTrait;
+
     /**
      * @return AccountInterface
      */
@@ -136,22 +139,10 @@ class CartController extends Controller
             $userId = $this->getCurrentUser()->id();
         }
 
-        $items = $this->getCartStorage()->listFor($userId);
+        $datasource = new CartDatasource($userId, $this->getCartStorage());
 
-        $display = (new NodeCartDisplay())
-            ->setParameterName('cd')
-            ->prepareFromQuery(
-                $request->query->all()
-            )
-        ;
-
-        $ret = [
-            '#theme'        => 'ucms_contrib_cart',
-            '#account'      => $userId,
-            '#can_receive'  => true,
-            '#items'        => $display->render($items),
-        ];
-
+        $ret = [];
+        $ret['#markup'] = $this->getPageBuilder('cart')->searchAndRender($datasource, $request);
         $ret['#attached']['library'][] = ['system', 'ui.droppable'];
         $ret['#attached']['library'][] = ['system', 'ui.draggable'];
         $ret['#attached']['library'][] = ['system', 'ui.sortable'];

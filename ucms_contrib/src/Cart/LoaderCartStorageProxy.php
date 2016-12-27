@@ -50,9 +50,9 @@ class LoaderCartStorageProxy implements CartStorageInterface
     /**
      * {@inhertdoc}
      */
-    public function listFor($uid)
+    public function listFor($uid, $limit = 14, $offset = 0)
     {
-        $items = $this->cart->listFor($uid);
+        $items = $this->cart->listFor($uid, $limit, $offset);
 
         if ($items) {
             $nodeIdList = [];

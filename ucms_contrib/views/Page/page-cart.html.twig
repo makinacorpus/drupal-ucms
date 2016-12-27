@@ -1,0 +1,32 @@
+{% extends 'module:ucms_dashboard:views/Page/page.html.twig' %}
+
+{% block item %}
+  {% set node = item.node %}
+  <div class="ucms-cart-item" draggable="true" data-nid="{{ item.nodeId }}" data-bundle="{{ node.type }}">
+    {{ node_view(node, constant('UCMS_VIEW_MODE_FAVORITE')) }}
+  </div>
+{% endblock %}
+
+{% block page %}
+  {# @todo removed all filters and displays, will be restored later #}
+  <div class="ucms-contrib-cart">
+    <div id="ucms-cart">
+      <h2 class="sr-only">{{ "Your cart"|t }}</h2>
+      {{ block('item_list') }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block item_list %}
+  <div id="ucms-cart-list" class="ucms-cart-list" data-can-receive="1">
+    {% for item in items %}
+      {{ block('item') }}
+    {% endfor %}
+  </div>
+  {% if true %}
+    {# @todo make this conditional #}
+    <div id="ucms-cart-trash" class="progress-bar-danger progress-bar-striped">
+      <span class="glyphicon glyphicon-trash"></span>
+    </div>
+  {% endif %}
+{% endblock %}

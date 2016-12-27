@@ -43,7 +43,7 @@ class PageBuilder
         }
 
         if ($this->debug) {
-            trigger_error("page builder has no explicit 'default' template set, using first in array", E_USER_NOTICE);
+            trigger_error("page builder has no explicit 'default' template set, using first in array", E_USER_WARNING);
         }
 
         return reset($this->templates);
@@ -64,7 +64,7 @@ class PageBuilder
 
         if (!isset($this->templates[$displayName])) {
             if ($this->debug) {
-                trigger_error(sprintf("%s: display has no associated template, switching to default", $displayName), E_USER_NOTICE);
+                trigger_error(sprintf("%s: display has no associated template, switching to default", $displayName), E_USER_WARNING);
             }
 
             if ($fallback) {

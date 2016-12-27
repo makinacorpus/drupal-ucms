@@ -129,8 +129,8 @@ final class BloomCartStorage implements CartStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function listFor($uid)
+    public function listFor($uid, $limit = 14, $offset = 0)
     {
-        return $this->cart->listFor($uid);
+        return $this->cart->listFor($uid, $limit, $offset);
     }
 }

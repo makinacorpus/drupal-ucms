@@ -19,44 +19,73 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * dependencies that we should inject into pages, and only this allows
  * us to do ti properly
  */
-class AdminWidgetFactory
+final class AdminWidgetFactory
 {
     private $formBuilder;
-    private $pageBuilder;
+    private $defaultPageBuilder;
+    private $pageBuilders = [];
     private $actionRegistry;
     private $eventDispatcher;
+    private $debug;
     private $twig;
 
     /**
      * Default constructor
      *
      * @param FormBuilderInterface $formBuilder
+     * @param PageBuilder $defaultPageBuilder,
      * @param ActionRegistry $actionRegistry
      * @param \Twig_Environment $twig
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         FormBuilderInterface $formBuilder,
-        PageBuilder $pageBuilder,
+        PageBuilder $defaultPageBuilder,
         ActionRegistry $actionRegistry,
         \Twig_Environment $twig,
         EventDispatcherInterface $eventDispatcher = null
     ) {
         $this->formBuilder = $formBuilder;
-        $this->pageBuilder = $pageBuilder;
+        $this->defaultPageBuilder = $defaultPageBuilder;
         $this->actionRegistry = $actionRegistry;
         $this->eventDispatcher = $eventDispatcher;
+        $this->debug = $twig->isDebug();
         $this->twig = $twig;
+    }
+
+    /**
+     * Register a page builder instance
+     *
+     * @param string $name
+     * @param PageBuilder $pageBuilder
+     */
+    public function registerPageBuilder($name, PageBuilder $pageBuilder)
+    {
+        $this->pageBuilders[$name] = $pageBuilder;
     }
 
     /**
      * Get the page builder
      *
+     * @param string $name
+     *
      * @return PageBuilder
      */
-    public function getPageBuilder()
+    public function getPageBuilder($name = null)
     {
-        return $this->pageBuilder;
+        if (null === $name) {
+            return $this->defaultPageBuilder;
+        }
+
+        if (!isset($this->pageBuilders[$name])) {
+            if ($this->debug) {
+                trigger_error(sprintf("%s: page builder is not set, reverting to default", $name), E_USER_WARNING);
+            }
+
+            return $this->defaultPageBuilder;
+        }
+
+        return $this->pageBuilders[$name];
     }
 
     /**

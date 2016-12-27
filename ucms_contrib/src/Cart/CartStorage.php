@@ -88,7 +88,7 @@ final class CartStorage implements CartStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function listFor($uid)
+    public function listFor($uid, $limit = 14, $offset = 0)
     {
         $q = $this
             ->db
@@ -100,6 +100,7 @@ final class CartStorage implements CartStorageInterface
         $q->addField('c', 'uid');
         $q->addField('c', 'ts_added', 'added');
         $q->join('node', 'n', "n.nid = c.nid");
+        $q->range($offset, $limit);
 
         return $q
             //->extend('PagerDefault')

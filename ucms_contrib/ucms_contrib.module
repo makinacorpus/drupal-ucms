@@ -384,33 +384,6 @@ function ucms_contrib_permission() {
 }
 
 /**
- * Implements hook_theme().
- */
-function ucms_contrib_theme() {
-  return [
-    'ucms_contrib_cart' => [
-      'variables' => [
-        'css_id'      => 'ucms-cart-list',
-        'account'     => null,
-        'can_receive' => false,
-        'items'       => [],
-        'actions'     => null,
-        'display'     => null,
-      ],
-      'template'  => 'ucms-contrib-cart',
-    ],
-    'ucms_contrib_content_result_grid' => [
-      'variables' => [
-        'nodes'     => [],
-        'view_mode' => UCMS_VIEW_MODE_CONTENTADMIN,
-        'mode'      => '',
-      ],
-      'template'  => 'ucms-contrib-content-result-grid',
-    ],
-  ];
-}
-
-/**
  * Implements hook_entity_info_alter().
  */
 function ucms_contrib_entity_info_alter(&$entity_info) {
@@ -758,23 +731,6 @@ function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
   }
 
   return $image_found;
-}
-
-
-/**
- * Preprocess theme_ucms_contrib_content_result_grid().
- *
- * @param $vars
- */
-function template_preprocess_ucms_contrib_content_result_grid(&$vars) {
-  if (empty($vars['nodes'])) {
-    return;
-  }
-  $node_views = node_view_multiple($vars['nodes'], $vars['view_mode']);
-  $vars['nodes'] = [];
-  foreach(element_children($node_views['nodes']) as $child_key) {
-    $vars['nodes'][$child_key] = $node_views['nodes'][$child_key];
-  }
 }
 
 /**
