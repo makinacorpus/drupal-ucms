@@ -37,8 +37,8 @@ interface CartStorageInterface
      *
      * @param int $uid
      *
-     * @return int[]
-     *   Ordered list of node identifiers.
+     * @return CartItem[]
+     *   Ordered list of items.
      */
     public function listFor($uid);
 }

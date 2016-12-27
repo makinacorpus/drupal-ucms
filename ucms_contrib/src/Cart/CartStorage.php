@@ -46,8 +46,9 @@ final class CartStorage implements CartStorageInterface
             ->db
             ->merge('ucms_contrib_cart')
             ->key([
-                'nid' => $nid,
-                'uid' => $uid,
+                'nid'       => $nid,
+                'uid'       => $uid,
+                'ts_added'  => (new \DateTime())->format('Y-m-d H:i:s'),
             ])
             ->execute()
         ;
@@ -92,10 +93,12 @@ final class CartStorage implements CartStorageInterface
         $q = $this
             ->db
             ->select('ucms_contrib_cart', 'c')
-            ->fields('c', ['nid'])
             ->condition('c.uid', $uid)
         ;
 
+        $q->addField('c', 'nid');
+        $q->addField('c', 'uid');
+        $q->addField('c', 'ts_added', 'added');
         $q->join('node', 'n', "n.nid = c.nid");
 
         return $q
@@ -103,9 +106,10 @@ final class CartStorage implements CartStorageInterface
             //->limit(12)
             // @todo Restore me!
             //->addTag('node_access')
+            ->orderBy('c.ts_added', 'desc')
             ->addTag(Access::QUERY_TAG_CONTEXT_OPT_OUT)
             ->execute()
-            ->fetchCol()
+            ->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, CartItem::class)
         ;
     }
 }

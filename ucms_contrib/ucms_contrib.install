@@ -23,14 +23,22 @@ function ucms_contrib_schema() {
         'not null'    => true,
         'default'     => 0,
       ],
+      'ts_added' => [
+        'decription'  => "Creation date",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => true,
+      ],
     ],
     'foreign keys' => [
       'uid' => [
-        'table'   => 'users', 
+        'table'   => 'users',
         'columns' => ['uid' => 'uid'],
       ],
       'nid' => [
-        'table'   => 'node', 
+        'table'   => 'node',
         'columns' => ['nid' => 'nid'],
       ],
     ],
@@ -153,4 +161,22 @@ function ucms_contrib_update_7004() {
     db_create_table('ucms_node_reference', drupal_get_schema_unprocessed('ucms_contrib', 'ucms_node_reference'));
   }
   ucms_contrib_install_schema_fix();
+}
+
+/**
+ * Adds the {ucms_contrib_cart}.ts_added column.
+ */
+function ucms_contrib_update_7005() {
+  if (!db_field_exists('ucms_contrib_cart', 'ts_added')) {
+    db_add_field('ucms_contrib_cart', 'ts_added', [
+      'decription'  => "Creation date",
+      'mysql_type'  => 'datetime',
+      'pgsql_type'  => 'timestamp',
+      'type'        => 'varchar',
+      'length'      => 16,
+      'not null'    => true,
+      // We need to set a default value, so now it is
+      'default'     => (new \DateTime())->format('Y-m-d H:i:s'),
+    ]);
+  }
 }

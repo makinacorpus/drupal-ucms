@@ -51,8 +51,8 @@ final class BloomCartStorage implements CartStorageInterface
     {
         $filter = new BloomFilter($this->size, $this->probability);
 
-        foreach ($this->listFor($uid) as $nid) {
-            $filter->set($nid);
+        foreach ($this->listFor($uid) as $item) {
+            $filter->set($item->getNodeId());
         }
 
         $this->cache->set($this->getCacheId($uid), $filter);

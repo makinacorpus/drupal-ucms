@@ -9,17 +9,20 @@ class NodeCartDisplay extends AbstractDisplay
     /**
      * {@inheritdoc}
      */
-    protected function displayAs($mode, $nodes)
+    protected function displayAs($mode, $items)
     {
-        if (empty($nodes)) {
-            return [];
+        $ret = [];
+        if (empty($items)) {
+            return $ret;
         }
-        $ret = node_view_multiple($nodes, UCMS_VIEW_MODE_FAVORITE);
-        foreach ($nodes as $nid => $node) {
+        /** @var \MakinaCorpus\Ucms\Contrib\Cart\CartItem $item */
+        foreach ($items as $item) {
+            $nid = $item->getNodeId();
+            $node = $item->getNode();
             $ret['nodes'][$nid] = [
                 '#prefix' => '<div class="ucms-cart-item" draggable="true" data-nid="'.$nid.'" data-bundle="'.$node->getType().'">',
                 '#suffix' => '</div>',
-                'content' => $ret['nodes'][$nid],
+                'content' => node_view($node, UCMS_VIEW_MODE_FAVORITE),
             ];
         }
         return $ret;

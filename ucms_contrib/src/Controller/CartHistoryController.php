@@ -108,8 +108,9 @@ class CartHistoryController extends Controller
 
         $query = $this->getDatabase()->select('history', 'h');
         $query->join('node', 'n', "h.nid = n.nid");
+        $query->fields('h', ['nid', 'uid']);
+        $query->addField('h', 'timestamp', 'added');
         $nodeIdList = $query
-            ->fields('h', ['nid'])
             ->condition('h.uid', $userId)
             ->orderBy('h.timestamp', 'desc')
             ->range(0, 12)

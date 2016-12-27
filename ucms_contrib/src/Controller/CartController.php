@@ -136,8 +136,7 @@ class CartController extends Controller
             $userId = $this->getCurrentUser()->id();
         }
 
-        $nidList  = $this->getCartStorage()->listFor($userId);
-        $nodes    = $nidList ? node_load_multiple($nidList) : [];
+        $items = $this->getCartStorage()->listFor($userId);
 
         $display = (new NodeCartDisplay())
             ->setParameterName('cd')
@@ -150,7 +149,7 @@ class CartController extends Controller
             '#theme'        => 'ucms_contrib_cart',
             '#account'      => $userId,
             '#can_receive'  => true,
-            '#items'        => $display->render($nodes),
+            '#items'        => $display->render($items),
         ];
 
         $ret['#attached']['library'][] = ['system', 'ui.droppable'];

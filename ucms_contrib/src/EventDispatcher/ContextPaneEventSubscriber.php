@@ -111,10 +111,10 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
             $contextPane
                 ->addTab('cart', $this->t("Cart"), 'shopping-cart')
                 ->add($this->renderCart(), 'cart')
-                ->addTab('history', $this->t("Your browse history"), 'bookmark')
-                ->add($this->renderBrowseHistory(), 'history')
-                ->addTab('bookmark', $this->t("Your recent modifications"), 'time')
-                ->add($this->renderUpdateHistory(), 'bookmark')
+//                 ->addTab('history', $this->t("Your browse history"), 'bookmark')
+//                 ->add($this->renderBrowseHistory(), 'history')
+//                 ->addTab('bookmark', $this->t("Your recent modifications"), 'time')
+//                 ->add($this->renderUpdateHistory(), 'bookmark')
             ;
         }
 
