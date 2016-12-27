@@ -175,8 +175,20 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function init($query)
+    public function init(array $query, array $filter)
     {
+        if ($filter) {
+            $filterQuery = $this->search->getFilterQuery();
+
+            foreach ($filter as $name => $value) {
+                if (is_array($value)) {
+                    $filterQuery->matchTermCollection($name, $value);
+                } else {
+                    $filterQuery->matchTerm($name, $value);
+                }
+            }
+        }
+
         $this->createTermFacets();
     }
 

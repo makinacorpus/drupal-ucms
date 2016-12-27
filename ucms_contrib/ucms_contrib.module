@@ -67,7 +67,7 @@ function ucms_contrib_menu() {
     $items['admin/dashboard/' . $key . '/global'] = [
       'title'             => "Global",
       'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::global', $key],
+      'page arguments'    => [NodeAdminController::class . '::default', 'global', $key],
       'access arguments'  => [Access::PERM_CONTENT_VIEW_GLOBAL],
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 90,
@@ -75,7 +75,7 @@ function ucms_contrib_menu() {
     $items['admin/dashboard/' . $key . '/local'] = [
       'title'             => "Local",
       'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::local', $key],
+      'page arguments'    => [NodeAdminController::class . '::default', 'local', $key],
       'access arguments'  => ['access ucms content overview'], // @todo user has sites
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 80,
@@ -83,7 +83,7 @@ function ucms_contrib_menu() {
     $items['admin/dashboard/' . $key . '/flagged'] = [
       'title'             => "Flagged",
       'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::flagged', $key],
+      'page arguments'    => [NodeAdminController::class . '::default', 'flagged', $key],
       'access callback'   => 'ucms_contrib_menu_node_access_global',
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 200,
@@ -91,7 +91,7 @@ function ucms_contrib_menu() {
     $items['admin/dashboard/' . $key . '/starred'] = [
       'title'             => "Starred",
       'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::starred', $key],
+      'page arguments'    => [NodeAdminController::class . '::default', 'starred', $key],
       'access arguments'  => [Access::PERM_CONTENT_MANAGE_GLOBAL],
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 210,

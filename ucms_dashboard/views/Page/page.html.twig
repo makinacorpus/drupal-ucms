@@ -207,7 +207,7 @@
 {% endblock %}
 
 {% block page %}
-  <div data-page="{{ uuid }}">
+  <div{% if uuid %} data-page="{{ uuid }}"{% endif %}>
     {% if displays or filters %}
       <div class="col-md-2">
         {% if displays %}

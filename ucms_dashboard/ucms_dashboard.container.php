@@ -8,6 +8,7 @@ use MakinaCorpus\Ucms\Dashboard\DependencyInjection\Compiler\ActionProviderRegis
 use MakinaCorpus\Ucms\Dashboard\DependencyInjection\Compiler\PageBuilderRegisterPass;
 use MakinaCorpus\Ucms\Dashboard\DependencyInjection\Compiler\PortletRegisterPass;
 
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -22,7 +23,7 @@ class ServiceProvider implements ServiceProviderInterface
     public function register(ContainerBuilder $container)
     {
         $container->addCompilerPass(new ActionProviderRegisterPass());
-        $container->addCompilerPass(new PageBuilderRegisterPass());
+        $container->addCompilerPass(new PageBuilderRegisterPass(), PassConfig::TYPE_BEFORE_REMOVING);
         $container->addCompilerPass(new PortletRegisterPass());
     }
 }

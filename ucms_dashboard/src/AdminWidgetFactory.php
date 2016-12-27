@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * God I hate to register more factories to the DIC, but we have some
@@ -78,30 +79,33 @@ final class AdminWidgetFactory
      */
     public function getPageType($name)
     {
-        // @todo rewrite this better
-        if (!isset($this->pageTypes[$name])) {
-            try {
-                $instance = $this->container->get($name);
+        if (isset($this->pageTypes[$name])) {
+            $id = $this->pageTypes[$name];
+        } else {
+            $id = $name;
+        }
+
+        try {
+            $instance = $this->container->get($id);
+
+            if (!$instance instanceof PageTypeInterface) {
+                throw new \InvalidArgumentException(sprintf("page builder '%s' with service id '%s' does not implement %s", $name, $id, PageTypeInterface::class));
+            }
+        } catch (ServiceNotFoundException $e) {
+
+            if (class_exists($name)) {
+                $instance = new $name();
+
                 if (!$instance instanceof PageTypeInterface) {
-                    throw new \InvalidArgumentException(sprintf("page builder with service id '%s' does not implement %s", $name, PageTypeInterface::class));
+                    throw new \InvalidArgumentException(sprintf("class '%s' does not implement %s", $name, PageTypeInterface::class));
                 }
-                $this->pageTypes[$name] = $instance;
-
-                return $instance;
-
-            } catch (ServiceNotFoundException $e) {
-                throw new \InvalidArgumentException(sprintf("page builder with service id '%s' does not exist in container", $name));
+            } else {
+                throw new \InvalidArgumentException(sprintf("page builder '%s' with service id '%s' does not exist in container or class does not exists", $name, $id));
             }
         }
 
-        $instance = $this->pageTypes[$name];
-
-        if (is_string($instance)) {
-            $instance = $this->container->get($instance);
-            if (!$instance instanceof PageTypeInterface) {
-                throw new \InvalidArgumentException(sprintf("page builder with service id '%s' does not implement %s", $name, PageTypeInterface::class));
-            }
-            $this->pageTypes[$name] = $instance;
+        if ($instance instanceof ContainerAwareInterface) {
+            $instance->setContainer($this->container);
         }
 
         return $instance;
@@ -120,6 +124,7 @@ final class AdminWidgetFactory
         $builder = new PageBuilder($this->twig);
 
         $type->build($builder, $request);
+        $builder->setId($name);
 
         return $builder;
     }

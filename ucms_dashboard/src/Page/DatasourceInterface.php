@@ -53,8 +53,10 @@ interface DatasourceInterface
      *
      * @param string[] $query
      *   Incomming query parameters
+     * @param string[] $filter
+     *   Base query (filtering query) set by the caller
      */
-    public function init($query);
+    public function init(array $query, array $filter);
 
     /**
      * Get items to display

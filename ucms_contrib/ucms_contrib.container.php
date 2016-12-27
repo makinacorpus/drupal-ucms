@@ -5,6 +5,7 @@ namespace Drupal\Module\ucms_contrib;
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 
 use MakinaCorpus\Ucms\Contrib\DependencyInjection\Compiler\EntityLinkFilterRegisterPass;
+use MakinaCorpus\Ucms\Contrib\DependencyInjection\Compiler\RegisterAdminPageTypesPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -20,5 +21,6 @@ class ServiceProvider implements ServiceProviderInterface
     public function register(ContainerBuilder $container)
     {
         $container->addCompilerPass(new EntityLinkFilterRegisterPass());
+        $container->addCompilerPass(new RegisterAdminPageTypesPass());
     }
 }

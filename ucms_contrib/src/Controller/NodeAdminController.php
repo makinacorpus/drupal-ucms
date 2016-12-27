@@ -3,11 +3,6 @@
 namespace MakinaCorpus\Ucms\Contrib\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Contrib\Page\FlaggedNodePageType;
-use MakinaCorpus\Ucms\Contrib\Page\GlobalNodePageType;
-use MakinaCorpus\Ucms\Contrib\Page\LocalNodePageType;
-use MakinaCorpus\Ucms\Contrib\Page\MyNodePageType;
-use MakinaCorpus\Ucms\Contrib\Page\StarredNodePageType;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 
@@ -18,6 +13,61 @@ class NodeAdminController extends Controller
     use PageControllerTrait;
 
     /**
+     * Get service name for page type
+     *
+     * @param string $tab
+     *   'content' or 'media' or anything that the type handler knows about
+     * @param string $pool
+     *   'mine', 'global', etc...
+     *
+     * @return string
+     */
+    static public function getServiceName($tab, $pool)
+    {
+        return 'ucms_contrib.page_type.' . $tab . '.' . $pool;
+    }
+
+    /**
+     * Get additional filters for pool
+     *
+     * @param string $pool
+     *   'mine', 'global', etc...
+     *
+     * @return mixed[]
+     */
+    static public function getQueryFilter($pool)
+    {
+        switch ($pool) {
+
+            case 'mine':
+                return []; // Dynamic
+
+            case 'global':
+                return [
+                    'is_global' => 1,
+                    'is_group' => 0,
+                ];
+
+            case 'local':
+                return [
+                    'is_global' => 0,
+                ];
+
+            case 'flagged':
+                return [
+                    'is_flagged' => 1,
+                ];
+
+            case 'starred':
+                return [
+                    'is_starred' => 1,
+                ];
+        }
+
+        return [];
+    }
+
+    /**
      * Main content page.
      *
      * @param string $tab
@@ -25,23 +75,6 @@ class NodeAdminController extends Controller
      */
     private function buildContentPage(PageBuilder $builder, Request $request, $tab = null)
     {
-        /** @var \MakinaCorpus\Ucms\Site\SiteManager $siteManager */
-        $siteManager = $this->get('ucms_site.manager');
-
-        // Apply context, if any
-        if ($siteManager->hasContext()) {
-            $builder->addBaseQueryParameter('site_id', $siteManager->getContext()->getId());
-        }
-
-        $types = $this->get('ucms_contrib.type_handler')->getTabTypes($tab);
-        if (!empty($types)) {
-            //$search->getFilterQuery()->matchTermCollection('type', $types);
-        }
-
-        if ('media' === $tab) {
-            $builder->setDefaultDisplay('grid');
-        }
-
         return $builder->searchAndRender($request);
     }
 
@@ -52,38 +85,14 @@ class NodeAdminController extends Controller
     {
         $request->query->set('user_id', $this->getUser()->id());
 
-        return $this->buildContentPage($this->getPageBuilder(MyNodePageType::class, $request), $request, $tab);
+        return $this->getPageBuilder($this->getServiceName($tab, 'mine'), $request)->searchAndRender($request);
     }
 
     /**
-     * Global content action
+     * Default render action
      */
-    public function globalAction(Request $request, $tab = null)
+    public function defaultAction(Request $request, $pool = 'local', $tab = null)
     {
-        return $this->buildContentPage($this->getPageBuilder(GlobalNodePageType::class, $request), $request, $tab);
-    }
-
-    /**
-     * Local content action
-     */
-    public function localAction(Request $request, $tab = null)
-    {
-        return $this->buildContentPage($this->getPageBuilder(LocalNodePageType::class, $request), $request, $tab);
-    }
-
-    /**
-     * Flagged content action
-     */
-    public function flaggedAction(Request $request, $tab = null)
-    {
-        return $this->buildContentPage($this->getPageBuilder(FlaggedNodePageType::class, $request), $request, $tab);
-    }
-
-    /**
-     * Starred content action
-     */
-    public function starredAction(Request $request, $tab = null)
-    {
-        return $this->buildContentPage($this->getPageBuilder(StarredNodePageType::class, $request), $request, $tab);
+        return $this->getPageBuilder($this->getServiceName($tab, $pool), $request)->searchAndRender($request);
     }
 }

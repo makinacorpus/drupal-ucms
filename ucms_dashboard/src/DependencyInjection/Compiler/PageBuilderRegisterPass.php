@@ -36,6 +36,7 @@ class PageBuilderRegisterPass implements CompilerPassInterface
                 $typeId = $attributes[0]['id'];
             }
 
+            $def->setShared(false);
             $types[$typeId] = $id;
         }
 

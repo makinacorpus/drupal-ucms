@@ -33,7 +33,7 @@ abstract class AbstractDatasource implements DatasourceInterface
     /**
      * {@inheritdoc}
      */
-    public function init($query)
+    public function init(array $query, array $filter)
     {
     }
 

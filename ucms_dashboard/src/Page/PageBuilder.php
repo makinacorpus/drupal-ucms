@@ -62,6 +62,20 @@ final class PageBuilder
     }
 
     /**
+     * Get datasource
+     *
+     * @return DatasourceInterface
+     */
+    public function getDatasource()
+    {
+        if (!$this->datasource) {
+            throw new \LogicException("cannot build page without a datasource");
+        }
+
+        return $this->datasource;
+    }
+
+    /**
      * Set default display
      *
      * @param string $defaultDisplay
@@ -189,23 +203,30 @@ final class PageBuilder
      */
     public function search(Request $request)
     {
-        if (!$this->datasource) {
-            throw new \LogicException("cannot build page without a datasource");
-        }
-        $datasource = $this->datasource;
+        $datasource = $this->getDatasource();
 
         $route = $request->attributes->get('_route');
         $state = new PageState();
 
         $query = array_merge(
             $request->query->all(),
-            $request->attributes->get('_route_params', []),
-            $this->baseQuery
+            $request->attributes->get('_route_params', [])
         );
 
         $query = Filter::fixQuery($query); // @todo this is ugly
 
-        $datasource->init($query);
+        // Check that there is no value out of bounds of the filter query to
+        // ensure we do override the incomming request query parameters, and
+        // avoid security issues
+        if ($this->baseQuery) {
+            foreach ($this->baseQuery as $name => $value) {
+                if (isset($query[$name])) {
+                    // @todo end this...
+                }
+            }
+        }
+
+        $datasource->init($query, $this->baseQuery);
 
         $sort = new SortManager();
         $sort->prepare($route, $query);

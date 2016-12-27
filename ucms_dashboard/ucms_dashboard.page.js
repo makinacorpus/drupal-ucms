@@ -6,16 +6,19 @@
    * @param element
    */
   function Page(element) {
-    var name = element['data-pname'];
+    var name = element.getAttribute("data-page");
   }
 
   Drupal.behaviors.UcmsDashboardPage = {
-    attachBehaviors: function (context, settings) {
-      var nodes = context.querySelectorAll("[data-pname]:not([data-pninit])");
+    attach: function (context, settings) {
+      var nodes = context.querySelectorAll("[data-page]:not([data-page-init])");
       var i;
       for (i in nodes) {
-        new Page(nodes[i]);
-        nodes[i]['data-pinit'] = "true";
+        // Sometimes, nodes are not nodes
+        if (nodes[i].getAttribute) {
+          new Page(nodes[i]);
+          nodes[i].setAttribute("data-page-init", 1);
+        }
       }
     }
   };
