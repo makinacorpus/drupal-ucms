@@ -7,7 +7,7 @@ use Drupal\node\Node;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
@@ -76,11 +76,11 @@ trait NodeAccessTestTrait
     /**
      * Get type handler
      *
-     * @return TypeHandler
+     * @return ContentTypeManager
      */
-    protected function getTypeHandler()
+    protected function getTypeManager()
     {
-        return $this->getDrupalContainer()->get('ucms_contrib.type_handler');
+        return $this->getDrupalContainer()->get('ucms_contrib.type_manager');
     }
 
     /**

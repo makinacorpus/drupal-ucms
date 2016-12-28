@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Contrib\DependencyInjection\Compiler;
 
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Contrib\Page\DefaultNodeAdminPage;
 use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -63,7 +63,7 @@ class RegisterNodeAdminPagePass implements CompilerPassInterface
                     $definition->setArguments([
                         new Reference('ucms_contrib.datasource.elastic'),
                         new Reference('ucms_site.manager'),
-                        new Reference('ucms_contrib.type_handler'),
+                        new Reference('ucms_contrib.type_manager'),
                         $pageDefinition['permission'],
                         $tab,
                         $pageDefinition['filter_query'],
@@ -86,14 +86,19 @@ class RegisterNodeAdminPagePass implements CompilerPassInterface
                 $definition->addTag('ucms_dashboard.page_type');
 
                 $adminPages[$path] = $pageDefinition['name'];
-                $definitions[TypeHandler::getServiceName($tab, $path)] = $definition;
+                $definitions[ContentTypeManager::getServiceName($tab, $path)] = $definition;
             }
         }
 
-        if ($container->has('ucms_contrib.type_handler')) {
+        if ($container->has('ucms_contrib.type_manager')) {
             $container
-                ->getDefinition('ucms_contrib.type_handler')
-                ->setArguments([$tabs, $adminPages])
+                ->getDefinition('ucms_contrib.type_manager')
+                ->setArguments([
+                    new Reference('database'),
+                    new Reference('event_dispatcher'),
+                    $tabs,
+                    $adminPages,
+                ])
             ;
         }
         if ($definitions) {

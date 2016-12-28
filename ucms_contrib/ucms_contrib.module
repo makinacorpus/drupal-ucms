@@ -16,7 +16,7 @@ use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\Controller\NodeAdminController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
 
@@ -54,12 +54,12 @@ function ucms_contrib_menu() {
   $items = [];
 
   // Main administration pages.
-  $typeHandler = ucms_contrib_type_handler_get();
-  foreach ($typeHandler->getTabs() as $tab => $label) {
+  $typeManager = ucms_contrib_type_manager_get();
+  foreach ($typeManager->getTabs() as $tab => $label) {
     $first = true;
     $weight = -100;
-    foreach ($typeHandler->getAdminPages() as $page => $name) {
-      $serviceId = TypeHandler::getServiceName($tab, $page);
+    foreach ($typeManager->getAdminPages() as $page => $name) {
+      $serviceId = ContentTypeManager::getServiceName($tab, $page);
       if ($first) {
         $first = false;
         $items['admin/dashboard/' . $tab] = [
@@ -280,7 +280,7 @@ function ucms_contrib_admin_page_access($serviceId) {
 function ucms_contrib_menu_node_access_add_to_site($type) {
 
   $user = \Drupal::service('current_user');
-  $typeHandler = ucms_contrib_type_handler_get();
+  $contentTypeManager = ucms_contrib_type_manager_get();
   $siteAccess = ucms_site_manager()->getAccess();
   $nodeAccess = ucms_site_node_access_helper();
 
@@ -293,11 +293,12 @@ function ucms_contrib_menu_node_access_add_to_site($type) {
     return false;
   }
 
-  if ($siteAccess->userIsWebmaster($user) && in_array($type, $typeHandler->getAllTypes())) {
+  if ($siteAccess->userIsWebmaster($user) && in_array($type, $contentTypeManager->getAllTypes())) {
     // Webmasters can create anything
     return true;
-  } else if ($siteAccess->userIsContributor($user) && in_array($type, $typeHandler->getEditorialTypes())) {
-    // Contributors can only create editorial content
+  }
+  else if ($siteAccess->userIsContributor($user) && in_array($type, $contentTypeManager->getNonComponentTypes())) {
+    // Contributors can't create components
     return true;
   }
 
@@ -376,10 +377,10 @@ function ucms_contrib_node_clone_form($node) {
 }
 
 /**
- * @return \MakinaCorpus\Ucms\Contrib\TypeHandler
+ * @return \MakinaCorpus\Ucms\Contrib\ContentTypeManager
  */
-function ucms_contrib_type_handler_get() {
-  return \Drupal::service('ucms_contrib.type_handler');
+function ucms_contrib_type_manager_get() {
+  return \Drupal::service('ucms_contrib.type_manager');
 }
 
 /**
@@ -686,11 +687,14 @@ function ucms_contrib_field_attach_view_alter(&$output, $context) {
   }
 
   // Add icon relative to meta content type
-  $icon_mapping = ['content' => 'file', 'media'   => 'picture'];
+  $icon_mapping = [
+    'content' => 'file',
+    'media'   => 'picture',
+  ];
   $meta_type = null;
-  $typeHandler = ucms_contrib_type_handler_get();
-  foreach ($typeHandler->getTabs() as $tab => $label) {
-    if (in_array($output['#bundle'], $typeHandler->getTabTypes($tab))) {
+  $typeManager = ucms_contrib_type_manager_get();
+  foreach ($typeManager->getTabs() as $tab => $label) {
+    if (in_array($output['#bundle'], $typeManager->getTabTypes($tab))) {
       $meta_type = $tab;
     }
   }
@@ -786,8 +790,8 @@ function ucms_contrib_process_text_format($element, &$form_state) {
       $profile_plugins = array_keys((array) $profile->settings['loadPlugins']);
 
       if (in_array('ucmsmediadnd', $profile_plugins)) {
-        $typeHandler = ucms_contrib_type_handler_get();
-        $settings = ['mediaBundles' => $typeHandler->getMediaTypes()];
+        $contentTypeManager = ucms_contrib_type_manager_get();
+        $settings = ['mediaBundles' => $contentTypeManager->getMediaTypes()];
         drupal_add_js(['ucms_contrib' => $settings], 'setting');
         break;
       }

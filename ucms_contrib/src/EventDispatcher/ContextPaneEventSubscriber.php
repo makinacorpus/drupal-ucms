@@ -6,7 +6,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
@@ -25,7 +25,15 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     private $container;
     private $contentActionProvider;
     private $siteManager;
-    private $typeHandler;
+
+    /**
+     * @var ContentTypeManager
+     */
+    private $contentTypeManager;
+
+    /**
+     * @var ActionProviderInterface
+     */
     private $actionProviderRegistry;
 
     /**
@@ -34,20 +42,20 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      * @param ActionProviderInterface $contentActionProvider
      * @param ActionProviderInterface $actionRegistry
      * @param SiteManager $siteManager
-     * @param TypeHandler $typeHandler
+     * @param ContentTypeManager $contentTypeManager
      */
     public function __construct(
         ContainerInterface $container,
         ActionProviderInterface $contentActionProvider,
         ActionRegistry $actionRegistry,
         SiteManager $siteManager,
-        TypeHandler $typeHandler
+        ContentTypeManager $contentTypeManager
     ) {
         $this->container = $container;
         $this->contentActionProvider = $contentActionProvider;
         $this->actionProviderRegistry = $actionRegistry;
         $this->siteManager = $siteManager;
-        $this->typeHandler = $typeHandler;
+        $this->contentTypeManager = $contentTypeManager;
     }
 
     /**

@@ -15,15 +15,15 @@ class NotificationCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition('ucms_contrib.type_handler')) {
-            $taggedServices = $container->findTaggedServiceIds('ucms_contrib.type_handler');
+        if ($container->hasDefinition('ucms_contrib.type_manager')) {
+            $taggedServices = $container->findTaggedServiceIds('ucms_contrib.type_manager');
 
             foreach ($taggedServices as $id => $attributes) {
                 $formatter = $container->getDefinition($id);
 
                 $formatter->addMethodCall(
-                    'setTypeHandler',
-                    [new Reference('ucms_contrib.type_handler')]
+                    'setTypeManager',
+                    [new Reference('ucms_contrib.type_manager')]
                 );
             }
         }

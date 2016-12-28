@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\Form\TreeEditForm;
@@ -21,11 +21,11 @@ use Symfony\Component\HttpFoundation\Request;
 class TreeAdminController extends Controller
 {
     /**
-     * @return TypeHandler
+     * @return ContentTypeManager
      */
-    private function getTypeHandler()
+    private function getTypeManager()
     {
-        return $this->get('ucms_contrib.type_handler');
+        return $this->get('ucms_contrib.type_manager');
     }
 
     /**
@@ -173,9 +173,9 @@ class TreeAdminController extends Controller
     public function addContentHere(Request $request)
     {
         $links = [];
-        $handler = $this->getTypeHandler();
-        foreach ($this->getTypeHandler()
-                      ->getTypesAsHumanReadableList($handler->getContentTypes()) as $type => $name) {
+        $handler = $this->getTypeManager();
+
+        foreach ($handler->getTypeNames($handler->getNonMediaTypes()) as $type => $name) {
             if (node_access('create', $type)) {
                 $options = [
                     'query' => [

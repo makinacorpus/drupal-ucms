@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Session\AccountInterface;
 
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultNodeAdminPage implements NodeAdminPageInterface
 {
     private $datasource;
-    private $typeHandler;
+    private $contentTypeManager;
     private $siteManager;
     private $tab;
     private $queryFilter;
@@ -34,13 +34,13 @@ class DefaultNodeAdminPage implements NodeAdminPageInterface
     public function __construct(
         DatasourceInterface $datasource,
         SiteManager $siteManager,
-        TypeHandler $typeHandler,
+        ContentTypeManager $contentTypeManager,
         $permission,
         $tab = null,
         array $queryFilter = []
     ) {
         $this->datasource = $datasource;
-        $this->typeHandler = $typeHandler;
+        $this->contentTypeManager = $contentTypeManager;
         $this->siteManager = $siteManager;
         $this->permission = $permission;
         $this->tab = $tab;
@@ -80,7 +80,7 @@ class DefaultNodeAdminPage implements NodeAdminPageInterface
         }
 
         if ($this->tab) {
-            $types = $this->typeHandler->getTabTypes($this->tab);
+            $types = $this->contentTypeManager->getTabTypes($this->tab);
             if ($types) {
                 $builder->addBaseQueryParameter('type', $types);
             } else {

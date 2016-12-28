@@ -4,14 +4,14 @@ namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 
 abstract class AbstractContentNotificationFormatter extends AbstractNotificationFormatter
 {
     /**
-     * @var TypeHandler
+     * @var ContentTypeManager
      */
-    private $typeHandler;
+    private $contentTypeManager;
 
     /**
      * {@inheritdoc}
@@ -25,11 +25,11 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
     }
 
     /**
-     * @param TypeHandler $typeHandler
+     * @param ContentTypeManager $contentTypeManager
      */
-    public function setTypeHandler($typeHandler)
+    public function setTypeManager($contentTypeManager)
     {
-        $this->typeHandler = $typeHandler;
+        $this->contentTypeManager = $contentTypeManager;
     }
 
     /**
@@ -64,7 +64,7 @@ abstract class AbstractContentNotificationFormatter extends AbstractNotification
         $contentIdList = $notification->getResourceIdList();
         if (count($contentIdList) === 1) {
             if ($node = node_load(reset($contentIdList))) {
-                return in_array($node->type, $this->typeHandler->getContentTypes()) ? "file" : "picture";
+                return in_array($node->type, $this->contentTypeManager->getNonMediaTypes()) ? "file" : "picture";
             }
         }
     }

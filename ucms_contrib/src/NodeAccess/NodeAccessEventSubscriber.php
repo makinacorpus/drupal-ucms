@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Contrib\NodeAccess;
 
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
@@ -22,18 +22,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class NodeAccessEventSubscriber implements EventSubscriberInterface
 {
     private $siteManager;
-    private $typeHandler;
+    private $contentTypeManager;
 
     /**
      * Default constructor
      *
      * @param SiteManager $siteManager
-     * @param TypeHandler $typeHandler
+     * @param ContentTypeManager $contentTypeManager
      */
-    public function __construct(SiteManager $siteManager, TypeHandler $typeHandler)
+    public function __construct(SiteManager $siteManager, ContentTypeManager $contentTypeManager)
     {
         $this->siteManager = $siteManager;
-        $this->typeHandler = $typeHandler;
+        $this->contentTypeManager = $contentTypeManager;
     }
 
     /**
@@ -65,15 +65,18 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         $access   = $this->siteManager->getAccess();
 
         if ('create' === $op) {
-
             // Drupal gave a wrong input, this may happen
             if (!is_string($node) && !$node instanceof NodeInterface) {
                 return $this->deny();
             }
+
             $type = is_string($node) ? $node : $node->bundle();
 
             // Locked types
-            if (in_array($type, $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
+            if (
+                in_array($type, $this->contentTypeManager->getLockedTypes()) &&
+                !$account->hasPermission(Access::PERM_CONTENT_GOD)
+            ) {
                 return $event->deny();
             }
 
@@ -81,12 +84,18 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 $site = $this->siteManager->getContext();
 
                 // Contributor can only create editorial content
-                if ($access->userIsContributor($account, $site) && in_array($type, $this->typeHandler->getEditorialTypes())) {
+                if (
+                    $access->userIsContributor($account, $site) &&
+                    in_array($type, $this->contentTypeManager->getNonComponentTypes())
+                ) {
                     return $event->allow();
                 }
 
                 // Webmasters can create anything
-                if ($access->userIsWebmaster($account, $site) && in_array($type, $this->typeHandler->getAllTypes())) {
+                if (
+                    $access->userIsWebmaster($account, $site) &&
+                    in_array($type, $this->contentTypeManager->getAllTypes())
+                ) {
                     return $event->allow();
                 }
             } else {
@@ -99,13 +108,16 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                     $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)
                 ;
 
-                if ($canManage && in_array($type, $this->typeHandler->getEditorialTypes())) {
+                if ($canManage && in_array($type, $this->contentTypeManager->getNonComponentTypes())) {
                     return $event->allow();
                 }
             }
         } else if (Permission::DELETE === $op) {
             // Locked types
-            if (in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
+            if (
+                in_array($node->bundle(), $this->contentTypeManager->getLockedTypes()) &&
+                !$account->hasPermission(Access::PERM_CONTENT_GOD)
+            ) {
                 return $event->deny();
             }
         }

@@ -347,7 +347,7 @@ class SiteAccessService
     public function userHasRole(AccountInterface $account, Site $site = null, $rrid = null)
     {
         if (null === $site && null === $rrid) {
-          return (boolean) count($this->getUserRoleCacheValue($account));
+            return (boolean) count($this->getUserRoleCacheValue($account));
         }
 
         if (null === $site) {

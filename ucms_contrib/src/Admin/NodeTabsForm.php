@@ -4,15 +4,15 @@ namespace MakinaCorpus\Ucms\Contrib\Admin;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class NodeTabsForm extends FormBase
 {
     /**
-     * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
+     * @var \MakinaCorpus\Ucms\Contrib\ContentTypeManager
      */
-    private $typeHandler;
+    private $contentTypeManager;
 
     /**
      * {@inheritDoc}
@@ -27,17 +27,17 @@ class NodeTabsForm extends FormBase
      */
     static public function create(ContainerInterface $container)
     {
-        return new self($container->get('ucms_contrib.type_handler'));
+        return new self($container->get('ucms_contrib.type_manager'));
     }
 
     /**
      * NodeTabsForm constructor.
      *
-     * @param TypeHandler $typeHandler
+     * @param ContentTypeManager $contentTypeManager
      */
-    public function __construct(TypeHandler $typeHandler)
+    public function __construct(ContentTypeManager $contentTypeManager)
     {
-        $this->typeHandler = $typeHandler;
+        $this->contentTypeManager = $contentTypeManager;
     }
 
     /**
@@ -52,7 +52,7 @@ class NodeTabsForm extends FormBase
         $form['media']['media_types'] = [
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
-            '#default_value' => $this->typeHandler->getMediaTypes(),
+            '#default_value' => $this->contentTypeManager->getMediaTypes(),
         ];
 
         $form['content'] = [
@@ -63,21 +63,21 @@ class NodeTabsForm extends FormBase
             '#title'         => $this->t("Editorial content types"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
-            '#default_value' => $this->typeHandler->getEditorialContentTypes(),
+            '#default_value' => $this->contentTypeManager->getEditorialTypes(),
         ];
 
         $form['content']['component'] = [
             '#title'         => $this->t("Component content types"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
-            '#default_value' => $this->typeHandler->getComponentTypes(),
+            '#default_value' => $this->contentTypeManager->getComponentTypes(),
         ];
 
         $form['content']['locked'] = [
             '#title'         => $this->t("Locked components"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
-            '#default_value' => $this->typeHandler->getLockedTypes(),
+            '#default_value' => $this->contentTypeManager->getLockedTypes(),
         ];
 
         $form['actions']['#type'] = 'actions';
@@ -115,10 +115,10 @@ class NodeTabsForm extends FormBase
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
 
-        $this->typeHandler->setMediaTypes($form_state->getValue('media_types'));
-        $this->typeHandler->setEditorialContentTypes($form_state->getValue('editorial'));
-        $this->typeHandler->setComponentTypes($form_state->getValue('component'));
-        $this->typeHandler->setLockedTypes($form_state->getValue('locked'));
+        $this->contentTypeManager->setMediaTypes($form_state->getValue('media_types'));
+        $this->contentTypeManager->setEditorialTypes($form_state->getValue('editorial'));
+        $this->contentTypeManager->setComponentTypes($form_state->getValue('component'));
+        $this->contentTypeManager->setLockedTypes($form_state->getValue('locked'));
 
         drupal_set_message($this->t('The configuration options have been saved.'));
     }

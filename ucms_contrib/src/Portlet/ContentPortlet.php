@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Contrib\Portlet;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
@@ -22,9 +22,9 @@ class ContentPortlet extends AbstractAdminPortlet
     private $actionProvider;
 
     /**
-     * @var \MakinaCorpus\Ucms\Contrib\TypeHandler
+     * @var \MakinaCorpus\Ucms\Contrib\ContentTypeManager
      */
-    private $typeHandler;
+    private $contentTypeManager;
 
     /**
      * @var \MakinaCorpus\Ucms\Site\SiteManager
@@ -41,20 +41,20 @@ class ContentPortlet extends AbstractAdminPortlet
      *
      * @param DatasourceInterface $datasource
      * @param ActionProviderInterface $actionProvider
-     * @param \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler
+     * @param \MakinaCorpus\Ucms\Contrib\ContentTypeManager $contentTypeManager
 
      */
     public function __construct(
         DatasourceInterface $datasource,
         ActionProviderInterface $actionProvider,
-        TypeHandler $typeHandler,
+        ContentTypeManager $contentTypeManager,
         SiteManager $siteManager,
         AccountInterface $currentUser
     ) {
         parent::__construct($datasource);
 
         $this->actionProvider = $actionProvider;
-        $this->typeHandler = $typeHandler;
+        $this->contentTypeManager = $contentTypeManager;
         $this->siteManager = $siteManager;
         $this->currentUser = $currentUser;
     }
@@ -115,7 +115,7 @@ class ContentPortlet extends AbstractAdminPortlet
      */
     protected function getDisplay(&$query, PageState $pageState)
     {
-        $query['type'] = $this->typeHandler->getEditorialContentTypes();
+        $query['type'] = $this->contentTypeManager->getEditorialTypes();
         $query['is_global'] = 0;
 
         // Only for webmaster, show local nodes (instead of own).

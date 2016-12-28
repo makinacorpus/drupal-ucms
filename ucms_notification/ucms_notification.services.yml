@@ -71,31 +71,31 @@ services:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentAdd
     tags:
       - { name: apb.notification.formatter, event: "node:add", auto: true, channels: "admin:content" }
-      - { name: ucms_contrib.type_handler }
+      - { name: ucms_contrib.type_manager }
 
   ucms_notification.content_edit:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentEdit
     tags:
       - { name: apb.notification.formatter, event: "node:edit", auto: true, channels: "admin:content" }
-      - { name: ucms_contrib.type_handler }
+      - { name: ucms_contrib.type_manager }
 
   ucms_notification.content_publish:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentPublish
     tags:
       - { name: apb.notification.formatter, event: "node:publish", auto: true, channels: "admin:content" }
-      - { name: ucms_contrib.type_handler }
+      - { name: ucms_contrib.type_manager }
 
   ucms_notification.content_unpublish:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentUnpublish
     tags:
       - { name: apb.notification.formatter, event: "node:unpublish", auto: true, channels: "admin:content" }
-      - { name: ucms_contrib.type_handler }
+      - { name: ucms_contrib.type_manager }
 
   ucms_notification.content_flag:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentFlag
     tags:
       - { name: apb.notification.formatter, event: "node:flag", auto: true, channels: "admin:content" }
-      - { name: ucms_contrib.type_handler }
+      - { name: ucms_contrib.type_manager }
 
   ucms_notification.content_delete:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentDelete
@@ -106,7 +106,7 @@ services:
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentNewLabels
     tags:
       - { name: apb.notification.formatter, event: "node:new_labels", auto: true }
-      - { name: ucms_contrib.type_handler }
+      - { name: ucms_contrib.type_manager }
 
   # Context pane event listener
   ucms_notification.context_pane_event_subscriber:

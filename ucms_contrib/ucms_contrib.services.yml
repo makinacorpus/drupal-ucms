@@ -2,12 +2,6 @@ parameters:
   ucms_contrib.filter.view_mode.wysiwyg: wysiwyg
   ucms_contrib.filter.view_mode.markup: default
 
-  # Content type role definitions
-  ucms_contrib_tab_media_type: []
-  ucms_contrib_editorial_types: []
-  ucms_contrib_component_types: []
-  ucms_contrib_locked_types: []
-
   # Default admin tabs
   ucms_contrib_admin_tabs:
     content: Content
@@ -106,7 +100,7 @@ services:
     tags: [{name: ucms_dashboard.action_provider}]
   ucms_contrib.content_action_provider:
     public: false
-    arguments: ["@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user", "@ucms_site.node_access_helper"]
+    arguments: ["@ucms_contrib.type_manager", "@ucms_site.manager", "@current_user", "@ucms_site.node_access_helper"]
     class: MakinaCorpus\Ucms\Contrib\Action\ContentActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
   ucms_contrib.site_action_provider:
@@ -122,7 +116,7 @@ services:
       - "@ucms_contrib.content_action_provider"
       - "@ucms_dashboard.action_provider_registry"
       - "@ucms_site.manager"
-      - "@ucms_contrib.type_handler"
+      - "@ucms_contrib.type_manager"
     tags: [{ name: event_subscriber }]
 
   # Datasource via elastic search
@@ -135,19 +129,19 @@ services:
   ucms_contrib.content_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_manager", "@ucms_site.manager", "@current_user"]
     tags: [{ name: ucms_dashboard.portlet }]
 
   # Media portlet
   ucms_contrib.media_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_manager", "@ucms_site.manager", "@current_user"]
     tags: [{ name: ucms_dashboard.portlet }]
 
   # Component responsible for providing content type context
-  ucms_contrib.type_handler:
-    class: MakinaCorpus\Ucms\Contrib\TypeHandler
+  ucms_contrib.type_manager:
+    class: MakinaCorpus\Ucms\Contrib\ContentTypeManager
 
   ucms_contrib.behavior_collection_subscriber:
     public: true
@@ -168,7 +162,7 @@ services:
   ucms_contrib.node_access.subscriber:
     public: true
     class: MakinaCorpus\Ucms\Contrib\NodeAccess\NodeAccessEventSubscriber
-    arguments: ["@ucms_site.manager", "@ucms_contrib.type_handler"]
+    arguments: ["@ucms_site.manager", "@ucms_contrib.type_manager"]
     tags: [{ name: event_subscriber }]
 
   ucms_contrib.node_index_subscriber:

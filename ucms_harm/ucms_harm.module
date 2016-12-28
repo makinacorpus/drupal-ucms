@@ -27,7 +27,7 @@ function ucms_harm_menu() {
   $items = [];
 
   // Main administration pages.
-  foreach (array_keys(ucms_contrib_type_handler_get()->getTabs()) as $key) {
+  foreach (array_keys(ucms_contrib_type_manager_get()->getTabs()) as $key) {
     $items['admin/dashboard/' . $key . '/group'] = [
       'title'             => "Group",
       'page callback'     => 'ucms_harm_admin_content_page_group',
@@ -91,7 +91,7 @@ function ucms_harm_admin_content_page($datasource, $tab) {
   if ($siteManager->hasContext()) {
     $search->getFilterQuery()->matchTerm('site_id', $siteManager->getContext()->getId());
   }
-  $types = \Drupal::service('ucms_contrib.type_handler')->getTabTypes($tab);
+  $types = \Drupal::service('ucms_contrib.type_manager')->getTabTypes($tab);
   if (!empty($types)) {
     $search->getFilterQuery()->matchTermCollection('type', $types);
   }

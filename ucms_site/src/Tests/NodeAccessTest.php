@@ -108,7 +108,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_global_published',
                     'in_on_global_unpublished',
                 ])
-                ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
+                ->canCreateOnly($this->getTypeManager()->getNonComponentTypes())
                 ->canDoNone(Permission::CLONE)
                 ->canDoOnly(Permission::LOCK, [
                     'global_locked_published',
@@ -145,7 +145,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_group_published',
                     'in_on_group_unpublished',
                 ])
-                ->canCreateOnly($this->getTypeHandler()->getEditorialTypes())
+                ->canCreateOnly($this->getTypeManager()->getNonComponentTypes())
                 ->canDoNone(Permission::CLONE)
                 ->canDoOnly(Permission::LOCK, [
                     'group_locked_published',
@@ -214,19 +214,19 @@ class NodeAccessTest extends AbstractDrupalTest
         $this->getSiteManager()->setContext($this->getSite('init'));
         $this
             ->whenIAm([], ['init' => Access::ROLE_WEBMASTER], 'init webmaster')
-                ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
+                ->canCreateOnly($this->getTypeManager()->getUnlockedTypes())
         ;
 
         $this->getSiteManager()->setContext($this->getSite('on'));
         $this
             ->whenIAm([], ['on' => Access::ROLE_WEBMASTER], 'on webmaster')
-                ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
+                ->canCreateOnly($this->getTypeManager()->getUnlockedTypes())
         ;
 
         $this->getSiteManager()->setContext($this->getSite('off'));
         $this
             ->whenIAm([], ['off' => Access::ROLE_WEBMASTER], 'off webmaster')
-                ->canCreateOnly($this->getTypeHandler()->getUnlockedTypes())
+                ->canCreateOnly($this->getTypeManager()->getUnlockedTypes())
         ;
 
         $this->getSiteManager()->setContext($this->getSite('archive'));

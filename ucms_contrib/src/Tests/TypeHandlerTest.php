@@ -2,10 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Tests;
 
-
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 
-class TypeHandlerTest extends AbstractDrupalTest
+class ContentTypeManagerTest extends AbstractDrupalTest
 {
     protected function setUp()
     {
@@ -42,41 +41,41 @@ class TypeHandlerTest extends AbstractDrupalTest
         return true;
     }
 
-    public function testTypeHandler()
+    public function testContentTypeManager()
     {
-        /** @var \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler */
-        $typeHandler = $this->getMockBuilder('\MakinaCorpus\Ucms\Contrib\TypeHandler')
-                            ->setMethods(
-                                array(
-                                    'getEditorialContentTypes',
-                                    'getComponentTypes',
-                                    'getContentTypes',
-                                    'getMediaTypes',
-                                )
-                            )
-                            ->getMock();
+        $contentTypeManager = $this->getMockBuilder('\MakinaCorpus\Ucms\Contrib\ContentTypeManager')
+            ->setMethods(
+                array(
+                    'getEditorialTypes',
+                    'getComponentTypes',
+                    'getMediaTypes',
+                    'getNonMediaTypes',
+                    'getNonComponentTypes',
+                )
+            )
+            ->getMock();
 
         // Mocking values
         $editorial = ['editorial_foo', 'editorial_bar'];
-        $typeHandler->method('getEditorialContentTypes')
+        $contentTypeManager->method('getEditorialTypes')
                     ->willReturn($editorial);
         $components = ['component_foo', 'component_bar'];
-        $typeHandler->method('getComponentTypes')
+        $contentTypeManager->method('getComponentTypes')
                     ->willReturn($components);
-        $typeHandler->method('getContentTypes')
+        $contentTypeManager->method('getNonMediaTypes')
                     ->willReturn(array_merge($components, $editorial));
         $media = ['media_foo', 'media_bar'];
-        $typeHandler->method('getMediaTypes')
+        $contentTypeManager->method('getMediaTypes')
                     ->willReturn($media);
 
         // Testing functions
-        $this->assertArrayAreSimilar($typeHandler->getAllTypes(), array_merge($editorial, $components, $media));
-        $this->assertArrayAreSimilar($typeHandler->getEditorialTypes(), array_merge($editorial, $media));
-        $this->assertArrayAreSimilar($typeHandler->getTabTypes('media'), $media);
-        $this->assertArrayAreSimilar($typeHandler->getTabTypes('content'), array_merge($components, $editorial));
+        $this->assertArrayAreSimilar($contentTypeManager->getAllTypes(), array_merge($editorial, $components, $media));
+        $this->assertArrayAreSimilar($contentTypeManager->getNonComponentTypes(), array_merge($editorial, $media));
+        $this->assertArrayAreSimilar($contentTypeManager->getTabTypes('media'), $media);
+        $this->assertArrayAreSimilar($contentTypeManager->getTabTypes('content'), array_merge($components, $editorial));
 
         $this->expectException(\Exception::class);
-        $typeHandler->getTabTypes('foo');
+        $contentTypeManager->getTabTypes('foo');
 
         // @Todo test human readable names
     }

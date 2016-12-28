@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManager;
 
 use MakinaCorpus\Ucms\ContentList\AbstractContentList;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Contrib\ContentTypeManager;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Label\LabelManager;
@@ -16,14 +16,14 @@ use MakinaCorpus\Ucms\Label\LabelManager;
  */
 class TypeContentListWidget extends AbstractContentList
 {
-    private $typeHandler;
+    private $contentTypeManager;
     private $labelManager;
 
-    public function __construct(EntityManager $entityManager, TypeHandler $typeHandler, LabelManager $labelManager = null)
+    public function __construct(EntityManager $entityManager, ContentTypeManager $contentTypeManager, LabelManager $labelManager = null)
     {
         parent::__construct($entityManager);
 
-        $this->typeHandler = $typeHandler;
+        $this->contentTypeManager = $contentTypeManager;
         $this->labelManager = $labelManager;
     }
 
@@ -100,7 +100,7 @@ class TypeContentListWidget extends AbstractContentList
      */
     protected function getContentTypeList()
     {
-        return $this->typeHandler->getTypesAsHumanReadableList($this->typeHandler->getEditorialContentTypes());
+        return $this->contentTypeManager->getTypeNames($this->contentTypeManager->getEditorialTypes());
     }
 
     /**
