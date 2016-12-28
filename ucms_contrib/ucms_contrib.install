@@ -86,6 +86,31 @@ function ucms_contrib_schema() {
     'primary key' => ['source_id', 'target_id', 'type'],
   ];
 
+  $schema['ucms_contrib_behavior'] = [
+    'description' => 'Associations between node types and behaviors',
+    'fields' => [
+      'type' => [
+        'description' => "Node type identifier",
+        'type'        => 'varchar',
+        'length'      => 32,
+        'not null'    => true,
+      ],
+      'behavior' => [
+        'description' => "Behavior identifier",
+        'type'        => 'varchar',
+        'length'      => 32,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'type' => [
+        'table'   => 'node_type',
+        'columns' => ['type' => 'type'],
+      ],
+    ],
+    'primary key' => ['type', 'behavior'],
+  ];
+
   return $schema;
 }
 
@@ -100,6 +125,9 @@ function ucms_contrib_install_schema_fix() {
   $constraints = [
     'ucms_site_access' => [
       'fk_ucms_node_reference' => "ALTER TABLE {ucms_node_reference} ADD CONSTRAINT {fk_ucms_node_reference} FOREIGN KEY (source_id) REFERENCES {node} (nid) ON DELETE CASCADE",
+    ],
+    'ucms_contrib_behavior' => [
+      'fk_ucms_contrib_behavior' => "ALTER TABLE {ucms_contrib_behavior} ADD CONSTRAINT {fk_ucms_contrib_behavior} FOREIGN KEY (type) REFERENCES {node_type} (type) ON DELETE CASCADE ON UPDATE CASCADE",
     ],
   ];
   foreach ($constraints as $table => $statements) {
@@ -169,14 +197,24 @@ function ucms_contrib_update_7004() {
 function ucms_contrib_update_7005() {
   if (!db_field_exists('ucms_contrib_cart', 'ts_added')) {
     db_add_field('ucms_contrib_cart', 'ts_added', [
-      'decription'  => "Creation date",
-      'mysql_type'  => 'datetime',
-      'pgsql_type'  => 'timestamp',
-      'type'        => 'varchar',
-      'length'      => 16,
-      'not null'    => true,
+      'decription' => "Creation date",
+      'mysql_type' => 'datetime',
+      'pgsql_type' => 'timestamp',
+      'type' => 'varchar',
+      'length' => 16,
+      'not null' => TRUE,
       // We need to set a default value, so now it is
-      'default'     => (new \DateTime())->format('Y-m-d H:i:s'),
+      'default' => (new \DateTime())->format('Y-m-d H:i:s'),
     ]);
   }
+}
+
+/**
+ * Adds the {ucms_contrib_behavior} table.
+ */
+function ucms_contrib_update_7006() {
+  if (!db_table_exists('ucms_contrib_behavior')) {
+    db_create_table('ucms_contrib_behavior', drupal_get_schema_unprocessed('ucms_contrib', 'ucms_contrib_behavior'));
+  }
+  ucms_contrib_install_schema_fix();
 }

@@ -149,6 +149,11 @@ services:
   ucms_contrib.type_handler:
     class: MakinaCorpus\Ucms\Contrib\TypeHandler
 
+  ucms_contrib.behavior_collection_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\BehaviorCollectionEventSubscriber
+    tags: [{ name: event_subscriber }]
+
   ucms_contrib.media.subscriber:
     public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\MediaReferenceEventSubscriber

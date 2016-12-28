@@ -42,3 +42,8 @@ services:
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\ContextPaneEventSubscriber
     arguments: ["@ucms_site.manager", "@ucms_layout.context_manager"]
     tags: [{ name: event_subscriber }]
+
+  ucms_layout.behavior_collection_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Layout\EventDispatcher\BehaviorCollectionEventSubscriber
+    tags: [{ name: event_subscriber }]
