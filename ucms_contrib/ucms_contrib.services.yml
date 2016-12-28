@@ -143,6 +143,10 @@ services:
   ucms_contrib.type_manager:
     class: MakinaCorpus\Ucms\Contrib\ContentTypeManager
 
+  ucms_contrib.usync_behavior_loader:
+    class: MakinaCorpus\Ucms\Contrib\USync\Loading\ContentTypeBehaviorLoader
+    arguments: ["@ucms_contrib.type_manager"]
+
   ucms_contrib.behavior_collection_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\BehaviorCollectionEventSubscriber
