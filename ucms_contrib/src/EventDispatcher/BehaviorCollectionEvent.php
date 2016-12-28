@@ -71,4 +71,14 @@ class BehaviorCollectionEvent extends Event
     {
         return $this->behaviors;
     }
+
+    /**
+     * Provides identifiers of all collected behaviors.
+     *
+     * @return string[]
+     */
+    public function getBehaviorsIdentifiers()
+    {
+        return array_keys($this->behaviors);
+    }
 }
