@@ -1,7 +1,9 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Cart;
+namespace MakinaCorpus\Ucms\Contrib\Page;
 
+use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
+use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Dashboard\Page\PageTypeInterface;
 
