@@ -133,7 +133,7 @@ class Page
         $state = new PageState();
         $fixedQuery = Filter::fixQuery($query); // @todo this is ugly
 
-        $this->datasource->init($fixedQuery);
+        $this->datasource->init($fixedQuery, $this->baseQuery);
 
         $sortManager = new SortManager();
         $sortIsEnabled = false;

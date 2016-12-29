@@ -92,7 +92,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
             $followers[] = $userId;
         }
 
-        if ($this->siteManager) {
+        if ($this->siteManager && $node->site_id) {
             // Notify all webmasters for the site, useful for content modified by local contributors.
             $site = $this->siteManager->getStorage()->findOne($node->site_id);
             foreach ($this->siteManager->getAccess()->listWebmasters($site) as $webmaster) {

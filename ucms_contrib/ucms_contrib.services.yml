@@ -2,6 +2,46 @@ parameters:
   ucms_contrib.filter.view_mode.wysiwyg: wysiwyg
   ucms_contrib.filter.view_mode.markup: default
 
+  # Content type role definitions
+  ucms_contrib_tab_media_type: []
+  ucms_contrib_editorial_types: []
+  ucms_contrib_component_types: []
+  ucms_contrib_locked_types: []
+
+  # Default admin tabs
+  ucms_contrib_admin_tabs:
+    content: Content
+    media: Media
+
+  # Default admin pages
+  ucms_contrib_admin_pages:
+    mine:
+      name: My content
+      class: MakinaCorpus\Ucms\Contrib\Page\MineNodeAdminPage
+      permission: access ucms content overview
+      filter_query: [] # this will be dynamic
+    local:
+      name: Local
+      permission: access ucms content overview
+      filter_query:
+        is_global: 0
+    global:
+      name: Global
+      permission: content manage global
+      filter_query:
+        is_global: 1
+        is_group: 0
+    flagged:
+      name: Flagged
+      permission: content manage global
+      filter_query:
+        is_flagged: 1
+    starred:
+      name: Starred
+      permission: content manage global
+      filter_query:
+        is_starred: 1
+
 services:
 
   # Site storage responsible for loading and updating site data

@@ -44,6 +44,7 @@ class TypeHandlerTest extends AbstractDrupalTest
 
     public function testTypeHandler()
     {
+        /** @var \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler */
         $typeHandler = $this->getMockBuilder('\MakinaCorpus\Ucms\Contrib\TypeHandler')
                             ->setMethods(
                                 array(

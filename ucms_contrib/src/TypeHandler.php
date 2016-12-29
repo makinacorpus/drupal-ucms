@@ -5,6 +5,40 @@ namespace MakinaCorpus\Ucms\Contrib;
 class TypeHandler
 {
     /**
+     * Get service name for page type
+     *
+     * @todo unstatic this
+     *
+     * @param string $tab
+     *   'content' or 'media' or anything that the type handler knows about
+     * @param string $page
+     *   'mine', 'global', etc...
+     *
+     * @return string
+     */
+    static public function getServiceName($tab, $page)
+    {
+        return 'ucms_contrib.page_type.' . $tab . '.' . $page;
+    }
+
+    private $tabs = [];
+    private $adminPages = [];
+
+    /**
+     * Default constructor
+     *
+     * @param string[] $tabs
+     *   Keys are path component, values are names
+     * @param string[] $adminPages
+     *   Keys are path component, values are names
+     */
+    public function __construct(array $tabs = [], array $adminPages = [])
+    {
+        $this->tabs = $tabs;
+        $this->adminPages = $adminPages;
+    }
+
+    /**
      * Cleans variable value
      *
      * @param $name
@@ -22,10 +56,24 @@ class TypeHandler
      */
     public function getTabs()
     {
-        return [
-            'content' => "Content",
-            'media'   => "Media",
-        ];
+        return $this->tabs;
+    }
+
+    /**
+     * Get admin pages definitions
+     *
+     * @todo
+     *   - how to handler permission for those pages?
+     *   - tie permissions with Drupal menu system
+     *   - better an a variable, what could it be?
+     *   - tabs content types could be configured too?
+     *
+     * @param string[]
+     *   Keys are path component, values are names
+     */
+    public function getAdminPages()
+    {
+        return $this->adminPages;
     }
 
     /**

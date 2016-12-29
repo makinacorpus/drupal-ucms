@@ -53,7 +53,7 @@ abstract class AbstractAdminPortlet extends AbstractPortlet
                 }
             }
 
-            $this->datasource->init($query);
+            $this->datasource->init($query, []);
 
             $display = $this->getDisplay($query, $pageState);
             $display->prepareFromQuery($query);

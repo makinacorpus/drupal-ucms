@@ -13,11 +13,11 @@ use MakinaCorpus\Ucms\Dashboard\Page\PageTypeInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\TemplateDisplay;
 use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * God I hate to register more factories to the DIC, but we have some

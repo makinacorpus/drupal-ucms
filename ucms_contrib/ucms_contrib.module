@@ -16,7 +16,9 @@ use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\Controller\NodeAdminController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
 
 require_once __DIR__ . '/ucms_contrib.field.inc';
 
@@ -50,52 +52,42 @@ function ucms_contrib_menu() {
   }
 
   $items = [];
+
   // Main administration pages.
-  foreach (ucms_contrib_type_handler_get()->getTabs() as $key => $label) {
-    $items['admin/dashboard/' . $key] = [
-      'title'             => $label,
-      'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::mine', $key],
-      'access arguments'  => ['access ucms content overview'],
-      'type'              => MENU_NORMAL_ITEM
-    ];
-    $items['admin/dashboard/' . $key . '/mine'] = [
-      'title'             => "My content",
-      'type'              => MENU_DEFAULT_LOCAL_TASK,
-      'weight'            => -10,
-    ];
-    $items['admin/dashboard/' . $key . '/global'] = [
-      'title'             => "Global",
-      'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::default', 'global', $key],
-      'access arguments'  => [Access::PERM_CONTENT_VIEW_GLOBAL],
-      'type'              => MENU_LOCAL_TASK,
-      'weight'            => 90,
-    ];
-    $items['admin/dashboard/' . $key . '/local'] = [
-      'title'             => "Local",
-      'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::default', 'local', $key],
-      'access arguments'  => ['access ucms content overview'], // @todo user has sites
-      'type'              => MENU_LOCAL_TASK,
-      'weight'            => 80,
-    ];
-    $items['admin/dashboard/' . $key . '/flagged'] = [
-      'title'             => "Flagged",
-      'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::default', 'flagged', $key],
-      'access callback'   => 'ucms_contrib_menu_node_access_global',
-      'type'              => MENU_LOCAL_TASK,
-      'weight'            => 200,
-    ];
-    $items['admin/dashboard/' . $key . '/starred'] = [
-      'title'             => "Starred",
-      'page callback'     => 'sf_dic_page',
-      'page arguments'    => [NodeAdminController::class . '::default', 'starred', $key],
-      'access arguments'  => [Access::PERM_CONTENT_MANAGE_GLOBAL],
-      'type'              => MENU_LOCAL_TASK,
-      'weight'            => 210,
-    ];
+  $typeHandler = ucms_contrib_type_handler_get();
+  foreach ($typeHandler->getTabs() as $tab => $label) {
+    $first = true;
+    $weight = -100;
+    foreach ($typeHandler->getAdminPages() as $page => $name) {
+      $serviceId = TypeHandler::getServiceName($tab, $page);
+      if ($first) {
+        $first = false;
+        $items['admin/dashboard/' . $tab] = [
+          'title'             => $label,
+          'page callback'     => 'sf_dic_page',
+          'page arguments'    => [NodeAdminController::class . '::default', $serviceId],
+          'access callback'   => 'ucms_contrib_admin_page_access',
+          'access arguments'  => [$serviceId],
+          'type'              => MENU_NORMAL_ITEM,
+          'weight'            => $weight++,
+        ];
+        $items['admin/dashboard/' . $tab . '/' . $page] = [
+          'title'             => $name,
+          'type'              => MENU_DEFAULT_LOCAL_TASK,
+          'weight'            => $weight++,
+        ];
+      } else {
+        $items['admin/dashboard/' . $tab . '/' . $page] = [
+          'title'             => $name,
+          'page callback'     => 'sf_dic_page',
+          'page arguments'    => [NodeAdminController::class . '::default', $serviceId],
+          'access callback'   => 'ucms_contrib_admin_page_access',
+          'access arguments'  => [$serviceId],
+          'type'              => MENU_LOCAL_TASK,
+          'weight'            => $weight++,
+        ];
+      }
+    }
   }
 
   // Node actions.
@@ -259,6 +251,27 @@ function ucms_contrib_menu_alter(&$items) {
   $items['node/%node/revisions']['type'] = MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB;
   $items['node/%node/revisions']['access callback'] = 'node_access';
   $items['node/%node/revisions']['access arguments'] = ['update', 1];
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_admin_page_access($serviceId) {
+  $container = \Drupal::getContainer();
+  $account = \Drupal::currentUser();
+  $isDebug = (bool)$container->getParameter('kernel.debug');
+  try {
+    $service = $container->get($serviceId);
+    if (!$service instanceof NodeAdminPageInterface) {
+      throw new \Exception(sprintf("%s: service does not implement %s", $serviceId, NodeAdminPageInterface::class));
+    }
+    return $service->userIsGranted($account);
+  } catch (\Exception $e) {
+    if ($isDebug) {
+      throw $e;
+    }
+    return false;
+  }
 }
 
 /**
