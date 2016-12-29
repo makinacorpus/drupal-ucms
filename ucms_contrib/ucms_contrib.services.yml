@@ -81,15 +81,15 @@ services:
   # Cart page types
   ucms_contrib.page_type.cart:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.datasource.cart']
+    arguments: ['@ucms_contrib.datasource.cart', false]
     tags: [{name: ucms_dashboard.page_type, id: cart}]
   ucms_contrib.page_type.browse_history:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.datasource.browse_history']
+    arguments: ['@ucms_contrib.datasource.browse_history', true]
     tags: [{name: ucms_dashboard.page_type, id: history_browse}]
   ucms_contrib.page_type.update_history:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.datasource.update_history']
+    arguments: ['@ucms_contrib.datasource.update_history', true]
     tags: [{name: ucms_dashboard.page_type, id: history_update}]
 
   # Action providers

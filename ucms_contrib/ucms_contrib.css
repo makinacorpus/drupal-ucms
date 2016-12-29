@@ -65,12 +65,10 @@
   clear: both;
   font-weight: bold;
 }
-.ucms-cart-list {
+.ucms-cart {
   min-height: 100px; /* Prevents empty zone */
   height: 100%;
   width: 100%;
-}
-.ucms-cart {
   overflow-y: auto; /* Form in the scroll bar */
 }
 .ucms-cart-list.ucms-highlighted {
