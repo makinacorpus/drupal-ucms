@@ -481,6 +481,65 @@ function ucms_contrib_preprocess_node(&$variables) {
 }
 
 /**
+ * Implements hook_form_node_type_form_alter().
+ */
+function ucms_contrib_form_node_type_form_alter(&$form, &$form_state) {
+
+  $contentTypeManager = ucms_contrib_type_manager_get();
+
+  $allBehaviors = $contentTypeManager->collectBehaviors();
+
+  if (empty($form['#node_type']->is_new)) {
+    $typeBehaviors = $contentTypeManager->loadBehaviorsForType($form['#node_type']->type);
+  }
+
+  $form['ucms_behaviors'] = [
+    '#type' => 'fieldset',
+    '#title' => t("µCMS behaviors"),
+    '#collapsible' => true,
+    '#collapsed' => true,
+    '#tree' => true,
+    '#group' => 'additional_settings',
+  ];
+
+  foreach ($allBehaviors as $behavior) {
+    $form['ucms_behaviors'][$behavior->getId()] = [
+      '#type' => 'checkbox',
+      '#title' => $behavior->getName(),
+      '#description' => $behavior->getDescription(),
+      '#default_value' => isset($typeBehaviors) && in_array($behavior->getId(), $typeBehaviors),
+    ];
+  }
+
+  $form['#validate'][] = 'ucms_contrib_form_node_type_form_validate';
+  $form['#submit'][] = 'ucms_contrib_form_node_type_form_submit';
+}
+
+/**
+ * Validation callback for the node type form.
+ */
+function ucms_contrib_form_node_type_form_validate($form, &$form_state) {
+  // Just takes out the behaviors from the form values to prevent them
+  // to be recorded in the variables table.
+  $form_state['ucms_behaviors'] = $form_state['values']['ucms_behaviors'];
+  unset($form_state['values']['ucms_behaviors']);
+  // Stores the machine name in the form state to make it available after the
+  // default submit callback...
+  $form_state['node_type'] = $form_state['values']['type'];
+}
+
+/**
+ * Submit callback for the node type form.
+ */
+function ucms_contrib_form_node_type_form_submit($form, &$form_state) {
+  // Saves selected behaviors.
+  $behaviors = array_keys(array_filter($form_state['ucms_behaviors']));
+  $contentTypeManager = ucms_contrib_type_manager_get();
+  $contentTypeManager->saveBehaviorsForType($form_state['node_type'], $behaviors, true);
+  $contentTypeManager->resetBehaviorsCache();
+}
+
+/**
  * Implements hook_form_node_form_alter().
  */
 function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
