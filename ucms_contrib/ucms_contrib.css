@@ -1,4 +1,10 @@
-/* Tables */
+
+/*****************************************************************************
+ *
+ * VARIOUS
+ *
+ *****************************************************************************/
+
 #ucms-contrib-results td > .btn-group {
   white-space: nowrap;
 }
@@ -15,9 +21,13 @@
   padding-right: 15px;
   float: left;
 }
-/**
- * Sortable placeholders
- */
+
+/*****************************************************************************
+ *
+ * SORTABLE PLACEHOLDERS
+ *
+ *****************************************************************************/
+
 .ucms-placeholder {
   border-radius: 6px;
   background: #018fe2;
@@ -59,16 +69,32 @@
   min-height: 100px; /* Prevents empty zone */
   height: 100%;
   width: 100%;
-  overflow-y: auto;
+}
+.ucms-cart {
+  overflow-y: auto; /* Form in the scroll bar */
 }
 .ucms-cart-list.ucms-highlighted {
   outline: dashed 5px #fff;
   /* transition: .5s; */
 }
 
-/**
- * Cart items
- */
+/*****************************************************************************
+ *
+ * CART SEARCH & FILTERS
+ *
+ *****************************************************************************/
+
+.ucms-cart form {
+  padding: 15px;
+  padding-bottom: 0;
+}
+
+/*****************************************************************************
+ *
+ * CART ITEMS
+ *
+ *****************************************************************************/
+
 .pane-down .ucms-cart-item {
   width: 150px;
   height: 150px;
@@ -124,9 +150,12 @@
   font-weight: bold;
 }
 
-/**
- * Trash
- */
+/*****************************************************************************
+ *
+ * CART TRASH
+ *
+ *****************************************************************************/
+
 #ucms-cart-trash {
   position: absolute;
   color: #fff;
@@ -193,9 +222,12 @@
   border: 2px solid red;
 }
 
-/**
- * Regions
- */
+/*****************************************************************************
+ *
+ * REGIONS
+ *
+ *****************************************************************************/
+
 body [data-region].ui-sortable {
   box-sizing: border-box;
   box-shadow: inset 0 0 0.5em #018fe2, 0 0 1em #808080;
@@ -276,9 +308,12 @@ body [data-region].ucms-highlighted-over {
   font-size: 1.5em;
 }
 
-/**
- * Default icons
- */
+/*****************************************************************************
+ *
+ * DEFAULT ICONS & METADATA
+ *
+ *****************************************************************************/
+
 .ucms-default-icon {
   position: relative;
   width: 100%;
