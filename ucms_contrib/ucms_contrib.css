@@ -84,9 +84,20 @@
  *
  *****************************************************************************/
 
-.ucms-cart form {
+.ucms-cart header {
   padding: 15px;
   padding-bottom: 0;
+  font-size: 13px;
+}
+.ucms-cart header a {
+  color: #bebebe;
+}
+.ucms-cart header a:hover {
+  text-decoration: none;
+}
+.ucms-cart header .sort-links {
+  margin: 0;
+  margin-top: 7px;
 }
 
 /*****************************************************************************
