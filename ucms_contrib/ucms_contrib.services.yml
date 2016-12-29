@@ -64,38 +64,32 @@ services:
     decorates: ucms_contrib.cart
     arguments: ["@entity.manager", "@ucms_contrib.cart.preloader.inner"]
 
-  # History carts
-  ucms_contrib.history_cart.browse:
+  # History datasources
+  ucms_contrib.datasource.cart:
     public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\BrowseHistoryCart
-    arguments: ['@database']
-  ucms_contrib.history_cart.update:
+    class: MakinaCorpus\Ucms\Contrib\Page\CartDatasource
+    arguments: ["@ucms_contrib.cart"]
+  ucms_contrib.datasource.browse_history:
     public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\UpdateHistoryCart
-    arguments: ['@database']
-  ucms_contrib.cart.history_cart.browse.preloader:
+    class: MakinaCorpus\Ucms\Contrib\Page\BrowseHistoryCartDatasource
+    arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
+  ucms_contrib.datasource.update_history:
     public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\LoaderCartStorageProxy
-    decorates: ucms_contrib.history_cart.browse
-    arguments: ["@entity.manager", "@ucms_contrib.cart.history_cart.browse.preloader.inner"]
-  ucms_contrib.cart.history_cart.update.preloader:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\LoaderCartStorageProxy
-    decorates: ucms_contrib.history_cart.update
-    arguments: ["@entity.manager", "@ucms_contrib.cart.history_cart.update.preloader.inner"]
+    class: MakinaCorpus\Ucms\Contrib\Page\UpdateHistoryCartDatasource
+    arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
 
   # Cart page types
   ucms_contrib.page_type.cart:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.cart']
+    arguments: ['@ucms_contrib.datasource.cart']
     tags: [{name: ucms_dashboard.page_type, id: cart}]
-  ucms_contrib.page_type.history_browse:
+  ucms_contrib.page_type.browse_history:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.history_cart.browse']
+    arguments: ['@ucms_contrib.datasource.browse_history']
     tags: [{name: ucms_dashboard.page_type, id: history_browse}]
-  ucms_contrib.page_type.history_update:
+  ucms_contrib.page_type.update_history:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.history_cart.update']
+    arguments: ['@ucms_contrib.datasource.update_history']
     tags: [{name: ucms_dashboard.page_type, id: history_update}]
 
   # Action providers

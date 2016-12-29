@@ -27,14 +27,6 @@ final class CartStorage implements CartStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function isReadonly()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function addFor($uid, $nid)
     {
         $exists = (bool)$this

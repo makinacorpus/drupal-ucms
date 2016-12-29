@@ -24,14 +24,6 @@ class LoaderCartStorageProxy implements CartStorageInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isReadonly()
-    {
-        return $this->cart->isReadonly();
-    }
-
-    /**
      * {@inhertdoc}
      */
     public function addFor($uid, $nid)

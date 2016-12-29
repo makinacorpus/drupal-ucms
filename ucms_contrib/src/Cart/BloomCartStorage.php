@@ -24,10 +24,6 @@ final class BloomCartStorage implements CartStorageInterface
      */
     public function __construct(CartStorageInterface $cart, CacheBackendInterface $cache, $size = 2000, $probibility = 0.001)
     {
-        if ($cart->isReadonly()) {
-            throw new \LogicException("bloom cart is useless with a readonly cart");
-        }
-
         $this->cart = $cart;
         $this->cache = $cache;
         $this->size = $size;
@@ -95,14 +91,6 @@ final class BloomCartStorage implements CartStorageInterface
     {
         unset($this->filters[$uid]);
         $this->cache->delete($this->getCacheId($uid));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isReadonly()
-    {
-        return false;
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
-use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
-use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Dashboard\Page\PageTypeInterface;
 
@@ -11,17 +10,18 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CartPageType implements PageTypeInterface
 {
-    private $cart;
     private $datasource;
+    private $readonly = true;
 
     /**
      * Default constructor
      *
      * @param DatasourceInterface $datasource
      */
-    public function __construct(CartStorageInterface $cart)
+    public function __construct(DatasourceInterface $datasource, $readonly = true)
     {
-        $this->cart = $cart;
+        $this->datasource = $datasource;
+        $this->readonly = $readonly;
     }
 
     /**
@@ -29,10 +29,6 @@ class CartPageType implements PageTypeInterface
      */
     public function getDatasource()
     {
-        if (!$this->datasource) {
-            $this->datasource = new CartDatasource($this->cart);
-        }
-
         return $this->datasource;
     }
 
@@ -41,13 +37,13 @@ class CartPageType implements PageTypeInterface
      */
     public function build(PageBuilder $builder, Request $request)
     {
-        if ($this->cart->isReadonly()) {
+        if ($this->readonly) {
             $builder
                 ->setAllowedTemplates([
                     'cart-readonly' => 'module:ucms_contrib:views/Page/page-cart-readonly.html.twig',
                 ])
                 ->setDefaultDisplay('cart-readonly')
-                ->setDatasource($this->getDatasource())
+                ->setDatasource($this->datasource)
             ;
         } else{
             $builder
@@ -55,7 +51,7 @@ class CartPageType implements PageTypeInterface
                     'cart' => 'module:ucms_contrib:views/Page/page-cart.html.twig',
                 ])
                 ->setDefaultDisplay('cart')
-                ->setDatasource($this->getDatasource())
+                ->setDatasource($this->datasource)
             ;
         }
     }

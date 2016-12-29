@@ -1,11 +1,17 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Cart;
+namespace MakinaCorpus\Ucms\Contrib\Page;
 
+use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 
+/**
+ * Datasource for user favorites.
+ *
+ * @todo write SQL directly into this
+ */
 class CartDatasource extends AbstractDatasource
 {
     private $cart;
