@@ -3,7 +3,8 @@
   are currently displaying, this template hanles nodes.
 
   Variables:
-    uuid: page uuid, for security and ajax queries
+    pageId: page uuid, for security and ajax queries
+    result: PageResult
     state: PageState
     route: string (current route)
     filters: Filter[]
@@ -25,7 +26,7 @@
 
 {% block display_mode_link %}
   {% spaceless %}
-    <a class="{% if link.isActive %}active {% endif %}btn btn-default" href="{{ path(link.route, link.routeParams) }}" title="{{ link.title }}">
+    <a class="{% if link.isActive %}active {% endif %}btn btn-default" href="{{ path(link.route, link.routeParams) }}" title="{{ link.title }}" data-page-link>
       <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
       <span class="sr-only">{{ link.title }}</span>
     </a>
@@ -46,7 +47,7 @@
   {% spaceless %}
     <div class="checkbox">
       <label>
-        <a{% if link.isActive %} class="active"{% endif %} href="{{ path(link.route, link.routeParams) }}">
+        <a{% if link.isActive %} class="active"{% endif %} href="{{ path(link.route, link.routeParams) }}" data-page-link="{{ field.field }}">
           <input type="checkbox"{% if link.isActive %} checked="checked"{% endif %}>
           {{ link.title }} {% if link.count %}<span class="badge">{{ link.count }}</span>{% endif %}
         </a>
@@ -67,7 +68,7 @@
 {% endblock %}
 
 {% block search_form %}
-  <form method="get" id="ucms-dashboard-search-form" accept-charset="UTF-8">
+  <form method="get" class="ucms-dashboard-search-form" accept-charset="UTF-8">
     <div class="input-group">
       <input placeholder="{{ "Search"|trans }}" class="form-control form-text" name="{{ state.searchParameter }}" value="{{ state.currentSearch|escape }}" maxlength="128" type="text">
       {% for name, value in query %}
@@ -86,7 +87,7 @@
 
 {% block sort_link %}
   {% spaceless %}
-    <a href="{{ path(link.route, link.routeParams) }}">
+    <a href="{{ path(link.route, link.routeParams) }}" data-page-link>
       {{ link.title }}
     </a>
   {% endspaceless %}
@@ -206,28 +207,36 @@
   {% endfor %}
 {% endblock %}
 
+{% block page_layout %}
+  <div class="container-fluid">
+    <div class="row">
+      {% if displays or filters %}
+        <div class="col-md-2">
+          {% if displays %}
+            <div data-page-block="display_mode">
+              {{ block('display_mode') }}
+            </div>
+          {% endif %}
+          {% if filters %}
+            <div data-page-block="filters">
+              {{ block('filters') }}
+            </div>
+         {% endif %}
+        </div>
+       <div id="ucms-contrib-results" class="col-md-10">
+          {{ block('page_content') }}
+        </div>
+      {% else %}
+        <div id="ucms-contrib-results" class="col-md-12">
+          {{ block('page_content') }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
 {% block page %}
-  <div{% if uuid %} data-page="{{ uuid }}"{% endif %}>
-    {% if displays or filters %}
-      <div class="col-md-2">
-        {% if displays %}
-          <div data-page-block="display_mode">
-            {{ block('display_mode') }}
-          </div>
-        {% endif %}
-        {% if filters %}
-          <div data-page-block="filters">
-            {{ block('filters') }}
-          </div>
-       {% endif %}
-      </div>
-      <div id="ucms-contrib-results" class="col-md-10">
-        {{ block('page_content') }}
-      </div>
-    {% else %}
-      <div id="ucms-contrib-results" class="col-md-12">
-        {{ block('page_content') }}
-      </div>
-    {% endif %}
+  <div{% if pageId %} data-page="{{ pageId }}" data-page-query="{{ result.queryToJson|escape }}"{% endif %} data-page-search="{{ state.searchParameter }}">
+    {{ block('page_layout') }}
   </div>
 {% endblock %}

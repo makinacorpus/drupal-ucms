@@ -69,4 +69,38 @@ class PageResult
     {
         return $this->sort;
     }
+
+    /**
+     * Serialize page state
+     *
+     * @param PageResult $result
+     *
+     * @return mixed[]
+     *   Suitable for JSON
+     */
+    public function queryToArray()
+    {
+        $query = $this->query;
+
+        foreach ($query as $index => $value) {
+            if ($value === null || $value === '') {
+                unset($query[$index]);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * Serialize page state
+     *
+     * @param PageResult $result
+     *
+     * @return mixed[]
+     *   Suitable for JSON
+     */
+    public function queryToJson()
+    {
+        return json_encode($this->queryToArray());
+    }
 }

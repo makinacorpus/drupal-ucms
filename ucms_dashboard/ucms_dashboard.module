@@ -9,6 +9,7 @@ use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
 use MakinaCorpus\Ucms\Dashboard\Page\Page;
 use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
 use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
+use MakinaCorpus\Ucms\Dashboard\Controller\AjaxPageController;
 
 /**
  * Use contextual pane permission.
@@ -57,6 +58,16 @@ function ucms_dashboard_menu() {
   $items['admin/action/process'] = [
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [ActionProcessorController::class .  '::process'],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['admin/page/refresh'] = [
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [AjaxPageController::class .  '::refresh'],
+    'type'              => MENU_CALLBACK,
+  ];
+  $items['admin/page/search'] = [
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [AjaxPageController::class .  '::search'],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -474,6 +485,7 @@ function ucms_dashboard_library() {
       'version'      => '0.1',
       'js'           => [
         drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.js' => [],
+        drupal_get_path('module', 'ucms_dashboard') . '/jquery.typewatch.js' => [],
         drupal_get_path('module', 'ucms_dashboard') . '/ucms_dashboard.page.js' => [],
       ],
       'css'          => [

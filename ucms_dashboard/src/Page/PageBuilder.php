@@ -213,6 +213,12 @@ final class PageBuilder
             $request->attributes->get('_route_params', [])
         );
 
+        // We are working with Drupal, q should never get here.
+        unset($query['q']);
+        $query = array_filter($query, function ($value) {
+            return $value !== '' && $value !== null;
+        });
+
         $query = Filter::fixQuery($query); // @todo this is ugly
 
         // Check that there is no value out of bounds of the filter query to
@@ -221,7 +227,7 @@ final class PageBuilder
         if ($this->baseQuery) {
             foreach ($this->baseQuery as $name => $value) {
                 if (isset($query[$name])) {
-                    // @todo end this...
+                    // unset($query[$name]);
                 }
             }
         }
@@ -262,7 +268,7 @@ final class PageBuilder
         if ($filters) {
             foreach ($filters as $index => $filter) {
                 if (isset($this->baseQuery[$filter->getField()])) {
-                    unset($filters[$index]);
+                    //unset($filters[$index]);
                 }
                 $filter->prepare($route, $query);
             }
@@ -277,7 +283,7 @@ final class PageBuilder
     }
 
     /**
-     * Render the page using a template
+     * Create the page view
      *
      * @param PageResult $result
      *   Page result from the search() method
@@ -287,7 +293,7 @@ final class PageBuilder
      *
      * @return PageView
      */
-    public function render(PageResult $result, array $arguments = [])
+    public function createPageView(PageResult $result, array $arguments = [])
     {
         $state = $result->getState();
 
@@ -313,7 +319,8 @@ final class PageBuilder
         }
 
         $arguments = [
-            'uuid'      => $this->computeId(),
+            'pageId'    => $this->computeId(),
+            'result'    => $result,
             'state'     => $state,
             'route'     => $result->getRoute(),
             'filters'   => $result->getFilters(),
@@ -336,6 +343,6 @@ final class PageBuilder
      */
     public function searchAndRender(Request $request)
     {
-        return $this->render($this->search($request))->render();
+        return $this->createPageView($this->search($request))->render();
     }
 }

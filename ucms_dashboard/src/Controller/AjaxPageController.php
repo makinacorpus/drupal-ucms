@@ -3,11 +3,13 @@
 namespace MakinaCorpus\Ucms\Dashboard\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
+use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+
 
 class AjaxPageController extends Controller
 {
@@ -18,28 +20,34 @@ class AjaxPageController extends Controller
      *
      * @param Request $request
      *
-     * @return DatasourceInterface
+     * @return PageBuilder
      */
-    private function getDatasourceFromRequest(Request $request)
+    private function getPageBuilderOrDie(Request $request)
     {
-        $datasourceId = $request->get('datasource');
-        $datasource = null;
+        $pageId = $request->get('name');
+        $page = null;
 
-        if (!$datasourceId) {
+        if (!$pageId) {
             throw $this->createNotFoundException();
         }
 
         try {
-            $datasource = $this->get($datasource);
+            $page = $this->getPageBuilder($pageId, $request);
+        } catch (\InvalidArgumentException $e) {
+            throw $this->createNotFoundException();
         } catch (ServiceNotFoundException $e) {
             throw $this->createNotFoundException();
         }
 
-        if (!$datasource instanceof DatasourceInterface) {
-            throw $this->createNotFoundException();
+        $account = $this->getUser();
+        // @todo move the interface in the dashboard module
+        if ($page instanceof NodeAdminPageInterface) {
+            if (!$page->userIsGranted($account)) {
+                throw $this->createAccessDeniedException();
+            }
         }
 
-        return $datasource;
+        return $page;
     }
 
     /**
@@ -47,17 +55,7 @@ class AjaxPageController extends Controller
      */
     public function searchAction(Request $request)
     {
-        $uuid         = $request->get('uuid');
-        $datasource   = $this->getDatasourceFromRequest($request);
-        $pageBuilder  = $this->getPageBuilder($name);
-        $result       = $pageBuilder->search($datasource, $request);
-        $page         = $pageBuilder->render($result, []);
-
-        return new JsonResponse([
-            'filters'       => $page->renderPartial('filters'),
-            'item_list'     => $page->renderPartial('item_list'),
-            'pager'         => $page->renderPartial('pager'),
-        ]);
+        return $this->refreshAction($request);
     }
 
     /**
@@ -65,18 +63,19 @@ class AjaxPageController extends Controller
      */
     public function refreshAction(Request $request)
     {
-        $name         = $request->get('name');
-        $datasource   = $this->getDatasourceFromRequest($request);
-        $pageBuilder  = $this->getPageBuilder($name);
-        $result       = $pageBuilder->search($datasource, $request);
-        $page         = $pageBuilder->render($result, []);
+        $pageType = $this->getPageBuilderOrDie($request);
+        $result   = $pageType->search($request);
+        $page     = $pageType->createPageView($result);
 
         return new JsonResponse([
-            'filters'       => $page->renderPartial('filters'),
-            'display_mode'  => $page->renderPartial('display_mode'),
-            'sort_links'    => $page->renderPartial('sort_links'),
-            'item_list'     => $page->renderPartial('item_list'),
-            'pager'         => $page->renderPartial('pager'),
+            'query' => $result->queryToArray(),
+            'blocks' => [
+                'filters'       => $page->renderPartial('filters'),
+                'display_mode'  => $page->renderPartial('display_mode'),
+                'sort_links'    => $page->renderPartial('sort_links'),
+                'item_list'     => $page->renderPartial('item_list'),
+                'pager'         => $page->renderPartial('pager'),
+            ],
         ]);
     }
 }
