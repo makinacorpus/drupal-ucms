@@ -1,4 +1,4 @@
-(function ($, Drupal) {
+(function($, Drupal) {
   "use strict";
 
   // @todo
@@ -48,7 +48,7 @@
     }
 
     var ret = {};
-    uri.split("&").forEach(function (raw) {
+    uri.split("&").forEach(function(raw) {
       var pos = raw.indexOf("=");
       if (-1 === pos) {
         ret[raw] = "";
@@ -118,7 +118,7 @@
     }
     // Then override using the incomming one.
     if (query) {
-      $.each(query, function (index, value) {
+      $.each(query, function(index, value) {
         data[index] = value;
       });
     }
@@ -129,13 +129,13 @@
       method: 'get',
       cache: false,
       data: data,
-      success: function (response) {
+      success: function(response) {
         placePageBlocks(page, response);
       },
-      error: function () {
+      error: function() {
         // refresh the page manually
       },
-      complete: function () {
+      complete: function() {
         modalDestroy(page);
         page.refreshing = false;
       }
@@ -151,7 +151,7 @@
    */
   function attachBehaviors(page, context) {
     // Ajax on links
-    page.selector.find('[data-page-link]').on("click", function (event) {
+    page.selector.find('[data-page-link]').on("click", function(event) {
       event.stopPropagation();
 
       // Links have a pre-built query that should work
@@ -165,9 +165,10 @@
     if (page.searchParam) {
       var form = page.selector.find('form.ucms-dashboard-search-form');
       if (form.length) {
+
         var input = form.find('input[type=text]');
         input.typeWatch({
-          callback: function (value) {
+          callback: function(value) {
             var query = {};
             query[page.searchParam] = value;
             refreshPage(page, query);
@@ -176,12 +177,23 @@
           captureLength: 0,
           wait: 750
         });
-        input.on("change", function () {
+        input.on("change", function() {
           if ("" === this.value) {
             var query = {};
             query[page.searchParam] = "";
             refreshPage(page, query);
           }
+        });
+
+        // Disable the search button and form submit, forces typewarch to
+        // work instead, especially for AJAX only pages such as the cart.
+        // Force the typewatch to submit instead.
+        form.on("submit", function(event) {
+          event.stopPropagation();
+          var query = {};
+          query[page.searchParam] = input.val();
+          refreshPage(page, query);
+          return false;
         });
       }
     }
@@ -193,8 +205,8 @@
    * Drupal behavior, find pages, spawn them, attach their behaviours.
    */
   Drupal.behaviors.UcmsDashboardPage = {
-    attach: function (context, settings) {
-      $(context).find("[data-page]").once('ucms_dashboard_page', function () {
+    attach: function(context, settings) {
+      $(context).find("[data-page]").once('ucms_dashboard_page', function() {
 
         var selector = $(this);
         var page = {
