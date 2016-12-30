@@ -143,9 +143,7 @@ class CartController extends Controller
 
         $ret = [];
         $ret['#markup'] = $builder->searchAndRender($request);
-        $ret['#attached']['library'][] = ['system', 'ui.droppable'];
-        $ret['#attached']['library'][] = ['system', 'ui.draggable'];
-        $ret['#attached']['library'][] = ['system', 'ui.sortable'];
+        $ret['#attached']['library'][] = ['ucms_contrib', 'dragula'];
         $ret['#attached']['library'][] = ['ucms_contrib', 'ucms_contrib'];
 
         return $ret;

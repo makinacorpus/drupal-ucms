@@ -130,7 +130,7 @@
 {% block item %}
   <tr>
     <td>{{ item.type }}</td>
-    <td class="ui-sortable"><span class="pull-right"></span>
+    <td><span class="pull-right"></span>
       <div class="ucms-contrib-result" data-nid="{{ item.id }}">
         <a href="{{ path('node/%node', {node: item.id}) }}">{{ item.title }}</a>
       </div>

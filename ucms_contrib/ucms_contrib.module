@@ -609,8 +609,7 @@ function ucms_contrib_library() {
         ],
       ],
       'dependencies' => [
-        ['system', 'ui.draggable'],
-        ['system', 'ui.droppable'],
+        ['ucms_contrib', 'dragula'],
       ],
     ],
     'dragula' => [
