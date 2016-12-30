@@ -389,7 +389,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
     // node link, we must enforce a local site to display it when relevant,
     // especially that most nodes can't be seen on master.
     $matches = [];
-    if (preg_match('/^node\/(\d+)/', $original_path, $matches)) {
+    if (preg_match('/^node\/(\d+)$/', $original_path, $matches)) {
       // Please note that the following algorith will probably be very heavy
       // in term of performances, but it can only happens in the administration
       // pages, in which nodes will almost always be preloaded one prior to
