@@ -4,16 +4,11 @@
  * µCMS user management module.
  */
 
-use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\User\Controller\AccountController;
+use MakinaCorpus\Ucms\User\Controller\UserAdminController;
 use MakinaCorpus\Ucms\User\UserAccess;
 
-
 define('UCMS_USER_PWD_MIN_LENGTH', 8);
-
 
 /**
  * Implements hook_menu().
@@ -23,10 +18,10 @@ function ucms_user_menu() {
 
   $items['admin/dashboard/user'] = [
     'title'             => 'Users',
-    'page callback'     => 'ucms_user_dashboard_user_list',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [UserAdminController::class . '::userList'],
     'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
     'type'              => MENU_NORMAL_ITEM,
-    'file'              => 'ucms_user.dashboard.inc',
   ];
 
   $items['admin/dashboard/user/add'] = [
@@ -41,10 +36,9 @@ function ucms_user_menu() {
     'title callback'    => 'ucms_user_menu_item_title',
     'title arguments'   => [3],
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => [AccountController::class . '::viewInfoAction', 3],
+    'page arguments'    => [UserAdminController::class . '::viewInfoAction', 3],
     'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
     'type'              => MENU_NORMAL_ITEM,
-    'file'              => 'ucms_user.dashboard.inc',
   ];
 
   $items['admin/dashboard/user/my-account'] = [

@@ -10,6 +10,11 @@ services:
     class: MakinaCorpus\Ucms\User\Page\UserAdminDatasource
     arguments: ["@database", "@ucms_site.access", "@entity.manager"]
 
+  # User admin page type
+  ucms_user.page_type.user_list:
+    class: MakinaCorpus\Ucms\User\Page\UserPageType
+    arguments: ["@ucms_user.admin.datasource"]
+
   # Action provider for the listing page
   ucms_user.action_provider:
     public: false

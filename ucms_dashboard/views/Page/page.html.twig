@@ -136,9 +136,9 @@
       </div>
     </td>
     <td>{% if item.isPublished %}{{ "published"|trans }}{% endif %}</td>
-    <td>4 weeks 3 hours</td>
-    <td>4 weeks 24 min</td>
-    <td>fonctionnel</td>
+    <td>{{ item.created|time_diff }}</td>
+    <td>{{ item.changed|time_diff }}</td>
+    <td>{{ item.uid }}: @todo</td>
     <td>
       {{ ucms_actions(item) }}
     </td>
@@ -214,7 +214,9 @@
         <div class="col-md-2">
           {% if displays %}
             <div data-page-block="display_mode">
-              {{ block('display_mode') }}
+              {% if 1 < displays.length %}{# @todo does not work, fixme #}
+                {{ block('display_mode') }}
+              {% endif %}
             </div>
           {% endif %}
           {% if filters %}

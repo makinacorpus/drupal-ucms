@@ -7,9 +7,10 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
-use MakinaCorpus\Ucms\Site\SiteManager;
 
-class AccountController extends Controller
+use Symfony\Component\HttpFoundation\Request;
+
+class UserAdminController extends Controller
 {
     use PageControllerTrait;
     use StringTranslationTrait;
@@ -51,5 +52,13 @@ class AccountController extends Controller
         $table->addRow($this->t("Roles"), implode('<br/>', $roles));
 
         return $table->render();
+    }
+
+    /**
+     * User details display
+     */
+    public function userListAction(Request $request)
+    {
+        return $this->getPageBuilder('ucms_user.page_type.user_list', $request)->searchAndRender($request);
     }
 }
