@@ -139,6 +139,11 @@
   border-color: #4d4d4d;
   color: #bebebe;
 }
+/* Minor fix for inputs in dropdowns */
+#contextual-pane .dropdown-menu input {
+  background: #fff;
+  color: #333;
+}
 
 /*****************************************************************************
  *
