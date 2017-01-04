@@ -13,6 +13,14 @@ class UpdateHistoryCartDatasource extends AbstractNodeDatasource
     /**
      * {@inheritdoc}
      */
+    protected function isSiteContextDependent()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getItems($query, PageState $pageState)
     {
         if (empty($query['user_id'])) {
@@ -56,5 +64,13 @@ class UpdateHistoryCartDatasource extends AbstractNodeDatasource
         }
 
         return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchFormParamName()
+    {
+        return 'cu';
     }
 }

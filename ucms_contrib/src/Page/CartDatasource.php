@@ -2,8 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
-use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
+use MakinaCorpus\Ucms\Contrib\Cart\CartItem;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 
@@ -12,23 +11,14 @@ use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
  *
  * @todo write SQL directly into this
  */
-class CartDatasource extends AbstractDatasource
+class CartDatasource extends AbstractNodeDatasource
 {
-    private $cart;
-
-    /**
-     * Default constructor
-     */
-    public function __construct(CartStorageInterface $cart)
-    {
-        $this->cart = $cart;
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    protected function isSiteContextDependent()
     {
+        return false;
     }
 
     /**
@@ -37,7 +27,14 @@ class CartDatasource extends AbstractDatasource
     public function getSortFields($query)
     {
         return [
-            'nid' => 'node identifier',
+            'c.ts_added'    => $this->t("added to cart date"),
+            'n.created'     => $this->t("creation date"),
+            'n.changed'     => $this->t("lastest update date"),
+            'h.timestamp'   => $this->t('most recently viewed'),
+            'n.status'      => $this->t("status"),
+            'n.uid'         => $this->t("owner"),
+            'n.title.title' => $this->t("title"),
+            'n.is_flagged'  => $this->t("flag"),
         ];
     }
 
@@ -46,7 +43,7 @@ class CartDatasource extends AbstractDatasource
      */
     public function getDefaultSort()
     {
-        return ['nid', SortManager::DESC];
+        return ['c.ts_added', SortManager::DESC];
     }
 
     /**
@@ -57,17 +54,46 @@ class CartDatasource extends AbstractDatasource
         if (empty($query['user_id'])) {
             return [];
         }
+        $userId = $query['user_id'];
 
-        // State is not supported yet, really.
-        return $this->cart->listFor($query['user_id'], $pageState->getLimit(), $pageState->getOffset());
-    }
+        $select = $this->getDatabase()->select('node', 'n');
+        $select = $this->process($select, $query, $pageState);
+        $select->join('ucms_contrib_cart', 'c', "c.nid = n.nid");
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasSearchForm()
-    {
-        return false;
+        // JOIN with {history} is actually done in the parent implementation
+        $select->fields('n', ['nid']);
+        $select->fields('h', ['uid']);
+        $select->addField('h', 'timestamp', 'added');
+
+        $items = $select
+            ->condition('c.uid', $userId)
+            ->execute()
+            ->fetchAll()
+        ;
+
+        $ret = [];
+
+        $nodeIdList = [];
+        foreach ($items as $item) {
+            $nodeIdList[] = $item->nid;
+            $ret[$item->nid] = new CartItem($item->nid, $userId, $item->added);
+        }
+
+        // Preload and set nodes at once
+        $nodes = $this->preloadDependencies($nodeIdList);
+        /** @var \MakinaCorpus\Ucms\Contrib\Cart\CartItem $item */
+        foreach ($ret as $id => $item) {
+            $nodeId = $item->getNodeId();
+            if (!isset($nodes[$nodeId])) {
+                // Very unlikely, but a node could have been deleted between
+                // our very first query and this
+                unset($ret[$id]);
+                continue;
+            }
+            $item->setNode($nodes[$nodeId]);
+        }
+
+        return $ret;
     }
 
     /**

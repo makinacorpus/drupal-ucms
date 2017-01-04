@@ -58,6 +58,7 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
         return [
             'n.created'     => $this->t("creation date"),
             'n.changed'     => $this->t("lastest update date"),
+            'h.timestamp'   => $this->t('most recently viewed'),
             'n.status'      => $this->t("status"),
             'n.uid'         => $this->t("owner"),
             'n.title.title' => $this->t("title"),
@@ -71,6 +72,16 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
     public function getDefaultSort()
     {
         return ['n.changed', SortManager::DESC];
+    }
+
+    /**
+     * Override and this to false to desactivate site context filtering
+     *
+     * @return boolean
+     */
+    protected function isSiteContextDependent()
+    {
+        return true;
     }
 
     /**
@@ -125,16 +136,22 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
         }
         $select->orderBy('n.nid', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $select->condition('n.title', '%' . db_like($query[$sParam]) . '%', 'LIKE');
         }
 
+        // Also add a few joins
+        $select->leftJoin('history', 'h', "h.nid = n.nid");
+
         // @todo here would be the rigth place to deal with filters
+
+        if ($this->isSiteContextDependent()) {
+            $select->addTag(Access::QUERY_TAG_CONTEXT_OPT_OUT);
+        }
 
         return $select
             ->addTag('node_access')
-            ->addTag(Access::QUERY_TAG_CONTEXT_OPT_OUT)
             //->groupBy('n.nid')
             ->extend('PagerDefault')
             ->limit($pageState->getLimit())

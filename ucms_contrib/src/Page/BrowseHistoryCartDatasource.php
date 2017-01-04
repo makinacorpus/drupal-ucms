@@ -14,11 +14,9 @@ class BrowseHistoryCartDatasource extends AbstractNodeDatasource
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    protected function isSiteContextDependent()
     {
-        return parent::getSortFields($query) + [
-            'h.timestamp' => 'most recently viewed',
-        ];
+        return false;
     }
 
     /**
@@ -40,13 +38,13 @@ class BrowseHistoryCartDatasource extends AbstractNodeDatasource
         $userId = $query['user_id'];
 
         $select = $this->getDatabase()->select('node', 'n');
+        $select = $this->process($select, $query, $pageState);
 
-        $select->join('history', 'h', "h.nid = n.nid");
+        // JOIN with {history} is actually done in the parent implementation
         $select->fields('n', ['nid']);
         $select->fields('h', ['uid']);
         $select->addField('h', 'timestamp', 'added');
-
-        $select = $this->process($select, $query, $pageState);
+        $select->isNotNull('h.uid');
 
         $items = $select
             ->condition('h.uid', $userId)
@@ -77,5 +75,13 @@ class BrowseHistoryCartDatasource extends AbstractNodeDatasource
         }
 
         return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchFormParamName()
+    {
+        return 'cb';
     }
 }

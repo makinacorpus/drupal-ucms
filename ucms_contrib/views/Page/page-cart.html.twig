@@ -8,7 +8,16 @@
 {% endblock %}
 
 {% block cart_header %}
-  {# User mutable cart is can't have filters and search yet. #}
+  {% if state.searchParameter %}
+    <div data-page-block="search_form">
+      {{ block('search_form') }}
+    </div>
+  {% endif %}
+  {% if sort.count %}
+    <div data-page-block="sort_links">
+      {{ block('sort_links') }}
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block page_layout %}

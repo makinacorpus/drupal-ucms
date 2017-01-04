@@ -68,7 +68,7 @@ services:
   ucms_contrib.datasource.cart:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Page\CartDatasource
-    arguments: ["@ucms_contrib.cart"]
+    arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
   ucms_contrib.datasource.browse_history:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Page\BrowseHistoryCartDatasource
