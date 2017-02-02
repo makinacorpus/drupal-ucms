@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Contrib\Cart\CartItem;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 
 /**
  * Datasource for user favorites.

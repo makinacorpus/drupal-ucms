@@ -1,9 +1,9 @@
-{% extends 'module:ucms_dashboard:views/Page/page.html.twig' %}
+{% extends 'module:udashboard:views/Page/page.html.twig' %}
 
 {% block item %}
   {% set node = item.node %}
   <div class="ucms-cart-item" draggable="true" data-nid="{{ item.nodeId }}" data-bundle="{{ node.type }}">
-    {{ node_view(node, constant('UCMS_VIEW_MODE_FAVORITE')) }}
+    {{ node_view(node, constant('UDASHBOARD_VIEW_MODE_FAVORITE')) }}
   </div>
 {% endblock %}
 

@@ -6,8 +6,8 @@ namespace MakinaCorpus\Ucms\Site\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\SiteAccessRecord;
 use MakinaCorpus\Ucms\Site\SiteManager;
 

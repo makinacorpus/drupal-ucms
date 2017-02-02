@@ -6,9 +6,9 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Contrib\NodeReference;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 
 class DeadLinkPortletDisplay extends AbstractDisplay
 {
@@ -55,7 +55,7 @@ class DeadLinkPortletDisplay extends AbstractDisplay
 
             if ($source->access(Permission::UPDATE)) {
                 $actions = [
-                    '#theme' => 'ucms_dashboard_actions',
+                    '#theme' => 'udashboard_actions',
                     '#actions' => [
                         new Action(
                             "",

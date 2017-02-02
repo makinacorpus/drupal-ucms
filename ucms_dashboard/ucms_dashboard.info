@@ -1,6 +1,0 @@
-name = "UCMS - Dashboard"
-description = "Admin dashboard for users"
-core = 7.x
-package = UCMS
-php = 5.5
-usync[] = usync/

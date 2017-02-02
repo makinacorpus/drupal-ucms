@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityManager;
 
 use MakinaCorpus\Ucms\ContentList\AbstractContentList;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Label\LabelManager;
 

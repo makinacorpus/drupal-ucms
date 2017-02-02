@@ -5,9 +5,9 @@ namespace MakinaCorpus\Ucms\Group\Controller;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Form\GroupMemberAddExisting;
 use MakinaCorpus\Ucms\Group\Form\GroupSiteAdd;

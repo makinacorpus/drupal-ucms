@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Session\AccountInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Page\PageTypeInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\PageTypeInterface;
 
 interface NodeAdminPageInterface extends PageTypeInterface
 {

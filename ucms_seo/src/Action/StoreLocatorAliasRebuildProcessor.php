@@ -7,7 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
+use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory;
 

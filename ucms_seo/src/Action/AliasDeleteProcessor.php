@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Seo\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
+use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Seo\SeoService;
 
 class AliasDeleteProcessor extends AbstractActionProcessor

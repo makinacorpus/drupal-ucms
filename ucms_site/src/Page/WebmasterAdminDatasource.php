@@ -1,22 +1,17 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\Filter;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
+use MakinaCorpus\Drupal\Dashboard\Page\Filter;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 
 class WebmasterAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
-
 
     /**
      * @var \DatabaseConnection
@@ -27,7 +22,6 @@ class WebmasterAdminDatasource extends AbstractDatasource
      * @var SiteManager
      */
     private $manager;
-
 
     /**
      * Default constructor
@@ -40,7 +34,6 @@ class WebmasterAdminDatasource extends AbstractDatasource
         $this->db = $db;
         $this->manager = $manager;
     }
-
 
     /**
      * {@inheritdoc}
@@ -61,7 +54,6 @@ class WebmasterAdminDatasource extends AbstractDatasource
 
         return [(new Filter('role', $this->t("Role")))->setChoicesMap($choices)];
     }
-
 
     /**
      * {@inheritdoc}
@@ -86,7 +78,6 @@ class WebmasterAdminDatasource extends AbstractDatasource
 
         return $accessRecords;
     }
-
 
     /**
      * {@inheritdoc}

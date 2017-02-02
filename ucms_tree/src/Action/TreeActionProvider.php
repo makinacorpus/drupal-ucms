@@ -2,8 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Tree\Action;
 
-use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProvider;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;

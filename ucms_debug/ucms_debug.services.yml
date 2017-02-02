@@ -3,9 +3,9 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Debug\Action\NodeActionProvider
     arguments: ["@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{name: udashboard.action_provider}]
   ucms_debug.user_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Debug\Action\UserActionProvider
     arguments: ["@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{name: udashboard.action_provider}]

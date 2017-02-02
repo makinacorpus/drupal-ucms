@@ -4,8 +4,8 @@ namespace MakinaCorpus\Ucms\Label\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Label\LabelManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

@@ -5,8 +5,8 @@ namespace MakinaCorpus\Ucms\User\Controller;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 
 use Symfony\Component\HttpFoundation\Request;
 

@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\APubSub\CursorInterface;
 use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\APubSub\Notification\NotificationService;
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

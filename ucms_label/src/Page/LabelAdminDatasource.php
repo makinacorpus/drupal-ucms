@@ -5,11 +5,11 @@ namespace MakinaCorpus\Ucms\Label\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\Filter;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
+use MakinaCorpus\Drupal\Dashboard\Page\Filter;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
+use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Label\LabelManager;
 
 

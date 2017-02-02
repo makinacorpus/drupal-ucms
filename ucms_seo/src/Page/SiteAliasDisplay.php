@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SiteAliasDisplay extends AbstractDisplay
@@ -77,7 +77,7 @@ class SiteAliasDisplay extends AbstractDisplay
                 $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
                 $item->priority,
                 $item->expires ? format_date((new \DateTime($item->expires))->getTimestamp()) : $this->t("No"),
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
+                theme('udashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
 

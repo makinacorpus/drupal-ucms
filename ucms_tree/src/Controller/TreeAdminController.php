@@ -5,9 +5,9 @@ namespace MakinaCorpus\Ucms\Tree\Controller;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\Form\TreeEditForm;
 use MakinaCorpus\Ucms\Tree\Form\TreeForm;
@@ -81,7 +81,7 @@ class TreeAdminController extends Controller
      */
     private function getAdminWidgetFactory()
     {
-        return $this->get('ucms_dashboard.admin_widget_factory');
+        return $this->get('udashboard.admin_widget_factory');
     }
 
     /**

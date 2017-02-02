@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\ContentList;
 
 use Drupal\Core\Entity\EntityInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Widget\WidgetInterface;
 

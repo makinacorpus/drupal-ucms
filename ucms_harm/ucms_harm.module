@@ -8,8 +8,8 @@
 
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Page\DefaultNodePageType;
-use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Drupal\Dashboard\Page\DefaultNodePageType;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Harm\Form\NodeMakeGroup;
 use MakinaCorpus\Ucms\Harm\Form\NodeUnmakeGroup;
 use MakinaCorpus\Ucms\Site\Access;

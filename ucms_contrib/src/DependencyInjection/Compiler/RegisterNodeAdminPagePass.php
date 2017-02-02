@@ -83,7 +83,7 @@ class RegisterNodeAdminPagePass implements CompilerPassInterface
                 // Pages are both node admin pages and a more generic page builder
                 // type, which needs to be registered to the admin widget factory,
                 // we are going to set the right tab onto it.
-                $definition->addTag('ucms_dashboard.page_type');
+                $definition->addTag('udashboard.page_type');
 
                 $adminPages[$path] = $pageDefinition['name'];
                 $definitions[TypeHandler::getServiceName($tab, $path)] = $definition;

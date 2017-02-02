@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\Site;
 
 use Symfony\Component\HttpFoundation\Request;

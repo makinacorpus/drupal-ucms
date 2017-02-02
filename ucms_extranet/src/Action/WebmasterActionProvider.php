@@ -6,7 +6,7 @@ namespace MakinaCorpus\Ucms\Extranet\Action;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
 use MakinaCorpus\Ucms\Site\Action\AbstractWebmasterActionProvider;
 use MakinaCorpus\Ucms\Site\SiteManager;

@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Group\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
+use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupSite;

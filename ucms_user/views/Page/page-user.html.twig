@@ -1,4 +1,4 @@
-{% extends 'module:ucms_dashboard:views/Page/page.html.twig' %}
+{% extends 'module:udashboard:views/Page/page.html.twig' %}
 
 {% block item %}
   <tr>
@@ -9,7 +9,7 @@
     <td>{{ item.created|time_diff }}</td>
     <td>{% if item.login %}{{ item.login|time_diff }}{% else %}{{ "Never"|trans }}{% endif %}</td>
     <td>
-      {{ ucms_actions(item) }}
+      {{ udashboard_actions(item) }}
     </td>
   </tr>
 {% endblock %}

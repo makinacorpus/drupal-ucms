@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Form\AbstractEntityActionForm;
+use MakinaCorpus\Drupal\Dashboard\Form\AbstractEntityActionForm;
 
 class NodeUnstar extends AbstractEntityActionForm
 {

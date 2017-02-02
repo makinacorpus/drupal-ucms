@@ -20,7 +20,7 @@ services:
     public: false
     class: MakinaCorpus\Ucms\User\Action\UserActionProvider
     arguments: ["@current_user"]
-    tags: [{ name: ucms_dashboard.action_provider }]
+    tags: [{ name: udashboard.action_provider }]
 
   ucms_user.user_event_subscriber:
     class: MakinaCorpus\Ucms\User\EventDispatcher\UserEventSubscriber
@@ -41,11 +41,11 @@ services:
   ucms_user.account_portlet:
     public: false
     class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
-    tags: [{ name: ucms_dashboard.portlet }]
+    tags: [{ name: udashboard.portlet }]
 
   # Users portlet
   ucms_user.users_portlet:
     public: false
     class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
     arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
-    tags: [{ name: ucms_dashboard.portlet }]
+    tags: [{ name: udashboard.portlet }]

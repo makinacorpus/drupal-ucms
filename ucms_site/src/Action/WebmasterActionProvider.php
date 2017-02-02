@@ -3,7 +3,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Action\AbstractWebmasterActionProvider;
 

@@ -4,14 +4,13 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Contrib\Cart\CartDatasource;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Drupal\Dashboard\Action\ActionRegistry;
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
-use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;

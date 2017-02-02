@@ -226,7 +226,7 @@
       /**
        * Admin items: can be dropped on cart, always reverted
        */
-      $('.ucms-contrib-result', context).parent().sortable($.extend({}, Drupal.ucmsSortableDefaults, {
+      $('.udashboard-result', context).parent().sortable($.extend({}, Drupal.ucmsSortableDefaults, {
         // Connect with cart
         connectWith: '#ucms-cart-list',
 

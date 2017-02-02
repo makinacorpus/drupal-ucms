@@ -10,8 +10,7 @@ use MakinaCorpus\Ucms\Contrib\DependencyInjection\Compiler\RegisterNodeAdminPage
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Class ServiceProvider
- * @package Drupal\Module\ucms_dashboard
+ * Drupal 8 service provider implementation
  */
 class ServiceProvider implements ServiceProviderInterface
 {

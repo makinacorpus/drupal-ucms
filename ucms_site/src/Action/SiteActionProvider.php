@@ -3,8 +3,8 @@
 namespace MakinaCorpus\Ucms\Site\Action;
 
 use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProvider;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;

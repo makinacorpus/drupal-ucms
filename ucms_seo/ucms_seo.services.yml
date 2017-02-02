@@ -24,34 +24,34 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\NodeActionProvider
     arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{name: udashboard.action_provider}]
   ucms_seo.site_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\SiteActionProvider
     arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{name: udashboard.action_provider}]
 
   # Action processors
   ucms_seo.action.alias_canonical:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\AliasCanonicalProcessor
     arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action}]
+    tags: [{name: udashboard.action}]
   ucms_seo.action.alias_delete:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\AliasDeleteProcessor
     arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action}]
+    tags: [{name: udashboard.action}]
   ucms_seo.action.redirect_delete:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\StoreLocatorAliasRebuildProcessor
     arguments: ["@ucms_seo.store_locator_factory", "@entity.manager", "@current_user"]
-    tags: [{name: ucms_dashboard.action}]
+    tags: [{name: udashboard.action}]
   ucms_seo.action.store_locator_aliases_rebuild:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\RedirectDeleteProcessor
     arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action}]
+    tags: [{name: udashboard.action}]
 
   # Data sources
   ucms_seo.admin.node_alias_datasource:
@@ -102,7 +102,7 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
     arguments: ["@ucms_seo.deadlinks.datasource", "@ucms_seo.deadlinks.display"]
-    tags: [{ name: ucms_dashboard.portlet }]
+    tags: [{ name: udashboard.portlet }]
   ucms_seo.deadlinks.datasource:
     class: MakinaCorpus\Ucms\Seo\Page\DeadLinkDatasource
     arguments: ["@database", "@entity.manager"]

@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Seo\Page\NodeAliasDisplay;
 use MakinaCorpus\Ucms\Seo\Page\NodeRedirectDisplay;
 use MakinaCorpus\Ucms\Seo\Page\SiteAliasDisplay;

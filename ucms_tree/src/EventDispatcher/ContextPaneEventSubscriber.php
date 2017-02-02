@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
 

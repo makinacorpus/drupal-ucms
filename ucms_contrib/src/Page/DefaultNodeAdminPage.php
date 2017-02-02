@@ -4,9 +4,9 @@ namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Session\AccountInterface;
 
+use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -62,8 +62,8 @@ class DefaultNodeAdminPage implements NodeAdminPageInterface
     {
         $builder
             ->setAllowedTemplates([
-                'grid' => 'module:ucms_dashboard:views/Page/page-grid.html.twig',
-                'table' => 'module:ucms_dashboard:views/Page/page.html.twig',
+                'grid' => 'module:udashboard:views/Page/page-grid.html.twig',
+                'table' => 'module:udashboard:views/Page/page.html.twig',
             ])
             ->setDefaultDisplay('table')
             ->setDatasource($this->datasource)

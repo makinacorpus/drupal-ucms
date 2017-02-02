@@ -31,7 +31,7 @@ class NotificationSupportCompilerPass implements CompilerPassInterface
             if ($container->hasAlias('ucms_label.label_notification_action_provider')) {
                 $container->removeAlias('ucms_label.label_notification_action_provider');
             }
-            
+
             return;
         }
 
@@ -45,7 +45,7 @@ class NotificationSupportCompilerPass implements CompilerPassInterface
                         new Reference('ucms_notification.service'),
                     ]
                 ))
-                ->addTag('ucms_dashboard.action_provider')
+                ->addTag('udashboard.action_provider')
             ,
             'ucms_label.label_event_subscriber' => (new Definition(
                 (new Definition(

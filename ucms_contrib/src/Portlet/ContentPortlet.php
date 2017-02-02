@@ -5,11 +5,11 @@ namespace MakinaCorpus\Ucms\Contrib\Portlet;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractAdminPortlet;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class ContentPortlet extends AbstractAdminPortlet
@@ -95,13 +95,13 @@ class ContentPortlet extends AbstractAdminPortlet
 
         // FIXME, allow to have multiple action groups
         $build['editorial'] = [
-          '#theme'      => 'ucms_dashboard_actions',
+          '#theme'      => 'udashboard_actions',
           '#actions'    => $this->actionProvider->getActions('editorial'),
           '#show_title' => true,
           '#title'      => $this->t("Create content"),
         ];
         $build['component'] = [
-          '#theme'      => 'ucms_dashboard_actions',
+          '#theme'      => 'udashboard_actions',
           '#actions'    => $this->actionProvider->getActions('component'),
           '#show_title' => true,
           '#title'      => $this->t("Create component"),

@@ -57,23 +57,23 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider
     arguments: ["@ucms_site.manager"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{name: udashboard.action_provider}]
 
   ucms_site.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\NodeActionProvider
     arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{name: udashboard.action_provider}]
 
   ucms_site.webmaster_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Site\Action\WebmasterActionProvider
     arguments: ["@ucms_site.manager", "@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    tags: [{name: udashboard.action_provider}]
 
   ucms_site.context_pane_event_subscriber:
     class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventSubscriber
-    arguments: ["@ucms_dashboard.action_provider_registry"]
+    arguments: ["@udashboard.action_provider_registry"]
     tags: [{ name: event_subscriber }]
 
   ucms_site.site_event_subscriber:
@@ -107,13 +107,13 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\SitesPortlet
     arguments: ["@ucms_site.admin.datasource"]
-    tags: [{ name: ucms_dashboard.portlet }]
+    tags: [{ name: udashboard.portlet }]
 
   ucms_site.my_sites_portlet:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\MySitesPortlet
     arguments: ["@ucms_site.admin.datasource"]
-    tags: [{ name: ucms_dashboard.portlet }]
+    tags: [{ name: udashboard.portlet }]
 
   ucms_site.twig.site_extension:
     public: false

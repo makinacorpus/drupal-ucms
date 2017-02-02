@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\User\Page;
 
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
-use MakinaCorpus\Ucms\Dashboard\Page\PageTypeInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Drupal\Dashboard\Page\PageTypeInterface;
 
 use Symfony\Component\HttpFoundation\Request;
 

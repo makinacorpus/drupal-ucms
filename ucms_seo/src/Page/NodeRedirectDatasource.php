@@ -3,10 +3,10 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
+use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 
 class NodeRedirectDatasource extends AbstractDatasource
 {
@@ -67,7 +67,7 @@ class NodeRedirectDatasource extends AbstractDatasource
             ->limit($pageState->getLimit())
             ->execute()
             ->fetchAll()
-            ;
+        ;
     }
 
     /**

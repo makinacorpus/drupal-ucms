@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Contrib\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
 
 use Symfony\Component\HttpFoundation\Request;
 

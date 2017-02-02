@@ -4,10 +4,10 @@ namespace MakinaCorpus\Ucms\Group\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
+use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Group\GroupManager;
 
 class GroupAdminDatasource extends AbstractDatasource

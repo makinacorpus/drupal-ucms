@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Page;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -49,7 +49,7 @@ class SiteAdminDisplay extends AbstractDisplay
                 format_interval(time() - $site->ts_created->getTimestamp()),
                 format_interval(time() - $site->ts_changed->getTimestamp()),
                 isset($accountMap[$site->uid]) ? check_plain(format_username($accountMap[$site->uid])) : '',
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($site), 'mode' => 'icon']),
+                theme('udashboard_actions', ['actions' => $this->getActions($site), 'mode' => 'icon']),
             ];
         }
 

@@ -5,11 +5,11 @@ namespace MakinaCorpus\Ucms\Contrib\Portlet;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractAdminPortlet;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Dashboard\Portlet\AbstractAdminPortlet;
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class MediaPortlet extends AbstractAdminPortlet

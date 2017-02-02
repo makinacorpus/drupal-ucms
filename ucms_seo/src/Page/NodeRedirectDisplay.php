@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class NodeRedirectDisplay extends AbstractDisplay
@@ -67,7 +67,7 @@ class NodeRedirectDisplay extends AbstractDisplay
             $rows[] = [
                 check_plain($item->path),
                 $siteLabel,
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($item)]),
+                theme('udashboard_actions', ['actions' => $this->getActions($item)]),
             ];
         }
 

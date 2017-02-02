@@ -5,9 +5,9 @@ namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\ActionRegistry;
+use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Group\GroupAccess;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

@@ -4,8 +4,8 @@ namespace MakinaCorpus\Ucms\Site\Portlet;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -51,7 +51,7 @@ class SitePortletDisplay extends AbstractDisplay
                     check_plain($item->title_admin),
                     $item->ts_created->format('d/m H:i'),
                     $this->t(check_plain($states[$item->state])),
-                    ['#theme' => 'ucms_dashboard_actions', '#actions' => [$action]],
+                    ['#theme' => 'udashboard_actions', '#actions' => [$action]],
                 ];
             }
         }

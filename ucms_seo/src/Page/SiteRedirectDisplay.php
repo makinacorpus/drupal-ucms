@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SiteRedirectDisplay extends AbstractDisplay
@@ -64,7 +64,7 @@ class SiteRedirectDisplay extends AbstractDisplay
             $rows[] = [
                 check_plain($item->path),
                 isset($nodes[$item->nid]) ? l($nodeLabel, 'node/'.$item->nid) : $nodeLabel,
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
+                theme('udashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
 

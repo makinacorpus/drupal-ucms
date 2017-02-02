@@ -1,20 +1,16 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\User\Portlet;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\user\UserInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 
 class UsersPortletDisplay extends AbstractDisplay
 {
     use StringTranslationTrait;
-
 
     /**
      * @var SiteManager
@@ -26,7 +22,6 @@ class UsersPortletDisplay extends AbstractDisplay
      */
     private $emptyMessage;
 
-
     /**
      * Default constructor
      */
@@ -35,7 +30,6 @@ class UsersPortletDisplay extends AbstractDisplay
         $this->siteManager = $siteManager;
         $this->emptyMessage = $emptyMessage;
     }
-
 
     /**
      * {@inheritdoc}
@@ -58,7 +52,7 @@ class UsersPortletDisplay extends AbstractDisplay
                 format_date($item->getCreatedTime(), 'short'),
                 implode('<br/>', $roles),
                 $item->isActive() ? $this->t("Enabled") : $this->t("Disabled"),
-                ['#theme' => 'ucms_dashboard_actions', '#actions' => [$action]],
+                ['#theme' => 'udashboard_actions', '#actions' => [$action]],
             ];
         }
 

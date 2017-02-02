@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Site\Controller;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\Site\SiteManager;

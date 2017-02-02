@@ -2,9 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
-use Drupal\Core\Session\AccountInterface;
-
-use MakinaCorpus\Ucms\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
 
 use Symfony\Component\HttpFoundation\Request;
 

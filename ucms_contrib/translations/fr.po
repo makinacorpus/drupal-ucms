@@ -614,7 +614,7 @@ msgid "Clone aware"
 msgstr "Prise en compte du clonage"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.info:0
@@ -724,76 +724,76 @@ msgstr "UCMS Media DnD"
 msgid "Will transform UCMS DnD markup into content"
 msgstr "Transforme le balisage UCMS  DnD en contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Form/ActionProcessForm.php:58
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Form/ActionProcessForm.php:58
 msgid "Action was done"
 msgstr "L’action a été réalisée"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/AbstractDisplay.php:176
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Page/AbstractDisplay.php:176
 msgid "Display as @mode"
 msgstr "Afficher comme @mode"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:55
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Page/SearchForm.php:55
 msgid "Clear"
 msgstr "Vider"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:48;62
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Page/SearchForm.php:48;62
 msgid "Search"
 msgstr "Rechercher"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:188
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Page/SortManager.php:188
 msgid "Sort by"
 msgstr "Trier par"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:207
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Page/SortManager.php:207
 msgid "ascending"
 msgstr "croissant"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:207
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Page/SortManager.php:207
 msgid "descending"
 msgstr "décroissant"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SortManager.php:215
+#: sites/all/modules/composer/drupal-ucms/udashboard/src/Page/SortManager.php:215
 msgid "Order by"
 msgstr "Trier par"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-actions.html.twig:35
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard-actions.html.twig:35
 msgid "More actions"
 msgstr "Plus d'actions"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-page-list.html.twig:13
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard-page-list.html.twig:13
 msgid "Sort by:"
 msgstr "Trier par :"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-page.html.twig:12
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard-page.html.twig:12
 msgid "see all"
 msgstr "voir tous"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-top.html.twig:5
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard-top.html.twig:5
 msgid "Toggle navigation"
 msgstr "Afficher/masquer la navigation"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-top.html.twig:12
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.module:159
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard-top.html.twig:12
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard.module:159
 msgid "Administration"
 msgstr "Administration"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard-top.html.twig:24;28
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard-top.html.twig:24;28
 msgid "Welcome @user"
 msgstr "Bienvenue @user"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard.info:0
 msgid "Admin dashboard for users"
 msgstr "Tableau de bord d'administration pour les utilisateurs"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard.info:0
 msgid "UCMS - Dashboard"
 msgstr "UCMS - Dashboard"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.module:24
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard.module:24
 msgid "Use contextual pane"
 msgstr "Utiliser le volet contextuel"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.module:96;51
+#: sites/all/modules/composer/drupal-ucms/udashboard/udashboard.module:96;51
 msgid "Dashboard"
 msgstr "Dashboard"
 

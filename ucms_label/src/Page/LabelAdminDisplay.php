@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Label\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 
 
 class LabelAdminDisplay extends AbstractDisplay
@@ -39,7 +39,7 @@ class LabelAdminDisplay extends AbstractDisplay
             $rows[] = [
                 check_plain($label->name),
                 ($label->is_locked == 1) ? $this->t("Non editable") : $this->t("Editable"),
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($label), 'mode' => 'icon']),
+                theme('udashboard_actions', ['actions' => $this->getActions($label), 'mode' => 'icon']),
             ];
         }
 

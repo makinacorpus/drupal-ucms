@@ -7,9 +7,9 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
-use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +48,7 @@ class CartController extends Controller
         $cart   = $this->getCartStorage();
 
         if ($cart->addFor($userId, $node->nid)) {
-            $node_view = node_view($node, UCMS_VIEW_MODE_FAVORITE);
+            $node_view = node_view($node, UDASHBOARD_VIEW_MODE_FAVORITE);
             $status = 200;
             $ret = [
                 'success' => true,

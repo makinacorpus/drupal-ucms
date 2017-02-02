@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Page;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class WebmasterAdminDisplay extends AbstractDisplay
@@ -44,7 +44,7 @@ class WebmasterAdminDisplay extends AbstractDisplay
                 $relativeRoles[$item->getRole()],
                 //((int)$item->getRole() === Access::ROLE_WEBMASTER) ? $this->t("Webmaster") : $this->t("Contributor"),
                 ($item->isBlocked()) ? $this->t("Disabled") : $this->t("Enabled"),
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
+                theme('udashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
 

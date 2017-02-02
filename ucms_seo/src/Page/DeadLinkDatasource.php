@@ -4,9 +4,9 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
 
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Contrib\NodeReference;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 
 class DeadLinkDatasource extends AbstractDatasource
 {

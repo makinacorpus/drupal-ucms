@@ -1084,6 +1084,6 @@ function theme_ucms_site_state_transition_form($variables) {
  *
  * @param $vars
  */
-function ucms_site_preprocess_ucms_dashboard_top(&$vars) {
+function ucms_site_preprocess_udashboard_top(&$vars) {
   $vars['site'] = ucms_site_manager()->getContext();
 }

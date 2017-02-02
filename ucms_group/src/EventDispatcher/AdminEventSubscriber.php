@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\AdminTableEvent;
+use MakinaCorpus\Drupal\Dashboard\EventDispatcher\AdminTableEvent;
 use MakinaCorpus\Ucms\Group\GroupManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

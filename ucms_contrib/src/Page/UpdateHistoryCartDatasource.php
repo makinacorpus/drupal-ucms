@@ -2,8 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
+use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Contrib\Cart\CartItem;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 
 /**
  * This implementation returns CartItem instances

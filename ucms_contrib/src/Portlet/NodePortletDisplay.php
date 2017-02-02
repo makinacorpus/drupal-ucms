@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\Portlet;
 
 use Drupal\node\NodeInterface;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 
 class NodePortletDisplay extends AbstractDisplay
 {

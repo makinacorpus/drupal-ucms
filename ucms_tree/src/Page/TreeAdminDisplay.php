@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Tree\Page;
 
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
+use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class TreeAdminDisplay extends AbstractDisplay
@@ -60,7 +60,7 @@ class TreeAdminDisplay extends AbstractDisplay
                 check_plain($siteName),
                 check_plain($role),
                 $siteMain,
-                theme('ucms_dashboard_actions', ['actions' => $this->getActions($menu), 'mode' => 'icon']),
+                theme('udashboard_actions', ['actions' => $this->getActions($menu), 'mode' => 'icon']),
             ];
         }
 

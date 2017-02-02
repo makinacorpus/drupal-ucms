@@ -5,8 +5,8 @@ namespace MakinaCorpus\Ucms\User\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 use MakinaCorpus\Ucms\User\UserAccess;
 

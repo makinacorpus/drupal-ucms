@@ -15,6 +15,6 @@ function ucms_label_dashboard_label_list() {
   $datasource = \Drupal::service('ucms_label.admin.datasource');
   $display    = new LabelAdminDisplay(t("There is not labels yet."));
 
-  return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'label'])
+  return udashboard_page_get($datasource, $display, ['dashboard', 'label'])
     ->render(drupal_get_query_parameters(), current_path());
 }

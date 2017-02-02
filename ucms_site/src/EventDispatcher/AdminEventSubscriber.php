@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\AdminTableEvent;
+use MakinaCorpus\Drupal\Dashboard\EventDispatcher\AdminTableEvent;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
