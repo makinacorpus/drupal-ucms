@@ -4,23 +4,22 @@ namespace MakinaCorpus\Ucms\Seo\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Drupal\Dashboard\Page\DisplayInterface;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractAdminPortlet;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
 
-class DeadLinkPortlet extends AbstractAdminPortlet
+/**
+ * Dead links detector portlet
+ */
+class DeadLinkPortlet extends AbstractPortlet
 {
     use StringTranslationTrait;
 
-    private $display;
+    private $datasource;
 
-    public function __construct(DatasourceInterface $datasource, DisplayInterface $display)
+    public function __construct(DatasourceInterface $datasource)
     {
-        parent::__construct($datasource);
-
-        $this->display = $display;
+        $this->datasource = $datasource;
     }
 
     public function getTitle()
@@ -35,9 +34,12 @@ class DeadLinkPortlet extends AbstractAdminPortlet
         return [];
     }
 
-    protected function getDisplay(&$query, PageState $pageState)
+    protected function createPage(PageBuilder $pageBuilder)
     {
-        return $this->display;
+        $pageBuilder
+            ->setDatasource($this->datasource)
+            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-deadlink-portlet.html.twig'])
+        ;
     }
 
     public function userIsAllowed(AccountInterface $account)

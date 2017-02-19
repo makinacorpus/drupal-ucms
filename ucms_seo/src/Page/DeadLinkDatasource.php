@@ -10,18 +10,18 @@ use MakinaCorpus\Ucms\Contrib\NodeReference;
 
 class DeadLinkDatasource extends AbstractDatasource
 {
-    private $db;
+    private $database;
     private $entityManager;
 
     /**
      * Default constructor
      *
-     * @param \DatabaseConnection $db
+     * @param \DatabaseConnection $database
      * @param EntityManager $entityManager
      */
-    public function __construct(\DatabaseConnection $db, EntityManager $entityManager)
+    public function __construct(\DatabaseConnection $database, EntityManager $entityManager)
     {
-        $this->db = $db;
+        $this->database = $database;
         $this->entityManager = $entityManager;
     }
 
@@ -32,7 +32,7 @@ class DeadLinkDatasource extends AbstractDatasource
      */
     public function getItems($query, PageState $pageState)
     {
-        $query = $this->db->select('ucms_node_reference', 't');
+        $query = $this->database->select('ucms_node_reference', 't');
         // Add join to node only for node_access, necessary
         $query->join('node', 'n', "n.nid = t.source_id");
         $query->addTag('node_access');
