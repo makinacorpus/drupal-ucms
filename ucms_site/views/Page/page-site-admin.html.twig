@@ -2,10 +2,10 @@
 
 {% block item %}
   <tr>
-    <td>{# this->manager->getTypeName($site->type) #}</td>
+    <td>{{ item.type|ucms_site_type }}</td>
     <td>{{ item.http_host }}</td>
     <td>{{ item.adminTitle }}</td>
-    <td>{# $states[$site->state] #}</td>
+    <td>{{ item.state|ucms_site_state }}</td>
     <td>{{ item.ts_created|time_diff }}</td>
     <td>{{ item.ts_changed|time_diff }}</td>
     <td>{# isset($accountMap[$site->uid]) ? check_plain(format_username($accountMap[$site->uid])) : '' #}</td>

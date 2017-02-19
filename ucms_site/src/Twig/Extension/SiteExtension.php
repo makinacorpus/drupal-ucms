@@ -33,6 +33,8 @@ class SiteExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter('ucms_site_state', [$this, 'renderState'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter('ucms_site_type', [$this, 'renderType']),
+            new \Twig_SimpleFilter('ucms_site_role', [$this, 'renderRole']),
         ];
     }
 
@@ -47,7 +49,7 @@ class SiteExtension extends \Twig_Extension
     }
 
     /**
-     * Render state
+     * Render state human readable label
      *
      * @param int $state
      *
@@ -62,6 +64,30 @@ class SiteExtension extends \Twig_Extension
         }
 
         return $this->t("Unknown");
+    }
+
+    /**
+     * Render type human readable label
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    public function renderType($type)
+    {
+        return $this->siteManager->getTypeName($type);
+    }
+
+    /**
+     * Render site-relative human readable label
+     *
+     * @param string $roleId
+     *
+     * @return string
+     */
+    public function renderRole($roleId)
+    {
+        return $this->siteManager->getAccess()->getRelativeRoleName($roleId);
     }
 
     /**

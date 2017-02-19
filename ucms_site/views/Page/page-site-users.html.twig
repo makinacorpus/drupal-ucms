@@ -4,7 +4,7 @@
   <tr>
     <td>{{ item.getDisplayName }}</td>
     <td>{{ item.getEmail }}</td>
-    <td>{# $$relativeRoles[$item->getRole()] #}</td>
+    <td>{{ item.role|ucms_site_role }}</td>
     <td>{% if item.isBlocked %}{{ "Disabled"|trans }}{% else %}{{ "Enabled"|trans }}{% endif %}</td>
     <td>
       {{ udashboard_actions(item) }}
