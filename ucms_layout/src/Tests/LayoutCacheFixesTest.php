@@ -99,7 +99,7 @@ class LayoutCacheFixesTest extends AbstractDrupalTest
         // to reference the new node (the clone)
         $this->getSiteManager()->setContext($site2);
         $clonedNode = $this->getNodeManager()->createAndSaveClone($bugNode);
-
+        $this->assertNotEquals($bugNode->id(), $clonedNode->id());
         // Cloned layout are not statically cached, so reloading it is enough
         $clonedReloadedLayout = $this->getLayoutStorage()->load($clonedLayout->getId());
         // Just ensure we did load a new instance

@@ -56,11 +56,16 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         $this->siteManager = $siteManager;
 
         // Easy and ulgy way (@todo fix me, do this at compile time)
-        \Drupal::service('acl.permission_map')->addPermissions([
-            Access::ACL_PERM_CONTENT_PROMOTE_GROUP => 32768,
-            Access::ACL_PERM_SITE_EDIT_TREE => 65536,
-            Access::ACL_PERM_SITE_MANAGE_USERS => 131072,
-        ]);
+        /** @var \MakinaCorpus\ACL\PermissionMap $permissionMap */
+        $permissionMap = \Drupal::service('acl.permission_map');
+        // Avoid duplicate definition during unit tests.
+        if (!$permissionMap->supports(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)) {
+            \Drupal::service('acl.permission_map')->addPermissions([
+                Access::ACL_PERM_CONTENT_PROMOTE_GROUP => 32768,
+                Access::ACL_PERM_SITE_EDIT_TREE => 65536,
+                Access::ACL_PERM_SITE_MANAGE_USERS => 131072,
+            ]);
+        }
     }
 
     /**

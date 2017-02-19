@@ -53,13 +53,13 @@ class CloningSiteTest extends AbstractDrupalTest
 
         $menuName     = 'site-main-'.$this->sites['template']->getId();
         $menu         = $this->findOrCreateMenu($menuName, $this->sites['template']->getId());
-        $menuId       = $menu['id'];
+        $menuId       = $menu->getId();
         $itemStorage->insert($menuId, $this->nodes['ref_homepage']->id(), $this->nodes['ref_homepage']->getTitle());
         $itemStorage->insert($menuId, $this->nodes['ref_news']->id(), $this->nodes['ref_news']->getTitle());
 
         $menuName     = 'site-main-'.$this->sites['not_relevant']->getId();
         $menu         = $this->findOrCreateMenu($menuName, $this->sites['not_relevant']->getId());
-        $menuId       = $menu['id'];
+        $menuId       = $menu->getId();
         $itemStorage->insert($menuId, $this->nodes['ref_news']->id(), $this->nodes['ref_news']->getTitle());
 
         // Create some layout on it
