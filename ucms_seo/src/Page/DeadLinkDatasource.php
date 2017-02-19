@@ -45,6 +45,9 @@ class DeadLinkDatasource extends AbstractDatasource
             ->isNull('s.nid')
         );
         $query->fields('t', ['source_id', 'target_id', 'type', 'field_name']);
+        $query->addField('n', 'title', 'source_title');
+        $query->addField('n', 'type', 'source_bundle');
+        $query->addField('s', 'title', 'target_title');
         $query->addExpression('s.nid', 'target_exists');
 
         $ret = $query->execute()->fetchAll(\PDO::FETCH_CLASS, NodeReference::class);

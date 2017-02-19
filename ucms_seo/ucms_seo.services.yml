@@ -98,11 +98,11 @@ services:
     arguments: ["@ucms_seo.seo_service"]
 
   # Deadlinks tracking and portlet
-#  ucms_seo.deadlinks.portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
-#    arguments: ["@ucms_seo.deadlinks.datasource", "@ucms_seo.deadlinks.display"]
-#    tags: [{ name: udashboard.portlet }]
+  ucms_seo.deadlinks.portlet:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
+    arguments: ["@ucms_seo.deadlinks.datasource"]
+    tags: [{ name: udashboard.portlet }]
   ucms_seo.deadlinks.datasource:
     class: MakinaCorpus\Ucms\Seo\Page\DeadLinkDatasource
     arguments: ["@database", "@entity.manager"]

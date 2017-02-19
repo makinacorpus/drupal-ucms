@@ -38,7 +38,7 @@ class DeadLinkPortlet extends AbstractPortlet
     {
         $pageBuilder
             ->setDatasource($this->datasource)
-            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-deadlink-portlet.html.twig'])
+            ->setAllowedTemplates(['table' => 'module:ucms_seo:Portlet/page-deadlink.html.twig'])
         ;
     }
 

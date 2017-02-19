@@ -3,8 +3,7 @@
 {% block item %}
   <tr>
     <td>{{ item.title }}</td>
-    <td>{{ item.bundle }}</td>
-    <td>@todo</td>
+    <td>{{ entity_bundle('node', item.bundle) }}</td>
     <td>{% if item.changedTime %}{{ item.changedTime|time_diff }}{% else %}{{ "Never"|trans }}{% endif %}</td>
     <td>{% if item.isPublished %}{{ "Published"|trans }}{% endif %}</td>
     <td>
@@ -22,7 +21,6 @@
       <tr>
         <th>{{ "Title"|trans }}</th>
         <th>{{ "Type"|trans }}</th>
-        <th>{{ "Site(s)"|trans }}</th>
         <th>{{ "Updated"|trans }}</th>
         <th>{{ "Status"|trans }}</th>
         <th></th>
@@ -36,17 +34,3 @@
   </table>
 {% endblock %}
 
-{#
-    /** @var $item NodeInterface */
-    $lastUpdate = ($item->getChangedTime() == 0)
-        ? $this->t("Never")
-        : format_interval(time() - $item->getChangedTime());
-
-    $rows[] = [
-        check_plain($item->getTitle()),
-        $item->bundle(),
-        '', // @todo sites
-        $lastUpdate,
-        $item->isPublished() ? $this->t("published") : '',
-    ];
- #}

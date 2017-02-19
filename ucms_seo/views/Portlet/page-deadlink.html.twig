@@ -2,9 +2,9 @@
 
 {% block item %}
   <tr>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>{% if item.sourceTitle %}{{ item.sourceTitle }}{% else %}<em>{{ "Error"|trans }}</em>{% endif %}</td>
+    <td>{{ field_name(item.fieldName, 'node', item.sourceBundle) }}</td>
+    <td>{% if item.targetTitle %}{{ item.targetTitle }}{% else %}<em>{{ item.targetId }}</em>{% endif %}</td>
     <td>{% if item.targetExists %}{{ "Unpublished"|t }}{% else %}{{ "Deleted"|t }}{% endif %}</td>
     <td>
       {% set type = item.type %}
@@ -18,7 +18,12 @@
         {{ type }}
       {% endif %}
     </td>
-    <td></td>
+    <td>
+      <a href="{{ path('node/' ~ item.sourceId) }}" title="{{ "View"|trans }}" class=" btn btn-default">
+        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+        <span class="sr-only">{{ "View"|trans }}</span>
+      </a>
+    </td>
   </tr>
 {% endblock %}
 
@@ -49,41 +54,9 @@
 {% endblock %}
 
 {#
-        $nodeStorage = $this->entityManager->getStorage('node');
-
-        foreach ($items as $item) {
             /** @var $item NodeReference */
-
             $fieldName = $item->getFieldName();
             if ($info = field_info_field($fieldName)) {
                 $fieldName = $info['label'];
             }
-
-            $source = $nodeStorage->load($item->getSourceId());
-            $target = $item->targetExists() ? $nodeStorage->load($item->getTargetId()) : null;
-
-            if ($source->access(Permission::UPDATE)) {
-                $actions = [
-                    '#theme' => 'udashboard_actions',
-                    '#actions' => [
-                        new Action(
-                            "",
-                            'node/' . $source->id() . '/edit',
-                            ['attributes' => ['class' => ['btn-sm']]],
-                            'share-alt'
-                        )
-                    ]
-                ];
-            } else {
-                $actions = '';
-            }
-
-            $rows[] = [
-                check_plain($source ? $source->title : 'error'),
-                check_plain($fieldName),
-                $target ? check_plain($target->title) : '<em>' . $item->getTargetId() . '</em>',
-
-                $typeLabel,
-                $actions,
-            ];
  #}
