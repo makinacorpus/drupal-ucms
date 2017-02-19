@@ -19,7 +19,6 @@ function ucms_label_menu() {
     'page callback'     => 'ucms_label_dashboard_label_list',
     'access arguments'  => [LabelAccess::PERM_ACCESS_DASHBOARD],
     'type'              => MENU_NORMAL_ITEM,
-    'file'              => 'ucms_label.dashboard.inc',
   ];
 
   $items['admin/dashboard/label/add'] = [
@@ -129,6 +128,24 @@ function ucms_label_menu_item_title($op, $label) {
   }
 }
 
+/**
+ * Labels list page.
+ *
+ * @deprecated
+ *   Move this to a controller
+ */
+function ucms_label_dashboard_label_list() {
+  $datasource = \Drupal::service('ucms_label.admin.datasource');
+  /** @var \MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory $factory */
+  $factory    = \Drupal::service('udashboard.admin_widget_factory');
+
+  return $factory
+      ->createPageBuilder()
+      ->setDatasource($datasource)
+      ->setAllowedTemplates(['table' => 'module:ucms_label:Page/page-label-admin.html.twig'])
+      ->searchAndRender(\Drupal::request())
+  ;
+}
 
 /**
  * Implements hook_taxonomy_term_presave().
