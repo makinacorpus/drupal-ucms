@@ -90,6 +90,26 @@ function ucms_contrib_schema() {
 }
 
 /**
+ * Configures udashboard.
+ */
+function ucms_contrib_install_udashboard() {
+
+  $variables = [
+    'udashboard.breadcrumb_alter' => true,
+    'udashboard.context_pane_enable' => true,
+    'udashboard.toolbar_enable' => true,
+  ];
+
+  foreach ($variables as $name => $value) {
+    // Ensure that the site builder didn't force the variable, case
+    // in which we must NOT override it, or it'll make him very angry.
+    if (!array_key_exists($name, $GLOBALS['conf'])) {
+      variable_set($name, $value);
+    }
+  }
+}
+
+/**
  * Adds missing database table columns and constraints
  */
 function ucms_contrib_install_schema_fix() {
@@ -127,6 +147,7 @@ function ucms_contrib_install_schema_fix() {
  */
 function ucms_contrib_install() {
   ucms_contrib_install_schema_fix();
+  ucms_contrib_install_udashboard();
 }
 
 /**
@@ -179,4 +200,11 @@ function ucms_contrib_update_7005() {
       'default'     => (new \DateTime())->format('Y-m-d H:i:s'),
     ]);
   }
+}
+
+/**
+ * Configures udashboard.
+ */
+function ucms_contrib_update_7006() {
+  ucms_contrib_install_udashboard();
 }
