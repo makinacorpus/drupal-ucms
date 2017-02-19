@@ -3,10 +3,10 @@
 namespace MakinaCorpus\Ucms\Group\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\Filter;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupSite;
@@ -128,8 +128,8 @@ class GroupSiteAdminDatasource extends AbstractDatasource
             ->addTag('ucms_group_access')
             ->addTag('ucms_site_access')
             ->groupBy('s.id')
-            ->extend('PagerDefault')
-            ->limit($pageState->getLimit())
+            ->extend(DrupalPager::class)
+            ->setPageState($pageState)
             ->execute()
         ;
 

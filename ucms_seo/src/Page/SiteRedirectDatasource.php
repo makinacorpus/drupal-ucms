@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
+use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 
 class SiteRedirectDatasource extends AbstractDatasource
@@ -64,11 +64,11 @@ class SiteRedirectDatasource extends AbstractDatasource
         }
 
         return $q
-            ->extend('PagerDefault')
-            ->limit($pageState->getLimit())
+            ->extend(DrupalPager::class)
+            ->setPageState($pageState)
             ->execute()
             ->fetchAll()
-            ;
+        ;
     }
 
     /**

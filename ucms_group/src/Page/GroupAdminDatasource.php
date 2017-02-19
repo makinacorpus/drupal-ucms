@@ -3,9 +3,9 @@
 namespace MakinaCorpus\Ucms\Group\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Group\GroupManager;
 
@@ -90,8 +90,8 @@ class GroupAdminDatasource extends AbstractDatasource
 
         $idList = $q
             ->groupBy('g.id')
-            ->extend('PagerDefault')
-            ->limit($pageState->getLimit())
+            ->extend(DrupalPager::class)
+            ->setPageState($pageState)
             ->execute()
             ->fetchCol()
         ;

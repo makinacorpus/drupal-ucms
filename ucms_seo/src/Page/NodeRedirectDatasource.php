@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 
 class NodeRedirectDatasource extends AbstractDatasource
@@ -62,8 +63,8 @@ class NodeRedirectDatasource extends AbstractDatasource
         }
 
         return $q
-            ->extend('PagerDefault')
-            ->limit($pageState->getLimit())
+            ->extend(DrupalPager::class)
+            ->setPageState($pageState)
             ->execute()
             ->fetchAll()
         ;
