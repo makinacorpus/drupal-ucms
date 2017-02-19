@@ -4,17 +4,22 @@ namespace MakinaCorpus\Ucms\Contrib\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractAdminPortlet;
+use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class MediaPortlet extends AbstractAdminPortlet
+class MediaPortlet extends AbstractPortlet
 {
     use StringTranslationTrait;
+
+    /**
+     * @var DatasourceInterface
+     */
+    private $datasource;
 
     /**
      * @var ActionProviderInterface
@@ -27,14 +32,9 @@ class MediaPortlet extends AbstractAdminPortlet
     private $typeHandler;
 
     /**
-     * @var \MakinaCorpus\Ucms\Site\SiteManager
+     * @var SiteManager
      */
     private $siteManager;
-
-    /**
-     * @var \Drupal\Core\Session\AccountInterface
-     */
-    private $currentUser;
 
     /**
      * Default constructor
@@ -43,21 +43,18 @@ class MediaPortlet extends AbstractAdminPortlet
      * @param ActionProviderInterface $actionProvider
      * @param TypeHandler $typeHandler
      * @param ActionProviderInterface $actionProvider
-     * @param \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler
+     * @param TypeHandler $typeHandler
      */
     public function __construct(
         DatasourceInterface $datasource,
         ActionProviderInterface $actionProvider,
         TypeHandler $typeHandler,
-        SiteManager $siteManager,
-        AccountInterface $currentUser
+        SiteManager $siteManager
     ) {
-        parent::__construct($datasource);
-
+        $this->datasource = $datasource;
         $this->actionProvider = $actionProvider;
         $this->typeHandler = $typeHandler;
         $this->siteManager = $siteManager;
-        $this->currentUser = $currentUser;
     }
 
     /**
@@ -73,7 +70,7 @@ class MediaPortlet extends AbstractAdminPortlet
      */
     public function getPath()
     {
-        if ($this->siteManager->getAccess()->userIsWebmaster($this->currentUser)) {
+        if ($this->siteManager->getAccess()->userIsWebmaster($this->getAccount())) {
             return 'admin/dashboard/media/local';
         }
         return 'admin/dashboard/media';
@@ -90,25 +87,17 @@ class MediaPortlet extends AbstractAdminPortlet
     /**
      * {@inheritDoc}
      */
-    public function renderActions()
+    protected function createPage(PageBuilder $pageBuilder)
     {
-        $build = parent::renderActions();
-        $build['#title'] = $this->t("Create media");
-
-        return $build;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getDisplay(&$query, PageState $pageState)
-    {
+        $query = [];
         $query['type'] = $this->typeHandler->getMediaTypes();
         $query['is_global'] = 0;
 
+        $currentUser = $this->getAccount();
+
         // Only for webmaster, show local nodes (instead of own).
-        if ($this->siteManager->getAccess()->userIsWebmaster($this->currentUser)) {
-            $map = $this->siteManager->getAccess()->getUserRoles($this->currentUser);
+        if ($this->siteManager->getAccess()->userIsWebmaster($currentUser)) {
+            $map = $this->siteManager->getAccess()->getUserRoles($currentUser);
             $site_ids = [];
             foreach ($map as $item) {
                 $site_ids[] = $item->getSiteId();
@@ -119,9 +108,11 @@ class MediaPortlet extends AbstractAdminPortlet
             }
         }
 
-        $pageState->setSortField('created');
-
-        return new NodePortletDisplay($this->t("You have no media yet."));
+        $pageBuilder
+            ->setDatasource($this->datasource)
+            ->setAllowedTemplates(['table' => 'module:ucms_contrib:Portlet/page-node-portlet.html.twig'])
+            ->setBaseQuery($query)
+        ;
     }
 
     /**

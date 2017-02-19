@@ -129,14 +129,14 @@ services:
   ucms_contrib.content_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
     tags: [{ name: udashboard.portlet }]
 
   # Media portlet
   ucms_contrib.media_portlet:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
+    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
     tags: [{ name: udashboard.portlet }]
 
   # Component responsible for providing content type context
