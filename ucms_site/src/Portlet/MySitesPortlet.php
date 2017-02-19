@@ -4,15 +4,33 @@ namespace MakinaCorpus\Ucms\Site\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractAdminPortlet;
+use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Site\Access;
 
-class MySitesPortlet extends AbstractAdminPortlet
+/**
+ * Current user site's portlet
+ */
+class MySitesPortlet extends AbstractPortlet
 {
     use StringTranslationTrait;
+
+    /**
+     * @var DatasourceInterface
+     */
+    private $datasource;
+
+    /**
+     * Default constructor
+     *
+     * @param DatasourceInterface $datasource
+     */
+    public function __construct(DatasourceInterface $datasource)
+    {
+        $this->datasource = $datasource;
+    }
 
     /**
      * Return the title of this portlet.
@@ -47,13 +65,12 @@ class MySitesPortlet extends AbstractAdminPortlet
     /**
      * {inheritDoc}
      */
-    protected function getDisplay(&$query, PageState $pageState)
+    protected function createPage(PageBuilder $pageBuilder)
     {
-        $pageState->setSortField('s.ts_changed');
-
-        $query['uid'] = $this->getAccount()->id();
-
-        return new SitePortletDisplay($this->t("No attached site yet."));
+        $pageBuilder
+            ->setDatasource($this->datasource)
+            ->setAllowedTemplates(['table' => 'module:ucms_site:Portlet/page-sites.html.twig'])
+        ;
     }
 
     /**
