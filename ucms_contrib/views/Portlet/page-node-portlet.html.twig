@@ -8,7 +8,10 @@
     <td>{% if item.changedTime %}{{ item.changedTime|time_diff }}{% else %}{{ "Never"|trans }}{% endif %}</td>
     <td>{% if item.isPublished %}{{ "Published"|trans }}{% endif %}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      <a href="{{ path('node/' ~ item.id) }}" title="{{ "View"|trans }}" class=" btn btn-default">
+        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+        <span class="sr-only">{{ "View"|trans }}</span>
+      </a>
     </td>
   </tr>
 {% endblock %}
