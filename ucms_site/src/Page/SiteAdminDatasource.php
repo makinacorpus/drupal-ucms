@@ -7,7 +7,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\Filter;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
@@ -131,7 +130,7 @@ class SiteAdminDatasource extends AbstractDatasource
         }
         $q->orderBy('s.id', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $q->condition(
                 db_or()

@@ -1,17 +1,13 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Label\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\Filter;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Label\LabelManager;
-
 
 class LabelAdminDatasource extends AbstractDatasource
 {
@@ -109,11 +105,6 @@ class LabelAdminDatasource extends AbstractDatasource
         if ($pageState->hasSortField()) {
             $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
-
-//        $sParam = SearchForm::DEFAULT_PARAM_NAME;
-//        if (!empty($query[$sParam])) {
-//            $q->condition('t.name', '%' . db_like($query[$sParam]) . '%', 'LIKE');
-//        }
 
         $ids = $q
             ->condition('t.vid', $this->manager->getVocabularyId())

@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 
 class NodeRedirectDatasource extends AbstractDatasource
@@ -57,7 +56,7 @@ class NodeRedirectDatasource extends AbstractDatasource
             );
         }
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $q->condition('u.path', '%'.db_like($query[$sParam]).'%', 'LIKE');
         }

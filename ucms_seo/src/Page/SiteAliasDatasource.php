@@ -3,11 +3,9 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\Filter;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 
 class SiteAliasDatasource extends AbstractDatasource
@@ -89,7 +87,7 @@ class SiteAliasDatasource extends AbstractDatasource
         }
         $q->orderBy('u.alias', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $q->condition('u.alias', '%' . db_like($query[$sParam]) . '%', 'LIKE');
         }
@@ -109,4 +107,4 @@ class SiteAliasDatasource extends AbstractDatasource
     {
         return true;
     }
- }
+}

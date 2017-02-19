@@ -1,23 +1,18 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\User\Page;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\Filter;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Site\SiteAccessService;
-
 
 class UserAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
-
 
     /**
      * @var \DatabaseConnection
@@ -48,7 +43,6 @@ class UserAdminDatasource extends AbstractDatasource
         $this->entityManager = $entityManager;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -72,7 +66,6 @@ class UserAdminDatasource extends AbstractDatasource
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -87,7 +80,6 @@ class UserAdminDatasource extends AbstractDatasource
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -95,7 +87,6 @@ class UserAdminDatasource extends AbstractDatasource
     {
         return ['u.login', SortManager::DESC];
     }
-
 
     /**
      * {@inheritdoc}
@@ -120,7 +111,7 @@ class UserAdminDatasource extends AbstractDatasource
             $q->orderBy($pageState->getSortField(), $pageState->getSortOrder());
         }
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $q->condition('u.name', '%' . db_like($query[$sParam]) . '%', 'LIKE');
         }
@@ -139,7 +130,6 @@ class UserAdminDatasource extends AbstractDatasource
             ->loadMultiple($idList)
         ;
     }
-
 
     /**
      * {@inheritdoc}

@@ -124,7 +124,7 @@ class TreeAdminDatasource extends AbstractDatasource
         }
         $q->orderBy('s.id', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $q->condition(
                 db_or()

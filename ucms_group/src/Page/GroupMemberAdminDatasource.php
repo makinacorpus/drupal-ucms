@@ -6,7 +6,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupMember;
@@ -83,7 +82,7 @@ class GroupMemberAdminDatasource extends AbstractDatasource
         }
         $q->orderBy('u.name', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $q->condition(
                 (new \DatabaseCondition('OR'))

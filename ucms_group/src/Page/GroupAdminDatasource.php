@@ -6,7 +6,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SearchForm;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Group\GroupManager;
 
@@ -84,7 +83,7 @@ class GroupAdminDatasource extends AbstractDatasource
         }
         $q->orderBy('g.id', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
             $q->condition('g.title', '%' . db_like($query[$sParam]) . '%', 'LIKE');
         }

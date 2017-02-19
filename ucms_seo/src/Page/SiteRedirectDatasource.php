@@ -58,7 +58,7 @@ class SiteRedirectDatasource extends AbstractDatasource
             );
         }
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
+        $sParam = 's';
         if (!empty($query[$sParam])) {
             $q->condition('u.path', '%'.db_like($query[$sParam]).'%', 'LIKE');
         }
