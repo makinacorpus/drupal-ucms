@@ -4,8 +4,8 @@ namespace MakinaCorpus\Ucms\Tree\Controller;
 
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory;
+use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -13,13 +13,13 @@ use MakinaCorpus\Ucms\Tree\Form\TreeEditForm;
 use MakinaCorpus\Ucms\Tree\Form\TreeForm;
 use MakinaCorpus\Ucms\Tree\MenuAccess;
 use MakinaCorpus\Ucms\Tree\Page\TreeAdminDatasource;
-use MakinaCorpus\Ucms\Tree\Page\TreeAdminDisplay;
 use MakinaCorpus\Umenu\Menu;
-
 use Symfony\Component\HttpFoundation\Request;
 
 class TreeAdminController extends Controller
 {
+    use PageControllerTrait;
+
     /**
      * @return TypeHandler
      */
@@ -34,14 +34,6 @@ class TreeAdminController extends Controller
     private function getTreeAdminDatasource()
     {
         return $this->get('ucms_tree.admin.datasource');
-    }
-
-    /**
-     * @return TreeAdminDisplay
-     */
-    private function getTreeAdminDisplay()
-    {
-        return $this->get('ucms_tree.admin.display');
     }
 
     /**
@@ -150,7 +142,6 @@ class TreeAdminController extends Controller
         }
 
         $datasource = $this->getTreeAdminDatasource();
-        $display    = $this->getTreeAdminDisplay();
         $query      = [];
 
         $siteManager = $this->getSiteManager();
@@ -158,10 +149,16 @@ class TreeAdminController extends Controller
             $query['site'] = $siteManager->getContext()->getId();
         }
 
-        $page = $this->getAdminWidgetFactory()->getPage($datasource, $display, ['tree-admin']);
-        $page->setBaseQuery($query);
-
-        return $page->render($request->query->all(), current_path()); //@todo current_path()
+        return $this
+            ->createPageBuilder()
+            ->setDatasource($datasource)
+            ->hideFilters()
+            ->hideSearch()
+            ->hideSort()
+            ->setAllowedTemplates(['table' => 'module:ucms_tree:Page/page-tree-admin.html.twig'])
+            ->setBaseQuery($query)
+            ->searchAndRender($request)
+        ;
     }
 
     /**

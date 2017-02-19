@@ -1,24 +1,14 @@
 <?php
+/**
+ * TO BE REMOVED, KEPT BECAUSE I NEED TO MOVE SOME LOGIC OUT.
+ */
 
 namespace MakinaCorpus\Ucms\Tree\Page;
 
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class TreeAdminDisplay extends AbstractDisplay
+class TreeAdminDisplay
 {
-    private $emptyMessage;
-    private $siteManager;
-
-    /**
-     * Default constructor
-     */
-    public function __construct(SiteManager $siteManager, $emptyMessage = null)
-    {
-        $this->emptyMessage = $emptyMessage;
-        $this->siteManager = $siteManager;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -63,23 +53,5 @@ class TreeAdminDisplay extends AbstractDisplay
                 theme('udashboard_actions', ['actions' => $this->getActions($menu), 'mode' => 'icon']),
             ];
         }
-
-        return [
-            '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
-            '#suffix' => '</div>', // FIXME should be in theme
-            '#theme'  => 'table',
-            '#header' => [
-                $this->t("Id."),
-                $this->t("Internal name"),
-                $this->t("Title"),
-                $this->t("Description"),
-                $this->t("Site"),
-                $this->t("Role"),
-                $this->t("Site main"),
-                '',
-            ],
-            '#empty'  => $this->emptyMessage,
-            '#rows'   => $rows,
-        ];
     }
 }

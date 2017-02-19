@@ -29,10 +29,6 @@ services:
     class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDatasource
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
 
-  ucms_tree.admin.display:
-    class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDisplay
-    arguments: ["@ucms_site.manager"]
-
   # Action processors and providers
   ucms_tree.action.tree_delete:
     public: false
