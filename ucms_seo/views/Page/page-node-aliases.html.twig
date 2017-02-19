@@ -1,0 +1,56 @@
+{% extends 'module:udashboard:views/Page/page.html.twig' %}
+
+{% block item %}
+  <tr>
+    <td>{{ item.alias }}</td>
+    <td>@todo</td>
+    <td>@todo</td>
+    <td>{% if item.is_canonical %}<strong>{{ "Yes"|trans }}</strong>{% else %}{{ "No"|trans }}{% endif %}</td>
+    <td>{{ item.priority }}</td>
+    <td>{% if item.expires %}{{ item.expires|date }}{% else %}{{ "No"|trans }}{% endif %}</td>
+    <td>
+      {{ udashboard_actions(item) }}
+    </td>
+  </tr>
+{% endblock %}
+
+{% block item_list %}
+  <table class="table table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>{{ "Alias"|trans }}</th>
+        <th>{{ "Site"|trans }}</th>
+        <th>{{ "Language"|trans }}</th>
+        <th>{{ "Canonical"|trans }}</th>
+        <th>{{ "Priority"|trans }}</th>
+        <th>{{ "Expires"|trans }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        {{ block('item') }}
+      {% else %}
+        <tr>
+          <td colspan="7">
+            {{ "This content has not SEO alias."|trans }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{#
+
+            $siteLabel = '<em>' . $this->t("None") . '</em>';
+            if ($item->site_id && isset($sites[$item->site_id])) {
+                $site = $sites[$item->site_id];
+                $siteLabel = l($site->title, 'admin/dashboard/site/' . $site->getId());
+            }
+            if (null === $item->language || 'und' === $item->language) {
+                $language = '<em>' . $this->t("default") . '</em>';;
+            } else {
+                $language = check_plain($item->language);
+            }
+ #}

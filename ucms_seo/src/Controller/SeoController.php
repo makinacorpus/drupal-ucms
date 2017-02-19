@@ -2,100 +2,57 @@
 
 namespace MakinaCorpus\Ucms\Seo\Controller;
 
-use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
-
-use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
-use MakinaCorpus\Ucms\Seo\Page\NodeAliasDisplay;
-use MakinaCorpus\Ucms\Seo\Page\NodeRedirectDisplay;
-use MakinaCorpus\Ucms\Seo\Page\SiteAliasDisplay;
-use MakinaCorpus\Ucms\Seo\Page\SiteRedirectDisplay;
-use MakinaCorpus\Ucms\Seo\SeoService;
+use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
+use Symfony\Component\HttpFoundation\Request;
 
 class SeoController extends Controller
 {
     use PageControllerTrait;
 
-    /**
-     * @return SiteManager
-     */
-    private function getSiteManager()
+    public function nodeAliasListAction(Request $request, NodeInterface $node)
     {
-        return $this->get('ucms_site.manager');
-    }
-
-    /**
-     * @return SeoService
-     */
-    private function getSeoService()
-    {
-        return $this->get('ucms_seo.service');
-    }
-
-    /**
-     * @return EntityManager
-     */
-    private function getEntityManager()
-    {
-        return $this->get('entity.manager');
-    }
-
-    public function nodeAliasListAction(NodeInterface $node)
-    {
-        $datasource = \Drupal::service('ucms_seo.admin.node_alias_datasource');
-        $display    = new NodeAliasDisplay($this->getSiteManager(), $this->getEntityManager(), t("This content has no SEO alias."));
-
-        $query  = ['node' => $node->id()];
-
         return $this
-            ->createPage($datasource, $display, ['dashboard', 'seo', 'aliases'])
-            ->setBaseQuery($query)
-            ->render(drupal_get_query_parameters(), current_path())
+            ->createPageBuilder()
+            ->setDatasource(\Drupal::service('ucms_seo.admin.node_alias_datasource'))
+            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-node-aliases.html.twig'])
+            ->setBaseQuery(['node' => $node->id()])
+            ->searchAndRender($request)
         ;
     }
 
-    public function siteAliasListAction(Site $site)
+    public function siteAliasListAction(Request $request, Site $site)
     {
-        $datasource = \Drupal::service('ucms_seo.admin.site_alias_datasource');
-        $display    = new SiteAliasDisplay($this->getSiteManager(), $this->getEntityManager(), t("This site has no SEO alias."));
-
-        $query  = ['site' => $site->getId()];
-
         return $this
-            ->createPage($datasource, $display, ['dashboard', 'seo', 'aliases'])
-            ->setBaseQuery($query)
-            ->render(drupal_get_query_parameters(), current_path())
+            ->createPageBuilder()
+            ->setDatasource(\Drupal::service('ucms_seo.admin.site_alias_datasource'))
+            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-site-aliases.html.twig'])
+            ->setBaseQuery(['site' => $site->getId()])
+            ->searchAndRender($request)
         ;
     }
 
-    public function nodeRedirectListAction(NodeInterface $node)
+    public function nodeRedirectListAction(Request $request, NodeInterface $node)
     {
-        $datasource = \Drupal::service('ucms_seo.admin.node_redirect_datasource');
-        $display    = new NodeRedirectDisplay($this->getSiteManager(), $this->getEntityManager(), t("This content has no SEO redirect."));
-
-        $query  = ['node' => $node->id()];
-
         return $this
-            ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])
-            ->setBaseQuery($query)
-            ->render(drupal_get_query_parameters(), current_path())
+            ->createPageBuilder()
+            ->setDatasource(\Drupal::service('ucms_seo.admin.node_redirect_datasource'))
+            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-node-redirect.html.twig'])
+            ->setBaseQuery(['node' => $node->id()])
+            ->searchAndRender($request)
         ;
     }
 
-    public function siteRedirectListAction(Site $site)
+    public function siteRedirectListAction(Request $request, Site $site)
     {
-        $datasource = \Drupal::service('ucms_seo.admin.site_redirect_datasource');
-        $display    = new SiteRedirectDisplay($this->getSiteManager(), $this->getEntityManager(), t("This site has no SEO redirect."));
-
-        $query  = ['site' => $site->getId()];
-
         return $this
-            ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])
-            ->setBaseQuery($query)
-            ->render(drupal_get_query_parameters(), current_path())
+            ->createPageBuilder()
+            ->setDatasource(\Drupal::service('ucms_seo.admin.site_redirect_datasource'))
+            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-site-redirect.html.twig'])
+            ->setBaseQuery(['site' => $site->getId()])
+            ->searchAndRender($request)
         ;
     }
 }
