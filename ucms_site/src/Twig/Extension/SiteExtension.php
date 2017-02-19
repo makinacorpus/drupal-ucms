@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Site\Twig\Extension;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
+use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 

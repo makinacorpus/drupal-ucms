@@ -1,56 +1,72 @@
 <?php
 /**
- * @file
  * Dashboard related pages.
+ *
+ * @todo
+ *   All functions in here belong to controllers
  */
 
 use MakinaCorpus\APubSub\CursorInterface;
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
-use MakinaCorpus\Drupal\Dashboard\Page\Page;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Page\SiteAdminDisplay;
 use MakinaCorpus\Ucms\Site\Page\WebmasterAdminDisplay;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * All sites list page.
+ *
+ * @deprecated
+ *   Convert me to controller
  */
 function ucms_site_dashboard_site_list_all() {
 
   $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(ucms_site_manager(), t("There is no sites yet."));
+  /** @var \MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory $factory */
+  $factory    = \Drupal::service('udashboard.admin_widget_factory');
 
-  return udashboard_page_get($datasource, $display, ['dashboard', 'site'])
-    ->render(drupal_get_query_parameters(), current_path())
+  return $factory
+      ->createPageBuilder()
+      ->setDatasource($datasource)
+      ->setBaseQuery([])
+      ->setAllowedTemplates(['table' => 'module:ucms_site:Page/page-site-admin.html.twig'])
+      ->searchAndRender(\Drupal::request())
   ;
 }
 
 /**
  * My sites list page.
+ *
+ * @deprecated
+ *   Convert me to controller
  */
 function ucms_site_dashboard_site_list_mine() {
   global $user;
 
   $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(ucms_site_manager(), t("You have no site."));
+  /** @var \MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory $factory */
+  $factory    = \Drupal::service('udashboard.admin_widget_factory');
 
-  return udashboard_page_get($datasource, $display, ['dashboard', 'site'])
-    ->setBaseQuery(['uid' => $user->uid])
-    ->render(drupal_get_query_parameters(), current_path())
+  return $factory
+      ->createPageBuilder()
+      ->setDatasource($datasource)
+      ->setBaseQuery(['uid' => $user->uid])
+      ->setAllowedTemplates(['table' => 'module:ucms_site:Page/page-site-admin.html.twig'])
+      ->searchAndRender(\Drupal::request())
   ;
 }
 
 /**
  * All sites list page.
+ *
+ * @deprecated
+ *   Convert me to controller
  */
 function ucms_site_dashboard_site_list_archive() {
   global $user;
 
   $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(ucms_site_manager(), t("There is no archives."));
-  $page       = udashboard_page_get($datasource, $display, ['dashboard', 'site']);
   $query      = ['state' => SiteState::ARCHIVE];
 
   if (!user_access(Access::PERM_SITE_GOD) &&
@@ -60,13 +76,23 @@ function ucms_site_dashboard_site_list_archive() {
       $query['uid'] = $user->uid;
   }
 
-  return $page->setBaseQuery($query)
-    ->render(drupal_get_query_parameters(), current_path())
+  /** @var \MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory $factory */
+  $factory = \Drupal::service('udashboard.admin_widget_factory');
+
+  return $factory
+      ->createPageBuilder()
+      ->setDatasource($datasource)
+      ->setBaseQuery($query)
+      ->setAllowedTemplates(['table' => 'module:ucms_site:Page/page-site-admin.html.twig'])
+      ->searchAndRender(\Drupal::request())
   ;
 }
 
 /**
  * Site page details
+ *
+ * @deprecated
+ *   Convert me to controller
  */
 function ucms_site_dashboard_site_page_log(Site $site) {
   try {
@@ -89,15 +115,22 @@ function ucms_site_dashboard_site_page_log(Site $site) {
  * Site's webmasters (and contributors) listing page.
  *
  * @param Site $site
- * @return []
+ *
+ * @deprecated
+ *   Convert me to controller
  */
 function ucms_site_dashboard_site_page_webmasters(Site $site) {
+
   $datasource = \Drupal::service('ucms_site.admin.webmaster_datasource');
-  $display    = new WebmasterAdminDisplay(ucms_site_manager(), t("There is no webmaster or contributor yet."));
+  /** @var \MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory $factory */
+  $factory = \Drupal::service('udashboard.admin_widget_factory');
 
-  $page   = udashboard_page_get($datasource, $display, ['dashboard', 'site', 'webmaster']);
-  $query  = ['site_id' => $site->id];
-
-  return $page->setBaseQuery($query)->render(drupal_get_query_parameters(), current_path());
+  return $factory
+      ->createPageBuilder()
+      ->setDatasource($datasource)
+      ->setBaseQuery(['site_id' => $site->getId()])
+      ->setAllowedTemplates(['table' => 'module:ucms_site:Page/page-site-users.html.twig'])
+      ->searchAndRender(\Drupal::request())
+  ;
 }
 
