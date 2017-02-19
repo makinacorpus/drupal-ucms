@@ -38,25 +38,3 @@
     </tbody>
   </table>
 {% endblock %}
-
-{#
-          /* @var $item Site */
-            $options = ['attributes' => ['class' => ['btn-sm']]];
-
-            if ($item instanceof Site) {
-                if ($item->state == SiteState::ON) {
-                    // $this->t("Go to site")
-                    $options += ['absolute' => true];
-                    $action = new Action("", 'sso/goto/' . $item->id, $options, 'share-alt');
-                } else {
-                    // $this->t("Go to request")
-                    $action = new Action("", 'admin/dashboard/site/' . $item->id, $options, 'eye-open');
-                }
-                $rows[] = [
-                    check_plain($item->title_admin),
-                    $item->ts_created->format('d/m H:i'),
-                    $this->t(check_plain($states[$item->state])),
-                    ['#theme' => 'udashboard_actions', '#actions' => [$action]],
-                ];
-            }
- #}
