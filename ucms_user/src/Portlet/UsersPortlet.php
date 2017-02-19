@@ -1,29 +1,25 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\User\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractAdminPortlet;
+use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\User\UserAccess;
 
-
-class UsersPortlet extends AbstractAdminPortlet
+/**
+ * User portlet display for user administrators.
+ */
+class UsersPortlet extends AbstractPortlet
 {
     use StringTranslationTrait;
 
-
-    /**
-     * @var SiteManager
-     */
     private $siteManager;
-
+    private $datasource;
 
     /**
      * Default constructor
@@ -32,10 +28,9 @@ class UsersPortlet extends AbstractAdminPortlet
      */
     public function __construct(DatasourceInterface $datasource, SiteManager $siteManager)
     {
-        parent::__construct($datasource);
+        $this->datasource = $datasource;
         $this->siteManager = $siteManager;
     }
-
 
     /**
      * {@inheritdoc}
@@ -45,7 +40,6 @@ class UsersPortlet extends AbstractAdminPortlet
         return $this->t("Users");
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -53,7 +47,6 @@ class UsersPortlet extends AbstractAdminPortlet
     {
         return 'admin/dashboard/user';
     }
-
 
     /**
      * @return Action[]
@@ -65,17 +58,18 @@ class UsersPortlet extends AbstractAdminPortlet
         ];
     }
 
-
     /**
-     * {@inheritdoc}
+     * {inheritDoc}
      */
-    protected function getDisplay(&$query, PageState $pageState)
+    protected function createPage(PageBuilder $pageBuilder)
     {
-        $pageState->setSortField('u.created');
-        $pageState->setSortOrder(PageState::SORT_DESC);
-        return new UsersPortletDisplay($this->siteManager, $this->t("No user created yet."));
+//         $pageState->setSortField('u.created');
+//         $pageState->setSortOrder(PageState::SORT_DESC);
+        $pageBuilder
+            ->setDatasource($this->datasource)
+            ->setAllowedTemplates(['table' => 'module:ucms_user:Portlet/page-users.html.twig'])
+        ;
     }
-
 
     /**
      * {@inheritdoc}

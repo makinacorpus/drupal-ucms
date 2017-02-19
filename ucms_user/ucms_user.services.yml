@@ -37,15 +37,15 @@ services:
 #    class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventSubscriber
 #    tags: [{ name: event_subscriber }]
 
-#  # Account portlet
-#  ucms_user.account_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
-#    tags: [{ name: udashboard.portlet }]
-#
-#  # Users portlet
-#  ucms_user.users_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
-#    arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
-#    tags: [{ name: udashboard.portlet }]
+  # Account portlet
+  ucms_user.account_portlet:
+    public: false
+    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
+    tags: [{ name: udashboard.portlet }]
+
+  # Users portlet
+  ucms_user.users_portlet:
+    public: false
+    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
+    arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
+    tags: [{ name: udashboard.portlet }]

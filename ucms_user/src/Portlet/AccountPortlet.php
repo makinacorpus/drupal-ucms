@@ -5,16 +5,24 @@ namespace MakinaCorpus\Ucms\User\Portlet;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Dashboard\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
+use MakinaCorpus\Drupal\Dashboard\Portlet\PortletInterface;
 
-class AccountPortlet extends AbstractPortlet
+class AccountPortlet implements PortletInterface
 {
     use StringTranslationTrait;
 
+    private $account;
+
     /**
-     * Return the title of this portlet.
-     *
-     * @return string
+     * {@inheritdoc}
+     */
+    public function setAccount(AccountInterface $account)
+    {
+        $this->account = $account;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getTitle()
     {
@@ -22,9 +30,7 @@ class AccountPortlet extends AbstractPortlet
     }
 
     /**
-     * Return the path for the main page of this portlet.
-     *
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getPath()
     {
@@ -32,7 +38,7 @@ class AccountPortlet extends AbstractPortlet
     }
 
     /**
-     * @return Action[]
+     * {@inheritdoc}
      */
     public function getActions()
     {
@@ -43,13 +49,12 @@ class AccountPortlet extends AbstractPortlet
     }
 
     /**
-     * Return the render array for this portlet.
-     * @return array
+     * {@inheritdoc}
      */
     public function getContent()
     {
         $items    = [];
-        $account  = $this->getAccount();
+        $account  = $this->account;
 
         $items[] = [$this->t('Username'), $account->getDisplayName()];
         $items[] = [$this->t('E-mail'), check_plain($account->getEmail())];
@@ -71,19 +76,19 @@ class AccountPortlet extends AbstractPortlet
             ],
         ];
 
-        return [
-            '#theme' => 'description_list',
-            '#theme_wrappers' => ['ucms_user_account_portlet'],
-            '#items' => $items,
-        ];
+        foreach ($items as $index => $item) {
+            $items[$index] = [
+                'title' => ['#markup' => '<strong>' . $item[0] . '</strong>&nbsp;: '],
+                'content' => is_array($item[1]) ? $item[1] : ['#markup' => $item[1]],
+                'sep' => ['#markup' => '<br/>']
+            ];
+        }
+
+        return drupal_render($items);
     }
 
     /**
-     * Return true if portlet if visible for user.
-     *
-     * @param AccountInterface $account
-     *
-     * @return boolean
+     * {@inheritdoc}
      */
     public function userIsAllowed(AccountInterface $account)
     {
