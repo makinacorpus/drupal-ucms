@@ -2,23 +2,19 @@
 
 namespace MakinaCorpus\Ucms\Seo;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityManager;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareInterface;
 use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareTrait;
 use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Seo\Path\AliasManager;
 use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Main access point for SEO information, all Drupal-7-ish stuff will be
@@ -55,7 +51,7 @@ class SeoService implements AuthorizationAwareInterface
     private $entityManager;
 
     /**
-     * @var AliasManagerInterface
+     * @var AliasManager
      */
     private $aliasManager;
 
@@ -91,7 +87,7 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function __construct(
         EntityManager $entiyManager,
-        AliasManagerInterface $aliasManager,
+        AliasManager $aliasManager,
         AliasStorageInterface $aliasStorage,
         RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
@@ -110,17 +106,16 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function clearCache()
     {
-        $this->aliasManager->cacheClear();
     }
 
     /**
      * Get alias storage
      *
-     * @return AliasStorageInterface
+     * @return AliasManager
      */
-    public function getAliasStorage()
+    public function getAliasManager()
     {
-        return $this->aliasStorage;
+        return $this->aliasManager;
     }
 
     /**
@@ -131,54 +126,6 @@ class SeoService implements AuthorizationAwareInterface
     public function getRedirectStorage()
     {
         return $this->redirectStorage;
-    }
-
-    /**
-     * Get node storage
-     *
-     * @return EntityStorageInterface
-     */
-    protected function getNodeStorage()
-    {
-        return $this->entityManager->getStorage('node');
-    }
-
-    /**
-     * Get node identifier from route
-     *
-     * @param string $route
-     *
-     * @return int
-     *   Or null if it's not a node route
-     */
-    protected function getLinkNodeId($route)
-    {
-        if (false === ($pos = strpos($route, '/'))) {
-            return;
-        }
-
-        $id = substr($route, $pos + 1);
-
-        if (is_numeric($id)) {
-            return (int)$id;
-        }
-    }
-
-    /**
-     * Get node associate to given link route
-     *
-     * @param string $route
-     *
-     * @return NodeInterface
-     */
-    protected function getLinkNode($route)
-    {
-        return $this
-            ->getNodeStorage()
-            ->load(
-                $this->getLinkNode($route)
-            )
-        ;
     }
 
     /**
@@ -292,64 +239,17 @@ class SeoService implements AuthorizationAwareInterface
     }
 
     /**
-     * Get node canonical alias
+     * Get node canonical alias for the current site
      *
      * @param NodeInterface $node
-     * @param string $langcode
-     * @param bool $restricToCurrentSite
-     * @return
+     *
+     * @return null|string
      */
-    public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $restricToCurrentSite = false)
+    public function getNodeLocalCanonical(NodeInterface $node)
     {
-        // We need to directly query the path alias table from here.
-        $query = $this
-            ->db
-            ->select('ucms_seo_alias', 'u')
-            ->fields('u', ['alias', 'site_id'])
-            ->condition('node_id', $node->id())
-            ->condition('source', 'node/'.$node->id())
-        ;
-
-        if ($restricToCurrentSite && $this->siteManager->hasContext()) {
-            $query->condition('site_id', $this->siteManager->getContext()->getId());
+        if ($this->siteManager->hasContext()) {
+            return $this->aliasManager->getPathAlias($node->id(), $this->siteManager->getContext()->getId());
         }
-
-        // Always lower the priority for expiring items.
-        $query->orderBy('u.expires', 'IS NULL DESC');
-
-        // Where the magic happens, if no canonical is present, this query
-        // actually does reproduce the SeoAliasStorage::lookupPathAlias() order
-        // and ensure we have consistent aliases and canonicals all over the
-        // place. The only thing that's different is that we won't filter by
-        // site since we will fetch it from the result itself, or from the
-        // node if no site found.
-        $query->orderBy('u.is_canonical', 'DESC');
-        $query->orderBy('u.priority', 'DESC');
-
-        // If language is not specified, attempt with the node one
-        if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
-            $langcode = $node->language; // @todo Drupal 8
-        }
-
-        // Language order is less important than site itself.
-        if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
-            $langcodeList = [$langcode];
-        } else {
-            $langcodeList = [$langcode, LanguageInterface::LANGCODE_NOT_SPECIFIED];
-            if (LanguageInterface::LANGCODE_NOT_SPECIFIED < $langcode) {
-                $query->orderBy('u.language', 'DESC');
-            } else {
-                $query->orderBy('u.language', 'ASC');
-            }
-        }
-
-        return $query
-            ->orderBy('u.pid', 'DESC')
-            ->range(0, 1)
-            ->condition('u.language', $langcodeList)
-            ->execute()
-            ->fetch()
-        ;
     }
 
     /**
@@ -357,42 +257,37 @@ class SeoService implements AuthorizationAwareInterface
      *
      * @param NodeInterface $node
      * @param string $langcode
+     *
+     * @return null|string
      */
-    public function getNodeCanonical(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
+    public function getNodeCanonical(NodeInterface $node)
     {
-        $route  = 'node/' . $node->id();
-        $row = $this->getNodeCanonicalAlias($node, $langcode);
-
-        if (!$row) {
-            // No alias at all means that the canonical is the node URL in the
-            // current site, I am sorry I can't provide more any magic here...
-            return url($route, ['absolute' => true]);
-        }
-
-        $site = null;
         $storage = $this->siteManager->getStorage();
 
-        if ($row->site_id) {
-            $site = $storage->findOne($row->site_id);
-        } else {
-            // There is no site, let's fetch the node one, the first, original
-            // one deserves to actually be the canonical.
-            if ($node->site_id) {
-                $storage->findOne($node->site_id);
-            } else if ($this->siteManager->hasContext()) {
-                $site = $this->siteManager->getContext();
-            } else {
-                // Attempt to find the very first site the node was in and just
-                // use that one.
-                // @todo DO IT BITCH !
+        // Very fist site is the right one for canonical URL
+        if ($node->site_id) {
+            $site = $storage->findOne($node->site_id);
+            if ($site->getState() !== SiteState::ON) {
+                $site = null;
             }
         }
 
+        // If no site, fetch on the current site
         if (!$site) {
-            return url($row->alias, ['absolute' => true]);
+            if ($this->siteManager->hasContext()) {
+                $site = $this->siteManager->getContext();
+            }
         }
 
-        return $this->siteManager->getUrlGenerator()->generateUrl($site, $row->alias, ['absolute' => true], true);
+        $alias = $this->aliasManager->getPathAlias($node->id(), $site->getId());
+
+        if (!$alias) {
+            // No alias at all means that the canonical is the node URL in the
+            // current site, I am sorry I can't provide more any magic here...
+            return url('node/' . $node->id(), ['absolute' => true]);
+        }
+
+        return $this->siteManager->getUrlGenerator()->generateUrl($site, $alias, ['absolute' => true], true);
     }
 
     /**
@@ -500,302 +395,7 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function getLinkAlias($id)
     {
-        $nodeIdList = [];
-        $segments   = [];
-
-        do {
-            $q = $this->db->select('menu_links', 'l');
-            $q->addField('l', 'plid', 'parent');
-            $q->addField('l', 'link_path', 'route');
-
-            $item = $q->condition('l.mlid', $id)->range(0, 1)->execute()->fetch();
-
-            if ($item) {
-                if ($nodeId = $this->getLinkNodeId($item->route)) {
-                    array_unshift($nodeIdList, $nodeId);
-                    $id = $item->parent; // Next iteration
-                } else {
-                    // The menu is not a node, just fetch its rightful alias
-                    // and prefix the segments with, then return
-                    $segments[] = $this->aliasManager->getAliasByPath($item->route);
-                    break;
-                }
-            }
-        } while ($item);
-
-        if ($nodeIdList) {
-            $map = $this->getNodeAliasMap($nodeIdList);
-            // Build the segment list
-            foreach ($nodeIdList as $nodeId) {
-                if (isset($map[$nodeId])) {
-                    $segments[] = $map[$nodeId];
-                } else {
-                    $segments[] = 'n' . $nodeId; // Fallback.
-                }
-            }
-        }
-
-        return implode('/', $segments);
-    }
-
-    /**
-     * Get menu links aliases for children
-     *
-     * This function will do some recursion over menu links table queries so
-     * please use it wisely, only for rebuilding.
-     *
-     * This will break as soon as any found menu are not pointing to a node,
-     * including the current menu given as parameter.
-     *
-     * @param int $id
-     *   Menu link identifier
-     *
-     * @return string[]
-     *   Keys are node identifiers, values are new aliases
-     */
-    public function getLinkChildrenAliases($id)
-    {
-        $ret = [];
-
-        // In this function, node identifiers will be associated to menu links
-        // identifiers, so that we can later do a fast pseudo topological browse
-        // of the links tree and build aliases
-        $linkMap = [];
-
-        // First collect all children recursively
-        $q = $this->db->select('menu_links', 'l');
-        $q->addField('l', 'mlid', 'id');
-        $q->addField('l', 'plid', 'parent');
-        $q->addField('l', 'has_children', 'hasChildren');
-        $q->addField('l', 'link_path', 'route');
-        $or = db_or();
-        // Clever girl (1).
-        foreach (range(1, 9) as $i) {
-            $or->condition('l.p' . $i, $id);
-        }
-        $itemList = $q->condition($or)->execute()->fetchAllAssoc('id');
-
-        if (empty($itemList)) {
-            return [];
-        }
-
-        // Then collect all node identifiers associated to those
-        foreach ($itemList as $index => $item) {
-            if ($nodeId = $this->getLinkNodeId($item->route)) {
-                $linkMap[$item->id] = $nodeId;
-                $itemList[$item->id]->nodeId = $nodeId;
-            } else {
-                unset($itemList[$index]);
-            }
-        }
-
-        // Load all at once, and prey
-        $map = $this->getNodeAliasMap($linkMap);
-
-        foreach ($linkMap as $index => $nodeId) {
-            if (isset($map[$nodeId])) {
-                $linkMap[$index] = $map[$nodeId];
-            } else {
-                $linkMap[$index] = 'n' . $nodeId; // Fallback.
-            }
-        }
-
-        // Don't forget to add the one we had as function parameter
-        $linkMap[$id] = $this->getLinkAlias($id);
-
-        // And now the hard part: we need to proceed to a topological sort on
-        // loaded item list, match them to the node identifiers, and build all
-        // of their aliases depending on parent node aliases.
-        foreach ($itemList as $item) {
-            $segments = [];
-            $current = $item;
-            do {
-                array_unshift($segments, $linkMap[$current->id]);
-                if (isset($itemList[$current->parent])) {
-                    $current = $itemList[$current->parent];
-                } else {
-                    break;
-                }
-            } while ($current);
-            // Re-key the array using aliases: avoids duplicates, which may
-            // cause, later, SQL INSERT exceptions due to constraint violation
-            $alias = implode('/', $segments);
-            $ret[$item->nodeId][$alias] = $alias;
-        }
-
-        // For lucky little bastards that read the function till the end:
-        //   (1) Muldoon: [Just before he gets attacked by a raptor].
-        return $ret;
-    }
-
-    /**
-     * Bulk merge node aliases
-     *
-     * @param string[][] $nodeAliases
-     *   First dimension keys are node identifiers, and values are
-     *   arrays of actual node aliases
-     */
-    protected function nodeAliasesMerge($nodeAliases, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $siteId)
-    {
-        // We hope doing that in only 3 SQL queries, we can't do less than
-        // that, first one load existing aliases, second insert missing,
-        // while the third update the existing which have an expire date
-
-        if (empty($nodeAliases)) {
-            return;
-        }
-
-        // 1 SQL query
-        $r = $this
-            ->db
-            ->select('ucms_seo_alias', 'u')
-            ->fields('u', ['pid', 'source', 'alias', 'expires', 'node_id'])
-            ->condition('u.node_id', array_keys($nodeAliases))
-            ->condition('u.language', $langcode)
-            ->condition('u.site_id', $siteId)
-            ->execute()
-        ;
-
-        $expiring = [];
-
-        foreach ($r as $row) {
-            if (isset($nodeAliases[$row->node_id])) {
-                if ($row->expires) {
-                    $expiring[] = $row->pid;
-                }
-                $nodeId = $row->node_id;
-                if (!empty($nodeAliases[$nodeId]) && false !== ($index = array_search($row->alias, $nodeAliases[$nodeId]))) {
-                    // Unmark the alias for insertion
-                    unset($nodeAliases[$nodeId][$index]);
-                    if (empty($nodeAliases[$nodeId])) {
-                        unset($nodeAliases[$nodeId]);
-                    }
-                }
-            }
-        }
-
-        if ($expiring) {
-            // 2 SQL queries
-            $this
-                ->db
-                ->update('ucms_seo_alias')
-                ->condition('pid', $expiring)
-                ->fields(['expires' => null])
-                ->execute()
-            ;
-        }
-
-        if (!empty($nodeAliases)) {
-
-            // <strike>3 SQL queries</strike> nope, chuck testa...
-
-            // Duplicate key won't stop happening, fouque, Drupal was not meant
-            // to deal with such algorithm, so we don't really have a choice
-            // here but to use db_merge() or and advanced non-standard query,
-            // so for now, we choose the standard way.
-
-            foreach ($nodeAliases as $nodeId => $aliases) {
-                foreach ($aliases as $alias) {
-                    $this
-                        ->db
-                        ->merge('ucms_seo_alias')
-                        ->key(['alias' => $alias, 'site_id' => $siteId])
-                        ->fields(['source' => 'node/' . $nodeId, 'language' => $langcode, 'node_id' => $nodeId, 'priority' => Alias::PRIORITY_DEFAULT])
-                        ->execute()
-                    ;
-                }
-
-                // Bad thing here, we need to manually clear the path cache for
-                // each node one by one
-                $this->aliasManager->cacheClear('node/' . $nodeId);
-            }
-        }
-    }
-
-    /**
-     * Find and update the canonical link for node
-     *
-     * It won't return anything because it will just update the alias table and
-     * Drupal magic will do the rest
-     *
-     * @param object|array $alias
-     */
-    public function setCanonicalForAlias($alias)
-    {
-        if (!is_object($alias)) {
-            $alias = (object)$alias;
-        }
-
-        $this
-            ->db
-            ->update('ucms_seo_alias')
-            ->fields(['is_canonical' => 0])
-            ->condition(
-                'source',
-                $this->db->escapeLike($alias->source),
-                'LIKE'
-            )
-            ->condition('language', $alias->language)
-            ->execute()
-        ;
-
-        // Use MERGE here to ensure the alias will be correctly created
-        $this
-            ->db
-            ->merge('ucms_seo_alias')
-            ->key([
-                'source'    => $alias->source,
-                'alias'     => $alias->alias,
-                'language'  => $alias->language,
-            ])
-            ->fields([
-                'is_canonical'  => 1,
-            ])
-            ->execute()
-        ;
-    }
-
-    /**
-     * Find and update the canonical link for node
-     *
-     * It won't return anything because it will just update the alias table and
-     * Drupal magic will do the rest
-     *
-     * @param NodeInterface $node
-     * @param Site $site
-     * @param string $alias
-     * @param string $langcode
-     */
-    public function updateCanonicalForNode(NodeInterface $node, $alias, Site $site, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
-    {
-        $route  = 'node/' . $node->id();
-
-        $this
-            ->db
-            ->update('ucms_seo_alias')
-            ->fields(['is_canonical' => 0])
-            ->condition('node_id', $node->id(), 'LIKE')
-            ->condition('language', $langcode)
-            ->execute()
-        ;
-
-        // Use MERGE here to ensure the alias will be correctly created
-        $this
-            ->db
-            ->merge('ucms_seo_alias')
-            ->key([
-                'source'    => $route,
-                'alias'     => $alias,
-                'language'  => $langcode,
-                'site_id'   => $site->getId(),
-            ])
-            ->fields([
-                'is_canonical'  => true,
-                // Enfore node identifier, because you never know.
-                'node_id'       => $node->id(),
-            ])
-            ->execute()
-        ;
+        return null;
     }
 
     /**
@@ -851,52 +451,7 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function onAliasChange(NodeInterface $node, $menuName = null)
     {
-        $nodeRoute  = 'node/' . $node->id();
-        $langcode   = $node->language()->getId();
-
-        // Fetch all menu links associated to this node in order to rebuild
-        // their parenting tree with the new alias, if any changed
-        $q = $this
-            ->db
-            ->select('menu_links', 'l')
-            ->fields('l', ['mlid'])
-            ->fields('m', ['site_id']);
-        ;
-        // We cannot deal aliases that are not in site context
-        $q->join('umenu', 'm', "m.name = l.menu_name AND m.site_id IS NOT NULL");
-        if ($menuName) {
-            $q->condition('l.menu_name', $menuName);
-        }
-        $idMap = $q->condition('l.link_path', $nodeRoute)->execute()->fetchAllKeyed();
-
-        if ($idMap) {
-
-            // Fetch all associated node aliases from the given menu link
-            $nodeAliases = [];
-            foreach ($idMap as $id => $siteId) {
-                if (!array_key_exists($siteId, $nodeAliases)) {
-                    $nodeAliases[$siteId] = [];
-                }
-                $nodeAliases[$siteId] = NestedArray::mergeDeepArray(
-                    [
-                        $nodeAliases[$siteId],
-                        $this->getLinkChildrenAliases($id),
-                    ],
-                    true
-                );
-            }
-
-            // Once merge, bulk update everything in there
-            // @todo this will probably be terrible for performances
-            foreach ($nodeAliases as $siteId => $aliases) {
-                if ($aliases) {
-                    $this->nodeAliasesMerge($aliases, $langcode, $siteId);
-                }
-            }
-        }
-
-        // Ensure node primary alias
-        $this->ensureNodePrimaryAlias($node);
+        // Do something
     }
 
     /**
@@ -910,14 +465,7 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function onAliasRemove(NodeInterface $node, $menuName = null)
     {
-        if ($menuName) {
-            // This will work, since the whole menu will be recomputed
-            $this->onAliasChange($node, $menuName);
-        } else {
-            // @todo but this won't work as we'd expect... need to investigate
-            // further into this
-            $this->onAliasChange($node, null);
-        }
+        // Do something
     }
 
     /**
@@ -932,202 +480,6 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function replaceNodeAliases($siteId, $previousNodeId, $nextNodeId)
     {
-        $this
-              ->db
-              ->query("
-                  UPDATE {ucms_seo_alias}
-                  SET
-                      node_id = :next,
-                      source = :source
-                  WHERE
-                      site_id = :site
-                      AND node_id = :previous
-              ", [
-                  ':site'     => $siteId,
-                  ':previous' => $previousNodeId,
-                  ':next'     => $nextNodeId,
-                  ':source'   => 'node/' . $nextNodeId,
-              ])
-          ;
-    }
-
-    /**
-     * From the given site, ensure that all nodes in it have a primary alias
-     *
-     * @see ::ensureNodePrimaryAlias()
-     *   For the equivalent method that ensure all aliases on all sites for
-     *   a single node
-     *
-     * @param int $siteId
-     * @param string $nodeIdList
-     *   If given, restrict the bulk operation to given node list
-     */
-    public function ensureSitePrimaryAliases($siteId, array $nodeIdList = null)
-    {
-        // HUGE YEAH! CONCAT() exists in both MySQL and PostgreSQL and are
-        // compatible altogether!!!
-        if ($nodeIdList) {
-            $this
-                ->db
-                ->query("
-                    INSERT INTO {ucms_seo_alias}
-                        (source, alias, language, site_id, node_id, priority)
-                    SELECT
-                        CONCAT('node', '/', s.nid), s.alias_segment, n.language, r.site_id, s.nid, :priority
-                    FROM {ucms_seo_node} s
-                    JOIN {node} n ON n.nid = s.nid
-                    JOIN {ucms_site_node} r
-                        ON r.site_id = :siteId
-                        AND r.nid = s.nid
-                    WHERE
-                        s.nid IN (:nidList)
-                        AND NOT EXISTS (
-                            SELECT 1 FROM {ucms_seo_alias} a
-                            WHERE
-                                (a.node_id = r.nid OR a.alias = s.alias_segment)
-                                AND a.site_id = r.site_id
-                        )
-                ", [
-                    ':priority'   => Alias::PRIORITY_LOW,
-                    ':siteId'     => $siteId,
-                    ':nidList'    => $nodeIdList,
-                ])
-            ;
-        } else {
-            $this
-                ->db
-                ->query("
-                    INSERT INTO {ucms_seo_alias}
-                        (source, alias, language, site_id, node_id, priority)
-                    EXPLAIN
-                    SELECT
-                        CONCAT('node', '/', s.nid), s.alias_segment, n.language, r.site_id, s.nid, :priority
-                    FROM {ucms_seo_node} s
-                    JOIN {node} n ON n.nid = s.nid
-                    JOIN {ucms_site_node} r
-                        ON r.site_id = :siteId
-                        AND r.nid = s.nid
-                    WHERE
-                        NOT EXISTS (
-                            SELECT 1 FROM {ucms_seo_alias} a
-                            WHERE
-                                (a.node_id = r.nid OR a.alias = s.alias_segment)
-                                AND a.site_id = r.site_id
-                        )
-                ", [
-                    ':siteId'   => $siteId,
-                    ':priority' => Alias::PRIORITY_LOW,
-                ])
-            ;
-        }
-
-        $this->clearCache();
-    }
-
-    /**
-     * From the given node, ensures at least one alias exists for it on all
-     * sites it is related, leave alone aliases when a menu exists
-     *
-     * @see ::ensureSitePrimaryAliases()
-     *   For the equivalent method that ensure aliases of a list of nodes for
-     *   a single site
-     *
-     * @param NodeInterface $node
-     */
-    public function ensureNodePrimaryAlias(NodeInterface $node)
-    {
-        $nodeRoute  = 'node/' . $node->id();
-        $segment    = $this->getNodeSegment($node);
-        $langcode   = $node->language()->getId();
-
-        // If alias already exists, remove its potential expiry date so it gets
-        // selected instead of others
-        if ($segment) {
-            $this
-                ->db
-                ->query("
-                    UPDATE {ucms_seo_alias}
-                    SET
-                        expires = NULL
-                    WHERE
-                        node_id = :nid
-                        AND alias = :alias
-                        AND expires IS NOT NULL
-                ", [
-                    ':alias'      => $segment,
-                    ':nid'        => $node->id(),
-                ])
-            ;
-
-            // First query will set alias for nodes wherever it does not exists
-            $this
-                ->db
-                ->query("
-                    INSERT INTO {ucms_seo_alias}
-                        (source, alias, language, site_id, node_id, priority)
-                    SELECT
-                        :source1, :alias1, :language, s.site_id, s.nid, :priority1
-                    FROM {ucms_site_node} s
-                    WHERE
-                        s.nid = :nid
-                        AND NOT EXISTS (
-                            SELECT 1 FROM {ucms_seo_alias} e
-                            WHERE
-                                e.site_id = s.site_id AND (
-                                    e.alias = :alias2
-                                    OR (e.source = :source2 AND e.priority > :priority2)
-                                )
-                        )
-                ", [
-                    ':alias1'     => $segment,
-                    ':alias2'     => $segment,
-                    ':language'   => $langcode,
-                    ':nid'        => $node->id(),
-                    ':priority1'  => Alias::PRIORITY_LOW,
-                    ':priority2'  => Alias::PRIORITY_LOW,
-                    ':source1'    => $nodeRoute,
-                    ':source2'    => $nodeRoute,
-                ])
-            ;
-
-            // Considering that the segment just changed, we also need to update
-            // it where it was generated previously
-            $this
-                ->db
-                ->query("
-                    UPDATE {ucms_seo_alias}
-                    SET
-                        expires = :expiry
-                    WHERE
-                        node_id = :nid
-                        AND alias <> :alias
-                        AND priority = :priority
-                ", [
-                    ':alias'      => $segment,
-                    ':expiry'     => (new \DateTime(Alias::EXPIRY))->format('Y-m-d H:i:s'),
-                    ':nid'        => $node->id(),
-                    ':priority'   => Alias::PRIORITY_LOW,
-                ])
-            ;
-        } else {
-            // Just mark as expiring everything
-            $this
-                ->db
-                ->query("
-                    UPDATE {ucms_seo_alias}
-                    SET
-                        expires = :expiry
-                    WHERE
-                        node_id = :nid
-                        AND priority = :priority
-                ", [
-                    ':expiry'     => (new \DateTime(Alias::EXPIRY))->format('Y-m-d H:i:s'),
-                    ':nid'        => $node->id(),
-                    ':priority'   => Alias::PRIORITY_LOW,
-                ])
-            ;
-        }
-
-        $this->clearCache();
+        // Do something
     }
 }

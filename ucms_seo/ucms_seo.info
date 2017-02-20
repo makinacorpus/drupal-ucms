@@ -7,3 +7,4 @@ dependencies[] = sf_dic
 dependencies[] = ucms_site
 dependencies[] = udashboard
 dependencies[] = ulink
+dependencies[] = umenu

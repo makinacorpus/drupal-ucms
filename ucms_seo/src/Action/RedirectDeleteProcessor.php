@@ -4,10 +4,12 @@ namespace MakinaCorpus\Ucms\Seo\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Seo\SeoService;
 
+/**
+ * Delete action on redirect entries.
+ */
 class RedirectDeleteProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;

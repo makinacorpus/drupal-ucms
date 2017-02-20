@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Seo\Path;
 
-
+/**
+ * Redirect storage interface.
+ */
 interface RedirectStorageInterface
 {
     /**

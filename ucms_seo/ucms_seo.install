@@ -10,55 +10,6 @@
 function ucms_seo_schema() {
   $schema = [];
 
-  // Provide a remplacement for the alias table, since Drupal 8 has not
-  // the hook_schema_alter() anymore, we'll also provide a replacement
-  // AliasStorageInterface to come up with.
-  $aliasTable = drupal_get_schema_unprocessed('system', 'url_alias');
-  $aliasTable['fields']['alias']['url_alias']['length'] = 1000;
-  $aliasTable['fields']['site_id'] = [
-    'description' => "Site identifier this alias belongs to",
-    'type'        => 'int',
-    'unsigned'    => true,
-    'not null'    => true,
-  ];
-  $aliasTable['fields']['is_canonical'] = [
-    'description' => "Is this alias the canonical alias for the source path",
-    'type'        => 'int',
-    'unsigned'    => true,
-    'not null'    => true,
-    'default'     => 0,
-  ];
-  $aliasTable['fields']['priority'] = [
-    'description' => "Defines a priority order for alias selection",
-    'type'        => 'int',
-    'not null'    => true,
-    'default'     => 0,
-  ];
-  $aliasTable['fields']['expires'] = [
-    'description' => "When this alias expires",
-    'mysql_type'  => 'datetime',
-    'pgsql_type'  => 'timestamp',
-    'type'        => 'varchar',
-    'length'      => 16,
-    'default'     => null,
-  ];
-  $aliasTable['fields']['node_id'] = [
-    'description' => "Associated node identifier if applyable",
-    'type'        => 'int',
-    'unsigned'    => true,
-    'not null'    => false,
-    'default'     => null,
-  ];
-  $schema['ucms_seo_alias'] = $aliasTable;
-  if ('mysql' !== \Database::getConnection()->driver()) {
-    // This can't be set this way on MySQL, because this fucking sadistic monkey
-    // driven so-called "relational database" (what a joke) cannot do UNIQUE
-    // KEYS nor INDEX on VARCHAR() that are longer than 768 bytes (so this is
-    // actually 255 characters using UTF-8).
-    // Why on earth anyone would want to use MySQL ? Seriously.
-    $schema['ucms_seo_alias']['unique keys']['uk_ucms_seo_alias_site'] = ['alias', 'site_id'];
-  }
-
   // Same statement as upper, any performance critical meta information must
   // live in a database table we keep the ownership on, any field API usage
   // here would forces us to proceed to heavy recursive processing over
@@ -97,9 +48,76 @@ function ucms_seo_schema() {
       'nid' => [
         'table'   => 'node',
         'columns' => ['node' => 'nid'],
+        'delete'  => 'cascade',
       ],
     ],
     'primary key' => ['nid'],
+  ];
+
+  $schema['ucms_seo_route'] = [
+    'description' => 'Stores node routes outside of Drupal alias manager',
+    'fields' => [
+      'node_id' => [
+        'description' => "Node identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'site_id' => [
+        'description' => "Site identifier this route belongs to",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'route' => [
+        'description' => "Node path alias, computed based upon menus",
+        'type'        => 'varchar',
+        'length'      => 1024,
+        'not null'    => true,
+      ],
+      'menu_id' => [
+        'description' => "Menu identifier if known (helps for invalidation)",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => false,
+        'default'     => null,
+      ],
+      'is_protected' => [
+        'description' => "I'm sure they will ask me to be able to bypass alias generation sometime",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+      'is_outdated' => [
+        'description' => "Is this path alias outdated, will be recomputed on access",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+    ],
+    'foreign keys' => [
+      'node_id'     => [
+        'table'   => 'node',
+        'columns' => ['node' => 'nid'],
+        'delete'  => 'cascade',
+      ],
+      'site_id' => [
+        'table'   => 'ucms_site',
+        'columns' => ['ucms_site' => 'id'],
+        'delete'  => 'cascade',
+      ],
+      'menu_id' => [
+        'table'   => 'umenu',
+        'columns' => ['mnue_id' => 'id'],
+        'delete'  => 'set null',
+      ],
+    ],
+    'unique keys' => [
+      'seo_site_route' => ['site_id', 'route'],
+    ],
+    'primary key' => ['node_id', 'site_id'],
   ];
 
   $schema['ucms_seo_redirect'] = [
@@ -108,37 +126,47 @@ function ucms_seo_schema() {
       'id'      => [
         'description' => "Redirect identifier",
         'type'        => 'serial',
-        'unsigned'    => TRUE,
-        'not null'    => TRUE,
+        'unsigned'    => true,
+        'not null'    => true,
       ],
       'nid'     => [
         'description' => "Node identifier",
         'type'        => 'int',
-        'unsigned'    => TRUE,
-        'not null'    => TRUE,
+        'unsigned'    => true,
+        'not null'    => true,
       ],
       'site_id' => [
         'description' => "Site identifier this alias belongs to",
         'type'        => 'int',
-        'unsigned'    => TRUE,
-        'not null'    => TRUE,
+        'unsigned'    => true,
+        'not null'    => true,
       ],
       'path'    => [
         'description' => "Old path to redirect from",
         'type'        => 'varchar',
         'length'      => 1024,
-        'not null'    => TRUE,
+        'not null'    => true,
         'default'     => '',
+      ],
+      'expires' => [
+        'description' => "When this redirect expires (is fully dropped; if null, no drop)",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'default'     => null,
       ],
     ],
     'foreign keys' => [
       'nid'     => [
         'table'   => 'node',
         'columns' => ['node' => 'nid'],
+        'delete'  => 'cascade',
       ],
       'site_id' => [
         'table'   => 'ucms_site',
         'columns' => ['ucms_site' => 'id'],
+        'delete'  => 'cascade',
       ],
     ],
     'indexes'      => [
@@ -157,12 +185,11 @@ function ucms_seo_install_constraints() {
   // Hopefully, this syntax should work on both PostgreSQL and MySQL although
   // this is pure coincidence, this is great for us.
   return [
-    'ucms_seo_alias' => [
-      'ucms_seo_alias_node_id_fk' => "ALTER TABLE {ucms_seo_alias} ADD CONSTRAINT {ucms_seo_alias_node_id_fk} FOREIGN KEY (node_id) REFERENCES {node} (nid) ON DELETE CASCADE",
+    'ucms_seo_node' => [
+      'ucms_seo_node_fk' => "ALTER TABLE {ucms_seo_node} ADD CONSTRAINT {ucms_seo_node_fk} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
     ],
     'ucms_seo_node' => [
       'ucms_seo_node_fk' => "ALTER TABLE {ucms_seo_node} ADD CONSTRAINT {ucms_seo_node_fk} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
-      'ucms_seo_alias_site_fk' => "ALTER TABLE {ucms_seo_alias} ADD CONSTRAINT {ucms_seo_alias_site_fk} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
     ],
   ];
 }
@@ -171,49 +198,18 @@ function ucms_seo_install_constraints() {
  * Adds database constraints.
  */
 function ucms_seo_install_schema_fix() {
-
-  if ('mysql' === \Database::getConnection()->driver()) {
-    // @see ucms_seo_schema().
-    // @todo this seems unnecessary when starting from a fresh install, keys has
-    //   not been set during install.
-    // db_query("ALTER TABLE {ucms_seo_alias} DROP KEY uk_ucms_seo_alias_site");
-    db_query("ALTER TABLE {ucms_seo_alias} ADD KEY uk_ucms_seo_alias_site (alias(255), site_id)");
-    db_query("ALTER TABLE {ucms_seo_alias} MODIFY COLUMN `alias` varchar(1000) NOT NULL DEFAULT ''");
-  }
-
-  foreach (ucms_seo_install_constraints() as $table => $statements) {
-    if (db_table_exists($table)) {
-      foreach ($statements as $statement) {
-        try {
-          db_query($statement);
-        } catch (\PDOException $e) {
-          switch ($e->getCode()) {
-            case 42710: // PostgreSQL constraint already exists
-              continue;
-            case 23000: // MySQL duplicate key in table
-              continue;
-            default:
-              throw $e;
-          }
-        }
-      }
-    }
-  }
+  drupal_get_complete_schema(true);
+  db_constraint_add_all('ucms_layout', drupal_get_schema('ucms_layout'));
+  db_constraint_add_all('ucms_layout_data', drupal_get_schema('ucms_layout_data'));
 }
 
 /**
  * Removes database constraints.
  */
 function ucms_seo_uninstall_schema_fix() {
-  /*
-  foreach (ucms_seo_install_constraints() as $table => $statements) {
-    if (db_condition($table)) {
-      foreach ($statements as $statement) {
-        // @todo should rmeove contraint db_query($statement);
-      }
-    }
-  }
-   */
+  drupal_get_complete_schema(true);
+  db_constraint_add_all('ucms_layout', drupal_get_schema('ucms_layout'));
+  db_constraint_add_all('ucms_layout_data', drupal_get_schema('ucms_layout_data'));
 }
 
 /**
@@ -239,7 +235,7 @@ function ucms_seo_install_set_weight() {
  * Implements hook_install().
  */
 function ucms_seo_install() {
-  ucms_seo_install_schema_fix();
+  db_constraint_fix('ucms_seo');
   ucms_seo_install_set_weight();
 }
 
@@ -247,54 +243,7 @@ function ucms_seo_install() {
  * Implements hook_uninstall().
  */
 function ucms_seo_uninstall() {
-  ucms_seo_uninstall_schema_fix();
-}
-
-/**
- * Adds the missing {ucms_seo_alias}.site_id column.
- */
-function ucms_seo_update_7001() {
-  if (!db_field_exists('ucms_seo_alias', 'site_id')) {
-    db_add_field('ucms_seo_alias', 'site_id', [
-      'description' => "Site identifier this alias belongs to",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-    ]);
-  }
-}
-
-/**
- * Adds missing database contraints.
- *
- * Weird thing is, with MySQL, when adding the field and settings contraints
- * during the same transaction, it seems to fail due to failing constraint, but
- * if you do it in two transactions, it works.
- */
-function ucms_seo_update_7002() {
-  ucms_seo_install_schema_fix();
-}
-
-/**
- * Sets the ucms_seo_alias.site_id column as nullable.
- */
-function ucms_seo_update_7003() {
-
-  try {
-    db_query("ALTER TABLE {ucms_seo_alias} DROP FOREIGN KEY {ucms_seo_alias_site_fk};");
-  } catch (PDOException $e) {}
-
-  if (db_field_exists('ucms_seo_alias', 'site_id')) {
-    db_drop_field('ucms_seo_alias', 'site_id');
-  }
-
-  db_add_field('ucms_seo_alias', 'site_id', [
-    'description' => "Site identifier this alias belongs to",
-    'type'        => 'int',
-    'unsigned'    => true,
-    'not null'    => false,
-    'default'     => null,
-  ]);
+  db_constraint_unfix('ucms_seo');
 }
 
 /**
@@ -321,35 +270,6 @@ function ucms_seo_update_7005() {
 }
 
 /**
- * Adds missing database columns.
- */
-function ucms_seo_update_7008() {
-  if (!db_field_exists('ucms_seo_alias', 'priority')) {
-    db_add_field('ucms_seo_alias', 'priority', [
-      'description' => "Defines a priority order for alias selection",
-      'type'        => 'int',
-      'not null'    => true,
-      'default'     => 0,
-    ]);
-  }
-  db_query("DELETE FROM {ucms_seo_alias} WHERE site_id IS NULL");
-  db_change_field('ucms_seo_alias', 'site_id', 'site_id', [
-    'description' => "Site identifier this alias belongs to",
-    'type'        => 'int',
-    'unsigned'    => true,
-    'not null'    => true,
-  ]);
-}
-
-/**
- * Restablishes the database contraints.
- */
-function ucms_seo_update_7010() {
-  db_add_unique_key('ucms_seo_alias', 'uk_ucms_seo_alias_site', ['alias', 'site_id']);
-  ucms_seo_install_schema_fix();
-}
-
-/**
  * Fix module weight.
  */
 function ucms_seo_update_7011() {
@@ -363,66 +283,6 @@ function ucms_seo_update_7014() {
   if (db_table_exists('ucms_seo_deadlinks_tracking')) {
     db_drop_table('ucms_seo_deadlinks_tracking');
   }
-}
-
-/**
- * Adds the {ucms_seo_alias}.node_id column.
- */
-function ucms_seo_update_7015() {
-  if (!db_field_exists('ucms_seo_alias', 'node_id')) {
-    db_add_field('ucms_seo_alias', 'node_id', [
-      'description' => "Associated node identifier if applyable",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ]);
-  }
-  ucms_seo_install_schema_fix();
-
-  // We are still just in the begining of the project, so there is not a
-  // massive amount of aliases, just fix this basically, there is no SQL
-  // standard way to do this.
-  $map = db_query("SELECT source, source FROM {ucms_seo_alias} WHERE source LIKE 'node/%'")->fetchAllKeyed();
-  $missing = [];
-  $map = array_map(function ($value) use (&$missing) {
-    $nodeId = explode('/', $value, 2)[1];
-    if (db_query("SELECT 1 FROM {node} WHERE nid = ?", [$nodeId])->fetchField()) {
-      return $nodeId;
-    }
-    $missing[] = $value;
-  }, $map);
-  // Remove missing nodes
-  if ($missing) {
-    db_query("DELETE FROM {ucms_seo_alias} WHERE source IN (:missing)", [':missing' => $missing]);
-  }
-  // Update others
-  foreach ($map as $source => $nodeId) {
-    db_query("UPDATE {ucms_seo_alias} SET node_id = :id WHERE source = :source", [':id' => $nodeId, ':source' => $source]);
-  }
-}
-
-/**
- * Changes the {ucms_seo_alias}.expires to datetime
- */
-function ucms_seo_update_7016() {
-  // There is no real content yet so this is OK.
-  db_query("UPDATE {ucms_seo_alias} SET expires = NULL");
-  db_change_field('ucms_seo_alias', 'expires', 'expires', [
-    'description' => "When this alias expires",
-    'mysql_type'  => 'datetime',
-    'pgsql_type'  => 'timestamp',
-    'type'        => 'varchar',
-    'length'      => 16,
-    'default'     => null,
-  ]);
-}
-
-/**
- * Change the {ucms_seo_alias}.alias length from 255 to 1000
- */
-function ucms_seo_update_7017() {
-  ucms_seo_install_schema_fix();
 }
 
 /**
@@ -441,4 +301,69 @@ function ucms_seo_update_7018() {
  */
 function ucms_seo_update_7019() {
   db_query("UPDATE {ucms_seo_redirect} SET path = CONCAT('/', path) WHERE LEFT(path, 1) != '/'")->execute();
+}
+
+/**
+ * New aliases database structure.
+ */
+function ucms_seo_update_7020() {
+  if (!db_table_exists('ucms_seo_route')) {
+    db_create_table('ucms_seo_route', drupal_get_schema_unprocessed('ucms_seo', 'ucms_seo_route'));
+  }
+  if (!db_field_exists('ucms_seo_redirect', 'expires')) {
+    db_add_field('ucms_seo_redirect', 'expires', [
+      'description' => "When this redirect expires (is fully dropped; if null, no drop)",
+      'mysql_type'  => 'datetime',
+      'pgsql_type'  => 'timestamp',
+      'type'        => 'varchar',
+      'length'      => 16,
+      'default'     => null,
+    ]);
+  }
+  ucms_seo_install_schema_fix();
+}
+
+/**
+ * New aliases data migration.
+ */
+function ucms_seo_update_7021() {
+
+  if (!db_table_exists('ucms_seo_alias')) {
+    return;
+  }
+
+  db_query("
+    INSERT INTO {ucms_seo_route}
+        (node_id, site_id, route, is_outdated)
+    SELECT
+        node_id, site_id, alias, 1
+    FROM {ucms_seo_alias}
+    WHERE pid IN (
+        SELECT MAX(pid)
+        FROM ucms_seo_alias
+        WHERE
+            site_id IS NOT NULL
+        GROUP BY
+            node_id, site_id
+    )
+  ");
+
+  db_query("
+    UPDATE {ucms_seo_alias}
+    SET expires = :date
+    WHERE expires IS NULL
+  ", [':date' => (new DateTime("now +6 month"))->format('Y-m-d')]);
+
+  db_query("
+    INSERT INTO {ucms_seo_redirect}
+        (nid, site_id, path, expires)
+    SELECT
+        node_id, site_id, CONCAT('/', alias), expires
+    FROM {ucms_seo_alias}
+    WHERE
+        site_id IS NOT NULL
+  ");
+
+  // We'll see about that later; just keeping it in case
+  // db_drop_table('ucms_seo_alias');
 }

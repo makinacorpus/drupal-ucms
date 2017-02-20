@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
 use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeReferenceCollectEvent;
 use MakinaCorpus\ULink\EntityLinkGenerator;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**

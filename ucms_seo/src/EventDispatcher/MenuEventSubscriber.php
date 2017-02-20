@@ -3,10 +3,8 @@
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
-
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MenuEventSubscriber implements EventSubscriberInterface

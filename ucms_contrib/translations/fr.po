@@ -138,7 +138,6 @@ msgstr "Retirer le marquage comme inapproprié"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:142
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:41
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:36
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/RedirectDeleteProcessor.php:36
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeDeleteProcessor.php:34
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:86
@@ -1504,37 +1503,6 @@ msgstr "Index de recherche"
 #: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.module:75
 msgid "Manage search indices."
 msgstr "Gérer les index de recherche"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasCanonicalProcessor.php:36
-msgid "Set as canonical"
-msgstr "Définir comme canonique"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasCanonicalProcessor.php:46
-msgid "Set this item as canonical for the associated page?"
-msgid_plural ""
-"Set the selected @count items as canonical for their respectively associated "
-"pages?"
-msgstr[0] "Définir cet élément comme canonique pour la page associée ?"
-msgstr[1] "Définir ces éléments comme canoniques pour leur page associée ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasCanonicalProcessor.php:64
-msgid "Alias has been set as canonical for its associated page"
-msgid_plural "@count aliases have been set as canonical their associated pages"
-msgstr[0] "L'alias a été défini comme url canonique pour cette page associée"
-msgstr[1] ""
-"@count alias ont été définis comme url canonique pour cette page associée"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:46
-msgid "Delete this page alias?"
-msgid_plural "Delete those @count page aliases?"
-msgstr[0] "Supprimer cet alias de page ?"
-msgstr[1] "Supprimer ces @count alias de page ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:65
-msgid "Alias has been deleted"
-msgid_plural "@count aliases have been deleted"
-msgstr[0] "L'alias a été supprimé"
-msgstr[1] "@count alias ont été supprimé"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/NodeActionProvider.php:47
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/SiteActionProvider.php:47

@@ -4,19 +4,18 @@ services:
     class: MakinaCorpus\Ucms\Seo\SeoService
     arguments:
       - "@entity.manager"
-      - "@path.alias_manager"
+      - "@ucms_seo.alias_manager"
       - "@path.alias_storage"
       - "@ucms_seo.redirect_storage"
       - "@ucms_site.manager"
       - "@database"
 
+  ucms_seo.alias_manager:
+    class: MakinaCorpus\Ucms\Seo\Path\AliasManager
+    arguments: ['@database', '@umenu.tree_provider']
+
   ucms_seo.redirect_storage:
     class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
-    arguments: ['@database', '@module_handler', "@ucms_site.manager"]
-
-  # This overrides the global one
-  path.alias_storage:
-    class: MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
 
   # Various actions providers for node and site
@@ -32,16 +31,6 @@ services:
     tags: [{name: udashboard.action_provider}]
 
   # Action processors
-  ucms_seo.action.alias_canonical:
-    public: false
-    class: MakinaCorpus\Ucms\Seo\Action\AliasCanonicalProcessor
-    arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: udashboard.action}]
-  ucms_seo.action.alias_delete:
-    public: false
-    class: MakinaCorpus\Ucms\Seo\Action\AliasDeleteProcessor
-    arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: udashboard.action}]
   ucms_seo.action.redirect_delete:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\StoreLocatorAliasRebuildProcessor
@@ -79,7 +68,7 @@ services:
     arguments: ["@ucms_seo.seo_service", "@entity.manager"]
     tags: [{name: event_subscriber }]
   ucms_seo.site_attach.subscriber:
-    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteAttachEventSubscriber
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteEventSubscriber
     arguments: ["@ucms_seo.seo_service"]
     tags: [{ name: event_subscriber }]
   ucms_seo.node_event_subscriber:

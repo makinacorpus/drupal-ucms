@@ -2,34 +2,39 @@
 
 namespace MakinaCorpus\Ucms\Seo\Path;
 
-
 use Drupal\Core\Extension\ModuleHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
+/**
+ * Redirect aliases database default storage.
+ */
 class RedirectStorage implements RedirectStorageInterface
 {
     /**
      * @var \DatabaseConnection
      */
-    private $db;
+    private $database;
+
     /**
-     * @var \MakinaCorpus\Ucms\Site\SiteManager
+     * @var SiteManager
      */
     private $siteManager;
+
     /**
-     * @var \Drupal\Core\Extension\ModuleHandler
+     * @var ModuleHandler
      */
     private $moduleHandler;
 
     /**
      * Default constructor.
      *
-     * @param \DatabaseConnection $db
-     * @param \MakinaCorpus\Ucms\Site\SiteManager $siteManager
+     * @param \DatabaseConnection $database
+     * @param ModuleHandler $moduleHandler
+     * @param SiteManager $siteManager
      */
-    public function __construct(\DatabaseConnection $db, ModuleHandler $moduleHandler, SiteManager $siteManager)
+    public function __construct(\DatabaseConnection $database, ModuleHandler $moduleHandler, SiteManager $siteManager)
     {
-        $this->db = $db;
+        $this->database = $database;
         $this->siteManager = $siteManager;
         $this->moduleHandler = $moduleHandler;
     }
@@ -56,7 +61,7 @@ class RedirectStorage implements RedirectStorageInterface
             $redirect['id'] = $id;
 
             $this
-                ->db
+                ->database
                 ->merge('ucms_seo_redirect')
                 ->key(['id' => $id])
                 ->fields($redirect)
@@ -68,7 +73,7 @@ class RedirectStorage implements RedirectStorageInterface
         } else {
 
             $this
-                ->db
+                ->database
                 ->insert('ucms_seo_redirect')
                 ->fields($redirect)
                 ->execute()
@@ -80,14 +85,17 @@ class RedirectStorage implements RedirectStorageInterface
         return $redirect;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function load($conditions)
     {
-        $select = $this->db->select('ucms_seo_redirect', 'u');
+        $select = $this->database->select('ucms_seo_redirect', 'u');
 
         foreach ($conditions as $field => $value) {
             if ($field == 'path') {
                 // Use LIKE for case-insensitive matching (stupid).
-                $select->condition('u.'.$field, $this->db->escapeLike($value), 'LIKE');
+                $select->condition('u.'.$field, $this->database->escapeLike($value), 'LIKE');
             } else {
                 $select->condition('u.'.$field, $value);
             }
@@ -99,18 +107,21 @@ class RedirectStorage implements RedirectStorageInterface
             ->range(0, 1)
             ->execute()
             ->fetchObject()
-            ;
+        ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete($conditions)
     {
         $path = $this->load($conditions);
-        $query = $this->db->delete('ucms_seo_redirect');
+        $query = $this->database->delete('ucms_seo_redirect');
 
         foreach ($conditions as $field => $value) {
             if ($field == 'path') {
                 // Use LIKE for case-insensitive matching (still stupid).
-                $query->condition($field, $this->db->escapeLike($value), 'LIKE');
+                $query->condition($field, $this->database->escapeLike($value), 'LIKE');
             } else {
                 $query->condition($field, $value);
             }
@@ -123,6 +134,9 @@ class RedirectStorage implements RedirectStorageInterface
 
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function redirectExists($path, $node_id, $site_id = null)
     {
         if (!$site_id) {
@@ -134,9 +148,9 @@ class RedirectStorage implements RedirectStorageInterface
 
         // Use LIKE and NOT LIKE for case-insensitive matching (stupid).
         $query = $this
-            ->db
+            ->database
             ->select('ucms_seo_redirect', 'u')
-            ->condition('u.path', $this->db->escapeLike($path), 'LIKE')
+            ->condition('u.path', $this->database->escapeLike($path), 'LIKE')
             ->condition('u.nid', $node_id)
             ->condition('u.site_id', $site_id)
         ;
@@ -147,13 +161,16 @@ class RedirectStorage implements RedirectStorageInterface
             ->range(0, 1)
             ->execute()
             ->fetchField()
-            ;
+        ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAliasesForAdminListing($header, $keys = null)
     {
         $query = $this
-            ->db
+            ->database
             ->select('ucms_seo_redirect', 'u')
             ->extend('PagerDefault')
             ->extend('TableSort')
@@ -172,12 +189,15 @@ class RedirectStorage implements RedirectStorageInterface
             ->limit(50)
             ->execute()
             ->fetchAll()
-            ;
+        ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function pathHasMatchingRedirect($path, $site_id = null)
     {
-        $query = $this->db->select('ucms_seo_redirect', 'u');
+        $query = $this->database->select('ucms_seo_redirect', 'u');
 
         if (!$site_id) {
             if (!$this->siteManager->hasContext()) {
@@ -193,6 +213,6 @@ class RedirectStorage implements RedirectStorageInterface
             ->range(0, 1)
             ->execute()
             ->fetchField()
-            ;
+        ;
     }
 }
