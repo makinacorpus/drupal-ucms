@@ -14,6 +14,8 @@ use MakinaCorpus\Umenu\TreeProviderInterface;
  *   and retry in a transaction; it'll be much safer
  * @todo implement the redirection on hook_menu_status_alter() in case
  *   of a 404 not/found with a simple select query
+ * @todo handle invalidation
+ * @todo deduplicate
  * @todo last but not least, we need a way to trick drupal path alias
  *   manager that our aliases are valid aliases for himself, would be
  *   good not to rely upon the path alias manager
@@ -203,7 +205,10 @@ class AliasManager
                 }
             } catch (\Exception $e2) {
                 // You are fucked.
+                watchdog_exception(__FUNCTION__, $e2);
             }
+
+            throw $e;
         }
     }
 
