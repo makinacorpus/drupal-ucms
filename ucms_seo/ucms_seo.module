@@ -17,7 +17,6 @@
  *   - global configuration (administer path, canonicals)
  */
 
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;

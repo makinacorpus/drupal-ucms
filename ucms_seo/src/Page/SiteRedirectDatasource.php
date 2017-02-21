@@ -50,7 +50,6 @@ class SiteRedirectDatasource extends AbstractDatasource
         $q->fields('u');
         $q->condition('u.site_id', $query['site']);
 
-
         if ($pageState->hasSortField()) {
             $q->orderBy(
                 'u.'.$pageState->getSortField(),
