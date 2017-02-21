@@ -167,34 +167,6 @@ class RedirectStorage implements RedirectStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getAliasesForAdminListing($header, $keys = null)
-    {
-        $query = $this
-            ->database
-            ->select('ucms_seo_redirect', 'u')
-            ->extend('PagerDefault')
-            ->extend('TableSort')
-        ;
-
-        if ($keys) {
-            // Replace wildcards with PDO wildcards.
-            $values = '%'.preg_replace('!\*+!', '%', $keys).'%';
-
-            $query->condition('u.path', $values, 'LIKE');
-        }
-
-        return $query
-            ->fields('u')
-            ->orderByHeader($header)
-            ->limit(50)
-            ->execute()
-            ->fetchAll()
-        ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function pathHasMatchingRedirect($path, $site_id = null)
     {
         $query = $this->database->select('ucms_seo_redirect', 'u');

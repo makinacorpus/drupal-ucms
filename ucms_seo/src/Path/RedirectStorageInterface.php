@@ -57,20 +57,6 @@ interface RedirectStorageInterface
     public function redirectExists($path, $node_id, $site_id = null);
 
     /**
-     * Loads redirects for admin listing.
-     *
-     * @param array $header
-     *   Table header.
-     * @param string|null $keys
-     *   (optional) Search keyword that may include one or more '*' as wildcard
-     *   values.
-     *
-     * @return array
-     *   Array of items to be displayed on the current page.
-     */
-    public function getAliasesForAdminListing($header, $keys = null);
-
-    /**
      * Check if any redirect exists starting with $initial_substring.
      *
      * @param string $path
