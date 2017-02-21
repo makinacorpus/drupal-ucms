@@ -106,7 +106,7 @@ class RedirectStorage implements RedirectStorageInterface
             ->orderBy('u.id', 'DESC')
             ->range(0, 1)
             ->execute()
-            ->fetchObject()
+            ->fetchObject(Redirect::class)
         ;
     }
 

@@ -19,13 +19,7 @@ interface RedirectStorageInterface
      * @param int|null $id
      *   (optional) Unique redirect identifier.
      *
-     * @return array|false
-     *   FALSE if the redirect could not be saved or an associative array containing
-     *   the following keys:
-     *   - path (string): The redirect path with a starting slash.
-     *   - nid (int): The node identifier.
-     *   - site_id (int): The site identifier.
-     *   - id (int): Unique path alias identifier.
+     * @return Redirect
      */
     public function save($path, $node_id, $site_id = null, $id = null);
 
@@ -35,13 +29,7 @@ interface RedirectStorageInterface
      * @param array $conditions
      *   An array of query conditions.
      *
-     * @return array|false
-     *   FALSE if no alias was found or an associative array containing the
-     *   following keys:
-     *   - path (string): The redirect path with a starting slash.
-     *   - nid (int): The node identifier.
-     *   - site_id (int): The site identifier.
-     *   - id (int): Unique path alias identifier.
+     * @return null|Redirect
      */
     public function load($conditions);
 

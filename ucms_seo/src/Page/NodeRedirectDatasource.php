@@ -7,7 +7,11 @@ use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
 use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Ucms\Seo\Path\Redirect;
 
+/**
+ * Node redirects datasource.
+ */
 class NodeRedirectDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
@@ -66,7 +70,7 @@ class NodeRedirectDatasource extends AbstractDatasource
             ->extend(DrupalPager::class)
             ->setPageState($pageState)
             ->execute()
-            ->fetchAll()
+            ->fetchAll(\PDO::FETCH_CLASS, Redirect::class)
         ;
     }
 

@@ -161,7 +161,7 @@ function ucms_seo_permission() {
 function ucms_seo_init() {
   // Globalredirect behavior
   // @todo can do better than that.
-  if (ucms_site_manager()->hasContext()) {
+  if (!drupal_is_cli() && ucms_site_manager()->hasContext()) {
     // Check a whole lot of condition to be sure we are only viewing the node
     if (!path_is_admin(current_path()) && ($node = menu_get_object()) && 'node' === arg(0) && !arg(2)) {
       // On front page, we should not have an alias
@@ -370,7 +370,12 @@ function ucms_seo_page_delivery_callback_alter(&$callback) {
  * @param $page_callback_result
  */
 function ucms_seo_drupal_deliver_html_page($page_callback_result) {
-  // Redirect behavior for path with query strings
+
+  if (drupal_is_cli()) {
+    return;
+  }
+
+    // Redirect behavior for path with query strings
   if ($page_callback_result === MENU_NOT_FOUND) {
 
     $manager = ucms_site_manager();
@@ -385,7 +390,7 @@ function ucms_seo_drupal_deliver_html_page($page_callback_result) {
       ;
 
       if ($redirect) {
-        return drupal_goto('node/' . $redirect->nid, [], 301);
+        return drupal_goto($redirect->getNodeRoute(), [], 301);
       }
     }
   }
