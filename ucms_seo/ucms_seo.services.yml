@@ -61,6 +61,11 @@ services:
     tags: [{name: twig.extension}]
 
   # A few various event subscribers
+
+  ucms_seo.site_event_subscriber:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteEventSubscriber
+    arguments: ["@ucms_seo.seo_service"]
+    tags: [{name: event_subscriber }]
   ucms_seo.menu_event_subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventSubscriber
     arguments: ["@ucms_seo.seo_service", "@entity.manager"]
