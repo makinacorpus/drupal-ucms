@@ -8,21 +8,16 @@ use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Site\Site;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Various SEO admin pages.
+ */
 class SeoController extends Controller
 {
     use PageControllerTrait;
 
-    public function nodeAliasListAction(Request $request, NodeInterface $node)
-    {
-        return $this
-            ->createPageBuilder()
-            ->setDatasource(\Drupal::service('ucms_seo.admin.node_alias_datasource'))
-            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-node-aliases.html.twig'])
-            ->setBaseQuery(['node' => $node->id()])
-            ->searchAndRender($request)
-        ;
-    }
-
+    /**
+     * Site alias action
+     */
     public function siteAliasListAction(Request $request, Site $site)
     {
         return $this
@@ -34,6 +29,9 @@ class SeoController extends Controller
         ;
     }
 
+    /**
+     * Node redirect list action
+     */
     public function nodeRedirectListAction(Request $request, NodeInterface $node)
     {
         return $this
@@ -45,6 +43,9 @@ class SeoController extends Controller
         ;
     }
 
+    /**
+     * Site redirect list action
+     */
     public function siteRedirectListAction(Request $request, Site $site)
     {
         return $this

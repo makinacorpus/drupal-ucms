@@ -1593,7 +1593,6 @@ msgid "%path will redirect to %title"
 msgstr "%path redirigera vers %title"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/SeoNodeForm.php:68
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:55
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:89
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:55
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:89
@@ -1674,41 +1673,34 @@ msgstr "Identifiant de site Piwik"
 msgid "Google webmaster tools verification code"
 msgstr "Code de vérification de la console Google Webmaster"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:38
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:38
 msgid "Is canonical"
 msgstr "Est canonique"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:42
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:42
 msgid "Do expire"
 msgstr "Expire"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:56
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:56
 msgid "Canonical state"
 msgstr "Statut canonical"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:57
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:91
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:57
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:91
 msgid "Language"
 msgstr "Langue"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:58
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:58
 msgid "Expiry date"
 msgstr "Expire le"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:59
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:93
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:59
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:93
 msgid "Priority"
 msgstr "Priorité"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:39;43
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:77
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:39;43
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:77
@@ -1718,7 +1710,6 @@ msgstr "Priorité"
 msgid "Yes"
 msgstr "Oui"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDatasource.php:40;44
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeAliasDisplay.php:77;79
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDatasource.php:40;44
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:77;79

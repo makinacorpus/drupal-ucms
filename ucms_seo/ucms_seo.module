@@ -52,14 +52,6 @@ function ucms_seo_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
-  $items['node/%node/seo-aliases'] = [
-    'title'             => "Node path aliases",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::nodeAliasList', 1],
-    'access callback'   => 'ucms_seo_menu_access_node_edit',
-    'access arguments'  => [1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
   $items['node/%node/seo-redirects'] = [
     'title'             => "Node redirects",
     'page callback'     => 'sf_dic_page',
@@ -119,7 +111,6 @@ function ucms_seo_menu() {
 function ucms_seo_admin_paths() {
   return [
     'node/*/seo-edit' => true,
-    'node/*/seo-aliases' => true,
     'node/*/seo-redirects' => true,
   ];
 }
