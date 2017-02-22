@@ -38,7 +38,7 @@ class SiteRedirectDatasource extends AbstractDatasource
     {
         return [
             'path'    => $this->t("path"),
-            'node'    => $this->t("node"),
+            'node'    => $this->t("content title"),
             'expires' => $this->t("expires at"),
         ];
     }

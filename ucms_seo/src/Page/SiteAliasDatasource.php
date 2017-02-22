@@ -34,11 +34,11 @@ class SiteAliasDatasource extends AbstractDatasource
     public function getFilters($query)
     {
         return [
-            (new Filter('canonical', $this->t("Is canonical")))->setChoicesMap([
+            (new Filter('outdated', $this->t("Is outdated")))->setChoicesMap([
                 1 => $this->t("Yes"),
                 0 => $this->t("No"),
             ]),
-            (new Filter('expires', $this->t("Do expire")))->setChoicesMap([
+            (new Filter('custom', $this->t("Is custom")))->setChoicesMap([
                 1 => $this->t("Yes"),
                 0 => $this->t("No"),
             ]),
@@ -51,12 +51,17 @@ class SiteAliasDatasource extends AbstractDatasource
     public function getSortFields($query)
     {
         return [
-            'alias'         => $this->t("Alias"),
-            'is_canonical'  => $this->t("Canonical state"),
-            'language'      => $this->t("Language"),
-            'expires'       => $this->t("Expiry date"),
-            'priority'      => $this->t("Priority"),
+            'alias'     => $this->t("alias"),
+            'node'      => $this->t("content title"),
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultSort()
+    {
+        return ['alias', SortManager::ASC];
     }
 
     /**
@@ -68,29 +73,44 @@ class SiteAliasDatasource extends AbstractDatasource
             return [];
         }
 
-        $q = $this->db->select('ucms_seo_alias', 'u');
+        $q = $this->db->select('ucms_seo_route', 'u');
         $q->fields('u');
         $q->condition('u.site_id', $query['site']);
+        $q->join('node', 'n', "n.nid = u.node_id");
+        $q->addField('n', 'title', 'node_title');
 
-        if (isset($query['canonical'])) {
-            $q->condition('u.is_canonical', (int)(bool)$query['canonical']);
+        if (isset($query['outdated'])) {
+            $q->condition('u.is_outdated', (int)(bool)$query['outdated']);
         }
-        if (isset($query['expires'])) {
-            if ($query['expires']) {
-                $q->isNotNull('u.expires');
-            } else {
-                $q->isNull('u.expires');
-            }
+        if (isset($query['custom'])) {
+            $q->condition('u.is_protected', (int)(bool)$query['custom']);
         }
 
         if ($pageState->hasSortField()) {
-            $q->orderBy('u.' . $pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+            switch ($pageState->getSortField()) {
+                case 'alias':
+                    $sortField = 'u.route';
+                    break;
+                case 'node':
+                    $sortField = 'n.title';
+                    break;
+            }
+
+            $q->orderBy($sortField, SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        } else {
+            $q->orderBy('u.route', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
-        $q->orderBy('u.alias', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+
+        // Consistent sorting
+        $q->orderBy('u.node_id', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
         $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
-            $q->condition('u.alias', '%' . db_like($query[$sParam]) . '%', 'LIKE');
+            $q->condition(
+                (new \DatabaseCondition('OR'))
+                    ->condition('u.route', '%' . db_like($query[$sParam]) . '%', 'LIKE')
+                    ->condition('n.title', '%' . db_like($query[$sParam]) . '%', 'LIKE')
+            );
         }
 
         return $q

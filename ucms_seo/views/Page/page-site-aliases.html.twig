@@ -2,12 +2,10 @@
 
 {% block item %}
   <tr>
-    <td>{{ item.alias }}</td>
-    <td>@todo</td>
-    <td>@todo</td>
-    <td>{% if item.is_canonical %}<strong>{{ "Yes"|trans }}</strong>{% else %}{{ "No"|trans }}{% endif %}</td>
-    <td>{{ item.priority }}</td>
-    <td>{% if item.expires %}{{ item.expires|date }}{% else %}{{ "No"|trans }}{% endif %}</td>
+    <td>{{ item.route }}</td>
+    <td>{{ item.node_title }}</td>
+    <td>{% if item.is_protected %}{{ "Yes" }}{% endif %}</td>
+    <td>{% if item.is_outdated %}<strong>{{ "Yes" }}</strong>{% endif %}</td>
     <td>
       {{ udashboard_actions(item) }}
     </td>
@@ -20,10 +18,8 @@
       <tr>
         <th>{{ "Alias"|trans }}</th>
         <th>{{ "Content"|trans }}</th>
-        <th>{{ "Language"|trans }}</th>
-        <th>{{ "Canonical"|trans }}</th>
-        <th>{{ "Priority"|trans }}</th>
-        <th>{{ "Expires"|trans }}</th>
+        <th>{{ "Custom" }}</th>
+        <th>{{ "Outdated" }}</th>
         <th></th>
       </tr>
     </thead>
@@ -40,27 +36,3 @@
     </tbody>
   </table>
 {% endblock %}
-
-{#
-            if ($item->node_id && isset($nodes[$item->node_id])) {
-                $nodeLabel = $nodes[$item->node_id]->getTitle();
-            } else {
-                $nodeLabel = '<em>' . $this->t("None") . '</em>';
-            }
-
-            if (null === $item->language || 'und' === $item->language) {
-                $language = '<em>' . $this->t("default") . '</em>';;
-            } else {
-                $language = check_plain($item->language);
-            }
-
-            $rows[] = [
-                check_plain($item->alias),
-                $nodeLabel,
-                $language,
-                $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
-                $item->priority,
-                $item->expires ? format_date((new \DateTime($item->expires))->getTimestamp()) : $this->t("No"),
-                theme('udashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
-            ];
- #}
