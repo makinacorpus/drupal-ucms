@@ -3,7 +3,7 @@
 {% block item %}
   <tr>
     <td>{{ item.path }}</td>
-    <td></td>
+    <td>{{ item.siteAdminTitle }}</td>
     <td>{% if item.hasExpiryDate %}{{ item.expiresAt|date }}{% else %}<em>{{ "Never"|trans }}</em>{% endif %}</td>
     <td>
       {{ udashboard_actions(item) }}

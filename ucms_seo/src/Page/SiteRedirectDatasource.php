@@ -37,7 +37,9 @@ class SiteRedirectDatasource extends AbstractDatasource
     public function getSortFields($query)
     {
         return [
-            'path' => $this->t("Path"),
+            'path'    => $this->t("path"),
+            'node'    => $this->t("node"),
+            'expires' => $this->t("expires at"),
         ];
     }
 
@@ -55,16 +57,32 @@ class SiteRedirectDatasource extends AbstractDatasource
         $q->condition('u.site_id', $query['site']);
 
         if ($pageState->hasSortField()) {
-            $q->orderBy(
-                'u.'.$pageState->getSortField(),
-                SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc'
-            );
+
+            switch ($pageState->getSortField()) {
+                case 'path':
+                    $sortField = 'u.path';
+                    break;
+                case 'site':
+                    $sortField = 'n.title';
+                    break;
+                case 'expires':
+                    $sortField = 'u.expires';
+                    break;
+            }
+
+            $q->orderBy($sortField, SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
 
         $sParam = 's';
         if (!empty($query[$sParam])) {
             $q->condition('u.path', '%'.db_like($query[$sParam]).'%', 'LIKE');
         }
+
+        // @todo this could be better, we are supposed to already have the site!
+        $q->join('node', 'n', "n.nid = u.nid");
+        $q->addField('n', 'title', 'node_title');
+        $q->join('ucms_site', 's', "s.id = u.site_id");
+        $q->addField('s', 'title_admin', 'site_title');
 
         return $q
             ->extend(DrupalPager::class)

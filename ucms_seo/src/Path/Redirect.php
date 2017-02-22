@@ -13,6 +13,8 @@ class Redirect
     private $path;
     private $expires;
     private $expiresAt;
+    private $site_title;
+    private $node_title;
 
     /**
      * Get identifier
@@ -86,5 +88,25 @@ class Redirect
         }
 
         return $this->expiresAt;
+    }
+
+    /**
+     * Get site admin title if selected by the query
+     *
+     * @return null|string
+     */
+    public function getSiteAdminTitle()
+    {
+        return $this->site_title;
+    }
+
+    /**
+     * Get node title if selected by the query
+     *
+     * @return null|string
+     */
+    public function getNodeTitle()
+    {
+        return $this->node_title;
     }
 }
