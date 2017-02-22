@@ -2,7 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Seo\Tests;
 
-use Drupal\Core\Language\LanguageInterface;
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Site\SiteState;
 

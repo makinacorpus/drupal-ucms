@@ -40,37 +40,4 @@ trait AliasTestTrait
 
         return $node;
     }
-
-    protected function doesAliasExists($alias, $nodeId = null, $siteId = null)
-    {
-        if ($siteId instanceof Site) {
-            $siteId = $siteId->getId();
-        }
-        if ($nodeId instanceof NodeInterface) {
-            $nodeId = $nodeId->id();
-        }
-
-        return (bool)$this
-            ->getDatabaseConnection()
-            ->query(
-                "SELECT 1 FROM {ucms_seo_alias} WHERE site_id = :site AND node_id = :nid AND alias = :alias",
-                [
-                    ':site'   => $siteId,
-                    ':nid'    => $nodeId,
-                    ':alias'  => $alias,
-                ]
-            )
-            ->fetchField()
-        ;
-    }
-
-    protected function assertAliasExists($alias, $nodeId = null, $siteId = null)
-    {
-        $this->assertTrue($this->doesAliasExists($alias, $nodeId, $siteId));
-    }
-
-    protected function assertNotAliasExists($alias, $nodeId = null, $siteId = null)
-    {
-        $this->assertFalse($this->doesAliasExists($alias, $nodeId, $siteId));
-    }
 }
