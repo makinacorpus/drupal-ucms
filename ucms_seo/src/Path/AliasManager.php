@@ -213,6 +213,26 @@ class AliasManager
     }
 
     /**
+     * Is the current path alias protected (i.e. manually set by user)
+     *
+     * @param int $nodeId
+     * @param int $siteId
+     *
+     * @return bool
+     */
+    public function isPathAliasProtected($nodeId, $siteId)
+    {
+        return (bool)$this
+            ->database
+            ->query(
+                "SELECT is_protected FROM {ucms_seo_route} WHERE node_id = :node AND site_id = :site",
+                [':node' => $nodeId, ':site' => $siteId]
+            )
+            ->fetchField()
+        ;
+    }
+
+    /**
      * Get alias for node on site
      *
      * Internally, if no alias was already computed, this will recompute
