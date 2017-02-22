@@ -92,8 +92,8 @@ class SeoNodeForm extends FormBase
             $currentAlias = $aliasManager->getPathAlias($nodeId, $siteId);
             $isProtected  = $currentAlias && $aliasManager->isPathAliasProtected($nodeId, $siteId);
 
-            $form['current_alias'] = [
-                '#title'            => t("Current alias in current site"),
+            $form['custom_alias'] = [
+                '#title'            => t("Alias in the current site"),
                 '#type'             => 'textfield',
                 '#attributes'       => ['placeholder' => ($currentAlias ? $currentAlias : $this->t("There is no computed alias yet"))],
                 '#default_value'    => $isProtected ? $currentAlias : null,
@@ -161,6 +161,19 @@ class SeoNodeForm extends FormBase
     {
         /** @var $node NodeInterface */
         $node = $formState->getTemporaryValue('node');
+
+        if ($this->siteManager->hasContext()) {
+
+            $siteId       = $this->siteManager->getContext()->getId();
+            $customAlias  = $formState->getValue('custom_alias');
+            $aliasManager = $this->seoService->getAliasManager();
+
+            if (empty($customAlias)) {
+                $aliasManager->removeCustomAlias($node->id(), $siteId);
+            } else {
+                $aliasManager->setCustomAlias($node->id(), $siteId, $customAlias);
+            }
+        }
 
         if ($segment = $formState->getValue('segment')) {
             $this->seoService->setNodeSegment($node, $segment);

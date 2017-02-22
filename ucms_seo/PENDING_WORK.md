@@ -24,11 +24,10 @@ Search regexes.
  -  [x] fix redirect site listing (missing node)
  -  [x] implement the redirection on hook_deliver_callback_alter() in case of a 404 not/found with a simple select query
  -  [x] protect the whole load/recompute/save algorithm using transactions and retry in a transaction; it'll be much safer
+ -  [x] write node current alias in node info and form, allow modification
  -  handle alias deduplicate
  -  handle invalidation
  -  rewrite all unit tests and new ones
- -  rewrite RedirectStorage to pass a Redirect object to hooks, and return this object
  -  rewrite service locator url generator
  -  rewrite site alias datasource
  -  url outbound alter (using drupal path alias or not?)
- -  write node current alias and redirect count in node info and form

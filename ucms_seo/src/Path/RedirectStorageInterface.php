@@ -17,9 +17,7 @@ interface RedirectStorageInterface
      * @param int|null $site_id
      *   (optional) The site the redirect belongs to.
      * @param int|null $id
-     *   (optional) Unique redirect identifier.
-     *
-     * @return Redirect
+     *   (optional) Unique redirect identifier for updates.
      */
     public function save($path, $node_id, $site_id = null, $id = null);
 

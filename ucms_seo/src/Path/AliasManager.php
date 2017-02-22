@@ -213,6 +213,90 @@ class AliasManager
     }
 
     /**
+     * Invalidate aliases with the given conditions
+     *
+     * @param array $conditions
+     *   Keys are column names, values are either single value or an array of
+     *   value to match to invalidate; allowed keys are:
+     *     - node_id: one or more node identifiers
+     *     - site_id: one or more site identifiers
+     */
+    public function invalidate(array $conditions)
+    {
+        if (empty($conditions)) {
+            throw new \InvalidArgumentException("cannot invalidate aliases with no conditions");
+        }
+
+        $query = $this
+            ->database
+            ->update('ucms_seo_route')
+            ->fields(['is_outdated' => 1])
+            ->condition('is_protected', 0)
+        ;
+
+        foreach ($conditions as $key => $value) {
+            switch ($key) {
+
+                case 'node_id':
+                    $query->condition('node_id', $value);
+                    break;
+
+                case 'site_id':
+                    $query->condition('site_id', $value);
+                    break;
+
+                default:
+                    throw new \InvalidArgumentException(sprintf("condition '%s' is not supported for aliases invalidation", $key));
+            }
+        }
+
+        $query->execute();
+    }
+
+    /**
+     * Set custom alias for
+     *
+     * @param int $nodeId
+     * @param int $siteId
+     * @param string $siteId
+     */
+    public function setCustomAlias($nodeId, $siteId, $alias)
+    {
+        $this
+            ->database
+            ->merge('ucms_seo_route')
+            ->key([
+                'node_id' => $nodeId,
+                'site_id' => $siteId,
+            ])
+            ->fields([
+                'route'        => $alias,
+                'is_protected' => 1,
+                'is_outdated'  => 0,
+            ])
+            ->execute()
+        ;
+    }
+
+    /**
+     * Remove custom alias for
+     *
+     * @param int $nodeId
+     * @param int $siteId
+     */
+    public function removeCustomAlias($nodeId, $siteId)
+    {
+        $this
+            ->database
+            ->update('ucms_seo_route')
+            ->condition('node_id', $nodeId)
+            ->condition('site_id', $siteId)
+            ->fields(['is_protected' => 0, 'is_outdated' => 1])
+            ->execute()
+        ;
+    }
+
+    /**
      * Is the current path alias protected (i.e. manually set by user)
      *
      * @param int $nodeId
