@@ -3,9 +3,7 @@ services:
   ucms_seo.seo_service:
     class: MakinaCorpus\Ucms\Seo\SeoService
     arguments:
-      - "@entity.manager"
       - "@ucms_seo.alias_manager"
-      - "@path.alias_storage"
       - "@ucms_seo.redirect_storage"
       - "@ucms_site.manager"
       - "@database"

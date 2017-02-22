@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Seo;
 
-use Drupal\Core\Entity\EntityManager;
-use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareInterface;
@@ -13,8 +11,8 @@ use MakinaCorpus\Ucms\Seo\Path\AliasManager;
 use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use MakinaCorpus\Ucms\Site\SiteState;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Main access point for SEO information, all Drupal-7-ish stuff will be
@@ -46,19 +44,9 @@ class SeoService implements AuthorizationAwareInterface
     const PERM_SEO_GLOBAL = 'ucms seo global manage';
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @var AliasManager
      */
     private $aliasManager;
-
-    /**
-     * @var AliasStorageInterface
-     */
-    private $aliasStorage;
 
     /**
      * @var SiteManager
@@ -78,24 +66,18 @@ class SeoService implements AuthorizationAwareInterface
     /**
      * Default constructor
      *
-     * @param EntityManager $entiyManager
-     * @param AliasManagerInterface $aliasManager
-     * @param AliasStorageInterface $aliasStorage
+     * @param AliasManager $aliasManager
      * @param RedirectStorageInterface $redirectStorage
      * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
      */
     public function __construct(
-        EntityManager $entiyManager,
         AliasManager $aliasManager,
-        AliasStorageInterface $aliasStorage,
         RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
         \DatabaseConnection $db)
     {
-        $this->entityManager = $entiyManager;
         $this->aliasManager = $aliasManager;
-        $this->aliasStorage = $aliasStorage;
         $this->redirectStorage = $redirectStorage;
         $this->siteManager = $siteManager;
         $this->db = $db;
