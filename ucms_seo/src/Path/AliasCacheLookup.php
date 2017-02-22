@@ -24,7 +24,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
  *
  * SQL query count (remember that site is kinda broken itself, cache backend
  * is plugged on Redis, so cache queries do not count here):
- *   1. 1330 / 464 / 1794
+ *   1. 1330 / 464 / 1794 (SELECT, INSERT, ALL)
  *   2. 286 / 0 / 286
  *   3. 1790 / 466 / 1790 (got some duplicates I guess)
  *   4. 54 / 0 / 54
@@ -36,6 +36,9 @@ use Drupal\Core\Cache\CacheBackendInterface;
  *
  * Some quick conclustions from this:
  *  - best case scenario is as fast as Drupal core is;
+ *  - we have to consider that requests are done per bulk of 5 in transactions
+ *    so even if there's a lot, it still terribly fast!
+ *  - alias deduplication is terrible for performances;
  *  - we need invalidation to be very refined (no whole site invalidation!);
  *  - we should drop some URLs, for example everything that's in admin toolset;
  *  - we must implement a regular cron that randomly rebuild URLs when outdated;
@@ -43,6 +46,9 @@ use Drupal\Core\Cache\CacheBackendInterface;
  *  - umenu trees could be remote cached;
  *  - we could attempt to lookup more than once at the same time (for example
  *    during node_load_multiple, and optimistically build the cache);
+ *  - OR we could simply allow outdated entries display, and refresh will be
+ *    done at redirect time and by the cron, sus completly eliminating the
+ *    insert queries at runtime problem
  *  - any other suggestion is welcome.
  */
 class AliasCacheLookup
