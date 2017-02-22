@@ -85,6 +85,7 @@ class SiteUrlGenerator
 
         // Avoid reentrancy in ucms_site_url_outbound_alter().
         $options['ucms_processed'] = true;
+        $options['ucms_site'] = $site->getId();
 
         // Site is the same, URL should not be absolute; or if it asked that it
         // might be, then let Drupal work his own base URL, since it's the right

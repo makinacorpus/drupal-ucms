@@ -179,6 +179,25 @@ function ucms_seo_init() {
 }
 
 /**
+ * Implements hook_url_outbound_alter().
+ */
+function ucms_seo_url_outbound_alter(&$path, &$options, $original_path) {
+
+  if (empty($options['ucms_site'])) {
+    return;
+  }
+
+  $matches = [];
+  if (preg_match('/^node\/(\d+)$/', $original_path, $matches)) {
+    /** @var \MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup $aliasLookup */
+    $aliasLookup = \Drupal::service('ucms_seo.alias_cache_lookup');
+    if ($alias = $aliasLookup->lookup($matches[1], $options['ucms_site'])) {
+      $path = $alias;
+    }
+  }
+}
+
+/**
  * Implements hook_page_build().
  */
 function ucms_seo_page_build(&$page) {

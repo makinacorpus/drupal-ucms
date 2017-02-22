@@ -371,6 +371,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
   }
 
   $options['ucms_processed'] = true;
+  $options['ucms_site'] = false;
   $manager = ucms_site_manager();
 
   if ($manager->hasContext()) {
@@ -380,6 +381,8 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
       $options['absolute'] = true;
       $options['external'] = true;
       $path = ucms_site_master_absolute_url() . '/' . $path;
+    } else {
+      $options['ucms_site'] = $manager->getContext()->getId();
     }
   } else {
     if (drupal_is_cli()) {
@@ -401,6 +404,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
         $mostRelevantSite = $nodeAccessService->findMostRelevantSiteFor($node);
         if ($mostRelevantSite) {
           $manager->getUrlGenerator()->forceSiteUrl($options, $mostRelevantSite);
+          $options['ucms_site'] = $mostRelevantSite->getId();
         }
       }
     }
@@ -660,8 +664,20 @@ function ucms_site_boot() {
  */
 function ucms_site_module_implements_alter(&$implementations, $hook) {
   switch ($hook) {
+
     case 'menu_site_status_alter':
       unset($implementations['user']);
+      break;
+
+    case 'url_outbound_alter':
+      // Always be the last, so that we can safely rewrite the URL
+      $group = $implementations['ucms_site'];
+      unset($implementations['ucms_site']);
+      $implementations['ucms_site'] = $group;
+      // And just set the SEO module after us, he will use our information
+      $group = $implementations['ucms_seo'];
+      unset($implementations['ucms_seo']);
+      $implementations['ucms_seo'] = $group;
       break;
   }
 }

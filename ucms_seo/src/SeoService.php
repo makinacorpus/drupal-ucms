@@ -7,6 +7,7 @@ use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareInterface;
 use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareTrait;
 use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup;
 use MakinaCorpus\Ucms\Seo\Path\AliasManager;
 use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
@@ -49,6 +50,11 @@ class SeoService implements AuthorizationAwareInterface
     private $aliasManager;
 
     /**
+     * @var AliasCacheLookup
+     */
+    private $aliasCacheLookup;
+
+    /**
      * @var SiteManager
      */
     private $siteManager;
@@ -67,17 +73,20 @@ class SeoService implements AuthorizationAwareInterface
      * Default constructor
      *
      * @param AliasManager $aliasManager
+     * @param AliasCacheLookup $aliasCacheLookup
      * @param RedirectStorageInterface $redirectStorage
      * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
      */
     public function __construct(
         AliasManager $aliasManager,
+        AliasCacheLookup $aliasCacheLookup,
         RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
         \DatabaseConnection $db)
     {
         $this->aliasManager = $aliasManager;
+        $this->aliasCacheLookup = $aliasCacheLookup;
         $this->redirectStorage = $redirectStorage;
         $this->siteManager = $siteManager;
         $this->db = $db;
@@ -98,6 +107,16 @@ class SeoService implements AuthorizationAwareInterface
     public function getAliasManager()
     {
         return $this->aliasManager;
+    }
+
+    /**
+     * Get alias cache lookup service
+     *
+     * @return AliasCacheLookup
+     */
+    public function getAliasCacheLookup()
+    {
+        return $this->aliasCacheLookup;
     }
 
     /**

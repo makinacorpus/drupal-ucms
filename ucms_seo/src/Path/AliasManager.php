@@ -124,8 +124,27 @@ class AliasManager
      */
     private function deduplicate($nodeId, $siteId, $alias)
     {
-        // @todo me like one of your french girls
-        return $alias;
+        $dupFound   = false;
+        $current    = $alias;
+        $increment  = 0;
+
+        do {
+            $dupFound = (bool)$this
+                ->database
+                ->query(
+                    "SELECT 1 FROM {ucms_seo_route} WHERE route = :route AND site_id = :site",
+                    [':route' => $current, ':site' => $siteId]
+                )
+                ->fetchField()
+            ;
+
+            if ($dupFound) {
+                $current = $alias . '-' . ($increment++);
+            }
+
+        } while ($dupFound);
+
+        return $current;
     }
 
     /**
@@ -338,7 +357,7 @@ class AliasManager
             ->fetch()
         ;
 
-        if ($route->is_outdated || !$route) {
+        if (!$route || $route->is_outdated) {
             return $this->computeAndStorePathAlias($nodeId, $siteId, ($route ? $route->route : null));
         } else {
             return $route->route;

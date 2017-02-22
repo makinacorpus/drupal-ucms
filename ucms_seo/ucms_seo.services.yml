@@ -5,15 +5,21 @@ services:
     class: MakinaCorpus\Ucms\Seo\SeoService
     arguments:
       - "@ucms_seo.alias_manager"
+      - "@ucms_seo.alias_cache_lookup"
       - "@ucms_seo.redirect_storage"
       - "@ucms_site.manager"
       - "@database"
   ucms_seo.alias_manager:
+    public: false
     class: MakinaCorpus\Ucms\Seo\Path\AliasManager
     arguments: ['@database', '@umenu.tree_provider']
   ucms_seo.redirect_storage:
+    public: false
     class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
+  ucms_seo.alias_cache_lookup:
+    class: MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup
+    arguments: ['@ucms_seo.alias_manager', '@database', '@cache.default']
 
   # Various actions providers for node and site
   ucms_seo.node_action_provider:
