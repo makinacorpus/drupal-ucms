@@ -404,7 +404,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
         $mostRelevantSite = $nodeAccessService->findMostRelevantSiteFor($node);
         if ($mostRelevantSite) {
           $manager->getUrlGenerator()->forceSiteUrl($options, $mostRelevantSite);
-          $options['ucms_site'] = $mostRelevantSite->getId();
+          $options['ucms_site'] = $mostRelevantSite;
         }
       }
     }
