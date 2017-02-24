@@ -1,3 +1,8 @@
+parameters:
+  # Allow invalid routes to be loaded at runtime to avoid massive rebuilds
+  # when all items are outdated in the database.
+  ucms_seo.alias_cache_lookup.allow_invalid: true
+
 services:
 
   # Main services
@@ -19,7 +24,7 @@ services:
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
   ucms_seo.alias_cache_lookup:
     class: MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup
-    arguments: ['@ucms_seo.alias_manager', '@database', '@cache.default']
+    arguments: ['@ucms_seo.alias_manager', '@database', '@cache.default', '%ucms_seo.alias_cache_lookup.allow_invalid%']
 
   # Various actions providers for node and site
   ucms_seo.node_action_provider:

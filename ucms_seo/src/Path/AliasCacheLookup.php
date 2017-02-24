@@ -59,6 +59,7 @@ class AliasCacheLookup
     const MAX_CACHE_SIZE = 1000;
 
     private $aliasManager;
+    private $allowInvalid = true;
     private $cache;
     private $cacheKey;
     private $database;
@@ -74,12 +75,14 @@ class AliasCacheLookup
      * @param AliasManager $aliasManager
      * @param \DatabaseConnection $database
      * @param CacheBackendInterface $cache
+     * @param bool $allowInvalid
      */
-    public function __construct(AliasManager $aliasManager, \DatabaseConnection $database, CacheBackendInterface $cache)
+    public function __construct(AliasManager $aliasManager, \DatabaseConnection $database, CacheBackendInterface $cache, $allowInvalid = true)
     {
         $this->aliasManager = $aliasManager;
         $this->database = $database;
         $this->cache = $cache;
+        $this->allowInvalid = $allowInvalid;
     }
 
     /**
@@ -183,15 +186,19 @@ class AliasCacheLookup
                 }
             }
 
-            $rows = $this
+            $query = $this
                 ->database
                 ->select('ucms_seo_route', 'r')
                 ->fields('r', ['node_id', 'site_id', 'route'])
                 ->condition('r.site_id', $siteIdList)
                 ->condition('r.node_id', $nodeIdList)
-                ->condition('r.is_outdated', 0)
-                ->execute()
             ;
+
+            if (!$this->allowInvalid) {
+                $query->condition('r.is_outdated', 0);
+            }
+
+            $rows = $query->execute();
 
             foreach ($rows as $row) {
                 $this->loaded[$row->node_id][$row->site_id] = $row->route;
@@ -204,7 +211,7 @@ class AliasCacheLookup
      *
      * This will be called on site init event
      *
-     * @param int $siteId
+     * @param int|string $siteId
      * @param string $path
      */
     public function setEnvironment($siteId, $path)
