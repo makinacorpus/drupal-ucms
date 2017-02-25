@@ -70,7 +70,7 @@
     "require" : {
         "elasticsearch/elasticsearch" : "2.2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
-        "makinacorpus/drupal-sf-dic" : ">=3.2.0-alpha11",
+        "makinacorpus/drupal-sf-dic" : ">=3.2.0-alpha12",
         "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha4",
         "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/drupal-umenu" : ">=1.1.5 <1.2",
