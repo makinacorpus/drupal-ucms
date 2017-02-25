@@ -7,6 +7,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 
 /**
  * This subscriber will collect linked content within text fields.
@@ -36,6 +37,9 @@ class SiteEventSubscriber implements EventSubscriberInterface
         return [
             SiteEvents::EVENT_INIT => [
                 ['onInit', 0]
+            ],
+            SiteEvents::EVENT_MASTER_INIT => [
+                ['onMasterInit', 0]
             ],
             KernelEvents::TERMINATE => [
                 ['onTerminate', 0]
@@ -70,6 +74,24 @@ class SiteEventSubscriber implements EventSubscriberInterface
             ->setEnvironment(
                 $site->getId(),
                 $incomming,
+                $request->query->all()
+            )
+        ;
+    }
+
+    /**
+     * We have no site context, we are in admin.
+     */
+    public function onMasterInit(MasterInitEvent $event)
+    {
+        $request = $event->getRequest();
+
+        $this
+            ->service
+            ->getAliasCacheLookup()
+            ->setEnvironment(
+                null,
+                $request->query->get('q'),
                 $request->query->all()
             )
         ;

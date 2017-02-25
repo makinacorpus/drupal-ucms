@@ -214,9 +214,13 @@ class AliasCacheLookup
      * @param int|string $siteId
      * @param string $path
      */
-    public function setEnvironment($siteId, $path)
+    public function setEnvironment($siteId, $path, $query = [])
     {
-        $cacheKey = 'alias#' . $siteId . '#' . $path;
+        if (null === $siteId) {
+            $cacheKey = 'alias#master#' . $path;
+        } else {
+            $cacheKey = 'alias#' . $siteId . '#' . $path;
+        }
 
         if ($cacheKey === $this->cacheKey) {
             return;

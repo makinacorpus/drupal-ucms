@@ -9,15 +9,16 @@
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Controller\AutocompleteController;
 use MakinaCorpus\Ucms\Site\Controller\DashboardController;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\PublicStreamWrapper;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 
 /**
  * Implements hook_menu().
@@ -651,7 +652,10 @@ function ucms_site_boot() {
     } else {
       $manager->dropContext();
 
-      if (!ucms_site_is_master() && !ucms_site_is_cdn()) {
+      if (ucms_site_is_master()) {
+        // Trigger the admin init event
+        \Drupal::service('event_dispatcher')->dispatch(SiteEvents::EVENT_MASTER_INIT, new MasterInitEvent($request));
+      } else if (!ucms_site_is_cdn()) {
         // This will trigger the maintainance page.
         ucms_site_fast_404();
       }
