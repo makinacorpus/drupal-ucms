@@ -94,26 +94,11 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     private function renderBrowseHistory()
     {
         $request = $this->get('request_stack')->getCurrentRequest();
-        $builder = $this->getPageBuilder('history_browse', $request);
+        $builder = $this->getPageBuilder('cart_all', $request);
         $userId  = $this->get('current_user')->id();
         $builder->addBaseQueryParameter('user_id', $userId);
 
         // @todo we must find a more straight-foward way
-        return $builder->searchAndRender($request);
-    }
-
-    /**
-     * Render one's favorite cart.
-     * @todo Better way
-     */
-    private function renderUpdateHistory()
-    {
-        // @todo we must find a more straight-foward way
-        $request = $this->get('request_stack')->getCurrentRequest();
-        $builder = $this->getPageBuilder('history_update', $request);
-        $userId  = $this->get('current_user')->id();
-        $builder->addBaseQueryParameter('user_id', $userId);
-
         return $builder->searchAndRender($request);
     }
 
@@ -130,10 +115,8 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
             $contextPane
                 ->addTab('cart', $this->t("Cart"), 'shopping-cart')
                 ->add($this->renderCart(), 'cart')
-                ->addTab('history_update', $this->t("Your recent modifications"), 'time')
-                ->add($this->renderUpdateHistory(), 'history_update')
-                ->addTab('history_browse', $this->t("Your browse history"), 'bookmark')
-                ->add($this->renderBrowseHistory(), 'history_browse')
+                ->addTab('cart_all', $this->t("All content"), 'bookmark')
+                ->add($this->renderBrowseHistory(), 'cart_all')
             ;
         }
 
