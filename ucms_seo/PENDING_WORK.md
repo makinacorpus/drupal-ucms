@@ -18,12 +18,12 @@ Search regexes.
  -  [x] fix redirect delete action processor to use Redirect class
  -  [x] fix redirect node listing (missing site)
  -  [x] fix redirect site listing (missing node)
+ -  [x] handle alias deduplicate
+ -  [x] handle invalidation
  -  [x] implement the redirection on hook_deliver_callback_alter() in case of a 404 not/found with a simple select query
  -  [x] protect the whole load/recompute/save algorithm using transactions and retry in a transaction; it'll be much safer
  -  [x] rewrite site alias datasource
  -  [x] write node current alias in node info and form, allow modification
  -  add query parameters (excluding q) as part of the cache alias lookup cache key
- -  handle alias deduplicate
- -  handle invalidation
  -  rewrite all unit tests and new ones
  -  rewrite service locator url generator (need one from a specific project)

@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
-use Drupal\Core\Entity\EntityManager;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Tree\EventDispatcher\MenuEvent;
+use MakinaCorpus\Umenu\Event\MenuEvent as UMenuEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MenuEventSubscriber implements EventSubscriberInterface
@@ -15,20 +15,13 @@ class MenuEventSubscriber implements EventSubscriberInterface
     private $service;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * Default constructor
      *
      * @param SeoService $service
-     * @param EntityManager $entityManager
      */
-    public function __construct(SeoService $service, EntityManager $entityManager)
+    public function __construct(SeoService $service)
     {
         $this->service = $service;
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -40,6 +33,15 @@ class MenuEventSubscriber implements EventSubscriberInterface
             MenuEvent::EVENT_TREE => [
                 ['onMenuTree', 0],
             ],
+            UMenuEvent::EVENT_DELETE => [
+                ['onMenuChange', 0],
+            ],
+            UMenuEvent::EVENT_TOGGLE_MAIN => [
+                ['onMenuChange', 0],
+            ],
+            UMenuEvent::EVENT_UPDATE => [
+                ['onMenuChange', 0],
+            ],
         ];
     }
 
@@ -50,27 +52,25 @@ class MenuEventSubscriber implements EventSubscriberInterface
      */
     public function onMenuTree(MenuEvent $event)
     {
-        $deleted = [];
-        $changed = [];
-
-        $storage = $this->entityManager->getStorage('node');
+        $refresh = [];
 
         foreach ($event->getDeletedItems() as $item) {
-            $deleted[] = $item->getNodeId();
+            $refresh[] = $item->getNodeId();
         }
-        if ($deleted) {
-            foreach ($storage->loadMultiple($deleted) as $node) {
-                $this->service->onAliasRemove($node, $event->getMenuName());
-            }
+        foreach ($event->getTree()->getChildren() as $item) {
+            $refresh[] = $item->getNodeId();
         }
 
-        foreach ($event->getTree()->getChildren() as $item) {
-            $changed[] = $item->getNodeId();
+        if ($refresh) {
+            $this->service->onAliasChange($refresh);
         }
-        if ($changed) {
-            foreach ($storage->loadMultiple($changed) as $node) {
-                $this->service->onAliasChange($node, $event->getMenuName());
-            }
-        }
+    }
+
+    /**
+     * UMenu module menu change
+     */
+    public function onMenuChange(UMenuEvent $event)
+    {
+        $this->service->onMenuChange($event->getMenu());
     }
 }

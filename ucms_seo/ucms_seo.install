@@ -367,3 +367,65 @@ function ucms_seo_update_7021() {
   // We'll see about that later; just keeping it in case
   // db_drop_table('ucms_seo_alias');
 }
+
+/**
+ * Migrates umenu data from legacy to new schema.
+ */
+function ucms_seo_update_7022() {
+  $driver = \Database::getConnection()->driver();
+  switch ($driver) {
+
+    case 'pgsql':
+      db_query("
+        INSERT INTO umenu_item
+            (id, menu_id, site_id, node_id, weight, title)
+        SELECT
+            ml.mlid AS id,
+            m.id AS menu_id,
+            m.site_id AS site_id,
+            SUBSTRING(ml.link_path FROM 6)::integer AS node_id,
+            ml.weight AS weight,
+            ml.link_title AS title
+        FROM menu_links ml
+        JOIN umenu m
+            ON m.name = ml.menu_name
+        WHERE
+            ml.link_path LIKE 'node/%'
+            AND (ml.plid = 0 OR ml.plid IS NULL)
+            AND m.name NOT IN (
+                'navigation', 'management', 'user-menu', 'main-menu'
+            )
+      ");
+
+      db_query("
+        INSERT INTO umenu_item
+            (id, menu_id, site_id, node_id, parent_id, weight, title)
+        SELECT
+            ml.mlid AS id,
+            m.id AS menu_id,
+            m.site_id AS site_id,
+            SUBSTRING(ml.link_path FROM 6)::integer AS node_id,
+            ml.plid AS parent_id,
+            ml.weight AS weight,
+            ml.link_title AS title
+        FROM menu_links ml
+        JOIN umenu m
+            ON m.name = ml.menu_name
+        WHERE
+            ml.link_path LIKE 'node/%'
+            AND ml.plid <> 0
+            AND ml.plid IS NOT NULL
+            AND m.name NOT IN (
+                'navigation', 'management', 'user-menu', 'main-menu'
+            )
+        ");
+
+        // Bit dangerous, so keeping that for later.
+        // db_query("DELETE FROM {menu_links} WHERE mlid IN (SELECT id FROM {umenu_item})");
+        break;
+
+    default:
+      throw new \Exception(sprintf("this update is unsupported for driver '%s'", $driver));
+      break;
+  }
+}

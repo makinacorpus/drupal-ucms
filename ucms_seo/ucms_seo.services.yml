@@ -85,7 +85,7 @@ services:
     tags: [{name: event_subscriber }]
   ucms_seo.menu_event_subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventSubscriber
-    arguments: ["@ucms_seo.seo_service", "@entity.manager"]
+    arguments: ["@ucms_seo.seo_service"]
     tags: [{name: event_subscriber }]
   ucms_seo.node_event_subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\NodeEventSubscriber

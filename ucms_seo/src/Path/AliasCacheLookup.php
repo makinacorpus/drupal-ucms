@@ -35,19 +35,19 @@ use Drupal\Core\Cache\CacheBackendInterface;
  * the very wrong *HUGE* URLs count).
  *
  * Some quick conclustions from this:
- *  - best case scenario is as fast as Drupal core is;
+ *  - [x] best case scenario is as fast as Drupal core is;
  *  - we have to consider that requests are done per bulk of 5 in transactions
- *    so even if there's a lot, it still terribly fast!
+ *    [x] so even if there's a lot, it still terribly fast!
  *  - alias deduplication is terrible for performances;
  *  - we need invalidation to be very refined (no whole site invalidation!);
  *  - we should drop some URLs, for example everything that's in admin toolset;
  *  - we must implement a regular cron that randomly rebuild URLs when outdated;
  *  - umenu trees should be statically cached (we have 230+ loads!);
- *  - umenu trees could be remote cached;
+ *  - [x] umenu trees could be remote cached;
  *  - we could attempt to lookup more than once at the same time (for example
  *    during node_load_multiple, and optimistically build the cache);
- *  - OR we could simply allow outdated entries display, and refresh will be
- *    done at redirect time and by the cron, sus completly eliminating the
+ *  - [x] OR we could simply allow outdated entries display, and refresh will
+ *    be done at redirect time and by the cron, sus completly eliminating the
  *    insert queries at runtime problem
  *  - any other suggestion is welcome.
  */
@@ -203,6 +203,26 @@ class AliasCacheLookup
             foreach ($rows as $row) {
                 $this->loaded[$row->node_id][$row->site_id] = $row->route;
             }
+        }
+    }
+
+    /**
+     * Clear caches for site
+     *
+     * This will always refresh cache for master as well.
+     *
+     * @param int $siteId
+     *   If set, refresh only for this site, delete all otherwise
+     */
+    public function refresh($siteId = null)
+    {
+        // @sorry for this, but Drupal 8 does not handle prefixes
+        //   and we don't have a fallback for tags yet in sf_dic
+        if ($siteId) {
+            cache_clear_all('alias#master#', 'cache', true);
+            cache_clear_all('alias#' . $siteId . '#', 'cache', true);
+        } else {
+            cache_clear_all('alias#', 'cache', true);
         }
     }
 

@@ -14,6 +14,7 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use MakinaCorpus\Umenu\Menu;
 
 /**
  * Main access point for SEO information, all Drupal-7-ish stuff will be
@@ -374,113 +375,31 @@ class SeoService implements AuthorizationAwareInterface
         ;
 
         if (empty($segment)) {
-            $this->onAliasRemove($node);
+            $this->onAliasChange([$node->id()]);
         } else {
-            $this->onAliasChange($node);
+            $this->onAliasChange([$node->id()]);
         }
     }
 
     /**
-     * Get alias associated to menu link
+     * Set all impacted aliases as outdated
      *
-     * This function will do some recursion over menu links table queries so
-     * please use it wisely, only for rebuilding.
-     *
-     * This will break as soon as any found menu are not pointing to a node,
-     * including the current menu given as parameter.
-     *
-     * @param int $id
-     *   Menu link identifier
-     *
-     * @return string
+     * @param array $nodeIdList
      */
-    public function getLinkAlias($id)
+    public function onAliasChange(array $nodeIdList)
     {
-        return null;
+        $this->aliasManager->invalidateRelated($nodeIdList);
+        $this->aliasCacheLookup->refresh();
     }
 
     /**
-     * From the given node, rebuild all its aliases and children aliases
+     * Set all impacted aliases as outdated
      *
-     * FIXME: THIS MAY CAUSE SERIOUS TROUBLES WHEN CHANGING NODE SEGMENT
-     * FOR NODES REFERENCED IN MANY MENUS
-     *
-     * All node aliases for each menu entry it is into must exists in the
-     * menu tree, no matter how many they are, for the sake of consistency
-     * one and only one of this aliases will be marked as canonical, and
-     * will be the first one the node has been set.
-     *
-     * Now, how aliases are built: for example, lets say you have nodes,
-     * with their respective aliases (identifiers don't matter):
-     *
-     *   node/1 -> foo
-     *   node/2 -> bar
-     *   node/3 -> baz
-     *   node/4 -> john
-     *   node/5 -> smith
-     *
-     * and the following main menu tree:
-     *   - node/1
-     *     - node/2
-     *       - node/3
-     *     - node/4
-     *       - node/5
-     *         - node/1 (this is a trap)
-     *     - node/3 (this is a trap too)
-     *
-     * then you'll get the following path aliases:
-     *
-     *   node/1 -> foo AND foo/john/smith/foo (remember the first trap)
-     *   node/2 -> foo/bar
-     *   node/3 -> foo/bar/baz AND foo/baz (remember the second trap)
-     *   node/4 -> foo/john
-     *   node/5 -> foo/john/smith
-     *
-     * Every menu path will be extracted and associated aliases rebuilt
-     * if changed, and all sub menu trees will too, this means that whenever
-     * a node is unpublished for example, all its children aliases will looose
-     * one level in their path alias.
-     *
-     * Outdate aliases will be kept, with a set lifetime, and garbage collected
-     * over time in order to avoid the url_alias table to grow too much.
-     *
-     * @param NodeInterface $node
-     * @param string $menuName
-     *   To restrict to a single menu, if you are sure that the node segment
-     *   itself has NOT been changed, if it did, leave this to null, everything
-     *   will be very slow, but it is necessary
+     * @param int $menuId
      */
-    public function onAliasChange(NodeInterface $node, $menuName = null)
+    public function onMenuChange(Menu $menu)
     {
-        // Do something
-    }
-
-    /**
-     * Node being removed means that everywhere it has been set as a menu
-     * item must recompute the parenting tree, but we should also drop
-     * all aliases of the node
-     *
-     * @param NodeInterface $node
-     * @param string $menuName
-     *   To restrict to a single menu
-     */
-    public function onAliasRemove(NodeInterface $node, $menuName = null)
-    {
-        // Do something
-    }
-
-    /**
-     * Within the given site, change all aliases from the given node to another
-     *
-     * Please be warned that WE DO NOT CHECK FOR CONSTRAINTS becaue it is only
-     * supposed to happen at node insert time.
-     *
-     * @param int $siteId
-     * @param int $previousNodeId
-     * @param int $nextNodeId
-     */
-    public function replaceNodeAliases($siteId, $previousNodeId, $nextNodeId)
-    {
-        // Do something
+        $this->aliasManager->invalidate(['site_id' => $menu->getSiteId()]);
+        $this->aliasCacheLookup->refresh();
     }
 }

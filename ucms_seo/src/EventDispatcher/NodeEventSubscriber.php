@@ -109,13 +109,13 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // Aliases should be merged on with the parent ones, since the parent
         // is going to be dereferenced from the site.
         if ($event->isClone() && $node->site_id) {
-            $this->service->replaceNodeAliases($node->site_id, $node->parent_nid, $node->id());
+            $this->service->onAliasChange([$node->id(), $node->parent_nid]);
         }
     }
 
     public function onDelete(NodeEvent $event)
     {
-        $this->service->onAliasRemove($event->getNode());
+        $this->service->onAliasChange([$event->getNode()->id()]);
     }
 
     private function onSaveStoreMeta(NodeEvent $event) {

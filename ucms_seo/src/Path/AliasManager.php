@@ -14,11 +14,6 @@ use MakinaCorpus\Umenu\TreeProviderInterface;
  *   and retry in a transaction; it'll be much safer
  * @todo implement the redirection on hook_menu_status_alter() in case
  *   of a 404 not/found with a simple select query
- * @todo handle invalidation
- * @todo deduplicate
- * @todo last but not least, we need a way to trick drupal path alias
- *   manager that our aliases are valid aliases for himself, would be
- *   good not to rely upon the path alias manager
  * @todo unit test it
  */
 class AliasManager
@@ -270,6 +265,64 @@ class AliasManager
         }
 
         $query->execute();
+    }
+
+    /**
+     * Invalidate aliases related with the given node
+     *
+     * @todo this will a few SQL indices
+     *
+     * @param int[] $nodeIdList
+     */
+    public function invalidateRelated($nodeIdList)
+    {
+        if (!$nodeIdList) {
+            return;
+        }
+
+        $this
+            ->database
+            ->query("
+                UPDATE {ucms_seo_route}
+                SET
+                    is_outdated = 1
+                WHERE
+                    is_outdated = 0
+                    AND is_protected = 0
+                    AND menu_id IS NOT NULL
+                    AND menu_id IN (
+                        SELECT
+                            DISTINCT(i.menu_id)
+                        FROM {umenu_item} i
+                        WHERE
+                            i.node_id IN (:nodeIdList)
+                    )
+            ", [':nodeIdList' => $nodeIdList])
+        ;
+
+        // This is sad, but when data is not consistent and menu identifier
+        // is not set, we must wipe out the complete site cache instead, but
+        // hopefully, it won't happen again once we'll have fixed the item
+        // insertion.
+        $this
+            ->database
+            ->query("
+                UPDATE {ucms_seo_route}
+                SET
+                    is_outdated = 1
+                WHERE
+                    is_outdated = 0
+                    AND is_protected = 0
+                    AND menu_id IS NULL
+                    AND site_id IN (
+                        SELECT
+                            DISTINCT(i.site_id)
+                        FROM {umenu_item} i
+                        WHERE
+                            i.node_id IN (:nodeIdList)
+                    )
+            ", [':nodeIdList' => $nodeIdList])
+        ;
     }
 
     /**
