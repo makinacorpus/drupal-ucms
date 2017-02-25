@@ -630,11 +630,13 @@ function ucms_site_boot() {
   // hook_boot() is the perfect place to set any context long before anything
   // else get initialized (except locale).
   $manager = ucms_site_manager();
+  $request = \Drupal::request();
+  $hostname = $request->server->get('HTTP_HOST');
 
-  if (!empty($_SERVER['HTTP_HOST'])) {
-    if ($site = ucms_site_manager()->getStorage()->findByHostname($_SERVER['HTTP_HOST'])) {
+  if ($hostname) {
+    if ($site = ucms_site_manager()->getStorage()->findByHostname($hostname)) {
       // @todo find a better way then disabling the init event
-      $manager->setContext($site, true);
+      $manager->setContext($site, $request, true);
 
       // This has to be done before drupal_path_initialize() which is run right
       // before the hook_init(), so this will be the one and only alteration

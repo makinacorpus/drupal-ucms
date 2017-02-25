@@ -3,10 +3,9 @@
 namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
 use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -54,7 +53,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
     /**
      * Set current group context
      */
-    public function onSiteInit(SiteEvent $event)
+    public function onSiteInit(SiteInitEvent $event)
     {
         $group = $this->groupManager->getAccess()->getSiteGroup($event->getSite());
 

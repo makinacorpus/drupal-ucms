@@ -1,12 +1,9 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use MakinaCorpus\Ucms\Site\Site;
-
 use Symfony\Component\EventDispatcher\Event;
-
 
 /**
  * Event class for the collection of the sites relative roles.

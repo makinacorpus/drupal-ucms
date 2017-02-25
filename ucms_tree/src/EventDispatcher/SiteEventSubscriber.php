@@ -3,14 +3,13 @@
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SiteEventSubscriber implements EventSubscriberInterface
@@ -59,6 +58,8 @@ class SiteEventSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * Set tree manager
+     *
      * @param TreeManager $treeManager
      */
     public function setTreeManager(TreeManager $treeManager)
@@ -68,10 +69,8 @@ class SiteEventSubscriber implements EventSubscriberInterface
 
     /**
      * On site context initialization.
-     *
-     * @param SiteEvent $event
      */
-    public function onSiteInit(SiteEvent $event)
+    public function onSiteInit(SiteInitEvent $event)
     {
         $site = $event->getSite();
 

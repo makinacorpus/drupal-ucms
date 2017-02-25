@@ -7,7 +7,6 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

@@ -3,9 +3,11 @@
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use MakinaCorpus\Ucms\Site\Site;
-
 use Symfony\Component\EventDispatcher\GenericEvent;
 
+/**
+ * Base implementation of site event
+ */
 class SiteEvent extends GenericEvent
 {
     /**

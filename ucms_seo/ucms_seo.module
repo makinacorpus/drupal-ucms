@@ -159,9 +159,14 @@ function ucms_seo_permission() {
  * Implements hook_init().
  */
 function ucms_seo_init() {
+
+  if (drupal_is_cli()) {
+    return; // Make drush happy.
+  }
+
   // Globalredirect behavior
   // @todo can do better than that.
-  if (!drupal_is_cli() && ucms_site_manager()->hasContext()) {
+  if (ucms_site_manager()->hasContext()) {
     // Check a whole lot of condition to be sure we are only viewing the node
     if (!path_is_admin(current_path()) && ($node = menu_get_object()) && 'node' === arg(0) && !arg(2)) {
       // On front page, we should not have an alias

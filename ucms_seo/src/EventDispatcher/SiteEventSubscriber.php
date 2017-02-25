@@ -3,8 +3,8 @@
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
 use MakinaCorpus\Ucms\Seo\SeoService;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -48,17 +48,31 @@ class SiteEventSubscriber implements EventSubscriberInterface
      * item has never been loaded, so alter the current path to something
      * else, before Drupal router gets to us.
      */
-    public function onInit(SiteEvent $event)
+    public function onInit(SiteInitEvent $event)
     {
         // Naive alias lookup for the current page
-        $site = $event->getSite();
-        $nodeId = $this->service->getAliasManager()->matchPath($_GET['q'], $site->getId());
+        $site       = $event->getSite();
+        $request    = $event->getRequest();
+        $incomming  = $request->query->get('q');
+
+        $nodeId = $this->service->getAliasManager()->matchPath($incomming, $site->getId());
         if ($nodeId) {
-            $_GET['q'] = 'node/' . $nodeId;
+            // $_GET['q'] reference will be useless for Drupal 8
+            $_GET['q'] = $incomming = 'node/' . $nodeId;
+            $request->query->set('q', $incomming);
+            $request->attributes->set('_route', $incomming);
         }
 
         // Set current context to the alias manager
-        $this->service->getAliasCacheLookup()->setEnvironment($site->getId(), $_GET['q']);
+        $this
+            ->service
+            ->getAliasCacheLookup()
+            ->setEnvironment(
+                $site->getId(),
+                $incomming,
+                $request->query->all()
+            )
+        ;
     }
 
     /**

@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Site\ACL;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\ACL\Collector\EntryCollectorInterface;
 use MakinaCorpus\ACL\Collector\EntryListBuilderInterface;
 use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
@@ -16,9 +15,9 @@ use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollectorInterface, EventSubscriberInterface
@@ -98,7 +97,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
     /**
      * On site init clear node access caches
      */
-    public function onSiteInit(SiteEvent $event)
+    public function onSiteInit(SiteInitEvent $event)
     {
         $this->resetCache();
     }
