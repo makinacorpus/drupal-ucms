@@ -73,7 +73,7 @@
         "makinacorpus/drupal-sf-dic" : ">=3.2.0-alpha12",
         "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha4",
         "makinacorpus/drupal-ulink" : "^2.0",
-        "makinacorpus/drupal-umenu" : ">=1.1.5 <1.2",
+        "makinacorpus/drupal-umenu" : "^2.0",
         "makinacorpus/drush-progressbar" : "^1.0",
         "makinacorpus/php-bloom" : "^2.0.1",
         "symfony/security" : "3.*"
