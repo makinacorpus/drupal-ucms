@@ -1,13 +1,8 @@
 # Seo alias migration
 
-Search regexes.
-
-## Various
-
-    SeoAliasStorage|ucms_seo_alias|ensureSitePrimaryAliases|ensureNodePrimaryAlias|getAliasStorage|AliasCanonicalProcessor|AliasDeleteProcessor|StoreLocatorAliasRebuildProcessor
-
 ## Todo list
 
+ -  [pending] rewrite all unit tests and new ones
  -  [postponed] build a batch to allow user force the aliases warmup
  -  [postponed] build a cron to rebuild arbitrary outdated aliases
  -  [postponed] find a way to trick drupal path alias manager that our aliases are valid aliases for himself, would be good not to rely upon the path alias manager
@@ -25,5 +20,4 @@ Search regexes.
  -  [x] rewrite site alias datasource
  -  [x] write node current alias in node info and form, allow modification
  -  add query parameters (excluding q) as part of the cache alias lookup cache key
- -  rewrite all unit tests and new ones
  -  rewrite service locator url generator (need one from a specific project)
