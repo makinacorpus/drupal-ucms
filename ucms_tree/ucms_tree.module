@@ -115,10 +115,11 @@ function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
     $site = $manager->getContext();
     $account = \Drupal::currentUser();
 
-    if (!$site
-      || !preg_match('@.*-(\d+)@', $_GET['menu_name'], $matches)
-      || ($site->getId() !== (int) $matches[1])
-      || !$manager->getAccess()->userIsWebmaster($account, $site)
+    $matches = [];
+    if (!$site ||
+        !preg_match('@\-(\d+)$@', $_GET['menu_name'], $matches) ||
+        ($site->getId() !== (int) $matches[1]) ||
+        !$manager->getAccess()->userIsWebmaster($account, $site)
     ) {
       drupal_access_denied();
       exit;
@@ -128,11 +129,11 @@ function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
     $form['menu'] = [
       '#tree' => TRUE,
     ];
-    $form['menu']['menu_name'] = [
+    $form['menu']['name'] = [
       '#type'  => 'value',
       '#value' => $_GET['menu_name'],
     ];
-    $form['menu']['plid'] = [
+    $form['menu']['parent'] = [
       '#type'  => 'value',
       '#value' => !empty($_GET['parent']) ? $_GET['parent'] : 0,
     ];
@@ -147,52 +148,22 @@ function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_node_insert().
  */
 function ucms_tree_node_insert($node) {
-  // We handle only insert
-  if (isset($node->menu) && isset($node->menu['menu_name'])) {
-    $link = &$node->menu;
-    $link['link_title'] = $node->title;
-    $link['link_path'] = "node/$node->nid";
-    $link['expanded'] = 1;
+  if (isset($node->menu) && isset($node->menu['name'])) {
+    $treeManager = umenu_get_manager();
 
-    // Calculate the position depending on siblings
-    $siblings = menu_build_tree($node->menu['menu_name'], [
-      'plid' => $node->menu['plid'],
-    ]);
-    $index = 0;
-    $previous_sibling_weight = -100;
-    $weight_proposition = -100;
-    foreach ($siblings as $sibling) {
-      $sibling_weight = (int)$sibling['link']['weight'];
-      if ($node->menu['position'] == $index) {
-        // Take the half between prev sibling weight and the sibling's
-        $weight_proposition = $sibling_weight - ($sibling_weight - $previous_sibling_weight) / 2;
+    try {
+      $parentId = $node->menu['parent'] ?: null;
+      $menu = $treeManager->getMenuStorage()->load($node->menu['name']);
+
+      if ($parentId) {
+        $treeManager->getItemStorage()->insertAsChild($parentId, $node->nid, $node->title);
+      } else {
+        $treeManager->getItemStorage()->insert($menu->getId(), $node->nid, $node->title);
       }
-      $previous_sibling_weight = $sibling_weight;
-      $index++;
-    }
-    $link['weight'] = $weight_proposition;
-
-    if (!menu_link_save($link)) {
+    } catch (\Exception $e) {
       drupal_set_message(t('There was an error saving the menu link.'), 'error');
+      watchdog_exception(__FUNCTION__, $e);
     }
-  }
-}
-
-
-/**
- * Implements hook_node_delete().
- */
-function ucms_tree_node_delete($node) {
-  // Delete all menu module links that point to this node.
-  $mlids = db_select('menu_links', 'ml')
-    ->fields('ml', ['mlid'])
-    ->condition('link_path', 'node/' . $node->nid)
-    ->condition('module', 'menu')
-    ->execute()
-    ->fetchCol()
-  ;
-  foreach ($mlids as $mlid) {
-    menu_link_delete($mlid);
   }
 }
 
