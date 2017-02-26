@@ -33,7 +33,6 @@
     "autoload" : {
         "exclude-from-classmap": [
             "/ucms_contrib/src/Tests/",
-            "/ucms_debug/src/Tests/",
             "/ucms_extranet/src/Tests/",
             "/ucms_group/src/Tests/",
             "/ucms_harm/src/Tests/",
@@ -52,7 +51,6 @@
         "psr-4" : {
             "MakinaCorpus\\Ucms\\ContentList\\" : "ucms_list/src",
             "MakinaCorpus\\Ucms\\Contrib\\" : "ucms_contrib/src",
-            "MakinaCorpus\\Ucms\\Debug\\" : "ucms_debug/src",
             "MakinaCorpus\\Ucms\\Extranet\\" : "ucms_extranet/src",
             "MakinaCorpus\\Ucms\\Harm\\" : "ucms_harm/src",
             "MakinaCorpus\\Ucms\\Group\\" : "ucms_group/src",

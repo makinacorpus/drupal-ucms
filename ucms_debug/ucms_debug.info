@@ -1,7 +1,0 @@
-name = "UCMS - Debug"
-description = "Provides some hidden admin screen for debugging purposes"
-core = 7.x
-package = UCMS
-php = 5.5
-dependencies[] = udashboard
-dependencies[] = ucms_site
