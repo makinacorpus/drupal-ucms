@@ -624,6 +624,11 @@ function ucms_site_fast_404() {
  */
 function ucms_site_boot() {
 
+  // Yes, this should also happen in Drush environment.
+  if (!function_exists('drupal_path_initialize')) {
+    $GLOBALS['conf']['path_inc'] = substr(__DIR__, strlen(realpath(DRUPAL_ROOT))) . '/../ucms_seo/includes/path.inc';
+  }
+
   if (drupal_is_cli()) {
     return; // Make drush happy.
   }
