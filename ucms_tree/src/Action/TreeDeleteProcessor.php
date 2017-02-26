@@ -4,12 +4,14 @@ namespace MakinaCorpus\Ucms\Tree\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\MenuStorageInterface;
 
+/**
+ * Delete action on tree.
+ */
 class TreeDeleteProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
