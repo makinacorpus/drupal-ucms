@@ -177,6 +177,11 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
             ];
         }
 
+        // Do not run the filter logic there is no nodes to load.
+        if (empty($map)) {
+            return new FilterProcessResult($text);
+        }
+
         $nodes = $this->entityManager->getStorage('node')->loadMultiple(array_keys($map));
         foreach ($map as $nodeId => $dataList) {
             $done = true;
