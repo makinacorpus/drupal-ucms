@@ -1,4 +1,15 @@
-# Seo alias migration
+# Seo alias
+
+The current module is the second major rewrite of the SEO path alias handling.
+
+Features are:
+
+ *  it does not rely on a Drupal alias table anymore;
+ *  a node, per site, can have one and only one alias;
+ *  this alias can be protected, this means never regenerated anymore: this
+    allows site administrator to write custom hardcoded path aliases;
+ *  on each alias regeneration or manual change, the old alias will be saved
+    in the redirect table with an expiry date.
 
 ## Todo list
 
