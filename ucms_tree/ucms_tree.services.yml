@@ -19,11 +19,6 @@ services:
     arguments: ["@database", "@ucms_site.manager", "%ucms_tree_site_menu%"]
     tags: [{ name: event_subscriber }]
 
-  ucms_tree.node_event_subscriber:
-    class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
-    arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
-    tags: [{ name: event_subscriber }]
-
   # Administrative components
   ucms_tree.admin.datasource:
     class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDatasource
