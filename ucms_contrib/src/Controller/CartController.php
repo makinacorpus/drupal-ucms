@@ -107,31 +107,6 @@ class CartController extends Controller
         }
     }
 
-    public function refreshAction(Request $request, $mode = null)
-    {
-        $content = $this->renderAction($request, $this->getCurrentUser()->id());
-        $content = drupal_render($content);
-
-        switch ($mode) {
-
-            case 'nojs':
-                return $this->redirectToRoute($request->query->get('destination', $request->getPathInfo()));
-
-            case 'ajax':
-                return (new AjaxResponse())
-                    ->addCommand([
-                        'command'   => 'invoke',
-                        'selector'  => null,
-                        'method'    => 'UcmsCartRefresh',
-                        'arguments' => [$content],
-                    ])
-                ;
-
-            default:
-                return new JsonResponse(['content' => $content, 'success' => true], 200);
-        }
-    }
-
     public function renderAction(Request $request, $userId = null)
     {
         if (!$userId) {

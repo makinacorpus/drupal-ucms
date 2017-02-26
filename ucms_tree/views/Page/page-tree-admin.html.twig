@@ -6,8 +6,8 @@
     <td>{{ item.name }}</td>
     <td>{{ item.title }}</td>
     <td>{{ item.description }}</td>
-    <td></td>
-    <td>{% if menu.isSiteMain %}{{ "Yes" }}{% endif %}</td>{# Not working #}
+    <td>{{ item.role }}</td>
+    <td>{% if menu.isSiteMain() %}{{ "Yes" }}{% endif %}</td>{# Not working #}
     <td>
       {{ udashboard_actions(item) }}
     </td>

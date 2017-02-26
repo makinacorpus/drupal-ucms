@@ -201,11 +201,6 @@ function ucms_contrib_menu() {
   ];
 
   // Cart operations.
-  $items['admin/cart/refresh'] = [
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [CartController::class . '::refresh'],
-    'access arguments'  => ['use favorites'],
-  ];
   $items['admin/cart/%node/add'] = [
     'title'             => "Content",
     'page callback'     => 'sf_dic_page',

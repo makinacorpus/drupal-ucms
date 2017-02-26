@@ -95,8 +95,6 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     {
         $request = $this->get('request_stack')->getCurrentRequest();
         $builder = $this->getPageBuilder('cart_all', $request);
-        $userId  = $this->get('current_user')->id();
-        $builder->addBaseQueryParameter('user_id', $userId);
 
         // @todo we must find a more straight-foward way
         return $builder->searchAndRender($request);
@@ -146,9 +144,6 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
                 $contextPane->addActions($actions, $this->t("Create"), 'plus');
             }
         }
-
-        $actions = $this->contentActionProvider->getActions('cart');
-        $contextPane->addActions($actions, $this->t("Refresh"), 'refresh');
 
         // Add node creation link on site
         // FIXME kill it with acid!

@@ -9,7 +9,7 @@ use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
 /**
  * This implementation returns CartItem instances
  */
-class BrowseHistoryCartDatasource extends AbstractNodeDatasource
+class CartAllDatasource extends AbstractNodeDatasource
 {
     /**
      * {@inheritdoc}

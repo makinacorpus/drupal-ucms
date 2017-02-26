@@ -69,19 +69,19 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Page\CartDatasource
     arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
-  ucms_contrib.datasource.browse_history:
+  ucms_contrib.datasource.cart_all:
     public: false
-    class: MakinaCorpus\Ucms\Contrib\Page\BrowseHistoryCartDatasource
+    class: MakinaCorpus\Ucms\Contrib\Page\CartAllDatasource
     arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
 
   # Cart page types
   ucms_contrib.page_type.cart:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.datasource.cart', false]
+    arguments: ['@ucms_contrib.datasource.cart', '@current_user', false]
     tags: [{name: udashboard.page_type, id: cart}]
   ucms_contrib.page_type.browse_history:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.datasource.browse_history', true]
+    arguments: ['@ucms_contrib.datasource.cart_all', '@current_user', true]
     tags: [{name: udashboard.page_type, id: cart_all}]
 
   # Action providers
