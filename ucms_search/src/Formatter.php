@@ -110,8 +110,8 @@ class Formatter
         $nodes = $this->entityManager->getStorage('node')->loadMultiple($nidList);
 
         return $this->buildCommonVariables($request, $response) + [
-            'nodes' => node_view_multiple($nodes),
-            'pager'   => ['#theme' => 'pager'],
+            'nodes' => $nodes ? node_view_multiple($nodes) : [],
+            'pager' => ['#theme' => 'pager'],
         ];
     }
 }
