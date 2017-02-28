@@ -4,28 +4,20 @@ namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
-use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SiteCloneEventListener
 {
     use StringTranslationTrait;
 
     private $db;
-    private $siteManager;
 
     /**
      * Default constructor
      *
      * @param \DatabaseConnection $db
-     * @param SiteManager $siteManager
-     *      Keys are menu name prefix, values are human readable english names
      */
-    public function __construct(
-      \DatabaseConnection $db,
-      SiteManager $siteManager
-    ) {
+    public function __construct(\DatabaseConnection $db) {
         $this->db = $db;
-        $this->siteManager = $siteManager;
     }
 
     /**
@@ -43,7 +35,7 @@ class SiteCloneEventListener
           ->db
           ->query(
             "
-                INSERT INTO {ucms_seo_aliases} (
+                INSERT INTO {ucms_seo_alias} (
                     source, 
                     alias, 
                     language, 
@@ -62,7 +54,7 @@ class SiteCloneEventListener
                     a.priority,
                     a.expires,
                     a.node_id
-                FROM {ucms_seo_aliases} a
+                FROM {ucms_seo_alias} a
                 WHERE
                     (a.site_id = :source)
             ",
