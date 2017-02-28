@@ -87,6 +87,10 @@ services:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventSubscriber
     arguments: ["@ucms_seo.seo_service"]
     tags: [{name: event_subscriber }]
+  ucms_seo.site_clone.subscriber:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteCloneEventListener
+    arguments: ["@ucms_seo.seo_service"]
+    tags: [{name: event_listener, event: "site:clone"}]
   ucms_seo.node_event_subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\NodeEventSubscriber
     arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
