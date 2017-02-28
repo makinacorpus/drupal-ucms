@@ -776,10 +776,12 @@ function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
  * @param $vars
  */
 function template_preprocess_ucms_contrib_content_result_grid(&$vars) {
-  $node_views = node_view_multiple($vars['nodes'], $vars['view_mode']);
-  $vars['nodes'] = [];
-  foreach(element_children($node_views['nodes']) as $child_key) {
-    $vars['nodes'][$child_key] = $node_views['nodes'][$child_key];
+  if (!empty($vars['nodes'])) {
+    $node_views = node_view_multiple($vars['nodes'], $vars['view_mode']);
+    $vars['nodes'] = [];
+    foreach(element_children($node_views['nodes']) as $child_key) {
+      $vars['nodes'][$child_key] = $node_views['nodes'][$child_key];
+    }
   }
 }
 
