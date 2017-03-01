@@ -57,7 +57,7 @@ class ContentActionProvider extends AbstractActionProvider
     /**
      * {@inheritDoc}
      */
-    public function getActions($item)
+    public function getActions($item, $primaryOnly = false, array $groups = [])
     {
         // Add node creation link
         $actions = [];

@@ -39,7 +39,7 @@ class NodeActionProvider extends AbstractActionProvider
     /**
      * {inheritdoc}
      */
-    public function getActions($item)
+    public function getActions($item, $primaryOnly = false, array $groups = [])
     {
         $ret = [];
 

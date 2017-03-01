@@ -38,7 +38,7 @@ class SiteActionProvider implements ActionProviderInterface
     /**
      * {inheritdoc}
      */
-    public function getActions($item)
+    public function getActions($item, $primaryOnly = false, array $groups = [])
     {
         /** @var \MakinaCorpus\Ucms\Site\Site $item */
         $ret = [];

@@ -54,7 +54,7 @@ class UserActionProvider implements ActionProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getActions($item)
+    public function getActions($item, $primaryOnly = false, array $groups = [])
     {
         if (!$this->currentUser->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
             return [];

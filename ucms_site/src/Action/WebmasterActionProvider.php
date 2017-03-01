@@ -13,7 +13,7 @@ class WebmasterActionProvider extends AbstractWebmasterActionProvider
     /**
      * {@inheritdoc}
      */
-    public function getActions($item)
+    public function getActions($item, $primaryOnly = false, array $groups = [])
     {
         if ($item->getUserId() == $this->currentUser->id()) {
             return [];

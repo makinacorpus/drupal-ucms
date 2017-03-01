@@ -1,21 +1,17 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\SiteAccessRecord;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-
 abstract class AbstractWebmasterActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
-
 
     /**
      * @var SiteManager
@@ -26,7 +22,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
      * @var AccountInterface
      */
     protected $currentUser;
-
 
     /**
      * Default constructor
@@ -39,15 +34,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
         $this->currentUser = $currentUser;
     }
 
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param SiteAccessRecord $item
-     */
-    abstract public function getActions($item);
-
-
     /**
      * {@inheritdoc}
      */
@@ -55,7 +41,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
     {
         return $item instanceof SiteAccessRecord;
     }
-
 
     /**
      * Builds the URI for a given operation on site accesses.
@@ -71,7 +56,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
             . '/webmaster/' . $item->getUserId() . '/' . $op;
     }
 
-
     /**
      * Creates the action to delete a user from a site.
      *
@@ -84,7 +68,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
         $path = $this->buildWebmasterUri($item, 'delete');
         return new Action($this->t("Delete from this site"), $path, 'dialog', 'remove', 100, true, true);
     }
-
 
     /**
      * Creates the action to change the role of a user.
@@ -99,4 +82,3 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
         return new Action($this->t("Change user's role"), $path, 'dialog', 'edit', 50, true, true);
     }
 }
-
