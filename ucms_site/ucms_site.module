@@ -292,13 +292,14 @@ function ucms_site_permission() {
  */
 function ucms_site_admin_path_is_allowed($path) {
   // Give a chance to contrib modules to override this.
-  $ret = module_invoke_all('ucms_path_is_allowed', $path);
-  if (in_array(false, $ret, true)) {
-    return FALSE;
-  }
-  elseif (in_array(true, $ret, true)) {
-    return true;
-  }
+  // @todo this is very SLOW - find another way
+//   $ret = module_invoke_all('ucms_path_is_allowed', $path);
+//   if (in_array(false, $ret, true)) {
+//     return FALSE;
+//   }
+//   elseif (in_array(true, $ret, true)) {
+//     return true;
+//   }
 
   // Our proper logic is following.
   if ('system/ajax' === $path) {
@@ -307,7 +308,7 @@ function ucms_site_admin_path_is_allowed($path) {
   if (minidialog_is_ajax()) {
     return true;
   }
-  if (path_is_admin($path)) {
+  if ('admin/' === substr($path, 0, 6) || path_is_admin($path)) {
     // Allow node/add
     if ('node/add' === substr($path, 0, 8)) {
       return true;
