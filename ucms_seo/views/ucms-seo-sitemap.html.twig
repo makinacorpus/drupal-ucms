@@ -1,7 +1,7 @@
 {% macro tree(tree) %}
   {% import _self as xmlsitemap %}
   {% if tree.children %}
-    <ul class="nav nav-stacked">
+    <ul>
       {% for item in tree.children %}
         <li>
           <a href="{{ url(item.route) }}">{{ item.title }}</a>{{ xmlsitemap.tree(item) }}
@@ -17,4 +17,3 @@
   <h3>{{ name }}</h3>
   {{ xmlsitemap.tree(tree) }}
 {% endfor %}
-

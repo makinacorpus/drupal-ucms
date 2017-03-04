@@ -100,6 +100,12 @@ services:
     arguments: ["@ucms_seo.seo_service"]
     tags: [{ name: event_subscriber }]
 
+  # Display site map
+  ucms_seo.widget.sitemap:
+    class: MakinaCorpus\Ucms\Seo\Widget\SiteMapWidget
+    arguments: ['@umenu.manager']
+    tags: [{name: ucms_widget, type: ucms_seo_sitemap}]
+
   # Store locator
   # @todo review the component
   ucms_seo.store_locator_factory:

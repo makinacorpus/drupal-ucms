@@ -83,7 +83,6 @@ class TreeEditForm extends FormBase
                 '#options'        => $roles,
                 '#default_value'  => $menu->getRole(),
                 '#empty_option'   => $this->t("None"),
-                '#required'       => true,
                 '#maxlength'      => 255,
             ];
         }
