@@ -41,6 +41,7 @@ class CartPageType implements PageTypeInterface
     {
         $builder
             ->setDatasource($this->datasource)
+            ->setLimit(16)
             ->addBaseQueryParameter('user_id', $this->account->id())
         ;
 

@@ -28,13 +28,11 @@ class CartDatasource extends AbstractNodeDatasource
     {
         return [
             'c.ts_added'    => $this->t("added to cart date"),
+            'c.weight'      => $this->t("cart order"),
             'n.created'     => $this->t("creation date"),
             'n.changed'     => $this->t("lastest update date"),
             'h.timestamp'   => $this->t('most recently viewed'),
-            'n.status'      => $this->t("status"),
-            'n.uid'         => $this->t("owner"),
-            'n.title.title' => $this->t("title"),
-            'n.is_flagged'  => $this->t("flag"),
+            'n.title'       => $this->t("title"),
         ];
     }
 
@@ -43,7 +41,17 @@ class CartDatasource extends AbstractNodeDatasource
      */
     public function getDefaultSort()
     {
-        return ['c.ts_added', SortManager::DESC];
+        return ['c.weight', SortManager::DESC];
+    }
+
+    /**
+     * Returns a column on which an arbitrary sort will be added in order to
+     * ensure that besides user selected sort order, it will be  predictible
+     * and avoid sort glitches.
+     */
+    protected function getPredictibleOrderColumn()
+    {
+        return 'c.ts_added';
     }
 
     /**

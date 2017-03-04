@@ -108,6 +108,10 @@
   width: 150px;
   height: 150px;
 }
+.ucms-cart-item .img-thumbnail {
+  width: 125px;
+  height: 125px;
+}
 .ucms-cart-item > .node,
 .udashboard-result-inner {
   margin: 15px 0;

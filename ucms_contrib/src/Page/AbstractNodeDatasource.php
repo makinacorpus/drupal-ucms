@@ -58,7 +58,7 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
             'h.timestamp'   => $this->t('most recently viewed'),
             'n.status'      => $this->t("status"),
             'n.uid'         => $this->t("owner"),
-            'n.title.title' => $this->t("title"),
+            'n.title'       => $this->t("title"),
             'n.is_flagged'  => $this->t("flag"),
         ];
     }
@@ -116,6 +116,16 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
     }
 
     /**
+     * Returns a column on which an arbitrary sort will be added in order to
+     * ensure that besides user selected sort order, it will be  predictible
+     * and avoid sort glitches.
+     */
+    protected function getPredictibleOrderColumn()
+    {
+        return 'n.nid';
+    }
+
+    /**
      * Implementors must set the node table with 'n' as alias, and call this
      * method for the datasource to work correctly.
      *
@@ -131,7 +141,7 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
         if ($pageState->hasSortField()) {
             $select->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
         }
-        $select->orderBy('n.nid', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        $select->orderBy($this->getPredictibleOrderColumn(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
 
         $sParam = $pageState->getSearchParameter();
         if (!empty($query[$sParam])) {
@@ -146,6 +156,8 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
         if ($this->isSiteContextDependent()) {
             $select->addTag(Access::QUERY_TAG_CONTEXT_OPT_OUT);
         }
+
+        $select->range($pageState->getOffset(), $pageState->getLimit());
 
         return $select
             ->addTag('node_access')

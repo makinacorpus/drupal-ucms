@@ -31,6 +31,13 @@ function ucms_contrib_schema() {
         'length'      => 16,
         'not null'    => true,
       ],
+      'weight' => [
+        'decription'  => "User set weight (unused)",
+        'type'        => 'int',
+        'unsigned'    => false,
+        'not null'    => true,
+        'default'     => 0,
+      ],
     ],
     'foreign keys' => [
       'uid' => [
@@ -207,4 +214,19 @@ function ucms_contrib_update_7005() {
  */
 function ucms_contrib_update_7006() {
   ucms_contrib_install_udashboard();
+}
+
+/**
+ * Adds the {ucms_contrib_cart}.weight column.
+ */
+function ucms_contrib_update_7007() {
+  if (!db_field_exists('ucms_contrib_cart', 'weight')) {
+    db_add_field('ucms_contrib_cart', 'weight', [
+      'decription'  => "User set weight (unused)",
+      'type'        => 'int',
+      'unsigned'    => false,
+      'not null'    => true,
+      'default'     => 0,
+    ]);
+  }
 }
