@@ -605,6 +605,7 @@ function ucms_contrib_filter_info() {
       'prepare callback'  => 'ucms_contrib_filter_media_prepare',
       'process callback'  => 'ucms_contrib_filter_media_process',
       'default settings'  => [],
+      'cache'             => (bool)variable_get('ulink_unsafe_text_caching', false),
     ],
   ];
 }
