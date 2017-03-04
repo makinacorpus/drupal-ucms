@@ -3,11 +3,9 @@
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ContextPaneEventSubscriber implements EventSubscriberInterface
@@ -17,6 +15,12 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     private $siteManager;
     private $treeManager;
 
+    /**
+     * Default constructor
+     *
+     * @param SiteManager $siteManager
+     * @param TreeManager $treeManager
+     */
     public function __construct(SiteManager $siteManager, TreeManager $treeManager)
     {
         $this->siteManager = $siteManager;
@@ -75,8 +79,6 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
             ->getMenuStorage()
             ->loadWithConditions(['site_id' => $site->getId()])
         ;
-
-        rsort($menus);
 
         $build = [
             '#prefix' => '<div class="col-xs-12">',
