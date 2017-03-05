@@ -91,10 +91,23 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      * Render one's favorite cart.
      * @todo Better way
      */
-    private function renderBrowseHistory()
+    private function renderPaneContent()
     {
         $request = $this->get('request_stack')->getCurrentRequest();
-        $builder = $this->getPageBuilder('cart_all', $request);
+        $builder = $this->getPageBuilder('cart_content', $request);
+
+        // @todo we must find a more straight-foward way
+        return $builder->searchAndRender($request);
+    }
+
+    /**
+     * Render one's favorite cart.
+     * @todo Better way
+     */
+    private function renderPaneMedia()
+    {
+        $request = $this->get('request_stack')->getCurrentRequest();
+        $builder = $this->getPageBuilder('cart_media', $request);
 
         // @todo we must find a more straight-foward way
         return $builder->searchAndRender($request);
@@ -113,8 +126,10 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
             $contextPane
                 ->addTab('cart', $this->t("Cart"), 'shopping-cart')
                 ->add($this->renderCart(), 'cart')
-                ->addTab('cart_all', $this->t("All content"), 'search')
-                ->add($this->renderBrowseHistory(), 'cart_all')
+                ->addTab('cart_content', $this->t("All content"), 'file')
+                ->add($this->renderPaneContent(), 'cart_content')
+                ->addTab('cart_media', $this->t("All medias"), 'picture')
+                ->add($this->renderPaneMedia(), 'cart_media')
             ;
         }
 
