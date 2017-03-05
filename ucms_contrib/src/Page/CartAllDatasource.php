@@ -44,10 +44,12 @@ class CartAllDatasource extends AbstractNodeDatasource
         $select->fields('n', ['nid']);
         $select->fields('h', ['uid']);
         $select->addField('h', 'timestamp', 'added');
-        $select->isNotNull('h.uid');
+
+        if (isset($query['type'])) {
+            $select->condition('n.type', $query['type']);
+        }
 
         $items = $select
-            ->condition('h.uid', $userId)
             ->execute()
             ->fetchAll()
         ;

@@ -149,7 +149,12 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
         }
 
         // Also add a few joins
-        $select->leftJoin('history', 'h', "h.nid = n.nid");
+        if (isset($query['user_id'])) {
+            $select->leftJoin('history', 'h', "h.nid = n.nid AND h.uid = :h_uid", [':h_uid' => $query['user_id']]);
+        } else {
+            // We need the join in order for sorts to avoid WSOD'ing
+            $select->leftJoin('history', 'h', "h.nid = n.nid");
+        }
 
         // @todo here would be the rigth place to deal with filters
 
