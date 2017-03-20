@@ -30,7 +30,7 @@ class TypeRegistry
      *
      * @return TypeRegistry
      */
-    public function register($types)
+    public function registerAll($types)
     {
         foreach ($types as $type => $definition) {
             $this->register($type, $definition);
