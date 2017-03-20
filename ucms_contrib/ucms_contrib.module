@@ -11,7 +11,6 @@
  */
 
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\Filter\EntityLinkFilter;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
@@ -75,6 +74,7 @@ function ucms_contrib_menu() {
     ];
     $items['admin/dashboard/' . $key . '/local'] = [
       'title'             => "Local",
+      'title callback'    => "ucms_contrib_admin_content_page_title",
       'page callback'     => 'ucms_contrib_admin_content_page_local',
       'page arguments'    => [$key],
       'access arguments'  => ['access ucms content overview'], // @todo user has sites
@@ -300,6 +300,15 @@ function ucms_contrib_menu_node_access_add_to_site($type) {
  */
 function ucms_contrib_menu_node_access_global() {
   return user_access(Access::PERM_CONTENT_MANAGE_GLOBAL);
+}
+
+/**
+ * Menu title helper
+ */
+function ucms_contrib_admin_content_page_title() {
+  /** @var \MakinaCorpus\Ucms\Site\SiteManager $manager */
+  $manager = \Drupal::service('ucms_site.manager');
+  return $manager->hasContext() ? t('In this site') : t('Local');
 }
 
 /**

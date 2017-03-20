@@ -29,6 +29,13 @@ function ucms_contrib_admin_content_page_local($tab = null) {
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_global', 0);
+
+  // Apply context, if any
+  $siteManager = ucms_site_manager();
+  if ($siteManager->hasContext()) {
+    $search->getFilterQuery()->matchTerm('site_id', $siteManager->getContext()->getId());
+  }
+
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 
@@ -51,19 +58,14 @@ function ucms_contrib_admin_content_page_starred($tab = null) {
 /**
  * Main content page.
  *
- * @param string $tab
- *   Tab name.
+ * @param \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource
+ * @param string $tab Tab name.
+ * @return array
  */
 function ucms_contrib_admin_content_page(PrivateNodeDataSource $datasource, $tab = null) {
 
   $ret = [];
   $search = $datasource->getSearch();
-
-  // Apply context, if any
-  $siteManager = ucms_site_manager();
-  if ($siteManager->hasContext()) {
-    $search->getFilterQuery()->matchTerm('site_id', $siteManager->getContext()->getId());
-  }
 
   $types = ucms_contrib_type_handler_get()->getTabTypes($tab);
   if (!empty($types)) {
