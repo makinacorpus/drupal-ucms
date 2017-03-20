@@ -7,7 +7,7 @@
       <ul class="nav navbar-nav">
         <li>
           {% if user.hasPermission('access administration pages') %}
-            <a class="navbar-brand" href="{{ url('admin') }}">
+            <a class="navbar-brand{% if not site %} bg-primary{% endif %}" href="{{ url('admin') }}">
               <span aria-hidden="true" class="glyphicon glyphicon-home"></span>
               <span class="sr-only">{{ "Administration"|t }}</span>
             </a>
@@ -30,7 +30,7 @@
             {% endif %}
           </li>
           {% if site %}
-            <li>
+            <li class="bg-primary">
               <a href="{{ url('') }}">
                 {{ site.title_admin }}
               </a>
