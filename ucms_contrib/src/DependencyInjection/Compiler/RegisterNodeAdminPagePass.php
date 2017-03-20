@@ -57,6 +57,9 @@ class RegisterNodeAdminPagePass implements CompilerPassInterface
                     if (empty($pageDefinition['permission'])) {
                         throw new \InvalidArgumentException(sprintf('page "%s" definition set contain the "permission" value.', $path));
                     }
+                    if (!isset($pageDefinition['in_site_context'])) {
+                      $pageDefinition['in_site_context'] = null;
+                    }
 
                     $definition = new Definition();
                     $definition->setClass(DefaultNodeAdminPage::class);
@@ -67,6 +70,7 @@ class RegisterNodeAdminPagePass implements CompilerPassInterface
                         $pageDefinition['permission'],
                         $tab,
                         $pageDefinition['filter_query'],
+                        $pageDefinition['in_site_context'],
                     ]);
                 }
 

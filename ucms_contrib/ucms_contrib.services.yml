@@ -23,6 +23,13 @@ parameters:
     local:
       name: Local
       permission: access ucms content overview
+      in_site_context: false
+      filter_query:
+        is_global: 0
+    site:
+      name: In this site
+      permission: access ucms content overview
+      in_site_context: true
       filter_query:
         is_global: 0
     global:
@@ -34,11 +41,13 @@ parameters:
     flagged:
       name: Flagged
       permission: content manage global
+      in_site_context: false
       filter_query:
         is_flagged: 1
     starred:
       name: Starred
       permission: content manage global
+      in_site_context: false
       filter_query:
         is_starred: 1
 
