@@ -74,8 +74,3 @@ li.ui-sortable-helper {
   color: #F00;
   font-weight: bold;
 }
-
-/* Cart - Force to be static, else it's messing with DnD */
-#ucms-cart {
-  position: static !important;
-}
