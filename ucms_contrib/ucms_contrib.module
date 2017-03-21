@@ -540,6 +540,18 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     '#weight' => 100,
   ];
 
+  // Adds a cancel button
+  if (isset($_GET['destination']) && !url_is_external($_GET['destination'])) {
+    $parsed = drupal_parse_url($_GET['destination']);
+    $form['actions']['cancel'] = [
+      '#markup' => l(t("Cancel"), $parsed['path'], ['query' => $parsed['query'], 'attributes' => ['class' => 'btn btn-warning']]),
+    ];
+  } else {
+    $form['actions']['cancel'] = [
+      '#markup' => '<a href="javascript:history.back()" class="btn btn-warning">' . t("Cancel") . '</a>',
+    ];
+  }
+
   // Adds the 'submit and add to cart' button. Button group will be done
   // by the theme layer.
   $add_to_cart = !$node->id() || !\Drupal::service('ucms_contrib.cart')->has($user->id(), $node->id());
