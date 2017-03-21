@@ -31,6 +31,10 @@ class SearchForm extends FormBase
             $parameterName = self::DEFAULT_PARAM_NAME;
         }
 
+        // Strip the s= & q= parameters from current query.
+        $parameters = drupal_get_query_parameters(null, ['q', $parameterName]);
+        $form['#action'] = url(current_path(), ['query' => $parameters]);
+
         $form_state
             ->setCached(false)
             ->setTemporaryValue(self::TEMP_PARAM, $parameterName)
