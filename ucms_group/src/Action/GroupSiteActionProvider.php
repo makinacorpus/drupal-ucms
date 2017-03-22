@@ -3,9 +3,9 @@
 namespace MakinaCorpus\Ucms\Group\Action;
 
 use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Group\GroupSite;
+use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**

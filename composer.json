@@ -74,6 +74,7 @@
         "makinacorpus/drupal-umenu" : "^2.0.1",
         "makinacorpus/drush-progressbar" : "^1.0",
         "makinacorpus/php-bloom" : "^2.0.1",
+        "makinacorpus/php-acl": "^1.0",
         "symfony/security" : "3.*"
     },
     "suggests" : {

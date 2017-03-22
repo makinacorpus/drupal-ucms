@@ -3,10 +3,9 @@
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
 use Drupal\Core\Session\AccountInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
+use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 

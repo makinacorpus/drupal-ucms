@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Seo\Action;
 
-use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Drupal\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Seo\Path\Redirect;
+use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**

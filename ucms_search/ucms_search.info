@@ -6,3 +6,4 @@ php = 5.5
 dependencies[] = sf_dic
 ; @TODO: check, dependencies added by rle
 dependencies[] = ulink
+dependencies[] = ucms_site
