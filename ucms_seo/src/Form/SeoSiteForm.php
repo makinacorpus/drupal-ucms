@@ -77,7 +77,7 @@ class SeoSiteForm extends FormBase
         $form['piwik']['url'] = [
             '#title'            => t("Piwik URL"),
             '#type'             => 'textfield',
-            '#attributes'       => ['placeholder' => 'http://demo.piwik.org/'],
+            '#attributes'       => ['placeholder' => 'demo.piwik.org'],
             '#default_value'    => $site->getAttribute('seo.piwik.url'),
         ];
         $form['piwik']['site_id'] = [
