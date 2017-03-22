@@ -53,13 +53,12 @@ class SearchForm extends FormBase
             '#default_value'  => isset($query[$parameterName]) ? $query[$parameterName] : null,
         ];
 
-        if (!empty($form['query']['#default_value'])) {
-            $form['clear'] = [
-                '#type'   => 'submit',
-                '#value'  => $this->t("Clear"),
-                '#submit' => ['::clearSubmit']
-            ];
-        }
+        $form['clear'] = [
+            '#type'   => 'submit',
+            '#value'  => $this->t("Clear"),
+            '#submit' => ['::clearSubmit'],
+            '#access' => !empty($form['query']['#default_value']) || !empty($_POST),
+        ];
 
         $form['submit'] = [
             '#type'   => 'submit',
