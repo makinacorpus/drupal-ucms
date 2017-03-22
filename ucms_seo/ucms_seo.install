@@ -47,7 +47,7 @@ function ucms_seo_schema() {
     'foreign keys' => [
       'nid' => [
         'table'   => 'node',
-        'columns' => ['node' => 'nid'],
+        'columns' => ['nid' => 'nid'],
         'delete'  => 'cascade',
       ],
     ],
@@ -100,17 +100,17 @@ function ucms_seo_schema() {
     'foreign keys' => [
       'node_id'     => [
         'table'   => 'node',
-        'columns' => ['node' => 'nid'],
+        'columns' => ['node_id' => 'nid'],
         'delete'  => 'cascade',
       ],
       'site_id' => [
         'table'   => 'ucms_site',
-        'columns' => ['ucms_site' => 'id'],
+        'columns' => ['site_id' => 'id'],
         'delete'  => 'cascade',
       ],
       'menu_id' => [
         'table'   => 'umenu',
-        'columns' => ['mnue_id' => 'id'],
+        'columns' => ['menu_id' => 'id'],
         'delete'  => 'set null',
       ],
     ],
@@ -119,6 +119,11 @@ function ucms_seo_schema() {
     ],
     'primary key' => ['node_id', 'site_id'],
   ];
+
+  if (db_driver() == 'mysql') {
+    // MySQL will fail on unique key with VARCHAR > 255.
+    unset($schema['ucms_seo_route']['unique keys']);
+  }
 
   $schema['ucms_seo_redirect'] = [
     'description'  => 'Stores old node paths for redirect',
@@ -160,12 +165,12 @@ function ucms_seo_schema() {
     'foreign keys' => [
       'nid'     => [
         'table'   => 'node',
-        'columns' => ['node' => 'nid'],
+        'columns' => ['nid' => 'nid'],
         'delete'  => 'cascade',
       ],
       'site_id' => [
         'table'   => 'ucms_site',
-        'columns' => ['ucms_site' => 'id'],
+        'columns' => ['site_id' => 'id'],
         'delete'  => 'cascade',
       ],
     ],
