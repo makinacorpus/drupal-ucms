@@ -110,7 +110,9 @@ function ucms_contrib_field_formatter_view($entity_type, $entity, $field, $insta
         $nodes = node_load_multiple($nids);
         $views = node_view_multiple($nodes, $view_mode);
         foreach ($nids as $delta => $nid) {
-          $element[$delta] = $views['nodes'][$nid];
+          if (isset($views['nodes'][$nid])) {
+            $element[$delta] = $views['nodes'][$nid];
+          }
         }
       }
       break;
