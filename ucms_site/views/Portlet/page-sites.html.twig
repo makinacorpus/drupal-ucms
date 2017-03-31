@@ -9,7 +9,7 @@
       {% if item.state == constant('MakinaCorpus\\Ucms\\Site\\SiteState::ON') %}
         {{ udashboard_button({icon: 'eye-open', title: "View"|t, uri: ucms_site_url(item)}) }}
       {% elseif item.state == constant('MakinaCorpus\\Ucms\\Site\\SiteState::REQUESTED') %}
-        {{ udashboard_button({icon: 'share-alt', title: "Go to request"|t, uri: path('admin/dashboard/site/' ~ item.id)}) }}
+        {{ udashboard_button({icon: 'share-alt', title: "Go to request"|t, uri: ucms_site_url(item)}) }}
       {% endif %}
     </td>
   </tr>
