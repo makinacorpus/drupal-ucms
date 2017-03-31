@@ -1,0 +1,7 @@
+name = "UCMS - Composition"
+description = "Legacy, modern, faster layout module replacement"
+core = 7.x
+package = UCMS
+php = 7.0
+dependencies[] = phplayout
+dependencies[] = ucms_site

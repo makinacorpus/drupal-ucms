@@ -32,6 +32,7 @@
     ],
     "autoload" : {
         "exclude-from-classmap": [
+            "/ucms_composition/src/Tests/",
             "/ucms_contrib/src/Tests/",
             "/ucms_extranet/src/Tests/",
             "/ucms_group/src/Tests/",
@@ -49,11 +50,12 @@
             "/ucms_widget/src/Tests/"
         ],
         "psr-4" : {
+            "MakinaCorpus\\Ucms\\Composition\\" : "ucms_composition/src",
             "MakinaCorpus\\Ucms\\ContentList\\" : "ucms_list/src",
             "MakinaCorpus\\Ucms\\Contrib\\" : "ucms_contrib/src",
             "MakinaCorpus\\Ucms\\Extranet\\" : "ucms_extranet/src",
-            "MakinaCorpus\\Ucms\\Harm\\" : "ucms_harm/src",
             "MakinaCorpus\\Ucms\\Group\\" : "ucms_group/src",
+            "MakinaCorpus\\Ucms\\Harm\\" : "ucms_harm/src",
             "MakinaCorpus\\Ucms\\Label\\" : "ucms_label/src",
             "MakinaCorpus\\Ucms\\Layout\\" : "ucms_layout/src",
             "MakinaCorpus\\Ucms\\Notification\\" : "ucms_notification/src",
@@ -68,13 +70,14 @@
     "require" : {
         "elasticsearch/elasticsearch" : "2.2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
-        "makinacorpus/drupal-sf-dic" : ">=3.2.0-alpha12",
-        "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha4",
+        "makinacorpus/drupal-phplayout" : "*",
+        "makinacorpus/drupal-sf-dic" : ">=3.2.0-alpha21",
+        "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha10",
         "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/drupal-umenu" : "^2.0.1",
         "makinacorpus/drush-progressbar" : "^1.0",
-        "makinacorpus/php-bloom" : "^2.0.1",
         "makinacorpus/php-acl": "^1.0",
+        "makinacorpus/php-bloom" : "^2.0.1",
         "symfony/security" : "3.*"
     },
     "suggests" : {

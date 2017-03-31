@@ -1,0 +1,10 @@
+services:
+
+  ucms_composition.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\Composition\EventDispatcher\ContextPaneEventSubscriber
+    arguments: ["@ucms_site.manager", "@php_layout.context"]
+    tags: [{ name: event_subscriber }]
+
+  ucms_composition.command.migrate:
+    class: MakinaCorpus\Ucms\Composition\Command\MigrateFromLayoutCommand
+    tags: [{name: console.command}]
