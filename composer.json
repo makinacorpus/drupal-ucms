@@ -34,19 +34,11 @@
         "exclude-from-classmap": [
             "/ucms_composition/src/Tests/",
             "/ucms_contrib/src/Tests/",
-            "/ucms_extranet/src/Tests/",
             "/ucms_group/src/Tests/",
-            "/ucms_harm/src/Tests/",
-            "/ucms_label/src/Tests/",
             "/ucms_layout/src/Tests/",
-            "/ucms_list/src/Tests/",
-            "/ucms_notification/src/Tests/",
             "/ucms_search/src/Tests/",
             "/ucms_seo/src/Tests/",
             "/ucms_site/src/Tests/",
-            "/ucms_sso/src/Tests/",
-            "/ucms_tree/src/Tests/",
-            "/ucms_user/src/Tests/",
             "/ucms_widget/src/Tests/"
         ],
         "psr-4" : {
@@ -65,6 +57,11 @@
             "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
             "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "MakinaCorpus\\Ucms\\Composition\\Tests\\" : "ucms_composition/tests"
         }
     },
     "require" : {
