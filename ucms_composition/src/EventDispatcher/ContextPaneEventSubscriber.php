@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Composition\EventDispatcher;
 
 use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Layout\Event\CollectLayoutEvent;
 use MakinaCorpus\Drupal\Layout\Form\LayoutContextEditForm;
 use MakinaCorpus\Layout\Controller\Context;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -14,16 +15,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     private $siteManager;
+    private $database;
     private $context;
 
     /**
      * Default constructor
      *
      * @param SiteManager $siteManager
+     * @param \DatabaseConnection $database
+     * @param Context $context
      */
-    public function __construct(SiteManager $siteManager, Context $context)
+    public function __construct(SiteManager $siteManager, \DatabaseConnection $database, Context $context)
     {
         $this->siteManager = $siteManager;
+        $this->database = $database;
         $this->context = $context;
     }
 
@@ -33,10 +38,57 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            CollectLayoutEvent::EVENT_NAME => [
+                ['onCollectLayout', 0],
+            ],
             ContextPaneEvent::EVENT_INIT => [
                 ['onUcmsdashboardContextinit', 0],
             ],
         ];
+    }
+
+    /**
+     * Collects current page layout
+     */
+    public function onCollectLayout(CollectLayoutEvent $event)
+    {
+        $event->hideForm();
+
+        if (arg(0) !== 'node' && arg(2)) {
+            return [];
+        }
+        if (!$node = menu_get_object()) {
+            return [];
+        }
+        if (!$this->siteManager->hasContext()) {
+            return;
+        }
+
+        $site = $this->siteManager->getContext();
+
+        $layoutIdList = $this
+            ->database
+            ->query(
+                "select id from {layout} where node_id = ? and site_id = ?",
+                [$node->nid, $site->getId()]
+            )
+            ->fetchCol()
+        ;
+
+        if ($layoutIdList) {
+            $layouts = $event->getLayoutStorage()->loadMultiple($layoutIdList);
+        } else {
+            // Automatically creates new layout for node if none exist
+            $layouts = [$event->getLayoutStorage()->create(['node_id' => $node->nid, 'site_id' => $site->getId()])];
+        }
+
+        // @todo access:
+        //   - for webmaster, layout in global regions
+        //   - for others, only if node is editable
+        //   - and we need to load home page layouts too
+        foreach ($layouts as $layout) {
+            $event->addLayout($layout, true);
+        }
     }
 
     /**
