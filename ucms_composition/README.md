@@ -38,16 +38,28 @@ to you:
 
 # Status
 
+## Todolist
+
  * [_] handle home page upon its creation
  * [_] handle homepage-only region (creation, load on every page)
- * [_] phplayout, bootstrap: checkbox for container width (fluid or not) or no container
- * [_] phplayout: add dragula drag'n'drop for moving items
- * [_] phplayout: add options form for containers
+ * [_] php-layout library: bootstrap renderer columns width management
+ * [_] php-layout library: bootstrap renderer helpers arguments Container instead of string
  * [_] phplayout: add options form for items
  * [_] phplayout: add style selector for items
  * [_] plug a dashboard selection screen for item selection
  * [_] unit test the event subscriber
+
+## Postponed
+
+ * [_] phplayout: add dragula drag'n'drop for moving items
+ * [_] phplayout: add options form for containers
+
+## Done
+
  * [x] handle display
  * [x] migrate from layout
+ * [x] phplayout, bootstrap: checkbox for container width (fluid or not) or no container
  * [x] phplayout: event for collecting page layout instead of hardcoded query
  * [x] phplayout: parameter for displaying or not edit form in content
+ * [x] phplayout: top level per-region options
+
