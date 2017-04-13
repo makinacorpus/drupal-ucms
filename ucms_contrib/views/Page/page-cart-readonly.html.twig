@@ -1,4 +1,18 @@
 {% extends 'module:ucms_contrib:views/Page/page-cart.html.twig' %}
 
+{% block item %}
+  {% set node = item.node %}
+  <div class="ucms-cart-item" data-item-type="node" data-item-id="{{ node.nid }}">
+    {{ node_view(node, constant('UDASHBOARD_VIEW_MODE_FAVORITE')) }}
+  </div>
+{% endblock %}
+
+{% block item_list %}
+  <div class="ucms-cart-list" data-layout-source="1">
+    {% for item in items %}
+      {{ block('item') }}
+    {% endfor %}
+  </div>
+{% endblock %}
+
 {% block trash %}{% endblock %}
-{% block css_id %}{% endblock %}
