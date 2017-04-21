@@ -6,6 +6,7 @@ use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Drupal\Layout\Event\CollectLayoutEvent;
 use MakinaCorpus\Drupal\Layout\Form\LayoutContextEditForm;
 use MakinaCorpus\Layout\Controller\Context;
+use MakinaCorpus\Ucms\Composition\RegionConfig;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -52,34 +53,73 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
      */
     public function onCollectLayout(CollectLayoutEvent $event)
     {
+        // We manually display the form in the context pane, so we hide it
+        // from the default content Drupal region
         $event->hideForm();
 
-        if (arg(0) !== 'node' && arg(2)) {
-            return [];
-        }
-        if (!$node = menu_get_object()) {
-            return [];
-        }
         if (!$this->siteManager->hasContext()) {
             return;
         }
 
-        $site = $this->siteManager->getContext();
+        $layoutIds  = [];
+        $layouts    = [];
+        $site       = $this->siteManager->getContext();
+        $theme      = $site->getTheme();
+        $storage    = $event->getLayoutStorage();
 
-        $layoutIdList = $this
+        /*
+         * Collect site layout
+         */
+
+        $siteLayoutIds = $this
             ->database
             ->query(
-                "select id from {layout} where node_id = ? and site_id = ?",
-                [$node->nid, $site->getId()]
+                "select id from {layout} where site_id = ? and node_id is null",
+                [$site->getId()]
             )
             ->fetchCol()
         ;
 
-        if ($layoutIdList) {
-            $layouts = $event->getLayoutStorage()->loadMultiple($layoutIdList);
+        if (!$siteLayoutIds) {
+            // Automatically create regions for site
+            foreach (RegionConfig::getSiteRegionList($theme) as $region) {
+                $layouts[] = $storage->create(['site_id' => $site->getId(), 'region' => $region]);
+            }
         } else {
-            // Automatically creates new layout for node if none exist
-            $layouts = [$event->getLayoutStorage()->create(['node_id' => $node->nid, 'site_id' => $site->getId()])];
+            $layoutIds = array_merge($layoutIds, $siteLayoutIds);
+        }
+
+        /*
+         * Collect current node layouts, if any
+         */
+
+        if (arg(0) === 'node' && !arg(2) && ($node = menu_get_object())) {
+
+            $nodeLayoutIds = $this
+                ->database
+                ->query(
+                    "select id from {layout} where node_id = ? and site_id = ?",
+                    [$node->nid, $site->getId()]
+                )
+                ->fetchCol()
+            ;
+
+            if (!$nodeLayoutIds) {
+                // Automatically creates new layout for node if none exist
+                foreach (RegionConfig::getPageRegionList($theme) as $region) {
+                    $layouts[] = $storage->create(['node_id' => $node->nid, 'site_id' => $site->getId(), 'region' => $region]);
+                }
+            } else {
+                $layoutIds = array_merge($layoutIds, $nodeLayoutIds);
+            }
+        }
+
+        /*
+         * Load everything at once if possible
+         */
+
+        if ($layoutIds) {
+            $layouts = array_merge($layouts, $storage->loadMultiple($layoutIds));
         }
 
         // @todo access:

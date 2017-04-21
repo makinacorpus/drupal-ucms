@@ -40,26 +40,28 @@ to you:
 
 ## Todolist
 
- * [_] handle home page upon its creation
- * [_] handle homepage-only region (creation, load on every page)
- * [_] php-layout library: bootstrap renderer columns width management
- * [_] php-layout library: bootstrap renderer helpers arguments Container instead of string
- * [_] plug a dashboard selection screen for item selection
- * [_] unit test the event subscriber
+ * [_] phplayout: preferred style for region
+ * [_] ucms: handle homepage (transveral regions) migration to layouts not attached to node
+ * [_] ucms: handle homepage-only region (creation, load on every page)
+ * [_] ucms: plug a dashboard selection screen for item selection
+ * [_] ucms: region edit access
+ * [_] ucms: unit test the event subscriber
+ * [_] ucms: widgets item types
 
 ## Postponed
 
- * [_] drag'n'drop from cart
  * [_] phplayout: "set content here" cannot be ajaxified (needs in page modifications)
  * [_] phplayout: add dragula drag'n'drop for moving horizontal containers
- * [_] phplayout: add options form for containers
+ * [_] phplayout: add options form for other than column containers
  * [_] phplayout: ajaxify all action links
+ * [_] ucms: drag'n'drop from cart
 
 ## Done
 
- * [x] handle display
- * [x] migrate from layout
+ * [x] php-layout library: bootstrap renderer columns width management
+ * [x] php-layout library: bootstrap renderer helpers arguments Container instead of string
  * [x] phplayout: add dragula drag'n'drop for moving items
+ * [x] phplayout: add options form for columns
  * [x] phplayout: add options form for items
  * [x] phplayout: add style selector for items
  * [x] phplayout: bootstrap: checkbox for container width (fluid or not) or no container
@@ -68,4 +70,6 @@ to you:
  * [x] phplayout: event for collecting page layout instead of hardcoded query
  * [x] phplayout: parameter for displaying or not edit form in content
  * [x] phplayout: top level per-region options
-
+ * [x] ucms: handle display
+ * [x] ucms: handle home page upon its creation NA: layouts are not attached to home page anymore
+ * [x] ucms: migrate from layout
