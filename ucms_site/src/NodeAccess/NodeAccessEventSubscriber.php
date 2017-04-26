@@ -225,7 +225,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 } else  {
                     $event->add(self::REALM_SITE_READONLY, $siteId);
                     if ($siteId === $node->site_id) { // Avoid data volume exploding
-                        $event->add(self::REALM_SITE_WEBMASTER, $siteId, true, true);
+                        $event->add(self::REALM_SITE_WEBMASTER, $siteId, true, true, true);
                     }
                 }
             }
