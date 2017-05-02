@@ -152,6 +152,12 @@ function ucms_sso_init() {
       drupal_add_http_header('Access-Control-Allow-Credentials', 'true');
       drupal_add_http_header('Access-Control-Allow-Headers', 'Accept, Content-Type');
       drupal_add_http_header('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+
+      // This response now contains per-origin values, so a cache_page MUST NOT cache
+      // the response (but you may still cache it anyway if you want in varnish
+      // for anonymous users, if the cache key is per-domain-used-in-origin, all anon
+      // user will have the same rejection status response.
+      drupal_page_is_cacheable(FALSE);
     }
   } else {
     // If there is no origin in the HTTP headers, this means we are building
@@ -227,6 +233,10 @@ function ucms_sso_callback_check() {
     //  caching.
     // With cache_page activated we have a cache duration and the
     // Vary: Cookie header.
+    // Note that we had an drupal_page_is_cacheable(FALSE); before, so the drupal cache
+    // will not cache it, because the HTTP response contains 1 Access-Control-Allow-Origin
+    // header which depends on the origin of the query, only Varnish can cache this anon
+    // response using the Origin header as a cache key, not Drupal page cache
     return drupal_json_output(['status' => 0]);
   }
 
