@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-03-20 15:56+0100\n"
+"POT-Creation-Date: 2017-05-02 18:34+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -76,6 +76,8 @@ msgstr "Créer !content_type"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:76
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:185;193
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupActionProvider.php:60
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:82
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:40
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:25
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:90
@@ -137,6 +139,7 @@ msgid "Un-flag as innappropriate"
 msgstr "Retirer le marquage comme inapproprié"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:143
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupDeleteProcessor.php:30
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:41
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/AliasDeleteProcessor.php:36
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/RedirectDeleteProcessor.php:36
@@ -148,6 +151,8 @@ msgid "Delete"
 msgstr "Supprimer"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:62;64
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupActionProvider.php:57
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupSiteActionProvider.php:50
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:49
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:68
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:49
@@ -268,6 +273,8 @@ msgstr "Continuer"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeAddToSite.php:136
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeDuplicate.php:148
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:547;551
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:80
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Form/LayoutContextEditForm.php:66;78
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:100
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:95
@@ -373,6 +380,7 @@ msgid "The user could not be identified."
 msgstr "Cet utilisateur ne peut pas être identifié."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:110
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupMemberAddExisting.php:96
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:136
 msgid "The user doesn't exist."
 msgstr "Cet utilisateur n'existe pas."
@@ -468,6 +476,7 @@ msgstr "dépublié"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:107
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:50
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:80
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:5
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:89
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:61
 msgid "Type"
@@ -475,6 +484,9 @@ msgstr "Type"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:108
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:49
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Controller/DashboardController.php:130
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:5
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:7
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:85
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:58
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:63
@@ -497,6 +509,7 @@ msgid "Status"
 msgstr "Statut"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:110
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:7
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:65
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:62
 msgid "Created"
@@ -573,12 +586,14 @@ msgid "My sites"
 msgstr "Mes sites"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:158
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:49
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:74
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:85
 msgid "creation date"
 msgstr "date de création"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:159
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:48
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:73
 msgid "lastest update date"
 msgstr "dernière mise à jour"
@@ -594,6 +609,8 @@ msgid "owner"
 msgstr "propriétaire"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:162
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:47
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:65
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:68
 msgid "title"
 msgstr "titre"
@@ -616,6 +633,7 @@ msgstr "Prise en compte du clonage"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_dashboard/ucms_dashboard.info:0
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.info:0
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.info:0
@@ -701,27 +719,27 @@ msgstr "Favori dans le panier"
 msgid "Lock this content"
 msgstr "Vérrouiller ce contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:551
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:563
 msgid "Save and add to cart"
 msgstr "Enregistrer et ajouter au panier"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:562
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:574
 msgid "Save and publish"
 msgstr "Enregistrer et publier"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:573
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:585
 msgid "Save, publish and add to cart"
 msgstr "Enregistrer, publier et ajouter au panier"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:857
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:869
 msgid "UCMS medias drop & paste management"
 msgstr "UCMS - gestion du copier-coller"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:876
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:888
 msgid "UCMS Media DnD"
 msgstr "UCMS Media DnD"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:877
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:889
 msgid "Will transform UCMS DnD markup into content"
 msgstr "Transforme le balisage UCMS  DnD en contenu"
 
@@ -737,11 +755,11 @@ msgstr "L’action a été réalisée"
 msgid "Display as @mode"
 msgstr "Afficher comme @mode"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:55
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:58
 msgid "Clear"
 msgstr "Vider"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:48;62
+#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/SearchForm.php:52;65
 msgid "Search"
 msgstr "Rechercher"
 
@@ -802,10 +820,415 @@ msgstr "Utiliser le volet contextuel"
 msgid "Dashboard"
 msgstr "Dashboard"
 
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupActionProvider.php:43
+msgid "All members"
+msgstr "Tous les membres"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupActionProvider.php:46
+msgid "Add existing member"
+msgstr "Ajouter un membre existant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupActionProvider.php:50
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitesPortlet.php:22
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:35
+msgid "All sites"
+msgstr "Tous les sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupActionProvider.php:53
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:118
+msgid "Add site"
+msgstr "Ajouter un site"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupDeleteProcessor.php:40
+msgid "Delete this group?"
+msgid_plural "Delete the selected @count groups?"
+msgstr[0] "Supprimer ce group ?"
+msgstr[1] "Supprimer ces @count groupes ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupDeleteProcessor.php:59
+msgid "Group has been deleted"
+msgid_plural "@count groups have been deleted"
+msgstr[0] "Le groupe a été supprimé"
+msgstr[1] "@count groupes ont été supprimé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupMemberRemoveProcessor.php:31
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupSiteRemoveProcessor.php:31
+msgid "Remove"
+msgstr "Retirer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupMemberRemoveProcessor.php:41
+msgid "Remove this member from this group?"
+msgid_plural "Remove the selected @count members for this group?"
+msgstr[0] "Retirer %title de ce groupe ?"
+msgstr[1] "Retirer les @count membres sélectionnés de ce groupe ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupMemberRemoveProcessor.php:67
+msgid "Group member has been removed"
+msgid_plural "@count group members have been removed"
+msgstr[0] "Le membre a été retiré"
+msgstr[1] "@count membres ont été retirés"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupSiteRemoveProcessor.php:41
+msgid "Remove this site from this group?"
+msgid_plural "Remove the selected @count sites from this group?"
+msgstr[0] "Retirer ce site du groupe ?"
+msgstr[1] "Retirer les @count sites sélectionnées du groupe ?"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupSiteRemoveProcessor.php:67
+msgid "Site has been removed from this group"
+msgid_plural "@count sites have been removed from this group"
+msgstr[0] "Site has been removed from this group"
+msgstr[1] "@count sites ont été retiré du groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/SiteActionProvider.php:47
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:133
+msgid "Attach to group"
+msgstr "Lier au groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Controller/DashboardController.php:129
+msgid "Information"
+msgstr "Informations"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Controller/DashboardController.php:131
+msgid "Identifier"
+msgstr "Identifiant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/EventDispatcher/AdminEventSubscriber.php:52;70
+#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:30
+msgid "Group"
+msgstr "Groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/EventDispatcher/AdminEventSubscriber.php:53;71
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:44
+msgid "Groups"
+msgstr "Groupes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/EventDispatcher/ContextPaneEventSubscriber.php:58
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:63
+msgid "Add group"
+msgstr "Ajouter un groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:58
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupMemberAddExisting.php:63
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupMemberAdmin.html.twig:5
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:75
+#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:123
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:70
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:103
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:86
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:58
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:59
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:68
+msgid "Name"
+msgstr "Nom"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:61
+msgid "Ouest union"
+msgstr "Ouest union"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:67
+msgid "Content is invisible in global content"
+msgstr "Le contenu est invisible dans le contenu global"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:70
+msgid ""
+"This is only the default value for content, it may be changed on a per-"
+"content basis."
+msgstr ""
+"Ceci est seulement la valeur par défaut pour le contenu, elle peut être "
+"modifiée pour chaque contenu."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:76
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:143
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:179
+#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:129
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:82
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:89
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:83
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:159
+msgid "Save"
+msgstr "Enregistrer"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:105
+msgid "Group %title has been created"
+msgstr "Le groupe %title a été créé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupEdit.php:107
+msgid "Group %title has been updated"
+msgstr "Le groupe %title a été mis à jour"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupMemberAddExisting.php:64
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupSiteAdd.php:65
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/SiteGroupAttach.php:66
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:87
+msgid "Please make your choice in the suggestions list."
+msgstr "Veuillez faire votre choix parmi cette liste de suggestions."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupMemberAddExisting.php:77
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupSiteAdd.php:78
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:117
+msgid "Add"
+msgstr "Ajouter"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupMemberAddExisting.php:92
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:132
+msgid "The user can't be identified."
+msgstr "Cet utilisateur ne peut pas être identifié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupMemberAddExisting.php:112
+msgid "!name has been added to group."
+msgstr "!name a été ajouté au groupe."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupMemberAddExisting.php:116
+msgid "!name is already a member of this group."
+msgstr "!name est déjà un membre de ce groupe."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupSiteAdd.php:64
+msgid "Title, administrative title, hostname..."
+msgstr "Titre, titre administratif, nom de domaine..."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupSiteAdd.php:93
+msgid "The site can't be identified."
+msgstr "Ce site ne peut pas être identifié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupSiteAdd.php:97
+msgid "The site doesn't exist."
+msgstr "Ce site n'existe pas."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupSiteAdd.php:115
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/SiteGroupAttach.php:116
+msgid "%name has been added to group %group."
+msgstr "%name a été ajouté au groupe %group."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/GroupSiteAdd.php:120
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/SiteGroupAttach.php:121
+msgid "%name is already in this group %group."
+msgstr "%name est déjà dans le groupe %group."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/SiteGroupAttach.php:65
+msgid "Group title..."
+msgstr "Titre du groupe..."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/SiteGroupAttach.php:79
+msgid "Attach"
+msgstr "Lier"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/SiteGroupAttach.php:94
+msgid "The group can't be identified."
+msgstr "Le groupe ne peut pas être identifié."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Form/SiteGroupAttach.php:98
+msgid "The group doesn't exist."
+msgstr "Ce groupe n'existe pas."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:46
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:64
+#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:73
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:67
+msgid "identifier"
+msgstr "identifiant"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupMemberAdminDatasource.php:47
+msgid "member identifier"
+msgstr "identifiant du membre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupMemberAdminDatasource.php:48
+msgid "member name"
+msgstr "nom du membre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:50
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:8
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:57
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:53
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:64
+msgid "State"
+msgstr "État"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:52
+#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:12
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:67
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:167
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:293
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:55
+msgid "Theme"
+msgstr "Thème"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:53
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:56
+msgid "Template"
+msgstr "Gabarit"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:54
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:57
+msgid "Other"
+msgstr "Autre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:66
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:69
+msgid "administrative title"
+msgstr "titre administratif"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:67
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:71
+msgid "state"
+msgstr "état"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:68
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:72
+msgid "type"
+msgstr "type"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:69
+msgid "domain name"
+msgstr "nom de domaine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.info:0
+msgid "Provides user group and site group feature"
+msgstr ""
+"Fournit des fonctionnalités de groupes de site et des groupes d'utilisateurs"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.info:0
+msgid "UCMS - Group"
+msgstr "UCMS - Group"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:22
+msgid "Access to group dashboard"
+msgstr "Accéder au tableau de bord des groupes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:25
+msgid "Manage all groups"
+msgstr "Gérer tous les groupes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:28
+msgid "Manage orphan content"
+msgstr "Gérer le contenu orphelin"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:31
+msgid "View all groups"
+msgstr "Voir tous les groupes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:51
+msgid "My groups"
+msgstr "Mes groupes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:56
+msgid "All groups"
+msgstr "Tous les groupes"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:72
+msgid "Group details"
+msgstr "Détails du groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:92
+msgid "Members"
+msgstr "Membres"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:100
+msgid "Add member"
+msgstr "Ajouter un membre"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:110
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:66;67
+#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:28;197
+msgid "Sites"
+msgstr "Sites"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:228
+msgid "Group options"
+msgstr "Options de groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:234
+msgid "Content is hidden outside of this group"
+msgstr "Le contenu est caché en dehors de ce groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:236
+msgid ""
+"If you check this option, this content will be invisible outside of this "
+"group, except in sites it's being displayed into."
+msgstr ""
+"Si vous cochez cette option, ce contenu sera invisible en dehors de ce "
+"groupe, sauf pour les sites où il est affiché."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:6
+msgid "Default status"
+msgstr "Statut par défaut"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:8
+msgid "Changed"
+msgstr "Modifié"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:19
+msgid "This is the default group"
+msgstr "Ceci est le groupe par défaut"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:23
+msgid "invisible"
+msgstr "invisible"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:23
+msgid "visible"
+msgstr "visible"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:33
+msgid "There is no groups yet."
+msgstr "Aucun groupe pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdminMine.html.twig:3
+msgid "You are not member of any group."
+msgstr "Vous n'êtes membre d'aucun groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdminSite.html.twig:3
+msgid "This site is in no groups."
+msgstr "Ce contenu n'est dans aucun groupe."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupMemberAdmin.html.twig:6
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:94
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:59
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:74
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:106
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:58
+msgid "Email"
+msgstr "E-mail"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupMemberAdmin.html.twig:8
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:62
+msgid "Global status"
+msgstr "Statut global"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupMemberAdmin.html.twig:9
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:51
+msgid ""
+"This is the global status for across the whole platform. Is a user is "
+"disabled, he/she won't be able to log in."
+msgstr ""
+"Ceci est le statut global pour toute la plateforme. Si un utilisateur est "
+"désactivé, il/elle ne pourra plus se connecter."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupMemberAdmin.html.twig:19
+msgid "disabled"
+msgstr "désactivé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupMemberAdmin.html.twig:19
+msgid "enabled"
+msgstr "activé"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupMemberAdmin.html.twig:27
+msgid "There is no members yet."
+msgstr "Pas de membres pour le moment."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:6
+#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:62
+msgid "Hostname"
+msgstr "Nom de domaine"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:26
+msgid "There is no sites attached to this group yet."
+msgstr "Aucun site lié à ce groupe pour le moment."
+
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Action/NodeActionProvider.php:39
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:40
 msgid "Define as group content"
-msgstr "Définir comme contenu de groupe"
+msgstr "Définir comme contenu Groupe"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Action/NodeActionProvider.php:39
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:48
@@ -814,15 +1237,15 @@ msgstr "Retirer des contenus Groupe"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeMakeGroup.php:25
 msgid "Define %title as group content?"
-msgstr "Définir %title comme contenu groupe ?"
+msgstr "Définir %title comme contenu Groupe ?"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeMakeGroup.php:39
 msgid "%title has been added to the group contents."
-msgstr "%title a été ajouté aux contenus groupes."
+msgstr "%title a été ajouté aux contenus Groupe."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeUnmakeGroup.php:25
 msgid "Remove %title from group contents?"
-msgstr "Retirer %title des contenu Groupe ?"
+msgstr "Retirer %title des contenus Groupe ?"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeUnmakeGroup.php:39
 msgid "%title has been removed from the group contents."
@@ -839,10 +1262,6 @@ msgstr ""
 #: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
 msgid "UCMS - Harm"
 msgstr "UCMS - Harm"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:30
-msgid "Group"
-msgstr "Groupe"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelNotificationsActionProvider.php:44
 #: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:45
@@ -874,17 +1293,6 @@ msgstr ""
 "Une erreur est survenue lors de la suppression de l'étiquette \"@name\". "
 "Veuillez réessayer."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:75
-#: sites/all/modules/composer/drupal-ucms/ucms_search/src/Admin/IndexListForm.php:123
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:70
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:103
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:86
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:58
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:59
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:68
-msgid "Name"
-msgstr "Nom"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:111
 msgid "Parent label"
 msgstr "Catégorie"
@@ -905,16 +1313,6 @@ msgstr ""
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:128
 msgid "Non editable label"
 msgstr "Étiquette non modifiable"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:143
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:179
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:129
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:82
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:89
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:83
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:159
-msgid "Save"
-msgstr "Enregistrer"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelEdit.php:166
 msgid "The new \"@name\" label has been created."
@@ -960,11 +1358,6 @@ msgstr "Non modifiable"
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:61
 msgid "Category"
 msgstr "Catégorie"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:73
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:67
-msgid "identifier"
-msgstr "identifiant"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:74
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:83
@@ -1069,14 +1462,6 @@ msgstr "Les modifications ont été supprimées"
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:12
 msgid "Enabled regions"
 msgstr "Régions activées"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:12
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:67
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:167
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:293
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:55
-msgid "Theme"
-msgstr "Thème"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:38
 msgid "No theme found."
@@ -2016,12 +2401,6 @@ msgstr "Identification"
 msgid "HTTP hostname"
 msgstr "Nom de domaine"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:57
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:53
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:64
-msgid "State"
-msgstr "État"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:59
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:33
 msgid "Created at"
@@ -2078,11 +2457,6 @@ msgstr "Pas de requête"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:77
 msgid "Pending requests"
 msgstr "Demandes en attente"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:66;67
-#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:28;197
-msgid "Sites"
-msgstr "Sites"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/ContextPaneEventListener.php:26
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:43
@@ -2314,10 +2688,6 @@ msgstr "Le site @site est passé de l'état @from à @to"
 msgid "There was an error switching site @site from @from to @to"
 msgstr "Il y a une erreur pour passer le site @site de l'état @from à @to"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:87
-msgid "Please make your choice in the suggestions list."
-msgstr "Veuillez faire votre choix parmi cette liste de suggestions."
-
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:104
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterChangeRole.php:104
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDatasource.php:62
@@ -2329,14 +2699,6 @@ msgstr "Veuillez faire votre choix parmi cette liste de suggestions."
 msgid "Role"
 msgstr "Rôle"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:117
-msgid "Add"
-msgstr "Ajouter"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:132
-msgid "The user can't be identified."
-msgstr "Cet utilisateur ne peut pas être identifié."
-
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:157
 msgid "!name has been added as %role."
 msgstr "!name a été ajouté comme %role."
@@ -2345,14 +2707,6 @@ msgstr "!name a été ajouté comme %role."
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:97
 msgid "Lastname / Firstname"
 msgstr "Nom / Prénom"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:94
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:59
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:74
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:106
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:58
-msgid "Email"
-msgstr "E-mail"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:112
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:51
@@ -2441,37 +2795,13 @@ msgstr "Promouvoir @name en tant que webmestre ?"
 msgid "!name has been promoted as %role."
 msgstr "@name a été promu en tant que webmestre."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:56
-msgid "Template"
-msgstr "Gabarit"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:57
-msgid "Other"
-msgstr "Autre"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:69
-msgid "administrative title"
-msgstr "titre administratif"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:70
 msgid "hostname"
 msgstr "nom de domaine"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:71
-msgid "state"
-msgstr "état"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:72
-msgid "type"
-msgstr "type"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:75
 msgid "owner name"
 msgstr "nom du propriétaire"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:62
-msgid "Hostname"
-msgstr "Nom de domaine"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:65
@@ -2480,18 +2810,6 @@ msgstr "Nom de domaine"
 msgid "Enabled"
 msgstr "Activé"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:51
-msgid ""
-"This is the global status for across the whole platform. Is a user is "
-"disabled, he/she won't be able to log in."
-msgstr ""
-"Ceci est le statut global pour toute la plateforme. Si un utilisateur est "
-"désactivé, il/elle ne pourra plus se connecter."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:62
-msgid "Global status"
-msgstr "Statut global"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:56
 msgid "No attached site yet."
 msgstr "Pas de site rattaché pour le moment."
@@ -2499,11 +2817,6 @@ msgstr "Pas de site rattaché pour le moment."
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:63
 msgid "Request date"
 msgstr "Date de demande"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitesPortlet.php:22
-#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:35
-msgid "All sites"
-msgstr "Tous les sites"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitesPortlet.php:40
 msgid "No site created yet."
