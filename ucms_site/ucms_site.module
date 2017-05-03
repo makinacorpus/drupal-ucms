@@ -387,7 +387,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
       $options['ucms_site'] = $manager->getContext()->getId();
     }
   } else {
-    if (drupal_is_cli()) {
+    if (drupal_is_cli() && $_SERVER['REQUEST_METHOD'] !== 'POST') {
       return;
     }
     // In case we have no site context, and we are actually trying to render a
