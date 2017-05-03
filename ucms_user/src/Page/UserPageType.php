@@ -39,6 +39,8 @@ class UserPageType implements PageTypeInterface
             ->setAllowedTemplates([
                 'table' => 'module:ucms_user:views/Page/page-user.html.twig',
             ])
+            ->enableFilter('role')
+            ->enableFilter('status')
             ->setDefaultDisplay('table')
             ->setDatasource($this->datasource)
         ;
