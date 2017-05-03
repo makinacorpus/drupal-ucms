@@ -55,6 +55,7 @@ to you:
  * [_] phplayout: add options form for other than column containers
  * [_] phplayout: ajaxify all action links
  * [_] ucms: drag'n'drop from cart
+ * [_] ucms: fix ckeditor plugin to use dragula
 
 ## Done
 

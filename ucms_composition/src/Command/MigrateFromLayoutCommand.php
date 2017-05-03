@@ -27,7 +27,7 @@ ucms_layout data, allowing you to do many migration attempts without loosing
 data.
 
 If you need to merge some regions altogether but not all regions, use the
---squash option instead of the --merge-region, where its syntax is:
+--squash option instead of the --merge-regions, where its syntax is:
 
    --squash=(region1 region2[" "...])[" "...]
 
