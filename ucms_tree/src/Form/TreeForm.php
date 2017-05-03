@@ -68,7 +68,7 @@ class TreeForm extends FormBase
 
         $formState->setTemporaryValue('menu', $menu);
 
-        $form['#attached']['library'][] = ['ucms_tree', 'nested-sortable'];
+        $form['#attached']['library'][] = ['ucms_tree', 'tree_edit'];
         $form['#attached']['js'][] = [
           'data' => ['ucmsTree' => ['menuNestingLevel' => variable_get('ucms_tree_menu_nesting_limit', 2)]],
           'type' => 'setting'
@@ -130,10 +130,15 @@ class TreeForm extends FormBase
             // Because they are ordered and a parent will be saved before a child,
             // thus modifying a child: we have to use a classic loop
             $itemsCount = count($items);
+
+            // Keep track of latest root parent found, in order to reorder top
+            // level item relative to each other.
+            $latestRootParentId = null;
+
             for ($i = 0; $i < $itemsCount; $i++) {
 
-                $item = $items[$i];
-                $nodeId   = $item['name'];
+                $item     = $items[$i];
+                $nodeId   = $item['item_id'];
                 $isNew    = substr($item['id'], 0, 4) == 'new_' || empty($item['id']);
                 $title    = trim($item['title']);
                 $itemId   = $isNew ? null : $item['id'];
@@ -141,21 +146,26 @@ class TreeForm extends FormBase
 
                 if ($isNew) {
                     if ($parentId) {
-                        $id = $itemStorage->insertAsChild($parentId, $nodeId, $title);
+                        $itemId = $itemStorage->insertAsChild($parentId, $nodeId, $title);
                     } else {
-                        $id = $itemStorage->insert($menuId, $nodeId, $title);
+                        $itemId = $itemStorage->insert($menuId, $nodeId, $title);
                     }
                     // New potential parent item inserted, replace potential children parent_id
                     foreach ($items as $index => $potentialChild) {
                         if ($potentialChild['parent_id'] === $item['id']) {
-                            $items[$index]['parent_id'] = $id;
+                            $items[$index]['parent_id'] = $itemId;
                         }
                     }
                 } else {
                     if ($parentId) {
                         $itemStorage->moveAsChild($itemId, $parentId);
                     } else {
-                        $itemStorage->moveToRoot($itemId);
+                        if ($latestRootParentId) {
+                            $itemStorage->moveAfter($itemId, $latestRootParentId);
+                        } else {
+                            $itemStorage->moveToRoot($itemId);
+                        }
+                        $latestRootParentId = $itemId;
                     }
 
                     // Update title if revelant
@@ -171,9 +181,6 @@ class TreeForm extends FormBase
         $newTree = $this->treeManager->buildTree($menuId, false, false, true);
 
         // Remove elements not in the original array
-        // TODO: if an item is moved from menuA to menuB, it will be deleted in menuA loop, and won't be available in
-        // menuB loop, so we need to refactor this to either have a single menu editable per route, or handle deleted
-        // items at the end of all menu processing.
         foreach (array_diff_key($old, $processed) as $itemId => $deleted) {
             $itemStorage->delete($itemId);
             $deleteItems[$itemId] = $deleted;
@@ -198,8 +205,18 @@ class TreeForm extends FormBase
         try {
             $tx = $this->db->startTransaction();
 
+            $rawValues = $formState->getValue('values');
+            if (empty($rawValues)) {
+                throw new \RuntimeException("Values can not be empty, JavaScript is disabled or bugguy on client");
+            }
+
+            $values = json_decode($rawValues, true);
+            if (!$values) {
+                throw new \RuntimeException("Values JSON is broken");
+            }
+
             $menu = $formState->getTemporaryValue('menu');
-            $this->saveMenuItems($menu, json_decode($formState->getValue('values'), true));
+            $this->saveMenuItems($menu, $values);
 
             unset($tx);
 
@@ -243,9 +260,11 @@ class TreeForm extends FormBase
                 '#theme_wrappers' => [],
                 '#suffix'         => '<span class="glyphicon glyphicon-remove"></span></div>',
             ];
-            $element['data'] = drupal_render($input);
-            $element['data-name'] = $item->getNodeId();
-            $element['data-mlid'] = $item->getId();
+
+            $element['data']            = drupal_render($input);
+            $element['data-item-type']  = 'node';
+            $element['data-item-id']    = $item->getNodeId();
+            $element['data-mlid']       = $item->getId();
 
             if ($item->hasChildren()) {
                 $elements = $this->treeOutput($item);
@@ -263,15 +282,14 @@ class TreeForm extends FormBase
 
         if ($menu) {
             $build['#attributes'] = [
-                'data-menu'        => $menu->getName(),
-                'data-can-receive' => 1,
-                'class'            => ['sortable'],
+                'data-menu' => $menu->getName(),
+                'class'     => ['sortable'],
             ];
             $build['#title'] = $menu->getTitle();
 
             // If tree has no children, add an empty element to allow drop.
             if (!$tree->hasChildren()) {
-                $build['#items'] = [''];
+                $build['#items'] = [' '];
             }
         }
 

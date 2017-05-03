@@ -166,16 +166,6 @@
  *
  *****************************************************************************/
 
-body [data-region].ui-sortable {
-  box-sizing: border-box;
-  box-shadow: inset 0 0 0.5em #018fe2, 0 0 1em #808080;
-  border-radius: 4px;
-
-  /* make them visible */
-  min-height: 2em;
-  min-width: 10em;
-}
-
 body [data-region].ucms-highlighted:after {
   content: " ";
   display: table;
@@ -221,11 +211,6 @@ body [data-region].ucms-highlighted-over {
   border: solid 1px #018fe2;
   z-index: 120;
   padding: 0 !important;
-}
-
-.ui-draggable.ui-draggable-dragging > .node,
-.ui-sortable-helper > .node {
-  margin: 0;
 }
 
 /* Fix fucking bootstrap banner */

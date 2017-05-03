@@ -503,28 +503,8 @@ function ucms_contrib_library() {
     'ucms_contrib' => [
       'title'   => 'UCMS - Contrib',
       'version' => '0.1',
-      'js'      => [
-        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js' => [],
-      ],
       'css'     => [
         drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css' => [
-          'type'  => 'file',
-          'media' => 'screen',
-        ],
-      ],
-      'dependencies' => [
-        ['system', 'ui.draggable'],
-        ['system', 'ui.droppable'],
-      ],
-    ],
-    'dragula' => [
-      'title'   => 'DragulaJS',
-      'version' => '3.7.1+dragscroll',
-      'js'      => [
-        drupal_get_path('module', 'ucms_contrib') . '/lib/dragula/dragula.min.js' => [],
-      ],
-      'css'     => [
-        drupal_get_path('module', 'ucms_contrib') . '/lib/dragula/dragula.min.css' => [
           'type'  => 'file',
           'media' => 'screen',
         ],

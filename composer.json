@@ -69,7 +69,7 @@
         "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-phplayout" : "*",
         "makinacorpus/drupal-sf-dic" : ">=3.2.0-alpha21",
-        "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha13",
+        "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha15",
         "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/drupal-umenu" : "^2.0.1",
         "makinacorpus/drush-progressbar" : "^1.0",

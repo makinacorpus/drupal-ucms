@@ -1,0 +1,12 @@
+{
+    "name": "drupal-ucms",
+    "version": "2.0.x-dev",
+    "main": "js/index.ts",
+    "repository": "https://github.com/makinacorpus/drupal-ucms.git",
+    "author": "Makina Corpus",
+    "license": "GPL-2",
+    "dependencies": {
+        "@types/dragula": "^2.1.30",
+        "@types/jquery": "^2.0.41"
+    }
+}

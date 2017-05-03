@@ -450,6 +450,23 @@ function ucms_site_theme() {
 }
 
 /**
+ * Implements hook_library().
+ */
+function ucms_site_library() {
+  return [
+    'ucms' => [
+      'title'   => 'µCMS JavaScript library',
+      'version' => '2.x-dev',
+      'js'      => [drupal_get_path('module', 'ucms_site') . '/dist/ucms.js' => []],
+      'css'     => [],
+      'dependencies' => [
+        ['dragula', 'dragula']
+      ],
+    ],
+  ];
+}
+
+/**
  * Get site manager service.
  *
  * @return \MakinaCorpus\Ucms\Site\SiteManager
