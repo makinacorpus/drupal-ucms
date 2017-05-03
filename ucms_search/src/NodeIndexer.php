@@ -254,10 +254,10 @@ class NodeIndexer implements NodeIndexerInterface
 
         try {
             $created = new \DateTime('@' . $node->getCreatedTime());
-        } catch (Exception $e) {}
+        } catch (\Exception $e) {}
         try {
             $changed = new \DateTime('@' . $node->getChangedTime());
-        } catch (Exception $e) {}
+        } catch (\Exception $e) {}
 
         // @todo Use field mapping from the index definition.
         // @todo Allow via usync in param definition to set different field names

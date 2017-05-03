@@ -10,7 +10,6 @@ use MakinaCorpus\APubSub\CursorInterface;
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Page\WebmasterAdminDisplay;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 

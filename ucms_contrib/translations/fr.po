@@ -873,7 +873,6 @@ msgstr ""
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:69
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:103
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:86
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:58
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:59
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:68
 msgid "Name"
@@ -1021,7 +1020,6 @@ msgstr ""
 "page pour ce thème."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:72
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:66
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:45
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:60
@@ -2220,7 +2218,6 @@ msgstr "Veuillez faire votre choix parmi cette liste de suggestions."
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:104
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterChangeRole.php:104
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDatasource.php:62
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:60
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:82
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:77
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:70
@@ -2246,7 +2243,6 @@ msgid "Lastname / Firstname"
 msgstr "Nom / Prénom"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:94
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:59
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserChangeEmail.php:74
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:106
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:58
@@ -2372,14 +2368,12 @@ msgstr "nom du propriétaire"
 msgid "Hostname"
 msgstr "Nom de domaine"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:65
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:45
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:60
 msgid "Enabled"
 msgstr "Activé"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:51
 msgid ""
 "This is the global status for across the whole platform. Is a user is "
 "disabled, he/she won't be able to log in."
@@ -2387,7 +2381,6 @@ msgstr ""
 "Ceci est le statut global pour toute la plateforme. Si un utilisateur est "
 "désactivé, il/elle ne pourra plus se connecter."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:62
 msgid "Global status"
 msgstr "Statut global"
 
