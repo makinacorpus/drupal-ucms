@@ -86,15 +86,15 @@ services:
   # Cart page types
   ucms_contrib.page_type.cart:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart', '@current_user', false]
+    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart', '@current_user']
     tags: [{name: udashboard.page_type, id: cart}]
   ucms_contrib.page_type.cart_content:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart_all', '@current_user', true, 'content']
+    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart_all', '@current_user', 'content']
     tags: [{name: udashboard.page_type, id: cart_content}]
   ucms_contrib.page_type.cart_media:
     class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart_all', '@current_user', true, 'media']
+    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart_all', '@current_user', 'media']
     tags: [{name: udashboard.page_type, id: cart_media}]
 
   # Action providers

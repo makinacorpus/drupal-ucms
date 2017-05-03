@@ -14,7 +14,6 @@ class CartPageType implements PageTypeInterface
     private $typeHandler;
     private $datasource;
     private $account;
-    private $readonly = true;
     private $tab;
 
     /**
@@ -29,12 +28,11 @@ class CartPageType implements PageTypeInterface
      * @param AccountInterface $account
      * @param string $readonly
      */
-    public function __construct(TypeHandler $typeHandler, DatasourceInterface $datasource, AccountInterface $account, $readonly = true, $tab = null)
+    public function __construct(TypeHandler $typeHandler, DatasourceInterface $datasource, AccountInterface $account, $tab = null)
     {
         $this->typeHandler = $typeHandler;
         $this->datasource = $datasource;
         $this->account = $account;
-        $this->readonly = $readonly;
         $this->tab = $tab;
     }
 
@@ -57,33 +55,24 @@ class CartPageType implements PageTypeInterface
             ->addBaseQueryParameter('user_id', $this->account->id())
         ;
 
-        if ($this->readonly) {
-            if ($this->tab) {
-                switch ($this->tab) {
+        if ($this->tab) {
+            switch ($this->tab) {
 
-                    case 'content':
-                        $builder->addBaseQueryParameter('type', $this->typeHandler->getContentTypes());
-                        break;
+                case 'content':
+                    $builder->addBaseQueryParameter('type', $this->typeHandler->getContentTypes());
+                    break;
 
-                    case 'media':
-                        $builder->addBaseQueryParameter('type', $this->typeHandler->getMediaTypes());
-                        break;
-                }
+                case 'media':
+                    $builder->addBaseQueryParameter('type', $this->typeHandler->getMediaTypes());
+                    break;
             }
-
-            $builder
-                ->setAllowedTemplates([
-                    'cart-readonly' => 'module:ucms_contrib:views/Page/page-cart-readonly.html.twig',
-                ])
-                ->setDefaultDisplay('cart-readonly')
-            ;
-        } else{
-            $builder
-                ->setAllowedTemplates([
-                    'cart' => 'module:ucms_contrib:views/Page/page-cart.html.twig',
-                ])
-                ->setDefaultDisplay('cart')
-            ;
         }
+
+        $builder
+            ->setAllowedTemplates([
+                'cart' => 'module:ucms_contrib:views/Page/page-cart.html.twig',
+            ])
+            ->setDefaultDisplay('cart')
+        ;
     }
 }

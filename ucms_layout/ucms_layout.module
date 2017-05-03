@@ -165,7 +165,6 @@ function ucms_layout_preprocess_region(&$vars) {
 
   if ($manager->isRegionInEditMode($vars['region'])) {
     $vars['attributes_array']['data-region'] = $vars['region'];
-    $vars['attributes_array']['data-can-receive'] = 1;
   }
 
   // Lookup for all blocks, if these are only ucms empty block, add class

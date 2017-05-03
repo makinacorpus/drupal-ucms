@@ -2,7 +2,7 @@
 
 {% block item %}
   {% set node = item.node %}
-  <div class="ucms-cart-item" draggable="true" data-nid="{{ item.nodeId }}" data-bundle="{{ node.type }}">
+  <div class="ucms-cart-item" data-item-type="node" data-item-bundle="{{ node.bundle }}" data-item-id="{{ node.nid }}">
     {{ node_view(node, constant('UDASHBOARD_VIEW_MODE_FAVORITE')) }}
   </div>
 {% endblock %}
@@ -31,17 +31,12 @@
       <div data-page-block="item_list">
         {{ block('item_list') }}
       </div>
-      {% block trash %}
-        <div id="ucms-cart-trash" class="progress-bar-danger progress-bar-striped">
-          <span class="glyphicon glyphicon-trash"></span>
-        </div>
-      {% endblock %}
     </div>
   </div>
 {% endblock %}
 
 {% block item_list %}
-  <div id="ucms-cart-list" data-can-receive="1" class="ucms-cart-list">
+  <div class="ucms-cart-list" data-layout-source="1">
     {% for item in items %}
       {{ block('item') }}
     {% endfor %}
