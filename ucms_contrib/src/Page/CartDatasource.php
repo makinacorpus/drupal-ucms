@@ -8,8 +8,6 @@ use MakinaCorpus\Ucms\Contrib\Cart\CartItem;
 
 /**
  * Datasource for user favorites.
- *
- * @todo write SQL directly into this
  */
 class CartDatasource extends AbstractNodeDatasource
 {
