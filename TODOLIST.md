@@ -4,6 +4,7 @@
 
  * add a complete drag and drop source and item handling api
  * add select2 less version for theming
+ * finish ucms_composition module, see ucms_composition/README.md
  * fix ucms_tree added root elements position is not saved
  * move drag and drop source and item handling to dragula module
  * remove select2 dynamic bootstrap theme selection
@@ -14,8 +15,8 @@
  * rewrite ucms_harm module to make it work
  * rewrite ucms_layout code to dragula (currently is removed)
  * split contrib.less, move items theming in udashboard
- * test ucms_group module
  * test ucms_extranet module
+ * test ucms_group module
 
 ## Long term
 
@@ -26,4 +27,3 @@
  * rewrite search module to be less complex
  * rewrite ucms_label to be a much more flexible front for taxonomy
  * rewrite udashboard JavaScript as TypeScript
-

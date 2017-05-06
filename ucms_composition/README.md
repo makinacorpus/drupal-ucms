@@ -40,6 +40,7 @@ to you:
 
 ## Todolist
 
+ * [_] phplayout: convert JavaScript to TypeScript
  * [_] phplayout: preferred style for region
  * [_] ucms: handle homepage (transveral regions) migration to layouts not attached to node
  * [_] ucms: handle homepage-only region (creation, load on every page)
