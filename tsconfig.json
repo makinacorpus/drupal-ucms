@@ -18,7 +18,7 @@
         "removeComments": true,
         "rootDir": "./",
         "sourceMap": true,
-        "sourceRoot": "./ucms_site/dist/",
+        "sourceRoot": "/ucms_site/dist/",
         "strict": true,
         "strictNullChecks": true,
         "target": "es5",
@@ -27,8 +27,8 @@
         ]
     },
     "files": [
-        "./ucms_site/js/dragsources.ts",
-        "./ucms_tree/js/behavior.ts",
-        "./ucms_tree/js/tree.ts"
+        "./resources/src/common/dragsources.ts",
+        "./resources/src/tree/behavior.ts",
+        "./resources/src/tree/tree.ts"
     ]
 }
