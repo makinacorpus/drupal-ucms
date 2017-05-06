@@ -14,6 +14,7 @@
         "gulp-rename": "latest"
     },
     "dependencies": {
+        "@types/ckeditor": "^0.0.37",
         "@types/select2": "^4.0.34"
     }
 }
