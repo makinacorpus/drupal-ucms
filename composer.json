@@ -67,6 +67,7 @@
     "require" : {
         "elasticsearch/elasticsearch" : "2.2.0",
         "makinacorpus/drupal-apubsub" : "^4.0",
+        "makinacorpus/drupal-dragula" : "^1",
         "makinacorpus/drupal-phplayout" : "*",
         "makinacorpus/drupal-sf-dic" : ">=3.2.2",
         "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha15",
@@ -80,7 +81,6 @@
     "suggests" : {
         "drupal/redis" : "Activates a few Redis-based caches",
         "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs",
-        "makinacorpus/drupal-dragula" : "Enables DND with Dragula for various modules",
         "makinacorpus/drupal-phplayout" : "In order to use the DND page composition module",
         "makinacorpus/drupal-unoderef" : "Simple node reference field with a DND widget",
         "makinacorpus/redis-bundle" : "Alternative Redis cache backend"
