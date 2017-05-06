@@ -79,6 +79,14 @@ class DefaultNodeAdminPage implements NodeAdminPageInterface
             ->setDatasource($this->datasource)
         ;
 
+        // Add elastic filters
+        $builder
+            ->enableFilter('type')
+            ->enableFilter('owner')
+            ->enableFilter('tags')
+            ->enableFilter('site_id')
+        ;
+
         if ($this->queryFilter) {
             foreach ($this->queryFilter as $name => $value) {
                 $builder->addBaseQueryParameter($name, $value);
