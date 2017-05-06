@@ -496,24 +496,6 @@ function ucms_contrib_favorite_render() {
 }
 
 /**
- * Implements hook_library().
- */
-function ucms_contrib_library() {
-  return [
-    'ucms_contrib' => [
-      'title'   => 'UCMS - Contrib',
-      'version' => '0.1',
-      'css'     => [
-        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css' => [
-          'type'  => 'file',
-          'media' => 'screen',
-        ],
-      ],
-    ],
-  ];
-}
-
-/**
  * Implements hook_admin_paths().
  */
 function ucms_contrib_admin_paths() {

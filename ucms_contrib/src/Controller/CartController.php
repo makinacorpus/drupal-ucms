@@ -118,7 +118,6 @@ class CartController extends Controller
 
         $ret = [];
         $ret['#markup'] = $builder->searchAndRender($request);
-        $ret['#attached']['library'][] = ['ucms_contrib', 'ucms_contrib'];
 
         return $ret;
     }
