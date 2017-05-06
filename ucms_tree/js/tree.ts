@@ -29,12 +29,31 @@ namespace UcmsTree {
         for (let input of <any>context.querySelectorAll("input[type=\"text\"]")) {
             (<HTMLInputElement>input).onchange = () => updateValue(form);
         }
+
+        // Attach the remove button, I am not happy with this one, but it works
+        // fine, I think that items should be a type, and we woudn't need to do
+        // this lookup at runtime if we had a reference kept somewhere
+        for (let span of <any>context.querySelectorAll("span.glyphicon-remove")) {
+            (<HTMLSpanElement>span).onclick = () => {
+                let search = <Element>span;
+                while (search.parentElement) {
+                    search = search.parentElement;
+                    if ("li" === search.tagName.toLowerCase()) {
+                        if (search.parentElement) {
+                            search.parentElement.removeChild(search);
+                        }
+                        updateValue(form);
+                        return;
+                    }
+                }
+            };
+        }
     }
 
     /**
-     * Create new item
+     * Create visual clone, but do not attach any behaviours
      */
-    function createItem(form: Element, element: Element, drake: dragula.Drake): Element {
+    function createItemClone(element: Element): Element {
         // Item id is mandatory, we now we have one since the item
         // was actually acceptable by dragula
         const itemId = <string>element.getAttribute(DragSources.DATA_ITEM_ID);
@@ -49,18 +68,40 @@ namespace UcmsTree {
             }
         }
 
+        // Little bit of DOM hack, we need a parent element to spawn our string
+        // template as real DOM elements
         const wrapper = document.createElement('div');
         const text = TEMPLATE_ITEM.replace("__ITEM_ID__", itemId).replace("__TITLE__", title).trim();
         wrapper.innerHTML = text;
 
-        const innerContainer = wrapper.querySelector("ol");
+        return <Element>wrapper.childNodes[0];
+    }
+
+    /**
+     * Create new item
+     */
+    function createItem(form: Element, element: Element, drake: dragula.Drake): Element {
+        // Item id is mandatory, we now we have one since the item
+        // was actually acceptable by dragula
+        const item = createItemClone(element);
+
+        const innerContainer = item.querySelector("ol");
         if (innerContainer) {
             drake.containers.push(innerContainer);
         }
 
-        attachAdditionalItemBehaviors(form, wrapper);
+        attachAdditionalItemBehaviors(form, item.parentElement ? item.parentElement : item);
+        item.setAttribute("data-tree-transformed", "1");
+        item.classList.add("tree-new");
 
-        return <Element>wrapper.childNodes[0];
+        return item;
+    }
+
+    /**
+     * Is the given element a target of one of our widgets
+     */
+    function isTarget(container: Element): boolean {
+        return "ol" === container.tagName.toLowerCase();
     }
 
     /**
@@ -83,9 +124,17 @@ namespace UcmsTree {
         const value: any[] = [];
 
         // Traverse traverse all children recursively
+        // @todo this need to be rewritten
         const recurse = (parent: Element, parentId: string) => {
             for (let child of <any>parent.childNodes) {
                 if (child instanceof Element && DragSources.elementMatches(child, "node")) {
+
+                    // Under some scenarios, some leftovers from dragula might
+                    // still exist due to non raised "dragend" event (we process
+                    // some items in the "drop" event).
+                    if (child.classList.contains("gu-transit")) {
+                        continue;
+                    }
 
                     // Find item title
                     const titleNode = child.querySelector("input[type=\"text\"]");
@@ -125,7 +174,6 @@ namespace UcmsTree {
         };
 
         recurse(root, "");
-
         hiddenField.setAttribute("value", JSON.stringify(value));
     }
 
@@ -157,7 +205,6 @@ namespace UcmsTree {
      * Initialiaze a single widget
      */
     export function initializeWidget(form: Element): void {
-
         const sources: Element[] = [];
 
         var root = <Element>form.querySelector(SELECTOR_ROOT);
@@ -168,6 +215,10 @@ namespace UcmsTree {
         for (let item of <any>form.querySelectorAll(SELECTOR_ITEM)) {
             // Find inner droppable
             let innerContainer = <Element>(<Element>item).querySelector("ol");
+
+            // Element found in the first place are correctly themed, avoid
+            // cloning them on drag
+            (<Element>item).setAttribute("data-tree-transformed", "1");
 
             // Add an empty zone for dropping if there's no child
             if (!innerContainer) {
@@ -196,11 +247,66 @@ namespace UcmsTree {
             direction: 'vertical'
         });
 
+        // Keep a reference to the currently being dragged element when dragging
+        // so we can do a little bit of magic (tm);
+        let currentDragElement: Element | null;
+        let currentClone: Element | null;
+
+        // On drag initialization, keep the dragged element reference and create
+        // the clone we will use for display inside the lists
+        drake.on("drag", (element: Element, source: Element) => {
+            currentDragElement = element;
+            // Items we dragged from the widget do not need a clone, they are
+            // already correctly displayed
+            if (!isTarget(source)) {
+                currentClone = createItemClone(element);
+                currentClone.classList.add("gu-transit");
+            }
+        });
+
+        // On dragend, remove all references to current element, and destroy
+        // clone, make it going out of the DOM and let be garbage collected
+        drake.on("dragend", (element: Element) => {
+            if (currentDragElement) {
+                currentDragElement.removeAttribute("style");
+            }
+            currentDragElement = null;
+            if (currentClone && currentClone.parentNode) {
+                currentClone.parentNode.removeChild(currentClone);
+            }
+            currentClone = null;
+        });
+
+        // As soon as an element is over a custom container of ours, hide it
+        // so it wouldn't show visually, but also attach the visual clone to
+        // its parent so it is visible, this is a hack that will allow us to
+        // make believe the user it drags the clone instead of the container
+        drake.on("over", (element: Element, container: Element, source: Element) => {
+            if (isTarget(container) && currentClone && element.parentElement) {
+                element.setAttribute("style", "display: none !important;");
+                element.parentElement.insertBefore(currentClone, element);
+            }
+        });
+
+        // The shadow event is a security, we do reattach the clone to the
+        // current element parent everytime it's being moved
+        drake.on("shadow", (element: Element, container: Element, source: Element) => {
+            if (isTarget(container) && currentClone && element.parentElement) {
+                element.parentElement.insertBefore(currentClone, element);
+            }
+        });
+
+        // Drop event, on which we are going to recreate a viable new element
+        // on which will attach our behaviours, unlike the visual clone which
+        // remains a passive item
         drake.on("drop", (element: Element, target: Element, source: Element) => {
-            if ("ol" === source.tagName.toLowerCase()) {
+            if (isTarget(source)) {
                 // If source is empty, add the "empty" class onto the ol
                 if (!source.childElementCount) {
                     source.classList.add("empty");
+                }
+                if (!element.classList.contains("tree-new")) {
+                    element.classList.add("tree-modified");
                 }
             } else {
                 const item = createItem(form, element, drake);

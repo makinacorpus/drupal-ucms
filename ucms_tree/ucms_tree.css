@@ -16,6 +16,12 @@ ol.sortable, ol.sortable ol {
 ol.sortable li {
   position: relative;
 }
+.tree-new > div {
+  background: #f1ffde;
+}
+.tree-modified > div {
+  background: #fffdd9;
+}
 .sortable li div,
 .sortable .ucms-placeholder {
   border: 1px solid #d4d4d4;

@@ -89,8 +89,27 @@ var UcmsTree;
             var input = _a[_i];
             input.onchange = function () { return updateValue(form); };
         }
+        var _loop_1 = function (span) {
+            span.onclick = function () {
+                var search = span;
+                while (search.parentElement) {
+                    search = search.parentElement;
+                    if ("li" === search.tagName.toLowerCase()) {
+                        if (search.parentElement) {
+                            search.parentElement.removeChild(search);
+                        }
+                        updateValue(form);
+                        return;
+                    }
+                }
+            };
+        };
+        for (var _b = 0, _c = context.querySelectorAll("span.glyphicon-remove"); _b < _c.length; _b++) {
+            var span = _c[_b];
+            _loop_1(span);
+        }
     }
-    function createItem(form, element, drake) {
+    function createItemClone(element) {
         var itemId = element.getAttribute(DragSources.DATA_ITEM_ID);
         var title = "";
         for (var _i = 0, _a = ["h1", "h2", "h3", "h4"]; _i < _a.length; _i++) {
@@ -104,12 +123,21 @@ var UcmsTree;
         var wrapper = document.createElement('div');
         var text = TEMPLATE_ITEM.replace("__ITEM_ID__", itemId).replace("__TITLE__", title).trim();
         wrapper.innerHTML = text;
-        var innerContainer = wrapper.querySelector("ol");
+        return wrapper.childNodes[0];
+    }
+    function createItem(form, element, drake) {
+        var item = createItemClone(element);
+        var innerContainer = item.querySelector("ol");
         if (innerContainer) {
             drake.containers.push(innerContainer);
         }
-        attachAdditionalItemBehaviors(form, wrapper);
-        return wrapper.childNodes[0];
+        attachAdditionalItemBehaviors(form, item.parentElement ? item.parentElement : item);
+        item.setAttribute("data-tree-transformed", "1");
+        item.classList.add("tree-new");
+        return item;
+    }
+    function isTarget(container) {
+        return "ol" === container.tagName.toLowerCase();
     }
     function updateValue(form) {
         var hiddenField = form.querySelector("input[name=\"values\"]");
@@ -126,6 +154,9 @@ var UcmsTree;
             for (var _i = 0, _a = parent.childNodes; _i < _a.length; _i++) {
                 var child = _a[_i];
                 if (child instanceof Element && DragSources.elementMatches(child, "node")) {
+                    if (child.classList.contains("gu-transit")) {
+                        continue;
+                    }
                     var titleNode = child.querySelector("input[type=\"text\"]");
                     var title = void 0;
                     if (titleNode instanceof HTMLInputElement) {
@@ -189,6 +220,7 @@ var UcmsTree;
         for (var _i = 0, _a = form.querySelectorAll(UcmsTree.SELECTOR_ITEM); _i < _a.length; _i++) {
             var item = _a[_i];
             var innerContainer = item.querySelector("ol");
+            item.setAttribute("data-tree-transformed", "1");
             if (!innerContainer) {
                 innerContainer = document.createElement('ol');
                 innerContainer.setAttribute("class", "empty");
@@ -206,10 +238,43 @@ var UcmsTree;
             removeOnSpill: false,
             direction: 'vertical'
         });
+        var currentDragElement;
+        var currentClone;
+        drake.on("drag", function (element, source) {
+            currentDragElement = element;
+            if (!isTarget(source)) {
+                currentClone = createItemClone(element);
+                currentClone.classList.add("gu-transit");
+            }
+        });
+        drake.on("dragend", function (element) {
+            if (currentDragElement) {
+                currentDragElement.removeAttribute("style");
+            }
+            currentDragElement = null;
+            if (currentClone && currentClone.parentNode) {
+                currentClone.parentNode.removeChild(currentClone);
+            }
+            currentClone = null;
+        });
+        drake.on("over", function (element, container, source) {
+            if (isTarget(container) && currentClone && element.parentElement) {
+                element.setAttribute("style", "display: none !important;");
+                element.parentElement.insertBefore(currentClone, element);
+            }
+        });
+        drake.on("shadow", function (element, container, source) {
+            if (isTarget(container) && currentClone && element.parentElement) {
+                element.parentElement.insertBefore(currentClone, element);
+            }
+        });
         drake.on("drop", function (element, target, source) {
-            if ("ol" === source.tagName.toLowerCase()) {
+            if (isTarget(source)) {
                 if (!source.childElementCount) {
                     source.classList.add("empty");
+                }
+                if (!element.classList.contains("tree-new")) {
+                    element.classList.add("tree-modified");
                 }
             }
             else {
