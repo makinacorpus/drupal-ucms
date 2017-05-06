@@ -68,7 +68,6 @@ class TreeForm extends FormBase
 
         $formState->setTemporaryValue('menu', $menu);
 
-        $form['#attached']['library'][] = ['ucms_tree', 'tree_edit'];
         $form['#attached']['js'][] = [
           'data' => ['ucmsTree' => ['menuNestingLevel' => variable_get('ucms_tree_menu_nesting_limit', 2)]],
           'type' => 'setting'

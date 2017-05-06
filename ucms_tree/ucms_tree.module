@@ -78,28 +78,6 @@ function ucms_tree_role_list() {
 }
 
 /**
- * Implements hook_library().
- */
-function ucms_tree_library() {
-  $path = drupal_get_path('module', 'ucms_tree');
-  return [
-    'tree_edit' => [
-      'title'   => 'Tree edit',
-      'version' => '1.x',
-      'css'     => [
-        $path . '/ucms_tree.css' => [
-          'type'  => 'file',
-          'media' => 'screen',
-        ],
-      ],
-      'dependencies' => [
-        ['ucms_site', 'ucms']
-      ],
-    ],
-  ];
-}
-
-/**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {

@@ -5,8 +5,12 @@
     "repository": "https://github.com/makinacorpus/drupal-ucms.git",
     "author": "Makina Corpus",
     "license": "GPL-2",
-    "dependencies": {
+    "devDependencies": {
         "@types/dragula": "^2.1.30",
-        "@types/jquery": "^2.0.41"
+        "@types/jquery": "^2.0.41",
+        "gulp": "latest",
+        "gulp-clean-css": "latest",
+        "gulp-less": "latest",
+        "gulp-rename": "latest"
     }
 }

@@ -454,16 +454,26 @@ function ucms_site_theme() {
  */
 function ucms_site_library() {
   return [
-    'ucms' => [
-      'title'   => 'µCMS JavaScript library',
+    'ucms_admin' => [
+      'title'   => 'µCMS admin JavaScript library',
       'version' => '2.x-dev',
       'js'      => [drupal_get_path('module', 'ucms_site') . '/dist/ucms.js' => []],
-      'css'     => [],
+      'css'     => [drupal_get_path('module', 'ucms_site') . '/dist/ucms.min.css' => []],
       'dependencies' => [
         ['dragula', 'dragula']
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function ucms_site_page_build(&$page) {
+  // Forces our library to be attached.
+  if (user_access('access administration pages') || user_access('view the administration theme')) {
+    drupal_add_library('ucms_site', 'ucms_admin');
+  }
 }
 
 /**
