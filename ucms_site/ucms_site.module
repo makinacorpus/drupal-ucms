@@ -457,7 +457,10 @@ function ucms_site_library() {
     'ucms_admin' => [
       'title'   => 'µCMS admin JavaScript library',
       'version' => '2.x-dev',
-      'js'      => [drupal_get_path('module', 'ucms_site') . '/dist/ucms.js' => []],
+      'js'      => [
+        drupal_get_path('module', 'ucms_site') . '/dist/select2.min.js' => [],
+        drupal_get_path('module', 'ucms_site') . '/dist/ucms.js' => [],
+      ],
       'css'     => [drupal_get_path('module', 'ucms_site') . '/dist/ucms.min.css' => []],
       'dependencies' => [
         ['dragula', 'dragula']

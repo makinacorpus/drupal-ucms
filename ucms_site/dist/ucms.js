@@ -1,4 +1,5 @@
 "use strict";
+Drupal.behaviors.UcmsInit = {};
 var DragSources;
 (function (DragSources) {
     DragSources.DATA_BUNDLES = "data-allowed-bundles";

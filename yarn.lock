@@ -6,9 +6,15 @@
   version "2.1.30"
   resolved "https://registry.yarnpkg.com/@types/dragula/-/dragula-2.1.30.tgz#d4ae183949ec4735bfe39f11dd677a9be9aca0f7"
 
-"@types/jquery@^2.0.41":
+"@types/jquery@*", "@types/jquery@^2.0.41":
   version "2.0.41"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.41.tgz#b87ba051011f99edbe586d8f97282e7786e01a6d"
+
+"@types/select2@^4.0.34":
+  version "4.0.34"
+  resolved "https://registry.yarnpkg.com/@types/select2/-/select2-4.0.34.tgz#7354530484e3984644fa4e02ecb60881ce76a1be"
+  dependencies:
+    "@types/jquery" "*"
 
 accord@^0.26.3:
   version "0.26.4"

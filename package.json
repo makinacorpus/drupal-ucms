@@ -12,5 +12,8 @@
         "gulp-clean-css": "latest",
         "gulp-less": "latest",
         "gulp-rename": "latest"
+    },
+    "dependencies": {
+        "@types/select2": "^4.0.34"
     }
 }

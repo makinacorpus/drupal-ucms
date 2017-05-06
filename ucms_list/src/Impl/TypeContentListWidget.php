@@ -132,15 +132,6 @@ class TypeContentListWidget extends AbstractContentList
     {
         $ret = parent::getOptionsForm($options);
 
-        // @todo sorry for this, should be the theme responsability
-        drupal_add_library('ucms_label', 'select2');
-        drupal_add_js("jQuery(function(){jQuery('select').select2({theme:'bootstrap'})});", 'inline');
-//         $ret['#attached']['library'][] = ['ucms_label', 'select2'];
-//         $ret['#attached']['js'][] = [
-//           'data' => "jQuery(function(){jQuery('select').select2({theme:'bootstrap'})})",
-//           'type' => 'inline'
-//         ];
-
         $ret = [
             'type' => [
                 '#type'             => 'select',

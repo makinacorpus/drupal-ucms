@@ -1,7 +1,4 @@
 
-// @todo not sure it meant to be used that way
-declare const Drupal: any;
-
 // Drupal attach point
 Drupal.behaviors.UcmsTree = {
     attach: function(context: Document | Element | any) {
