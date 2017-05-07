@@ -11,7 +11,7 @@ services:
 
   ucms_tree.context_pane_event_subscriber:
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\ContextPaneEventSubscriber
-    arguments: ["@ucms_site.manager", "@umenu.manager"]
+    arguments: ["@ucms_site.manager", "@umenu.manager", "@ucms_tree.menu_access", "@current_user"]
     tags: [{ name: event_subscriber }]
 
   ucms_tree.site_event_subscriber:
