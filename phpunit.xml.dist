@@ -12,13 +12,13 @@
 
     <testsuites>
         <testsuite name="UCMS test suite">
-            <directory>./ucms_contrib/src/Tests/</directory>
+            <directory>./ucms_contrib/tests/</directory>
             <directory>./ucms_dashboard/src/Tests/</directory>
             <directory>./ucms_group/src/Tests/</directory>
             <directory>./ucms_layout/src/Tests/</directory>
-            <directory>./ucms_seo/src/Tests/</directory>
+            <directory>./ucms_seo/tests/</directory>
             <directory>./ucms_search/src/Tests/</directory>
-            <directory>./ucms_site/src/Tests/</directory>
+            <directory>./ucms_site/tests/</directory>
             <directory>./ucms_widget/src/Tests/</directory>
         </testsuite>
     </testsuites>

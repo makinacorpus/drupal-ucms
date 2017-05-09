@@ -265,6 +265,9 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             return;
         }
 
+        // User should always be able to edit its own content, I guess.
+        $builder->add(Access::PROFILE_OWNER, $account->id());
+
         if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
             $builder->add(Access::PROFILE_GLOBAL, Access::ID_ALL);
         }
@@ -314,7 +317,6 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
                     case SiteState::ON:
                     case SiteState::OFF:
                         $builder->add(Access::PROFILE_SITE_READONLY, $siteId);
-                        $builder->add(Access::PROFILE_OWNER, $account->id());
                         break;
                 }
             }

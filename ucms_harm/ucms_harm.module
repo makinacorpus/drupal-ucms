@@ -7,9 +7,8 @@
  */
 
 use Drupal\node\NodeInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Page\DefaultNodePageType;
 use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Ucms\Contrib\Page\DefaultNodeAdminPage;
 use MakinaCorpus\Ucms\Harm\Form\NodeMakeGroup;
 use MakinaCorpus\Ucms\Harm\Form\NodeUnmakeGroup;
 use MakinaCorpus\Ucms\Site\Access;
@@ -83,21 +82,25 @@ function ucms_harm_admin_content_page_group($tab = null) {
  * @deprecated
  */
 function ucms_harm_admin_content_page($datasource, $tab) {
-  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $search */
-  $search = \Drupal::service('ucms_contrib.datasource.elastic');
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
+  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   /** @var \MakinaCorpus\Ucms\Site\SiteManager $siteManager */
   $siteManager = \Drupal::service('ucms_site.manager');
-  // Apply context, if any
-  if ($siteManager->hasContext()) {
-    $search->getFilterQuery()->matchTerm('site_id', $siteManager->getContext()->getId());
-  }
-  $types = \Drupal::service('ucms_contrib.type_handler')->getTabTypes($tab);
-  if (!empty($types)) {
-    $search->getFilterQuery()->matchTermCollection('type', $types);
-  }
-  $type = new DefaultNodePageType($datasource);
+  /** @var \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler */
+  $typeHandler = \Drupal::service('ucms_contrib.type_handler');
+
+  $type = new DefaultNodeAdminPage($datasource,
+    $siteManager,
+    $typeHandler,
+    null,
+    $tab = null,
+    ['type' => $typeHandler->getTabTypes($tab)],
+    false
+  );
+
   $builder = new PageBuilder(\Drupal::service('twig'));
   $type->build($builder);
   $result = $builder->search($datasource, \Drupal::request());
-  return $builder->render($result);
+
+  return $builder->createPageView($result)->render();
 }

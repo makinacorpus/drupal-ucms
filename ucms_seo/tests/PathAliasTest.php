@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Seo\Tests;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Test both the alias manager and the alias cache lookup
@@ -22,18 +23,20 @@ class PathAliasTest extends AbstractDrupalTest
 
         // Bacic path computation using menus testing
         // We create a first site, with 2 nodes and a menu
-        $site1    = $this->createDrupalSite();
+        $site1Id  = 'test_site1';
+        $site1    = $this->createDrupalSite(SiteState::ON, null, $site1Id);
         $menu1    = $menuStorage->create(uniqid('test-alias-1'), ['site_id' => $site1->getId()]);
-        $node1A   = $this->createNodeWithAlias('1-a');
-        $node1B   = $this->createNodeWithAlias('1-b');
+        $node1A   = $this->createNodeWithAlias('1-a', 'article', $site1Id);
+        $node1B   = $this->createNodeWithAlias('1-b', 'article', $site1Id);
         $item1A   = $menuItemStorage->insert($menu1->getId(), $node1A->id(), 'node 1 a');
         $item1B   = $menuItemStorage->insertAsChild($item1A, $node1B->id(), 'node 1 a/b');
         $item1AB  = $menuItemStorage->insertAsChild($item1B, $node1A->id(), 'node 1 a/b/a');
         // And a second site, with 2 nodes in another menu
-        $site2    = $this->createDrupalSite();
+        $site2Id  = 'test_site2';
+        $site2    = $this->createDrupalSite(SiteState::ON, null, $site2Id);
         $menu2    = $menuStorage->create(uniqid('test-alias-2'), ['site_id' => $site2->getId()]);
-        $node2A   = $this->createNodeWithAlias('2-a');
-        $node2C   = $this->createNodeWithAlias('2-c');
+        $node2A   = $this->createNodeWithAlias('2-a', 'article', $site2Id);
+        $node2C   = $this->createNodeWithAlias('2-c', 'article', $site2Id);
         $item2A   = $menuItemStorage->insert($menu2->getId(), $node2A->id(), 'node 2 a');
         $item2C   = $menuItemStorage->insertAsChild($item2A, $node2C->id(), 'node 2 a/c');
 
@@ -58,6 +61,8 @@ class PathAliasTest extends AbstractDrupalTest
         // create additional menus in site 1, additional nodes, and we must
         // observe that the behaviour is predictible
         $menu3  = $menuStorage->create(uniqid('test-alias-3'), ['site_id' => $site1->getId()]);
+        $this->addNodeToSite($site1Id, $node2A->id());
+        $this->addNodeToSite($site1Id, $node1A->id());
         $menuStorage->toggleMainStatus($menu3->getId());
         $item3A = $menuItemStorage->insert($menu3->getId(), $node2A->id(), 'node 3 b');
         $item3B = $menuItemStorage->insertAsChild($item3A, $node1A->id(), 'node 3 b/a');

@@ -6,12 +6,12 @@
  * [_] add select2 less version for theming
  * [_] ensure upgrade path from previous versions
  * [_] finish ucms_composition module, see ucms_composition/README.md
- * [_] fix missing ucms_tree add button in tree admin
- * [_] fix redirection on ucms_tree add
  * [_] fix ucms_tree added root elements position is not saved
  * [_] fix ucms_tree restore max depth for menus
  * [_] fix udashboard and elastic, facets cannot be selected
  * [_] move drag and drop source and item handling to dragula module
+ * [_] move tests to their own folders
+ * [_] normalize acl/access usage via isGranted and voters
  * [_] remove select2 dynamic bootstrap theme selection
  * [_] rewrite all JavaScript to TypeScript
  * [_] rewrite ckeditor plugin to use dragula for drag and drop
@@ -22,6 +22,8 @@
  * [_] split contrib.less, move items theming in udashboard
  * [_] test ucms_extranet module
  * [_] test ucms_group module
+ * [x] fix missing ucms_tree add button in tree admin
+ * [x] fix redirection on ucms_tree add
 
 ## Long term
 

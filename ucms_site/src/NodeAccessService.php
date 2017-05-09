@@ -4,8 +4,8 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\ACL\Permission;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Drupal ACL builder for usage with node_access() related hooks
@@ -106,11 +106,11 @@ final class NodeAccessService
         // Damn this is ugly
         if ($this->manager->hasContext()) {
             $previous = $this->manager->getContext();
-            $this->manager->setContext($site);
+            $this->manager->setContext($site, new Request());
             $result = $this->userCanCreate($account, $type);
-            $this->manager->setContext($previous);
+            $this->manager->setContext($previous, new Request());
         } else {
-            $this->manager->setContext($site);
+            $this->manager->setContext($site, new Request());
             $result = $this->userCanCreate($account, $type);
             $this->manager->dropContext();
         }

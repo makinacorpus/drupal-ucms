@@ -2,14 +2,15 @@
 
 namespace MakinaCorpus\Ucms\Site\Tests;
 
-use Drupal\node\Node;
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
+/**
+ * Tests the site cloning functionnality
+ */
 class CloningSiteTest extends AbstractDrupalTest
 {
     use SiteTestTrait;
@@ -19,6 +20,14 @@ class CloningSiteTest extends AbstractDrupalTest
      */
     private $layout;
 
+    /**
+     * Find or create menu
+     *
+     * @param string $name
+     * @param int $siteId
+     *
+     * @return \MakinaCorpus\Umenu\Menu
+     */
     private function findOrCreateMenu($name, $siteId)
     {
         $treeManager = $this->getTreeManager();
@@ -47,6 +56,9 @@ class CloningSiteTest extends AbstractDrupalTest
         $this->nodes['not_relevant_homepage'] = $this->createDrupalNode('homepage', 'not_relevant');
         $this->nodes['not_relevant_news'] = $this->createDrupalNode('news', 'not_relevant');
 
+        // Add nodes to sites
+        $this->addNodeToSite('not_relevant', $this->nodes['ref_news']->id());
+
         // Add some menu links
         $treeManager  = $this->getTreeManager();
         $itemStorage  = $treeManager->getItemStorage();
@@ -68,6 +80,10 @@ class CloningSiteTest extends AbstractDrupalTest
         $layout->setSiteId($this->sites['template']->getId());
 
         // Compose something
+        if (!$this->moduleExists('ucms_layout')) {
+            $this->markTestIncomplete("You must enable the 'ucms_layout' module to have a complete test");
+        }
+
         $layout->getRegion('content')->addAt(new Item($this->nodes['ref_news']->id()));
         $this->getLayoutStorage()->save($layout);
 

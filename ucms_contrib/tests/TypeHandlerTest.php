@@ -2,11 +2,16 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Tests;
 
-
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 
+/**
+ * Tests the type handler
+ */
 class TypeHandlerTest extends AbstractDrupalTest
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -45,29 +50,40 @@ class TypeHandlerTest extends AbstractDrupalTest
     public function testTypeHandler()
     {
         /** @var \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler */
-        $typeHandler = $this->getMockBuilder('\MakinaCorpus\Ucms\Contrib\TypeHandler')
-                            ->setMethods(
-                                array(
-                                    'getEditorialContentTypes',
-                                    'getComponentTypes',
-                                    'getContentTypes',
-                                    'getMediaTypes',
-                                )
-                            )
-                            ->getMock();
+        $typeHandler = $this
+            ->getMockBuilder('\MakinaCorpus\Ucms\Contrib\TypeHandler')
+            ->setMethods([
+                'getEditorialContentTypes',
+                'getComponentTypes',
+                'getContentTypes',
+                'getMediaTypes',
+            ])
+            ->getMock()
+        ;
 
         // Mocking values
         $editorial = ['editorial_foo', 'editorial_bar'];
-        $typeHandler->method('getEditorialContentTypes')
-                    ->willReturn($editorial);
+        $typeHandler
+            ->method('getEditorialContentTypes')
+            ->willReturn($editorial)
+        ;
+
         $components = ['component_foo', 'component_bar'];
-        $typeHandler->method('getComponentTypes')
-                    ->willReturn($components);
-        $typeHandler->method('getContentTypes')
-                    ->willReturn(array_merge($components, $editorial));
+        $typeHandler
+            ->method('getComponentTypes')
+            ->willReturn($components)
+        ;
+
+        $typeHandler
+            ->method('getContentTypes')
+            ->willReturn(array_merge($components, $editorial))
+        ;
+
         $media = ['media_foo', 'media_bar'];
-        $typeHandler->method('getMediaTypes')
-                    ->willReturn($media);
+        $typeHandler
+            ->method('getMediaTypes')
+            ->willReturn($media)
+        ;
 
         // Testing functions
         $this->assertArrayAreSimilar($typeHandler->getAllTypes(), array_merge($editorial, $components, $media));

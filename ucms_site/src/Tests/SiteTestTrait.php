@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Site\Tests;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\Node;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Layout\DrupalStorage;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\NodeManager;
@@ -13,9 +12,11 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Umenu\TreeManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Testing in site basics
+ */
 trait SiteTestTrait
 {
     /**
@@ -86,6 +87,14 @@ trait SiteTestTrait
         return $this->getDrupalContainer()->get('ucms_layout.storage');
     }
 
+    /**
+     * Does node exists in site
+     *
+     * @param int|NodeInterface $node
+     * @param int|Site $site
+     *
+     * @return bool
+     */
     protected function isNodeInSite($node, $site)
     {
         $site = (int)($site instanceof Site) ? $site->getId() : $site;
@@ -212,6 +221,35 @@ trait SiteTestTrait
         return $this->nodes[] = $node;
     }
 
+    /**
+     * Add node into site
+     *
+     * @param string $name
+     *   Site test name
+     * @param int $nodeId
+     *   Node identifier
+     */
+    protected function addNodeToSite($name, $nodeId)
+    {
+        $this->getNodeManager()->createReferenceBulkInSite($this->getSite($name)->getId(), [$nodeId]);
+    }
+
+    /**
+     * Remove node from site
+     *
+     * @param string $name
+     *   Site test name
+     * @param int $nodeId
+     *   Node identifier
+     */
+    protected function removeNodeFromSite($name, $nodeId)
+    {
+        $this->getNodeManager()->deleteReferenceBulkFromSite($this->getSite($name)->getId(), [$nodeId]);
+    }
+
+    /**
+     * Call this in your tearDown()
+     */
     protected function eraseAllData()
     {
         foreach ($this->sites as $site) {

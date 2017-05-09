@@ -6,6 +6,7 @@ use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\Tests\SiteTestTrait;
+use Symfony\Component\HttpFoundation\Request;
 
 class LayoutCacheFixesTest extends AbstractDrupalTest
 {
@@ -97,7 +98,7 @@ class LayoutCacheFixesTest extends AbstractDrupalTest
         // Clone the node within the site, which will run all associated events
         // etc, which will actually change the layout data in database in order
         // to reference the new node (the clone)
-        $this->getSiteManager()->setContext($site2);
+        $this->getSiteManager()->setContext($site2, new Request());
         $clonedNode = $this->getNodeManager()->createAndSaveClone($bugNode);
         $this->assertNotEquals($bugNode->id(), $clonedNode->id());
         // Cloned layout are not statically cached, so reloading it is enough

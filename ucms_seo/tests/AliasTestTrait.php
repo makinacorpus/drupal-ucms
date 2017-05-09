@@ -6,10 +6,12 @@ use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup;
 use MakinaCorpus\Ucms\Seo\Path\AliasManager;
-use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\Tests\SiteTestTrait;
 use MakinaCorpus\Umenu\MenuStorage;
 
+/**
+ * Alias based tests helpers
+ */
 trait AliasTestTrait
 {
     use SiteTestTrait;

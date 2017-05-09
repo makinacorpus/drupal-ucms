@@ -61,7 +61,10 @@
     },
     "autoload-dev" : {
         "psr-4" : {
-            "MakinaCorpus\\Ucms\\Composition\\Tests\\" : "ucms_composition/tests"
+            "MakinaCorpus\\Ucms\\Composition\\Tests\\" : "ucms_composition/tests",
+            "MakinaCorpus\\Ucms\\Contrib\\Tests\\" : "ucms_contrib/tests",
+            "MakinaCorpus\\Ucms\\Seo\\Tests\\" : "ucms_seo/tests"
+            "MakinaCorpus\\Ucms\\Site\\Tests\\" : "ucms_site/tests",
         }
     },
     "require" : {
