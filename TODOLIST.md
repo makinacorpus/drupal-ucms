@@ -47,6 +47,7 @@
  * [_] deprecated then drop ucms_layout in a future version
  * [_] investigate plugging udashboard to a front framework too
  * [_] investigate potential front framework for admin UI
- * [_] move breadcrumb to somewhere it takes less space (toolbar?)
  * [_] rewrite search module to be less complex
  * [_] rewrite ucms_label to be a much more flexible front for taxonomy
+ * [_] theme breadcrumb in toolbar
+ * [x] move breadcrumb to somewhere it takes less space (toolbar?)
