@@ -11,15 +11,30 @@
  */
 
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\Ucms\Contrib\Admin\NodeTabsForm;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\Controller\NodeAdminController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
+use MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite;
+use MakinaCorpus\Ucms\Contrib\Form\NodeDuplicate;
+use MakinaCorpus\Ucms\Contrib\Form\NodeFlag;
+use MakinaCorpus\Ucms\Contrib\Form\NodeLock;
+use MakinaCorpus\Ucms\Contrib\Form\NodeMakeGlobal;
+use MakinaCorpus\Ucms\Contrib\Form\NodePublish;
+use MakinaCorpus\Ucms\Contrib\Form\NodeStar;
+use MakinaCorpus\Ucms\Contrib\Form\NodeTransfer;
+use MakinaCorpus\Ucms\Contrib\Form\NodeUnflag;
+use MakinaCorpus\Ucms\Contrib\Form\NodeUnlock;
+use MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish;
+use MakinaCorpus\Ucms\Contrib\Form\NodeUnstar;
+use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
 
+/**
+ * Field integration
+ */
 require_once __DIR__ . '/ucms_contrib.field.inc';
 
 /**
@@ -79,7 +94,7 @@ function ucms_contrib_menu() {
       'title'             => "New !type for my site",
       'title arguments'   => ['!type' => strtolower($type->name)],
       'page callback'     => 'sf_dic_page_form',
-      'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite', $type->type],
+      'page arguments'    => [NodeAddToSite::class, $type->type],
       'access callback'   => 'ucms_contrib_menu_node_access_add_to_site',
       'access arguments'  => [$type->type],
       'type'              => MENU_CALLBACK,
@@ -88,23 +103,23 @@ function ucms_contrib_menu() {
   $items['node/%node/publish'] = [
     'title'             => "Publish content",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodePublish', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_publish',
-    'access arguments'  => [1],
+    'page arguments'    => [NodePublish::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [Permission::PUBLISH, 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unpublish'] = [
     'title'             => "Unpublish content",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_publish',
-    'access arguments'  => [1],
+    'page arguments'    => [NodeUnpublish::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [Permission::PUBLISH, 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/report'] = [
     'title'             => "Flag as inappropriate",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeFlag', 1],
+    'page arguments'    => [NodeFlag::class, 1],
     'access callback'   => 'ucms_contrib_menu_node_access_flag',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
@@ -112,7 +127,7 @@ function ucms_contrib_menu() {
   $items['node/%node/unreport'] = [
     'title'             => "Un-flag as innappropriate",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnflag', 1],
+    'page arguments'    => [NodeUnflag::class, 1],
     'access callback'   => 'ucms_contrib_menu_node_access_unflag',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
@@ -120,63 +135,63 @@ function ucms_contrib_menu() {
   $items['node/%node/star'] = [
     'title'             => "Star",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeStar', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_star',
-    'access arguments'  => [1],
+    'page arguments'    => [NodeStar::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [Access::PERM_CONTENT_MANAGE_STARRED, 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unstar'] = [
     'title'             => "Unstar",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnstar', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_star',
-    'access arguments'  => [1],
+    'page arguments'    => [NodeUnstar::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [Access::PERM_CONTENT_MANAGE_STARRED, 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/lock'] = [
     'title'             => "Lock",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeLock', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_lock',
-    'access arguments'  => [1],
+    'page arguments'    => [NodeLock::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [Permission::LOCK, 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unlock'] = [
     'title'             => "Unlock",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnlock', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_lock',
-    'access arguments'  => [1],
+    'page arguments'    => [NodeUnlock::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [Permission::LOCK, 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/duplicate'] = [
     'title'             => "Edit",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeDuplicate', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
-    'access arguments'  => [1],
+    'page arguments'    => [NodeDuplicate::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [[Permission::UPDATE, Permission::PUBLISH], 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/clone'] = [
     'title'             => "Edit",
     'page callback'     => 'ucms_contrib_node_clone_form',
     'page arguments'    => [1],
-    'access callback'   => 'ucms_contrib_menu_node_access_copy_on_edit',
-    'access arguments'  => [1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [[Permission::UPDATE, Permission::PUBLISH], 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/make-global'] = [
     'title'             => "Add to global contents",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeMakeGlobal', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_global',
-    'access arguments'  => [1],
+    'page arguments'    => [NodeMakeGlobal::class, 1],
+    'access callback'   => 'sf_acl_is_granted',
+    'access arguments'  => [Access::PERM_CONTENT_MANAGE_GLOBAL],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/transfer'] = [
     'title'             => "Transfer ownership",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeTransfer', 1],
+    'page arguments'    => [NodeTransfer::class, 1],
     'access callback'   => 'ucms_contrib_menu_node_access_transfer',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
@@ -185,7 +200,7 @@ function ucms_contrib_menu() {
   // Returns the rendered node in a JSON response.
   $items['node/%node/ajax'] = [
     'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\NodeController::view', 1],
+    'page arguments'    => [NodeController::class . '::view', 1],
     'access callback'   => 'node_access',
     'access arguments'  => ['view', 1],
   ];
@@ -195,7 +210,7 @@ function ucms_contrib_menu() {
     'title'             => "Contribution user interface",
     'description'       => "Manage content types categorisation and how the main contribution user interface will look like and behave.",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Admin\NodeTabsForm'],
+    'page arguments'    => [NodeTabsForm::class],
     'access arguments'  => ['administer content types'],
     'type'              => MENU_NORMAL_ITEM,
   ];
@@ -282,29 +297,8 @@ function ucms_contrib_menu_node_access_add_to_site($type) {
 /**
  * Menu access helper.
  */
-function ucms_contrib_menu_node_access_global() {
-  return sf_acl_is_granted(Access::PERM_CONTENT_MANAGE_GLOBAL);
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_menu_node_access_publish(NodeInterface $node) {
-  return sf_acl_is_granted(Permission::PUBLISH, $node);
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_menu_node_access_star(NodeInterface $node) {
-  return sf_acl_is_granted(Access::PERM_CONTENT_MANAGE_STARRED);
-}
-
-/**
- * Menu access helper.
- */
 function ucms_contrib_menu_node_access_flag(NodeInterface $node) {
-  return sf_acl_is_granted(Access::PERM_CONTENT_FLAG);
+  return sf_acl_is_granted(Access::PERM_CONTENT_FLAG) && sf_acl_is_granted(Permission::UPDATE, $node);
 }
 
 /**
@@ -312,20 +306,6 @@ function ucms_contrib_menu_node_access_flag(NodeInterface $node) {
  */
 function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
   return sf_acl_is_granted(Access::PERM_CONTENT_UNFLAG) && sf_acl_is_granted(Permission::UPDATE, $node);
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
-  return sf_acl_is_granted(Permission::LOCK, $node);
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
-  return sf_acl_is_granted([Permission::UPDATE, Permission::PUBLISH], $node);
 }
 
 /**
