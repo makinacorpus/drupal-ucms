@@ -277,6 +277,9 @@ var UcmsTree;
                 if (!element.classList.contains("tree-new")) {
                     element.classList.add("tree-modified");
                 }
+                if (element.classList.contains("gu-transit")) {
+                    element.classList.remove("gu-transit");
+                }
             }
             else {
                 var item = createItem(form, element, drake);

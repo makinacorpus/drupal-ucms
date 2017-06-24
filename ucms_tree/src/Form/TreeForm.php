@@ -148,6 +148,11 @@ class TreeForm extends FormBase
                         $itemId = $itemStorage->insertAsChild($parentId, $nodeId, $title);
                     } else {
                         $itemId = $itemStorage->insert($menuId, $nodeId, $title);
+                        // Move the new item, in root tree, right after the
+                        // lastest processed root item
+                        if ($latestRootParentId) {
+                            $itemStorage->moveAfter($itemId, $latestRootParentId);
+                        }
                     }
                     // New potential parent item inserted, replace potential children parent_id
                     foreach ($items as $index => $potentialChild) {
@@ -164,6 +169,12 @@ class TreeForm extends FormBase
                         } else {
                             $itemStorage->moveToRoot($itemId);
                         }
+                    }
+
+                    // When inserting or moving an item in the root of the tree
+                    // we must keep track of it for being able to properly place
+                    // the item relatively to its previous sibling.
+                    if (!$parentId) {
                         $latestRootParentId = $itemId;
                     }
 

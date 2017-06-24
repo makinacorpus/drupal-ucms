@@ -308,6 +308,10 @@ namespace UcmsTree {
                 if (!element.classList.contains("tree-new")) {
                     element.classList.add("tree-modified");
                 }
+                // Remove the "gu-transit" class we manually added in drag even
+                if (element.classList.contains("gu-transit")) {
+                    element.classList.remove("gu-transit");
+                }
             } else {
                 const item = createItem(form, element, drake);
                 if (element.parentNode) {
