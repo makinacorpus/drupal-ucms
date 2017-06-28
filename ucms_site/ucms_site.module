@@ -354,6 +354,10 @@ function ucms_site_admin_path_is_allowed($path) {
  */
 function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
 
+  if (empty($original_path)) {
+    return;
+  }
+
   // Skip external URLs, we cannot proceed them on both fronts, since other
   // sites in the platform will actually be dealt as external by Drupal core
   // let them pass, if you need to generate other site's URLs, please use
