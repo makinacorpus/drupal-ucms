@@ -4,9 +4,9 @@ namespace MakinaCorpus\Ucms\Seo\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Action\AbstractActionProcessor;
-use MakinaCorpus\Ucms\Seo\Path\Redirect;
+use MakinaCorpus\Drupal\Calista\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Seo\SeoService;
+use MakinaCorpus\Ucms\Seo\Path\Redirect;
 
 /**
  * Delete action on redirect entries.

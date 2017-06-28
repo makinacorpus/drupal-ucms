@@ -6,7 +6,7 @@
     <td>{{ item.siteAdminTitle }}</td>
     <td>{% if item.hasExpiryDate %}{{ item.expiresAt|date }}{% else %}<em>{{ "Never"|trans }}</em>{% endif %}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      {{ calista_actions(item) }}
     </td>
   </tr>
 {% endblock %}
@@ -45,6 +45,6 @@
             $rows[] = [
                 check_plain($item->path),
                 $siteLabel,
-                theme('udashboard_actions', ['actions' => $this->getActions($item)]),
+                theme('calista_actions', ['actions' => $this->getActions($item)]),
             ];
  #}

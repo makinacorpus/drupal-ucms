@@ -7,7 +7,7 @@
     <td>{% if item.is_protected %}{{ "Yes" }}{% endif %}</td>
     <td>{% if item.is_outdated %}<strong>{{ "Yes" }}</strong>{% endif %}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      {{ calista_actions(item) }}
     </td>
   </tr>
 {% endblock %}

@@ -1,16 +1,13 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Extranet\Action;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
 use MakinaCorpus\Ucms\Site\Action\AbstractWebmasterActionProvider;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 
 class WebmasterActionProvider extends AbstractWebmasterActionProvider
 {
@@ -19,19 +16,15 @@ class WebmasterActionProvider extends AbstractWebmasterActionProvider
      */
     protected $entityManager;
 
-
     /**
      * Constructor.
      */
-    public function __construct(
-        SiteManager $siteManager,
-        EntityManager $entityManager,
-        AccountInterface $currentUser
-    ) {
+    public function __construct(SiteManager $siteManager, EntityManager $entityManager, AccountInterface $currentUser)
+    {
         $this->entityManager = $entityManager;
+
         parent::__construct($siteManager, $currentUser);
     }
-
 
     /**
      * {@inheritdoc}
@@ -67,7 +60,6 @@ class WebmasterActionProvider extends AbstractWebmasterActionProvider
 
         return $actions;
     }
-
 
     /**
      * {@inheritdoc}

@@ -20,7 +20,7 @@ services:
     public: false
     class: MakinaCorpus\Ucms\User\Action\UserActionProvider
     arguments: ["@current_user"]
-    tags: [{ name: udashboard.action_provider }]
+    tags: [{ name: calista.action_provider }]
 
   ucms_user.user_event_subscriber:
     class: MakinaCorpus\Ucms\User\EventDispatcher\UserEventSubscriber

@@ -7,9 +7,9 @@
     <td>{{ item.state|ucms_site_state }}</td>
     <td>
       {% if item.state == constant('MakinaCorpus\\Ucms\\Site\\SiteState::ON') %}
-        {{ udashboard_button({icon: 'share-alt', title: "View"|t, uri: ucms_site_url(item)}) }}
+        {{ calista_button({icon: 'share-alt', title: "View"|t, uri: ucms_site_url(item)}) }}
       {% elseif item.state == constant('MakinaCorpus\\Ucms\\Site\\SiteState::REQUESTED') %}
-        {{ udashboard_button({icon: 'share-alt', title: "Go to request"|t, uri: ucms_site_url(item)}) }}
+        {{ calista_button({icon: 'share-alt', title: "Go to request"|t, uri: ucms_site_url(item)}) }}
       {% endif %}
     </td>
   </tr>

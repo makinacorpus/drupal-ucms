@@ -45,7 +45,7 @@ class NotificationSupportCompilerPass implements CompilerPassInterface
                         new Reference('ucms_notification.service'),
                     ]
                 ))
-                ->addTag('udashboard.action_provider')
+                ->addTag('calista.action_provider')
             ,
             'ucms_label.label_event_subscriber' => (new Definition(
                 (new Definition(

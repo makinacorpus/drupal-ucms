@@ -102,24 +102,24 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
     arguments: ["@ucms_site.node_access_helper", "@ucms_site.manager", "@current_user", "@ucms_contrib.cart"]
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]
   ucms_contrib.content_action_provider:
     public: false
     arguments: ["@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user", "@ucms_site.node_access_helper"]
     class: MakinaCorpus\Ucms\Contrib\Action\ContentActionProvider
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]
   ucms_contrib.site_action_provider:
     public: false
     arguments: ["@ucms_site.manager", "@current_user"]
     class: MakinaCorpus\Ucms\Contrib\Action\SiteActionProvider
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]
 
   ucms_contrib.context_pane_event_subscriber:
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventSubscriber
     arguments:
       - "@service_container"
       - "@ucms_contrib.content_action_provider"
-      - "@udashboard.action_provider_registry"
+      - "@calista.action_provider_registry"
       - "@ucms_site.manager"
       - "@ucms_contrib.type_handler"
     tags: [{ name: event_subscriber }]
@@ -127,22 +127,25 @@ services:
   # Datasource via elastic search
   ucms_contrib.datasource.elastic:
     shared: false
-    class: MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource
+    class: MakinaCorpus\Ucms\Contrib\Page\ElasticNodeDataSource
     arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@entity.manager", "@current_user"]
 
-  # Content portlet
-  ucms_contrib.content_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
-    tags: [{ name: udashboard.portlet }]
-
-  # Media portlet
-  ucms_contrib.media_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
-    tags: [{ name: udashboard.portlet }]
+#
+# @todo restore those two: it needs a portlet API in calista
+#
+#  # Content portlet
+#  ucms_contrib.content_portlet:
+#    public: false
+#    class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
+#    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
+#    tags: [{ name: udashboard.portlet }]
+#
+#  # Media portlet
+#  ucms_contrib.media_portlet:
+#    public: false
+#    class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
+#    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
+#    tags: [{ name: udashboard.portlet }]
 
   # Component responsible for providing content type context
   ucms_contrib.type_handler:

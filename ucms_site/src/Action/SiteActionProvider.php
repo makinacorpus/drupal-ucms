@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Site\Action;
 
 use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;

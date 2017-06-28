@@ -12,7 +12,7 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Label\Action\LabelActionProvider
     arguments: ["@ucms_label.manager", "@current_user"]
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]
 
   ucms_label.context_pane_event_subscriber:
     class: MakinaCorpus\Ucms\Label\EventDispatcher\ContextPaneEventSubscriber

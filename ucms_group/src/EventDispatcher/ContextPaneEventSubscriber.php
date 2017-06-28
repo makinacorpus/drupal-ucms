@@ -4,12 +4,10 @@ namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Action\ActionRegistry;
-use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Calista\Action\Action;
+use MakinaCorpus\Calista\Action\ActionRegistry;
+use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Group\GroupAccess;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ContextPaneEventSubscriber implements EventSubscriberInterface

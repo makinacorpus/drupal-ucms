@@ -9,7 +9,7 @@
     <td>{{ item.created|time_diff }}</td>
     <td>{% if item.login %}{{ item.login|time_diff }}{% else %}{{ "Never"|trans }}{% endif %}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      {{ calista_actions(item) }}
     </td>
   </tr>
 {% endblock %}

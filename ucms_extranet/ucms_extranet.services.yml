@@ -21,4 +21,4 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Extranet\Action\WebmasterActionProvider
     arguments: ["@ucms_site.manager", "@entity.manager", "@current_user"]
-    tags: [{ name: udashboard.action_provider }]
+    tags: [{ name: calista.action_provider }]

@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Site\Structure;
 
 /**
  * Type hint implementations of the PartialUserTrait with this interface to
- * benefit from automatic features, such as dashboard actions
+ * benefit from automatic features, such as calista actions
  */
 interface PartialUserInterface
 {

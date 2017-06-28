@@ -10,7 +10,7 @@
     <td>{{ item.ts_changed|time_diff }}</td>
     <td>{# isset($accountMap[$site->uid]) ? check_plain(format_username($accountMap[$site->uid])) : '' #}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      {{ calista_actions(item) }}
     </td>
   </tr>
 {% endblock %}

@@ -3,8 +3,7 @@
 namespace MakinaCorpus\Ucms\Harm\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Form\AbstractEntityActionForm;
+use MakinaCorpus\Drupal\Calista\Form\AbstractEntityActionForm;
 
 class NodeMakeGroup extends AbstractEntityActionForm
 {

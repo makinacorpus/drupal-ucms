@@ -2,9 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Controller;
 
+use MakinaCorpus\Calista\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
-
 use Symfony\Component\HttpFoundation\Request;
 
 class NodeAdminController extends Controller
@@ -16,7 +15,6 @@ class NodeAdminController extends Controller
      */
     public function defaultAction(Request $request, $name)
     {
-        // We don't need to check permissions twice, Drupal already did it
-        return $this->getPageBuilder($name, $request)->searchAndRender($request);
+        return $this->renderPageResponse($name, $request);
     }
 }

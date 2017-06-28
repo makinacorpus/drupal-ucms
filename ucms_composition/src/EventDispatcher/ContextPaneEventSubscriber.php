@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Composition\EventDispatcher;
 
-use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Drupal\Layout\Event\CollectLayoutEvent;
 use MakinaCorpus\Drupal\Layout\Form\LayoutContextEditForm;
 use MakinaCorpus\Layout\Controller\Context;

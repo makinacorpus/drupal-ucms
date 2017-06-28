@@ -5,9 +5,8 @@ namespace MakinaCorpus\Ucms\Harm\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Calista\Action\Action;
+use MakinaCorpus\Calista\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
 
 class NodeActionProvider implements ActionProviderInterface

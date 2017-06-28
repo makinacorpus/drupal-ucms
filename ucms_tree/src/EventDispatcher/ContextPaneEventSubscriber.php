@@ -4,12 +4,12 @@ namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Calista\Action\Action;
+use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Tree\MenuAccess;
 use MakinaCorpus\Umenu\TreeManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
 
 class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
@@ -41,7 +41,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     {
         return [
             ContextPaneEvent::EVENT_INIT => [
-                ['onUcmsdashboardContextinit', 0],
+                ['onContextPaneInit', 0],
             ],
         ];
     }
@@ -51,7 +51,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      *
      * @param ContextPaneEvent $event
      */
-    public function onUcmsdashboardContextinit(ContextPaneEvent $event)
+    public function onContextPaneInit(ContextPaneEvent $event)
     {
         $site = null;
         $contextPane = $event->getContextPane();

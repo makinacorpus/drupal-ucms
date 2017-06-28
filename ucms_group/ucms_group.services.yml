@@ -48,7 +48,7 @@ services:
   ucms_group.context_pane_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Group\EventDispatcher\ContextPaneEventSubscriber
-    arguments: ["@current_user", "@udashboard.action_provider_registry"]
+    arguments: ["@current_user", "@calista_provider_registry"]
     tags: [{ name: event_subscriber }]
   ucms_group.admin_subscriber:
     public: true
@@ -70,29 +70,29 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Group\Action\GroupDeleteProcessor
     arguments: ["@ucms_group.manager", "@current_user"]
-    tags: [{name: udashboard.action}]
+    tags: [{name: calista.action}]
   ucms_group.action.group_member_remove:
     public: false
     class: MakinaCorpus\Ucms\Group\Action\GroupMemberRemoveProcessor
     arguments: ["@ucms_group.manager", "@current_user"]
-    tags: [{name: udashboard.action}]
+    tags: [{name: calista.action}]
   ucms_group.action.group_site_remove:
     public: false
     class: MakinaCorpus\Ucms\Group\Action\GroupSiteRemoveProcessor
     arguments: ["@ucms_group.manager", "@current_user"]
-    tags: [{name: udashboard.action}]
+    tags: [{name: calista.action}]
   ucms_group.group_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Group\Action\GroupActionProvider
     arguments: ["@ucms_group.manager", "@current_user"]
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]
   ucms_group.group_site_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Group\Action\GroupSiteActionProvider
     arguments: ["@ucms_site.manager", "@current_user"]
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]
   ucms_group.action.site_provider:
     public: false
     class: MakinaCorpus\Ucms\Group\Action\SiteActionProvider
     arguments: ["@ucms_group.manager", "@current_user"]
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]

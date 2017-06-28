@@ -3,16 +3,14 @@
 namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Drupal\Dashboard\Action\ActionRegistry;
+use MakinaCorpus\Calista\Action\Action;
+use MakinaCorpus\Calista\Action\ActionProviderInterface;
+use MakinaCorpus\Calista\Action\ActionRegistry;
+use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
-use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -56,7 +54,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     {
         return [
             ContextPaneEvent::EVENT_INIT => [
-                ['onUcmsdashboardContextinit', 0],
+                ['onContextPaneInit', 0],
             ],
         ];
     }
@@ -116,7 +114,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     /**
      * @param ContextPaneEvent $event
      */
-    public function onUcmsdashboardContextinit(ContextPaneEvent $event)
+    public function onContextPaneInit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
         $router_item = menu_get_item();

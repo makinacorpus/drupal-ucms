@@ -5,7 +5,7 @@
     <td>{{ item.name }}</td>
     <td>{% if item.is_locked %}{{ "Non editable"|trans }}{% else %}{{ "Editable"|trans }}{% endif %}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      {{ calista_actions(item) }}
     </td>
   </tr>
 {% endblock %}

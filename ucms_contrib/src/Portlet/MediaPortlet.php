@@ -4,10 +4,9 @@ namespace MakinaCorpus\Ucms\Contrib\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Calista\Action\ActionProviderInterface;
 use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
 use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -42,8 +41,7 @@ class MediaPortlet extends AbstractPortlet
      * @param DatasourceInterface $datasource
      * @param ActionProviderInterface $actionProvider
      * @param TypeHandler $typeHandler
-     * @param ActionProviderInterface $actionProvider
-     * @param TypeHandler $typeHandler
+     * @param SiteManager $siteManager
      */
     public function __construct(
         DatasourceInterface $datasource,
@@ -81,6 +79,7 @@ class MediaPortlet extends AbstractPortlet
      */
     public function getActions()
     {
+        return []; // FIXME
         return $this->actionProvider->getActions('media');
     }
 

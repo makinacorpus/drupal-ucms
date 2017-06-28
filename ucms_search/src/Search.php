@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Search;
 
 use Elasticsearch\Client;
-
 use MakinaCorpus\Ucms\Search\Aggs\AggInterface;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
 use MakinaCorpus\Ucms\Search\Aggs\TopHits;
@@ -372,7 +371,7 @@ class Search
     /**
      * Get aggregations
      *
-     * @return Aggs\AggInterface[]
+     * @return AggInterface[]
      */
     public function getAggregations()
     {

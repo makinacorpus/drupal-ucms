@@ -2,11 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Layout\EventDispatcher;
 
-use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager;
 use MakinaCorpus\Ucms\Layout\Form\LayoutContextEditForm;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -35,7 +34,7 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
     {
         return [
             ContextPaneEvent::EVENT_INIT => [
-                ['onUcmsdashboardContextinit', 0],
+                ['onContextPaneInit', 0],
             ],
         ];
     }
@@ -43,7 +42,7 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
     /**
      * @param ContextPaneEvent $event
      */
-    public function onUcmsdashboardContextinit(ContextPaneEvent $event)
+    public function onContextPaneInit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
         $manager = $this->siteManager;

@@ -3,4 +3,4 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Harm\Action\NodeActionProvider
     arguments: ["@current_user"]
-    tags: [{name: udashboard.action_provider}]
+    tags: [{name: calista.action_provider}]

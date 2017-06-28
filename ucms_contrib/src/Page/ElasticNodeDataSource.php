@@ -1,22 +1,22 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib;
+namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\Filter;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\DefaultDatasourceResult;
+use MakinaCorpus\Calista\Datasource\Filter;
+use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
+use MakinaCorpus\Ucms\Search\NodeIndexerInterface;
 use MakinaCorpus\Ucms\Search\Search;
 use MakinaCorpus\Ucms\Search\SearchFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class PrivateNodeDataSource extends AbstractDatasource
+class ElasticNodeDataSource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
@@ -54,6 +54,14 @@ class PrivateNodeDataSource extends AbstractDatasource
         $this->manager = $manager;
         $this->entityManager = $entityManager;
         $this->account = $account;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemClass()
+    {
+        return NodeIndexerInterface::class;
     }
 
     /**
@@ -137,7 +145,7 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    public function getFilters()
     {
         $ret = [];
 
@@ -152,7 +160,7 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getSorts()
     {
         return [
             'created'     => $this->t("creation date"),
@@ -169,18 +177,20 @@ class PrivateNodeDataSource extends AbstractDatasource
      */
     public function getDefaultSort()
     {
-        return ['updated', SortManager::DESC];
+        return ['updated', Query::SORT_DESC];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function init(array $query, array $filter)
+    private function init(Query $query)
     {
-        if ($filter) {
+        $filters = $query->all();
+
+        if ($filters) {
             $filterQuery = $this->search->getFilterQuery();
 
-            foreach ($filter as $name => $value) {
+            foreach ($filters as $name => $value) {
                 if (is_array($value)) {
                     $filterQuery->matchTermCollection($name, $value);
                 } else {
@@ -220,41 +230,37 @@ class PrivateNodeDataSource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
-        if ($pageState->hasSortField()) {
-            $this->search->addSort($pageState->getSortField(), $pageState->getSortOrder());
+        if ($query->hasSortField()) {
+            $this->search->addSort($query->getSortField(), $query->getSortOrder());
         }
+
+        $inputDefinition = $query->getInputDefinition();
 
         $response = $this
             ->search
-            ->setPageParameter($pageState->getPageParameter())
+            ->setPageParameter($inputDefinition->getPagerParameter())
+            ->setFulltextParameterName($inputDefinition->getSearchParameter())
             ->addField('_id')
-            ->setLimit($pageState->getLimit())
-            ->doSearch($query)
+            ->setLimit($query->getLimit())
+            ->doSearch($query->getRouteParameters()) // FIXME this should be the sanitized filters + a few others (sort, etc...)
         ;
-
-        $pageState->setTotalItemCount($response->getTotal());
 
         $nodeList = $this->entityManager->getStorage('node')->loadMultiple($response->getAllNodeIdentifiers());
         $this->preloadDependencies($nodeList);
 
-        return $nodeList;
+        $result = new DefaultDatasourceResult(NodeInterface::class, $nodeList);
+        $result->setTotalItemCount($response->getTotal());
+
+        return $result;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasSearchForm()
+    public function supportsFulltextSearch()
     {
         return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearchFormParamName()
-    {
-        return $this->search->getFulltextParameterName();
     }
 }

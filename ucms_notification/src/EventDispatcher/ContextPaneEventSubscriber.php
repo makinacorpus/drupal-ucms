@@ -4,13 +4,11 @@ namespace MakinaCorpus\Ucms\Notification\EventDispatcher;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\APubSub\CursorInterface;
 use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\APubSub\Notification\NotificationService;
-use MakinaCorpus\Drupal\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Layout\ContextManager as LayoutContextManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ContextPaneEventSubscriber implements EventSubscriberInterface
@@ -53,7 +51,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     {
         return [
             ContextPaneEvent::EVENT_INIT => [
-                ['onUcmsdashboardContextinit', 0],
+                ['onContextPaneInit', 0],
             ],
         ];
     }
@@ -63,7 +61,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
      *
      * @param ContextPaneEvent $event
      */
-    public function onUcmsdashboardContextinit(ContextPaneEvent $event)
+    public function onContextPaneInit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
 

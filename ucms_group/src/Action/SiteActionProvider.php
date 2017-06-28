@@ -4,9 +4,8 @@ namespace MakinaCorpus\Ucms\Group\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Calista\Action\Action;
+use MakinaCorpus\Calista\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Site;
 

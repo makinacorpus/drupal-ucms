@@ -3,10 +3,9 @@
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Session\AccountInterface;
+use MakinaCorpus\Calista\DependencyInjection\PageDefinitionInterface;
 
-use MakinaCorpus\Drupal\Dashboard\Page\PageTypeInterface;
-
-interface NodeAdminPageInterface extends PageTypeInterface
+interface NodeAdminPageInterface extends PageDefinitionInterface
 {
     /**
      * Check for access to this page

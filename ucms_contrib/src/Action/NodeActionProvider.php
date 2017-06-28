@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Contrib\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;

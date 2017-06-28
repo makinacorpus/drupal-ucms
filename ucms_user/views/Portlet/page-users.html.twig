@@ -6,7 +6,7 @@
     <td>{{ item.createdTime|time_diff }}</td>
     <td>@todo</td>
     <td>{% if item.isActive %}{{ "Enabled"|t }}{% else %}{{ "Disabled"|t }}{% endif %}</td>
-    <td>{{ udashboard_button({icon: 'eye-open', title: "View"|t, uri: path('admin/dashboard/user/' ~ item.id)}) }}</td>
+    <td>{{ calista_button({icon: 'eye-open', title: "View"|t, uri: path('admin/dashboard/user/' ~ item.id)}) }}</td>
   </tr>
 {% endblock %}
 

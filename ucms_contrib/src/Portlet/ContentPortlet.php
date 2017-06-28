@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Contrib\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Calista\Action\ActionProviderInterface;
 use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
 use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
@@ -79,6 +79,7 @@ class ContentPortlet extends AbstractPortlet
      */
     public function getActions()
     {
+        return []; // FIXME
         return array_merge(
             $this->actionProvider->getActions('editorial'),
             $this->actionProvider->getActions('component')

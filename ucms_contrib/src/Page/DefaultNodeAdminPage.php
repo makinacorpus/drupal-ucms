@@ -3,16 +3,17 @@
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Session\AccountInterface;
-use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
+use MakinaCorpus\Calista\Datasource\DatasourceInterface;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
-use Symfony\Component\HttpFoundation\Request;
+use MakinaCorpus\Calista\DependencyInjection\AbstractPageDefinition;
+use MakinaCorpus\Calista\View\Html\TwigView;
+use MakinaCorpus\Calista\Datasource\InputDefinition;
 
 /**
  * Default node admin page implementation, suitable for most use cases
  */
-class DefaultNodeAdminPage implements NodeAdminPageInterface
+class DefaultNodeAdminPage extends AbstractPageDefinition implements NodeAdminPageInterface
 {
     private $datasource;
     private $typeHandler;
@@ -27,7 +28,7 @@ class DefaultNodeAdminPage implements NodeAdminPageInterface
      *
      * @param DatasourceInterface $datasource
      * @param SiteManager $siteManager
-     * @param \MakinaCorpus\Ucms\Contrib\TypeHandler $typeHandler
+     * @param TypeHandler $typeHandler
      * @param $permission
      * @param null $tab
      * @param mixed[] $queryFilter
@@ -68,46 +69,37 @@ class DefaultNodeAdminPage implements NodeAdminPageInterface
     /**
      * {@inheritdoc}
      */
-    public function build(PageBuilder $builder, Request $request)
+    public function getDatasource()
     {
-        $builder
-            ->setAllowedTemplates([
-                'grid' => 'module:udashboard:views/Page/page-grid.html.twig',
-                'table' => 'module:udashboard:views/Page/page.html.twig',
-            ])
-            ->setDefaultDisplay('table')
-            ->setDatasource($this->datasource)
-        ;
+        return $this->datasource;
+    }
 
-        // Add elastic filters
-        $builder
-            ->enableFilter('type')
-            ->enableFilter('owner')
-            ->enableFilter('tags')
-            ->enableFilter('site_id')
-        ;
+    /**
+     * {@inheritdoc}
+     */
+    public function getInputDefinition(array $options = [])
+    {
+        return new InputDefinition($this->getDatasource(), [
+            'base_query'    => $this->queryFilter,
+            'limit_default' => 24,
+            'pager_enable'  => true,
+            'pager_param'   => 'page',
+            'search_enable' => true,
+            'search_param'  => 's',
+        ]);
+    }
 
-        if ($this->queryFilter) {
-            foreach ($this->queryFilter as $name => $value) {
-                $builder->addBaseQueryParameter($name, $value);
-            }
-        }
-
-        if ($this->siteManager->hasContext()) {
-            $builder->addBaseQueryParameter('site_id', $this->siteManager->getContext()->getId());
-        }
-
-        if ($this->tab) {
-            $types = $this->typeHandler->getTabTypes($this->tab);
-            if ($types) {
-                $builder->addBaseQueryParameter('type', $types);
-            } else {
-                $builder->addBaseQueryParameter('type', 'this will never work, sorry');
-            }
-        }
-
-        if ('media' === $this->tab) {
-            $builder->setDefaultDisplay('grid');
-        }
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDisplayOptions()
+    {
+        return [
+            'view_type' => TwigView::class,
+            'templates' => [
+                'table' => '@calista/Page/page.html.twig',
+                'grid'  => '@calista/Page/page-grid.html.twig',
+            ],
+        ];
     }
 }

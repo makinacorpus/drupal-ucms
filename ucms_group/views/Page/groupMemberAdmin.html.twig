@@ -18,7 +18,7 @@
           <td>{{ item.email|escape }}</td>
           <td>{% if item.isActive %}{{ "enabled"|trans }}{% else %}{{ "disabled"|trans }}{% endif %}</td>
           <td>
-            {{ udashboard_actions(item) }}
+            {{ calista_actions(item) }}
           </td>
         </tr>
       {% else %}

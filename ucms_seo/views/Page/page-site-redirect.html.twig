@@ -5,7 +5,7 @@
     <td>{{ item.path }}</td>
     <td>{{ item.nodeTitle }}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      {{ calista_actions(item) }}
     </td>
   </tr>
 {% endblock %}
@@ -44,6 +44,6 @@
             $rows[] = [
                 check_plain($item->path),
                 isset($nodes[$item->nid]) ? l($nodeLabel, 'node/'.$item->nid) : $nodeLabel,
-                theme('udashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
+                theme('calista_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
  #}

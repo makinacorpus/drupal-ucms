@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Contrib\DependencyInjection\Compiler;
 use MakinaCorpus\Ucms\Contrib\Page\DefaultNodeAdminPage;
 use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -87,7 +86,7 @@ class RegisterNodeAdminPagePass implements CompilerPassInterface
                 // Pages are both node admin pages and a more generic page builder
                 // type, which needs to be registered to the admin widget factory,
                 // we are going to set the right tab onto it.
-                $definition->addTag('udashboard.page_type');
+                $definition->addTag('calista.page_definition');
 
                 $adminPages[$path] = $pageDefinition['name'];
                 $definitions[TypeHandler::getServiceName($tab, $path)] = $definition;

@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Contrib\Action;
 
 use Drupal\Core\Session\AccountInterface;
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
@@ -35,7 +35,6 @@ class ContentActionProvider extends AbstractActionProvider
      */
     private $access;
 
-
     /**
      * ContentActionProvider constructor.
      *
@@ -51,7 +50,6 @@ class ContentActionProvider extends AbstractActionProvider
         $this->currentUser = $currentUser;
         $this->access = $access;
     }
-
 
     /**
      * {@inheritDoc}
@@ -94,7 +92,6 @@ class ContentActionProvider extends AbstractActionProvider
 
         return $actions;
     }
-
 
     /**
      * {@inheritDoc}

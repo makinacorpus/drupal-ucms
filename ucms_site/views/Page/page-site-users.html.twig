@@ -7,7 +7,7 @@
     <td>{{ item.role|ucms_site_role }}</td>
     <td>{% if item.isBlocked %}{{ "Disabled"|trans }}{% else %}{{ "Enabled"|trans }}{% endif %}</td>
     <td>
-      {{ udashboard_actions(item) }}
+      {{ calista_actions(item) }}
     </td>
   </tr>
 {% endblock %}

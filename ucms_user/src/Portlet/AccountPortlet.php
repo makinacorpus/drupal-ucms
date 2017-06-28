@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\User\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Drupal\Dashboard\Portlet\PortletInterface;
 
 class AccountPortlet implements PortletInterface
@@ -42,6 +42,7 @@ class AccountPortlet implements PortletInterface
      */
     public function getActions()
     {
+        return []; // FIXME
         return [
             new Action($this->t('Edit my information'), 'admin/dashboard/user/my-account', 'dialog', 'edit'),
             new Action($this->t('Edit my password'), 'admin/dashboard/user/my-password', 'dialog', 'edit'),

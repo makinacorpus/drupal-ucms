@@ -1,12 +1,9 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use MakinaCorpus\Drupal\Dashboard\Action\Action;
+use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Action\AbstractWebmasterActionProvider;
-
 
 class WebmasterActionProvider extends AbstractWebmasterActionProvider
 {
@@ -41,7 +38,6 @@ class WebmasterActionProvider extends AbstractWebmasterActionProvider
         return $actions;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -50,6 +46,7 @@ class WebmasterActionProvider extends AbstractWebmasterActionProvider
         // We act only on the roles known by ucms_site and let other modules
         // provide actions for their own roles.
         $roles = [Access::ROLE_WEBMASTER, Access::ROLE_CONTRIB];
+
         return parent::supports($item) && in_array($item->getRole(), $roles);
     }
 }
