@@ -7,17 +7,17 @@ use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Calista\Action\ActionProviderInterface;
 use MakinaCorpus\Calista\Action\ActionRegistry;
 use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
-use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
-use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Add lots of stuff into the context pane.
+ */
 class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
-    use PageControllerTrait;
 
     private $container;
     private $contentActionProvider;
@@ -60,21 +60,38 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Get service in container
+     * Render page
      *
-     * @param string $id
+     * @param string $name
+     * @param array $inputOptions
      *
-     * @return object
+     * @return string
      */
-    final protected function get($id)
+    private function renderPage($name, array $inputOptions = [])
     {
-        return $this->container->get($id);
+        /** @var \MakinaCorpus\Calista\DependencyInjection\ViewFactory $factory */
+        $factory = $this->container->get('calista.view_factory');
+
+        $page = $factory->getPageDefinition($name);
+        $viewDefinition = $page->getViewDefinition();
+        $view = $factory->getView($viewDefinition->getViewType());
+
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+
+        $query = $page->getInputDefinition($inputOptions)->createQueryFromRequest($request);
+        $items = $page->getDatasource()->getItems($query);
+
+        // View must inherit from the page definition identifier to ensure
+        // that AJAX queries will work
+        $view->setId($page->getId());
+
+        return $view->render($viewDefinition, $items, $query);
     }
 
     /**
      * Render one's favorite cart.
      * @todo Better way
-     */
+     *
     private function renderCart()
     {
         // @todo keeping controller for now because it does handles the
@@ -84,32 +101,22 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
 
         return $controller->renderAction($this->container->get('request_stack')->getCurrentRequest());
     }
+        if ($this->tab) {
+            switch ($this->tab) {
 
-    /**
-     * Render one's favorite cart.
-     * @todo Better way
+                case 'content':
+                    $baseQuery['type'] = $this->typeHandler->getContentTypes();
+                    $searchParam = 'ccs';
+                    break;
+
+                case 'media':
+                    $baseQuery['type'] = $this->typeHandler->getMediaTypes();
+                    $searchParam = 'cms';
+                    break;
+            }
+        }
+
      */
-    private function renderPaneContent()
-    {
-        $request = $this->get('request_stack')->getCurrentRequest();
-        $builder = $this->getPageBuilder('cart_content', $request);
-
-        // @todo we must find a more straight-foward way
-        return $builder->searchAndRender($request);
-    }
-
-    /**
-     * Render one's favorite cart.
-     * @todo Better way
-     */
-    private function renderPaneMedia()
-    {
-        $request = $this->get('request_stack')->getCurrentRequest();
-        $builder = $this->getPageBuilder('cart_media', $request);
-
-        // @todo we must find a more straight-foward way
-        return $builder->searchAndRender($request);
-    }
 
     /**
      * @param ContextPaneEvent $event
@@ -123,11 +130,11 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
         if (user_access('use favorites')) {
             $contextPane
                 ->addTab('cart', $this->t("Cart"), 'shopping-cart')
-                ->add($this->renderCart(), 'cart')
-                ->addTab('cart_content', $this->t("All content"), 'file')
-                ->add($this->renderPaneContent(), 'cart_content')
-                ->addTab('cart_media', $this->t("All medias"), 'picture')
-                ->add($this->renderPaneMedia(), 'cart_media')
+                ->add($this->renderPage('ucms_cart'), 'cart')
+//                 ->addTab('cart_content', $this->t("All content"), 'file')
+//                 ->add($this->renderPage('cart_content'), 'cart_content')
+//                 ->addTab('cart_media', $this->t("All medias"), 'picture')
+//                 ->add($this->renderPage('cart_media'), 'cart_media')
             ;
         }
 

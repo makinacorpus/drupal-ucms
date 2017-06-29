@@ -1,4 +1,26 @@
+calista:
+  pages:
+    ucms_cart:
+      id: ucms_cart
+      datasource: ucms_contrib.datasource.cart
+      input:
+        base_query: {}
+        limit_default: 16
+        pager_enable: false
+        search_enable: true
+        search_param: cs
+        sort_default_field: n.changed # @fixme use history instead
+      view:
+        enabled_filters: {}
+        show_filters: false
+        show_search: true
+        show_sort: true
+        templates:
+          cart: module:ucms_contrib:views/Page/page-cart.html.twig
+        view_type: twig_page
+
 parameters:
+
   ucms_contrib.filter.view_mode.wysiwyg: wysiwyg
   ucms_contrib.filter.view_mode.markup: default
 
@@ -65,6 +87,7 @@ services:
   ucms_contrib.cart:
     alias: ucms_contrib.cart.bloom
     class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
+    tags: [{name: calista.datasource}]
 
   # Preload cart item nodes upon cart list operation
   ucms_contrib.cart.preloader:
@@ -73,29 +96,11 @@ services:
     decorates: ucms_contrib.cart
     arguments: ["@entity.manager", "@ucms_contrib.cart.preloader.inner"]
 
-  # History datasources
+  # Cart datasource
   ucms_contrib.datasource.cart:
-    public: false
+    public: true
     class: MakinaCorpus\Ucms\Contrib\Page\CartDatasource
     arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
-  ucms_contrib.datasource.cart_all:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Page\CartAllDatasource
-    arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
-
-  # Cart page types
-  ucms_contrib.page_type.cart:
-    class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart', '@current_user']
-    tags: [{name: udashboard.page_type, id: cart}]
-  ucms_contrib.page_type.cart_content:
-    class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart_all', '@current_user', 'content']
-    tags: [{name: udashboard.page_type, id: cart_content}]
-  ucms_contrib.page_type.cart_media:
-    class: MakinaCorpus\Ucms\Contrib\Page\CartPageType
-    arguments: ['@ucms_contrib.type_handler', '@ucms_contrib.datasource.cart_all', '@current_user', 'media']
-    tags: [{name: udashboard.page_type, id: cart_media}]
 
   # Action providers
   ucms_contrib.node_action_provider:

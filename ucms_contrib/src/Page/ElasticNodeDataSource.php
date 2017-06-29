@@ -250,10 +250,7 @@ class ElasticNodeDataSource extends AbstractDatasource
         $nodeList = $this->entityManager->getStorage('node')->loadMultiple($response->getAllNodeIdentifiers());
         $this->preloadDependencies($nodeList);
 
-        $result = new DefaultDatasourceResult(NodeInterface::class, $nodeList);
-        $result->setTotalItemCount($response->getTotal());
-
-        return $result;
+        return $this->createResult($nodeList, $response->getTotal());
     }
 
     /**

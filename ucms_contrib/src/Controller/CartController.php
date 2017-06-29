@@ -6,11 +6,9 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Calista\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -114,10 +112,9 @@ class CartController extends Controller
         }
 
         $request->query->set('user_id', $userId);
-        $builder = $this->getPageBuilder('cart', $request);
 
         $ret = [];
-        $ret['#markup'] = $builder->searchAndRender($request);
+        $ret['#markup'] = $this->renderPage('cart', $request);
 
         return $ret;
     }

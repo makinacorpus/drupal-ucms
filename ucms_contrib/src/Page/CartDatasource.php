@@ -2,12 +2,12 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Page;
 
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\Filter;
+use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Ucms\Contrib\Cart\CartItem;
 
 /**
- * Datasource for user favorites.
+ * Datasource for carts.
  */
 class CartDatasource extends AbstractNodeDatasource
 {
@@ -17,6 +17,25 @@ class CartDatasource extends AbstractNodeDatasource
     protected function isSiteContextDependent()
     {
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemClass()
+    {
+        return CartItem::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters()
+    {
+        return [
+            new Filter('type'),
+            new Filter('user_id')
+        ];
     }
 
     /**
@@ -36,11 +55,21 @@ class CartDatasource extends AbstractNodeDatasource
 
     /**
      * {@inheritdoc}
-     */
+     *
     public function getDefaultSort()
     {
         return ['c.weight', SortManager::DESC];
     }
+     */
+
+    /**
+     * {@inheritdoc}
+     *
+    public function getSearchFormParamName()
+    {
+        return 'cs';
+    }
+     */
 
     /**
      * Returns a column on which an arbitrary sort will be added in order to
@@ -55,27 +84,30 @@ class CartDatasource extends AbstractNodeDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
-        if (empty($query['user_id'])) {
-            return [];
-        }
-        $userId = $query['user_id'];
-
         $select = $this->getDatabase()->select('node', 'n');
-        $select = $this->process($select, $query, $pageState);
-        $select->join('ucms_contrib_cart', 'c', "c.nid = n.nid");
+        $select = $this->process($select, $query);
 
         // JOIN with {history} is actually done in the parent implementation
         $select->fields('n', ['nid']);
         $select->fields('h', ['uid']);
         $select->addField('h', 'timestamp', 'added');
 
-        $items = $select
-            ->condition('c.uid', $userId)
-            ->execute()
-            ->fetchAll()
-        ;
+        if ($query->has('type')) {
+            $select->condition('n.type', $query->get('type'));
+        }
+        if ($query->has('user_id')) {
+            $userId = $query->get('user_id');
+            $select->condition('c.uid', $userId);
+            $select->join('ucms_contrib_cart', 'c', "c.nid = n.nid");
+        } else {
+            // Avoid errors if people use the filter accidentally
+            $select->leftJoin('ucms_contrib_cart', 'c', "c.nid = n.nid and 1 = 0");
+            $userId = null;
+        }
+
+        $items = $select->execute()->fetchAll();
 
         $ret = [];
 
@@ -99,14 +131,6 @@ class CartDatasource extends AbstractNodeDatasource
             $item->setNode($nodes[$nodeId]);
         }
 
-        return $ret;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearchFormParamName()
-    {
-        return 'cs';
+        return $this->createResult($ret);
     }
 }

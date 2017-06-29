@@ -4,9 +4,10 @@ namespace MakinaCorpus\Ucms\Contrib\Page;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use Drupal\node\NodeInterface;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\Query;
+use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -16,6 +17,7 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
 
     private $database;
     private $entityManager;
+    private $pager;
     private $siteManager;
 
     /**
@@ -32,6 +34,11 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
         $this->siteManager = $siteManager;
     }
 
+    /**
+     * Get database connection
+     *
+     * @return \\DatabaseConnection
+     */
     final protected function getDatabase()
     {
         return $this->database;
@@ -40,7 +47,15 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    public function getItemClass()
+    {
+        return NodeInterface::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters()
     {
         // @todo build commong database filters for node datasource into some
         //   trait or abstract implemetnation to avoid duplicates
@@ -50,7 +65,7 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getSorts()
     {
         return [
             'n.created'     => $this->t("creation date"),
@@ -68,7 +83,7 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
      */
     public function getDefaultSort()
     {
-        return ['n.changed', SortManager::DESC];
+        return ['n.changed', Query::SORT_DESC];
     }
 
     /**
@@ -126,35 +141,52 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
     }
 
     /**
+     * Get page
+     *
+     * @return DrupalPager
+     */
+    final protected function getPager()
+    {
+        if (!$this->pager) {
+            throw new \LogicException("you cannot fetch the pager before the database query has been created");
+        }
+
+        return $this->pager;
+    }
+
+    /**
      * Implementors must set the node table with 'n' as alias, and call this
      * method for the datasource to work correctly.
      *
      * @param \SelectQuery $select
-     * @param mixed[] $query
-     * @param PageState $pageState
+     * @param Query $query
      *
      * @return \SelectQuery
      *   It can be an extended query, so use this object.
      */
-    final protected function process(\SelectQuery $select, $query, PageState $pageState)
+    final protected function process(\SelectQuery $select, Query $query)
     {
-        if ($pageState->hasSortField()) {
-            $select->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        if ($query->hasSortField()) {
+            $select->orderBy($query->getSortField(), $query->getSortOrder());
         }
-        $select->orderBy($this->getPredictibleOrderColumn(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        $select->orderBy($this->getPredictibleOrderColumn(), $query->getSortOrder());
 
-        $sParam = $pageState->getSearchParameter();
-        if (!empty($query[$sParam])) {
-            $select->condition('n.title', '%' . db_like($query[$sParam]) . '%', 'LIKE');
+        if ($search = $query->getSearchString()) {
+            $select->condition('n.title', '%' . db_like($search) . '%', 'LIKE');
         }
 
         // Also add a few joins
+        /*
+         * @todo restore me
+         *
         if (isset($query['user_id'])) {
             $select->leftJoin('history', 'h', "h.nid = n.nid AND h.uid = :h_uid", [':h_uid' => $query['user_id']]);
         } else {
             // We need the join in order for sorts to avoid WSOD'ing
             $select->leftJoin('history', 'h', "h.nid = n.nid");
         }
+         */
+        $select->leftJoin('history', 'h', "h.nid = n.nid");
 
         // @todo here would be the rigth place to deal with filters
 
@@ -162,29 +194,28 @@ abstract class AbstractNodeDatasource extends AbstractDatasource
             $select->addTag(Access::QUERY_TAG_CONTEXT_OPT_OUT);
         }
 
-        $select->range($pageState->getOffset(), $pageState->getLimit());
+        $this->pager = $select = $select->extend(DrupalPager::class)->setDatasourceQuery($query);
 
-        return $select
-            ->addTag('node_access')
-            //->groupBy('n.nid')
-            //->extend(DrupalPager::class)
-            //->setPageState($pageState)
-        ;
+        return $select->addTag('node_access'); // ->groupBy('n.nid');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasSearchForm()
+    protected function createResult(array $items, $totalCount = null)
+    {
+        if (null === $totalCount) {
+            $totalCount = $this->getPager()->getTotalCount();
+        }
+
+        return parent::createResult($items, $totalCount);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsFulltextSearch()
     {
         return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearchFormParamName()
-    {
-        return 's';
     }
 }

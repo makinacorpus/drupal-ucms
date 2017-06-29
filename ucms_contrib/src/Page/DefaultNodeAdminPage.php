@@ -80,12 +80,13 @@ class DefaultNodeAdminPage extends AbstractPageDefinition implements NodeAdminPa
     public function getInputDefinition(array $options = [])
     {
         return new InputDefinition($this->getDatasource(), [
-            'base_query'    => $this->queryFilter,
-            'limit_default' => 24,
-            'pager_enable'  => true,
-            'pager_param'   => 'page',
-            'search_enable' => true,
-            'search_param'  => 's',
+            'base_query'          => $this->queryFilter,
+            'limit_default'       => 24,
+            'pager_enable'        => true,
+            'pager_param'         => 'page',
+            'search_enable'       => true,
+            'search_param'        => 's',
+            'sort_default_field'  => 'updated',
         ]);
     }
 

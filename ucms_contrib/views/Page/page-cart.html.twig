@@ -1,4 +1,4 @@
-{% extends 'module:udashboard:views/Page/page.html.twig' %}
+{% extends '@calista/Page/page.html.twig' %}
 
 {% block item %}
   {% set node = item.node %}
@@ -8,12 +8,12 @@
 {% endblock %}
 
 {% block cart_header %}
-  {% if state.searchParameter %}
+  {% if input.isSearchEnabled %}
     <div data-page-block="search_form">
       {{ block('search_form') }}
     </div>
   {% endif %}
-  {% if sort.count %}
+  {% if 1 < input.allowedSorts|length %}
     <div data-page-block="sort_links">
       {{ block('sort_links') }}
     </div>
