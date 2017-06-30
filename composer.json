@@ -1,36 +1,36 @@
 {
-    "name" : "makinacorpus/drupal-ucms",
-    "type" : "drupal-module",
-    "description" : " µCMS modules - Node/Elasticsearch/favorites based Drupal fast contribution UI/UX",
-    "homepage" : "http://github.com/makinacorpus/drupal-ucms",
-    "license" : "GPL-2",
-    "authors" : [
+    "name": "makinacorpus/drupal-ucms",
+    "type": "drupal-module",
+    "description": " µCMS modules - Node/Elasticsearch/favorites based Drupal fast contribution UI/UX",
+    "homepage": "http://github.com/makinacorpus/drupal-ucms",
+    "license": "GPL-2",
+    "authors": [
         {
-            "name" : "Lonny Loquesol",
-            "email" : "lonny.loquesol@makina-corpus.com"
+            "name": "Lonny Loquesol",
+            "email": "lonny.loquesol@makina-corpus.com"
         },
         {
-            "name" : "Pierre Rineau",
-            "email" : "pierre.rineau@makina-corpus.com"
+            "name": "Pierre Rineau",
+            "email": "pierre.rineau@makina-corpus.com"
         },
         {
-            "name" : "Régis Leroy",
-            "email" : "regis.leroy@makina-corpus.com"
+            "name": "Régis Leroy",
+            "email": "regis.leroy@makina-corpus.com"
         },
         {
-            "name" : "Sébastien Corbin",
-            "email" : "sebastien.corbin@makina-corpus.com"
+            "name": "Sébastien Corbin",
+            "email": "sebastien.corbin@makina-corpus.com"
         },
         {
-            "name" : "Yannick Chabbert",
-            "email" : "yannick.chabbert@makina-corpus.com"
+            "name": "Yannick Chabbert",
+            "email": "yannick.chabbert@makina-corpus.com"
         },
         {
-            "name" : "Makina Corpus",
-            "homepage" : "http://makina-corpus.com"
+            "name": "Makina Corpus",
+            "homepage": "http://makina-corpus.com"
         }
     ],
-    "autoload" : {
+    "autoload": {
         "exclude-from-classmap": [
             "/ucms_composition/src/Tests/",
             "/ucms_contrib/src/Tests/",
@@ -41,53 +41,53 @@
             "/ucms_site/src/Tests/",
             "/ucms_widget/src/Tests/"
         ],
-        "psr-4" : {
-            "MakinaCorpus\\Ucms\\Composition\\" : "ucms_composition/src",
-            "MakinaCorpus\\Ucms\\ContentList\\" : "ucms_list/src",
-            "MakinaCorpus\\Ucms\\Contrib\\" : "ucms_contrib/src",
-            "MakinaCorpus\\Ucms\\Extranet\\" : "ucms_extranet/src",
-            "MakinaCorpus\\Ucms\\Group\\" : "ucms_group/src",
-            "MakinaCorpus\\Ucms\\Harm\\" : "ucms_harm/src",
-            "MakinaCorpus\\Ucms\\Label\\" : "ucms_label/src",
-            "MakinaCorpus\\Ucms\\Layout\\" : "ucms_layout/src",
-            "MakinaCorpus\\Ucms\\Notification\\" : "ucms_notification/src",
-            "MakinaCorpus\\Ucms\\Search\\" : "ucms_search/src",
-            "MakinaCorpus\\Ucms\\Seo\\" : "ucms_seo/src",
-            "MakinaCorpus\\Ucms\\Site\\" : "ucms_site/src",
-            "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
-            "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
-            "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src"
+        "psr-4": {
+            "MakinaCorpus\\Ucms\\Composition\\": "ucms_composition/src",
+            "MakinaCorpus\\Ucms\\ContentList\\": "ucms_list/src",
+            "MakinaCorpus\\Ucms\\Contrib\\": "ucms_contrib/src",
+            "MakinaCorpus\\Ucms\\Extranet\\": "ucms_extranet/src",
+            "MakinaCorpus\\Ucms\\Group\\": "ucms_group/src",
+            "MakinaCorpus\\Ucms\\Harm\\": "ucms_harm/src",
+            "MakinaCorpus\\Ucms\\Label\\": "ucms_label/src",
+            "MakinaCorpus\\Ucms\\Layout\\": "ucms_layout/src",
+            "MakinaCorpus\\Ucms\\Notification\\": "ucms_notification/src",
+            "MakinaCorpus\\Ucms\\Search\\": "ucms_search/src",
+            "MakinaCorpus\\Ucms\\Seo\\": "ucms_seo/src",
+            "MakinaCorpus\\Ucms\\Site\\": "ucms_site/src",
+            "MakinaCorpus\\Ucms\\Tree\\": "ucms_tree/src",
+            "MakinaCorpus\\Ucms\\User\\": "ucms_user/src",
+            "MakinaCorpus\\Ucms\\Widget\\": "ucms_widget/src"
         }
     },
-    "autoload-dev" : {
-        "psr-4" : {
-            "MakinaCorpus\\Ucms\\Composition\\Tests\\" : "ucms_composition/tests",
-            "MakinaCorpus\\Ucms\\Contrib\\Tests\\" : "ucms_contrib/tests",
-            "MakinaCorpus\\Ucms\\Seo\\Tests\\" : "ucms_seo/tests"
-            "MakinaCorpus\\Ucms\\Site\\Tests\\" : "ucms_site/tests",
+    "autoload-dev": {
+        "psr-4": {
+            "MakinaCorpus\\Ucms\\Composition\\Tests\\": "ucms_composition/tests",
+            "MakinaCorpus\\Ucms\\Contrib\\Tests\\": "ucms_contrib/tests",
+            "MakinaCorpus\\Ucms\\Seo\\Tests\\": "ucms_seo/tests",
+            "MakinaCorpus\\Ucms\\Site\\Tests\\":"ucms_site/tests"
         }
     },
-    "require" : {
-        "elasticsearch/elasticsearch" : "2.2.0",
-        "makinacorpus/drupal-apubsub" : "^4.0",
-        "makinacorpus/drupal-calista" : "^1",
-        "makinacorpus/drupal-dragula" : "^1",
-        "makinacorpus/drupal-phplayout" : "*",
-        "makinacorpus/drupal-sf-dic" : ">=3.2.2",
-        "makinacorpus/drupal-udashboard" : ">=1.0.0-alpha15",
-        "makinacorpus/drupal-ulink" : "^2.0",
-        "makinacorpus/drupal-umenu" : "^2.0.5",
-        "makinacorpus/drush-progressbar" : "^1.0",
+    "require": {
+        "elasticsearch/elasticsearch": "2.2.0",
+        "makinacorpus/drupal-apubsub": "^4.0",
+        "makinacorpus/drupal-calista": "^1",
+        "makinacorpus/drupal-dragula": "^1",
+        "makinacorpus/drupal-phplayout": "*",
+        "makinacorpus/drupal-sf-dic": ">=3.2.2",
+        "makinacorpus/drupal-udashboard": ">=1.0.0-alpha15",
+        "makinacorpus/drupal-ulink": "^2.0",
+        "makinacorpus/drupal-umenu": "^2.0.5",
+        "makinacorpus/drush-progressbar": "^1.0",
         "makinacorpus/php-acl": "^1.0",
-        "makinacorpus/php-bloom" : "^2.0.1",
-        "symfony/security" : "3.*"
+        "makinacorpus/php-bloom": "^2.0.1",
+        "symfony/security": "3.*"
     },
-    "suggests" : {
-        "drupal/redis" : "Activates a few Redis-based caches",
-        "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs",
-        "makinacorpus/drupal-phplayout" : "In order to use the DND page composition module",
-        "makinacorpus/drupal-unoderef" : "Simple node reference field with a DND widget",
-        "makinacorpus/redis-bundle" : "Alternative Redis cache backend"
+    "suggests": {
+        "drupal/redis": "Activates a few Redis-based caches",
+        "jbroadway/urlify": "For the SEO module to be able to generate correct URLs",
+        "makinacorpus/drupal-phplayout": "In order to use the DND page composition module",
+        "makinacorpus/drupal-unoderef": "Simple node reference field with a DND widget",
+        "makinacorpus/redis-bundle": "Alternative Redis cache backend"
     },
-    "minimum-stability" : "dev"
+    "minimum-stability": "dev"
 }
