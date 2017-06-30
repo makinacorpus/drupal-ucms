@@ -1,0 +1,19 @@
+calista:
+  pages:
+
+    ucms_user.list_users:
+      datasource: ucms_user.admin.datasource
+      input:
+        base_query: {}
+        limit_default: 24
+        pager_enable: true
+        search_enable: true
+        sort_default_field: u.login
+        sort_default_order: desc
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          default: module:ucms_user:views/Page/page-user.html.twig
+        view_type: twig_page

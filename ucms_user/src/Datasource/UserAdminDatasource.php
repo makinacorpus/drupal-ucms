@@ -1,14 +1,14 @@
 <?php
 
-namespace MakinaCorpus\Ucms\User\Page;
+namespace MakinaCorpus\Ucms\User\Datasource;
 
 use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\Filter;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\Filter;
+use MakinaCorpus\Calista\Datasource\Query;
+use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
 use MakinaCorpus\Ucms\Site\SiteAccessService;
 
 class UserAdminDatasource extends AbstractDatasource
@@ -47,7 +47,7 @@ class UserAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    public function getFilters()
     {
         $roles = $this->access->getDrupalRoleList();
         foreach ($roles as $rid => $role) {
@@ -70,7 +70,7 @@ class UserAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getSorts()
     {
         return [
             'u.mail'      => $this->t("email"),
@@ -84,15 +84,7 @@ class UserAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getDefaultSort()
-    {
-        return ['u.login', SortManager::DESC];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
         $q = $this
             ->db
@@ -100,42 +92,47 @@ class UserAdminDatasource extends AbstractDatasource
             ->fields('u', ['uid'])
         ;
 
-        if (isset($query['status'])) {
-            $q->condition('u.status', $query['status']);
+        if ($query->has('status')) {
+            $q->condition('u.status', $query->get('status'));
         }
-        if (!empty($query['role'])) {
+        if ($query->has('role')) {
             $q->join('users_roles', 'ur', "u.uid = ur.uid");
-            $q->condition('ur.rid', $query['role']);
+            $q->condition('ur.rid', $query->get('role'));
         }
 
-        if ($pageState->hasSortField()) {
-            $q->orderBy($pageState->getSortField(), $pageState->getSortOrder());
+        if ($query->hasSortField()) {
+            $q->orderBy($query->getSortField(), $query->getSortOrder());
         }
 
-        $sParam = $pageState->getSearchParameter();
-        if (!empty($query[$sParam])) {
-            $q->condition('u.name', '%' . db_like($query[$sParam]) . '%', 'LIKE');
+        $search = $query->getSearchString();
+        if ($search) {
+            $q->condition('u.name', '%' . db_like($search) . '%', 'LIKE');
         }
 
-        $idList = $q
-            ->condition('u.uid', 0, '!=')
-            ->condition('u.uid', 1, '!=')
-            ->extend(DrupalPager::class)
-            ->setPageState($pageState)
-            ->execute()
-            ->fetchCol();
+        // Exclude admin and anonymous users
+        $q->condition('u.uid', 0, '!=')->condition('u.uid', 1, '!=');
 
-        return $this
-            ->entityManager
-            ->getStorage('user')
-            ->loadMultiple($idList)
-        ;
+        /** @var \MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager $pager */
+        $pager = $q->extend(DrupalPager::class)->setDatasourceQuery($query);
+        $idList = $pager->execute()->fetchCol();
+
+        $items = $this->entityManager->getStorage('user')->loadMultiple($idList);
+
+        return $this->createResult($items, $pager->getTotalCount());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasSearchForm()
+    public function getItemClass()
+    {
+        return AccountInterface::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsFulltextSearch()
     {
         return true;
     }

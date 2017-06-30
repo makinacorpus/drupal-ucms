@@ -4,7 +4,6 @@
  * µCMS user management module.
  */
 
-use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\User\Controller\UserAdminController;
 use MakinaCorpus\Ucms\User\UserAccess;
 

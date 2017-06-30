@@ -7,13 +7,9 @@ services:
 
   # Data source service for listing page
   ucms_user.admin.datasource:
-    class: MakinaCorpus\Ucms\User\Page\UserAdminDatasource
+    class: MakinaCorpus\Ucms\User\Datasource\UserAdminDatasource
     arguments: ["@database", "@ucms_site.access", "@entity.manager"]
-
-  # User admin page type
-  ucms_user.page_type.user_list:
-    class: MakinaCorpus\Ucms\User\Page\UserPageType
-    arguments: ["@ucms_user.admin.datasource"]
+    tags: [{name: calista.datasource}]
 
   # Action provider for the listing page
   ucms_user.action_provider:
@@ -32,20 +28,17 @@ services:
     class: MakinaCorpus\Ucms\User\EventDispatcher\ContextPaneEventSubscriber
     tags: [{ name: event_subscriber }]
 
-  # Dashboard event subscriber to provide portlets
-#  ucms_user.dashboard_event_subscriber:
-#    class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventSubscriber
-#    tags: [{ name: event_subscriber }]
-
-  # Account portlet
-  ucms_user.account_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
-    tags: [{ name: udashboard.portlet }]
-
-  # Users portlet
-  ucms_user.users_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
-    arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
-    tags: [{ name: udashboard.portlet }]
+# @todo restore me
+#
+#  # Account portlet
+#  ucms_user.account_portlet:
+#    public: false
+#    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
+#    tags: [{ name: udashboard.portlet }]
+#
+#  # Users portlet
+#  ucms_user.users_portlet:
+#    public: false
+#    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
+#    arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
+#    tags: [{ name: udashboard.portlet }]

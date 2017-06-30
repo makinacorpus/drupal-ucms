@@ -4,10 +4,9 @@ namespace MakinaCorpus\Ucms\User\Controller;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Calista\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
-
+use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class UserAdminController extends Controller
@@ -59,6 +58,6 @@ class UserAdminController extends Controller
      */
     public function userListAction(Request $request)
     {
-        return $this->getPageBuilder('ucms_user.page_type.user_list', $request)->searchAndRender($request);
+        return $this->renderPage('ucms_user.list_users', $request);
     }
 }
