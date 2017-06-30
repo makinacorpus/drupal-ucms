@@ -1,13 +1,12 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\Page;
+namespace MakinaCorpus\Ucms\Group\Datasource;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\Filter;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\Filter;
+use MakinaCorpus\Calista\Datasource\Query;
+use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupSite;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -37,12 +36,12 @@ class GroupSiteAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    public function getFilters()
     {
         $states = SiteState::getList(SiteState::ARCHIVE);
 
         foreach ($states as $key => $label) {
-          $states[$key] = $this->t($label);
+            $states[$key] = $this->t($label);
         }
 
         return [
@@ -57,7 +56,7 @@ class GroupSiteAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getSorts()
     {
         return [
             's.id'          => $this->t("identifier"),
@@ -71,68 +70,66 @@ class GroupSiteAdminDatasource extends AbstractDatasource
 
     /**
      * {@inheritdoc}
-     */
+     *
     public function getDefaultSort()
     {
         return ['s.title', SortManager::ASC];
     }
+     */
 
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
         $q = $this
             ->database
             ->select('ucms_site', 's')
+            ->addTag('ucms_group_access')
+            ->addTag('ucms_site_access')
+            //->groupBy('s.id')
         ;
 
         // We need aliases
         $q->addField('s', 'id', 'site_id');
         $q->addField('s', 'group_id', 'group_id');
 
-        if (!empty($query['group'])) {
-            $q->condition('s.group_id', $query['group']);
+        if ($query->has('group')) {
+            $q->condition('s.group_id', $query->get('group'));
         }
-        if (!empty($query['site'])) {
-            $q->condition('s.id', $query['site']);
+        if ($query->has('site')) {
+            $q->condition('s.id', $query->get('site'));
         }
 
         // Filters
-        if (isset($query['state'])) {
-            $q->condition('s.state', $query['state']);
+        if ($query->has('state')) {
+            $q->condition('s.state', $query->get('state'));
         }
-        if (isset($query['theme'])) {
-            $q->condition('s.theme', $query['theme']);
+        if ($query->has('theme')) {
+            $q->condition('s.theme', $query->get('theme'));
         }
-        if (isset($query['template'])) {
-            $q->condition('s.template_id', $query['template']);
+        if ($query->has('template')) {
+            $q->condition('s.template_id', $query->get('template'));
         }
 
-        if ($pageState->hasSortField()) {
-            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        if ($query->hasSortField()) {
+            $q->orderBy($query->getSortField(), $query->getSortOrder());
         }
-        $q->orderBy('s.title', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        $q->orderBy('s.title', $query->getSortOrder());
 
-        $sParam = $pageState->getSearchParameter();
-        if (!empty($query[$sParam])) {
+        $search = $query->getSearchString();
+        if ($search) {
             $q->condition(
                 (new \DatabaseCondition('OR'))
-                    ->condition('s.title', '%' . db_like($query[$sParam]) . '%', 'LIKE')
-                    ->condition('s.title_admin', '%' . db_like($query[$sParam]) . '%', 'LIKE')
-                    ->condition('s.http_host', '%' . db_like($query[$sParam]) . '%', 'LIKE')
+                    ->condition('s.title', '%' . db_like($search) . '%', 'LIKE')
+                    ->condition('s.title_admin', '%' . db_like($search) . '%', 'LIKE')
+                    ->condition('s.http_host', '%' . db_like($search) . '%', 'LIKE')
             );
         }
 
-        $r = $q
-            ->addTag('ucms_group_access')
-            ->addTag('ucms_site_access')
-            ->groupBy('s.id')
-            ->extend(DrupalPager::class)
-            ->setPageState($pageState)
-            ->execute()
-        ;
-
+        /** @var \MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager $pager */
+        $pager = $q->extend(DrupalPager::class)->setDatasourceQuery($query);
+        $r = $pager->execute();
         $r->setFetchMode(\PDO::FETCH_CLASS, GroupSite::class);
 
         $ret = $r->fetchAll();
@@ -148,13 +145,21 @@ class GroupSiteAdminDatasource extends AbstractDatasource
             }
         }
 
-        return $ret;
+        return $this->createResult($ret, $pager->getTotalCount());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasSearchForm()
+    public function getItemClass()
+    {
+        return GroupSite::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsFulltextSearch()
     {
         return true;
     }

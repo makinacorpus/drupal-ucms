@@ -35,8 +35,11 @@
  * [_] test ucms_extranet module
  * [_] test ucms_group module
 
-### µDashboard 2 migration
+### Calista migration
 
+ * [_] contrib: add missing dynamic parameters in base queries
+ * [_] contrib: fix admin page registration (make it easy once again)
+ * [_] group: add missing dynamic parameters in base queries
  * [_] migrate all pages to new version
  * [_] normalize acl/access usage via isGranted and voters
  * [_] rewrite udashboard JavaScript as TypeScript

@@ -4,9 +4,7 @@ namespace MakinaCorpus\Ucms\Group\Controller;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
+use MakinaCorpus\Calista\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Form\GroupMemberAddExisting;
@@ -15,7 +13,6 @@ use MakinaCorpus\Ucms\Group\Form\SiteGroupAttach;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Site;
-
 use Symfony\Component\HttpFoundation\Request;
 
 class DashboardController extends Controller
@@ -32,30 +29,6 @@ class DashboardController extends Controller
     }
 
     /**
-     * @return DatasourceInterface
-     */
-    private function getGroupAdminDatasource()
-    {
-        return $this->get('ucms_group.admin.group_datasource');
-    }
-
-    /**
-     * @return DatasourceInterface
-     */
-    private function getGroupSiteAdminDatasource()
-    {
-        return $this->get('ucms_group.admin.group_site_datasource');
-    }
-
-    /**
-     * @return DatasourceInterface
-     */
-    private function getGroupMemberAdminDatasource()
-    {
-        return $this->get('ucms_group.admin.group_member_datasource');
-    }
-
-    /**
      * @return AccountInterface
      */
     private function getCurrentUser()
@@ -64,25 +37,11 @@ class DashboardController extends Controller
     }
 
     /**
-     * @return int
-     */
-    private function getCurrentUserId()
-    {
-        return $this->getCurrentUser()->id();
-    }
-
-    /**
      * View all groups action
      */
     public function viewAllAction(Request $request)
     {
-        return $this
-            ->createTemplatePage(
-                $this->getGroupAdminDatasource(),
-                'module:ucms_group:views/Page/groupAdmin.html.twig'
-            )
-            ->render($request->query->all())
-        ;
+        return $this->renderPage('ucms_group.list_all', $request);
     }
 
     /**
@@ -90,16 +49,7 @@ class DashboardController extends Controller
      */
     public function viewMineAction(Request $request)
     {
-        return $this
-            ->createTemplatePage(
-                $this->getGroupAdminDatasource(),
-                'module:ucms_group:views/Page/groupAdminMine.html.twig'
-            )
-            ->setBaseQuery([
-                'uid' => $this->getCurrentUserId(),
-            ])
-            ->render($request->query->all())
-        ;
+        return $this->renderPage('ucms_group.list_mine', $request);
     }
 
     /**
@@ -141,16 +91,7 @@ class DashboardController extends Controller
      */
     public function memberListAction(Request $request, Group $group)
     {
-        return $this
-            ->createTemplatePage(
-                $this->getGroupMemberAdminDatasource(),
-                'module:ucms_group:views/Page/groupMemberAdmin.html.twig'
-            )
-            ->setBaseQuery([
-                'group' => $group->getId(),
-            ])
-            ->render($request->query->all())
-        ;
+        return $this->renderPage('ucms_group.list_members', $request);
     }
 
     /**
@@ -188,15 +129,6 @@ class DashboardController extends Controller
      */
     public function siteListAction(Request $request, Group $group)
     {
-        return $this
-            ->createTemplatePage(
-                $this->getGroupSiteAdminDatasource(),
-                'module:ucms_group:views/Page/groupSiteAdmin.html.twig'
-            )
-            ->setBaseQuery([
-                'group' => $group->getId(),
-            ])
-            ->render($request->query->all())
-        ;
+        return $this->renderPage('ucms_group.list_by_site', $request);
     }
 }

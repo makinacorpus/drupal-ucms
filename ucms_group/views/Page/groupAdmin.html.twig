@@ -1,4 +1,25 @@
-<div class="col-md-12">
+{% extends '@calista/Page/page.html.twig' %}
+
+{% block item %}
+<tr>
+  <td>
+    {{ item.title|escape }}
+    {% if item.isMeta %}
+      <span class="pull-right">
+        <span class="glyphicon glyphicon-pushpin" data-toggle="tooltip" title="{{ "This is the default group"|trans }}"></span>&nbsp;
+      </span>
+    {% endif %}
+  </td>
+  <td>{% if item.isGhost %}{{ "invisible"|trans }}{% else %}{{ "visible"|trans }}{% endif %}</td>
+  <td>{{ item.createdAt|time_diff }}</td>
+  <td>{{ item.changedAt|time_diff }}</td>
+  <td>
+    {{ calista_actions(item) }}
+  </td>
+</tr>
+{% endblock %}
+
+{% block item_list %}
   <table class="table table-condensed">
     <thead>
       <tr>
@@ -11,22 +32,7 @@
     </thead>
     <tbody>
       {% for item in items %}
-        <tr>
-          <td>
-            {{ item.title|escape }}
-            {% if item.isMeta %}
-              <span class="pull-right">
-                <span class="glyphicon glyphicon-pushpin" data-toggle="tooltip" title="{{ "This is the default group"|trans }}"></span>&nbsp;
-              </span>
-            {% endif %}
-          </td>
-          <td>{% if item.isGhost %}{{ "invisible"|trans }}{% else %}{{ "visible"|trans }}{% endif %}</td>
-          <td>{{ item.createdAt|time_diff }}</td>
-          <td>{{ item.changedAt|time_diff }}</td>
-          <td>
-            {{ calista_actions(item) }}
-          </td>
-        </tr>
+        {{ block('item') }}
       {% else %}
         <tr>
           <td colspan="7">
@@ -36,4 +42,4 @@
       {% endfor %}
     </tbody>
   </table>
-</div>
+{% endblock %}

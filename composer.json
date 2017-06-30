@@ -1,7 +1,7 @@
 {
     "name": "makinacorpus/drupal-ucms",
     "type": "drupal-module",
-    "description": " µCMS modules - Node/Elasticsearch/favorites based Drupal fast contribution UI/UX",
+    "description": "µCMS - A Drupal easy-to-use multi-site factory, without core multi-site feature",
     "homepage": "http://github.com/makinacorpus/drupal-ucms",
     "license": "GPL-2",
     "authors": [

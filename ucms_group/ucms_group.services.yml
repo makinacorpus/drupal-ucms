@@ -18,16 +18,19 @@ services:
   # Admin datasources
   ucms_group.admin.group_datasource:
     public: true
-    class: MakinaCorpus\Ucms\Group\Page\GroupAdminDatasource
+    class: MakinaCorpus\Ucms\Group\Datasource\GroupAdminDatasource
     arguments: ["@database", "@ucms_group.manager"]
+    tags: [{name: calista.datasource}]
   ucms_group.admin.group_member_datasource:
     public: true
-    class: MakinaCorpus\Ucms\Group\Page\GroupMemberAdminDatasource
+    class: MakinaCorpus\Ucms\Group\Datasource\GroupMemberAdminDatasource
     arguments: ["@database", "@ucms_group.manager"]
+    tags: [{name: calista.datasource}]
   ucms_group.admin.group_site_datasource:
     public: true
-    class: MakinaCorpus\Ucms\Group\Page\GroupSiteAdminDatasource
+    class: MakinaCorpus\Ucms\Group\Datasource\GroupSiteAdminDatasource
     arguments: ["@database", "@ucms_group.manager", "@ucms_site.manager"]
+    tags: [{name: calista.datasource}]
 
   # Various listeners and subscribers
   ucms_group.node_event_subscriber:
@@ -48,7 +51,7 @@ services:
   ucms_group.context_pane_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Group\EventDispatcher\ContextPaneEventSubscriber
-    arguments: ["@current_user", "@calista_provider_registry"]
+    arguments: ["@current_user", "@calista.action_provider_registry"]
     tags: [{ name: event_subscriber }]
   ucms_group.admin_subscriber:
     public: true

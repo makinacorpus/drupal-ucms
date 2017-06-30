@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Group\Action;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Calista\Action\AbstractActionProvider;
 use MakinaCorpus\Calista\Action\Action;
@@ -14,6 +15,8 @@ use MakinaCorpus\Ucms\Site\SiteManager;
  */
 class GroupSiteActionProvider extends AbstractActionProvider
 {
+    use StringTranslationTrait;
+
     private $siteManager;
 
     /**

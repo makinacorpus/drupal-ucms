@@ -1,4 +1,4 @@
-# µCMS
+# µCMS - A Drupal easy-to-use multi-site factory, without core multi-site feature
 
 Multi-site Drupal based upon a single Drupal instance.
 
