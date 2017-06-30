@@ -97,14 +97,22 @@ function ucms_contrib_schema() {
 }
 
 /**
- * Configures udashboard.
+ * Configures calista.
  */
-function ucms_contrib_install_udashboard() {
+function ucms_contrib_install_calista() {
 
   $variables = [
-    'udashboard.breadcrumb_alter' => true,
-    'udashboard.context_pane_enable' => true,
-    'udashboard.toolbar_enable' => true,
+    'calista_breadcrumb_alter' => 1,
+    'calista_context_pane_enable' => 1,
+    'calista_disable_css' => 1,
+    'calista_toolbar_breadcrumb' => 1,
+    'calista_toolbar_enable' => 1,
+    'udashboard.breadcrumb_alter' => 0,
+    'udashboard.context_pane_enable' => 0,
+    'udashboard.disable_css' => 1,
+    'udashboard.disable_js' => 1,
+    'udashboard.toolbar_breadcrumb' => 0,
+    'udashboard.toolbar_enable' => 0,
   ];
 
   foreach ($variables as $name => $value) {
@@ -154,7 +162,7 @@ function ucms_contrib_install_schema_fix() {
  */
 function ucms_contrib_install() {
   ucms_contrib_install_schema_fix();
-  ucms_contrib_install_udashboard();
+  ucms_contrib_install_calista();
 }
 
 /**
@@ -210,10 +218,10 @@ function ucms_contrib_update_7005() {
 }
 
 /**
- * Configures udashboard.
+ * Configures calista.
  */
 function ucms_contrib_update_7006() {
-  ucms_contrib_install_udashboard();
+  ucms_contrib_install_calista();
 }
 
 /**
@@ -229,4 +237,11 @@ function ucms_contrib_update_7007() {
       'default'     => 0,
     ]);
   }
+}
+
+/**
+ * Configures calista.
+ */
+function ucms_contrib_update_7008() {
+  ucms_contrib_install_calista();
 }

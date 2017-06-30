@@ -46,7 +46,7 @@ class CartController extends Controller
         $cart   = $this->getCartStorage();
 
         if ($cart->addFor($userId, $node->nid)) {
-            $node_view = node_view($node, UDASHBOARD_VIEW_MODE_FAVORITE);
+            $node_view = node_view($node, CALISTA_VIEW_MODE_FAVORITE);
             $status = 200;
             $ret = [
                 'success' => true,

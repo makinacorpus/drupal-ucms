@@ -3,7 +3,7 @@
 {% block item %}
   {% set node = item.node %}
   <div class="ucms-cart-item" data-item-type="node" data-item-bundle="{{ node.bundle }}" data-item-id="{{ node.nid }}">
-    {{ node_view(node, constant('UDASHBOARD_VIEW_MODE_FAVORITE')) }}
+    {{ node_view(node, constant('CALISTA_VIEW_MODE_FAVORITE')) }}
   </div>
 {% endblock %}
 
