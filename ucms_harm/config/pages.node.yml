@@ -1,0 +1,69 @@
+# Default node admin pages
+#
+# @todo
+#   - handle in site context
+#   - make it easier to override
+#   - make it easier to register, use a compiler pass
+#   - restore editorial/media tabs
+#
+calista:
+  pages:
+
+    # My content content
+    ucms_node_content_group:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/content
+          title: Group
+          access arguments: [access ucms content overview]
+          type: MENU_NORMAL_ITEM
+      input:
+        base_query:
+          # @todo dynamic current user injection on revision_user_id
+          type: '%ucms_contrib.type.content%'
+          is_group: true
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
+
+    # My content media
+    ucms_node_media_group:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/media
+          title: Group
+          access arguments: [access ucms content overview]
+          type: MENU_NORMAL_ITEM
+      input:
+        base_query:
+          # @todo dynamic current user injection on revision_user_id
+          type: '%ucms_contrib.type.media%'
+          is_group: true
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        default_display: grid
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
