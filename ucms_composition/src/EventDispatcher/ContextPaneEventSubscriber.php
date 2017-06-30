@@ -43,7 +43,7 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
                 ['onCollectLayout', 0],
             ],
             ContextPaneEvent::EVENT_INIT => [
-                ['onUcmsdashboardContextinit', 0],
+                ['onContextInit', 0],
             ],
         ];
     }
@@ -134,7 +134,7 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
     /**
      * @param ContextPaneEvent $event
      */
-    public function onUcmsdashboardContextinit(ContextPaneEvent $event)
+    public function onContextInit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
 
