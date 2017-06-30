@@ -1,0 +1,197 @@
+# Default node admin pages
+#
+# @todo
+#   - handle in site context
+#   - make it easier to override
+#   - make it easier to register, use a compiler pass
+#   - restore editorial/media tabs
+#
+calista:
+  pages:
+
+    # My content content
+    ucms_node_content_mine:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/content
+          title: My content
+          access arguments: [access ucms content overview]
+          type: MENU_NORMAL_ITEM
+      input:
+        base_query:
+          # @todo dynamic current user injection on revision_user_id
+          type: '%ucms_contrib.type.content%'
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
+
+    # My content media
+    ucms_node_media_mine:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/media
+          title: My media
+          access arguments: [access ucms content overview]
+          type: MENU_NORMAL_ITEM
+      input:
+        base_query:
+          # @todo dynamic current user injection on revision_user_id
+          type: '%ucms_contrib.type.media%'
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        default_display: grid
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
+
+    # Local content
+    ucms_node_content_local:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/content/local
+          title: Local
+          access arguments: [access ucms content overview]
+          type: MENU_LOCAL_TASK
+      input:
+        base_query:
+          type: '%ucms_contrib.type.content%'
+          is_global: 0
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
+
+    # Local media
+    ucms_node_media_local:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/media/local
+          title: Local
+          access arguments: [access ucms content overview]
+          type: MENU_LOCAL_TASK
+      input:
+        base_query:
+          type: '%ucms_contrib.type.media%'
+          is_global: 0
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        default_display: grid
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
+
+    # Global content
+    ucms_node_content_global:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/content/global
+          title: Global
+          access arguments: [content manage global]
+          type: MENU_LOCAL_TASK
+      input:
+        base_query:
+          type: '%ucms_contrib.type.content%'
+          is_global: 1
+          # is_group: 0
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
+
+    # Global media
+    ucms_node_media_global:
+      datasource: ucms_contrib.datasource.node
+      extra:
+        route:
+          href: admin/dashboard/media/global
+          title: Global
+          access arguments: [content manage global]
+          type: MENU_LOCAL_TASK
+      input:
+        base_query:
+          type: '%ucms_contrib.type.media%'
+          is_global: 1
+          # is_group: 0
+        limit_default: 24
+        pager_enable: true
+        pager_param: page
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        default_display: grid
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          table: '@calista/Page/page.html.twig'
+          grid: '@calista/Page/page-grid.html.twig'
+        view_type: twig_page
+
+#    ucms_node_flagged:
+#      name: Flagged
+#      permission: content manage global
+#      in_site_context: false
+#      filter_query:
+#        is_flagged: 1
+#
+#    ucms_node_starred:
+#      name: Starred
+#      permission: content manage global
+#      in_site_context: false
+#      filter_query:
+#        is_starred: 1

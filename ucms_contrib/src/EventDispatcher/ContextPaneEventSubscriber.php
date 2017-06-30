@@ -78,6 +78,10 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
 
         $request = $this->container->get('request_stack')->getCurrentRequest();
 
+        // Add some custom options
+        $currentUserId = $this->container->get('current_user')->id();
+        $inputOptions['base_query']['history_user_id'] = $currentUserId;
+
         $query = $page->getInputDefinition($inputOptions)->createQueryFromRequest($request);
         $items = $page->getDatasource()->getItems($query);
 

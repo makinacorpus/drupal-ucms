@@ -9,7 +9,7 @@ use MakinaCorpus\Ucms\Contrib\Cart\CartItem;
 /**
  * Datasource for carts.
  */
-class CartDatasource extends AbstractNodeDatasource
+class CartDatasource extends NodeDatasource
 {
     /**
      * {@inheritdoc}
@@ -32,10 +32,11 @@ class CartDatasource extends AbstractNodeDatasource
      */
     public function getFilters()
     {
-        return [
-            new Filter('type'),
-            new Filter('user_id')
-        ];
+        $ret = parent::getFilters();
+
+        $ret[] = new Filter('cart_user_id', $this->t("User (cart owner)"));
+
+        return $ret;
     }
 
     /**
@@ -43,33 +44,11 @@ class CartDatasource extends AbstractNodeDatasource
      */
     public function getSortFields($query)
     {
-        return [
+        return parent::getSorts() + [
             'c.ts_added'    => $this->t("added to cart date"),
             'c.weight'      => $this->t("cart order"),
-            'n.created'     => $this->t("creation date"),
-            'n.changed'     => $this->t("lastest update date"),
-            'h.timestamp'   => $this->t('most recently viewed'),
-            'n.title'       => $this->t("title"),
         ];
     }
-
-    /**
-     * {@inheritdoc}
-     *
-    public function getDefaultSort()
-    {
-        return ['c.weight', SortManager::DESC];
-    }
-     */
-
-    /**
-     * {@inheritdoc}
-     *
-    public function getSearchFormParamName()
-    {
-        return 'cs';
-    }
-     */
 
     /**
      * Returns a column on which an arbitrary sort will be added in order to
@@ -97,8 +76,8 @@ class CartDatasource extends AbstractNodeDatasource
         if ($query->has('type')) {
             $select->condition('n.type', $query->get('type'));
         }
-        if ($query->has('user_id')) {
-            $userId = $query->get('user_id');
+        if ($query->has('cart_user_id')) {
+            $userId = $query->get('cart_user_id');
             $select->condition('c.uid', $userId);
             $select->join('ucms_contrib_cart', 'c', "c.nid = n.nid");
         } else {

@@ -1,24 +1,3 @@
-calista:
-  pages:
-    ucms_cart:
-      id: ucms_cart
-      datasource: ucms_contrib.datasource.cart
-      input:
-        base_query: {}
-        limit_default: 16
-        pager_enable: false
-        search_enable: true
-        search_param: cs
-        sort_default_field: n.changed # @fixme use history instead
-      view:
-        enabled_filters: {}
-        show_filters: false
-        show_search: true
-        show_sort: true
-        templates:
-          cart: module:ucms_contrib:views/Page/page-cart.html.twig
-        view_type: twig_page
-
 parameters:
 
   ucms_contrib.filter.view_mode.wysiwyg: wysiwyg
@@ -34,44 +13,6 @@ parameters:
   ucms_contrib_admin_tabs:
     content: Content
     media: Media
-
-  # Default admin pages
-  ucms_contrib_admin_pages:
-    mine:
-      name: My content
-      class: MakinaCorpus\Ucms\Contrib\Page\MineNodeAdminPage
-      permission: access ucms content overview
-      filter_query: [] # this will be dynamic
-    local:
-      name: Local
-      permission: access ucms content overview
-      in_site_context: false
-      filter_query:
-        is_global: 0
-    site:
-      name: In this site
-      permission: access ucms content overview
-      in_site_context: true
-      filter_query:
-        is_global: 0
-    global:
-      name: Global
-      permission: content manage global
-      filter_query:
-        is_global: 1
-        is_group: 0
-    flagged:
-      name: Flagged
-      permission: content manage global
-      in_site_context: false
-      filter_query:
-        is_flagged: 1
-    starred:
-      name: Starred
-      permission: content manage global
-      in_site_context: false
-      filter_query:
-        is_starred: 1
 
 services:
 
@@ -101,6 +42,14 @@ services:
     public: true
     class: MakinaCorpus\Ucms\Contrib\Page\CartDatasource
     arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
+    tags: [{name: calista.datasource}]
+
+  # Node datasource
+  ucms_contrib.datasource.node:
+    public: true
+    class: MakinaCorpus\Ucms\Contrib\Page\NodeDatasource
+    arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
+    tags: [{name: calista.datasource}]
 
   # Action providers
   ucms_contrib.node_action_provider:

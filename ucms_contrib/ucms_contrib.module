@@ -2,19 +2,12 @@
 /**
  * @file
  * UCMS  - Contribution.
- *
- * @todo
- *   - Keep cart items order same as insert
- *   - Add other possible cart view modes (grid, list, ...)
- *   - Add other possible UI view modes (grid, list, ...)
- *   - Add UI sorting
  */
 
 use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Admin\NodeTabsForm;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
-use MakinaCorpus\Ucms\Contrib\Controller\NodeAdminController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite;
 use MakinaCorpus\Ucms\Contrib\Form\NodeDuplicate;
@@ -28,8 +21,6 @@ use MakinaCorpus\Ucms\Contrib\Form\NodeUnflag;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnlock;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnstar;
-use MakinaCorpus\Ucms\Contrib\Page\NodeAdminPageInterface;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Access;
 
 /**
@@ -47,43 +38,6 @@ function ucms_contrib_menu() {
   }
 
   $items = [];
-
-  // Main administration pages.
-  $typeHandler = ucms_contrib_type_handler_get();
-  foreach ($typeHandler->getTabs() as $tab => $label) {
-    $first = true;
-    $weight = -100;
-    foreach ($typeHandler->getAdminPages() as $page => $name) {
-      $serviceId = TypeHandler::getServiceName($tab, $page);
-      if ($first) {
-        $first = false;
-        $items['admin/dashboard/' . $tab] = [
-          'title'             => $label,
-          'page callback'     => 'sf_dic_page',
-          'page arguments'    => [NodeAdminController::class . '::default', $serviceId],
-          'access callback'   => 'ucms_contrib_admin_page_access',
-          'access arguments'  => [$serviceId],
-          'type'              => MENU_NORMAL_ITEM,
-          'weight'            => $weight++,
-        ];
-        $items['admin/dashboard/' . $tab . '/' . $page] = [
-          'title'             => $name,
-          'type'              => MENU_DEFAULT_LOCAL_TASK,
-          'weight'            => $weight++,
-        ];
-      } else {
-        $items['admin/dashboard/' . $tab . '/' . $page] = [
-          'title'             => $name,
-          'page callback'     => 'sf_dic_page',
-          'page arguments'    => [NodeAdminController::class . '::default', $serviceId],
-          'access callback'   => 'ucms_contrib_admin_page_access',
-          'access arguments'  => [$serviceId],
-          'type'              => MENU_LOCAL_TASK,
-          'weight'            => $weight++,
-        ];
-      }
-    }
-  }
 
   // Node actions.
   node_type_cache_reset();
@@ -241,27 +195,6 @@ function ucms_contrib_menu_alter(&$items) {
   $items['node/%node/revisions']['type'] = MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB;
   $items['node/%node/revisions']['access callback'] = 'node_access';
   $items['node/%node/revisions']['access arguments'] = ['update', 1];
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_admin_page_access($serviceId) {
-  $container = \Drupal::getContainer();
-  $account = \Drupal::currentUser();
-  $isDebug = (bool)$container->getParameter('kernel.debug');
-  try {
-    $service = $container->get($serviceId);
-    if (!$service instanceof NodeAdminPageInterface) {
-      throw new \Exception(sprintf("%s: service does not implement %s", $serviceId, NodeAdminPageInterface::class));
-    }
-    return $service->userIsGranted($account);
-  } catch (\Exception $e) {
-    if ($isDebug) {
-      throw $e;
-    }
-    return false;
-  }
 }
 
 /**
