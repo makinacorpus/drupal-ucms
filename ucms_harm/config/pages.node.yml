@@ -14,7 +14,7 @@ calista:
       datasource: ucms_contrib.datasource.node
       extra:
         route:
-          href: admin/dashboard/content
+          href: admin/dashboard/content/group
           title: Group
           access arguments: [access ucms content overview]
           type: MENU_NORMAL_ITEM
@@ -43,7 +43,7 @@ calista:
       datasource: ucms_contrib.datasource.node
       extra:
         route:
-          href: admin/dashboard/media
+          href: admin/dashboard/media/group
           title: Group
           access arguments: [access ucms content overview]
           type: MENU_NORMAL_ITEM

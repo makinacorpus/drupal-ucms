@@ -4,5 +4,4 @@ core = 7.x
 package = UCMS
 php = 5.5
 dependencies[] = ucms_contrib
-dependencies[] = udashboard
 dependencies[] = ucms_site
