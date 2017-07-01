@@ -46,12 +46,14 @@ services:
     factory: ["@ucms_site.manager", getUrlGenerator]
 
   ucms_site.admin.datasource:
-    class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
+    class: MakinaCorpus\Ucms\Site\Datasource\SiteAdminDatasource
     arguments: ["@database", "@ucms_site.manager"]
+    tags: [{name: calista.datasource}]
 
   ucms_site.admin.webmaster_datasource:
-    class: MakinaCorpus\Ucms\Site\Page\WebmasterAdminDatasource
+    class: MakinaCorpus\Ucms\Site\Datasource\WebmasterAdminDatasource
     arguments: ["@database", "@ucms_site.manager"]
+    tags: [{name: calista.datasource}]
 
   ucms_site.site_action_provider:
     public: false
@@ -107,13 +109,13 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\SitesPortlet
     arguments: ["@ucms_site.admin.datasource"]
-    tags: [{ name: udashboard.portlet }]
+    # tags: [{ name: udashboard.portlet }]
 
   ucms_site.my_sites_portlet:
     public: false
     class: MakinaCorpus\Ucms\Site\Portlet\MySitesPortlet
     arguments: ["@ucms_site.admin.datasource"]
-    tags: [{ name: udashboard.portlet }]
+    # tags: [{ name: udashboard.portlet }]
 
   ucms_site.twig.site_extension:
     public: false

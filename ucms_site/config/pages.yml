@@ -1,0 +1,32 @@
+calista:
+  pages:
+
+    ucms_site.list_all:
+      datasource: ucms_site.admin.datasource
+      input:
+        limit_default: 24
+        pager_enable: true
+        search_enable: true
+        sort_default_field: s.ts_changed
+        sort_default_order: desc
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          default: module:ucms_site:Page/page-site-admin.html.twig
+        view_type: twig_page
+
+    ucms_site.list_members:
+      datasource: ucms_site.admin.webmaster_datasource
+      input:
+        limit_default: 24
+        pager_enable: true
+        search_enable: false
+      view:
+        show_filters: true
+        show_search: false
+        show_sort: false
+        templates:
+          default: module:ucms_site:Page/page-site-users.html.twig
+        view_type: twig_page

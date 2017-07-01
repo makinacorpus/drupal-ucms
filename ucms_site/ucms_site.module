@@ -10,15 +10,18 @@
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\APubSub\CursorInterface;
+use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
+use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Controller\AutocompleteController;
 use MakinaCorpus\Ucms\Site\Controller\DashboardController;
+use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\PublicStreamWrapper;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 
 /**
  * Implements hook_menu().
@@ -28,16 +31,16 @@ function ucms_site_menu() {
 
   $items['admin/dashboard/site'] = [
     'title'             => "Sites",
-    'page callback'     => 'ucms_site_dashboard_site_list_mine',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::siteMineList'],
     'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
     'type'              => MENU_NORMAL_ITEM,
-    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/all'] = [
     'title'             => "All sites",
-    'page callback'     => 'ucms_site_dashboard_site_list_all',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::siteList'],
     'access callback'   => 'ucms_site_menu_access_view_all',
-    'file'              => 'ucms_site.dashboard.inc',
     'type'              => MENU_LOCAL_TASK,
   ];
   $items['admin/dashboard/site/mine'] = [
@@ -46,11 +49,11 @@ function ucms_site_menu() {
   ];
   $items['admin/dashboard/site/archive'] = [
     'title'             => "Archives",
-    'page callback'     => 'ucms_site_dashboard_site_list_archive',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::siteArchiveList'],
     'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
     'type'              => MENU_LOCAL_TASK,
     'weight'            => 100,
-    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/request'] = [
     'title'             => "Request new site",
@@ -81,7 +84,6 @@ function ucms_site_menu() {
       'access callback'   => 'ucms_site_menu_access_overview',
       'access arguments'  => [3],
       'type'              => MENU_LOCAL_TASK,
-      'file'              => 'ucms_site.dashboard.inc',
     ];
   }
   $items['admin/dashboard/site/%ucms_site/edit'] = [
@@ -91,7 +93,6 @@ function ucms_site_menu() {
     'access callback'   => 'ucms_site_menu_access_manage',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/delete'] = [
     'title'             => "Site delete",
@@ -111,12 +112,11 @@ function ucms_site_menu() {
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster'] = [
     'title'             => "Users",
-    'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
-    'page arguments'    => [3],
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [DashboardController::class . '::webmasterList', 3],
     'access callback'   => 'ucms_site_menu_access_webmasters',
     'access arguments'  => ['list', 3],
     'type'              => MENU_LOCAL_TASK,
-    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/add-existing'] = [
     'title'             => "Add an existing user",
@@ -288,7 +288,9 @@ function ucms_site_permission() {
 /**
  * Is the given path allowed on sites.
  *
- * @return $path
+ * @param string $path
+ *
+ * @return bool
  */
 function ucms_site_admin_path_is_allowed($path) {
   // Give a chance to contrib modules to override this.
@@ -1110,6 +1112,28 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
 }
 
 /**
+ * Site page details
+ *
+ * @deprecated
+ *   Convert me to controller
+ */
+function ucms_site_dashboard_site_page_log(Site $site) {
+  try {
+    $messages = notification_service_get()
+      ->getBackend()
+      ->getChannel('site:' . $site->id)
+      ->fetch()
+    ;
+    $messages->addSort(Field::MSG_SENT, CursorInterface::SORT_DESC);
+
+    return notification_block_render_messages($messages);
+
+  } catch (ChannelDoesNotExistException $e) {
+    return ['#markup' => '<p>' . t("There is no history to display.") . '<p>'];
+  }
+}
+
+/**
  * Render the state transition form.
  */
 function theme_ucms_site_state_transition_form($variables) {
@@ -1136,12 +1160,11 @@ function theme_ucms_site_state_transition_form($variables) {
   return theme('table', ['header' => $header, 'rows' => $rows]) . drupal_render_children($form);
 }
 
-
 /**
  * Preprocess dashboard top bar.
  *
  * @param $vars
  */
-function ucms_site_preprocess_udashboard_top(&$vars) {
+function ucms_site_preprocess_calista_top(&$vars) {
   $vars['site'] = ucms_site_manager()->getContext();
 }

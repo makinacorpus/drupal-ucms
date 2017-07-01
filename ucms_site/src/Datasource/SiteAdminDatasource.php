@@ -1,15 +1,15 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\Page;
+namespace MakinaCorpus\Ucms\Site\Datasource;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\Filter;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\Filter;
+use MakinaCorpus\Calista\Datasource\Query;
+use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\Site;
 
 class SiteAdminDatasource extends AbstractDatasource
 {
@@ -40,7 +40,15 @@ class SiteAdminDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    public function getItemClass()
+    {
+        return Site::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters()
     {
         $states = SiteState::getList(SiteState::ARCHIVE);
 
@@ -54,13 +62,14 @@ class SiteAdminDatasource extends AbstractDatasource
             (new Filter('theme', $this->t("Theme")))->setChoicesMap($this->manager->getAllowedThemesOptionList()),
             (new Filter('template', $this->t("Template")))->setChoicesMap($this->manager->getTemplateList()),
             (new Filter('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
+            new Filter('uid'),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getSorts()
     {
         return [
             's.id'          => $this->t("identifier"),
@@ -77,16 +86,17 @@ class SiteAdminDatasource extends AbstractDatasource
 
     /**
      * {@inheritdoc}
-     */
+     *
     public function getDefaultSort()
     {
         return ['s.ts_changed', SortManager::DESC];
     }
+     */
 
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
         $q = $this
             ->db
@@ -96,27 +106,28 @@ class SiteAdminDatasource extends AbstractDatasource
         ;
         $q->leftJoin('users', 'u', "u.uid = s.uid");
 
-        if (isset($query['state'])) {
-            $q->condition('s.state', $query['state']);
+        if ($query->has('state')) {
+            $q->condition('s.state', $query->get('state'));
         }
-        if (isset($query['theme'])) {
-            $q->condition('s.theme', $query['theme']);
+        if ($query->has('theme')) {
+            $q->condition('s.theme', $query->get('theme'));
         }
-        if (isset($query['template'])) {
-            $q->condition('s.template_id', $query['template']);
+        if ($query->has('template')) {
+            $q->condition('s.template_id', $query->get('template'));
         }
-        if (!empty($query['uid'])) {
+        if ($query->has('uid')) {
             $q->join('ucms_site_access', 'sa', "sa.site_id = s.id");
-            $q->condition('sa.uid', $query['uid']);
+            $q->condition('sa.uid', $query->get('uid'));
         }
 
         // Quite ugly, but working as of now
         // @todo find a more elegant way
-        if (isset($query['other'])) {
-            if (!is_array($query['other'])) {
-                $query['other'] = [$query['other']];
+        if ($query->has('other')) {
+            $others = $query->get('other');
+            if (!is_array($others)) {
+                $others = [$others];
             }
-            foreach ($query['other'] as $value) {
+            foreach ($others as $value) {
                 switch ($value) {
                     case 't':
                         $q->condition('s.is_template', 1);
@@ -125,35 +136,35 @@ class SiteAdminDatasource extends AbstractDatasource
             }
         }
 
-        if ($pageState->hasSortField()) {
-            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        if ($query->hasSortField()) {
+            $q->orderBy($query->getSortField(), $query->getSortOrder());
         }
-        $q->orderBy('s.id', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        $q->orderBy('s.id', $query->getSortOrder());
 
-        $sParam = $pageState->getSearchParameter();
-        if (!empty($query[$sParam])) {
+        $search = $query->getSearchString();
+        if ($search) {
             $q->condition(
                 db_or()
-                  ->condition('s.title', '%' . db_like($query[$sParam]) . '%', 'LIKE')
-                  ->condition('s.http_host', '%' . db_like($query[$sParam]) . '%', 'LIKE')
+                  ->condition('s.title', '%' . db_like($search) . '%', 'LIKE')
+                  ->condition('s.http_host', '%' . db_like($search) . '%', 'LIKE')
             );
         }
 
-        $idList = $q
-            ->groupBy('s.id')
-            ->extend(DrupalPager::class)
-            ->setPageState($pageState)
-            ->execute()
-            ->fetchCol()
-        ;
+        $q->groupBy('s.id');
 
-        return $this->manager->getStorage()->loadAll($idList);
+        /** @var \MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager $pager */
+        $pager = $q->extend(DrupalPager::class)->setDatasourceQuery($query);
+        $idList = $pager->execute()->fetchCol();
+
+        $items = $this->manager->getStorage()->loadAll($idList);
+
+        return $this->createResult($items, $pager->getTotalCount());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasSearchForm()
+    public function supportsFulltextSearch()
     {
         return true;
     }

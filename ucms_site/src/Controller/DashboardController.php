@@ -3,12 +3,13 @@
 namespace MakinaCorpus\Ucms\Site\Controller;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
+use MakinaCorpus\Calista\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\SiteState;
+use Symfony\Component\HttpFoundation\Request;
 
 class DashboardController extends Controller
 {
@@ -23,6 +24,66 @@ class DashboardController extends Controller
     private function getSiteManager()
     {
         return $this->get('ucms_site.manager');
+    }
+
+    /**
+     * Get current user id
+     *
+     * @return int
+     */
+    private function getCurrentUserId()
+    {
+        return $this->get('current_user')->id();
+    }
+
+    /**
+     * List all sites
+     */
+    public function siteListAction(Request $request)
+    {
+        return $this->renderPage('ucms_site.list_all', $request);
+    }
+
+    /**
+     * List current user site
+     */
+    public function siteMineListAction(Request $request)
+    {
+        return $this->renderPage('ucms_site.list_all', $request, [
+            'base_query' => [
+                'uid' => $this->getCurrentUserId(),
+            ],
+        ]);
+    }
+
+    /**
+     * List archived sites
+     */
+    public function siteArchiveListAction(Request $request)
+    {
+        $baseQuery = ['s.state' => SiteState::ARCHIVE];
+
+        if (!$this->isGranted([Access::PERM_SITE_GOD, Access::PERM_SITE_MANAGE_ALL, Access::PERM_SITE_VIEW_ALL])) {
+            $baseQuery['uid'] = $this->getCurrentUserId();
+        }
+
+        return $this->renderPage('ucms_site.list_all', $request, [
+            'base_query' => [
+                'uid' => $baseQuery,
+            ],
+        ]);
+    }
+
+    /**
+     * List current user site
+     */
+    public function webmasterListAction(Request $request, Site $site)
+    {
+        return $this->renderPage('ucms_site.list_members', $request, [
+            'base_query' => [
+                'site_id' => $site->getId(),
+            ],
+        ]);
     }
 
     /**
