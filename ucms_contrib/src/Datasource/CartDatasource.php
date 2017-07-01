@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Page;
+namespace MakinaCorpus\Ucms\Contrib\Datasource;
 
 use MakinaCorpus\Calista\Datasource\Filter;
 use MakinaCorpus\Calista\Datasource\Query;

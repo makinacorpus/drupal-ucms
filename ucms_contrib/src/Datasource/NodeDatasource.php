@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Page;
+namespace MakinaCorpus\Ucms\Contrib\Datasource;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
@@ -42,6 +42,7 @@ class NodeDatasource extends DefaultNodeDatasource
         $ret[] = (new Filter('is_flagged', $this->t("Flagged")))->setChoicesMap([1 => t("Yes"), 0 => t("No")]);
         $ret[] = (new Filter('is_starred', $this->t("Starred")))->setChoicesMap([1 => t("Yes"), 0 => t("No")]);
         $ret[] = (new Filter('is_clonable', $this->t("Locked")))->setChoicesMap([0 => t("Yes"), 1 => t("No")]);
+        $ret[] = (new Filter('is_group', $this->t("Group")))->setChoicesMap([1 => t("Yes"), 0 => t("No")]);
         // @todo site_id
         // @todo in my cart
 

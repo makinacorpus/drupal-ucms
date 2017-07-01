@@ -40,14 +40,14 @@ services:
   # Cart datasource
   ucms_contrib.datasource.cart:
     public: true
-    class: MakinaCorpus\Ucms\Contrib\Page\CartDatasource
+    class: MakinaCorpus\Ucms\Contrib\Datasource\CartDatasource
     arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
     tags: [{name: calista.datasource}]
 
   # Node datasource
   ucms_contrib.datasource.node:
     public: true
-    class: MakinaCorpus\Ucms\Contrib\Page\NodeDatasource
+    class: MakinaCorpus\Ucms\Contrib\Datasource\NodeDatasource
     arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
     tags: [{name: calista.datasource}]
 
@@ -81,7 +81,7 @@ services:
   # Datasource via elastic search
   ucms_contrib.datasource.elastic:
     shared: false
-    class: MakinaCorpus\Ucms\Contrib\Page\ElasticNodeDataSource
+    class: MakinaCorpus\Ucms\Contrib\Datasource\ElasticNodeDataSource
     arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@entity.manager", "@current_user"]
 
 #
@@ -104,6 +104,8 @@ services:
   # Component responsible for providing content type context
   ucms_contrib.type_handler:
     class: MakinaCorpus\Ucms\Contrib\TypeHandler
+    # @todo unhardcode the first parameter
+    arguments: [{content: Content, media: Media}, '%ucms_contrib.admin_pages%']
 
   ucms_contrib.media.subscriber:
     public: true

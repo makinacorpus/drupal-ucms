@@ -8,6 +8,7 @@ use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Admin\NodeTabsForm;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
+use MakinaCorpus\Ucms\Contrib\Controller\NodeController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite;
 use MakinaCorpus\Ucms\Contrib\Form\NodeDuplicate;
@@ -38,6 +39,48 @@ function ucms_contrib_menu() {
   }
 
   $items = [];
+
+  // Main administration pages.
+  $typeHandler = ucms_contrib_type_handler_get();
+  foreach ($typeHandler->getTabs() as $tab => $label) {
+    $first = true;
+    $weight = -100;
+    foreach ($typeHandler->getAdminPages() as $page => $definition) {
+      if ($first) {
+        $first = false;
+        $route = 'admin/dashboard/' . $tab;
+        $items[$route] = [
+          'title'             => $label,
+          'page callback'     => 'sf_dic_page',
+          'page arguments'    => [NodeController::class . '::nodeAdminList', $tab, $page],
+          'type'              => MENU_NORMAL_ITEM,
+          'weight'            => $weight++,
+        ];
+        $items['admin/dashboard/' . $tab . '/' . $page] = [
+          'title'             => $definition['title'],
+          'type'              => MENU_DEFAULT_LOCAL_TASK,
+          'weight'            => $weight++,
+        ];
+      } else {
+        $route = 'admin/dashboard/' . $tab . '/' . $page;
+        $items[$route] = [
+          'title'             => $definition['title'],
+          'page callback'     => 'sf_dic_page',
+          'page arguments'    => [NodeController::class . '::nodeAdminList', $tab, $page],
+          'type'              => MENU_LOCAL_TASK,
+          'weight'            => $weight++,
+        ];
+      }
+
+      if (is_callable($definition['access'])) {
+        $items[$route]['access callback'] = $definition['access'];
+      } else if (is_string($definition['access'])) {
+        $items[$route]['access arguments'] = [$definition['access']];
+      } else {
+        $items[$route]['access arguments'] = $definition['access'];
+      }
+    }
+  }
 
   // Node actions.
   node_type_cache_reset();

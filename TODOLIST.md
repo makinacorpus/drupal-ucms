@@ -37,14 +37,14 @@
 
 ### Calista migration
 
- * [_] contrib: add missing dynamic parameters in base queries
- * [_] contrib: fix admin page registration (make it easy once again)
+ * [_] contrib, search: move elastic datasource in the search module
  * [_] group: add missing dynamic parameters in base queries
- * [_] migrate all pages to new version
  * [_] normalize acl/access usage via isGranted and voters
  * [_] restore all portlets
  * [_] rewrite calista JavaScript as TypeScript
  * [x] admin table event name still conflict with udashboard
+ * [x] contrib: fix admin page registration (make it easy once again)
+ * [x] migrate all pages to new version
 
 ## Long term
 

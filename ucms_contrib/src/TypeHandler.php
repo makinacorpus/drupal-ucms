@@ -4,23 +4,6 @@ namespace MakinaCorpus\Ucms\Contrib;
 
 class TypeHandler
 {
-    /**
-     * Get service name for page type
-     *
-     * @todo unstatic this
-     *
-     * @param string $tab
-     *   'content' or 'media' or anything that the type handler knows about
-     * @param string $page
-     *   'mine', 'global', etc...
-     *
-     * @return string
-     */
-    static public function getServiceName($tab, $page)
-    {
-        return 'ucms_contrib.page_type.' . $tab . '.' . $page;
-    }
-
     private $tabs = [];
     private $adminPages = [];
 
@@ -47,6 +30,43 @@ class TypeHandler
     protected function filterVariable($name)
     {
         return array_filter(variable_get($name, []));
+    }
+
+    /**
+     * Get admin page base query
+     *
+     * @return array
+     */
+    public function getAdminPageBaseQuery($tab, $page)
+    {
+        if (!isset($this->tabs[$tab])) {
+            throw new \RuntimeException("content admin tab '%s' does not exist", $tab);
+        }
+        if (!isset($this->adminPages[$page])) {
+            throw new \RuntimeException("content admin page '%s' does not exist", $page);
+        }
+
+        if (isset($this->adminPages[$page]['base_query'])) {
+            $baseQuery = $this->adminPages[$page]['base_query'];
+        } else {
+            $baseQuery = [];
+        }
+
+        switch ($tab) {
+
+            case 'content':
+                $baseQuery['type'] = $this->getEditorialTypes();
+                break;
+
+            case 'media':
+                $baseQuery['type'] = $this->getMediaTypes();
+                break;
+
+            default:
+                throw new \RuntimeException("only 'content' and 'media' tabs are supported as of now", $page);
+        }
+
+        return $baseQuery;
     }
 
     /**
@@ -81,7 +101,7 @@ class TypeHandler
      *
      * @param $tab
      *
-     * @return \string[]
+     * @return string[]
      */
     public function getTabTypes($tab)
     {
