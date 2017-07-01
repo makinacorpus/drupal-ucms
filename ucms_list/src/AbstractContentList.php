@@ -56,7 +56,7 @@ abstract class AbstractContentList implements ContentListInterface
               '#theme'      => 'ucms_list',
               '#nodes'      => $nodes,
               '#view_mode'  => $formatterOptions['view_mode'],
-              '#pager'      => empty($formatterOptions['use_pager']) ? null : ['#theme' => 'pager', /* '#element' => $pageState->getPagerElement() @todo restore this */],
+              '#pager'      => empty($formatterOptions['use_pager']) ? null : ['#theme' => 'pager', /* '#element' => $query->getPagerElement() @todo restore this */],
               '#limit'      => $query->getLimit(),
               '#count'      => count($nodes),
             ];

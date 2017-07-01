@@ -40,7 +40,7 @@ class TypeContentListWidget extends AbstractContentList
           $exclude    = [];
           $limit      = $query->getLimit();
           // @todo fixme
-          $usePager   = false ; //$pageState->
+          $usePager   = false; //$query->
 
           // Exclude current node whenever it matches the conditions
           if (($current = menu_get_object()) && in_array($current->bundle(), $typeList)) {
