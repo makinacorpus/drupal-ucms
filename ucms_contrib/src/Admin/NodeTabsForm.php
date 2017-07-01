@@ -114,7 +114,6 @@ class NodeTabsForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-
         $this->typeHandler->setMediaTypes($form_state->getValue('media_types'));
         $this->typeHandler->setEditorialContentTypes($form_state->getValue('editorial'));
         $this->typeHandler->setComponentTypes($form_state->getValue('component'));
