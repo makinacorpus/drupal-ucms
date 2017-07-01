@@ -14,6 +14,15 @@ class ContribExtension extends Extension
     /**
      * {@inheritdoc}
      */
+    public function getAlias()
+    {
+        // This will be the config key
+        return 'ucms_contrib';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = $this->getConfiguration($configs, $container);
