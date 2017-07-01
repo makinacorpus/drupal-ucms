@@ -37,7 +37,6 @@
 
 ### Calista migration
 
- * [_] admin table event name still conflict with udashboard
  * [_] contrib: add missing dynamic parameters in base queries
  * [_] contrib: fix admin page registration (make it easy once again)
  * [_] group: add missing dynamic parameters in base queries
@@ -45,6 +44,7 @@
  * [_] normalize acl/access usage via isGranted and voters
  * [_] restore all portlets
  * [_] rewrite udashboard JavaScript as TypeScript
+ * [x] admin table event name still conflict with udashboard
 
 ## Long term
 

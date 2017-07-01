@@ -3,12 +3,10 @@
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Drupal\Dashboard\EventDispatcher\AdminTableEvent;
+use MakinaCorpus\Calista\Event\AdminTableEvent;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -28,7 +26,7 @@ class AdminEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'admin:table:ucms_user_profile' => [
+            AdminTableEvent::getEventName('ucms_user_profile') => [
                 ['onUserProfileDetails', 0]
             ],
         ];

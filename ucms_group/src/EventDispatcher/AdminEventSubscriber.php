@@ -24,10 +24,10 @@ class AdminEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'admin:table:ucms_site_details' => [
+            AdminTableEvent::getEventName('ucms_site_details') => [
                 ['onSiteAdminDetails', 0]
             ],
-            'admin:table:ucms_user_profile' => [
+            AdminTableEvent::getEventName('ucms_user_profile') => [
                 ['onUserProfileDetails', 0]
             ],
         ];
