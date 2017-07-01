@@ -21,8 +21,9 @@ services:
 
   # Administrative components
   ucms_tree.admin.datasource:
-    class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDatasource
+    class: MakinaCorpus\Ucms\Tree\Datasource\TreeAdminDatasource
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
+    tags: [{ name: calista.datasource }]
 
   # Action processors and providers
   ucms_tree.action.tree_delete:
