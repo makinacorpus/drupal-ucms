@@ -4,12 +4,11 @@ namespace MakinaCorpus\Ucms\ContentList\Impl;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManager;
-
+use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Ucms\ContentList\AbstractContentList;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Label\LabelManager;
+use MakinaCorpus\Ucms\Site\Site;
 
 /**
  * List content using content type
@@ -30,7 +29,7 @@ class TypeContentListWidget extends AbstractContentList
     /**
      * {@inheritdoc}
      */
-    public function fetch(EntityInterface $entity, Site $site, PageState $pageState, $options = [])
+    public function fetch(EntityInterface $entity, Site $site, Query $query, $options = [])
     {
           $typeList = $options['type'];
 
@@ -39,7 +38,7 @@ class TypeContentListWidget extends AbstractContentList
           }
 
           $exclude    = [];
-          $limit      = $pageState->getLimit();
+          $limit      = $query->getLimit();
           // @todo fixme
           $usePager   = false ; //$pageState->
 
@@ -48,25 +47,25 @@ class TypeContentListWidget extends AbstractContentList
               $exclude[] = $current->id();
           }
 
-          $query = db_select('node', 'n');
-          $query->join('ucms_site_node', 'un', 'un.nid = n.nid');
+          $select = db_select('node', 'n');
+          $select->join('ucms_site_node', 'un', 'un.nid = n.nid');
 
           if ($exclude) {
-              $query->condition('n.nid', $exclude, 'NOT IN');
+              $select->condition('n.nid', $exclude, 'NOT IN');
           }
 
           if ($options['tags']) {
-              $query->groupBy('n.nid');
-              $query->join('taxonomy_index', 'i', 'i.nid = n.nid');
-              $query->condition('i.tid', $options['tags']);
+              $select->groupBy('n.nid');
+              $select->join('taxonomy_index', 'i', 'i.nid = n.nid');
+              $select->condition('i.tid', $options['tags']);
           }
 
-          $query
+          $select
               ->fields('n', ['nid'])
               ->condition('n.type', $typeList)
               ->condition('n.status', NODE_PUBLISHED)
               ->condition('un.site_id', $site->getId())
-              ->orderBy('n.' . $pageState->getSortField(), $pageState->getSortOrder())
+              ->orderBy('n.' . $query->getSortField(), $query->getSortOrder())
               ->addMetaData('entity', $entity)
               ->addMetaData('ucms_list', $typeList)
               ->addTag('node_access')
@@ -75,13 +74,13 @@ class TypeContentListWidget extends AbstractContentList
           if ($usePager) {
               // execute() method must run on the query extender and not the
               // original query itself, do not change this
-              $query = $query->extend('PagerDefault');
-              $query->limit($limit);
+              $select = $query->extend('PagerDefault');
+              $select->limit($limit);
           } else {
-              $query->range(0, $limit);
+              $select->range(0, $limit);
           }
 
-          return $query->execute()->fetchCol();
+          return $select->execute()->fetchCol();
     }
 
     /**

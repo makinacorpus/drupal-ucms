@@ -3,8 +3,7 @@
 namespace MakinaCorpus\Ucms\ContentList;
 
 use Drupal\Core\Entity\EntityInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Ucms\Site\Site;
 
 /**
@@ -15,7 +14,7 @@ class NullContentList extends AbstractContentList
     /**
      * {@inheritdoc}
      */
-    public function fetch(EntityInterface $entity, Site $site, PageState $pageState, $options = [])
+    public function fetch(EntityInterface $entity, Site $site, Query $query, $options = [])
     {
         return [];
     }

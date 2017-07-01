@@ -5,10 +5,8 @@ namespace MakinaCorpus\Ucms\ContentList;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Calista\Datasource\QueryFactory;
 use MakinaCorpus\Ucms\Site\Site;
-
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -42,14 +40,14 @@ abstract class AbstractContentList implements ContentListInterface
 
     public function render(EntityInterface $entity, Site $site, $options = [], $formatterOptions = [], Request $request)
     {
-        // @todo User request to populate page task
-        $pageState = new PageState();
-        $pageState->setRange($formatterOptions['limit']);
-        $pageState->setPagerElement(++\PagerDefault::$maxElement);
-        $pageState->setSortField($formatterOptions['order_field']);
-        $pageState->setSortOrder($formatterOptions['order']);
+        // @todo allow disabling pager
+        $query = (new QueryFactory())->fromArbitraryArray([
+            'limit' => $formatterOptions['limit'],
+            'st' => $formatterOptions['order_field'],
+            'by' => $formatterOptions['order'],
+        ]);
 
-        $idList = $this->fetch($entity, $site, $pageState, $options);
+        $idList = $this->fetch($entity, $site, $query, $options);
 
         if (!empty($idList)) {
             $nodes = $this->entityManager->getStorage('node')->loadMultiple($idList);
@@ -58,8 +56,8 @@ abstract class AbstractContentList implements ContentListInterface
               '#theme'      => 'ucms_list',
               '#nodes'      => $nodes,
               '#view_mode'  => $formatterOptions['view_mode'],
-              '#pager'      => empty($formatterOptions['use_pager']) ? null : ['#theme' => 'pager', '#element' => $pageState->getPagerElement()],
-              '#limit'      => $pageState->getLimit(),
+              '#pager'      => empty($formatterOptions['use_pager']) ? null : ['#theme' => 'pager', /* '#element' => $pageState->getPagerElement() @todo restore this */],
+              '#limit'      => $query->getLimit(),
               '#count'      => count($nodes),
             ];
           } else {

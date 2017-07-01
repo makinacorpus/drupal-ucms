@@ -3,8 +3,7 @@
 namespace MakinaCorpus\Ucms\ContentList;
 
 use Drupal\Core\Entity\EntityInterface;
-
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Widget\WidgetInterface;
 
@@ -18,11 +17,11 @@ interface ContentListInterface extends WidgetInterface
      *
      * @param EntityInterface $entity,
      * @param Site $site
-     * @param PageState $pageState
+     * @param Query $query
      * @param mixed[] $options
      *
      * @return int[]
      *   Sorted node indentifier list
      */
-    public function fetch(EntityInterface $entity, Site $site, PageState $pageState, $options = []);
+    public function fetch(EntityInterface $entity, Site $site, Query $query, $options = []);
 }
