@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Seo\Controller;
 
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Drupal\Dashboard\Controller\PageControllerTrait;
+use MakinaCorpus\Calista\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Site\Site;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,13 +20,11 @@ class SeoController extends Controller
      */
     public function siteAliasListAction(Request $request, Site $site)
     {
-        return $this
-            ->createPageBuilder()
-            ->setDatasource(\Drupal::service('ucms_seo.admin.site_alias_datasource'))
-            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-site-aliases.html.twig'])
-            ->setBaseQuery(['site' => $site->getId()])
-            ->searchAndRender($request)
-        ;
+        return $this->renderPage('ucms_seo.site_alias', $request, [
+            'base_query' => [
+                'site' => $site->getId(),
+            ],
+        ]);
     }
 
     /**
@@ -34,13 +32,11 @@ class SeoController extends Controller
      */
     public function nodeRedirectListAction(Request $request, NodeInterface $node)
     {
-        return $this
-            ->createPageBuilder()
-            ->setDatasource(\Drupal::service('ucms_seo.admin.node_redirect_datasource'))
-            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-node-redirect.html.twig'])
-            ->setBaseQuery(['node' => $node->id()])
-            ->searchAndRender($request)
-        ;
+        return $this->renderPage('ucms_seo.node_redirect', $request, [
+            'base_query' => [
+                'node' => $node->id(),
+            ],
+        ]);
     }
 
     /**
@@ -48,12 +44,10 @@ class SeoController extends Controller
      */
     public function siteRedirectListAction(Request $request, Site $site)
     {
-        return $this
-            ->createPageBuilder()
-            ->setDatasource(\Drupal::service('ucms_seo.admin.site_redirect_datasource'))
-            ->setAllowedTemplates(['table' => 'module:ucms_seo:Page/page-site-redirect.html.twig'])
-            ->setBaseQuery(['site' => $site->getId()])
-            ->searchAndRender($request)
-        ;
+        return $this->renderPage('ucms_seo.site_redirect', $request, [
+            'base_query' => [
+                'site' => $site->getId(),
+            ],
+        ]);
     }
 }

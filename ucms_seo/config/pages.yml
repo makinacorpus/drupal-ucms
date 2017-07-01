@@ -1,0 +1,56 @@
+calista:
+  pages:
+
+    ucms_seo.site_alias:
+      datasource: ucms_seo.admin.site_alias_datasource
+      input:
+        base_query: []
+          # site: null # dynamically inject this (group from request)
+        limit_default: 50
+        pager_enable: true
+        search_enable: false
+        sort_default_field: alias
+        sort_default_order: asc
+      view:
+        show_filters: true
+        show_search: false
+        show_sort: true
+        templates:
+          default: module:ucms_seo:Page/page-site-aliases.html.twig
+        view_type: twig_page
+
+    ucms_seo.node_redirect:
+      datasource: ucms_seo.admin.node_redirect_datasource
+      input:
+        base_query: []
+          # node: 2 # dynamically inject this (current user)
+        limit_default: 50
+        pager_enable: true
+        search_enable: true
+        sort_default_field: path
+        sort_default_order: asc
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          default: module:ucms_seo:Page/page-node-redirect.html.twig
+        view_type: twig_page
+
+    ucms_seo.site_redirect:
+      datasource: ucms_seo.admin.site_redirect_datasource
+      input:
+        base_query: []
+          # site: null # dynamically inject this (group from request)
+        limit_default: 50
+        pager_enable: true
+        search_enable: true
+        sort_default_field: path
+        sort_default_order: asc
+      view:
+        show_filters: true
+        show_search: true
+        show_sort: true
+        templates:
+          default: module:ucms_seo:Page/page-site-redirect.html.twig
+        view_type: twig_page

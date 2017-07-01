@@ -1,11 +1,11 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Seo\Page;
+namespace MakinaCorpus\Ucms\Seo\Datasource;
 
 use Drupal\Core\Entity\EntityManager;
-
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\Query;
+use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
 use MakinaCorpus\Ucms\Contrib\NodeReference;
 
 class DeadLinkDatasource extends AbstractDatasource
@@ -26,31 +26,41 @@ class DeadLinkDatasource extends AbstractDatasource
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getItemClass()
+    {
+        return NodeReference::class;
+    }
+
+    /**
      * Node reference is dead if it is :
      * - deleted
      * - unpublished
      */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
-        $query = $this->database->select('ucms_node_reference', 't');
+        $select = $this->database->select('ucms_node_reference', 't');
         // Add join to node only for node_access, necessary
-        $query->join('node', 'n', "n.nid = t.source_id");
-        $query->addTag('node_access');
+        $select->join('node', 'n', "n.nid = t.source_id");
+        $select->addTag('node_access');
         // And really, I am sorry Yannick, but in the end I have no choice,
         // we need this join to ensure the node exists or not, it could have
         // been a sub-request in select, but MySQL does not allow this
-        $query->leftJoin('node', 's', "s.nid = t.target_id");
-        $query->condition((new \DatabaseCondition('OR'))
+        $select->leftJoin('node', 's', "s.nid = t.target_id");
+        $select->condition((new \DatabaseCondition('OR'))
             ->condition('s.status', 0)
             ->isNull('s.nid')
         );
-        $query->fields('t', ['source_id', 'target_id', 'type', 'field_name']);
-        $query->addField('n', 'title', 'source_title');
-        $query->addField('n', 'type', 'source_bundle');
-        $query->addField('s', 'title', 'target_title');
-        $query->addExpression('s.nid', 'target_exists');
+        $select->fields('t', ['source_id', 'target_id', 'type', 'field_name']);
+        $select->addField('n', 'title', 'source_title');
+        $select->addField('n', 'type', 'source_bundle');
+        $select->addField('s', 'title', 'target_title');
+        $select->addExpression('s.nid', 'target_exists');
 
-        $ret = $query->execute()->fetchAll(\PDO::FETCH_CLASS, NodeReference::class);
+        /** @var \MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager $pager */
+        $pager = $select->extend(DrupalPager::class)->setDatasourceQuery($query);
+        $ret = $pager->execute()->fetchAll(\PDO::FETCH_CLASS, NodeReference::class);
 
         // Preload everything since it's for displaying just later.
         $nids = [];
@@ -64,6 +74,6 @@ class DeadLinkDatasource extends AbstractDatasource
         }
         $this->entityManager->getStorage('node')->loadMultiple($nids);
 
-        return $ret;
+        return $this->createResult($ret, $pager->getTotalCount());
     }
 }

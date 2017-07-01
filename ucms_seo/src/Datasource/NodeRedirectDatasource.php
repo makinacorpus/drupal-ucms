@@ -1,12 +1,12 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Seo\Page;
+namespace MakinaCorpus\Ucms\Seo\Datasource;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\Filter;
+use MakinaCorpus\Calista\Datasource\Query;
+use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
 use MakinaCorpus\Ucms\Seo\Path\Redirect;
 
 /**
@@ -34,7 +34,25 @@ class NodeRedirectDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getItemClass()
+    {
+        return Redirect::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters()
+    {
+        return [
+            new Filter('node'),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSorts()
     {
         return [
             'path'    => $this->t("path"),
@@ -46,18 +64,18 @@ class NodeRedirectDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
-        if (empty($query['node'])) {
-            return [];
+        if (!$query->has('node')) {
+            return $this->createEmptyResult();
         }
 
         $q = $this->db->select('ucms_seo_redirect', 'u');
         $q->fields('u');
-        $q->condition('u.nid', $query['node']);
+        $q->condition('u.nid', $query->get('node'));
 
-        if ($pageState->hasSortField()) {
-            switch ($pageState->getSortField()) {
+        if ($query->hasSortField()) {
+            switch ($query->getSortField()) {
                 case 'path':
                     $sortField = 'u.path';
                     break;
@@ -69,12 +87,12 @@ class NodeRedirectDatasource extends AbstractDatasource
                     break;
             }
 
-            $q->orderBy($sortField, SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+            $q->orderBy($sortField, $query->getSortOrder());
         }
 
-        $sParam = $pageState->getSearchParameter();
-        if (!empty($query[$sParam])) {
-            $q->condition('u.path', '%'.db_like($query[$sParam]).'%', 'LIKE');
+        $search = $query->getSearchString();
+        if ($search) {
+            $q->condition('u.path', '%'.db_like($search).'%', 'LIKE');
         }
 
         // @todo this could be better, we are supposed to already have the site!
@@ -83,18 +101,17 @@ class NodeRedirectDatasource extends AbstractDatasource
         $q->join('ucms_site', 's', "s.id = u.site_id");
         $q->addField('s', 'title_admin', 'site_title');
 
-        return $q
-            ->extend(DrupalPager::class)
-            ->setPageState($pageState)
-            ->execute()
-            ->fetchAll(\PDO::FETCH_CLASS, Redirect::class)
-        ;
+        /** @var \MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager $pager */
+        $pager = $q->extend(DrupalPager::class)->setDatasourceQuery($query);
+        $items = $pager->execute()->fetchAll(\PDO::FETCH_CLASS, Redirect::class);
+
+        return $this->createResult($items, $pager->getTotalCount());
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasSearchForm()
+    public function supportsFulltextSearch()
     {
         return true;
     }

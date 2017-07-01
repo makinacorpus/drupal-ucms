@@ -60,16 +60,22 @@ services:
     tags: [{name: calista.action}]
 
   # Data sources
-    arguments: ["@database"]
   ucms_seo.admin.site_alias_datasource:
-    class: MakinaCorpus\Ucms\Seo\Page\SiteAliasDatasource
+    class: MakinaCorpus\Ucms\Seo\Datasource\SiteAliasDatasource
     arguments: ["@database"]
+    tags: [{name: calista.datasource}]
   ucms_seo.admin.node_redirect_datasource:
-    class: MakinaCorpus\Ucms\Seo\Page\NodeRedirectDatasource
+    class: MakinaCorpus\Ucms\Seo\Datasource\NodeRedirectDatasource
     arguments: ["@database"]
+    tags: [{name: calista.datasource}]
   ucms_seo.admin.site_redirect_datasource:
-    class: MakinaCorpus\Ucms\Seo\Page\SiteRedirectDatasource
+    class: MakinaCorpus\Ucms\Seo\Datasource\SiteRedirectDatasource
     arguments: ["@database"]
+    tags: [{name: calista.datasource}]
+  ucms_seo.deadlinks.datasource:
+    class: MakinaCorpus\Ucms\Seo\Datasource\DeadLinkDatasource
+    arguments: ["@database", "@entity.manager"]
+    tags: [{name: calista.datasource}]
 
   twig.extension.ucms_seo:
     public: false
@@ -117,10 +123,7 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
     arguments: ["@ucms_seo.deadlinks.datasource"]
-    tags: [{ name: udashboard.portlet }]
-  ucms_seo.deadlinks.datasource:
-    class: MakinaCorpus\Ucms\Seo\Page\DeadLinkDatasource
-    arguments: ["@database", "@entity.manager"]
+    # tags: [{ name: udashboard.portlet }]
   ucms_seo.deadlinks.subsriber:
     public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\LinkReferenceEventSubscriber
