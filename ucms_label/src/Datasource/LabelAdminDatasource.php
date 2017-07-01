@@ -1,30 +1,20 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Label\Page;
+namespace MakinaCorpus\Ucms\Label\Datasource;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Drupal\Dashboard\Page\Filter;
-use MakinaCorpus\Drupal\Dashboard\Page\PageState;
-use MakinaCorpus\Drupal\Dashboard\Page\QueryExtender\DrupalPager;
-use MakinaCorpus\Drupal\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\Filter;
+use MakinaCorpus\Calista\Datasource\Query;
+use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
 use MakinaCorpus\Ucms\Label\LabelManager;
 
 class LabelAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
-
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var LabelManager
-     */
     private $manager;
-
 
     /**
      * Default constructor
@@ -38,11 +28,10 @@ class LabelAdminDatasource extends AbstractDatasource
         $this->manager = $manager;
     }
 
-
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    public function getFilters()
     {
         $categories = [];
         foreach ($this->manager->loadRootLabels() as $label) {
@@ -60,11 +49,10 @@ class LabelAdminDatasource extends AbstractDatasource
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getSorts()
     {
         return [
             't.tid'       => $this->t("identifier"),
@@ -73,20 +61,10 @@ class LabelAdminDatasource extends AbstractDatasource
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */
-    public function getDefaultSort()
-    {
-        return ['t.name', SortManager::ASC];
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getItems($query, PageState $pageState)
+    public function getItems(Query $query)
     {
         $q = $this->db->select('taxonomy_term_data', 't');
         // fields() must be call prior to orderBy() because orderBy() will
@@ -96,35 +74,26 @@ class LabelAdminDatasource extends AbstractDatasource
         $q->fields('t', ['tid']);
         $q->join('taxonomy_term_hierarchy', 'h', "h.tid = t.tid");
 
-        if (isset($query['category'])) {
-            $q->condition('h.parent', $query['category']);
+        if ($query->has('category')) {
+            $q->condition('h.parent', $query->get('category'));
         }
-        if (isset($query['status'])) {
-            $q->condition('t.is_locked', $query['status']);
-        }
-
-        if ($pageState->hasSortField()) {
-            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        if ($query->has('status')) {
+            $q->condition('t.is_locked', $query->get('status'));
         }
 
-        $ids = $q
-            ->condition('t.vid', $this->manager->getVocabularyId())
-            ->extend(DrupalPager::class)
-            ->setPageState($pageState)
-            ->execute()
-            ->fetchCol()
-        ;
+        if ($query->hasSortField()) {
+            $q->orderBy($query->getSortField(), $query->getSortOrder());
+        }
 
-        return $this->manager->loadLabels($ids);
-    }
+        $q->condition('t.vid', $this->manager->getVocabularyId());
 
+        /** @var \MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager $pager */
+        $pager = $q->extend(DrupalPager::class)->setDatasourceQuery($query);
+        $idList = $pager->execute()->fetchCol();
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasSearchForm()
-    {
-        return false;
+        $items = $this->manager->loadLabels($idList);
+
+        return $this->createResult($items, $pager->getTotalCount());
     }
  }
 

@@ -1,0 +1,17 @@
+calista:
+  pages:
+
+    ucms_label.list_all:
+      datasource: ucms_label.admin.datasource
+      input:
+        base_query: {}
+        limit_default: 100
+        pager_enable: true
+        sort_default_field: t.name
+        sort_default_order: asc
+      view:
+        show_filters: true
+        show_sort: true
+        templates:
+          default: module:ucms_label:Page/page-label-admin.html.twig
+        view_type: twig_page

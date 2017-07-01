@@ -5,8 +5,9 @@ services:
     arguments: ["@database", "@entity.manager"]
 
   ucms_label.admin.datasource:
-    class: MakinaCorpus\Ucms\Label\Page\LabelAdminDatasource
+    class: MakinaCorpus\Ucms\Label\Datasource\LabelAdminDatasource
     arguments: ["@database", "@ucms_label.manager"]
+    tags: [{name: calista.datasource}]
 
   ucms_label.label_action_provider:
     public: false

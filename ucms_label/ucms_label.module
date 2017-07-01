@@ -4,9 +4,8 @@
  * UCMS - Label management.
  */
 
-
 use MakinaCorpus\Ucms\Label\LabelAccess;
-
+use MakinaCorpus\Drupal\Calista\Controller\PageController;
 
 /**
  * Implements hook_menu().
@@ -16,7 +15,8 @@ function ucms_label_menu() {
 
   $items['admin/dashboard/label'] = [
     'title'             => "Labels",
-    'page callback'     => 'ucms_label_dashboard_label_list',
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [PageController::class . '::page', 'ucms_label.list_all'],
     'access arguments'  => [LabelAccess::PERM_ACCESS_DASHBOARD],
     'type'              => MENU_NORMAL_ITEM,
   ];
@@ -69,7 +69,6 @@ function ucms_label_menu() {
   return $items;
 }
 
-
 /**
  * Implements hook_permission().
  */
@@ -86,7 +85,6 @@ function ucms_label_permission() {
     ],
   ];
 }
-
 
 /**
  * Checks the user's permissions for operations on labels.
@@ -115,7 +113,6 @@ function ucms_label_access_manage($op, $label = null, $account = null) {
   return false;
 }
 
-
 /**
  * Callback for menu items titles.
  */
@@ -126,25 +123,6 @@ function ucms_label_menu_item_title($op, $label) {
     case LabelAccess::OP_DELETE:
       return t("Delete \"@name\" label", ['@name' => $label->name]);
   }
-}
-
-/**
- * Labels list page.
- *
- * @deprecated
- *   Move this to a controller
- */
-function ucms_label_dashboard_label_list() {
-  $datasource = \Drupal::service('ucms_label.admin.datasource');
-  /** @var \MakinaCorpus\Drupal\Dashboard\AdminWidgetFactory $factory */
-  $factory    = \Drupal::service('udashboard.admin_widget_factory');
-
-  return $factory
-      ->createPageBuilder()
-      ->setDatasource($datasource)
-      ->setAllowedTemplates(['table' => 'module:ucms_label:Page/page-label-admin.html.twig'])
-      ->searchAndRender(\Drupal::request())
-  ;
 }
 
 /**
@@ -173,7 +151,6 @@ function ucms_label_taxonomy_term_presave($term) {
   }
 }
 
-
 /**
  * Implements hook_taxonomy_term_delete().
  *
@@ -192,7 +169,6 @@ function ucms_label_taxonomy_term_delete($term) {
     throw new \LogicException("Can't delete a label which has children.");
   }
 }
-
 
 /**
  * Provide options for label
