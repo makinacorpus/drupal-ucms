@@ -15,13 +15,13 @@
  * [_] rewrite ckeditor plugin to use dragula for drag and drop
  * [_] rewrite contrib.less to use variables
  * [_] rewrite tree.less to use variables
- * [_] split contrib.less, move items theming in udashboard
+ * [_] split contrib.less, move items theming in calista
 
 ### Bugfixes
 
  * [_] finish ucms_composition module, see ucms_composition/README.md
  * [_] fix ucms_tree restore max depth for menus
- * [_] fix udashboard and elastic, facets cannot be selected
+ * [_] fix calista and elastic, facets cannot be selected
  * [_] move tests to their own folders
  * [_] rewrite ucms_layout code to dragula (currently is removed)
  * [x] fix missing ucms_tree add button in tree admin
@@ -43,14 +43,14 @@
  * [_] migrate all pages to new version
  * [_] normalize acl/access usage via isGranted and voters
  * [_] restore all portlets
- * [_] rewrite udashboard JavaScript as TypeScript
+ * [_] rewrite calista JavaScript as TypeScript
  * [x] admin table event name still conflict with udashboard
 
 ## Long term
 
  * [_] allow content to be created in dialogs (fast creation, not all options)
  * [_] deprecated then drop ucms_layout in a future version
- * [_] investigate plugging udashboard to a front framework too
+ * [_] investigate plugging calista to a front framework too
  * [_] investigate potential front framework for admin UI
  * [_] rewrite search module to be less complex
  * [_] rewrite ucms_label to be a much more flexible front for taxonomy
