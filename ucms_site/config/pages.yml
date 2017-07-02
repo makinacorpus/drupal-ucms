@@ -10,6 +10,7 @@ calista:
         sort_default_field: s.ts_changed
         sort_default_order: desc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true
@@ -24,6 +25,7 @@ calista:
         pager_enable: true
         search_enable: false
       view:
+        properties: {}
         show_filters: true
         show_search: false
         show_sort: false

@@ -11,6 +11,7 @@ calista:
         sort_default_field: u.login
         sort_default_order: desc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true

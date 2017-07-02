@@ -11,6 +11,7 @@ calista:
         sort_default_field: g.ts_changed
         sort_default_order: desc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true
@@ -29,6 +30,7 @@ calista:
         sort_default_field: g.ts_changed
         sort_default_order: desc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true
@@ -47,6 +49,7 @@ calista:
         sort_default_field: u.name
         sort_default_order: asc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true
@@ -66,6 +69,7 @@ calista:
         sort_default_field: s.title
         sort_default_order: asc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true

@@ -15,6 +15,7 @@ calista:
         sort_default_order: desc
       view:
         enabled_filters: {}
+        properties: {}
         show_filters: false
         show_search: true
         show_sort: true
@@ -33,6 +34,7 @@ calista:
         search_param: s
         sort_default_field: n.changed
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true
@@ -53,6 +55,7 @@ calista:
         sort_default_field: n.changed
       view:
         default_display: grid
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true

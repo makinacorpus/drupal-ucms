@@ -12,6 +12,7 @@ calista:
         sort_default_field: alias
         sort_default_order: asc
       view:
+        properties: {}
         show_filters: true
         show_search: false
         show_sort: true
@@ -30,6 +31,7 @@ calista:
         sort_default_field: path
         sort_default_order: asc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true
@@ -48,6 +50,7 @@ calista:
         sort_default_field: path
         sort_default_order: asc
       view:
+        properties: {}
         show_filters: true
         show_search: true
         show_sort: true

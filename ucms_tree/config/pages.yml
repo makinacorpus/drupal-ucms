@@ -6,6 +6,7 @@ calista:
       input:
         pager_enable: false
       view:
+        properties: {}
         show_filters: true
         show_pager: false
         templates:

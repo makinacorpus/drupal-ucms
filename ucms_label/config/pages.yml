@@ -10,6 +10,7 @@ calista:
         sort_default_field: t.name
         sort_default_order: asc
       view:
+        properties: {}
         show_filters: true
         show_sort: true
         templates:
