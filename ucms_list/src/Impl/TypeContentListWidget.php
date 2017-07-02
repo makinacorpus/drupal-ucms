@@ -65,7 +65,13 @@ class TypeContentListWidget extends AbstractContentList
               ->condition('n.type', $typeList)
               ->condition('n.status', NODE_PUBLISHED)
               ->condition('un.site_id', $site->getId())
-              ->orderBy('n.' . $query->getSortField(), $query->getSortOrder())
+          ;
+
+          if ($query->hasSortField()) {
+              $select->orderBy('n.' . $query->getSortField(), $query->getSortOrder());
+          }
+
+          $select
               ->addMetaData('entity', $entity)
               ->addMetaData('ucms_list', $typeList)
               ->addTag('node_access')
