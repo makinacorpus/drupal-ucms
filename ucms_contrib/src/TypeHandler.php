@@ -55,7 +55,7 @@ class TypeHandler
         switch ($tab) {
 
             case 'content':
-                $baseQuery['type'] = $this->getEditorialTypes();
+                $baseQuery['type'] = $this->getContentTypes();
                 break;
 
             case 'media':
