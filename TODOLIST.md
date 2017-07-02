@@ -31,19 +31,19 @@
 ### Migration and testing
 
  * [_] ensure upgrade path from previous versions
- * [_] rewrite ucms_harm module to make it work
  * [_] test ucms_extranet module
- * [_] test ucms_group module
+ * [x] rewrite ucms_harm module to make it work
+ * [x] test ucms_group module
 
 ### Calista migration
 
  * [_] contrib, search: move elastic datasource in the search module
- * [_] group: add missing dynamic parameters in base queries
  * [_] normalize acl/access usage via isGranted and voters
  * [_] restore all portlets
  * [_] rewrite calista JavaScript as TypeScript
  * [x] admin table event name still conflict with udashboard
  * [x] contrib: fix admin page registration (make it easy once again)
+ * [x] group: add missing dynamic parameters in base queries
  * [x] migrate all pages to new version
 
 ## Long term

@@ -41,7 +41,7 @@ class DashboardController extends Controller
      */
     public function viewAllAction(Request $request)
     {
-        return $this->renderPage('ucms_group.list_all', $request);
+        return $this->renderPage('ucms_group.list', $request);
     }
 
     /**
@@ -49,7 +49,11 @@ class DashboardController extends Controller
      */
     public function viewMineAction(Request $request)
     {
-        return $this->renderPage('ucms_group.list_mine', $request);
+        return $this->renderPage('ucms_group.list', $request, [
+            'base_query' => [
+                'uid' => $this->getCurrentUser()->id(),
+            ]
+        ]);
     }
 
     /**

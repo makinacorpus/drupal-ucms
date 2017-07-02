@@ -1,10 +1,9 @@
 calista:
   pages:
 
-    ucms_group.list_all:
+    ucms_group.list:
       datasource: ucms_group.admin.group_datasource
       input:
-        base_query: {}
         limit_default: 24
         pager_enable: true
         search_enable: true
@@ -19,30 +18,9 @@ calista:
           default: module:ucms_group:views/Page/groupAdmin.html.twig
         view_type: twig_page
 
-    ucms_group.list_mine:
-      datasource: ucms_group.admin.group_datasource
-      input:
-        base_query: []
-          # uid: 2 # dynamically inject this (current user)
-        limit_default: 24
-        pager_enable: true
-        search_enable: true
-        sort_default_field: g.ts_changed
-        sort_default_order: desc
-      view:
-        properties: {}
-        show_filters: true
-        show_search: true
-        show_sort: true
-        templates:
-          default: module:ucms_group:views/Page/groupAdminMine.html.twig
-        view_type: twig_page
-
     ucms_group.list_members:
       datasource: ucms_group.admin.group_member_datasource
       input:
-        base_query: []
-          # group: null # dynamically inject this (group from request)
         limit_default: 24
         pager_enable: true
         search_enable: true
@@ -56,7 +34,6 @@ calista:
         templates:
           default: module:ucms_group:views/Page/groupMemberAdmin.html.twig
         view_type: twig_page
-
 
     ucms_group.list_by_site:
       datasource: ucms_group.admin.group_site_datasource
