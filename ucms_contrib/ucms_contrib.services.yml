@@ -84,22 +84,15 @@ services:
     class: MakinaCorpus\Ucms\Contrib\Datasource\ElasticNodeDataSource
     arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@entity.manager", "@current_user"]
 
-#
-# @todo restore those two: it needs a portlet API in calista
-#
-#  # Content portlet
-#  ucms_contrib.content_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
-#    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
-#    tags: [{ name: udashboard.portlet }]
-#
-#  # Media portlet
-#  ucms_contrib.media_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
-#    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager"]
-#    tags: [{ name: udashboard.portlet }]
+  # Portlets
+  ucms_contrib.content_portlet:
+    class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
+    arguments: ['@ucms_contrib.type_handler']
+    tags: [{ name: calista.portlet }]
+  ucms_contrib.media_portlet:
+    class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
+    arguments: ['@ucms_contrib.type_handler']
+    tags: [{ name: calista.portlet }]
 
   # Component responsible for providing content type context
   ucms_contrib.type_handler:
