@@ -147,7 +147,7 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
             $router_item = menu_get_item();
 
             if (
-                $this->contextManager->isInEditMode() ||
+                $this->context->hasToken() ||
                 in_array($router_item['path'], $defaultTabRoutes) ||
                 in_array($router_item['tab_parent'], $defaultTabRoutes)
             ) {

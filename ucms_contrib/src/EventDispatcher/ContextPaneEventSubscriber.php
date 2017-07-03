@@ -142,18 +142,6 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
             ;
         }
 
-        // Add a backlink
-        //   @todo find a solution for path_is_admin() and current_path()
-        //     maybe bring in the RequestStack
-        if (!path_is_admin(current_path()) && user_access('access administration pages')) {
-            $backlink = new Action($this->t("Go to dashboard"), 'admin/dashboard', null, 'dashboard');
-            $contextPane->addActions([$backlink], null, 'dashboard', false);
-        }
-        /*else {
-            // @Todo possibly store the last site visited in the session to provide a backlink
-            $backlink = new Action($this->t("Go to site"), '<front>', null, 'globe');
-        }*/
-
         // Add node creation link on dashboard
         // FIXME kill it with fire!
         if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), ['content', 'media'])) {
