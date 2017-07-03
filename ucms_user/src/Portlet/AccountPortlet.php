@@ -3,20 +3,19 @@
 namespace MakinaCorpus\Ucms\User\Portlet;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Portlet\PortletInterface;
+use MakinaCorpus\Drupal\Calista\Portlet\AbstractPortlet;
 
-class AccountPortlet implements PortletInterface
+class AccountPortlet extends AbstractPortlet
 {
-    use StringTranslationTrait;
-
     private $account;
 
     /**
-     * {@inheritdoc}
+     * Default constructor
+     *
+     * @param AccountInterface $account
      */
-    public function setAccount(AccountInterface $account)
+    public function __construct(AccountInterface $account)
     {
         $this->account = $account;
     }
@@ -42,7 +41,6 @@ class AccountPortlet implements PortletInterface
      */
     public function getActions()
     {
-        return []; // FIXME
         return [
             new Action($this->t('Edit my information'), 'admin/dashboard/user/my-account', 'dialog', 'edit'),
             new Action($this->t('Edit my password'), 'admin/dashboard/user/my-password', 'dialog', 'edit'),
@@ -86,13 +84,5 @@ class AccountPortlet implements PortletInterface
         }
 
         return drupal_render($items);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function userIsAllowed(AccountInterface $account)
-    {
-        return true;
     }
 }

@@ -2,37 +2,13 @@
 
 namespace MakinaCorpus\Ucms\Site\Portlet;
 
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
-use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
+use MakinaCorpus\Drupal\Calista\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\Site\Access;
 
-/**
- * Technical admin sites portlet
- */
 class SitesPortlet extends AbstractPortlet
 {
-    use StringTranslationTrait;
-
     /**
-     * @var DatasourceInterface
-     */
-    private $datasource;
-
-    /**
-     * Default constructor
-     *
-     * @param DatasourceInterface $datasource
-     */
-    public function __construct(DatasourceInterface $datasource)
-    {
-        $this->datasource = $datasource;
-    }
-
-    /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getTitle()
     {
@@ -40,29 +16,18 @@ class SitesPortlet extends AbstractPortlet
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function getPath()
+    public function getContent()
     {
-        return 'admin/dashboard/site/all';
+        return $this->renderPage('ucms_site.admin.datasource', 'module:ucms_site:Portlet/page-sites.html.twig');
     }
 
     /**
-     * {inheritDoc}
+     * {@inheritdoc}
      */
-    protected function createPage(PageBuilder $pageBuilder)
+    public function isGranted()
     {
-        $pageBuilder
-            ->setDatasource($this->datasource)
-            ->setAllowedTemplates(['table' => 'module:ucms_site:Portlet/page-sites.html.twig'])
-        ;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function userIsAllowed(AccountInterface $account)
-    {
-        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD);
+        return $this->authorizationChecker->isGranted([Access::PERM_SITE_MANAGE_ALL, Access::PERM_SITE_GOD]);
     }
 }

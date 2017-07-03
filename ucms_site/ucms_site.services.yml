@@ -105,17 +105,13 @@ services:
       - "@event_dispatcher"
     tags: [{ name: event_subscriber }]
 
-#  ucms_site.sites_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\Site\Portlet\SitesPortlet
-#    arguments: ["@ucms_site.admin.datasource"]
-#    # tags: [{ name: udashboard.portlet }]
-#
-#  ucms_site.my_sites_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\Site\Portlet\MySitesPortlet
-#    arguments: ["@ucms_site.admin.datasource"]
-#    # tags: [{ name: udashboard.portlet }]
+  ucms_site.sites_portlet:
+    class: MakinaCorpus\Ucms\Site\Portlet\SitesPortlet
+    tags: [{ name: calista.portlet }]
+
+  ucms_site.my_sites_portlet:
+    class: MakinaCorpus\Ucms\Site\Portlet\MySitesPortlet
+    tags: [{ name: calista.portlet }]
 
   ucms_site.twig.site_extension:
     public: false

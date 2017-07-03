@@ -28,17 +28,13 @@ services:
     class: MakinaCorpus\Ucms\User\EventDispatcher\ContextPaneEventSubscriber
     tags: [{ name: event_subscriber }]
 
-# @todo restore me
-#
-#  # Account portlet
-#  ucms_user.account_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
-#    tags: [{ name: udashboard.portlet }]
-#
-#  # Users portlet
-#  ucms_user.users_portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
-#    arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
-#    tags: [{ name: udashboard.portlet }]
+  # Account portlet
+  ucms_user.account_portlet:
+    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
+    arguments: ['@current_user']
+    tags: [{ name: calista.portlet }]
+
+  # Users portlet
+  ucms_user.users_portlet:
+    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
+    tags: [{ name: calista.portlet }]

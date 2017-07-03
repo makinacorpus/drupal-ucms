@@ -84,7 +84,6 @@ services:
     tags: [{name: twig.extension}]
 
   # A few various event subscribers
-
   ucms_seo.site_event_subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteEventSubscriber
     arguments: ["@ucms_seo.seo_service"]
@@ -118,12 +117,10 @@ services:
     class: MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory
     arguments: ["@ucms_seo.seo_service"]
 
-#  # Deadlinks tracking and portlet
-#  ucms_seo.deadlinks.portlet:
-#    public: false
-#    class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
-#    arguments: ["@ucms_seo.deadlinks.datasource"]
-#    # tags: [{ name: udashboard.portlet }]
+  # Deadlinks tracking and portlet
+  ucms_seo.deadlinks.portlet:
+    class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
+    tags: [{ name: calista.portlet }]
   ucms_seo.deadlinks.subsriber:
     public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\LinkReferenceEventSubscriber

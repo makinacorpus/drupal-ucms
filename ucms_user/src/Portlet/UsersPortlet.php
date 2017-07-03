@@ -2,13 +2,8 @@
 
 namespace MakinaCorpus\Ucms\User\Portlet;
 
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Action\Action;
-use MakinaCorpus\Drupal\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Drupal\Dashboard\Page\PageBuilder;
-use MakinaCorpus\Drupal\Dashboard\Portlet\AbstractPortlet;
-use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Drupal\Calista\Portlet\AbstractPortlet;
 use MakinaCorpus\Ucms\User\UserAccess;
 
 /**
@@ -16,22 +11,6 @@ use MakinaCorpus\Ucms\User\UserAccess;
  */
 class UsersPortlet extends AbstractPortlet
 {
-    use StringTranslationTrait;
-
-    private $siteManager;
-    private $datasource;
-
-    /**
-     * Default constructor
-     *
-     * @param DatasourceInterface $datasource
-     */
-    public function __construct(DatasourceInterface $datasource, SiteManager $siteManager)
-    {
-        $this->datasource = $datasource;
-        $this->siteManager = $siteManager;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -53,31 +32,21 @@ class UsersPortlet extends AbstractPortlet
      */
     public function getActions()
     {
-        return []; // FIXME
         return [
             new Action($this->t("Create user"), 'admin/dashboard/user/add', null, 'user', 0, true, true),
         ];
     }
 
-    /**
-     * {inheritDoc}
-     */
-    protected function createPage(PageBuilder $pageBuilder)
+    public function getContent()
     {
-//         $pageState->setSortField('u.created');
-//         $pageState->setSortOrder(PageState::SORT_DESC);
-        $pageBuilder
-            ->setDatasource($this->datasource)
-            ->setAllowedTemplates(['table' => 'module:ucms_user:Portlet/page-users.html.twig'])
-        ;
+        return $this->renderPage('ucms_user.admin.datasource', 'module:ucms_user:Portlet/page-users.html.twig');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function userIsAllowed(AccountInterface $account)
+    public function isGranted()
     {
-        return $account->hasPermission(UserAccess::PERM_MANAGE_ALL);
+        return $this->authorizationChecker->isGranted(UserAccess::PERM_MANAGE_ALL);
     }
 }
-
