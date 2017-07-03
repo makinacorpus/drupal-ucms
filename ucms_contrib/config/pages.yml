@@ -2,7 +2,7 @@
 calista:
   pages:
 
-    # Carte page
+    # Cart page
     ucms_cart:
       id: ucms_cart
       datasource: ucms_contrib.datasource.cart

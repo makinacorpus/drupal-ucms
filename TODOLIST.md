@@ -53,10 +53,13 @@
  * [ ] investigate plugging calista to a front framework too
  * [ ] investigate potential front framework for admin UI
  * [ ] make *every* module optional
- * [ ] move cart ot its own module, usable without ucms
- * [ ] move contrib into its own module, usable without ucms
- * [ ] move search (content/media handling) into its own module, usable without ucms
  * [ ] rewrite search module to be less complex
  * [ ] rewrite ucms_label to be a much more flexible front for taxonomy
  * [ ] theme breadcrumb in toolbar
  * [x] move breadcrumb to somewhere it takes less space (toolbar?)
+
+## Decoupling
+
+ * [ ] move cart ot its own module, usable without ucms
+ * [ ] move contrib into its own module, usable without ucms
+ * [ ] move non ucms related node actions to their own module

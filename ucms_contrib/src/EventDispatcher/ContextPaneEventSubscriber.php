@@ -3,9 +3,9 @@
 namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Calista\Action\ActionProviderInterface;
 use MakinaCorpus\Calista\Action\ActionRegistry;
+use MakinaCorpus\Calista\Controller\PageRenderer;
 use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -19,11 +19,12 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
+    private $actionProviderRegistry;
     private $container;
     private $contentActionProvider;
+    private $pageRenderer;
     private $siteManager;
     private $typeHandler;
-    private $actionProviderRegistry;
 
     /**
      * Default constructor
@@ -38,13 +39,15 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
         ActionProviderInterface $contentActionProvider,
         ActionRegistry $actionRegistry,
         SiteManager $siteManager,
-        TypeHandler $typeHandler
+        TypeHandler $typeHandler,
+        PageRenderer $pageRenderer
     ) {
         $this->container = $container;
         $this->contentActionProvider = $contentActionProvider;
         $this->actionProviderRegistry = $actionRegistry;
         $this->siteManager = $siteManager;
         $this->typeHandler = $typeHandler;
+        $this->pageRenderer = $pageRenderer;
     }
 
     /**
@@ -60,85 +63,47 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Render page
-     *
-     * @param string $name
-     * @param array $inputOptions
-     *
-     * @return string
-     */
-    private function renderPage($name, array $inputOptions = [])
-    {
-        /** @var \MakinaCorpus\Calista\DependencyInjection\ViewFactory $factory */
-        $factory = $this->container->get('calista.view_factory');
-
-        $page = $factory->getPageDefinition($name);
-        $viewDefinition = $page->getViewDefinition();
-        $view = $factory->getView($viewDefinition->getViewType());
-
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-
-        // Add some custom options
-        $currentUserId = $this->container->get('current_user')->id();
-        $inputOptions['base_query']['history_user_id'] = $currentUserId;
-
-        $query = $page->getInputDefinition($inputOptions)->createQueryFromRequest($request);
-        $items = $page->getDatasource()->getItems($query);
-
-        // View must inherit from the page definition identifier to ensure
-        // that AJAX queries will work
-        $view->setId($page->getId());
-
-        return $view->render($viewDefinition, $items, $query);
-    }
-
-    /**
-     * Render one's favorite cart.
-     * @todo Better way
-     *
-    private function renderCart()
-    {
-        // @todo keeping controller for now because it does handles the
-        //   javascript includes for Drupal, and we need it
-        $controller = new CartController();
-        $controller->setContainer($this->container);
-
-        return $controller->renderAction($this->container->get('request_stack')->getCurrentRequest());
-    }
-        if ($this->tab) {
-            switch ($this->tab) {
-
-                case 'content':
-                    $baseQuery['type'] = $this->typeHandler->getContentTypes();
-                    $searchParam = 'ccs';
-                    break;
-
-                case 'media':
-                    $baseQuery['type'] = $this->typeHandler->getMediaTypes();
-                    $searchParam = 'cms';
-                    break;
-            }
-        }
-
-     */
-
-    /**
      * @param ContextPaneEvent $event
      */
     public function onContextPaneInit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
         $router_item = menu_get_item();
+        $request = $this->container->get('request_stack')->getCurrentRequest();
 
         // Add the shopping cart
         if (user_access('use favorites')) {
             $contextPane
+                // User cart
                 ->addTab('cart', $this->t("Cart"), 'shopping-cart')
-                ->add($this->renderPage('ucms_cart'), 'cart')
-//                 ->addTab('cart_content', $this->t("All content"), 'file')
-//                 ->add($this->renderPage('cart_content'), 'cart_content')
-//                 ->addTab('cart_media', $this->t("All medias"), 'picture')
-//                 ->add($this->renderPage('cart_media'), 'cart_media')
+                ->add(
+                    $this->pageRenderer->renderPage(
+                        'ucms_cart',
+                        $request,
+                        ['base_query' => ['cart_user_id' => $GLOBALS['user']->uid /* @fixme */]]
+                    ),
+                    'cart'
+                )
+                // All content
+                ->addTab('cart_content', $this->t("All content"), 'file')
+                ->add(
+                    $this->pageRenderer->renderPage(
+                        'ucms_cart',
+                        $request,
+                        ['base_query' => ['type' => $this->typeHandler->getContentTypes()]]
+                    ),
+                    'cart_content'
+                )
+                // All media
+                ->addTab('cart_media', $this->t("All medias"), 'picture')
+                ->add(
+                    $this->pageRenderer->renderPage(
+                        'ucms_cart',
+                        $request,
+                        ['base_query' => ['type' => $this->typeHandler->getMediaTypes()]]
+                    ),
+                    'cart_media'
+                )
             ;
         }
 

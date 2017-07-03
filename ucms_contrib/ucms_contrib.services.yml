@@ -76,6 +76,7 @@ services:
       - "@calista.action_provider_registry"
       - "@ucms_site.manager"
       - "@ucms_contrib.type_handler"
+      - "@calista.page_renderer"
     tags: [{ name: event_subscriber }]
 
   # Datasource via elastic search
