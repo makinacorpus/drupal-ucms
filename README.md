@@ -10,7 +10,7 @@ This product is not yet fully documented:
 
 There are 4 major versions existing:
 
- *  master / 2.0 is the actual development branch, althought it is very stable
+ *  master / 2.0 is the actual development branch, althought it is almost stable
     it is highly subject to API changes (and UI works only partially);
 
  *  1.4 is latest stable version;
