@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Harm\Form;
+namespace MakinaCorpus\Ucms\Contrib\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use MakinaCorpus\Drupal\Calista\Form\AbstractEntityActionForm;
@@ -12,7 +12,7 @@ class NodeUnmakeGroup extends AbstractEntityActionForm
      */
     public function getFormId()
     {
-        return 'ucms_harm_node_unmake_group_form';
+        return 'ucms_contrib_node_unmake_group_form';
     }
 
     /**

@@ -613,14 +613,6 @@ msgid "Clone aware"
 msgstr "Prise en compte du clonage"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_notification/ucms_notification.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_search/ucms_search.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.info:0
-#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.info:0
 msgid "UCMS"
 msgstr "UCMS"
 
@@ -776,45 +768,32 @@ msgstr "Utiliser le volet contextuel"
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Action/NodeActionProvider.php:39
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:40
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:39
 msgid "Define as group content"
 msgstr "Définir comme contenu de groupe"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Action/NodeActionProvider.php:39
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:48
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:39
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:48
 msgid "Remove from group contents"
 msgstr "Retirer des contenus Groupe"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeMakeGroup.php:25
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:25
 msgid "Define %title as group content?"
 msgstr "Définir %title comme contenu groupe ?"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeMakeGroup.php:39
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:39
 msgid "%title has been added to the group contents."
 msgstr "%title a été ajouté aux contenus groupes."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeUnmakeGroup.php:25
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:25
 msgid "Remove %title from group contents?"
 msgstr "Retirer %title des contenu Groupe ?"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/src/Form/NodeUnmakeGroup.php:39
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:39
 msgid "%title has been removed from the group contents."
 msgstr "%title a été retiré des contenus Groupe."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
-msgid ""
-"Provide unmeaningful legacy features that will be dropped. Please, never use "
-"this module."
-msgstr ""
-"Fournit des fonctionnalités historiques dépréciées qui seront retirées. "
-"N'utilisez jamais ce module."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.info:0
-msgid "UCMS - Harm"
-msgstr "UCMS - Harm"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_harm/ucms_harm.module:30
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:30
 msgid "Group"
 msgstr "Groupe"
 

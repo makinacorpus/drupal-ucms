@@ -1,6 +1,0 @@
-services:
-  ucms_harm.node_action_provider:
-    public: false
-    class: MakinaCorpus\Ucms\Harm\Action\NodeActionProvider
-    arguments: ["@current_user"]
-    tags: [{name: calista.action_provider}]

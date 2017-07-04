@@ -23,6 +23,8 @@ use MakinaCorpus\Ucms\Contrib\Form\NodeUnlock;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnstar;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Contrib\Form\NodeMakeGroup;
+use MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeGroup;
 
 /**
  * Field integration
@@ -193,6 +195,22 @@ function ucms_contrib_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
+  $items['node/%node/make-group'] = [
+    'title'             => "Define as group content",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [NodeMakeGroup::class, 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_group',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['node/%node/unmake-group'] = [
+    'title'             => "Remove from group contents",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [NodeUnmakeGroup::class, 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_group',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
 
   // Returns the rendered node in a JSON response.
   $items['node/%node/ajax'] = [
@@ -289,6 +307,13 @@ function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
  */
 function ucms_contrib_menu_node_access_transfer(NodeInterface $node) {
   return sf_acl_is_granted(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) && sf_acl_is_granted(Permission::UPDATE, $node);
+}
+
+/**
+ * Menu access helper.
+ */
+function ucms_contrib_menu_node_access_group(NodeInterface $node) {
+  sf_acl_is_granted(Access::ACL_PERM_CONTENT_PROMOTE_GROUP, $node);
 }
 
 /**

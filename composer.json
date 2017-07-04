@@ -47,7 +47,6 @@
             "MakinaCorpus\\Ucms\\Contrib\\": "ucms_contrib/src",
             "MakinaCorpus\\Ucms\\Extranet\\": "ucms_extranet/src",
             "MakinaCorpus\\Ucms\\Group\\": "ucms_group/src",
-            "MakinaCorpus\\Ucms\\Harm\\": "ucms_harm/src",
             "MakinaCorpus\\Ucms\\Label\\": "ucms_label/src",
             "MakinaCorpus\\Ucms\\Layout\\": "ucms_layout/src",
             "MakinaCorpus\\Ucms\\Notification\\": "ucms_notification/src",

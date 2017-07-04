@@ -32,7 +32,6 @@
 
  * [ ] ensure upgrade path from previous versions
  * [ ] test ucms_extranet module
- * [x] rewrite ucms_harm module to make it work
  * [x] test ucms_group module
 
 ### Calista migration

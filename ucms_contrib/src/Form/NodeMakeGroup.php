@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Harm\Form;
+namespace MakinaCorpus\Ucms\Contrib\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use MakinaCorpus\Drupal\Calista\Form\AbstractEntityActionForm;
@@ -12,7 +12,7 @@ class NodeMakeGroup extends AbstractEntityActionForm
      */
     public function getFormId()
     {
-        return 'ucms_harm_node_make_group_form';
+        return 'ucms_contrib_node_make_group_form';
     }
 
     /**
@@ -39,4 +39,3 @@ class NodeMakeGroup extends AbstractEntityActionForm
         $form_state->setRedirect('node/' . $node->nid);
     }
 }
-
