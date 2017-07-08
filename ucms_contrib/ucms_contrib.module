@@ -15,16 +15,16 @@ use MakinaCorpus\Ucms\Contrib\Form\NodeDuplicate;
 use MakinaCorpus\Ucms\Contrib\Form\NodeFlag;
 use MakinaCorpus\Ucms\Contrib\Form\NodeLock;
 use MakinaCorpus\Ucms\Contrib\Form\NodeMakeGlobal;
+use MakinaCorpus\Ucms\Contrib\Form\NodeMakeGroup;
 use MakinaCorpus\Ucms\Contrib\Form\NodePublish;
 use MakinaCorpus\Ucms\Contrib\Form\NodeStar;
 use MakinaCorpus\Ucms\Contrib\Form\NodeTransfer;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnflag;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnlock;
+use MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeGroup;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnstar;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Contrib\Form\NodeMakeGroup;
-use MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeGroup;
 
 /**
  * Field integration

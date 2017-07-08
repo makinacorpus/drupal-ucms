@@ -3,15 +3,13 @@
 namespace MakinaCorpus\Ucms\Site\ACL;
 
 use Drupal\Core\Session\AccountInterface;
-
+use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\ACL\Resource;
 use MakinaCorpus\ACL\Collector\EntryCollectorInterface;
 use MakinaCorpus\ACL\Collector\EntryListBuilderInterface;
 use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
 use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
 use MakinaCorpus\ACL\Converter\ResourceConverterInterface;
-use MakinaCorpus\ACL\Manager;
-use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\ACL\Resource;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;

@@ -40,8 +40,7 @@ class ContribConfiguration implements ConfigurationInterface
                             // Page and tab title
                             ->scalarNode('title')->isRequired()->end()
                             // Arbitrary base query filters
-                            ->variableNode('base_query')
-                            ->end()
+                            ->variableNode('base_query')->end()
                         ->end() // children
                     ->end() // prototype
                 ->end() // pages

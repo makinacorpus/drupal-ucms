@@ -36,9 +36,6 @@
 
 ### Calista migration
 
- * [ ] contrib, search: move elastic datasource in the search module
- * [ ] normalize acl/access usage via isGranted and voters
- * [ ] rewrite calista JavaScript as TypeScript
  * [x] admin table event name still conflict with udashboard
  * [x] contrib, search: move elastic datasource in the search module
  * [x] contrib: fix admin page registration (make it easy once again)
@@ -53,6 +50,7 @@
  * [ ] investigate plugging calista to a front framework too
  * [ ] investigate potential front framework for admin UI
  * [ ] make *every* module optional
+ * [ ] normalize acl/access usage via isGranted and voters
  * [ ] rewrite search module to be less complex
  * [ ] rewrite ucms_label to be a much more flexible front for taxonomy
  * [ ] theme breadcrumb in toolbar
@@ -61,5 +59,6 @@
 ## Decoupling
 
  * [ ] move cart ot its own module, usable without ucms
- * [ ] move contrib into its own module, usable without ucms
+ * [ ] move contrib ckeditor+filter into its own module, usable without ucms
+ * [ ] move contrib generic actions into its own module, usable without ucms
  * [ ] move non ucms related node actions to their own module
