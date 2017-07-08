@@ -34,6 +34,7 @@ calista:
         search_param: s
         sort_default_field: n.changed
       view:
+        enabled_filters: ['type', 'status']
         properties: {}
         show_filters: true
         show_search: true
@@ -55,6 +56,7 @@ calista:
         sort_default_field: n.changed
       view:
         default_display: grid
+        enabled_filters: ['type', 'status']
         properties: {}
         show_filters: true
         show_search: true
