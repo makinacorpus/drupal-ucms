@@ -40,6 +40,7 @@
  * [ ] normalize acl/access usage via isGranted and voters
  * [ ] rewrite calista JavaScript as TypeScript
  * [x] admin table event name still conflict with udashboard
+ * [x] contrib, search: move elastic datasource in the search module
  * [x] contrib: fix admin page registration (make it easy once again)
  * [x] group: add missing dynamic parameters in base queries
  * [x] migrate all pages to new version

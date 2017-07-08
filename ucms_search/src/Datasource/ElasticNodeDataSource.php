@@ -1,17 +1,15 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Datasource;
+namespace MakinaCorpus\Ucms\Search\Datasource;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Calista\Datasource\AbstractDatasource;
-use MakinaCorpus\Calista\Datasource\DefaultDatasourceResult;
 use MakinaCorpus\Calista\Datasource\Filter;
 use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Ucms\Search\Aggs\TermFacet;
-use MakinaCorpus\Ucms\Search\NodeIndexerInterface;
 use MakinaCorpus\Ucms\Search\Search;
 use MakinaCorpus\Ucms\Search\SearchFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -61,7 +59,7 @@ class ElasticNodeDataSource extends AbstractDatasource
      */
     public function getItemClass()
     {
-        return NodeIndexerInterface::class;
+        return NodeInterface::class;
     }
 
     /**

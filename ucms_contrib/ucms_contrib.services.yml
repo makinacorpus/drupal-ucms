@@ -79,12 +79,6 @@ services:
       - "@calista.page_renderer"
     tags: [{ name: event_subscriber }]
 
-  # Datasource via elastic search
-  ucms_contrib.datasource.elastic:
-    shared: false
-    class: MakinaCorpus\Ucms\Contrib\Datasource\ElasticNodeDataSource
-    arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@entity.manager", "@current_user"]
-
   # Portlets
   ucms_contrib.content_portlet:
     class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet

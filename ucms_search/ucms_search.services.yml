@@ -64,6 +64,12 @@ services:
       - "@entity.manager"
       - "private"
 
+  # Datasource via elastic search
+  ucms_search.datasource.elastic:
+    shared: false
+    class: MakinaCorpus\Ucms\Contrib\Datasource\ElasticNodeDataSource
+    arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@entity.manager", "@current_user"]
+
   ucms_search.elastic.client:
     class: Elasticsearch\Client
     factory: [Elasticsearch\ClientBuilder, fromConfig]
