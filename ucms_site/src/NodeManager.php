@@ -4,13 +4,11 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles whatever needs to be done with nodes
@@ -56,14 +54,14 @@ class NodeManager
      * @param SiteManager $manager
      * @param EntityManager $entityManager
      * @param NodeAccessService $nodeAccessService
-     * @param EventDispatcher $eventDispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         \DatabaseConnection $db,
         SiteManager $manager,
         EntityManager $entityManager,
         NodeAccessService $nodeAccessService,
-        EventDispatcher $eventDispatcher
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->db = $db;
         $this->manager = $manager;
