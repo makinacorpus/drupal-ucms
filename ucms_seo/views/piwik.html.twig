@@ -1,5 +1,23 @@
 <script type="text/javascript">
+var UcmsSeoPrivacy = UcmsSeoPrivacy || {};
+if (!UcmsSeoPrivacy.isOptOut || !UcmsSeoPrivacy.isOptOut('piwik')) {
   var _paq = _paq || [];
+
+  /*
+   * Non-prorogation des Cookie pour protéger la vie privée des visiteurs.
+   *  - https://www.cnil.fr/fr/solutions-pour-la-mesure-daudience
+   *  - https://www.cnil.fr/sites/default/files/typo/document/Configuration_piwik.pdf
+   */
+ _paq.push([function() {
+    var self = this;
+    this.setVisitorCookieTimeout(function() {
+      var now = new Date(), nowTs = Math.round(now.getTime() / 1000), visitorInfo = self.getVisitorInfo();
+      var createTs = parseInt(visitorInfo[2]);
+      var cookieTimeout = 33696000; // 13 mois en secondes
+      return createTs + cookieTimeout - nowTs;
+    });
+  }]);
+
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   (function() {
@@ -9,4 +27,5 @@
     var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
     g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
   })();
+}
 </script>
