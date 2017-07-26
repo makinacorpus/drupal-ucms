@@ -1,0 +1,26 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2017-05-02 18:34+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/views/privacy-settings.html.twig:0
+msgid "Privacy settings"
+msgstr "Paramètres de confidentialité"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/views/privacy-settings.html.twig:0
+msgid "You can opt-out for analytics providers, just uncheck the unwanted analytic trackers to disable it."
+msgstr "Vous pouvez désactiver les solutions de mesure d'audience que vous souhaitez en cochant simplement les cases associées ci-dessous."
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/views/privacy-settings.html.twig:0
+msgid "Disable @label"
+msgstr "Désactiver @label"
