@@ -72,7 +72,7 @@
         "makinacorpus/drupal-calista": "^1",
         "makinacorpus/drupal-dragula": "^1",
         "makinacorpus/drupal-phplayout": "*",
-        "makinacorpus/drupal-sf-dic": ">=3.2.2",
+        "makinacorpus/drupal-sf-dic": ">=3.3",
         "makinacorpus/drupal-ulink": "^2.0",
         "makinacorpus/drupal-umenu": "^2.0.5",
         "makinacorpus/drush-progressbar": "^1.0",

@@ -1,0 +1,18 @@
+<div id="privacy-settings">
+  <h1>{{ "Privacy settings"|trans }}</h1>
+
+  <p>
+    {{ "You can opt-out for analytics providers, just uncheck the unwanted analytic trackers to disable it." }}
+  </p>
+
+  {% for provider, label in providers %}
+    <div class="form-group">
+      <div class="checkbox">
+        <label>
+          <input class="ucms-privacy-opt-out" rel="{{ provider|e }}" type="checkbox">
+          {{ "Disable @label"|trans({'@label': label}) }}
+        </label>
+      </div>
+    </div>
+  {% endfor %}
+</div>

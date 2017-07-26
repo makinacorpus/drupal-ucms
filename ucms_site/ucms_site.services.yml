@@ -118,3 +118,9 @@ services:
     class: MakinaCorpus\Ucms\Site\Twig\Extension\SiteExtension
     arguments: ["@ucms_site.manager"]
     tags: [{ name: twig.extension }]
+
+  ucms_site.argument_value_resolver.current_site:
+    class: MakinaCorpus\Ucms\Site\Controller\ArgumentResolver\CurrentSiteValueResolver
+    public: false
+    arguments: ["@ucms_site.manager"]
+    tags: [{name: controller.argument_value_resolver, priority: 128}]
