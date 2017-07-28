@@ -19,7 +19,7 @@ class EntityLinkFilterRegisterPass implements CompilerPassInterface
             $definition = new Definition('MakinaCorpus\Ucms\Contrib\EventDispatcher\EntityLinkFilterEventSubscriber');
             $definition->setArguments([new Reference("ucms_site.manager"), new Reference("ucms_site.node_manager")]);
             $definition->addTag('event_subscriber');
-            $container->addDefinitions([$definition]);
+            $container->addDefinitions(['ucms_contrib.entity_link_filter_event_subscriber' => $definition]);
         }
     }
 }
