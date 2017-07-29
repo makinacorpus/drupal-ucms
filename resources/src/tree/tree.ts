@@ -15,7 +15,7 @@ namespace UcmsTree {
     const TEMPLATE_ITEM = '<li data-item-type="node" data-item-id="__ITEM_ID__">'
         + '<div class="tree-item clearfix">'
         + '<input class="form-control form-text" value="__TITLE__" maxlength="128" type="text"/>'
-        + '<span class="glyphicon glyphicon-remove"></span>'
+        + '<span class="fa fa-times"></span>'
         + '</div>'
         + '<ol class="empty"></ol>'
         + '</li>'
@@ -33,7 +33,7 @@ namespace UcmsTree {
         // Attach the remove button, I am not happy with this one, but it works
         // fine, I think that items should be a type, and we woudn't need to do
         // this lookup at runtime if we had a reference kept somewhere
-        for (let span of <any>context.querySelectorAll("span.glyphicon-remove")) {
+        for (let span of <any>context.querySelectorAll("span.fa-times")) {
             (<HTMLSpanElement>span).onclick = () => {
                 let search = <Element>span;
                 while (search.parentElement) {

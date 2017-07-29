@@ -51,12 +51,12 @@ class NodeActionProvider extends AbstractActionProvider
                 $ret[] = new Action($this->t("Remove from the current site"), 'node/' . $item->nid . '/dereference-from/' . $site->getId(), 'dialog', 'remove', 2, true, true, false, 'site');
             }
             if ($this->nodeAccess->userCanReference($account, $item)) {
-                $ret[] = new Action($this->t("Use on another site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
+                $ret[] = new Action($this->t("Use on another site"), 'node/' . $item->nid . '/reference', 'dialog', 'link', 2, true, true, false, 'site');
             }
 
         } else if ($this->nodeAccess->userCanReference($account, $item)) {
             // We are not on a site, just display "normal" action
-            $ret[] = new Action($this->t("Use on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
+            $ret[] = new Action($this->t("Use on my site"), 'node/' . $item->nid . '/reference', 'dialog', 'link', 2, true, true, false, 'site');
         }
 
         if ($this->isGranted(Permission::LOCK, $item)) {

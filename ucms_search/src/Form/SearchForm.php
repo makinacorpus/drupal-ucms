@@ -73,7 +73,7 @@ class SearchForm extends FormBase
         // exposed as GET parameter with an input button.
         $form['submit'] = [
             '#type'    => 'button',
-            '#content' => '<span class="glyphicon glyphicon-search"></span>',
+            '#content' => '<span class="fa fa-search"></span>',
             '#prefix'  => '<span class="input-group-btn">',
             '#suffix'  => '</span></div>',
         ];

@@ -51,7 +51,7 @@ class SiteActionProvider extends AbstractActionProvider
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
             if ($canView) {
                 $uri = $this->manager->getUrlGenerator()->generateUrl($item->id);
-                $ret[] = new Action($this->t("Go to site"), $uri, null, 'share-alt', -5, true);
+                $ret[] = new Action($this->t("Go to site"), $uri, null, 'external-link', -5, true);
             }
             if ($canManage) {
                 $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -2, false, true);

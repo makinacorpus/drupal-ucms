@@ -38,7 +38,7 @@ class RedirectActionProvider extends AbstractActionProvider
         $siteId = $item->getSiteId();
 
         $uri = $this->siteManager->getUrlGenerator()->generateUrl($siteId, 'node/' . $item->getNodeId());
-        $ret[] = new Action($this->t("Go to site"), $uri, null, 'share-alt');
+        $ret[] = new Action($this->t("Go to site"), $uri, null, 'external-link');
 
         return $ret;
     }

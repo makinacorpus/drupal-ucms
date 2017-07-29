@@ -268,7 +268,7 @@ class TreeForm extends FormBase
                 '#attributes'     => ['class' => ['']],
                 '#value'          => $item->getTitle(),
                 '#theme_wrappers' => [],
-                '#suffix'         => '<span class="glyphicon glyphicon-remove"></span></div>',
+                '#suffix'         => '<span class="fa fa-times"></span></div>',
             ];
 
             $element['data']            = drupal_render($input);

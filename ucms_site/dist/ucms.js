@@ -81,7 +81,7 @@ var UcmsTree;
     var TEMPLATE_ITEM = '<li data-item-type="node" data-item-id="__ITEM_ID__">'
         + '<div class="tree-item clearfix">'
         + '<input class="form-control form-text" value="__TITLE__" maxlength="128" type="text"/>'
-        + '<span class="glyphicon glyphicon-remove"></span>'
+        + '<span class="fa fa-times"></span>'
         + '</div>'
         + '<ol class="empty"></ol>'
         + '</li>';
@@ -105,7 +105,7 @@ var UcmsTree;
                 }
             };
         };
-        for (var _b = 0, _c = context.querySelectorAll("span.glyphicon-remove"); _b < _c.length; _b++) {
+        for (var _b = 0, _c = context.querySelectorAll("span.fa-times"); _b < _c.length; _b++) {
             var span = _c[_b];
             _loop_1(span);
         }
