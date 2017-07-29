@@ -16,7 +16,6 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     private $siteManager;
     private $database;
-    private $context;
 
     /**
      * Default constructor
@@ -57,10 +56,10 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
         }
 
         $layoutIds  = [];
-        $layouts    = [];
+        $context    = $event->getContext();
         $site       = $this->siteManager->getContext();
         $theme      = $site->getTheme();
-        $storage    = $event->getLayoutStorage();
+        $storage    = $context->getLayoutStorage();
 
         /*
          * Collect site layout
@@ -78,7 +77,7 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
         if (!$siteLayoutIds) {
             // Automatically create regions for site
             foreach (RegionConfig::getSiteRegionList($theme) as $region) {
-                $layouts[] = $storage->create(['site_id' => $site->getId(), 'region' => $region]);
+                $layoutIds[] = $storage->create(['site_id' => $site->getId(), 'region' => $region])->getId();
             }
         } else {
             $layoutIds = array_merge($layoutIds, $siteLayoutIds);
@@ -102,27 +101,15 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
             if (!$nodeLayoutIds) {
                 // Automatically creates new layout for node if none exist
                 foreach (RegionConfig::getPageRegionList($theme) as $region) {
-                    $layouts[] = $storage->create(['node_id' => $node->nid, 'site_id' => $site->getId(), 'region' => $region]);
+                    $layoutIds[] = $storage->create(['node_id' => $node->nid, 'site_id' => $site->getId(), 'region' => $region])->getId();
                 }
             } else {
                 $layoutIds = array_merge($layoutIds, $nodeLayoutIds);
             }
         }
 
-        /*
-         * Load everything at once if possible
-         */
-
         if ($layoutIds) {
-            $layouts = array_merge($layouts, $storage->loadMultiple($layoutIds));
-        }
-
-        // @todo access:
-        //   - for webmaster, layout in global regions
-        //   - for others, only if node is editable
-        //   - and we need to load home page layouts too
-        foreach ($layouts as $layout) {
-            $event->addLayout($layout, true);
+            $event->addLayoutList($layoutIds);
         }
     }
 
