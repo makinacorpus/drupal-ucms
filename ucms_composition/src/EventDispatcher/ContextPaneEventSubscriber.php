@@ -3,9 +3,8 @@
 namespace MakinaCorpus\Ucms\Composition\EventDispatcher;
 
 use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
-use MakinaCorpus\Drupal\Layout\Event\CollectLayoutEvent;
-use MakinaCorpus\Drupal\Layout\Form\LayoutContextEditForm;
-use MakinaCorpus\Layout\Controller\Context;
+use MakinaCorpus\Layout\Context\Context;
+use MakinaCorpus\Layout\EventDispatcher\CollectLayoutEvent;
 use MakinaCorpus\Ucms\Composition\RegionConfig;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -53,10 +52,6 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
      */
     public function onCollectLayout(CollectLayoutEvent $event)
     {
-        // We manually display the form in the context pane, so we hide it
-        // from the default content Drupal region
-        $event->hideForm();
-
         if (!$this->siteManager->hasContext()) {
             return;
         }
@@ -153,14 +148,6 @@ final class ContextPaneEventSubscriber implements EventSubscriberInterface
             ) {
                 $contextPane->setDefaultTab('cart');
             }
-        }
-
-        $site = $this->siteManager->getContext();
-        $account = \Drupal::currentUser();
-        // @todo this should check for any layout at all being here
-        if (!path_is_admin(current_path()) && $site && $this->siteManager->getAccess()->userIsWebmaster($account, $site)) {
-            $form = \Drupal::formBuilder()->getForm(LayoutContextEditForm::class);
-            $contextPane->addActions($form);
         }
 
         if ($this->context->hasToken()) {
