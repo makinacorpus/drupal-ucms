@@ -57,7 +57,7 @@ var UcmsSeoPrivacy = (function (document, $) {
       return;
     }
 
-    var closeButton = element.querySelector('.btn-close');
+    var closeButton = element.querySelector('.close-cookie-dialog');
     if (closeButton) {
       closeButton.addEventListener("click", function (event) {
         event.preventDefault();
