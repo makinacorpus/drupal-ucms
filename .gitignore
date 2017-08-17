@@ -3,3 +3,4 @@ node_modules
 phpunit.xml
 ucms_site/dist/ucms.js.map
 vendor
+docs/_build
