@@ -31,7 +31,7 @@ import sphinx_rtd_theme
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = ['sphinx.ext.todo']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Drupal 7 - uCMS'
+project = 'Drupal 7 - &#181;CMS'
 copyright = '2017, Makina Corpus'
 author = 'Makina Corpus'
 
@@ -170,4 +170,5 @@ texinfo_documents = [
 ]
 
 
-
+[extensions]
+todo_include_todos=True
