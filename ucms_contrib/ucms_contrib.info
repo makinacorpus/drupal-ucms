@@ -4,6 +4,7 @@ core = 7.x
 package = UCMS
 php = 5.5
 dependencies[] = dragula
+dependencies[] = taxonomy
 dependencies[] = ucms_search
 dependencies[] = ucms_site
 dependencies[] = usync
