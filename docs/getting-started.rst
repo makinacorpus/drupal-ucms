@@ -5,12 +5,12 @@ Requirements
 ============
 To setup µCMS, you will need :
 
-* A **composer based** Drupal 7 project 
+* A *composer based* Drupal 7 project 
 * A twig based theme
 * `Badm <https://github.com/makinacorpus/drupal-badm>`_ as admin theme
 * At least 2 domains (one for your admin site & one for your first site)
 * JQuery in version 1.9 or higher (or the `JQuery Update module <https://www.drupal.org/project/jquery_update/releases/7.x-3.0-alpha3>`_)
-* Elastic Search *(will be removed in v2)*
+* Elastic Search (version >=2.3 and <3) with the mapper-attachments plugin **<- won't be required in µCMS v2*
 
 Installation
 ============
@@ -69,14 +69,22 @@ Configure the master site hostname
 In order to administrate your multi-site factory, µCMS provides you an administration
 site.
 
-To let µCMS know your master site hostname, add the following variable to your 
+To let µCMS know your master hostname, add the following variable to your 
 ``settings.php`` file :
 
 .. code-block:: php
    
    <? php
    
-   $conf['ucms_site_master_hostname'] = 'MASTER_HOSTNAME';
+   $conf['ucms_site_master_hostname'] = 'YOUR_MASTER_HOSTNAME';
+   
+Add also the following variable needed to perform multi-site redirection :
+
+.. code-block:: php
+   
+   <? php
+   
+   $conf['site_frontpage']='home';
 
 Setup of µCMS
 =============
@@ -104,27 +112,27 @@ Creating Roles
 ^^^^^^^^^^^^^^
 As an example, we suggest you create at least these two roles :
 
-* ``admin`` : can manage the site-factory
+* ``fadmin`` : can manage the site-factory
 * ``webmaster`` : can only manage his sites
 
-To set these two roles go to *People* pannel ``MASTER_HOSTNAME/admin/people``,
+To set these two roles go to *People* pannel ``YOUR_MASTER_HOSTNAME/admin/people``,
 then, go in the *Permissions* tab and in the *Roles* sub-tab.
 
-Or go directly to ``MASTER_HOSTNAME/admin/people/permissions/roles``.
+Or go directly to ``YOUR_MASTER_HOSTNAME/admin/people/permissions/roles``.
 
 .. note:: 
    The *People* dashboard is not accesible via the main dashboard but only
    by the url : ``MASTER_HOSTNAME/admin/people``.
 
-You can now create your two *Roles* : ``admin`` & ``webmaster``.
+You can now create your two *Roles* : ``fadmin`` & ``webmaster``.
 
 Setting up Permissions
 ^^^^^^^^^^^^^^^^^^^^^^
-Then, go to the permission sub-tab ``MASTER_HOSTNAME/admin/people/permissions/``
+Then, go to the permission sub-tab ``YOUR_MASTER_HOSTNAME/admin/people/permissions/``
 and give the following *Permissions* :
 
 .. csv-table::
-   :header: *Permissions*, ``admin``, ``webmaster``
+   :header: *Permissions*, ``fadmin``, ``webmaster``
    :widths: 50, 10, 10
 
    **UCMS - Contribution**                                  
@@ -153,31 +161,68 @@ and give the following *Permissions* :
 
 Creating Users
 ^^^^^^^^^^^^^^
-Now, let's create an *User* for each *Role*. So we suggest to create :
+Now, let's create an *User* for each *Role* :
 
-* an *User* ``FactoryAdmin`` with the *Role* ``admin``
+* an *User* ``FactoryAdmin`` with the *Role* ``fadmin``
 * an *User* ``Webmaster`` with the *Role* ``webmaster``
 
-Go to the *Dashboard* and for each *User* click on ``Create user``, fill the form, enable your *User* and set a passaword.
+Go to the *Dashboard* and for each *User* click on ``Create user``, fill the form, 
+enable your *User* and set a passaword.
+
+.. Note::
+
+   The *Role* admin for µCMS is different from the drupal admin
 
 Configure site template
 -----------------------
 µCMS let you choose themes and categories available when someone wants to create a
-new site. To set this up, go to ``MASTER_HOSTNAME/admin/structure/`` and the click on
-``Site factory configuration``.
+new site. To set this up, go to ``YOUR_MASTER_HOSTNAME/admin/structure/`` and the click 
+on ``Site factory configuration``.
 
-Or go directly to ``MASTER_HOSTNAME/admin/structure/site``.
+Or go directly to ``YOUR_MASTER_HOSTNAME/admin/structure/site``.
 
+Here you can choose the default node type for site home page and allowed themes 
+for a new site.
 
 Configure the site workflow
 ---------------------------
-Go to ``MASTER_HOSTNAME/admin/structure/site/transitions``
+µCMS provides a complete customizable *Workflow* to securize a site life-cycle - 
+from request to archive passing by publication. Here is the different *States* a 
+site can be in µCMS :
 
-Creation of your first Site
+.. csv-table::
+   :header: States, Description, Published ?
+   :widths: 10, 500, 5
+ 
+   *Requested*, Someone asked for a new site : beginning of the site life-cycle, no
+   *Rejected*, A requested site has been rejected by someone, no
+   *Creation*, A requested site has been accepted and is now in creation, no
+   *Initialization*, First contents is adding in a create site, no
+   *On*, Site is published, YES
+   *Off*, Site is Off-line, no
+   *Archive*, The site no-longer needed : end of the site life-cycle, no
+
+To setup this workflow, go to the *Transitions* pannel : ``YOUR_MASTER_HOSTNAME/admin/structure/``,
+click on ``Site factory configuration`` and go to the ``Transitions`` tab.
+ 
+Or go directly to ``YOUR_MASTER_HOSTNAME/admin/structure/site/transitions``.
+
+Here you can choose for each trio *'StateA/RoleA/StateB'* if the *Role* ``RoleA``
+can put a site from the *State* ``StateA`` to ``StateB``.
+
+For example : 
+
+* Can an ``admin`` put a site from *Requested* to *Rejected* ?
+* Can a ``webmaster`` put a site from *Off* to *Archive* ?
+* Can an ``xxx`` directly put a site to *On* from *Requested* ?
+* Can an ``xxx`` put a site from *aaa* to *bbb* ?
+* ...
+
+Creation of your first site
 ---------------------------
-Ok... that's it ! 
+Ok... that's *it*, let's create your first site !
 
-Let's create your first site !
+Log in with an *User* attached to a *Role* with the ability to request a new site and go to the 
+*Dashboard* : ``YOUR_MASTER_HOSTNAME/admin/dashboard``.
 
-
-
+Then, just follow the workflow you have setted up.

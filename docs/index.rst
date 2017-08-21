@@ -14,6 +14,16 @@ Introduction
 module that serves the purpose of bringing to Drupal 7 an easy-to-use multi-site 
 factory, without the core multi-site feature.
 
+This module let you :
+
+* Administrate your multi-site factory :
+   * *Permissions*, *Roles* & *Users* (eg: Factory Admin, Webmaster, Contributor)
+   * The *Workflow* for a new site creation
+   * Themes available for new site
+* Manage contents of your multi-site factory :
+   * *Global* contents : shared with all sites of your factory
+   * *Local* contents : accessible only for one specific site
+
 .. warning::
 
    This product is not yet fully documented.
@@ -27,7 +37,7 @@ There are 4 major versions existing:
 
  *  1.4 is latest stable version;
 
- *  1.3 and 1.2 are both two unsupported versions that exists only for legacy
+ *  1.3 and 1.2 are both unsupported versions that exists only for legacy
     project maintenance, please don't use them.
 
 Todo List
