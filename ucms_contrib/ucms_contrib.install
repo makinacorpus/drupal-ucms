@@ -119,6 +119,9 @@ function ucms_contrib_install_schema_fix() {
  */
 function ucms_contrib_install() {
   ucms_contrib_install_schema_fix();
+  if (module_exists('usync')) {
+    usync_run_sources('ucms_contrib:usync/');
+  }
 }
 
 /**
