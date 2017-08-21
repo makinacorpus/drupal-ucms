@@ -10,7 +10,7 @@ To setup µCMS, you will need :
 * `Badm <https://github.com/makinacorpus/drupal-badm>`_ as admin theme
 * At least 2 domains (one for your admin site & one for your first site)
 * JQuery in version 1.9 or higher (or the `JQuery Update module <https://www.drupal.org/project/jquery_update/releases/7.x-3.0-alpha3>`_)
-* Elastic Search (version >=2.3 and <3) with the mapper-attachments plugin **<- won't be required in µCMS v2*
+* Elastic Search (version >=2.3 and <3) with the mapper-attachments plugin **<- won't be required in µCMS v2**
 
 Installation
 ============
