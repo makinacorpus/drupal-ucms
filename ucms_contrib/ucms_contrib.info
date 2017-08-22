@@ -7,5 +7,6 @@ dependencies[] = dragula
 dependencies[] = taxonomy
 dependencies[] = ucms_search
 dependencies[] = ucms_site
+dependencies[] = ucms_seo
 dependencies[] = usync
 usync[] = usync/
