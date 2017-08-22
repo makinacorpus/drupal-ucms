@@ -115,7 +115,7 @@ As an example, we suggest you create at least these two roles :
 * ``fadmin`` : can manage the site-factory
 * ``webmaster`` : can only manage his sites
 
-To set these two roles go to *People* pannel ``YOUR_MASTER_HOSTNAME/admin/people``,
+To set these two *Roles* go to *People* pannel ``YOUR_MASTER_HOSTNAME/admin/people``,
 then, go in the *Permissions* tab and in the *Roles* sub-tab.
 
 Or go directly to ``YOUR_MASTER_HOSTNAME/admin/people/permissions/roles``.
