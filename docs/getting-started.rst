@@ -10,7 +10,6 @@ To setup µCMS, you will need :
 * `Badm <https://github.com/makinacorpus/drupal-badm>`_ as admin theme
 * At least 2 domains (one for your admin site & one for your first site)
 * JQuery in version 1.9 or higher (or the `JQuery Update module <https://www.drupal.org/project/jquery_update/releases/7.x-3.0-alpha3>`_)
-* Elastic Search (version >=2.3 and <3) with the mapper-attachments plugin **<- won't be required in µCMS v2**
 
 Installation
 ============
@@ -22,7 +21,7 @@ project repository and just type the following line in your terminal :
 
 .. code-block:: sh
 
-    composer require makinacorpus/drupal-ucms
+    composer require makinacorpus/drupal-ucms:master-dev
 
 Please refer to this `Composer template for Drupal projects <https://github.com/drupal-composer/drupal-project/tree/7.x/>`_
 to have a nice exemple for doing this.
@@ -45,24 +44,42 @@ Then, you may follow these documentations :
 * `Bringing Symfony 3 Fullstack into Drupal 7 <http://drupal-sf-dic.readthedocs.io/en/latest/bundles.html>`_
 * `Using twig in Drupal 7 <http://drupal-sf-dic.readthedocs.io/en/latest/twig.html>`_
 
-Configure Elastic Search
-------------------------
-.. note::
+Configure Calista
+-----------------
 
-   Elastic Search won't be needed in the version 2 of µCMS
+Calista provides an adminstration dashboard to µCMS.
+ 
+Add following variable to your ``settings.php`` file :
 
-You must then tell this module your Elastic Search hostname by adding the 
-following variable to your ``settings.php`` file :
+.. code-block:: php
 
+   <?php 
+   
+   //Calista config variables
+   $conf['calista_context_pane_enable'] = true; //Enable top toolbar 
+   $conf['calista_context_pane_enable'] = true; //Enable context pane
+   $conf['calista_breadcrumb_alter'] = true;    //Enable admin pages breadcrumb alteration
+   $conf['calista_disable_css'] = false;        //Enable css from Calista
+   
+   
 .. todo::
 
-   Note sure this is the righ variable
+   calista_disable_css should be true per default and configured here only if 
+   disabling css is needed.
    
-.. code-block:: php
-   
-   <? php
-   
-   $conf['ucms_search.elastic.config']['hosts'] = ['localhost:9200'];
+If you use Symfony Full Stack, you also need to enable the ``property_info`` 
+component. Edit your ``app/config/config.yml`` file adding the following section :
+
+.. code-block:: yml
+
+   framework:
+       # ...
+       property_info:
+           enabled: true
+
+.. seealso:: 
+
+   More information about Calista : `documentation <https://php-calista.readthedocs.io/>`_
    
 Configure the master site hostname
 ----------------------------------
@@ -85,6 +102,24 @@ Add also the following variable needed to perform multi-site redirection :
    <? php
    
    $conf['site_frontpage']='home';
+
+µCMS differs *General Content* from *Media*. To configure this, add the following
+variables and complete them with your own Drupal type of content :
+
+.. code-block:: php
+   
+   <? php
+   
+   $conf['ucms_contrib_tab_media_type']=['image'];
+   $conf['ucms_contrib_editorial_types']=['blog','general_entry'];
+
+.. warning::
+   
+   These variables **need** to be not-null. Whithout its, it won't work !
+
+.. todo::
+
+   ucms_contrib should work whith these variables null.
 
 Setup of µCMS
 =============
@@ -168,10 +203,6 @@ Now, let's create an *User* for each *Role* :
 
 Go to the *Dashboard* and for each *User* click on ``Create user``, fill the form, 
 enable your *User* and set a passaword.
-
-.. Note::
-
-   The *Role* admin for µCMS is different from the drupal admin
 
 Configure site template
 -----------------------
