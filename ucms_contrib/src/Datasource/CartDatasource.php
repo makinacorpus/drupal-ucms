@@ -82,8 +82,7 @@ class CartDatasource extends NodeDatasource
             $select->join('ucms_contrib_cart', 'c', "c.nid = n.nid");
         } else {
             // Avoid errors if people use the filter accidentally
-            $select->leftJoin('ucms_contrib_cart', 'c', "c.nid = n.nid and 1 = 0");
-            $userId = null;
+            return $this->createEmptyResult();
         }
 
         $items = $select->execute()->fetchAll();
