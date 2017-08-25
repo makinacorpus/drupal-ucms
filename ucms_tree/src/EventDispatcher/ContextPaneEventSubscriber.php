@@ -78,7 +78,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
         if ($site) {
             // Add the tree structure as a new tab
             $contextPane
-                ->addTab('tree', $this->t("Menu tree"), 'tree-conifer')
+                ->addTab('tree', $this->t("Menu tree"), 'bars')
                 ->add($this->renderCurrentTree(), 'tree')
             ;
 

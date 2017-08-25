@@ -95,7 +95,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
                     'cart_content'
                 )
                 // All media
-                ->addTab('cart_media', $this->t("All medias"), 'picture')
+                ->addTab('cart_media', $this->t("All medias"), 'picture-o')
                 ->add(
                     $this->pageRenderer->renderPage(
                         'ucms_cart',
