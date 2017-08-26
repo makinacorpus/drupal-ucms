@@ -40,7 +40,7 @@ class GroupSiteActionProvider extends AbstractActionProvider
         $site = $item->getSite();
 
         if ($this->isGranted(Permission::OVERVIEW, $site)) {
-            $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $site->getId(), null, 'eye-open', -10);
+            $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $site->getId(), null, 'eye', -10);
         }
 
         return $ret;

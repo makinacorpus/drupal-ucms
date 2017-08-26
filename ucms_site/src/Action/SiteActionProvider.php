@@ -48,7 +48,7 @@ class SiteActionProvider extends AbstractActionProvider
         $canManageUsers = $this->isGranted(Access::ACL_PERM_SITE_MANAGE_USERS, $item);
 
         if ($canOverview) {
-            $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
+            $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye', -10);
             if ($canView) {
                 $uri = $this->manager->getUrlGenerator()->generateUrl($item->id);
                 $ret[] = new Action($this->t("Go to site"), $uri, null, 'external-link', -5, true);

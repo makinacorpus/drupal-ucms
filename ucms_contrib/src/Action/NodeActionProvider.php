@@ -56,9 +56,9 @@ class NodeActionProvider extends AbstractActionProvider
         $siteId = $this->access->findMostRelevantSiteFor($item);
         if ($siteId) {
             $uri = $this->siteManager->getUrlGenerator()->generateUrl($siteId, 'node/' . $item->id());
-            $ret[] = new Action($this->t("View"), $uri, [], 'eye-open');
+            $ret[] = new Action($this->t("View"), $uri, [], 'eye');
         } else {
-            $ret[] = new Action($this->t("View"), 'node/' . $item->id(), null, 'eye-open', 0, true, false, true); // disabled link
+            $ret[] = new Action($this->t("View"), 'node/' . $item->id(), null, 'eye', 0, true, false, true); // disabled link
         }
 
         // @todo
@@ -74,9 +74,9 @@ class NodeActionProvider extends AbstractActionProvider
 
             if ($this->isGranted(Permission::PUBLISH, $item)) {
                 if ($item->status) {
-                    $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'remove-circle', -50, false, true, false, 'edit');
+                    $ret[] = new Action($this->t("Unpublish"), 'node/' . $item->id() . '/unpublish', 'dialog', 'ban', -50, false, true, false, 'edit');
                 } else {
-                    $ret[] = new Action($this->t("Publish"), 'node/' . $item->id() . '/publish', 'dialog', 'ok-circle', -50, false, true, false, 'edit');
+                    $ret[] = new Action($this->t("Publish"), 'node/' . $item->id() . '/publish', 'dialog', 'check-circle', -50, false, true, false, 'edit');
                 }
             }
 

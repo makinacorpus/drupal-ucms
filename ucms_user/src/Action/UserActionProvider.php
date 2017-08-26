@@ -64,16 +64,16 @@ class UserActionProvider implements ActionProviderInterface
         $userId = $this->getUserIdFrom($item);
         $userStatus = $this->getStatusFrom($item);
 
-        $actions[] = new Action($this->t("View"), 'admin/dashboard/user/' . $userId, null, 'eye-open', 1, true, true);
+        $actions[] = new Action($this->t("View"), 'admin/dashboard/user/' . $userId, null, 'eye', 1, true, true);
 
         if (!$userStatus) {
             $action_title = $this->t("Enable");
             $action_path  = 'admin/dashboard/user/' . $userId . '/enable';
-            $action_icon  = 'ok-circle';
+            $action_icon  = 'check-circle';
         } else {
             $action_title = $this->t("Disable");
             $action_path  = 'admin/dashboard/user/' . $userId . '/disable';
-            $action_icon  = 'ban-circle';
+            $action_icon  = 'ban';
         }
 
         $action_disabled  = ($userId === $this->currentUser->id());

@@ -53,7 +53,7 @@ class GroupActionProvider implements ActionProviderInterface
         }
 
         if ($canView) {
-            $ret[] = new Action($this->t("View"), 'admin/dashboard/group/' . $item->getId(), [], 'eye-open', 0, true, false, false, 'edit');
+            $ret[] = new Action($this->t("View"), 'admin/dashboard/group/' . $item->getId(), [], 'eye', 0, true, false, false, 'edit');
         }
         if ($this->groupManager->getAccess()->userCanEdit($this->currentUser, $item)) {
             $ret[] = new Action($this->t("Edit"), 'admin/dashboard/group/' . $item->getId() . '/edit', [], 'pencil', 400, false, true, false, 'edit');
