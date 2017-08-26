@@ -40,8 +40,8 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          table: '@calista/page/page.html.twig'
-          grid: '@calista/page/page-grid.html.twig'
+          table: '@calista/page/drupal/page-node-table.html.twig'
+          grid: '@calista/page/drupal/page-node-grid.html.twig'
         view_type: twig_page
 
     # Media administration page
@@ -62,6 +62,6 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          table: '@calista/page/page.html.twig'
-          grid: '@calista/page/page-grid.html.twig'
+          table: '@calista/page/drupal/page-node-table.html.twig'
+          grid: '@calista/page/drupal/page-node-grid.html.twig'
         view_type: twig_page
