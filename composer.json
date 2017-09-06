@@ -75,7 +75,6 @@
         "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-filechunk": "^1.0",
         "makinacorpus/drupal-minidialog": "*",
-        "makinacorpus/drupal-phplayout": "*",
         "makinacorpus/drupal-umenu" : ">=1.1.5 <1.2",
         "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/drupal-sf-dic" : "^3.3 <3.4",
