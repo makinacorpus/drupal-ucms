@@ -72,27 +72,32 @@ var UcmsSeoPrivacy = (function (document, $) {
    * Initialize privacy settings component
    */
   function initPrivacySettingsComponent() {
-    var radio_yes = document.getElementsByName("input[type=radio].ucms-privacy-yes");
-    var radio_no = document.getElementsByName("input[type=radio].ucms-privacy-no");
+    var radio_yes = document.querySelector("input[type=radio].ucms-privacy-yes");
+    var radio_no = document.querySelector("input[type=radio].ucms-privacy-no");
 
-    if (radio_yes & radio_no) {
-          if (isOptOut()) {
-            radio_yes.checked = "checked";
-            radio_no.checked = "";
-          } else {
-            radio_yes.checked = "";
-            radio_no.checked = "checked";
-          }
-
-          radio_yes.addEventListener("change", function (event) {
-            if (this.checked) {
-              optOut();
-            } else {
-              optIn();
-            }
-          });
-        }
+    if (radio_yes && radio_no) {
+      if (isOptOut()) {
+        radio_yes.checked = "checked";
+        radio_no.checked = "";
+      } else {
+        radio_yes.checked = "";
+        radio_no.checked = "checked";
       }
+
+      radio_yes.addEventListener("change", function (event) {
+        if (this.checked) {
+          optOut();
+        } else {
+          optIn();
+        }
+      });
+      radio_no.addEventListener("change", function (event) {
+        if (this.checked) {
+          optIn();
+        } else {
+          optOut();
+        }
+      });
     }
   }
 
