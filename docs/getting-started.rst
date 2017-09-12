@@ -47,9 +47,11 @@ Then, you may follow these documentations :
 Configure Calista
 -----------------
 
-Calista provides an adminstration dashboard to µCMS.
+`Calista <https://github.com/makinacorpus/drupal-calista>`_ is used here to provide
+an nice adminstration dashboard to µCMS.
  
-Add following variable to your ``settings.php`` file :
+Calista need the following variables in your ``settings.php`` file to be able to
+work :
 
 .. code-block:: php
 
@@ -64,10 +66,10 @@ Add following variable to your ``settings.php`` file :
    
 .. todo::
 
-   calista_disable_css should be true per default and configured here only if 
+   ``calista_disable_css`` should be true per default and configured here only if 
    disabling css is needed.
    
-If you use Symfony Full Stack, you also need to enable the ``property_info`` 
+If you use Symfony Full Stack, you also have to enable the ``property_info`` 
 component. Edit your ``app/config/config.yml`` file adding the following section :
 
 .. code-block:: yml
@@ -86,7 +88,7 @@ Configure the master site hostname
 In order to administrate your multi-site factory, µCMS provides you an administration
 site.
 
-To let µCMS know your master hostname, add the following variable to your 
+To let µCMS knows your master hostname, add the following variable to your 
 ``settings.php`` file :
 
 .. code-block:: php
@@ -104,7 +106,7 @@ Add also the following variable needed to perform multi-site redirection :
    $conf['site_frontpage']='home';
 
 µCMS differs *General Content* from *Media*. To configure this, add the following
-variables and complete them with your own Drupal type of content :
+variables and complete them with your own Drupal types of content :
 
 .. code-block:: php
    
@@ -115,18 +117,18 @@ variables and complete them with your own Drupal type of content :
 
 .. warning::
    
-   These variables **need** to be not-null. Whithout its, it won't work !
+   These variables **need** to be not-null.
 
 .. todo::
 
-   ucms_contrib should work whith these variables null.
+   *ucms_contrib* should work whith these variables null.
 
 Setup of µCMS
 =============
 Before you can create your fisrt website, you need to configure :
 
 * your µCMS roles & users;
-* themes & categories available for your futur sites;
+* themes available for your futur sites;
 * the workflow for a site creation.
 
 But first, enable the following µCMS modules in Drupal :
