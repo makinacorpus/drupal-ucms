@@ -9,32 +9,26 @@ var UcmsSeoPrivacy = (function (document, $) {
   "use strict";
 
   /**
-   * Is provider disabled by client (opt-out)
-   *
-   * @param string provider
+   * Is tracking disabled by client (opt-out)
    *
    * @returns boolean
    */
-  function isOptOut(provider) {
-    return (new RegExp('privacy_' + provider + '=1')).test(document.cookie);
+  function isOptOut() {
+    return (new RegExp('privacy_tracker=1')).test(document.cookie);
   }
 
   /**
-   * Opt-int analytics provider
-   *
-   * @param string provider
+   * Opt-int analytics tracker
    */
-  function optIn(provider) {
-    document.cookie = "privacy_" + provider + "=0";
+  function optIn() {
+    document.cookie = "privacy_tracker=0";
   }
 
   /**
-   * Opt-out analytics provider
-   *
-   * @param string provider
+   * Opt-out analytics tracker
    */
-  function optOut(provider) {
-    document.cookie = "privacy_" + provider + "=1";
+  function optOut() {
+    document.cookie = "privacy_tracker=1";
   }
 
   /**
@@ -78,26 +72,23 @@ var UcmsSeoPrivacy = (function (document, $) {
    * Initialize privacy settings component
    */
   function initPrivacySettingsComponent() {
-    var checkboxes = document.querySelectorAll('input[type=checkbox].ucms-privacy-opt-out');
+    var radio_yes = document.getElementsByName("input[type=radio].ucms-privacy-yes");
+    var radio_no = document.getElementsByName("input[type=radio].ucms-privacy-no");
 
-    if (checkboxes) {
-      for (var i = 0; i < checkboxes.length; ++i) {
-        var checkbox = checkboxes[i];
-        if (checkbox.hasAttribute("rel")) {
-
-          if (isOptOut(checkbox.getAttribute("rel"))) {
-            checkbox.checked = "checked";
+    if (radio_yes & radio_no) {
+          if (isOptOut()) {
+            radio_yes.checked = "checked";
+            radio_no.checked = "";
           } else {
-            checkbox.checked = "";
+            radio_yes.checked = "";
+            radio_no.checked = "checked";
           }
 
-          checkbox.addEventListener("change", function (event) {
+          radio_yes.addEventListener("change", function (event) {
             if (this.checked) {
-              optOut(this.getAttribute("rel"));
-              checkbox.checked = "checked";
+              optOut();
             } else {
-              optIn(this.getAttribute("rel"));
-              checkbox.checked = "";
+              optIn();
             }
           });
         }
