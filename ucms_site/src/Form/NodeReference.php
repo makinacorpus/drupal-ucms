@@ -70,7 +70,7 @@ class NodeReference extends FormBase
 
         $options = [];
         foreach ($sites as $site) {
-            $options[$site->id] = check_plain($site->title);
+            $options[$site->id] = $site->title;
         }
 
         $form_state->setTemporaryValue('node', $node);
