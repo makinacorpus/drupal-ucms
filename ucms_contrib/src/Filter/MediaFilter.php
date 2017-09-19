@@ -212,7 +212,7 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
                 $new->setAttribute('data-media-width', $width);
                 $new->setAttribute('data-media-float', $float);
                 if ($width) {
-                    $new->setAttribute('style', 'width: ' . $width);
+                    $new->setAttribute('style', 'max-width: ' . $width);
                 }
                 if ($float) {
                     $new->setAttribute('class', 'pull-' . $float);
