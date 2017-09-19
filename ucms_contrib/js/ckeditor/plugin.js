@@ -234,12 +234,14 @@
           }
 
           // Apply everything to the wrapper only
+          // For backward compatibility, we also remove the "width" style.
+          this.element.$.parentElement.style.width = '';
           if (this.data.width) {
-            this.element.$.parentElement.style.width = this.data.width;
+            this.element.$.parentElement.style.maxWidth = this.data.width;
             this.element.$.setAttribute('data-media-width', this.data.width);
           } else {
             // We might want to set less aggressive defaults
-            this.element.$.parentElement.style.width = '';
+            this.element.$.parentElement.style.maxWidth = '';
             this.element.$.setAttribute('data-media-width', '');
           }
 
