@@ -9,7 +9,7 @@ namespace DragSources {
     export const DATA_ITEM_BUNDLE = "data-item-bundle";
     export const DATA_ITEM_ID = "data-item-id";
     export const DATA_ITEM_TYPE = "data-item-type";
-    export const SELECTOR_SOURCES = "[data-layout-source=\"1\"]";
+    export const SELECTOR_SOURCES = `[data-layout-source="1"]`;
 
     /**
      * Represents a potential source

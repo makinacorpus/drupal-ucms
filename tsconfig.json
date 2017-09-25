@@ -5,8 +5,7 @@
         "checkJs": false,
         "downlevelIteration": false,
         "inlineSources": true,
-        "mapRoot": "./ucms_site/dist/",
-        "module": "system",
+        "module": "commonjs",
         "noFallthroughCasesInSwitch": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
@@ -14,22 +13,10 @@
         "noUnusedLocals": true,
         "noUnusedParameters": false,
         "outDir": "./ucms_site/dist/",
-        "outFile": "./ucms_site/dist/ucms.js",
         "removeComments": true,
-        "rootDir": "./",
         "sourceMap": true,
-        "sourceRoot": "/ucms_site/dist/",
         "strict": true,
         "strictNullChecks": true,
-        "target": "es5",
-        "typeRoots": [
-            "./node_modules/@types"
-        ]
-    },
-    "files": [
-        "./resources/src/common/init.ts",
-        "./resources/src/common/dragsources.ts",
-        "./resources/src/tree/behavior.ts",
-        "./resources/src/tree/tree.ts"
-    ]
+        "target": "es5"
+    }
 }
