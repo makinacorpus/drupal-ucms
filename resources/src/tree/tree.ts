@@ -26,7 +26,7 @@ namespace UcmsTree {
      */
     function attachAdditionalItemBehaviors(form: Element, context: Element): void {
         // Attach on change behavior for input fields
-        for (let input of <any>context.querySelectorAll("input[type=\"text\"]")) {
+        for (let input of <any>context.querySelectorAll(`input[type="text"]`)) {
             (<HTMLInputElement>input).onchange = () => updateValue(form);
         }
 
@@ -109,7 +109,7 @@ namespace UcmsTree {
      */
     function updateValue(form: Element) {
 
-        const hiddenField = form.querySelector("input[name=\"values\"]");
+        const hiddenField = form.querySelector(`input[name="values"]`);
         if (!hiddenField) {
             throw "Cannot update form state";
         }
