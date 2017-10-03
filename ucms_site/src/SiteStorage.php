@@ -54,7 +54,7 @@ class SiteStorage
         $site = $this
             ->db
             ->query(
-                "SELECT * FROM {ucms_site} WHERE http_host = :host LIMIT 1 OFFSET 0",
+                "SELECT s.*, n.nid AS has_home FROM {ucms_site} s LEFT JOIN {node} n ON n.nid = s.home_nid WHERE http_host = :host LIMIT 1 OFFSET 0",
                 [':host' => $hostname]
             )
             ->fetchObject(Site::class)
@@ -87,7 +87,7 @@ class SiteStorage
         $site = $this
             ->db
             ->query(
-                "SELECT * FROM {ucms_site} WHERE id = :id LIMIT 1 OFFSET 0",
+                "SELECT s.*, n.nid AS has_home FROM {ucms_site} s LEFT JOIN {node} n ON n.nid = s.home_nid WHERE s.id = :id LIMIT 1 OFFSET 0",
                 [':id' => $id]
             )
             ->fetchObject(Site::class)
@@ -127,6 +127,9 @@ class SiteStorage
             ->select('ucms_site', 's')
             ->fields('s')
         ;
+
+        $q->leftJoin('node', 'n', 'n.nid = s.home_nid');
+        $q->addExpression('n.nid', 'has_home');
 
         if ($withAccess) {
             $q->addTag('ucms_site_access');
@@ -190,14 +193,17 @@ class SiteStorage
         $q = $this
             ->db
             ->select('ucms_site', 's')
+            ->fields('s')
         ;
 
         if ($withAccess) {
             $q->addTag('ucms_site_access');
         }
 
+        $q->leftJoin('node', 'n', 'n.nid = s.home_nid');
+        $q->addExpression('n.nid', 'has_home');
+
         $sites = $q
-            ->fields('s')
             ->condition('s.id', $idList)
             ->execute()
             ->fetchAll(\PDO::FETCH_CLASS, Site::class)

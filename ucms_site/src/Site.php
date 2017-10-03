@@ -98,6 +98,11 @@ class Site
     /**
      * @var int
      */
+    public $has_home = 0;
+
+    /**
+     * @var int
+     */
     public $group_id;
 
     public function getId()
@@ -167,6 +172,11 @@ class Site
     public function setHomeNodeId($nodeId)
     {
         $this->home_nid = $nodeId;
+    }
+
+    public function hasHome()
+    {
+        return (bool)$this->has_home;
     }
 
     public function getHomeNodeId()
