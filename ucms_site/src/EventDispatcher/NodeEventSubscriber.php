@@ -236,7 +236,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
             // Site might not have an homepage, because the factory wasn't
             // configured properly before creation, so just set this node
             // as home page.
-            if (empty($site->home_nid)) {
+            if (!$site->hasHome()) {
                 $site->home_nid = $node->nid;
                 $this->manager->getStorage()->save($site, ['home_nid']);
             }
