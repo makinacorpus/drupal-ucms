@@ -23,6 +23,12 @@ use MakinaCorpus\Ucms\Site\SiteState;
 function ucms_site_menu() {
   $items = [];
 
+  $items['welcome'] = [
+    'title'             => "Welcome",
+    'page callback'     => 'ucms_site_webmaster_home',
+    'access callback'   => 'ucms_site_menu_access_manage_current',
+    'type'              => MENU_CALLBACK,
+  ];
   $items['admin/dashboard/site'] = [
     'title'             => "Sites",
     'page callback'     => 'ucms_site_dashboard_site_list_mine',
@@ -190,6 +196,14 @@ function ucms_site_menu() {
     'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\NodeDereferenceFrom', 1, 3],
     'access callback'   => 'ucms_site_menu_access_dereference_from',
     'access arguments'  => [1, 3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['node/%node/set-home'] = [
+    'title'             => "Set as home page",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\NodeSetHome', 1],
+    'access callback'   => 'ucms_site_menu_access_manage_current',
+    'access arguments'  => [],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -473,6 +487,20 @@ function ucms_site_menu_access_overview($site, $account = null) {
 /**
  * Menu helper.
  */
+function ucms_site_menu_access_manage_current($account = null) {
+  $manager = ucms_site_manager();
+  if (!$manager->hasContext()) {
+    return false;
+  }
+  if (!$account) {
+    $account = \Drupal::currentUser();
+  }
+  return $manager->getAccess()->userCanManage($account, $manager->getContext());
+}
+
+/**
+ * Menu helper.
+ */
 function ucms_site_menu_access_manage($site, $account = null) {
   if (!$site instanceof Site) {
     return false;
@@ -595,18 +623,22 @@ function ucms_site_boot() {
   $manager = ucms_site_manager();
 
   if (!empty($_SERVER['HTTP_HOST'])) {
-    if ($site = ucms_site_manager()->getStorage()->findByHostname($_SERVER['HTTP_HOST'])) {
+    if ($site = $manager->getStorage()->findByHostname($_SERVER['HTTP_HOST'])) {
       // @todo find a better way then disabling the init event
       $manager->setContext($site, true);
 
       // This has to be done before drupal_path_initialize() which is run right
       // before the hook_init(), so this will be the one and only alteration
       // being done on hook_boot().
-      if ($site->home_nid) {
+      if ($site->hasHome()) {
         $GLOBALS['conf']['site_frontpage'] = 'node/' . $site->home_nid;
       } else {
         // We do need a fallback, else the dashboard module will hit us.
-        $GLOBALS['conf']['site_frontpage'] = 'node';
+        if ($manager->getAccess()->userIsWebmaster($GLOBALS['user'], $site)) {
+          $GLOBALS['conf']['site_frontpage'] = 'welcome';
+        } else {
+          $GLOBALS['conf']['site_frontpage'] = 'node';
+        }
       }
 
     } else {
@@ -1052,6 +1084,14 @@ function theme_ucms_site_state_transition_form($variables) {
   return theme('table', ['header' => $header, 'rows' => $rows]) . drupal_render_children($form);
 }
 
+/**
+ * Home page for webmasters when a site has no frontpage
+ */
+function ucms_site_webmaster_home() {
+  drupal_set_title(t('Welcome to @site-name', array('@site-name' => variable_get('site_name', 'Drupal'))), PASS_THROUGH);
+
+  return sf_dic_twig_render('module:ucms_site:views/Site/welcome.html.twig', ['site' => ucms_site_manager()->getContext()]);
+}
 
 /**
  * Preprocess dashboard top bar.
