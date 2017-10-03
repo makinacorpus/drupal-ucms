@@ -13,6 +13,8 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
+use MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextEventTrait;
 
 /**
  * All context alterations events into the same subscriber, because it does
@@ -20,6 +22,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class GroupContextSubscriber implements EventSubscriberInterface
 {
+    use GroupContextEventTrait;
+
     /**
      * Orphan content
      */
@@ -29,16 +33,6 @@ class GroupContextSubscriber implements EventSubscriberInterface
      * Visible (not ghost) content
      */
     const REALM_GROUP_SHARED = 'ucms_group_shared';
-
-    /**
-     * @var SiteManager
-     */
-    private $siteManager;
-
-    /**
-     * @var GroupManager
-     */
-    private $groupManager;
 
     /**
      * {@inheritdoc}
@@ -54,22 +48,13 @@ class GroupContextSubscriber implements EventSubscriberInterface
             NodeAccessGrantEvent::EVENT_NODE_ACCESS_GRANT => [
                 ['onNodeAccessGrant', -128],
             ],
+            NodeAccessEvent::EVENT_NODE_ACCESS => [
+                ['onNodeAccess', 48],
+            ],
             SiteEvents::EVENT_INIT => [
                 ['onSiteInit', 0],
             ],
         ];
-    }
-
-    /**
-     * Default constructor
-     *
-     * @param SiteManager $siteManager
-     * @param GroupManager $groupManager
-     */
-    public function __construct(SiteManager $siteManager, GroupManager $groupManager)
-    {
-        $this->siteManager = $siteManager;
-        $this->groupManager = $groupManager;
     }
 
     /**
@@ -189,6 +174,27 @@ class GroupContextSubscriber implements EventSubscriberInterface
                 }
             }
         }
+    }
+
+    /**
+     * Checks node access for content creation
+     */
+    public function onNodeAccess(NodeAccessEvent $event)
+    {
+        $node = $event->getNode();
+
+        if (Access::OP_CREATE === $event->getOperation()) {
+            if (is_string($node)) {
+                if ($group = $this->findMostRelevantGroup()) {
+                    $allowedContentTypes = $group->getAttribute('allowed_content_types');
+                    if ($allowedContentTypes && !in_array($node, $allowedContentTypes)) {
+                        $event->deny();
+                    }
+                }
+            }
+        }
+
+        return $event->ignore();
     }
 
     /**

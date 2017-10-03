@@ -43,7 +43,7 @@ services:
   ucms_group.context_event_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Group\NodeAccess\GroupContextSubscriber
-    arguments: ["@ucms_site.manager", "@ucms_group.manager"]
+    arguments: ["@ucms_group.manager", "@ucms_site.manager", "@current_user"]
     tags: [{ name: event_subscriber }]
   ucms_group.context_pane_subscriber:
     public: true
