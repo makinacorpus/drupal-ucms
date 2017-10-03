@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
+use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -23,6 +23,9 @@ class SiteEventSubscriber implements EventSubscriberInterface
             SiteEvents::EVENT_PRECREATE => [
                 ['onSitePreCreate', 0]
             ],
+            AllowListEvent::EVENT_THEMES => [
+                ['onAllowedThemeList', 0]
+            ],
         ];
     }
 
@@ -38,5 +41,18 @@ class SiteEventSubscriber implements EventSubscriberInterface
         }
 
         $site->group_id = $this->findMostRelevantGroupId();
+    }
+
+    /**
+     * Restrict theme list to what group supports
+     */
+    public function onAllowedThemeList(AllowListEvent $event)
+    {
+        if ($id = $this->findMostRelevantGroupId()) {
+            $group = $this->groupManager->getStorage()->findOne($id);
+            if ($themes = $group->getAttribute('allowed_themes')) {
+                $event->removeNotIn($themes);
+            }
+        }
     }
 }
