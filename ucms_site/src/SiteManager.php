@@ -8,6 +8,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
 
 /**
  * Facade for using both site storage and site access helpers, that will also
@@ -229,6 +230,19 @@ class SiteManager
      */
     public function getAllowedThemes()
     {
+        $event = new AllowListEvent(AllowListEvent::THEMES, variable_get('ucms_site_allowed_themes', []));
+        $this->dispatcher->dispatch(AllowListEvent::EVENT_THEMES, $event);
+
+        return $event->getAllowedItems();
+    }
+
+    /**
+     * Get allowed front-end themes
+     *
+     * @return string[]
+     */
+    public function getDefaultAllowedThemes()
+    {
         return variable_get('ucms_site_allowed_themes', []);
     }
 
@@ -322,7 +336,7 @@ class SiteManager
     }
 
     /**
-     * Get allowed front-end themes along with human name
+     * Get allowed front-end themes along with human names
      *
      * @return string[]
      */
@@ -332,6 +346,27 @@ class SiteManager
         $all = list_themes();
 
         foreach ($this->getAllowedThemes() as $theme) {
+            if (isset($all[$theme])) {
+                $ret[$theme] = $all[$theme]->info['name'];
+            } else {
+                $ret[$theme] = "oups";
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Get allowed front-end themes along with human names
+     *
+     * @return string[]
+     */
+    public function getDefaultAllowedThemesOptionList()
+    {
+        $ret = [];
+        $all = list_themes();
+
+        foreach ($this->getDefaultAllowedThemes() as $theme) {
             if (isset($all[$theme])) {
                 $ret[$theme] = $all[$theme]->info['name'];
             } else {
