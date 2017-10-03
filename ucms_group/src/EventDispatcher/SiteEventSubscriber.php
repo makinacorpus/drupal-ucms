@@ -48,8 +48,7 @@ class SiteEventSubscriber implements EventSubscriberInterface
      */
     public function onAllowedThemeList(AllowListEvent $event)
     {
-        if ($id = $this->findMostRelevantGroupId()) {
-            $group = $this->groupManager->getStorage()->findOne($id);
+        if ($group = $this->findMostRelevantGroup()) {
             if ($themes = $group->getAttribute('allowed_themes')) {
                 $event->removeNotIn($themes);
             }

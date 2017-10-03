@@ -49,12 +49,6 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
     /**
      * Checks node access for content creation
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface|string $node
-     * @param string $op
-     * @param Site $site
-     * @return string
      */
     public function onNodeAccess(NodeAccessEvent $event)
     {
