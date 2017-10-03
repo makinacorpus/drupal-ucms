@@ -4,8 +4,6 @@ namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
-use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -52,6 +50,18 @@ trait GroupContextEventTrait
         $accessList = $this->groupManager->getAccess()->getUserGroups($this->currentUser);
         if ($accessList) {
             return (int)reset($accessList)->getGroupId();
+        }
+    }
+
+    /**
+     * Same as findMostRelevantGroupId() but returning the group object
+     *
+     * @return null|\MakinaCorpus\Ucms\Group\Group
+     */
+    private function findMostRelevantGroup()
+    {
+        if ($id = $this->findMostRelevantGroupId()) {
+            return $this->groupManager->getStorage()->findOne($id);
         }
     }
 
