@@ -188,7 +188,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
                 if ($group = $this->findMostRelevantGroup()) {
                     $allowedContentTypes = $group->getAttribute('allowed_content_types');
                     if ($allowedContentTypes && !in_array($node, $allowedContentTypes)) {
-                        $event->deny();
+                        return $event->deny();
                     }
                 }
             }
