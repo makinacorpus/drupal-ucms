@@ -2,8 +2,7 @@ name = "UCMS - Extranet"
 description = "Provides an additional layer to ucms_site to manage extranet sites."
 core = 7.x
 package = UCMS
-php = 5.5
-
+php = 7.0
 dependencies[] = minidialog
 dependencies[] = sf_dic
 dependencies[] = ucms_site

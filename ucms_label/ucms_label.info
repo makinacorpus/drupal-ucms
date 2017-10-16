@@ -2,9 +2,7 @@ name = "UCMS - Label"
 description = "Provide a labels management interface."
 core = 7.x
 package = UCMS
-php = 5.5
-
+php = 7.0
 usync[] = usync/vocabulary.yml
-
 dependencies[] = sf_dic
 dependencies[] = ucms_site

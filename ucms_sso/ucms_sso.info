@@ -2,5 +2,5 @@ name = "UCMS - SSO"
 description = "Provide pseudo SSO login accross all sites"
 core = 7.x
 package = UCMS
-php = 5.5
+php = 7.0
 dependencies[] = ucms_site

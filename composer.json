@@ -81,6 +81,7 @@
         "makinacorpus/drush-progressbar": "^1.0",
         "makinacorpus/php-acl": "^1.0",
         "makinacorpus/php-bloom": "^2.0.1",
+        "php": ">=7",
         "symfony/security": "3.*"
     },
     "suggests": {

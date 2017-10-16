@@ -2,7 +2,7 @@ name = "UCMS - Search"
 description = "Integration with Elastic Search for back and front search"
 core = 7.x
 package = UCMS
-php = 5.5
+php = 7.0
 dependencies[] = sf_dic
 ; @TODO: check, dependencies added by rle
 dependencies[] = ulink
