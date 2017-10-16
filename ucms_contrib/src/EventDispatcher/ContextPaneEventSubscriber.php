@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Action\ActionProviderInterface;
 use MakinaCorpus\Calista\Action\ActionRegistry;
-use MakinaCorpus\Calista\Controller\PageRenderer;
 use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -22,7 +21,6 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     private $actionProviderRegistry;
     private $container;
     private $contentActionProvider;
-    private $pageRenderer;
     private $siteManager;
     private $typeHandler;
 
@@ -39,15 +37,13 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
         ActionProviderInterface $contentActionProvider,
         ActionRegistry $actionRegistry,
         SiteManager $siteManager,
-        TypeHandler $typeHandler,
-        PageRenderer $pageRenderer
+        TypeHandler $typeHandler
     ) {
         $this->container = $container;
         $this->contentActionProvider = $contentActionProvider;
         $this->actionProviderRegistry = $actionRegistry;
         $this->siteManager = $siteManager;
         $this->typeHandler = $typeHandler;
-        $this->pageRenderer = $pageRenderer;
     }
 
     /**
@@ -69,43 +65,6 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
     {
         $contextPane = $event->getContextPane();
         $router_item = menu_get_item();
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-
-        // Add the shopping cart
-        if (user_access('use favorites')) {
-            $contextPane
-                // User cart
-                ->addTab('cart', $this->t("Cart"), 'shopping-cart')
-                ->add(
-                    $this->pageRenderer->renderPage(
-                        'ucms_cart',
-                        $request,
-                        ['base_query' => ['cart_user_id' => $GLOBALS['user']->uid /* @fixme */]]
-                    ),
-                    'cart'
-                )
-                // All content
-                ->addTab('cart_content', $this->t("All content"), 'file')
-                ->add(
-                    $this->pageRenderer->renderPage(
-                        'ucms_cart',
-                        $request,
-                        ['base_query' => ['type' => $this->typeHandler->getContentTypes()]]
-                    ),
-                    'cart_content'
-                )
-                // All media
-                ->addTab('cart_media', $this->t("All medias"), 'picture-o')
-                ->add(
-                    $this->pageRenderer->renderPage(
-                        'ucms_cart',
-                        $request,
-                        ['base_query' => ['type' => $this->typeHandler->getMediaTypes()]]
-                    ),
-                    'cart_media'
-                )
-            ;
-        }
 
         // Add node creation link on dashboard
         // FIXME kill it with fire!

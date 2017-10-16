@@ -6,52 +6,6 @@
 function ucms_contrib_schema() {
   $schema = [];
 
-  $schema['ucms_contrib_cart'] = [
-    'description' => 'Cart',
-    'fields' => [
-      'nid' => [
-        'description' => "Node identifier",
-        'type'        => 'int',
-        'unsigned'    => true,
-        'not null'    => true,
-        'default'     => 0,
-      ],
-      'uid' => [
-        'description' => "Account owner",
-        'type'        => 'int',
-        'unsigned'    => true,
-        'not null'    => true,
-        'default'     => 0,
-      ],
-      'ts_added' => [
-        'decription'  => "Creation date",
-        'mysql_type'  => 'datetime',
-        'pgsql_type'  => 'timestamp',
-        'type'        => 'varchar',
-        'length'      => 16,
-        'not null'    => true,
-      ],
-      'weight' => [
-        'decription'  => "User set weight (unused)",
-        'type'        => 'int',
-        'unsigned'    => false,
-        'not null'    => true,
-        'default'     => 0,
-      ],
-    ],
-    'foreign keys' => [
-      'uid' => [
-        'table'   => 'users',
-        'columns' => ['uid' => 'uid'],
-      ],
-      'nid' => [
-        'table'   => 'node',
-        'columns' => ['nid' => 'nid'],
-      ],
-    ],
-    'primary key' => ['uid', 'nid'],
-  ];
-
   $schema['ucms_node_reference'] = [
     'description' => 'Internal table that tracks node references',
     'fields' => [
@@ -166,15 +120,6 @@ function ucms_contrib_install() {
 }
 
 /**
- * Adds the {ucms_contrib_cart} table.
- */
-function ucms_contrib_update_7001() {
-  if (!db_table_exists('ucms_contrib_cart')) {
-    db_create_table('ucms_contrib_cart', drupal_get_schema_unprocessed('ucms_contrib', 'ucms_contrib_cart'));
-  }
-}
-
-/**
  * Replace tab identifier in variable name
  */
 function ucms_contrib_update_7002() {
@@ -200,43 +145,10 @@ function ucms_contrib_update_7004() {
 }
 
 /**
- * Adds the {ucms_contrib_cart}.ts_added column.
- */
-function ucms_contrib_update_7005() {
-  if (!db_field_exists('ucms_contrib_cart', 'ts_added')) {
-    db_add_field('ucms_contrib_cart', 'ts_added', [
-      'decription'  => "Creation date",
-      'mysql_type'  => 'datetime',
-      'pgsql_type'  => 'timestamp',
-      'type'        => 'varchar',
-      'length'      => 16,
-      'not null'    => true,
-      // We need to set a default value, so now it is
-      'default'     => (new \DateTime())->format('Y-m-d H:i:s'),
-    ]);
-  }
-}
-
-/**
  * Configures calista.
  */
 function ucms_contrib_update_7006() {
   ucms_contrib_install_calista();
-}
-
-/**
- * Adds the {ucms_contrib_cart}.weight column.
- */
-function ucms_contrib_update_7007() {
-  if (!db_field_exists('ucms_contrib_cart', 'weight')) {
-    db_add_field('ucms_contrib_cart', 'weight', [
-      'decription'  => "User set weight (unused)",
-      'type'        => 'int',
-      'unsigned'    => false,
-      'not null'    => true,
-      'default'     => 0,
-    ]);
-  }
 }
 
 /**

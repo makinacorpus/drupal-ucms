@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Controller;
+namespace MakinaCorpus\Ucms\Cart\Controller;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -8,7 +8,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Calista\Controller\PageControllerTrait;
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
+use MakinaCorpus\Ucms\Cart\Cart\CartStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,7 +29,7 @@ class CartController extends Controller
      */
     private function getCartStorage()
     {
-        return $this->get('ucms_contrib.cart');
+        return $this->get('ucms_cart.cart');
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Cart;
+namespace MakinaCorpus\Ucms\Cart\Cart;
 
 use MakinaCorpus\Ucms\Site\Access;
 
@@ -31,7 +31,7 @@ final class CartStorage implements CartStorageInterface
     {
         $exists = (bool)$this
             ->db
-            ->query("SELECT 1 FROM {ucms_contrib_cart} WHERE nid = :nid AND uid = :uid", [
+            ->query("SELECT 1 FROM {ucms_cart} WHERE nid = :nid AND uid = :uid", [
                 ':nid' => $nid,
                 ':uid' => $uid,
             ])
@@ -44,7 +44,7 @@ final class CartStorage implements CartStorageInterface
 
         $this
             ->db
-            ->merge('ucms_contrib_cart')
+            ->merge('ucms_cart')
             ->key([
                 'nid'       => $nid,
                 'uid'       => $uid,
@@ -64,7 +64,7 @@ final class CartStorage implements CartStorageInterface
         return (bool)$this
             ->db
             ->query(
-                "SELECT 1 FROM {ucms_contrib_cart} WHERE nid = ? AND uid = ?",
+                "SELECT 1 FROM {ucms_cart} WHERE nid = ? AND uid = ?",
                 [$nid, $uid]
             )
             ->fetchField()
@@ -78,7 +78,7 @@ final class CartStorage implements CartStorageInterface
     {
         $this
             ->db
-            ->delete('ucms_contrib_cart')
+            ->delete('ucms_cart')
             ->condition('nid', $nid)
             ->condition('uid', $uid)
             ->execute()
@@ -92,7 +92,7 @@ final class CartStorage implements CartStorageInterface
     {
         $q = $this
             ->db
-            ->select('ucms_contrib_cart', 'c')
+            ->select('ucms_cart', 'c')
             ->condition('c.uid', $uid)
         ;
 

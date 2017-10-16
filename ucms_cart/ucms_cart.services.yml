@@ -1,0 +1,46 @@
+services:
+
+  ucms_cart.cart.default:
+    public: false
+    class: MakinaCorpus\Ucms\Cart\Cart\CartStorage
+    arguments: ["@database"]
+
+  ucms_cart.cart.bloom:
+    public: false
+    class: MakinaCorpus\Ucms\Cart\Cart\BloomCartStorage
+    arguments: ["@ucms_cart.cart.default", "@cache.default"]
+
+  ucms_cart.cart:
+    alias: ucms_cart.cart.bloom
+    class: MakinaCorpus\Ucms\Cart\Cart\CartStorage
+    tags: [{name: calista.datasource}]
+
+  ucms_cart.cart.preloader:
+    public: false
+    class: MakinaCorpus\Ucms\Cart\Cart\LoaderCartStorageProxy
+    decorates: ucms_cart.cart
+    arguments: ["@entity.manager", "@ucms_cart.cart.preloader.inner"]
+
+  ucms_cart.datasource.cart:
+    public: true
+    class: MakinaCorpus\Ucms\Cart\Datasource\CartDatasource
+    arguments: ["@database", "@entity.manager"]
+    tags: [{name: calista.datasource}]
+
+  ucms_cart.datasource.content:
+    public: true
+    class: MakinaCorpus\Ucms\Cart\Datasource\NodeDatasource
+    arguments: ["@database", "@entity.manager"]
+    tags: [{name: calista.datasource}]
+
+  ucms_cart.node_action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\Cart\Action\NodeActionProvider
+    arguments: ["@current_user", "@ucms_cart.cart"]
+    tags: [{name: calista.action_provider}]
+
+  ucms_cart.context_pane_event_subscriber:
+    public: true
+    class: MakinaCorpus\Ucms\Cart\EventDispatcher\ContextPaneEventSubscriber
+    arguments: ["@ucms_contrib.type_handler", "@service_container", "@calista.page_renderer"]
+    tags: [{ name: event_subscriber }]

@@ -7,7 +7,6 @@
 use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Contrib\Admin\NodeTabsForm;
-use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\Controller\NodeController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite;
@@ -230,20 +229,6 @@ function ucms_contrib_menu() {
     'type'              => MENU_NORMAL_ITEM,
   ];
 
-  // Cart operations.
-  $items['admin/cart/%node/add'] = [
-    'title'             => "Content",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [CartController::class . '::add', 2],
-    'access arguments'  => ['use favorites'],
-  ];
-  $items['admin/cart/%node/remove'] = [
-    'title'             => "Content",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [CartController::class . '::remove', 2],
-    'access arguments'  => ['use favorites'],
-  ];
-
   return $items;
 }
 
@@ -455,25 +440,6 @@ function ucms_contrib_form_node_form_submit_publish($form, &$form_state) {
  */
 function ucms_contrib_node_submit($node, $form, &$form_state) {
   $node->is_clonable = ((bool) $form_state['values']['locked']) ? 0 : 1;
-}
-
-/**
- * Render one's favorite cart.
- *
- * @return []
- *   drupal_render() friendly structure.
- */
-function ucms_contrib_favorite_render() {
-
-  $controller = new CartController();
-  $controller->setContainer(\Drupal::getContainer());
-
-  return $controller
-    ->renderAction(
-      \Drupal::requestStack()->getCurrentRequest(),
-      \Drupal::currentUser()->id()
-    )
-  ;
 }
 
 /**

@@ -16,34 +16,6 @@ parameters:
 
 services:
 
-  # Site storage responsible for loading and updating site data
-  ucms_contrib.cart.default:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
-    arguments: ["@database"]
-  ucms_contrib.cart.bloom:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\BloomCartStorage
-    arguments: ["@ucms_contrib.cart.default", "@cache.default"]
-  ucms_contrib.cart:
-    alias: ucms_contrib.cart.bloom
-    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
-    tags: [{name: calista.datasource}]
-
-  # Preload cart item nodes upon cart list operation
-  ucms_contrib.cart.preloader:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\LoaderCartStorageProxy
-    decorates: ucms_contrib.cart
-    arguments: ["@entity.manager", "@ucms_contrib.cart.preloader.inner"]
-
-  # Cart datasource
-  ucms_contrib.datasource.cart:
-    public: true
-    class: MakinaCorpus\Ucms\Contrib\Datasource\CartDatasource
-    arguments: ["@database", "@entity.manager", "@ucms_site.manager"]
-    tags: [{name: calista.datasource}]
-
   # Node datasource
   ucms_contrib.datasource.node:
     public: true
@@ -55,7 +27,7 @@ services:
   ucms_contrib.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
-    arguments: ["@ucms_site.node_access_helper", "@ucms_site.manager", "@current_user", "@ucms_contrib.cart"]
+    arguments: ["@ucms_site.node_access_helper", "@ucms_site.manager", "@current_user"]
     tags: [{name: calista.action_provider}]
   ucms_contrib.content_action_provider:
     public: false
@@ -76,7 +48,6 @@ services:
       - "@calista.action_provider_registry"
       - "@ucms_site.manager"
       - "@ucms_contrib.type_handler"
-      - "@calista.page_renderer"
     tags: [{ name: event_subscriber }]
 
   # Portlets

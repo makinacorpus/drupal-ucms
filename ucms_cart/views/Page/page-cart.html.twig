@@ -1,7 +1,11 @@
 {% extends '@calista/page/page.html.twig' %}
 
 {% block item %}
-  {% set node = item.node %}
+  {% if item.node %}
+    {% set node = item.node %}
+  {% else %}
+    {% set node = item %}
+  {% endif %}
   <div class="ucms-cart-item" data-item-type="node" data-item-bundle="{{ node.bundle }}" data-item-id="{{ node.nid }}">
     {{ node_view(node, constant('CALISTA_VIEW_MODE_FAVORITE')) }}
   </div>
@@ -22,15 +26,13 @@
 
 {% block page_layout %}
   {# @todo removed all filters and displays, will be restored later #}
-  <div class="ucms-contrib-cart">
-    <div class="ucms-cart">
-      <header>
-        <h2 class="sr-only">{{ "Your cart"|t }}</h2>
-        {{ block('cart_header') }}
-      </header>
-      <div data-page-block="item_list">
-        {{ block('item_list') }}
-      </div>
+  <div class="ucms-cart">
+    <header>
+      <h2 class="sr-only">{{ "Your cart"|t }}</h2>
+      {{ block('cart_header') }}
+    </header>
+    <div data-page-block="item_list">
+      {{ block('item_list') }}
     </div>
   </div>
 {% endblock %}

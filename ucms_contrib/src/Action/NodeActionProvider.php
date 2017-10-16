@@ -6,7 +6,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Calista\Action\Action;
-use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Site\NodeAccessService;
@@ -29,17 +28,11 @@ class NodeActionProvider extends AbstractActionProvider
      */
     private $account;
 
-    /**
-     * @var CartStorageInterface
-     */
-    private $cart;
-
-    public function __construct(NodeAccessService $access, SiteManager $siteManager, AccountInterface $account, CartStorageInterface $cart)
+    public function __construct(NodeAccessService $access, SiteManager $siteManager, AccountInterface $account)
     {
         $this->access = $access;
         $this->siteManager = $siteManager;
         $this->account = $account;
-        $this->cart = $cart;
     }
 
     /**
@@ -107,20 +100,6 @@ class NodeActionProvider extends AbstractActionProvider
                 'priority'  => -30,
                 'redirect'  => true,
                 'group'     => 'edit',
-            ]);
-        }
-
-        if ($this->isGranted('use favorites')) { // @todo constant or helper ?
-            $inCart = $this->cart->has($this->account->id(), $item->id());
-            $ret[] = Action::create([
-                'title'     => $inCart ? $this->t("Remove from cart") : $this->t("Add to cart"),
-                'uri'       => 'admin/cart/' . $item->id() . ($inCart ? '/remove' : '/add') . '/nojs',
-                // 'options'   => 'ajax',
-                'icon'      => 'shopping-cart',
-                'primary'   => false,
-                'priority'  => -25,
-                'redirect'  => true,
-                'group'     => 'mark',
             ]);
         }
 

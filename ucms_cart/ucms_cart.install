@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_cart_schema() {
+  $schema = [];
+
+  $schema['ucms_cart'] = [
+    'description' => 'Cart',
+    'fields' => [
+      'nid' => [
+        'description' => "Node identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+      'uid' => [
+        'description' => "Account owner",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+      'ts_added' => [
+        'decription'  => "Creation date",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => true,
+      ],
+      'weight' => [
+        'decription'  => "User set weight (unused)",
+        'type'        => 'int',
+        'unsigned'    => false,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+    ],
+    'foreign keys' => [
+      'uid' => [
+        'table'   => 'users',
+        'columns' => ['uid' => 'uid'],
+      ],
+      'nid' => [
+        'table'   => 'node',
+        'columns' => ['nid' => 'nid'],
+      ],
+    ],
+    'primary key' => ['uid', 'nid'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function ucms_cart_install() {
+  db_constraint_fix('ucms_cart');
+
+  // Migration from ucms_contrib previous version.
+  if (db_table_exists('ucms_contrib_cart')) {
+    db_query("INSERT INTO {ucms_cart} SELECT * FROM {ucms_contrib_cart}");
+    db_drop_table('ucms_contrib_cart');
+  }
+}

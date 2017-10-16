@@ -103,14 +103,6 @@ msgstr "Révisions"
 msgid "Transfer ownership"
 msgstr "Transférer la propriété"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:107
-msgid "Add to cart"
-msgstr "Ajouter au panier"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:107
-msgid "Remove from cart"
-msgstr "Retirer du panier"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:119
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:201
 msgid "Add to global contents"
@@ -203,14 +195,6 @@ msgstr "Les contenus éditoriaux ne peuvent pas être des composants."
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteStateTransitionForm.php:103
 msgid "The configuration options have been saved."
 msgstr "Les options de configuration ont été enregistrées"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Controller/CartController.php:57
-msgid "%title is already a favorite"
-msgstr "%title est déjà un favori"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:70
-msgid "Cart"
-msgstr "Panier"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:79
 msgid "Go to dashboard"
@@ -599,10 +583,6 @@ msgstr "titre"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:163
 msgid "flag"
 msgstr "marquage"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms-contrib-cart.html.twig:4
-msgid "Your cart"
-msgstr "Votre panier"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.field.inc:17
 msgid "Clone aware (first item only)"

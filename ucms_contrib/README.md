@@ -4,16 +4,10 @@ This brings the following things:
 
  * media and editorial content handling;
  * administrative UI for content and media using µDashboard;
- * user favorites cart;
  * editorial and media context panes;
  * CKEditor media integration.
 
 # Status
-
-## Todolist
-
- * [_] performance: lazy load carts with AJAX in pane when user open it
- * [_] reliability: allow to fallback content admin on database when Elastic search is not available
 
 ## Pending
 

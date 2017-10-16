@@ -2,27 +2,6 @@
 calista:
   pages:
 
-    # Cart page
-    ucms_cart:
-      id: ucms_cart
-      datasource: ucms_contrib.datasource.cart
-      input:
-        limit_default: 16
-        pager_enable: false
-        search_enable: true
-        search_param: cs
-        sort_default_field: h.timestamp
-        sort_default_order: desc
-      view:
-        enabled_filters: {}
-        properties: {}
-        show_filters: false
-        show_search: true
-        show_sort: true
-        templates:
-          cart: module:ucms_contrib:views/Page/page-cart.html.twig
-        view_type: twig_page
-
     # Content administration page
     ucms_contrib.content_admin.content:
       datasource: ucms_contrib.datasource.node

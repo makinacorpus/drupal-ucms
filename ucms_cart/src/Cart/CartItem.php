@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Cart;
+namespace MakinaCorpus\Ucms\Cart\Cart;
 
 use Drupal\node\NodeInterface;
 

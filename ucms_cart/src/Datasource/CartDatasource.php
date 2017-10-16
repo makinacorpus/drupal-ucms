@@ -1,24 +1,16 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib\Datasource;
+namespace MakinaCorpus\Ucms\Cart\Datasource;
 
 use MakinaCorpus\Calista\Datasource\Filter;
 use MakinaCorpus\Calista\Datasource\Query;
-use MakinaCorpus\Ucms\Contrib\Cart\CartItem;
+use MakinaCorpus\Ucms\Cart\Cart\CartItem;
 
 /**
  * Datasource for carts.
  */
 class CartDatasource extends NodeDatasource
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function isSiteContextDependent()
-    {
-        return false;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -79,7 +71,7 @@ class CartDatasource extends NodeDatasource
         if ($query->has('cart_user_id')) {
             $userId = $query->get('cart_user_id');
             $select->condition('c.uid', $userId);
-            $select->join('ucms_contrib_cart', 'c', "c.nid = n.nid");
+            $select->join('ucms_cart', 'c', "c.nid = n.nid");
         } else {
             // Avoid errors if people use the filter accidentally
             return $this->createEmptyResult();
@@ -97,7 +89,7 @@ class CartDatasource extends NodeDatasource
 
         // Preload and set nodes at once
         $nodes = $this->preloadDependencies($nodeIdList);
-        /** @var \MakinaCorpus\Ucms\Contrib\Cart\CartItem $item */
+        /** @var \MakinaCorpus\Ucms\Cart\Cart\CartItem $item */
         foreach ($ret as $id => $item) {
             $nodeId = $item->getNodeId();
             if (!isset($nodes[$nodeId])) {

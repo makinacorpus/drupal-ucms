@@ -1,0 +1,43 @@
+# Default node admin pages
+calista:
+  pages:
+
+    # Cart page
+    ucms_cart:
+      id: ucms_cart
+      datasource: ucms_cart.datasource.cart
+      input:
+        limit_default: 16
+        pager_enable: false
+        search_enable: true
+        search_param: cs
+        sort_default_field: h.timestamp
+        sort_default_order: desc
+      view:
+        enabled_filters: {}
+        properties: {}
+        show_filters: false
+        show_search: true
+        show_sort: true
+        templates:
+          cart: module:ucms_cart:views/Page/page-cart.html.twig
+        view_type: twig_page
+
+    # Content cart
+    ucms_cart.content:
+      datasource: ucms_cart.datasource.content
+      input:
+        limit_default: 16
+        pager_enable: false
+        search_enable: true
+        search_param: s
+        sort_default_field: n.changed
+      view:
+        enabled_filters: {}
+        properties: {}
+        show_filters: false
+        show_search: true
+        show_sort: true
+        templates:
+          cart: module:ucms_cart:views/Page/page-cart.html.twig
+        view_type: twig_page

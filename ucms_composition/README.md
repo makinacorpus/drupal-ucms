@@ -41,7 +41,6 @@ to you:
 ## Todolist
 
  * [_] phplayout: allow hidding page content completly
- * [_] phplayout: convert JavaScript to TypeScript
  * [_] phplayout: preferred style for region
  * [_] ucms: handle homepage (transveral regions) migration to layouts not attached to node
  * [_] ucms: handle homepage-only region (creation, load on every page)
@@ -49,15 +48,16 @@ to you:
  * [_] ucms: region edit access
  * [_] ucms: unit test the event subscriber
  * [_] ucms: widgets item types
+ * [x] phplayout: convert JavaScript to TypeScript
 
 ## Postponed
 
  * [_] phplayout: "set content here" cannot be ajaxified (needs in page modifications)
  * [_] phplayout: add dragula drag'n'drop for moving horizontal containers
  * [_] phplayout: add options form for other than column containers
- * [_] phplayout: ajaxify all action links
- * [_] ucms: drag'n'drop from cart
  * [_] ucms: fix ckeditor plugin to use dragula
+ * [x] phplayout: ajaxify all action links
+ * [x] ucms: drag'n'drop from cart
 
 ## Done
 

@@ -32,6 +32,7 @@
     ],
     "autoload": {
         "exclude-from-classmap": [
+            "/ucms_cart/src/Tests/",
             "/ucms_composition/src/Tests/",
             "/ucms_contrib/src/Tests/",
             "/ucms_group/src/Tests/",
@@ -42,6 +43,7 @@
             "/ucms_widget/src/Tests/"
         ],
         "psr-4": {
+            "MakinaCorpus\\Ucms\\Cart\\": "ucms_cart/src",
             "MakinaCorpus\\Ucms\\Composition\\": "ucms_composition/src",
             "MakinaCorpus\\Ucms\\ContentList\\": "ucms_list/src",
             "MakinaCorpus\\Ucms\\Contrib\\": "ucms_contrib/src",

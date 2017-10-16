@@ -1,0 +1,10 @@
+name = "UCMS - Cart"
+description = "Allows user to keep favorite content, and provide a contet search sidebar"
+core = 7.x
+package = UCMS
+php = 7.0
+dependencies[] = calista
+dependencies[] = dragula
+dependencies[] = plusql
+dependencies[] = ucms_contrib
+dependencies[] = ucms_site
