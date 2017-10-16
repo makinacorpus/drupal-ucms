@@ -701,7 +701,7 @@ function ucms_site_boot() {
   $hostname = $request->server->get('HTTP_HOST');
 
   if ($hostname) {
-    if ($site = $manager->getStorage()->findByHostname($manager)) {
+    if ($site = $manager->getStorage()->findByHostname($hostname)) {
       // @todo find a better way then disabling the init event
       $manager->setContext($site, $request, true);
 
