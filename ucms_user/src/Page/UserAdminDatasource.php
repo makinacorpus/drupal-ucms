@@ -105,6 +105,7 @@ class UserAdminDatasource extends AbstractDatasource
         $q = $this
             ->db
             ->select('users', 'u')
+            ->addTag('ucms_user_access')
             ->fields('u', ['uid'])
         ;
 

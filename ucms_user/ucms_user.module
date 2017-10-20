@@ -5,11 +5,9 @@
  */
 
 use Drupal\Core\Session\AccountInterface;
-
-use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\User\Controller\AccountController;
 use MakinaCorpus\Ucms\User\UserAccess;
+use MakinaCorpus\Ucms\User\Controller\AccountController;
+use MakinaCorpus\Ucms\User\EventDispatcher\UserAccessEvent;
 
 
 define('UCMS_USER_PWD_MIN_LENGTH', 8);
@@ -24,7 +22,7 @@ function ucms_user_menu() {
   $items['admin/dashboard/user'] = [
     'title'             => 'Users',
     'page callback'     => 'ucms_user_dashboard_user_list',
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access_admin',
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_user.dashboard.inc',
   ];
@@ -33,7 +31,7 @@ function ucms_user_menu() {
     'title'             => 'Create user',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserEdit'],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access_admin',
     'type'              => MENU_NORMAL_ITEM,
   ];
 
@@ -42,7 +40,8 @@ function ucms_user_menu() {
     'title arguments'   => [3],
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [AccountController::class . '::viewInfoAction', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3, 'view'],
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_user.dashboard.inc',
   ];
@@ -73,7 +72,8 @@ function ucms_user_menu() {
     'title'             => 'Edit',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserEdit', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3, 'update'],
     'type'              => MENU_LOCAL_TASK,
     'weight'            => -10
   ];
@@ -82,7 +82,8 @@ function ucms_user_menu() {
     'title'             => 'Reset password',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserResetPassword', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3, 'update'],
     'type'              => MENU_LOCAL_TASK,
   ];
 
@@ -90,7 +91,8 @@ function ucms_user_menu() {
     'title'             => 'Delete',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserDelete', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3, 'update'],
     'type'              => MENU_LOCAL_TASK,
     'weight'            => 100,
   ];
@@ -99,7 +101,8 @@ function ucms_user_menu() {
     'title'             => 'Enable the user',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserEnable', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3, 'update'],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -107,7 +110,8 @@ function ucms_user_menu() {
     'title'             => 'Disable the user',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserDisable', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3, 'update'],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -115,7 +119,8 @@ function ucms_user_menu() {
     'title'             => 'Change email',
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\User\Form\UserChangeEmail', 3],
-    'access arguments'  => [UserAccess::PERM_MANAGE_ALL],
+    'access callback'   => 'ucms_user_access',
+    'access arguments'  => [3, 'update'],
     'type'              => MENU_CALLBACK,
   ];
 
@@ -130,6 +135,49 @@ function ucms_user_menu() {
   return $items;
 }
 
+/**
+ * @todo reimplement me using ACL in master
+ */
+function ucms_user_access($target, $permission) {
+  if (!$target instanceof AccountInterface) {
+    return false;
+  }
+  if (!ucms_user_access_admin()) {
+    return false;
+  }
+  $account = \Drupal::currentUser();
+
+  // @todo implement me properly, this is very ugly
+  // @todo raise an event for group module to intercept
+  switch ($permission) {
+
+    case 'delete':
+      if ($target->hasPermission(UserAccess::PERM_USER_GOD) && !$account->hasPermission(UserAccess::PERM_USER_GOD)) {
+        return false;
+      }
+      break;
+
+    case 'update':
+      if ($target->hasPermission(UserAccess::PERM_USER_GOD) && !$account->hasPermission(UserAccess::PERM_USER_GOD)) {
+        return false;
+      }
+      break;
+  }
+
+  /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+  $dispatcher = \Drupal::service('event_dispatcher');
+  $event = new UserAccessEvent($target, $account, $permission);
+  $dispatcher->dispatch(UserAccessEvent::EVENT_NAME, $event);
+
+  return $event->isGranted();
+}
+
+/**
+ * @todo reimplement me using ACL in master
+ */
+function ucms_user_access_admin() {
+  return user_access(UserAccess::PERM_MANAGE_ALL) || user_access(UserAccess::PERM_USER_GOD);
+}
 
 /**
  * Implements hook_menu_alter().
@@ -155,7 +203,10 @@ function ucms_user_menu_item_title($user) {
 function ucms_user_permission() {
   return [
     UserAccess::PERM_MANAGE_ALL => [
-      'title' => t("Manage all users"),
+      'title' => t("Manage all users in allowed contexts such as groups"),
+    ],
+    UserAccess::PERM_USER_GOD => [
+      'title' => t("Manage all users, no matter the context"),
     ],
   ];
 }

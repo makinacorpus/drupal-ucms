@@ -56,7 +56,7 @@ class UserActionProvider implements ActionProviderInterface
      */
     public function getActions($item)
     {
-        if (!$this->currentUser->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
+        if (!$this->currentUser->hasPermission(UserAccess::PERM_MANAGE_ALL) && !$this->currentUser->hasPermission(UserAccess::PERM_USER_GOD)) {
             return [];
         }
 
@@ -67,23 +67,28 @@ class UserActionProvider implements ActionProviderInterface
 
         $actions[] = new Action($this->t("View"), 'admin/dashboard/user/' . $userId, null, 'eye-open', 1, true, true);
 
-        if (!$userStatus) {
-            $action_title = $this->t("Enable");
-            $action_path  = 'admin/dashboard/user/' . $userId . '/enable';
-            $action_icon  = 'ok-circle';
-        } else {
-            $action_title = $this->t("Disable");
-            $action_path  = 'admin/dashboard/user/' . $userId . '/disable';
-            $action_icon  = 'ban-circle';
+        if (ucms_user_access($item, 'update')) {
+            if (!$userStatus) {
+                $action_title = $this->t("Enable");
+                $action_path  = 'admin/dashboard/user/' . $userId . '/enable';
+                $action_icon  = 'ok-circle';
+            } else {
+                $action_title = $this->t("Disable");
+                $action_path  = 'admin/dashboard/user/' . $userId . '/disable';
+                $action_icon  = 'ban-circle';
+            }
+
+            $action_disabled  = ($userId === $this->currentUser->id());
+            $actions[] = new Action($action_title, $action_path, 'dialog', $action_icon, 2, false, true, $action_disabled);
+
+            $actions[] = new Action($this->t("Edit"), 'admin/dashboard/user/' . $userId . '/edit', null, 'pencil', 3, false, true);
+            $actions[] = new Action($this->t("Change email"), 'admin/dashboard/user/' . $userId . '/change-email', 'dialog', 'pencil', 4, false, true);
+            $actions[] = new Action($this->t("Reset password"), 'admin/dashboard/user/' . $userId . '/reset-password', 'dialog', 'refresh', 5, false, true);
         }
 
-        $action_disabled  = ($userId === $this->currentUser->id());
-        $actions[] = new Action($action_title, $action_path, 'dialog', $action_icon, 2, false, true, $action_disabled);
-
-        $actions[] = new Action($this->t("Edit"), 'admin/dashboard/user/' . $userId . '/edit', null, 'pencil', 3, false, true);
-        $actions[] = new Action($this->t("Change email"), 'admin/dashboard/user/' . $userId . '/change-email', 'dialog', 'pencil', 4, false, true);
-        $actions[] = new Action($this->t("Reset password"), 'admin/dashboard/user/' . $userId . '/reset-password', 'dialog', 'refresh', 5, false, true);
-        $actions[] = new Action($this->t("Delete"), 'admin/dashboard/user/' . $userId . '/delete', 'dialog', 'trash', 6, false, true);
+        if (ucms_user_access($item, 'delete')) {
+            $actions[] = new Action($this->t("Delete"), 'admin/dashboard/user/' . $userId . '/delete', 'dialog', 'trash', 6, false, true);
+        }
 
         return $actions;
     }
