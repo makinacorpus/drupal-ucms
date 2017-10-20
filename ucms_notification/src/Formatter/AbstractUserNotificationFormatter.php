@@ -31,7 +31,7 @@ abstract class AbstractUserNotificationFormatter extends AbstractNotificationFor
     public function getURI(NotificationInterface $interface)
     {
         $userIdList = $interface->getResourceIdList();
-        if (count($userIdList) === 1 && $this->account->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
+        if (count($userIdList) === 1 && ($this->account->hasPermission(UserAccess::PERM_MANAGE_ALL) || $this->account->hasPermission(UserAccess::PERM_USER_GOD))) {
             return 'admin/dashboard/user/' . reset($userIdList);
         }
     }

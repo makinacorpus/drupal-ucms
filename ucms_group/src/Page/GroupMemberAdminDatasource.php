@@ -67,6 +67,7 @@ class GroupMemberAdminDatasource extends AbstractDatasource
             ->select('ucms_group_user', 'gu')
             ->fields('gu', ['group_id', 'user_id'])
             ->fields('u', ['name', 'mail', 'status'])
+            ->addTag('ucms_user_access')
         ;
 
         $q->join('users', 'u', "u.uid = gu.user_id");

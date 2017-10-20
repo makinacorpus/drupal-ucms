@@ -8,6 +8,8 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAccessEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MakinaCorpus\Ucms\User\EventDispatcher\UserAccessEvent;
+use MakinaCorpus\Ucms\User\UserAccess;
 
 /**
  * Add group functionnality on sites
@@ -31,7 +33,35 @@ class SiteEventSubscriber implements EventSubscriberInterface
             AllowListEvent::EVENT_THEMES => [
                 ['onAllowedThemeList', 0]
             ],
+            UserAccessEvent::EVENT_NAME => [
+                ['onUserAccess', 0]
+            ],
         ];
+    }
+
+    /**
+     * Forbid user access if not in the same group(s)
+     */
+    public function onUserAccess(UserAccessEvent $event)
+    {
+        $target = $event->getTarget();
+        $account = $event->getUserAccount();
+
+        if ($account->hasPermission(UserAccess::PERM_USER_GOD)) {
+            return $event->allow();
+        }
+
+        // This is unefficient, I am sorry...
+        $accessManager = $this->groupManager->getAccess();
+        foreach ($accessManager->getUserGroups($account) as $group) {
+            foreach ($accessManager->getUserGroups($target) as $targetGroup) {
+                if ($group->getGroupId() == $targetGroup->getGroupId()) {
+                    return $event->allow();
+                }
+            }
+        }
+
+        return $event->deny();
     }
 
     /**

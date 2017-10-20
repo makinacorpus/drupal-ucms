@@ -12,6 +12,7 @@ use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupAccess;
 use MakinaCorpus\Ucms\Group\Controller\AutocompleteController;
 use MakinaCorpus\Ucms\Site\Access as SiteAccess;
+use MakinaCorpus\Ucms\User\UserAccess;
 
 /**
  * Implements hook_permission().
@@ -236,6 +237,67 @@ function ucms_group_form_node_form_alter(&$form, &$form_state) {
       '#description'    => t("If you check this option, this content will be invisible outside of this group, except in sites it's being displayed into."),
     ];
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Only allow users to see other users from group they're in.
+ */
+function ucms_group_query_ucms_user_access_alter(QueryAlterableInterface $query) {
+
+  if (!$query instanceof SelectQueryInterface) {
+    return;
+  }
+  if (drupal_is_cli()) {
+    // See comment in ucms_group_query_ucms_site_access_alter().
+    return;
+  }
+
+  /** @var \Drupal\Core\Session\AccountInterface $account */
+  if (!$account = $query->getMetaData('account')) {
+    $account = \Drupal::currentUser();
+  }
+
+    // God mode.
+  if ($account->hasPermission(UserAccess::PERM_USER_GOD)) {
+    return;
+  }
+
+  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
+  $groupManager = \Drupal::service('ucms_group.manager');
+  $accessList   = $groupManager->getAccess()->getUserGroups($account);
+
+  // Normal user rights coming in!
+  if (!$accessList) {
+    $query->condition("1 = 0");
+    return;
+  }
+
+  $userAlias = null;
+
+  // If no base table is specified explicitly, search for one.
+  foreach ($query->getTables() as $alias => $table_info) {
+    if (!($table_info instanceof SelectQueryInterface)) {
+      // If the node table is in the query, it wins immediately.
+      if ('users' === $table_info['table']) {
+        $userAlias = $alias;
+      }
+    }
+  }
+
+  if (!$userAlias) {
+    return;
+  }
+
+  $query->join('ucms_group_user', '_augu', "_augu.user_id = " . $userAlias . ".uid");
+
+  $groupList = [];
+  foreach ($accessList as $access) {
+    $groupList[] = $access->getGroupId();
+  }
+
+  $query->condition('_augu.group_id', $groupList);
 }
 
 /**
