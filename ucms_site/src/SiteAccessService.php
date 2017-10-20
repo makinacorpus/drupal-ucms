@@ -4,9 +4,7 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Site\EventDispatcher\RolesCollectionEvent;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -139,7 +137,7 @@ class SiteAccessService
      *   - second dimension is to state
      *   - third dimension is a list of roles identifiers
      *
-     * @see MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
+     * @see \MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
      *
      * @return int[int[int[]]]
      */
@@ -397,6 +395,9 @@ class SiteAccessService
      */
     public function userCanDelete(AccountInterface $account, Site $site)
     {
+        // @todo
+        // authorization checker view
+
         return SiteState::ARCHIVE == $site->state && ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD));
     }
 

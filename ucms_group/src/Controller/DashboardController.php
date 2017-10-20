@@ -95,7 +95,11 @@ class DashboardController extends Controller
      */
     public function memberListAction(Request $request, Group $group)
     {
-        return $this->renderPage('ucms_group.list_members', $request);
+        return $this->renderPage('ucms_group.list_members', $request, [
+            'base_query' => [
+                'group' => $group->getId(),
+            ]
+        ]);
     }
 
     /**
@@ -133,6 +137,10 @@ class DashboardController extends Controller
      */
     public function siteListAction(Request $request, Group $group)
     {
-        return $this->renderPage('ucms_group.list_by_site', $request);
+        return $this->renderPage('ucms_group.list_by_site', $request, [
+            'base_query' => [
+                'group' => $group->getId(),
+            ]
+        ]);
     }
 }

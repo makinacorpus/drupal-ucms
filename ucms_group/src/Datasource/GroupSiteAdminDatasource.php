@@ -46,7 +46,7 @@ class GroupSiteAdminDatasource extends AbstractDatasource
 
         return [
             (new Filter('state', $this->t("State")))->setChoicesMap($states),
-            // @todo missing site type registry or variable somewhere
+            (new Filter('group', $this->t("Group"))),
             (new Filter('theme', $this->t("Theme")))->setChoicesMap($this->siteManager->getAllowedThemesOptionList()),
             (new Filter('template', $this->t("Template")))->setChoicesMap($this->siteManager->getTemplateList()),
             (new Filter('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
