@@ -54,6 +54,9 @@ class SiteActionProvider implements ActionProviderInterface
 
         if ($access->userCanOverview($account, $item)) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye-open', -10);
+            // We do not check site state, because if user cannot view site, it
+            // should not end up being checked against here (since SQL query
+            // alteration will forbid it).
             if ($access->userCanView($account, $item)) {
                 if ($this->ssoEnabled) {
                     $uri = url('sso/goto/' . $item->id);

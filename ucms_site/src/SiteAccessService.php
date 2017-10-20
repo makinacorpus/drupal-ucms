@@ -6,6 +6,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Site\EventDispatcher\RolesCollectionEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAccessEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -100,6 +102,26 @@ class SiteAccessService
         }
 
         return $this->accessCache[$userId];
+    }
+
+    /**
+     * Can user access site, driven by event
+     *
+     * Only Access::OP_VIEW, Access::OP_UPDATE and Access::OP_DELETE are supported.
+     *
+     * @param AccountInterface $account
+     * @param Site $site
+     * @param string $operation
+     *
+     * @return boolean
+     */
+    private function accessIsDenied(AccountInterface $account, Site $site, $operation = Access::OP_VIEW)
+    {
+        $event = new SiteAccessEvent($site, $account, $operation);
+
+        $this->dispatcher->dispatch(SiteEvents::EVENT_ACCESS, $event);
+
+        return !$event->isGranted();
     }
 
     /**
@@ -381,6 +403,11 @@ class SiteAccessService
      */
     public function userCanView(AccountInterface $account, Site $site)
     {
+        // This is OK because userCanView() is only in use in admin
+        if ($this->accessIsDenied($account, $site, Access::OP_VIEW)) {
+            return false;
+        }
+
         if (SiteState::ON == $site->state) {
             return true;
         }
@@ -417,6 +444,10 @@ class SiteAccessService
      */
     public function userCanOverview(AccountInterface $account, Site $site)
     {
+        if ($this->accessIsDenied($account, $site, Access::OP_VIEW)) {
+            return false;
+        }
+
         if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
             return true;
         }
@@ -446,6 +477,10 @@ class SiteAccessService
      */
     public function userCanManage(AccountInterface $account, Site $site)
     {
+        if ($this->accessIsDenied($account, $site, Access::OP_UPDATE)) {
+            return false;
+        }
+
         if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
             return true;
         }
@@ -471,6 +506,10 @@ class SiteAccessService
      */
     public function userCanManageWebmasters(AccountInterface $account, Site $site)
     {
+        if ($this->accessIsDenied($account, $site, Access::OP_UPDATE)) {
+            return false;
+        }
+
         return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD) || $this->userIsWebmaster($account, $site);
     }
 
@@ -500,6 +539,10 @@ class SiteAccessService
      */
     public function userCanDelete(AccountInterface $account, Site $site)
     {
+        if ($this->accessIsDenied($account, $site, Access::OP_DELETE)) {
+            return false;
+        }
+
         return SiteState::ARCHIVE == $site->state && $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD);
     }
 

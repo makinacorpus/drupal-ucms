@@ -27,4 +27,7 @@ final class SiteEvents
 
     // Site context is being dropped
     const EVENT_DROP = 'site:drop';
+
+    // Site access is requested
+    const EVENT_ACCESS = 'site:access';
 }
