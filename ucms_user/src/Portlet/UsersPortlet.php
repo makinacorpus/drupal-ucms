@@ -82,7 +82,7 @@ class UsersPortlet extends AbstractAdminPortlet
      */
     public function userIsAllowed(AccountInterface $account)
     {
-        return $account->hasPermission(UserAccess::PERM_MANAGE_ALL) || $this->account->hasPermission(UserAccess::PERM_USER_GOD);
+        return user_access(UserAccess::PERM_MANAGE_ALL) || user_access(UserAccess::PERM_USER_GOD);
     }
 }
 
