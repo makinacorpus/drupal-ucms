@@ -94,7 +94,6 @@ class SiteAdminDatasource extends AbstractDatasource
             ->select('ucms_site', 's')
             ->fields('s', ['id'])
             ->addTag('ucms_site_access')
-            ->addTag('ucms_user_access')
         ;
         $q->leftJoin('users', 'u', "u.uid = s.uid");
 
