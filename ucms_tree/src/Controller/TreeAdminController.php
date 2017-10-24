@@ -174,8 +174,7 @@ class TreeAdminController extends Controller
     {
         $links = [];
         $handler = $this->getTypeHandler();
-        foreach ($this->getTypeHandler()
-                      ->getTypesAsHumanReadableList($handler->getContentTypes()) as $type => $name) {
+        foreach ($this->getTypeHandler()->getTypesAsHumanReadableList($handler->getContentTypes()) as $type => $name) {
             if (node_access('create', $type)) {
                 $options = [
                     'query' => [
