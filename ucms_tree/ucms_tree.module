@@ -117,7 +117,7 @@ function ucms_tree_form_node_form_alter(&$form, &$form_state, $form_id) {
     $site = $manager->getContext();
     $account = \Drupal::currentUser();
     if (!$site
-      || $site->getId() !== $matches[1]
+      || $site->getId() !== (int)$matches[1]
       || !$manager->getAccess()->userIsWebmaster($account, $site)) {
       drupal_access_denied();
       exit;
