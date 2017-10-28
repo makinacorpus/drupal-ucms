@@ -383,7 +383,8 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
 
   // Adds the 'submit and add to cart' button. Button group will be done
   // by the theme layer.
-  $add_to_cart = !$node->id() || !\Drupal::service('ucms_contrib.cart')->has($user->id(), $node->id());
+  // @todo this needs to be reworked
+  $add_to_cart = !$node->id() || !\Drupal::service('ucms_cart.cart')->has($user->id(), $node->id());
   if ($add_to_cart) {
     $submit = $form['actions']['submit']['#submit'];
     $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
@@ -425,7 +426,7 @@ function ucms_contrib_form_node_form_submit_add_to_cart($form, &$form_state) {
   // the non-saved empty version of the node instead of being the one that
   // gets submitted. This would work in update scenario, but for an obscure
   // reason won't when we clone.
-  \Drupal::service('ucms_contrib.cart')->addFor(\Drupal::currentUser()->id(), $form_state['node']->id());
+  \Drupal::service('ucms_cart.cart')->addFor(\Drupal::currentUser()->id(), $form_state['node']->id());
 }
 
 /**
