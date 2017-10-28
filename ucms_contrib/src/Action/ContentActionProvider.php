@@ -75,6 +75,11 @@ class ContentActionProvider extends AbstractActionProvider
                 ($siteAccess->userIsWebmaster($this->currentUser) || $siteAccess->userIsContributor($this->currentUser)) &&
                 $this->access->userCanCreateInAnySite($this->currentUser, $type)
             ) {
+                if (!isset($names[$type])) { // How to deal with it?
+                    //trigger_error(sprintf("Content type @type does not exist", $type), E_USER_NOTICE);
+                    continue;
+                }
+
                 $label = $this->t('Create !content_type', ['!content_type' => $this->t($names[$type])]);
 
                 // Edge case, we rewrite all options so that we don't add destination, it will be handled by the form.
