@@ -208,6 +208,8 @@ function ucms_extranet_form_user_login_validate($form, $form_state, $should_have
   // Load the potential user.
   $account = user_load_by_name($form_state['values']['name']);
   $manager = ucms_site_manager();
+  $should_have_extranet_role = false;
+  $has_extranet_role = false;
 
   if ($account && $manager->hasContext()) {
 
@@ -219,7 +221,7 @@ function ucms_extranet_form_user_login_validate($form, $form_state, $should_have
       ExtranetAccess::ROLE_EXTRANET_MEMBER,
     ]);
 
-  } else {
+  } else if ($account) {
 
     // Check if the user has a role other that extranet for dashboard.
     $accessRecords = $manager->getAccess()->getUserRoles($account);
