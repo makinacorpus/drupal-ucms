@@ -308,10 +308,10 @@ class SiteRequest extends FormBase
 
         $defaultTemplate = null;
         if ($site->template_id) {
-          $defaultTemplate = $site->template_id;
+            $defaultTemplate = $site->template_id;
         } elseif (count($templateList) == 1) {
-          reset($templateList);
-          $defaultTemplate = key($templateList);
+            reset($templateList);
+            $defaultTemplate = key($templateList);
         }
 
         $form['template_id'] = [
@@ -319,7 +319,8 @@ class SiteRequest extends FormBase
             '#type'          => 'radios',
             '#options'       => $templateList,
             '#default_value' => $defaultTemplate,
-            '#required'      => !$canManage,
+            '#required'      => !$canManage && $templateList,
+            '#access'        => !empty($templateList),
             '#disabled'      => (count($templateList) == 1),
         ];
 

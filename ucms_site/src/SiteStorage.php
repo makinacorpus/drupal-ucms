@@ -71,7 +71,7 @@ class SiteStorage
      */
     public function findTemplates()
     {
-        return $this->loadWithConditions(['is_template' => 1], 'title', 'asc', 0, FALSE);
+        return $this->loadWithConditions(['is_template' => 1], 'title', 'asc', 0, false, ['ucms_site_template_access']);
     }
 
     /**
@@ -115,7 +115,7 @@ class SiteStorage
      * @param bool $withAccess
      * @return Site[]
      */
-    protected function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100, $withAccess = TRUE)
+    protected function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100, $withAccess = true, array $additionalTags = [])
     {
         $ret = [];
 
@@ -134,6 +134,11 @@ class SiteStorage
 
         if ($withAccess) {
             $q->addTag('ucms_site_access');
+        }
+        if ($additionalTags) {
+            foreach ($additionalTags as $tag) {
+                $q->addTag($tag);
+            }
         }
 
         foreach ($conditions as $field => $values) {

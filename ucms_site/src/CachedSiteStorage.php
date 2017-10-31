@@ -70,9 +70,9 @@ class CachedSiteStorage extends SiteStorage
     /**
      * {@inheritdoc}
      */
-    protected function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100, $withAccess = TRUE)
+    protected function loadWithConditions($conditions = [], $orderField = null, $order = null, $limit = 100, $withAccess = true, array $additionalTags = [])
     {
-        return $this->addAll(parent::loadWithConditions($conditions, $orderField, $order, $limit, $withAccess));
+        return $this->addAll(parent::loadWithConditions($conditions, $orderField, $order, $limit, $withAccess, $additionalTags));
     }
 
     /**
