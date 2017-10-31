@@ -5,13 +5,13 @@ namespace MakinaCorpus\Ucms\User\Page;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
 use MakinaCorpus\Ucms\Site\SiteAccessService;
+use MakinaCorpus\Ucms\User\UserAccess;
 
 
 class UserAdminDatasource extends AbstractDatasource
@@ -54,12 +54,11 @@ class UserAdminDatasource extends AbstractDatasource
      */
     public function getFilters($query)
     {
-        $roles = $this->access->getDrupalRoleList();
-        foreach ($roles as $rid => $role) {
-            if (in_array($rid, [DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID])) {
-                unset($roles[$rid]);
-            }
+        $roles = $this->access->getDrupalRoleList(!user_access(UserAccess::PERM_MANAGE_ALL_ROLES));
+        foreach ($this->access->getDefaultRelativeRoles() as $rid => $role) {
+            $roles[$rid] = $role;
         }
+        sort($roles, SORT_NATURAL);
 
         $statuses = [
             1 => $this->t("Enabled"),

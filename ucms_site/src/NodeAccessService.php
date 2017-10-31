@@ -27,7 +27,7 @@ final class NodeAccessService
      *
      * @param NodeInterface $node
      *
-     * @see MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber::onLoad()
+     * @see \MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber::onLoad()
      *
      * @return int
      *   The site identifier is returned, we don't need to load it to build
@@ -58,6 +58,12 @@ final class NodeAccessService
      */
     public function userCanPublish(AccountInterface $account, NodeInterface $node)
     {
+        if (!$node->access(Access::OP_VIEW, $account)) {
+            return false; // Avoid breaking context (such as group)
+        }
+        if ($account->hasPermission(Access::PERM_CONTENT_GOD)) {
+            return true;
+        }
         if ($node->is_global && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
             return true;
         }
@@ -111,7 +117,7 @@ final class NodeAccessService
      */
     public function userCanPromoteToGroup(AccountInterface $account, NodeInterface $node)
     {
-        return ($node->is_group || $node->is_global) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+        return $node->access(Access::OP_VIEW, $account) && ($node->is_group || $node->is_global) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
     }
 
     /**
@@ -211,6 +217,10 @@ final class NodeAccessService
      */
     public function userCanLock(AccountInterface $account, NodeInterface $node)
     {
+        if (!$node->access(Access::OP_VIEW, $account)) {
+            return false; // Avoid breaking context (such as group)
+        }
+
         if ($node->is_group) {
             return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
         }
@@ -248,6 +258,10 @@ final class NodeAccessService
      */
     public function userCanDuplicate(AccountInterface $account, NodeInterface $node)
     {
+        if (!$node->access(Access::OP_VIEW, $account)) {
+            return false; // Avoid breaking context (such as group)
+        }
+
         if (!$node->is_clonable) {
             return false;
         }

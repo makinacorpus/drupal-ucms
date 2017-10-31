@@ -13,6 +13,11 @@ final class UserAccess
     const PERM_MANAGE_ALL = 'users manage all';
 
     /**
+     * Allow to set or unset any role on any user.
+     */
+    const PERM_MANAGE_ALL_ROLES = 'users manage all roles';
+
+    /**
      * Do not matter about context, you are the king.
      */
     const PERM_USER_GOD = 'users god';

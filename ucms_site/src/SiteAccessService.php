@@ -253,10 +253,14 @@ class SiteAccessService
      * @return string(]
      *   Keys are internal role identifiers, values are role names
      */
-    public function getDrupalRoleList()
+    public function getDrupalRoleList($onlyAllowed = true)
     {
         if (null === $this->roleListCache) {
             $this->roleListCache = $this->db->query("SELECT rid, name FROM {role} ORDER BY rid")->fetchAllKeyed();
+        }
+
+        if ($onlyAllowed && ($allowed = variable_get('ucms_site_allowed_roles'))) {
+            return array_intersect_key($this->roleListCache, array_flip($allowed));
         }
 
         return $this->roleListCache;
@@ -270,7 +274,7 @@ class SiteAccessService
      */
     public function getDrupalRoleName($rid)
     {
-        $roles = $this->getDrupalRoleList();
+        $roles = $this->getDrupalRoleList(false);
         return $roles[(string) $rid];
     }
 
