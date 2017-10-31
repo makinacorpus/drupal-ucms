@@ -14,6 +14,7 @@ use MakinaCorpus\Ucms\User\TokenManager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use MakinaCorpus\Ucms\User\UserAccess;
 
 
 /**
@@ -117,11 +118,12 @@ class UserEdit extends FormBase
             ]);
         }
 
-        $allRoles = $this->siteManager->getAccess()->getDrupalRoleList();
+        $allRoles = $this->siteManager->getAccess()->getDrupalRoleList(!user_access(UserAccess::PERM_MANAGE_ALL_ROLES));
         unset($allRoles[DRUPAL_ANONYMOUS_RID]);
         unset($allRoles[DRUPAL_AUTHENTICATED_RID]);
         $siteRoles = $this->siteManager->getAccess()->getRolesAssociations();
         $availableRoles = array_diff_key($allRoles, $siteRoles);
+        sort($availableRoles, SORT_NATURAL);
 
         $form['roles'] = [
             '#type' => 'checkboxes',

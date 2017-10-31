@@ -205,6 +205,9 @@ function ucms_user_permission() {
     UserAccess::PERM_MANAGE_ALL => [
       'title' => t("Manage all users in allowed contexts such as groups"),
     ],
+    UserAccess::PERM_MANAGE_ALL_ROLES => [
+      'title' => t("Manage all roles, even those which are not sites business related"),
+    ],
     UserAccess::PERM_USER_GOD => [
       'title' => t("Manage all users, no matter the context"),
     ],
