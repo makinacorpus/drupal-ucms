@@ -328,6 +328,7 @@ class SiteManager
     public function getTemplateList()
     {
         $templates = [];
+
         foreach ($this->storage->findTemplates() as $site) {
             $templates[$site->id] = $site->title;
         }
