@@ -146,7 +146,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
 
         // Some users have global permissions on the platform, we need to give
         // them the right to see orphan content.
-        if ($account->hasPermission(GroupAccess::PERM_MANAGE_ORPHAN)) {
+        if ($account->hasPermission(Access::PERM_GROUP_MANAGE_ORPHAN)) {
             $builder->add(GroupAccess::PROFILE_GROUP_ORPHAN, Access::ID_ALL);
         }
 

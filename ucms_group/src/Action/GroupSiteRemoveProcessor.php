@@ -2,29 +2,24 @@
 
 namespace MakinaCorpus\Ucms\Group\Action;
 
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Calista\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupSite;
+use MakinaCorpus\Ucms\Site\Access;
 
 class GroupSiteRemoveProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
 
     protected $groupManager;
-    protected $currentUser;
 
     /**
      * Default constructor
-     *
-     * @param GroupManager $groupManager
-     * @param AccountInterface $currentUser
      */
-    public function __construct(GroupManager $groupManager, AccountInterface $currentUser)
+    public function __construct(GroupManager $groupManager)
     {
         $this->groupManager = $groupManager;
-        $this->currentUser = $currentUser;
 
         parent::__construct($this->t("Remove"), 'remove', 500, true, true, true, 'edit');
     }
@@ -52,7 +47,7 @@ class GroupSiteRemoveProcessor extends AbstractActionProcessor
         /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
         $group = $this->groupManager->getStorage()->findOne($item->getGroupId());
 
-        return $this->groupManager->getAccess()->userCanManageSites($this->currentUser, $group);
+        return $this->isGranted(Access::ACL_PERM_MANAGE_SITES, $group);
     }
 
     public function processAll($items)

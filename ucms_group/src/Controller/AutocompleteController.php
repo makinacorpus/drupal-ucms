@@ -2,38 +2,15 @@
 
 namespace MakinaCorpus\Ucms\Group\Controller;
 
-use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
-
+use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use MakinaCorpus\Ucms\Site\Site;
 
 class AutocompleteController extends Controller
 {
-    /**
-     * Get current logged in user
-     *
-     * @return AccountInterface
-     */
-    private function getCurrentUser()
-    {
-        return $this->get('current_user');
-    }
-
-    /**
-     * Get site manager
-     *
-     * @return GroupManager
-     */
-    private function getGroupManager()
-    {
-        return $this->get('ucms_group.manager');
-    }
-
     /**
      * Get database connection
      *
@@ -49,10 +26,7 @@ class AutocompleteController extends Controller
      */
     public function siteAddAutocompleteAction(Request $request, Group $group, $string)
     {
-        $manager = $this->getGroupManager();
-        $account = $this->getCurrentUser();
-
-        if (!$manager->getAccess()->userCanManageSites($account, $group)) {
+        if (!$this->isGranted(Access::ACL_PERM_MANAGE_SITES, $group)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -88,10 +62,7 @@ class AutocompleteController extends Controller
      */
     public function siteAttachAutocompleteAction(Request $request, Site $site, $string)
     {
-        $manager = $this->getGroupManager();
-        $account = $this->getCurrentUser();
-
-        if (!$manager->getAccess()->userCanManageAll($account)) {
+        if (!$this->isGranted(Access::PERM_GROUP_MANAGE_ALL)) {
             throw $this->createAccessDeniedException();
         }
 

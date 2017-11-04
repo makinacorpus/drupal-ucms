@@ -31,7 +31,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         return [
             Access::ACL_PERM_CONTENT_PROMOTE_GROUP => true,
             Access::ACL_PERM_SITE_EDIT_TREE => true,
-            Access::ACL_PERM_SITE_MANAGE_USERS => true,
+            Access::ACL_PERM_MANAGE_USERS => true,
             Permission::DELETE => true,
             Permission::LOCK => true,
             Permission::PUBLISH => true,
@@ -61,7 +61,8 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             \Drupal::service('acl.permission_map')->addPermissions([
                 Access::ACL_PERM_CONTENT_PROMOTE_GROUP => 32768,
                 Access::ACL_PERM_SITE_EDIT_TREE => 65536,
-                Access::ACL_PERM_SITE_MANAGE_USERS => 131072,
+                Access::ACL_PERM_MANAGE_USERS => 131072,
+                Access::ACL_PERM_MANAGE_SITES => 262144,
             ]);
         }
     }

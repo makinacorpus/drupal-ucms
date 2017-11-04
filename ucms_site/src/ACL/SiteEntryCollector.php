@@ -75,8 +75,8 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
         $siteId = $site->getId();
 
         // No matter the site state, admins can view them all.
-        $builder->add(Access::PROFILE_SITE_GOD, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_SITE_MANAGE_USERS]);
-        $builder->add(Access::PROFILE_SITE_ADMIN, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_SITE_MANAGE_USERS]);
+        $builder->add(Access::PROFILE_SITE_GOD, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_MANAGE_USERS]);
+        $builder->add(Access::PROFILE_SITE_ADMIN, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_MANAGE_USERS]);
         $builder->add(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL, [Permission::OVERVIEW]);
 
         // Sites cannot be viewed if they have not been created.
@@ -88,7 +88,7 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
         // No matter the state, webmasters can always see site information
         // in adminitration interface; they need to be able to follow the
         // validation workflow from the site creation upon its death
-        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, [Permission::OVERVIEW, Access::ACL_PERM_SITE_MANAGE_USERS]);
+        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, [Permission::OVERVIEW, Access::ACL_PERM_MANAGE_USERS]);
 
         switch ($site->state) {
 

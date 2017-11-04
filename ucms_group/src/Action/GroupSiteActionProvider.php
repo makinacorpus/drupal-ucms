@@ -2,12 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Group\Action;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Calista\Action\AbstractActionProvider;
 use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Group\GroupSite;
-use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
  * We only partially implement the site action provider, we do not want to
@@ -15,20 +13,6 @@ use MakinaCorpus\Ucms\Site\SiteManager;
  */
 class GroupSiteActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
-    private $siteManager;
-
-    /**
-     * Default constructor
-     *
-     * @param SiteManager $siteManager
-     */
-    public function __construct(SiteManager $siteManager)
-    {
-        $this->siteManager = $siteManager;
-    }
-
     /**
      * {inheritdoc}
      */

@@ -2,38 +2,13 @@
 
 namespace MakinaCorpus\Ucms\Group\Action;
 
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use MakinaCorpus\Calista\Action\AbstractActionProvider;
 use MakinaCorpus\Calista\Action\Action;
-use MakinaCorpus\Calista\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 
-class SiteActionProvider implements ActionProviderInterface
+class SiteActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
-    /**
-     * @var GroupManager
-     */
-    private $groupManager;
-
-    /**
-     * @var AccountInterface
-     */
-    private $currentUser;
-
-    /**
-     * Default constructor
-     *
-     * @param GroupManager $manager
-     */
-    public function __construct(GroupManager $groupManager, AccountInterface $currentUser)
-    {
-        $this->groupManager = $groupManager;
-        $this->currentUser = $currentUser;
-    }
-
     /**
      * {inheritdoc}
      */
@@ -42,7 +17,7 @@ class SiteActionProvider implements ActionProviderInterface
         /** @var \MakinaCorpus\Ucms\Site\Site $item */
         $ret = [];
 
-        if ($this->groupManager->getAccess()->userCanManageAll($this->currentUser)) {
+        if ($this->isGranted(Access::PERM_GROUP_MANAGE_ALL)) {
             $ret[] = new Action($this->t("Attach to group"), 'admin/dashboard/site/' . $item->getId() . '/group-attach', 'dialog', 'tent', 200, false, true, false, 'group');
         }
 

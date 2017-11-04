@@ -14,19 +14,12 @@ use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Site;
 use Symfony\Component\HttpFoundation\Request;
+use MakinaCorpus\Ucms\Site\Access;
 
 class DashboardController extends Controller
 {
     use PageControllerTrait;
     use StringTranslationTrait;
-
-    /**
-     * @return GroupManager
-     */
-    private function getGroupManager()
-    {
-        return $this->get('ucms_group.manager');
-    }
 
     /**
      * @return AccountInterface
@@ -123,9 +116,7 @@ class DashboardController extends Controller
      */
     public function siteAttachAction(Site $site)
     {
-        $account = $this->getCurrentUser();
-
-        if (!$this->getGroupManager()->getAccess()->userCanManageAll($account)) {
+        if (!$this->isGranted(Access::PERM_GROUP_MANAGE_ALL)) {
             throw $this->createAccessDeniedException();
         }
 

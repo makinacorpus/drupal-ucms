@@ -7,24 +7,20 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Calista\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Group\GroupMember;
+use MakinaCorpus\Ucms\Site\Access;
 
 class GroupMemberRemoveProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
 
     protected $groupManager;
-    protected $currentUser;
 
     /**
      * Default constructor
-     *
-     * @param GroupManager $groupManager
-     * @param AccountInterface $currentUser
      */
-    public function __construct(GroupManager $groupManager, AccountInterface $currentUser)
+    public function __construct(GroupManager $groupManager)
     {
         $this->groupManager = $groupManager;
-        $this->currentUser = $currentUser;
 
         parent::__construct($this->t("Remove"), 'remove', 500, true, true, true, 'edit');
     }
@@ -52,7 +48,7 @@ class GroupMemberRemoveProcessor extends AbstractActionProcessor
         /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
         $group = $this->groupManager->getStorage()->findOne($item->getGroupId());
 
-        return $this->groupManager->getAccess()->userCanManageMembers($this->currentUser, $group);
+        return $this->isGranted(Access::ACL_PERM_MANAGE_USERS, $group);
     }
 
     public function processAll($items)
@@ -72,17 +68,17 @@ class GroupMemberRemoveProcessor extends AbstractActionProcessor
     public function getItemId($item)
     {
         /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
-        return $item->getGroupId() . ':' . $item->getUserId();
+        return $item->getGroupId() . ':' . $item->getUserId() . ':' . $item->getRoleMask();
     }
 
     public function loadItem($id)
     {
-        list ($groupId, $userId) = explode(':', $id);
+        list ($groupId, $userId, $role) = explode(':', $id);
 
         // This is somehow bad, because we are creating a partial partial user
         // implementation, with name, email and status missing, but it's only
         // to pass throught requests and form state, and will not happen to
         // be displayed in any template, so get over it!
-        return GroupMember::create($groupId, $userId);
+        return GroupMember::create($groupId, $userId, $role);
     }
 }

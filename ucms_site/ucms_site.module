@@ -296,6 +296,18 @@ function ucms_site_permission() {
     Access::PERM_SITE_VIEW_ALL => [
       'title' => t("View all sites no matter their state is"),
     ],
+    Access::PERM_GROUP_DASHBOARD_ACCESS => [
+      'title' => t("Access to group dashboard"),
+    ],
+    Access::PERM_GROUP_MANAGE_ALL => [
+      'title' => t("Manage all groups"),
+    ],
+    Access::PERM_GROUP_MANAGE_ORPHAN => [
+      'title' => t("Manage orphan content"),
+    ],
+    Access::PERM_GROUP_VIEW_ALL => [
+      'title' => t("View all groups"),
+    ],
   ];
 }
 
@@ -612,7 +624,7 @@ function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $web
 
   $manager = ucms_site_manager();
 
-  if (sf_acl_is_granted(Access::ACL_PERM_SITE_MANAGE_USERS, $site)) {
+  if (sf_acl_is_granted(Access::ACL_PERM_MANAGE_USERS, $site)) {
     switch ($op) {
       case 'change-role':
         // Prevents to give a role to a user which doesn't belong to the site

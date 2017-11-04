@@ -78,6 +78,21 @@ final class Access
     const PROFILE_SITE_ADMIN_RO = 'site_admin_ro';
 
     /**
+     * Platform wide group maanger
+     */
+    const PROFILE_GROUP_GOD = 'group_god';
+
+    /**
+     * Group administrators
+     */
+    const PROFILE_GROUP_ADMIN = 'group_admin';
+
+    /**
+     * Group members
+     */
+    const PROFILE_GROUP_MEMBER = 'group_member';
+
+    /**
      * Default group identifier for grants where it does not make sense
      */
     const ID_ALL = 0;
@@ -138,6 +153,26 @@ final class Access
     const PERM_CONTENT_VIEW_OTHER = 'content view other';
 
     /**
+     * Access the group admin dashboard
+     */
+    const PERM_GROUP_DASHBOARD_ACCESS = 'group dashboard access';
+
+    /**
+     * Manage all groups (group god)
+     */
+    const PERM_GROUP_MANAGE_ALL = 'group manage all';
+
+    /**
+     * Manage orphaned content (outside of groups)
+     */
+    const PERM_GROUP_MANAGE_ORPHAN = 'group manage orphan';
+
+    /**
+     * View all groups
+     */
+    const PERM_GROUP_VIEW_ALL = 'group view all';
+
+    /**
      * Access the site dashboard
      */
     const PERM_SITE_DASHBOARD_ACCESS = 'site dashboard access';
@@ -170,7 +205,12 @@ final class Access
     /**
      * ACL permission for site: manage webmasters
      */
-    const ACL_PERM_SITE_MANAGE_USERS = 'manage users';
+    const ACL_PERM_MANAGE_USERS = 'manage users';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_MANAGE_SITES = 'manage sites';
 
     /**
      * ACL permission for site: manage webmasters
@@ -191,6 +231,11 @@ final class Access
      * Site relative role: contributor
      */
     const ROLE_CONTRIB = 2;
+
+    /**
+     * Group administrator
+     */
+    const ROLE_GROUP_ADMIN = 2;
 
     /**
      * Explicitely tell that the query should not filter out nodes that don't

@@ -6,6 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 
 use MakinaCorpus\Ucms\Group\Error\GroupMoveDisallowedException;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\Access;
 
 class GroupAccessService
 {
@@ -168,7 +169,7 @@ class GroupAccessService
             $q = $this
                 ->database
                 ->select('ucms_group_access', 'gu')
-                ->fields('gu', ['group_id', 'user_id'])
+                ->fields('gu', ['group_id', 'user_id', 'role'])
                 ->condition('gu.user_id', $userId)
             ;
 
@@ -262,89 +263,5 @@ class GroupAccessService
         $this->storage->touch($groupId);
 
         $this->resetCache();
-    }
-
-    /**
-     * Can user view the group details
-     *
-     * @param AccountInterface $account
-     * @param Group $group
-     *
-     * @return bool
-     */
-    public function userCanView(AccountInterface $account, Group $group)
-    {
-        return $this->userCanManageAll($account) || $this->userIsMember($account, $group);
-    }
-
-    /**
-     * Can user manage all groups
-     *
-     * @param AccountInterface $account
-     *
-     * @return bool
-     */
-    public function userCanManageAll(AccountInterface $account)
-    {
-        return
-            $account->hasPermission(GroupAccess::PERM_VIEW_ALL) ||
-            $account->hasPermission(GroupAccess::PERM_MANAGE_ALL)
-        ;
-    }
-
-    /**
-     * Can user edit the group details
-     *
-     * @param AccountInterface $account
-     * @param Group $group
-     *
-     * @return bool
-     */
-    public function userCanEdit(AccountInterface $account, Group $group)
-    {
-        return $this->userCanManageAll($account);
-    }
-
-    /**
-     * Can user delete the group
-     *
-     * @param AccountInterface $account
-     * @param Group $group
-     *
-     * @return bool
-     */
-    public function userCanDelete(AccountInterface $account, Group $group)
-    {
-        if ($group->isMeta()) {
-            return false;
-        }
-
-        return $this->userCanManageAll($account);
-    }
-
-    /**
-     * Can user manage the group sites
-     *
-     * @param AccountInterface $account
-     * @param Group $group
-     *
-     * @return bool
-     */
-    public function userCanManageSites(AccountInterface $account, Group $group)
-    {
-        return $this->userCanManageAll($account);
-    }
-
-    /**
-     * Can user manage the group members
-     *
-     * @param AccountInterface $account
-     * @param Group $group
-     *
-     * @return bool
-     */
-    public function userCanManageMembers(AccountInterface $account, Group $group)
-    {
-        return $this->userCanManageAll($account);
     }
 }

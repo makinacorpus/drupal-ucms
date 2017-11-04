@@ -7,7 +7,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Calista\Action\ActionRegistry;
 use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
-use MakinaCorpus\Ucms\Group\GroupAccess;
+use MakinaCorpus\Ucms\Site\Access;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ContextPaneEventSubscriber implements EventSubscriberInterface
@@ -51,7 +51,7 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
             case 'admin/dashboard/group':
             case 'admin/dashboard/group/mine':
             case 'admin/dashboard/group/all':
-                if ($this->account->hasPermission(GroupAccess::PERM_MANAGE_ALL)) {
+                if ($this->account->hasPermission(Access::PERM_GROUP_MANAGE_ALL)) {
                     $event->getContextPane()->addActions([
                         new Action($this->t("Add group"), 'admin/dashboard/group/add', null, 'plus', 0, true, true),
                     ]);

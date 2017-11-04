@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Group\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Drupal\Calista\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\GroupManager;
@@ -45,7 +46,7 @@ class GroupDeleteProcessor extends AbstractActionProcessor
 
     public function appliesTo($item)
     {
-        return $item instanceof Group && $this->groupManager->getAccess()->userCanDelete($this->currentUser, $item);
+        return $item instanceof Group && $this->isGranted(Permission::DELETE, $item);
     }
 
     public function processAll($items)

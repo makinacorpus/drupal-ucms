@@ -9,29 +9,9 @@
 
 use MakinaCorpus\Ucms\Group\Controller\DashboardController;
 use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupAccess;
 use MakinaCorpus\Ucms\Group\Controller\AutocompleteController;
-use MakinaCorpus\Ucms\Site\Access as SiteAccess;
-
-/**
- * Implements hook_permission().
- */
-function ucms_group_permission() {
-  return [
-    GroupAccess::PERM_DASHBOARD_ACCESS => [
-      'title' => t("Access to group dashboard"),
-    ],
-    GroupAccess::PERM_MANAGE_ALL => [
-      'title' => t("Manage all groups"),
-    ],
-    GroupAccess::PERM_MANAGE_ORPHAN => [
-      'title' => t("Manage orphan content"),
-    ],
-    GroupAccess::PERM_VIEW_ALL => [
-      'title' => t("View all groups"),
-    ],
-  ];
-}
+use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\ACL\Permission;
 
 /**
  * Implements hook_menu().
@@ -44,7 +24,7 @@ function ucms_group_menu() {
     'title'             => "Groups",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::viewMineAction'],
-    'access arguments'  => [GroupAccess::PERM_DASHBOARD_ACCESS],
+    'access arguments'  => [Access::PERM_GROUP_DASHBOARD_ACCESS],
     'type'              => MENU_NORMAL_ITEM,
   ];
   $items['admin/dashboard/group/mine'] = [
@@ -56,14 +36,14 @@ function ucms_group_menu() {
     'title'             => "All groups",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::viewAllAction'],
-    'access arguments'  => [GroupAccess::PERM_VIEW_ALL],
+    'access arguments'  => [Access::PERM_GROUP_VIEW_ALL],
     'type'              => MENU_LOCAL_TASK,
   ];
   $items['admin/dashboard/group/add'] = [
     'title'             => "Add group",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::addAction'],
-    'access arguments'  => [GroupAccess::PERM_MANAGE_ALL],
+    'access arguments'  => [Access::PERM_GROUP_MANAGE_ALL],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -163,22 +143,7 @@ function ucms_group_menu_load($id) {
  * @deprecated
  */
 function ucms_group_menu_access_view(Group $group) {
-  $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
-  $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanView($account, $group);
-}
-
-/**
- * Menu helper, do not use.
- *
- * @deprecated
- */
-function ucms_group_menu_access_manage(Group $group) {
-  $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
-  $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanManageAll($account);
+  return sf_acl_is_granted(Permission::VIEW, $group);
 }
 
 /**
@@ -187,10 +152,7 @@ function ucms_group_menu_access_manage(Group $group) {
  * @deprecated
  */
 function ucms_group_menu_access_manage_members(Group $group) {
-  $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
-  $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanManageMembers($account, $group);
+  return sf_acl_is_granted(Access::ACL_PERM_MANAGE_USERS, $group);
 }
 
 /**
@@ -199,10 +161,7 @@ function ucms_group_menu_access_manage_members(Group $group) {
  * @deprecated
  */
 function ucms_group_menu_access_edit(Group $group) {
-  $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
-  $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanEdit($account, $group);
+  return sf_acl_is_granted(Permission::UPDATE, $group);
 }
 
 /**
@@ -265,7 +224,7 @@ function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query)
   }
 
   // God mode.
-  if ($account->hasPermission(SiteAccess::PERM_SITE_GOD)) {
+  if ($account->hasPermission(Access::PERM_SITE_GOD)) {
     return;
   }
 

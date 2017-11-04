@@ -59,7 +59,7 @@ class GroupMemberAdminDatasource extends AbstractDatasource
         $q = $this
             ->database
             ->select('ucms_group_access', 'gu')
-            ->fields('gu', ['group_id', 'user_id'])
+            ->fields('gu', ['group_id', 'user_id', 'role'])
             ->fields('u', ['name', 'mail', 'status'])
             ->addTag('ucms_group_access')
             //->groupBy('gu.user_id')

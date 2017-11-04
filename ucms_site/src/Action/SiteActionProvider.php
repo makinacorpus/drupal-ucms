@@ -45,7 +45,7 @@ class SiteActionProvider extends AbstractActionProvider
         $canOverview    = $this->isGranted(Permission::OVERVIEW, $item);
         $canView        = $this->isGranted(Permission::VIEW, $item);
         $canManage      = $this->isGranted(Permission::UPDATE, $item);
-        $canManageUsers = $this->isGranted(Access::ACL_PERM_SITE_MANAGE_USERS, $item);
+        $canManageUsers = $this->isGranted(Access::ACL_PERM_MANAGE_USERS, $item);
 
         if ($canOverview) {
             $ret[] = new Action($this->t("View"), 'admin/dashboard/site/' . $item->id, null, 'eye', -10);
