@@ -6,6 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Notification\NotificationService;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -41,13 +42,9 @@ class NodeEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    private $service;
     private $currentUser;
     private $dispatcher;
-
-    /**
-     * @var \MakinaCorpus\Ucms\Site\SiteManager null
-     */
+    private $service;
     private $siteManager = null;
 
     /**
@@ -66,10 +63,8 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
     /**
      * Set site manager
-     *
-     * @param \MakinaCorpus\Ucms\Site\SiteManager $siteManager
      */
-    public function setSiteManager($siteManager)
+    public function setSiteManager(SiteManager $siteManager)
     {
         $this->siteManager = $siteManager;
     }
