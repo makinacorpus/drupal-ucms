@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Group\NodeAccess;
 
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextEventTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,12 +36,12 @@ class GroupContextSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
-        if (Access::OP_CREATE === $event->getOperation()) {
+        if (Permission::CREATE === $event->getOperation()) {
             if (is_string($node)) {
                 if ($group = $this->findMostRelevantGroup()) {
                     $allowedContentTypes = $group->getAttribute('allowed_content_types');
                     if ($allowedContentTypes && !in_array($node, $allowedContentTypes)) {
-                        $event->deny();
+                        return $event->deny();
                     }
                 }
             }
