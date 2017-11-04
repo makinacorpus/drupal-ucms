@@ -76,7 +76,7 @@ class SiteActionProvider extends AbstractActionProvider
             $ret[] = new Action($this->t("Manage users"), 'admin/dashboard/site/' . $item->id . '/webmaster', null, 'user', 102, false, false, false, 'user');
         }
 
-        if ($access->userCanDelete($account, $item)) {
+        if ($this->isGranted(Permission::DELETE, $item)) {
             $ret[] = new Action($this->t("Delete"), 'admin/dashboard/site/' . $item->id . '/delete', 'dialog', 'trash', 1000, false, true, false, 'switch');
         }
 

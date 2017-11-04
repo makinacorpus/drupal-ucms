@@ -61,10 +61,10 @@ class SiteDelete extends FormBase
             $this->logger('form')->critical("There is not site to delete!");
             return $form;
         }
-        if (!$this->manager->getAccess()->userCanDelete($this->currentUser(), $site)) {
-            $this->logger('form')->critical("User can't delete site!");
-            return $form;
-        }
+//         if (!$this->manager->getAccess()->userCanDelete($this->currentUser(), $site)) {
+//             $this->logger('form')->critical("User can't delete site!");
+//             return $form;
+//         }
 
         $form_state->setTemporaryValue('site', $site);
         $form['#site'] = $site; // This is used in *_form_alter()

@@ -569,7 +569,7 @@ function ucms_site_menu_access_manage_current($account = null) {
   if (!$account) {
     $account = \Drupal::currentUser();
   }
-  return $manager->getAccess()->userCanManage($account, $manager->getContext());
+  return sf_acl_is_granted(Permission::UPDATE, $manager->getContext());
 }
 
 /**

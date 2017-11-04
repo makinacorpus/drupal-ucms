@@ -386,22 +386,6 @@ class SiteAccessService
     }
 
     /**
-     * Can the given user delete the given site
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return boolean
-     */
-    public function userCanDelete(AccountInterface $account, Site $site)
-    {
-        // @todo
-        // authorization checker view
-
-        return SiteState::ARCHIVE == $site->state && ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD));
-    }
-
-    /**
      * Get allow transition list for the given site and user
      *
      * @param AccountInterface $account

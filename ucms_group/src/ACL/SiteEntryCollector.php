@@ -93,11 +93,6 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
             return;
         }
 
-        // God mode.
-        if ($account->hasPermission(Access::PERM_SITE_GOD)) {
-            return;
-        }
-
         // Remove all out-of-group global permissions
         $builder->remove(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL);
         $builder->remove(Access::PROFILE_SITE_ADMIN, Access::ID_ALL);

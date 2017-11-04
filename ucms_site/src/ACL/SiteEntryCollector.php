@@ -75,6 +75,7 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
         $siteId = $site->getId();
 
         // No matter the site state, admins can view them all.
+        $builder->add(Access::PROFILE_SITE_GOD, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_SITE_MANAGE_USERS]);
         $builder->add(Access::PROFILE_SITE_ADMIN, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_SITE_MANAGE_USERS]);
         $builder->add(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL, [Permission::OVERVIEW]);
 
@@ -123,6 +124,9 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
             return;
         }
 
+        if ($account->hasPermission(Access::PERM_SITE_GOD)) {
+            $builder->add(Access::PROFILE_SITE_GOD, Access::ID_ALL);
+        }
         if ($account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
             $builder->add(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL);
         }

@@ -68,6 +68,11 @@ final class Access
     const PROFILE_SITE_ADMIN = 'site_admin_editor';
 
     /**
+     * Users that can manage all sites
+     */
+    const PROFILE_SITE_GOD = 'site_admin_god';
+
+    /**
      * Users that can see all sites
      */
     const PROFILE_SITE_ADMIN_RO = 'site_admin_ro';
