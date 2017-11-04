@@ -54,7 +54,7 @@ class NodeActionProvider extends AbstractActionProvider
                 $ret[] = new Action($this->t("Use on another site"), 'node/' . $item->nid . '/reference', 'dialog', 'link', 2, true, true, false, 'site');
             }
 
-            if (!$site->hasHome() && $item->site_id == $site->getId() && $item->access('update', $account)) {
+            if (!$site->hasHome() && $item->site_id == $site->getId() && $this->isGranted(Permission::UPDATE, $item)) {
                 $ret[] = new Action($this->t("Set as home page"), 'node/' . $item->nid . '/set-home', 'dialog', 'home', 2, false, true, false, 'site');
             }
 

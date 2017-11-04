@@ -5,11 +5,11 @@ namespace MakinaCorpus\Ucms\User\Action;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Action\Action;
-use MakinaCorpus\Calista\Action\ActionProviderInterface;
+use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 use MakinaCorpus\Ucms\User\UserAccess;
 
-class UserActionProvider implements ActionProviderInterface
+class UserActionProvider extends AbstractActionProvider
 {
     use StringTranslationTrait;
 
@@ -55,7 +55,7 @@ class UserActionProvider implements ActionProviderInterface
      */
     public function getActions($item, $primaryOnly = false, array $groups = [])
     {
-        if (!$this->currentUser->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
+        if (!$this->isGranted(UserAccess::PERM_MANAGE_ALL)) {
             return [];
         }
 

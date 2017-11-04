@@ -2,14 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Site\Controller;
 
-use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\User\UserAccess;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -18,7 +13,7 @@ class AutocompleteController extends Controller
     /**
      * Get current logged in user
      *
-     * @return AccountInterface
+     * @return \Drupal\Core\Session\AccountInterface
      */
     private function getCurrentUser()
     {
@@ -28,7 +23,7 @@ class AutocompleteController extends Controller
     /**
      * Get site manager
      *
-     * @return SiteManager
+     * @return \MakinaCorpus\Ucms\Site\SiteManager
      */
     private function getSiteManager()
     {
@@ -53,7 +48,7 @@ class AutocompleteController extends Controller
         $manager = $this->getSiteManager();
         $account = $this->getCurrentUser();
 
-        if (!$manager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
+        if (!$manager->getAccess()->userIsWebmaster($account) && !$this->isGranted(UserAccess::PERM_MANAGE_ALL)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -83,11 +78,7 @@ class AutocompleteController extends Controller
         $manager = $this->getSiteManager();
         $account = $this->getCurrentUser();
 
-        if (!$manager->getAccess()->userIsWebmaster($account) &&
-            !$account->hasPermission(Access::PERM_SITE_VIEW_ALL) &&
-            !$account->hasPermission(Access::PERM_SITE_MANAGE_ALL) &&
-            !$account->hasPermission(Access::PERM_SITE_GOD)
-        ) {
+        if (!$manager->getAccess()->userIsWebmaster($account) && !$this->isGranted([Access::PERM_SITE_VIEW_ALL, Access::PERM_SITE_MANAGE_ALL, Access::PERM_SITE_GOD])) {
             throw $this->createAccessDeniedException();
         }
 

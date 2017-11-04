@@ -7,11 +7,11 @@
  * content visibility throught the admin will be altered to match the groups.
  */
 
-use MakinaCorpus\Ucms\Group\Controller\DashboardController;
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\Controller\AutocompleteController;
+use MakinaCorpus\Ucms\Group\Controller\DashboardController;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\ACL\Permission;
 
 /**
  * Implements hook_menu().
