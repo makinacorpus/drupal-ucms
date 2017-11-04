@@ -144,7 +144,7 @@ class GroupAccessService
         return (bool)$this
             ->database
             ->query(
-                "SELECT 1 FROM {ucms_group_user} WHERE group_id = :group AND user_id = :user",
+                "SELECT 1 FROM {ucms_group_access} WHERE group_id = :group AND user_id = :user",
                 [':group' => $group->getId(), ':user' => $account->id()]
             )
             ->fetchField()
@@ -167,7 +167,7 @@ class GroupAccessService
 
             $q = $this
                 ->database
-                ->select('ucms_group_user', 'gu')
+                ->select('ucms_group_access', 'gu')
                 ->fields('gu', ['group_id', 'user_id'])
                 ->condition('gu.user_id', $userId)
             ;
@@ -210,7 +210,7 @@ class GroupAccessService
         $exists = (bool)$this
             ->database
             ->query(
-                "SELECT 1 FROM {ucms_group_user} WHERE group_id = :group AND user_id = :user",
+                "SELECT 1 FROM {ucms_group_access} WHERE group_id = :group AND user_id = :user",
                 [':group' => $groupId, ':user' => $userId]
             )
             ->fetchField()
@@ -222,7 +222,7 @@ class GroupAccessService
 
         $this
             ->database
-            ->merge('ucms_group_user')
+            ->merge('ucms_group_access')
             ->key([
                 'group_id'  => $groupId,
                 'user_id'   => $userId,
@@ -251,7 +251,7 @@ class GroupAccessService
     {
         $this
             ->database
-            ->delete('ucms_group_user')
+            ->delete('ucms_group_access')
             ->condition('group_id', $groupId)
             ->condition('user_id', $userId)
             ->execute()

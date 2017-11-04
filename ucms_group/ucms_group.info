@@ -1,5 +1,5 @@
-name = "UCMS - Group"
-description = "Provides user group and site group feature"
+name = "UCMS - Group UI"
+description = "Provides group feature UI"
 core = 7.x
 package = UCMS
 php = 7.0

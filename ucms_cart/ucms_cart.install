@@ -43,10 +43,12 @@ function ucms_cart_schema() {
       'uid' => [
         'table'   => 'users',
         'columns' => ['uid' => 'uid'],
+        'delete'  => 'cascade',
       ],
       'nid' => [
         'table'   => 'node',
         'columns' => ['nid' => 'nid'],
+        'delete'  => 'cascade',
       ],
     ],
     'primary key' => ['uid', 'nid'],
@@ -66,4 +68,14 @@ function ucms_cart_install() {
     db_query("INSERT INTO {ucms_cart} SELECT * FROM {ucms_contrib_cart}");
     db_drop_table('ucms_contrib_cart');
   }
+}
+
+/**
+ * Refresh database constraints.
+ */
+function ucms_cart_update_7001() {
+  db_query("DELETE FROM {ucms_cart} WHERE nid NOT IN (SELECT nid FROM {node})");
+  db_query("DELETE FROM {ucms_cart} WHERE uid NOT IN (SELECT uid FROM {users})");
+  db_constraint_unfix('ucms_cart');
+  db_constraint_fix('ucms_cart');
 }

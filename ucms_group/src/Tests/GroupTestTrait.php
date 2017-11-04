@@ -85,7 +85,7 @@ trait GroupTestTrait
      */
     final protected function assertUserInGroup($groupId, $userId)
     {
-        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_user} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_access} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
 
         $this->assertTrue($exists);
     }
@@ -95,7 +95,7 @@ trait GroupTestTrait
      */
     final protected function assertUserNotInGroup($groupId, $userId)
     {
-        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_user} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_access} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
 
         $this->assertFalse($exists);
     }
