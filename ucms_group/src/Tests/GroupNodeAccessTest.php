@@ -127,7 +127,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         // Group member, no site, should only site global published content
         // And other groups non-ghost global published content
         $this
-            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], [], 'global admin and group viewer in a')
+            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], [], 'global admin and group viewer in a')
                 ->canSeeOnly([
                     'group_a_global_ghost',
                     'group_a_group_published',
@@ -139,7 +139,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
 
         // Group member a and b, no site, write on global, can see and write global
         $this
-            ->whenIAmMember('a', [Access::PERM_CONTENT_MANAGE_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], [], 'global admin and group viewer in a')
+            ->whenIAmMember('a', [Access::PERM_CONTENT_MANAGE_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], [], 'global admin and group viewer in a')
                 ->canSeeOnly([
                     'group_a_group_published',
                     'group_b_group_published',
@@ -151,9 +151,9 @@ class GroupNodeAccessTest extends AbstractDrupalTest
                 ->canCreate('page')
         ;
 
-        // Group member, webmaster, should see all site content and group content
+        // Group member, webmaster, should see all site content and corporate content
         $this
-            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], ['on' => Access::ROLE_WEBMASTER], 'global viewer and group viewer and on webmaster in a')
+            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], ['on' => Access::ROLE_WEBMASTER], 'global viewer and group viewer and on webmaster in a')
                 ->canSeeOnly([
                     // 'nogroup_site_on_published', // @todo
                     // 'nogroup_site_on_unpublished', // @todo
@@ -193,10 +193,10 @@ class GroupNodeAccessTest extends AbstractDrupalTest
                 //->canCreate('page')
         ;
 
-        // No group, can see group content but no ghosts
+        // No group, can see corporate content but no ghosts
         // This does not tests it fully, but it validates that normal rights are not changed
         $this
-            ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], ['no_on' => Access::ROLE_WEBMASTER, 'no_off' => Access::ROLE_CONTRIB], 'viewer, no_on webmaster and no_off contrib in a')
+            ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], ['no_on' => Access::ROLE_WEBMASTER, 'no_off' => Access::ROLE_CONTRIB], 'viewer, no_on webmaster and no_off contrib in a')
                 ->canSeeOnly([
                     'nogroup_site_on_published',
                     'nogroup_site_on_unpublished',

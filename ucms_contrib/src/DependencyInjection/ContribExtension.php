@@ -56,8 +56,8 @@ class ContribExtension extends Extension
                         'title'       => "Global",
                         'access'      => 'content manage global',
                         'base_query'  => [
-                            'is_global' => 1,
-                            'is_group'  => 0,
+                            'is_global'     => 1,
+                            'is_corporate'  => 0,
                         ],
                     ],
                     'flagged' => [

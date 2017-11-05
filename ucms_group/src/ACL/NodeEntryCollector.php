@@ -60,8 +60,8 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         return [
             Access::PROFILE_GLOBAL,
             Access::PROFILE_GLOBAL_READONLY,
-            Access::PROFILE_GROUP,
-            Access::PROFILE_GROUP_READONLY,
+            Access::PROFILE_CORPORATE_ADMIN,
+            Access::PROFILE_CORPORATE_READER,
             Access::PROFILE_OTHER,
             Access::PROFILE_READONLY,
         ];
@@ -108,8 +108,8 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
                 // This handles two grants in one:
                 //  - Webmasters can browse along published content of other sites
                 //  - People with global repository access may see this content
-                if ($node->is_group) {
-                    $builder->add(Access::PROFILE_GROUP_READONLY, Access::ID_ALL, $readOnly);
+                if ($node->is_corporate) {
+                    $builder->add(Access::PROFILE_CORPORATE_READER, Access::ID_ALL, $readOnly);
                 } else if ($node->is_global) {
                     $builder->add(Access::PROFILE_GLOBAL_READONLY, Access::ID_ALL, $readOnly);
                 } else {
@@ -167,8 +167,8 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
                 $builder->add(Access::PROFILE_GLOBAL, $groupId);
             }
-            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
-                $builder->add(Access::PROFILE_GROUP, $groupId);
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)) {
+                $builder->add(Access::PROFILE_CORPORATE_ADMIN, $groupId);
             }
 
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
@@ -177,8 +177,8 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
                 if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
                     $builder->add(Access::PROFILE_GLOBAL_READONLY, $groupId);
                 }
-                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP)) {
-                    $builder->add(Access::PROFILE_GROUP_READONLY, $groupId);
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_CORPORATE)) {
+                    $builder->add(Access::PROFILE_CORPORATE_READER, $groupId);
                 }
                 if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
                     $builder->add(Access::PROFILE_OTHER, $groupId);

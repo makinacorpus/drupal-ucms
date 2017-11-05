@@ -14,13 +14,13 @@ use MakinaCorpus\Ucms\Contrib\Form\NodeDuplicate;
 use MakinaCorpus\Ucms\Contrib\Form\NodeFlag;
 use MakinaCorpus\Ucms\Contrib\Form\NodeLock;
 use MakinaCorpus\Ucms\Contrib\Form\NodeMakeGlobal;
-use MakinaCorpus\Ucms\Contrib\Form\NodeMakeGroup;
+use MakinaCorpus\Ucms\Contrib\Form\NodeMakeCorporate;
 use MakinaCorpus\Ucms\Contrib\Form\NodePublish;
 use MakinaCorpus\Ucms\Contrib\Form\NodeStar;
 use MakinaCorpus\Ucms\Contrib\Form\NodeTransfer;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnflag;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnlock;
-use MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeGroup;
+use MakinaCorpus\Ucms\Contrib\Form\NodeUnmakeCorporate;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish;
 use MakinaCorpus\Ucms\Contrib\Form\NodeUnstar;
 use MakinaCorpus\Ucms\Site\Access;
@@ -195,17 +195,17 @@ function ucms_contrib_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/make-group'] = [
-    'title'             => "Define as group content",
+    'title'             => "Define as corporate content",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => [NodeMakeGroup::class, 1],
+    'page arguments'    => [NodeMakeCorporate::class, 1],
     'access callback'   => 'ucms_contrib_menu_node_access_group',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
   $items['node/%node/unmake-group'] = [
-    'title'             => "Remove from group contents",
+    'title'             => "Remove from corporate contents",
     'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => [NodeUnmakeGroup::class, 1],
+    'page arguments'    => [NodeUnmakeCorporate::class, 1],
     'access callback'   => 'ucms_contrib_menu_node_access_group',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
@@ -298,7 +298,7 @@ function ucms_contrib_menu_node_access_transfer(NodeInterface $node) {
  * Menu access helper.
  */
 function ucms_contrib_menu_node_access_group(NodeInterface $node) {
-  sf_acl_is_granted(Access::ACL_PERM_CONTENT_PROMOTE_GROUP, $node);
+  sf_acl_is_granted(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE, $node);
 }
 
 /**

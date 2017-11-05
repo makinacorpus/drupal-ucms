@@ -428,8 +428,8 @@ msgid "This content is a copy of another content"
 msgstr "Ce contenu est la copie d'un autre contenu existant"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:74
-msgid "This is a group content"
-msgstr "Ce contenu est un contenu groupe"
+msgid "This is a corporate content"
+msgstr "Ce contenu est un contenu institutionnel"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:83
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:34
@@ -749,33 +749,37 @@ msgid "Dashboard"
 msgstr "Dashboard"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:39
-msgid "Define as group content"
-msgstr "Définir comme contenu de groupe"
+msgid "Define as corporate content"
+msgstr "Définir comme contenu institutionnels"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:39
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:48
-msgid "Remove from group contents"
-msgstr "Retirer des contenus Groupe"
+msgid "Remove from corporate contents"
+msgstr "Retirer des contenus institutionnels"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:25
-msgid "Define %title as group content?"
-msgstr "Définir %title comme contenu groupe ?"
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeCorporate.php:25
+msgid "Set %title as corporate content?"
+msgstr "Définir %title comme contenu insitutionnel ?"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeGroup.php:39
-msgid "%title has been added to the group contents."
-msgstr "%title a été ajouté aux contenus groupes."
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeMakeCorporate.php:39
+msgid "%title has been set as corporate content."
+msgstr "%title a été ajouté aux contenus institutionnels."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:25
-msgid "Remove %title from group contents?"
-msgstr "Retirer %title des contenu Groupe ?"
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeCorporate.php:25
+msgid "Remove %title from corporate contents?"
+msgstr "Retirer %title des contenu institutionnels ?"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeGroup.php:39
-msgid "%title has been removed from the group contents."
-msgstr "%title a été retiré des contenus Groupe."
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnmakeCorporate.php:39
+msgid "%title has been removed from the corporate contents."
+msgstr "%title a été retiré des contenus institutionnels."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:30
 msgid "Group"
 msgstr "Groupe"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:30
+msgid "Corporate"
+msgstr "Institutionnel"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelNotificationsActionProvider.php:44
 #: sites/all/modules/composer/drupal-ucms/ucms_label/ucms_label.module:45
@@ -2455,8 +2459,8 @@ msgid "Manage global content"
 msgstr "Gérer le contenu global"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:241
-msgid "Manage group content"
-msgstr "Gérer le contenu Groupe"
+msgid "Manage corporate content"
+msgstr "Gérer le contenu institutionnel"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:244
 msgid "Manage starred content"
@@ -2483,8 +2487,8 @@ msgid "View global published content"
 msgstr "Voir les contenus globaux publiés"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:262
-msgid "View group published content"
-msgstr "Voir les contenus groupes publiés"
+msgid "View corporate published content"
+msgstr "Voir les contenus institutionnels publiés"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:265
 msgid "View other site content"

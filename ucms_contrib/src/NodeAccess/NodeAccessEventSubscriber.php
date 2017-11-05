@@ -90,7 +90,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 // long as content is editorial (text and media)
                 $canManage =
                     $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL) ||
-                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)
+                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)
                 ;
 
                 if ($canManage && in_array($type, $this->typeHandler->getEditorialTypes())) {

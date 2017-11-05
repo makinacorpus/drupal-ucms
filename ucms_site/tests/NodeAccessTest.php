@@ -86,7 +86,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 // THOSE TESTS IN EACH SITE CONTEXT, IT WONT CHANGE A THING!
                 ->canDoNone(Permission::CLONE)
                 ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
 
             ->whenIAm([Access::PERM_CONTENT_MANAGE_GLOBAL], [], 'global contributor')
@@ -123,10 +123,10 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_global_published',
                     'in_on_global_unpublished',
                 ])
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
 
-           ->whenIAm([Access::PERM_CONTENT_MANAGE_GROUP], [], 'group administrator')
+           ->whenIAm([Access::PERM_CONTENT_MANAGE_CORPORATE], [], 'group administrator')
 
                 ->canSeeOnly([
                     'group_locked_published',
@@ -160,7 +160,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     'in_on_group_published',
                     'in_on_group_unpublished',
                 ])
-                ->canDoOnly(Access::ACL_PERM_CONTENT_PROMOTE_GROUP, [
+                ->canDoOnly(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE, [
                     'global_locked_published',
                     'global_locked_unpublished',
                     'global_published',
@@ -192,10 +192,10 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canCreateNone()
                 ->canDoNone(Permission::CLONE)
                 ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
 
-            ->whenIAm([Access::PERM_CONTENT_VIEW_GROUP], [], 'user that can see group content')
+            ->whenIAm([Access::PERM_CONTENT_VIEW_CORPORATE], [], 'user that can see corporate content')
 
                 ->canSeeOnly([
                     'group_locked_published',
@@ -207,7 +207,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canCreateNone()
                 ->canDoNone(Permission::CLONE)
                 ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
     }
@@ -274,7 +274,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     'site_on_locked_published',
                     'site_on_locked_unpublished',
                 ])
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
 
@@ -297,7 +297,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     'site_off_published',
                     'site_off_unpublished',
                 ])
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
 
@@ -307,9 +307,9 @@ class NodeAccessTest extends AbstractDrupalTest
         $this
             ->whenIAm([
                 Access::PERM_CONTENT_VIEW_GLOBAL,
-                Access::PERM_CONTENT_VIEW_GROUP,
+                Access::PERM_CONTENT_VIEW_CORPORATE,
                 Access::PERM_CONTENT_VIEW_OTHER
-            ], ['off' => Access::ROLE_WEBMASTER], 'off webmaster that can see global and group content')
+            ], ['off' => Access::ROLE_WEBMASTER], 'off webmaster that can see global and corporate content')
                 ->canSeeOnly([
                     'site_on_published',
                     'site_on_locked_published',
@@ -343,7 +343,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     'site_off_published',
                     'site_off_unpublished',
                 ])
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
 
@@ -362,7 +362,7 @@ class NodeAccessTest extends AbstractDrupalTest
                     //'site_archive_published',
                     //'site_archive_unpublished',
                 ])
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
 
             ->whenIAm([], ['pending' => Access::ROLE_WEBMASTER], 'pending webmaster')
@@ -375,7 +375,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 // FIXME: Node site target should be checked for
                 // [init, off, on] states upon those methods
                 // ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
     }
@@ -399,7 +399,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canCreateNone()
                 ->canDoNone(Permission::CLONE)
                 ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
 
             ->whenIAm([], ['off' => Access::ROLE_CONTRIB], 'off contributor')
@@ -472,7 +472,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canCreateNone()
                 ->canDoNone(Permission::CLONE)
                 ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
 
@@ -485,7 +485,7 @@ class NodeAccessTest extends AbstractDrupalTest
             ->canCreateNone()
             ->canDoNone(Permission::CLONE)
             ->canDoNone(Permission::LOCK)
-            ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+            ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
             //->canDoNone('reference')
         ;
 
@@ -510,7 +510,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canCreateNone()
                 ->canDoNone(Permission::CLONE)
                 ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
 
@@ -528,7 +528,7 @@ class NodeAccessTest extends AbstractDrupalTest
                 ->canCreateNone()
                 ->canDoNone(Permission::CLONE)
                 ->canDoNone(Permission::LOCK)
-                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)
+                ->canDoNone(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)
                 //->canDoNone('reference')
         ;
 

@@ -130,7 +130,7 @@ trait NodeAccessTestTrait
         return $account;
     }
 
-    protected function createDrupalNode($status = 0, $site = null, $otherSites = [], $isGlobal = false, $isGroup = false, $isClonable = false, $other = [])
+    protected function createDrupalNode($status = 0, $site = null, $otherSites = [], $isGlobal = false, $isCorporate = false, $isClonable = false, $other = [])
     {
         $node = new Node();
         $node->nid = $this->nidSeq++;
@@ -145,7 +145,7 @@ trait NodeAccessTestTrait
         if ($isGlobal) {
             $title[] = 'global';
         }
-        if ($isGroup) {
+        if ($isCorporate) {
             $title[] = 'group';
         }
         if (!$isClonable) {
@@ -167,7 +167,7 @@ trait NodeAccessTestTrait
         }
 
         $node->is_global = (int)(bool)$isGlobal;
-        $node->is_group = (int)(bool)$isGroup;
+        $node->is_corporate = (int)(bool)$isCorporate;
         $node->is_clonable = (int)(bool)$isClonable;
 
         foreach ($otherSites as $label) {

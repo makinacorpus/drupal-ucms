@@ -90,10 +90,10 @@ class NodeActionProvider extends AbstractActionProvider
         }
 
         /* @var $item NodeInterface */
-        if ($item->is_global && user_access(Access::PERM_CONTENT_MANAGE_GROUP)) {
+        if ($item->is_global && user_access(Access::PERM_CONTENT_MANAGE_CORPORATE)) {
             $ret[] = Action::create([
-                'title'     => $item->is_group ? $this->t("Remove from group contents") : $this->t("Define as group content"),
-                'uri'       => 'node/' . $item->id() . ($item->is_group ? '/unmake-group' : '/make-group'),
+                'title'     => $item->is_corporate ? $this->t("Remove from corporate contents") : $this->t("Define as corporate content"),
+                'uri'       => 'node/' . $item->id() . ($item->is_corporate ? '/unmake-group' : '/make-group'),
                 'options'   => 'dialog',
                 'icon'      => 'briefcase',
                 'primary'   => false,

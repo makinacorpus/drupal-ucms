@@ -57,9 +57,9 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         /** @var \MakinaCorpus\ACL\PermissionMap $permissionMap */
         $permissionMap = \Drupal::service('acl.permission_map');
         // Avoid duplicate definition during unit tests.
-        if (!$permissionMap->supports(Access::ACL_PERM_CONTENT_PROMOTE_GROUP)) {
+        if (!$permissionMap->supports(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)) {
             \Drupal::service('acl.permission_map')->addPermissions([
-                Access::ACL_PERM_CONTENT_PROMOTE_GROUP => 32768,
+                Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE => 32768,
                 Access::ACL_PERM_SITE_EDIT_TREE => 65536,
                 Access::ACL_PERM_MANAGE_USERS => 131072,
                 Access::ACL_PERM_MANAGE_SITES => 262144,
@@ -271,8 +271,8 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
             $builder->add(Access::PROFILE_GLOBAL, Access::ID_ALL);
         }
-        if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
-            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL);
+        if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)) {
+            $builder->add(Access::PROFILE_CORPORATE_ADMIN, Access::ID_ALL);
         }
 
         if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
@@ -281,8 +281,8 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL) || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
                 $builder->add(Access::PROFILE_GLOBAL_READONLY, Access::ID_ALL);
             }
-            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GROUP) || $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
-                $builder->add(Access::PROFILE_GROUP_READONLY, Access::ID_ALL);
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_CORPORATE) || $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)) {
+                $builder->add(Access::PROFILE_CORPORATE_READER, Access::ID_ALL);
             }
             if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
                 $builder->add(Access::PROFILE_OTHER, Access::ID_ALL);

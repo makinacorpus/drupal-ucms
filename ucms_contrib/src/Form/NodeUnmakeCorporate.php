@@ -5,14 +5,14 @@ namespace MakinaCorpus\Ucms\Contrib\Form;
 use Drupal\Core\Form\FormStateInterface;
 use MakinaCorpus\Drupal\Calista\Form\AbstractEntityActionForm;
 
-class NodeUnmakeGroup extends AbstractEntityActionForm
+class NodeUnmakeCorporate extends AbstractEntityActionForm
 {
     /**
      * {inheritdoc}
      */
     public function getFormId()
     {
-        return 'ucms_contrib_node_unmake_group_form';
+        return 'ucms_contrib_node_unmake_corporate_form';
     }
 
     /**
@@ -21,7 +21,7 @@ class NodeUnmakeGroup extends AbstractEntityActionForm
     public function buildForm(array $form, FormStateInterface $form_state, $node = null)
     {
         $this->setEntity($form_state, $node);
-        return confirm_form($form, $this->t("Remove %title from group contents?", ['%title' => $node->title]), 'node/' . $node->nid, '');
+        return confirm_form($form, $this->t("Remove %title from corporate contents?", ['%title' => $node->title]), 'node/' . $node->nid, '');
     }
 
     /**
@@ -31,11 +31,11 @@ class NodeUnmakeGroup extends AbstractEntityActionForm
     {
         $node = $this->getEntity($form_state);
 
-        $node->is_group = 0;
+        $node->is_corporate = 0;
         $node->ucms_index_now = 1; // @todo find a better way
         $this->getEntityStorage('node')->save($node);
 
-        drupal_set_message($this->t("%title has been removed from the group contents.", ['%title' => $node->title]));
+        drupal_set_message($this->t("%title has been removed from the corporate contents.", ['%title' => $node->title]));
         $form_state->setRedirect('node/' . $node->nid);
     }
 }

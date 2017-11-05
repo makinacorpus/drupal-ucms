@@ -197,7 +197,7 @@ trait SiteTestTrait
         $node->status = 1;
         $node->is_global = false;
         $node->type = $type;
-        $node->is_group = false;
+        $node->is_corporate = false;
         $node->is_clonable = false;
 
         foreach ($values as $key => $value) {

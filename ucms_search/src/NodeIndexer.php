@@ -266,22 +266,22 @@ class NodeIndexer implements NodeIndexerInterface
         //   also include basic matching rules whenever possible.
 
         $values = [
-            'title'       => $node->getTitle(),
-            'id'          => $node->id(),
-            'owner'       => $node->getOwnerId(),
-            'created'     => $created ? $created->format(\DateTime::ISO8601) : null,
-            'updated'     => $changed ? $changed->format(\DateTime::ISO8601) : null,
-            'type'        => $node->getType(),
-            'body'        => [],
-            'status'      => (int)$node->isPublished(),
-            'tags'        => [],
-            'is_starred'  => (bool)$node->is_starred,
-            'is_flagged'  => (bool)$node->is_flagged,
-            'is_global'   => (bool)$node->is_global,
-            'is_group'    => (bool)$node->is_group,
-            'is_locked'   => !(bool)$node->is_clonable,
-            'node_access' => $this->nodeExtractGrants($node),
-            'site_id'     => $node->ucms_sites,
+            'title'         => $node->getTitle(),
+            'id'            => $node->id(),
+            'owner'         => $node->getOwnerId(),
+            'created'       => $created ? $created->format(\DateTime::ISO8601) : null,
+            'updated'       => $changed ? $changed->format(\DateTime::ISO8601) : null,
+            'type'          => $node->getType(),
+            'body'          => [],
+            'status'        => (int)$node->isPublished(),
+            'tags'          => [],
+            'is_starred'    => (bool)$node->is_starred,
+            'is_flagged'    => (bool)$node->is_flagged,
+            'is_global'     => (bool)$node->is_global,
+            'is_corporate'  => (bool)$node->is_corporate,
+            'is_locked'     => !(bool)$node->is_clonable,
+            'node_access'   => $this->nodeExtractGrants($node),
+            'site_id'       => $node->ucms_sites,
         ];
 
         $event = new NodeIndexEvent($node, $values);

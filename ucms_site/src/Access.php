@@ -53,14 +53,14 @@ final class Access
     const PROFILE_GLOBAL = 'content_global_editor';
 
     /**
-     * Grants for group content
+     * Grants for institutional content
      */
-    const PROFILE_GROUP_READONLY = 'content_group_ro';
+    const PROFILE_CORPORATE_READER = 'corporate_reader';
 
     /**
-     * Grants for group content
+     * Grants for institutional content
      */
-    const PROFILE_GROUP = 'content_group_editor';
+    const PROFILE_CORPORATE_ADMIN = 'corporate_admin';
 
     /**
      * Users that can manage all sites
@@ -108,9 +108,9 @@ final class Access
     const PERM_CONTENT_MANAGE_GLOBAL = 'content manage global';
 
     /**
-     * Manage group content
+     * Manage corporate content
      */
-    const PERM_CONTENT_MANAGE_GROUP = 'content manage group';
+    const PERM_CONTENT_MANAGE_CORPORATE = 'content manage corporate';
 
     /**
      * Star content
@@ -143,9 +143,9 @@ final class Access
     const PERM_CONTENT_VIEW_GLOBAL = 'content view global';
 
     /**
-     * View published group content
+     * View published corporate content
      */
-    const PERM_CONTENT_VIEW_GROUP = 'content view group';
+    const PERM_CONTENT_VIEW_CORPORATE = 'content view corporate';
 
     /**
      * View published other sites content
@@ -195,7 +195,7 @@ final class Access
     /**
      * ACL permission for site: manage webmasters
      */
-    const ACL_PERM_CONTENT_PROMOTE_GROUP = 'promote to group';
+    const ACL_PERM_CONTENT_PROMOTE_CORPORATE = 'promote to corporate';
 
     /**
      * ACL permission for site: manage webmasters

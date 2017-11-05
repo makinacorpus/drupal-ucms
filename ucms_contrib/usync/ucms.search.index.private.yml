@@ -99,7 +99,7 @@ mappings:
       is_global:
         type:         boolean
 
-      is_group:
+      is_corporate:
         type:         boolean
 
       is_locked:
