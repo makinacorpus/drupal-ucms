@@ -75,10 +75,8 @@ services:
   # Node ACL collector
   ucms_group.acl.node_collector:
     class: MakinaCorpus\Ucms\Group\ACL\NodeEntryCollector
-    arguments: ["@ucms_group.manager", "@entity.manager"]
+    arguments: ["@ucms_group.manager"]
     tags:
-      # Those must run after the ucms_site node collector
-      - {name: acl.entry_collector, priority: -32}
       - {name: acl.profile_collector, priority: -32}
 
   # Site ACL collector

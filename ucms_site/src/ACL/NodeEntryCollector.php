@@ -22,31 +22,24 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollectorInterface, EventSubscriberInterface
 {
     /**
-     * Get supported permissions
-     *
-     * @return string[]
+     * Supported permissions
      */
-    static public function getSupportedPermissions()
-    {
-        return [
-            Access::ACL_PERM_CONTENT_PROMOTE_GROUP => true,
-            Access::ACL_PERM_SITE_EDIT_TREE => true,
-            Access::ACL_PERM_MANAGE_USERS => true,
-            Permission::DELETE => true,
-            Permission::LOCK => true,
-            Permission::PUBLISH => true,
-            Permission::UPDATE => true,
-            Permission::VIEW => true,
-        ];
-    }
+    private static $supportedPermissions = [
+        Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE => true,
+        Access::ACL_PERM_SITE_EDIT_TREE => true,
+        Access::ACL_PERM_MANAGE_USERS => true,
+        Permission::DELETE => true,
+        Permission::LOCK => true,
+        Permission::PUBLISH => true,
+        Permission::UPDATE => true,
+        Permission::VIEW => true,
+    ];
 
     private $entityManager;
     private $siteManager;
 
     /**
      * Default constructor
-     *
-     * @param SiteManager $manager
      */
     public function __construct(EntityManager $entityManager, SiteManager $siteManager)
     {
@@ -115,7 +108,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
      */
     public function supports($type, $permission)
     {
-        return 'node' === $type && isset(self::getSupportedPermissions()[$permission]);
+        return 'node' === $type && isset(self::$supportedPermissions[$permission]);
     }
 
     /**
@@ -148,46 +141,60 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         $readWrite    = [Permission::VIEW, Permission::UPDATE, Permission::DELETE];
         $readUpdate   = [Permission::VIEW, Permission::UPDATE];
         $isGlobal     = $node->is_global;
-        $isGroup      = $node->is_group;
-        $isNotLocal   = $isGlobal || $isGroup;
+        $isCorporate  = $node->is_corporate;
+        $isGhost      = $node->is_ghost;
+        $isNotLocal   = $isGlobal || $isCorporate;
         $isPublished  = $node->isPublished();
+        $groupId      = $node->group_id ?? Access::ID_ALL;
 
         // People with "view all" permissions should view it
-        $builder->add(Access::PROFILE_READONLY, Access::ID_ALL, $readOnly);
+        $builder->add(Access::PROFILE_READONLY, $groupId, $readOnly);
         $builder->add(Access::PROFILE_GOD, Access::ID_ALL, $readWrite);
 
         // This handles two grants in one:
         //  - Webmasters can browse along published content of other sites
         //  - People with global repository access may see this content
 
-        if ($isGroup) {
-            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, $readWrite);
-            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, [Permission::LOCK, Permission::PUBLISH]);
-            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, Access::ACL_PERM_CONTENT_PROMOTE_GROUP);
+        if ($isCorporate) {
+            $builder->add(Access::PROFILE_CORPORATE_ADMIN, $groupId, $readWrite);
+            $builder->add(Access::PROFILE_CORPORATE_ADMIN, $groupId, [Permission::LOCK, Permission::PUBLISH]);
+            $builder->add(Access::PROFILE_CORPORATE_ADMIN, $groupId, Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE);
             if ($isPublished) { // Avoid data volume exploding
-                $builder->add(Access::PROFILE_GROUP_READONLY, Access::ID_ALL, $readOnly);
+                $builder->add(Access::PROFILE_CORPORATE_READER, $groupId, $readOnly);
             }
-        } else if ($isGlobal) {
-            $builder->add(Access::PROFILE_GLOBAL, Access::ID_ALL, $readWrite);
-            $builder->add(Access::PROFILE_GLOBAL, Access::ID_ALL, [Permission::LOCK, Permission::PUBLISH]);
-            // Beware that when the node is global, only "group" profile can
-            // promote it to group, so no, this is a not typo error:
-            $builder->add(Access::PROFILE_GROUP, Access::ID_ALL, Access::ACL_PERM_CONTENT_PROMOTE_GROUP);
+        }
+        if ($isGlobal) {
+            $builder->add(Access::PROFILE_GLOBAL, $groupId, $readWrite);
+            $builder->add(Access::PROFILE_GLOBAL, $groupId, [Permission::LOCK, Permission::PUBLISH]);
+            $builder->add(Access::PROFILE_CORPORATE_ADMIN, $groupId, Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE);
             if ($isPublished) { // Avoid data volume exploding
+                $builder->add(Access::PROFILE_GLOBAL_READONLY, $groupId, $readOnly);
+            }
+        }
+
+        // Non-ghost content is shared between groups, thus can be seen by
+        // anyone as long as it is published. Unpublished content can never
+        // be seen out of its group.
+        if ($isPublished && !$isGhost) {
+            if ($isCorporate) {
+                $builder->add(Access::PROFILE_CORPORATE_READER, Access::ID_ALL, $readOnly);
+            }
+            if ($isGlobal) {
                 $builder->add(Access::PROFILE_GLOBAL_READONLY, Access::ID_ALL, $readOnly);
+            }
+            if (!$isNotLocal) {
+                $builder->add(Access::PROFILE_READONLY, Access::ID_ALL, $readOnly);
             }
         }
 
         if (!$isNotLocal) {
-
             // This allows other webmasters to see other site content, but please
             // beware that it drops out the site's state from the equation, there
             // is no easy way of doing this except by rewriting all site content
             // node access rights on each site status change, and that's sadly a
             // no-go.
             if ($isPublished) {
-                $builder->add(Access::PROFILE_OTHER, Access::ID_ALL, $readOnly);
-
+                $builder->add(Access::PROFILE_OTHER, $groupId, $readOnly);
             }
 
             // Every local node must be updateable for their authors, especially
@@ -199,6 +206,13 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             if ($node->site_id) {
                 $builder->add(Access::PROFILE_SITE_WEBMASTER, $node->site_id, [Permission::LOCK]);
             }
+        }
+
+        if (!$groupId) {
+            // A content without a group identifier is considered as an
+            // orphan content, even thought it belongs to a site: allow platform
+            // admins to see it.
+            $builder->add(Access::PROFILE_GROUP_ORPHAN_READER, Access::ID_ALL, $readOnly);
         }
 
         // Inject an entry for each site, even when the node is a global node, this

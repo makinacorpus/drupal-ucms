@@ -146,7 +146,7 @@ trait NodeAccessTestTrait
             $title[] = 'global';
         }
         if ($isCorporate) {
-            $title[] = 'group';
+            $title[] = 'corporate';
         }
         if (!$isClonable) {
             $title[] = 'locked';
@@ -260,13 +260,14 @@ trait NodeAccessTestTrait
         if (!$this->contextualAccount || $this->contextualAccount->isAnonymous()) {
             return 'Anonymous';
         } else {
-            return $this->contextualAccount->getAccountName();
+            return $this->contextualAccount->getAccountName() . ' (' . $this->contextualAccount->uid . ')';
         }
     }
 
     protected function canSee($label)
     {
         $site = $this->getSiteManager()->getContext();
+        $node = $this->getNode($label);
 
         $this
             ->assertSame(
@@ -278,7 +279,7 @@ trait NodeAccessTestTrait
                         $this->getNode($label),
                         $this->contextualAccount
                     ),
-                sprintf("%s can see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can see %s (%s) on site %s", $this->whoIAm(), $label, $node->nid, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -288,6 +289,7 @@ trait NodeAccessTestTrait
     protected function canNotSee($label)
     {
         $site = $this->getSiteManager()->getContext();
+        $node = $this->getNode($label);
 
         $this
             ->assertSame(
@@ -299,7 +301,7 @@ trait NodeAccessTestTrait
                         $this->getNode($label),
                         $this->contextualAccount
                     ),
-                sprintf("%s can not see %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can not see %s (%s) on site %s", $this->whoIAm(), $label, $node->nid, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -342,6 +344,7 @@ trait NodeAccessTestTrait
     protected function canEdit($label)
     {
         $site = $this->getSiteManager()->getContext();
+        $node = $this->getNode($label);
 
         $this
             ->assertSame(
@@ -353,7 +356,7 @@ trait NodeAccessTestTrait
                         $this->getNode($label),
                         $this->contextualAccount
                     ),
-                sprintf("%s can edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can edit %s (%s) on site %s", $this->whoIAm(), $label, $node->nid, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -363,6 +366,7 @@ trait NodeAccessTestTrait
     protected function canNotEdit($label)
     {
         $site = $this->getSiteManager()->getContext();
+        $node = $this->getNode($label);
 
         $this
             ->assertSame(
@@ -374,7 +378,7 @@ trait NodeAccessTestTrait
                         $this->getNode($label),
                         $this->contextualAccount
                     ),
-                sprintf("%s can not edit %s on site %s", $this->whoIAm(), $label, $site ? SiteState::getList()[$site->state] : '<None>')
+                sprintf("%s can not edit %s (%s) on site %s", $this->whoIAm(), $label, $node->nid, $site ? SiteState::getList()[$site->state] : '<None>')
             )
         ;
 
@@ -487,8 +491,9 @@ trait NodeAccessTestTrait
     protected function canDo($op, $label)
     {
         $site = $this->getSiteManager()->getContext();
+        $node = $this->getNode($label);
 
-        $this->assertTrue($this->canDoReally($op, $label), sprintf("%s can %s %s on site %s", $this->whoIAm(), $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+        $this->assertTrue($this->canDoReally($op, $label), sprintf("%s can %s %s (%s) on site %s", $this->whoIAm(), $op, $label, $node->uid, $site ? SiteState::getList()[$site->state] : '<None>'));
 
         return $this;
     }
@@ -496,8 +501,9 @@ trait NodeAccessTestTrait
     protected function canNotDo($op, $label)
     {
         $site = $this->getSiteManager()->getContext();
+        $node = $this->getNode($label);
 
-        $this->assertFalse($this->canDoReally($op, $label), sprintf("%s can NOT %s %s on site %s", $this->whoIAm(), $op, $label, $site ? SiteState::getList()[$site->state] : '<None>'));
+        $this->assertFalse($this->canDoReally($op, $label), sprintf("%s can NOT %s %s (%s) on site %s", $this->whoIAm(), $op, $label, $node->nid, $site ? SiteState::getList()[$site->state] : '<None>'));
 
         return $this;
     }

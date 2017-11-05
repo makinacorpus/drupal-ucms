@@ -270,6 +270,15 @@ class SiteStorage
         foreach ($fields as $field) {
             switch ($field) {
 
+                case 'template_id':
+                    // Avoid SQL constraints violation due to dangling 0 values
+                    if (!$site->template_id) {
+                        $values[$field] = null;
+                    } else {
+                        $values[$field] = $site->template_id;
+                    }
+                    break;
+
                 case 'attributes':
                     $attributes = $site->getAttributes();
                     if (empty($attributes)) {

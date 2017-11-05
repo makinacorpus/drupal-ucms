@@ -3,10 +3,8 @@
 namespace MakinaCorpus\Ucms\Group;
 
 use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Ucms\Group\Error\GroupMoveDisallowedException;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\Access;
 
 class GroupAccessService
 {

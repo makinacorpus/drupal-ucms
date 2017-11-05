@@ -23,7 +23,7 @@ class GroupStorageTest extends AbstractDrupalTest
         $storage = $this->getGroupManager()->getStorage();
 
         try {
-            $storage->findOne(PHP_INT_MAX); // should never happen in dev env
+            $storage->findOne(999999999); // should never happen in dev env
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             // OK

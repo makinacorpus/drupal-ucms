@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Group;
 
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
-use MakinaCorpus\Ucms\Site\Access;
 
 /**
  * Single access record for a group and user couple

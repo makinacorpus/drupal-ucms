@@ -148,7 +148,7 @@ trait SiteTestTrait
         if ($template === true) {
             // this site is a template
             $site->is_template = 1;
-            $site->template_id = 0;
+            $site->template_id = null;
         } else {
             // this site is created from a template
             $site->is_template = 0;

@@ -93,6 +93,11 @@ final class Access
     const PROFILE_GROUP_MEMBER = 'group_member';
 
     /**
+     * Admins that can see orphaned content
+     */
+    const PROFILE_GROUP_ORPHAN_READER = 'ucms_group_orphan_reader';
+
+    /**
      * Default group identifier for grants where it does not make sense
      */
     const ID_ALL = 0;

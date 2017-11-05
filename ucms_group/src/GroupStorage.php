@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Group;
 
 use MakinaCorpus\Ucms\Group\EventDispatcher\GroupEvent;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class GroupStorage
