@@ -83,9 +83,6 @@ final class GroupEntryCollector implements EntryCollectorInterface, ProfileColle
             $builder->add(Access::PROFILE_GROUP_GOD, Access::ID_ALL);
         }
 
-        // @todo deal with this case
-        // $canViewAll = $account->hasPermission(Access::PERM_GROUP_VIEW_ALL);
-
         foreach ($this->groupManager->getAccess()->getUserGroups($account) as $access) {
             $groupId = $access->getGroupId();
             $builder->add(Access::PROFILE_GROUP_MEMBER, $groupId);

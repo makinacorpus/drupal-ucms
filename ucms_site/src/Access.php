@@ -168,11 +168,6 @@ final class Access
     const PERM_GROUP_MANAGE_ORPHAN = 'group manage orphan';
 
     /**
-     * View all groups
-     */
-    const PERM_GROUP_VIEW_ALL = 'group view all';
-
-    /**
      * Access the site dashboard
      */
     const PERM_SITE_DASHBOARD_ACCESS = 'site dashboard access';

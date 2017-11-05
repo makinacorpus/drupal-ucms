@@ -36,7 +36,7 @@ function ucms_group_menu() {
     'title'             => "All groups",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::viewAllAction'],
-    'access arguments'  => [Access::PERM_GROUP_VIEW_ALL],
+    'access arguments'  => [Access::PERM_GROUP_MANAGE_ALL],
     'type'              => MENU_LOCAL_TASK,
   ];
   $items['admin/dashboard/group/add'] = [

@@ -305,9 +305,6 @@ function ucms_site_permission() {
     Access::PERM_GROUP_MANAGE_ORPHAN => [
       'title' => t("Manage orphan content"),
     ],
-    Access::PERM_GROUP_VIEW_ALL => [
-      'title' => t("View all groups"),
-    ],
   ];
 }
 
