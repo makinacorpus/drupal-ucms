@@ -61,7 +61,8 @@ class DeadLinkPortletDisplay extends AbstractDisplay
                             "",
                             'node/' . $source->id() . '/edit',
                             ['attributes' => ['class' => ['btn-sm']]],
-                            'share-alt'
+                            'pencil',
+                            0, true, true
                         )
                     ]
                 ];
