@@ -123,7 +123,7 @@ class UserEdit extends FormBase
         unset($allRoles[DRUPAL_AUTHENTICATED_RID]);
         $siteRoles = $this->siteManager->getAccess()->getRolesAssociations();
         $availableRoles = array_diff_key($allRoles, $siteRoles);
-        sort($availableRoles, SORT_NATURAL);
+        asort($availableRoles, SORT_NATURAL);
 
         $form['roles'] = [
             '#type' => 'checkboxes',
