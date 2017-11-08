@@ -206,8 +206,9 @@ class MediaFilter extends FilterBase implements ContainerFactoryPluginInterface
 
                 $new = $d->createElement('div');
                 $new->setAttribute('class', 'body-media');
-                 $this->setInnerHtml($new, $renderedMedia);
+                $this->setInnerHtml($new, $renderedMedia);
 
+                $new->setAttribute('data-media-type', $nodes[$nodeId]->bundle());
                 $new->setAttribute('data-media-nid', $nodeId);
                 $new->setAttribute('data-media-width', $width);
                 $new->setAttribute('data-media-float', $float);
