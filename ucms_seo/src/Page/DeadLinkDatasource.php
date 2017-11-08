@@ -33,13 +33,19 @@ class DeadLinkDatasource extends AbstractDatasource
     public function getItems($query, PageState $pageState)
     {
         $query = $this->db->select('ucms_node_reference', 't');
+
         // Add join to node only for node_access, necessary
         $query->join('node', 'n', "n.nid = t.source_id");
         $query->addTag('node_access');
+        $query->addMetaData('op', 'update');
+
         // And really, I am sorry Yannick, but in the end I have no choice,
         // we need this join to ensure the node exists or not, it could have
-        // been a sub-request in select, but MySQL does not allow this
-        $query->leftJoin('node', 's', "s.nid = t.target_id");
+        // been a sub-request in select, but MySQL does not allow this.
+        // IMPORTANT NOTE: we use 'node_revision' here otherwise the
+        // 'node_access' tag will also match this table and create false
+        // negatives, wrongly hiding nodes from the 'node n' table.
+        $query->leftJoin('node_revision', 's', "s.nid = t.target_id");
         $query->condition((new \DatabaseCondition('OR'))
             ->condition('s.status', 0)
             ->isNull('s.nid')
