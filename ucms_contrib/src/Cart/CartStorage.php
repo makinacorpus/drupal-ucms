@@ -48,6 +48,7 @@ final class CartStorage implements CartStorageInterface
             ->key([
                 'nid' => $nid,
                 'uid' => $uid,
+                'ts_added' => (new \DateTime())->format('Y-m-d H:i:s'),
             ])
             ->execute()
         ;
@@ -94,6 +95,8 @@ final class CartStorage implements CartStorageInterface
             ->select('ucms_contrib_cart', 'c')
             ->fields('c', ['nid'])
             ->condition('c.uid', $uid)
+            ->orderBy('ts_added', 'DESC')
+            ->orderBy('nid', 'DESC')
         ;
 
         $q->join('node', 'n', "n.nid = c.nid");
