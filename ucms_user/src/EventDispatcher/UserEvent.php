@@ -1,10 +1,8 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\User\EventDispatcher;
 
 use Symfony\Component\EventDispatcher\GenericEvent;
-
 
 class UserEvent extends GenericEvent
 {
@@ -18,9 +16,9 @@ class UserEvent extends GenericEvent
     public function __construct($userId, $triggerUserId = null, array $arguments = [])
     {
         $arguments['uid'] = $triggerUserId;
+
         parent::__construct($userId, $arguments);
     }
-
 
     /**
      * Who did this
@@ -29,7 +27,16 @@ class UserEvent extends GenericEvent
      */
     public function getUserId()
     {
-        return $this->getArgument('uid');
+        return (int)$this->getArgument('uid');
+    }
+
+    /**
+     * Get the new accound user identifier
+     *
+     * @return int
+     */
+    public function getCreatedUserId()
+    {
+        return (int)$this->getSubject();
     }
 }
-

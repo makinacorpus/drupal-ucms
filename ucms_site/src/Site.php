@@ -159,6 +159,6 @@ class Site
      */
     public function getGroupId()
     {
-        return $this->group_id;
+        return (int)$this->group_id;
     }
 }
