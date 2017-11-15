@@ -84,7 +84,7 @@ class NodeTransfer extends FormBase
             '#type' => 'textfield',
             '#title' => $this->t("Transfer ownership to:"),
             '#description' => $this->t("Please enter a name and select the user in the suggestions list."),
-            '#autocomplete_path' => 'admin/dashboard/site/users-ac',
+            '#autocomplete_path' => 'admin/dashboard/ajax/users-ac',
             '#required' => true,
         ];
 
