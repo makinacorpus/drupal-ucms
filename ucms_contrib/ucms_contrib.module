@@ -395,7 +395,7 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     ];
   }
 
-  $add_and_publish = !$node->id() && (!$access || sf_acl_is_granted(Permission::PUBLISH, $node));
+  $add_and_publish = (!$access || sf_acl_is_granted(Permission::PUBLISH, $node));
   if ($add_and_publish) {
     $submit = $form['actions']['submit']['#submit'];
     array_unshift($submit, 'ucms_contrib_form_node_form_submit_publish');
