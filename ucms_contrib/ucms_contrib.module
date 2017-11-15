@@ -576,7 +576,7 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     ];
   }
 
-  $add_and_publish = !$node->id() && (!$access || $access->userCanPublish($user, $node));
+  $add_and_publish = (!$access || $access->userCanPublish($user, $node));
   if ($add_and_publish) {
     $submit = $form['actions']['submit']['#submit'];
     array_unshift($submit, 'ucms_contrib_form_node_form_submit_publish');
