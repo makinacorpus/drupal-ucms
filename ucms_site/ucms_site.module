@@ -171,12 +171,12 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK,
   ];
 
-  $items['admin/dashboard/site/users-ac'] = [
+  $items['admin/dashboard/ajax/users-ac'] = [
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [AutocompleteController::class . '::userAutocompleteAction'],
     'type'              => MENU_CALLBACK,
   ];
-  $items['admin/dashboard/site/sites-ac'] = [
+  $items['admin/dashboard/ajax/sites-ac'] = [
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [AutocompleteController::class . '::siteAutocompleteAction'],
     'type'              => MENU_CALLBACK,
