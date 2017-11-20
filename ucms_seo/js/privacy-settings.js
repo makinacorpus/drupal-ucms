@@ -57,6 +57,7 @@ var UcmsSeoPrivacy = (function (document, $) {
       closeButton.addEventListener("click", function (event) {
         event.preventDefault();
         document.cookie = "cookie_consent=1";
+        document.cookie = "privacy_tracker=0";
         $(element).fadeOut();
       });
     }
@@ -74,30 +75,41 @@ var UcmsSeoPrivacy = (function (document, $) {
   function initPrivacySettingsComponent() {
     var radio_yes = document.querySelector("input[type=radio].ucms-privacy-yes");
     var radio_no = document.querySelector("input[type=radio].ucms-privacy-no");
+    var button_validate = document.querySelector("button.ucms-privacy-validate");
 
     if (radio_yes && radio_no) {
       if (isOptOut()) {
-        radio_yes.checked = "checked";
-        radio_no.checked = "";
-      } else {
         radio_yes.checked = "";
         radio_no.checked = "checked";
+      } else {
+        radio_yes.checked = "checked";
+        radio_no.checked = "";
       }
 
-      radio_yes.addEventListener("change", function (event) {
-        if (this.checked) {
-          optOut();
+//      radio_yes.addEventListener("change", function (event) {
+//        if (this.checked) {
+//          optIn();
+//        } else {
+//          optOut();
+//        }
+//      });
+//      radio_no.addEventListener("change", function (event) {
+//        if (this.checked) {
+//          optOut();
+//        } else {
+//          optIn();
+//        }
+//      });
+      button_validate.addEventListener("click", function (event) {
+        if (radio_yes.checked) {
+          optIn() ;
         } else {
-          optIn();
-        }
-      });
-      radio_no.addEventListener("change", function (event) {
-        if (this.checked) {
-          optIn();
-        } else {
           optOut();
         }
+        document.cookie = "cookie_consent=1";
+        window.location.href = "/";
       });
+
     }
   }
 

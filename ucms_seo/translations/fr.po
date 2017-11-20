@@ -31,4 +31,7 @@ msgstr "Acceptez-vous le dépôt et la lecture de cookies afin d'analyser votre 
 
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/views/privacy-settings.html.twig:0
 msgid "Disable @label"
-msgstr "Désactiver @label"
+
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/views/privacy-settings.html.twig:0
+msgid "Validate"
+msgstr "Valider"
