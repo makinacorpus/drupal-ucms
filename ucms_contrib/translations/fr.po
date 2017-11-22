@@ -3244,9 +3244,9 @@ msgstr "Envoyer ma demande"
 msgid "Sorry, %mail is not a known e-mail address."
 msgstr "Désolé, %mail n'est pas une adresse e-mail connue."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserRequestNewPassword.php:135
-msgid "Further instructions have been sent to your e-mail address."
-msgstr "Plus d'informations ont été envoyée à votre adresse e-mail."
+#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserRequestNewPassword.php:139
+msgid "If this adress is known to us, you will receive further instructions."
+msgstr "Si cette adresse est enregistrée, vous recevrez plus d'information par e-mail."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserResetPassword.php:83
 msgid "Do you really want to reset the password of the user @name?"
