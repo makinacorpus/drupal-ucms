@@ -1,0 +1,13 @@
+services:
+
+    ucms_taxo.term_action_provider:
+        public: false
+        class: MakinaCorpus\Ucms\Taxo\Action\TermActionProvider
+        arguments: ["@current_user"]
+        tags: [{name: ucms_dashboard.action_provider}]
+
+    ucms_taxo.vocabulary_action_provider:
+        public: false
+        class: MakinaCorpus\Ucms\Taxo\Action\VocabularyActionProvider
+        arguments: ["@current_user"]
+        tags: [{name: ucms_dashboard.action_provider}]

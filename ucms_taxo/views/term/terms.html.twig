@@ -1,0 +1,43 @@
+<div class="col-md-12">
+  <table class="table table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>{{ "Name"|trans }}</th>
+        <th>{{ "Owner"|trans }}</th>
+        <th>{{ "Is locked"|trans }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for term in terms %}
+        <tr>
+          <td id="term-{{ term.tid }}">
+            {% if term.parent %}
+              <a href="#term-{{ term.parent }}">{{ term.parent_name|e }}</a> »
+            {% endif %}
+            {{ term.name|e }}
+          </td>
+          <td>
+            {% if users[term.user_id] is defined %}
+              {{ users[term.user_id].displayName }}
+            {% endif %}
+          </td>
+          <td>
+            {% if term.is_locked %}
+              {{ "Locked"|trans }}
+            {% endif %}
+          </td>
+          <td>
+            {{ ucms_actions(term) }}
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="2">
+            <p>{{ "There is no terms in this vocabulary"|trans }}</p>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

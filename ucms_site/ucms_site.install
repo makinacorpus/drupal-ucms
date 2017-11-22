@@ -235,6 +235,18 @@ function ucms_site_schema_alter(&$schema) {
       'not null'    => true,
       'default'     => 0,
     ];
+    $schema['taxonomy_term_data']['fields']['user_id'] = [
+      'description' => "User which created the term",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ];
+    $schema['taxonomy_term_data']['foreign keys']['user_id'] = [
+      'table'   => 'users',
+      'columns' => ['user_id' => 'uid'],
+      'delete'  => 'set null',
+    ];
   }
 
   if (isset($schema['url_alias'])) {
@@ -410,6 +422,16 @@ function ucms_site_install_schema_fix() {
       'default'     => 0,
     ]);
   }
+  // Adds {taxonomy_term_data}.user_id column.
+  if (db_table_exists('taxonomy_term_data') && !db_field_exists('taxonomy_term_data', 'user_id')) {
+    db_add_field('taxonomy_term_data', 'user_id', [
+      'description' => "User which created the term",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
 
   // Adds {umenu}.site_id column.
   if (db_table_exists('umenu') && !db_field_exists('umenu', 'site_id')) {
@@ -496,6 +518,13 @@ function ucms_site_install_schema_fix() {
       }
     }
   }
+
+  db_constraint_fix_processed('menu');
+  db_constraint_fix_processed('node');
+  db_constraint_fix_processed('system');
+  db_constraint_fix_processed('taxonomy');
+  db_constraint_fix_processed('ucms_site');
+  db_constraint_fix_processed('user');
 }
 
 /**
@@ -718,9 +747,15 @@ function ucms_site_update_7019() {
 }
 
 /**
- * God mode needs rebuild.
- * Node references between sites needs rebuild.
+ * God mode needs rebuild - Node references between sites needs rebuild.
  */
 function ucms_site_update_7021() {
   variable_set('node_access_needs_rebuild', 1);
+}
+
+/**
+ * Ensures database schema.
+ */
+function ucms_site_update_7022() {
+  ucms_site_install_schema_fix();
 }

@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function ucms_taxo_schema() {
+  $schema = [];
+
+  $schema['ucms_taxo_access'] = [
+    'description' => 'Taxonomy access control list',
+    'fields' => [
+      'id' => [
+        'description' => "Vocabulary identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'user_id' => [
+        'description' => "User identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'role' => [
+        'description' => 'User role for this vocabulary, see roles constants',
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'user_id' => [
+        'table'   => 'users',
+        'columns' => ['user_id' => 'uid'],
+        'delete'  => 'cascade',
+      ],
+      'user_id' => [
+        'table'   => 'users',
+        'columns' => ['user_id' => 'uid'],
+        'delete'  => 'cascade',
+      ],
+    ],
+    'primary key' => ['id', 'user_id', 'role'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function ucms_taxo_install() {
+  db_constraint_fix('ucms_taxo');
+}

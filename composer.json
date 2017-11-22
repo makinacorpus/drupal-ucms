@@ -45,6 +45,7 @@
             "/ucms_seo/src/Tests/",
             "/ucms_site/src/Tests/",
             "/ucms_sso/src/Tests/",
+            "/ucms_taxo/src/Tests/",
             "/ucms_tree/src/Tests/",
             "/ucms_user/src/Tests/",
             "/ucms_widget/src/Tests/"
@@ -62,6 +63,7 @@
             "MakinaCorpus\\Ucms\\Search\\" : "ucms_search/src",
             "MakinaCorpus\\Ucms\\Seo\\" : "ucms_seo/src",
             "MakinaCorpus\\Ucms\\Site\\" : "ucms_site/src",
+            "MakinaCorpus\\Ucms\\Taxo\\" : "ucms_taxo/src",
             "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
             "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src",
@@ -74,6 +76,7 @@
         "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-umenu" : "^1.1.4",
         "makinacorpus/drupal-ulink" : "^2.0",
+        "makinacorpus/drupal-plusql" : "^1.0.4",
         "makinacorpus/drupal-sf-dic" : "^3.0.32",
         "makinacorpus/drush-progressbar" : "^1.0",
         "makinacorpus/php-bloom" : "^2.0.1"

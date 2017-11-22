@@ -123,6 +123,16 @@ final class Access
     const ROLE_CONTRIB = 2;
 
     /**
+     * Can admin a certain taxonomy vocabulary
+     */
+    const ROLE_TAXO_ADMIN = 1;
+
+    /**
+     * Can read a certain taxonomy vocabulary
+     */
+    const ROLE_TAXO_READER = 2;
+
+    /**
      * Explicitely tell that the query should not filter out nodes that don't
      * elong to the current site context. This site filtering is only done
      * whenever the query is tagged with 'node_access'.
