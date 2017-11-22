@@ -7,10 +7,8 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\UserInterface;
-
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 use MakinaCorpus\Ucms\User\TokenManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -107,6 +105,10 @@ class UserRequestNewPassword extends FormBase
         $mail = $form_state->getValue('mail');
         $mail = trim($mail);
 
+        if (!valid_email_address($mail)) {
+            $form_state->setErrorByName('mail', $this->t('The e-mail address you specified is not valid.'));
+        }
+
         $uid = db_select('users')
             ->fields('users', array('uid'))
             ->condition('mail', $mail)
@@ -115,9 +117,7 @@ class UserRequestNewPassword extends FormBase
             ->execute()
             ->fetchField();
 
-        if (!$uid) {
-            $form_state->setErrorByName('mail', $this->t('Sorry, %mail is not a known e-mail address.', ['%mail' => $mail]));
-        } else {
+        if ($uid) {
             $user = $this->entityManager->getStorage('user')->load($uid);
             $form_state->setTemporaryValue('user', $user);
         }
@@ -131,9 +131,12 @@ class UserRequestNewPassword extends FormBase
     {
         /* @var UserInterface $user */
         $user = $form_state->getTemporaryValue('user');
-        $this->tokenManager->sendTokenMail($user, 'ucms_user', 'new-password-request');
-        drupal_set_message($this->t("Further instructions have been sent to your e-mail address."));
-        $this->dispatcher->dispatch('user:request_new_password', new UserEvent($user->uid, $this->currentUser()->id()));
+        if ($user) {
+            $this->tokenManager->sendTokenMail($user, 'ucms_user', 'new-password-request');
+            $event = new UserEvent($user->uid, $this->currentUser()->id());
+            $this->dispatcher->dispatch('user:request_new_password', $event);
+        }
+        drupal_set_message($this->t("If this adress is known to us, you will receive further instructions."));
     }
 
 }
