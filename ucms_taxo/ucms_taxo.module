@@ -1,0 +1,183 @@
+<?php
+/**
+ * @file
+ * UCMS - Taxonomy but more flexible.
+ */
+
+use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Taxo\Controller\TermController;
+use MakinaCorpus\Ucms\Taxo\Form\TermDelete;
+use MakinaCorpus\Ucms\Taxo\Form\TermEdit;
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_taxo_menu() {
+  $items = [];
+
+  $items['admin/dashboard/taxonomy'] = [
+    'title'             => "Vocabularies",
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [TermController::class . '::listVocabularies'],
+    'access arguments'  => ['access administration pages'],
+    'type'              => MENU_NORMAL_ITEM,
+  ];
+
+  $items['admin/dashboard/taxonomy/%ucms_vocabulary'] = [
+    'title callback'    => 'ucms_taxo_menu_vocabulary_title',
+    'title arguments'   => [3],
+    'page callback'     => 'sf_dic_page',
+    'page arguments'    => [TermController::class . '::listTerms', 3],
+    'access callback'   => 'ucms_taxo_vocabulary_access',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  $items['admin/dashboard/taxonomy/%ucms_vocabulary/add'] = [
+    'title'             => "Add new term",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [TermEdit::class, 3],
+    'access callback'   => 'ucms_taxo_vocabulary_access',
+    'access arguments'  => [3, Access::OP_CREATE],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  $items['admin/dashboard/taxonomy/%ucms_vocabulary/%ucms_term/update'] = [
+    'title callback'    => 'ucms_taxo_menu_item_title',
+    'title arguments'   => [4, Access::OP_UPDATE],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [TermEdit::class, 3, 4],
+    'access callback'   => 'ucms_taxo_term_access',
+    'access arguments'  => [4, Access::OP_UPDATE],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  $items['admin/dashboard/taxonomy/%ucms_vocabulary/%ucms_term/delete'] = [
+    'title callback'    => 'ucms_taxo_menu_item_title',
+    'title arguments'   => [4, Access::OP_DELETE],
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [TermDelete::class, 3, 4],
+    'access callback'   => 'ucms_taxo_term_access',
+    'access arguments'  => [4, Access::OP_DELETE],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+
+  return $items;
+}
+
+/**
+ * Menu loader, please don't use this.
+ *
+ * @internal
+ */
+function ucms_vocabulary_load($id) {
+  if (is_numeric($id)) {
+    return taxonomy_vocabulary_load($id);
+  }
+  return taxonomy_vocabulary_machine_name_load($id);
+}
+
+/**
+ * Menu loader, please don't use this.
+ *
+ * @internal
+ */
+function ucms_term_load($id) {
+  return taxonomy_term_load($id);
+}
+
+/**
+ * Menu access helper
+ */
+function ucms_taxo_vocabulary_access($vocabulary, $op = Access::OP_VIEW, $account = null) {
+
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  switch ($op) {
+
+    case Access::OP_VIEW:
+      return (bool)db_query("SELECT 1 FROM {ucms_taxo_access} WHERE id = ? AND user_id = ? AND role IN (?, ?) LIMIT 1", [
+        $vocabulary->vid, $account->uid, Access::ROLE_TAXO_ADMIN, Access::ROLE_TAXO_READER
+      ])->fetchField();
+
+    case Access::OP_DELETE:
+      return (bool)db_query("SELECT 1 FROM {ucms_taxo_access} WHERE id = ? AND user_id = ? AND role = ? LIMIT 1", [
+        $vocabulary->vid, $account->uid, Access::ROLE_TAXO_ADMIN
+      ])->fetchField();
+
+    default:
+      return false;
+  }
+}
+
+/**
+ * Menu access helper
+ */
+function ucms_taxo_term_access($term, $op = Access::OP_VIEW, $account = null) {
+
+  if (!$account) {
+    $account = $GLOBALS['user'];
+  }
+
+  switch ($op) {
+
+    case Access::OP_UPDATE:
+      // Owner can edit, except when locked
+      return (!$term->is_locked && $term->user_id && $term->user_id == $account->uid) || (bool)db_query("SELECT 1 FROM {ucms_taxo_access} WHERE id = ? AND user_id = ? AND role = ? LIMIT 1", [
+        $term->vid, $account->uid, Access::ROLE_TAXO_ADMIN,
+      ])->fetchField();
+
+    case Access::OP_DELETE:
+      return (bool)db_query("SELECT 1 FROM {ucms_taxo_access} WHERE id = ? AND user_id = ? AND role = ? LIMIT 1", [
+        $term->vid, $account->uid, Access::ROLE_TAXO_ADMIN
+      ])->fetchField();
+
+    default:
+      return false;
+  }
+}
+
+/**
+ * Menu title helper.
+ *
+ * @internal
+ */
+function ucms_taxo_menu_vocabulary_title($vocbulary) {
+  return t("Terms in @name", ['@name' => $vocbulary->name]);
+}
+
+/**
+ * Menu title helper.
+ *
+ * @internal
+ */
+function ucms_taxo_menu_item_title($term, $op = Access::OP_VIEW) {
+  switch ($op) {
+
+    case 'update':
+      return t("Edit \"@name\" term", ['@name' => $term->name]);
+
+    case 'delete':
+      return t("Delete \"@name\" term", ['@name' => $term->name]);
+
+    default:
+      return check_plain($term->name);
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function ucms_taxo_field_widget_options_select_form_alter(&$element, &$form_state, $context) {
+  // Attach select2 library on taxonomy term fields.
+  $field = $context['field'];
+  if ($field['type'] == "taxonomy_term_reference") {
+    $element['#attached']['library'][] = ['ucms_label', 'select2'];
+    $element['#attached']['js'][] = [
+      'data' => "jQuery(function(){jQuery('#edit-labels select').select2({theme:'bootstrap'})})",
+      'type' => 'inline'
+    ];
+  }
+}

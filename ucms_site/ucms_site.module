@@ -1098,6 +1098,16 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
 }
 
 /**
+ * Implements hook_taxonomy_term_presave().
+ */
+function ucms_site_taxonomy_term_presave($term) {
+  // Maintain term creators.
+  if (empty($term->original) && !empty($GLOBALS['user']->uid)) {
+    $term->user_id = $GLOBALS['user']->uid;
+  }
+}
+
+/**
  * Render the state transition form.
  */
 function theme_ucms_site_state_transition_form($variables) {
