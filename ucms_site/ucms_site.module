@@ -17,6 +17,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\PublicStreamWrapper;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\Form\SiteHostnameChange;
 
 /**
  * Implements hook_menu().
@@ -104,6 +105,15 @@ function ucms_site_menu() {
     'access callback'   => 'ucms_site_menu_access_manage',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
+  $items['admin/dashboard/site/%ucms_site/change-hostname'] = [
+    'title'             => "Change site hostname",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => [SiteHostnameChange::class, 3],
+    'access callback'   => 'ucms_site_menu_access_manage',
+    'access arguments'  => [3],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/switch/%'] = [
     'title'             => "Switch site state",
@@ -277,6 +287,10 @@ function ucms_site_permission() {
     ],
     Access::PERM_CONTENT_VIEW_OTHER => [
       'title' => t("View other site content"),
+    ],
+    Access::PERM_SITE_MANGE_HOSTNAME => [
+      'title' => t("Site change hostnames"),
+      'description' => t("This permission bypasses everything that can be bypassed, for technical administrators only"),
     ],
     Access::PERM_SITE_GOD => [
       'title' => t("Site god mode"),
