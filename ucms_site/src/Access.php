@@ -93,6 +93,11 @@ final class Access
     const PERM_SITE_GOD = 'site god';
 
     /**
+     * Manage technical aspects of sites, such as hostnames
+     */
+    const PERM_SITE_MANGE_HOSTNAME = 'site manage hostname';
+
+    /**
      * Request a new site
      */
     const PERM_SITE_REQUEST = 'site request';

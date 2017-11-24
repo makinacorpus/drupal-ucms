@@ -4,9 +4,9 @@ namespace MakinaCorpus\Ucms\Site\Action;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -25,7 +25,7 @@ class SiteActionProvider implements ActionProviderInterface
     private $ssoEnabled = false;
 
     /**
-     * @var AccountInterface
+     * @var \Drupal\Core\Session\AccountInterface
      */
     private $currentUser;
 
@@ -67,6 +67,9 @@ class SiteActionProvider implements ActionProviderInterface
             }
             if ($access->userCanManage($account, $item)) {
                 $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -2, false, true);
+            }
+            if ($account->hasPermission(Access::PERM_SITE_MANGE_HOSTNAME)) {
+                $ret[] = new Action($this->t("Change hostname"), 'admin/dashboard/site/' . $item->id . '/change-hostname', null, 'fire', 0, false, true);
             }
             $ret[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->id . '/log', null, 'list-alt', -1, false);
         }
