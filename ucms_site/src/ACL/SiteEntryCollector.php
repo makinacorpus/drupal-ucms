@@ -6,7 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\ACL\Resource;
 use MakinaCorpus\ACL\Collector\EntryCollectorInterface;
-use MakinaCorpus\ACL\Collector\EntryListBuilderInterface;
+use MakinaCorpus\ACL\Collector\EntryListBuilder;
 use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
 use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
 use MakinaCorpus\ACL\Converter\ResourceConverterInterface;
@@ -32,7 +32,7 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
     /**
      * {@inheritdoc}
      */
-    public function supports($type, $permission)
+    public function supports(string $type, string $permission) : bool
     {
         return 'site' === $type;
     }
@@ -40,7 +40,7 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
     /**
      * {@inheritdoc}
      */
-    public function supportsType($type)
+    public function supportsType(string $type) : bool
     {
         return 'site' === $type;
     }
@@ -56,11 +56,9 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
     }
 
     /**
-     * Collect entries for resource
-     *
-     * @param EntryListBuilderInterface $entries
+     * {@inheritdoc}
      */
-    public function collectEntryLists(EntryListBuilderInterface $builder)
+    public function collectEntryLists(EntryListBuilder $builder)
     {
         $resource = $builder->getResource();
         $site = $builder->getObject();
@@ -113,9 +111,7 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
     }
 
     /**
-     * Collect entries for resource
-     *
-     * @param ProfileSetBuilder $builder
+     * {@inheritdoc}
      */
     public function collectProfiles(ProfileSetBuilder $builder)
     {

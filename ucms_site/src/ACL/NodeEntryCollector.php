@@ -7,7 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\ACL\Collector\EntryCollectorInterface;
-use MakinaCorpus\ACL\Collector\EntryListBuilderInterface;
+use MakinaCorpus\ACL\Collector\EntryListBuilder;
 use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
 use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
@@ -48,10 +48,10 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
 
         // Easy and ulgy way (@todo fix me, do this at compile time)
         /** @var \MakinaCorpus\ACL\PermissionMap $permissionMap */
-        $permissionMap = \Drupal::service('acl.permission_map');
+        $permissionMap = \Drupal::service('php_acl.permission_map');
         // Avoid duplicate definition during unit tests.
         if (!$permissionMap->supports(Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE)) {
-            \Drupal::service('acl.permission_map')->addPermissions([
+            \Drupal::service('php_acl.permission_map')->addPermissions([
                 Access::ACL_PERM_CONTENT_PROMOTE_CORPORATE => 32768,
                 Access::ACL_PERM_SITE_EDIT_TREE => 65536,
                 Access::ACL_PERM_MANAGE_USERS => 131072,
@@ -106,7 +106,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
     /**
      * {@inheritdoc}
      */
-    public function supports($type, $permission)
+    public function supports(string $type, string $permission) : bool
     {
         return 'node' === $type && isset(self::$supportedPermissions[$permission]);
     }
@@ -114,17 +114,15 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
     /**
      * {@inheritdoc}
      */
-    public function supportsType($type)
+    public function supportsType(string $type) : bool
     {
         return 'node' === $type;
     }
 
     /**
-     * Collect entries for resource
-     *
-     * @param EntryListBuilderInterface $entries
+     * {@inheritdoc}
      */
-    public function collectEntryLists(EntryListBuilderInterface $builder)
+    public function collectEntryLists(EntryListBuilder $builder)
     {
         $resource = $builder->getResource();
 
@@ -252,9 +250,7 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
     }
 
     /**
-     * Collect entries for resource
-     *
-     * @param ProfileSetBuilder $builder
+     * {@inheritdoc}
      */
     public function collectProfiles(ProfileSetBuilder $builder)
     {

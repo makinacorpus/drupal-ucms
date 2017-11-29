@@ -2,12 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Extranet\EventDispatcher;
 
-use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareInterface;
-use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareTrait;
+use MakinaCorpus\ACL\Bridge\Symfony\AuthorizationAwareInterface;
+use MakinaCorpus\ACL\Bridge\Symfony\AuthorizationAwareTrait;
 use MakinaCorpus\Ucms\Extranet\ExtranetAccess;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SiteStatusEventSubscriber implements EventSubscriberInterface, AuthorizationAwareInterface

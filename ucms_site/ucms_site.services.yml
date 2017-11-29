@@ -15,9 +15,9 @@ services:
     class: MakinaCorpus\Ucms\Site\ACL\SiteEntryCollector
     arguments: ["@ucms_site.manager"]
     tags:
-      - {name: acl.entry_collector}
-      - {name: acl.profile_collector}
-      - {name: acl.resource_converter}
+      - {name: php_acl.entry_collector}
+      - {name: php_acl.profile_collector}
+      - {name: php_acl.resource_converter}
 
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:
@@ -32,8 +32,8 @@ services:
     class: MakinaCorpus\Ucms\Site\ACL\NodeEntryCollector
     arguments: ["@entity.manager", "@ucms_site.manager"]
     tags:
-      - {name: acl.entry_collector}
-      - {name: acl.profile_collector}
+      - {name: php_acl.entry_collector}
+      - {name: php_acl.profile_collector}
       - {name: event_subscriber}
 
   # Node manager, handles node attach/detach/clone to sites

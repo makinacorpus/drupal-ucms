@@ -4,16 +4,15 @@ namespace MakinaCorpus\Ucms\Seo;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareInterface;
-use MakinaCorpus\ACL\Impl\Symfony\AuthorizationAwareTrait;
 use MakinaCorpus\ACL\Permission;
+use MakinaCorpus\ACL\Bridge\Symfony\AuthorizationAwareInterface;
+use MakinaCorpus\ACL\Bridge\Symfony\AuthorizationAwareTrait;
 use MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup;
 use MakinaCorpus\Ucms\Seo\Path\AliasManager;
 use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use MakinaCorpus\Umenu\Menu;
 
 /**
