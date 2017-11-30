@@ -122,9 +122,9 @@ trait NodeAccessTestTrait
         // group
         $groupId = $this->getDefaultGroupId();
         if ($groupId) {
-            /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
+            /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager */
             $groupManager = $this->getDrupalContainer()->get('ucms_group.manager');
-            $groupManager->getAccess()->addMember($groupId, $account->id());
+            $groupManager->addMember($groupId, $account->id());
         }
 
         return $account;

@@ -1,9 +1,8 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\EventDispatcher;
+namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
-use MakinaCorpus\Ucms\Group\Group;
-
+use MakinaCorpus\Ucms\Site\Group;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class GroupEvent extends GenericEvent

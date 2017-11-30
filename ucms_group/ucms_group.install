@@ -1,59 +1,8 @@
 <?php
 
 /**
- * Creates the default plateform-wide group.
- */
-function ucms_group_install_default_group() {
-  if (!db_query('SELECT 1 FROM {ucms_group} WHERE is_meta = 1')->fetchField()) {
-    $id = db_insert('ucms_group')->fields([
-      'title'      => "Default group",
-      // This group cannot be deleted
-      'is_meta'    => 1,
-      // Per default, already existing content will no be visible
-      'is_ghost'   => 1,
-      'ts_created' => (new DateTime())->format('Y-m-d H:i:s'),
-      'ts_changed' => (new DateTime())->format('Y-m-d H:i:s'),
-    ])->execute();
-
-    // Set all sites with no groups into this group
-    db_query("UPDATE {ucms_site} SET group_id = ? WHERE group_id IS NULL", [$id]);
-    // Give all nodes without any group to this group
-    db_query("UPDATE {node} SET group_id = ? WHERE group_id IS NULL", [$id]);
-  }
-}
-
-/**
- * Implements hook_install().
- */
-function ucms_group_install() {
-  ucms_group_install_default_group();
-  variable_set('node_access_needs_rebuild', 1);
-}
-
-/**
- * Creates the default plateform-wide group.
- */
-function ucms_group_update_7002() {
-
-  ucms_group_install_default_group();
-
-  // Modify the {node}.is_ghost to be 1 per default
-  db_change_field('node', 'is_ghost', 'is_ghost', [
-    'description' => "Is this node visible by non-members of the group it is attached to",
-    'type'        => 'int',
-    'size'        => 'tiny',
-    'unsigned'    => true,
-    'not null'    => true,
-    'default'     => 1,
-  ]);
-
-  // Update existing content to match default
-  db_query("UPDATE {node} SET is_ghost = 1");
-}
-
-/**
- * Mark node access for rebuild.
+ * Skipped update.
  */
 function ucms_group_update_7003() {
-  variable_set('node_access_needs_rebuild', 1);
+  // Function dropped, kept for numbering.
 }

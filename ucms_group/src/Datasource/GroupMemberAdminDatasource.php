@@ -7,8 +7,8 @@ use MakinaCorpus\Calista\Datasource\AbstractDatasource;
 use MakinaCorpus\Calista\Datasource\Filter;
 use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupMember;
+use MakinaCorpus\Ucms\Site\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupMember;
 
 class GroupMemberAdminDatasource extends AbstractDatasource
 {

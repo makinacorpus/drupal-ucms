@@ -3,11 +3,9 @@
 namespace MakinaCorpus\Ucms\Notification\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
-
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

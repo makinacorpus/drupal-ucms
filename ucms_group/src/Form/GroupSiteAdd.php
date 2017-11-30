@@ -4,11 +4,9 @@ namespace MakinaCorpus\Ucms\Group\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -109,9 +107,9 @@ class GroupSiteAdd extends FormBase
         /** @var \MakinaCorpus\Ucms\Site\Site $site */
         $site     = $form_state->getTemporaryValue('site');
         $groupÎd  = $form_state->getValue('group');
-        $group    = $this->groupManager->getStorage()->findOne($groupÎd);
+        $group    = $this->groupManager->findOne($groupÎd);
 
-        if ($this->groupManager->getAccess()->addSite($groupÎd, $site->getId())) {
+        if ($this->groupManager->addSite($groupÎd, $site->getId())) {
             drupal_set_message($this->t("%name has been added to group %group.", [
                 '%name' => $site->getAdminTitle(),
                 '%group'  => $group->getTitle(),

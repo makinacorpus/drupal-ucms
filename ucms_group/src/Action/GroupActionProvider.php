@@ -4,8 +4,8 @@ namespace MakinaCorpus\Ucms\Group\Action;
 
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Calista\Action\Action;
-use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Group;
 use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 
 class GroupActionProvider extends AbstractActionProvider
@@ -17,7 +17,7 @@ class GroupActionProvider extends AbstractActionProvider
     {
         $ret = [];
 
-        /** @var \MakinaCorpus\Ucms\Group\Group $item */
+        /** @var \MakinaCorpus\Ucms\Site\Group $item */
         $canView = $this->isGranted(Permission::VIEW, $item);
 
         if ($canView) {

@@ -4,9 +4,8 @@ namespace MakinaCorpus\Ucms\Group\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,29 +19,19 @@ class GroupEdit extends FormBase
      */
     static public function create(ContainerInterface $container)
     {
-        if ($container->has('ucms_contrib.type_handler')) {
-            return new self(
-                $container->get('ucms_group.manager'),
-                $container->get('ucms_site.manager'),
-                $container->get('ucms_contrib.type_handler')
-            );
-        } else {
-            return new self(
-                $container->get('ucms_group.manager'),
-                $container->get('ucms_site.manager')
-            );
-        }
+        return new self(
+            $container->get('ucms_group.manager'),
+            $container->get('ucms_site.manager')
+        );
     }
 
     private $groupManager;
     private $siteManager;
-    private $typeHandler;
 
-    public function __construct(GroupManager $groupManager, SiteManager $siteManager, TypeHandler $typeHandler = null)
+    public function __construct(GroupManager $groupManager, SiteManager $siteManager)
     {
         $this->groupManager = $groupManager;
         $this->siteManager = $siteManager;
-        $this->typeHandler = $typeHandler;
     }
 
     /**
@@ -91,18 +80,6 @@ class GroupEdit extends FormBase
             '#description'    => $this->t("Check at least one theme here to restrict allowed themes for this group."),
         ];
 
-        if ($this->typeHandler) {
-            if ($allTypes = $this->typeHandler->getAllTypes()) {
-                $form['allowed_content_types'] = [
-                    '#title'          => $this->t("Allowed content types for group"),
-                    '#type'           => 'checkboxes',
-                    '#options'        => $this->typeHandler->getTypesAsHumanReadableList($allTypes),
-                    '#default_value'  => $group->getAttribute('allowed_content_types', []),
-                    '#description'    => $this->t("Check at least one content type here to restrict allowed content types for this group."),
-                ];
-            }
-        }
-
         $form['actions']['#type'] = 'actions';
         $form['actions']['continue'] = [
             '#type'   => 'submit',
@@ -131,7 +108,7 @@ class GroupEdit extends FormBase
         $group->setTitle($values['title']);
         $group->setIsGhost($values['is_ghost']);
 
-        foreach (['allowed_themes', 'allowed_content_types'] as $name) {
+        foreach (['allowed_themes'] as $name) {
             $list = $form_state->getValue($name, []);
             $list = array_values(array_filter($list));
             if ($list) {
@@ -143,7 +120,7 @@ class GroupEdit extends FormBase
 
         $isNew = !$group->getId();
 
-        $this->groupManager->getStorage()->save($group, ['title', 'is_ghost', 'attributes']);
+        $this->groupManager->save($group, ['title', 'is_ghost', 'attributes']);
         if ($isNew) {
             drupal_set_message($this->t("Group %title has been created", ['%title' => $group->getTitle()]));
         } else {

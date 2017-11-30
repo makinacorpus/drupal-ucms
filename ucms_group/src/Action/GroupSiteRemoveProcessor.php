@@ -4,8 +4,8 @@ namespace MakinaCorpus\Ucms\Group\Action;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Drupal\Calista\Action\AbstractActionProcessor;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupSite;
+use MakinaCorpus\Ucms\Site\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupSite;
 use MakinaCorpus\Ucms\Site\Access;
 
 class GroupSiteRemoveProcessor extends AbstractActionProcessor
@@ -44,17 +44,17 @@ class GroupSiteRemoveProcessor extends AbstractActionProcessor
             return false;
         }
 
-        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
-        $group = $this->groupManager->getStorage()->findOne($item->getGroupId());
+        /** @var \MakinaCorpus\Ucms\Site\GroupSite $item */
+        $group = $this->groupManager->findOne($item->getGroupId());
 
         return $this->isGranted(Access::ACL_PERM_MANAGE_SITES, $group);
     }
 
     public function processAll($items)
     {
-        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
+        /** @var \MakinaCorpus\Ucms\Site\GroupSite $item */
         foreach ($items as $item) {
-            $this->groupManager->getAccess()->removeSite($item->getGroupId(), $item->getSiteId());
+            $this->groupManager->removeSite($item->getGroupId(), $item->getSiteId());
         }
 
         return $this->formatPlural(
@@ -66,7 +66,7 @@ class GroupSiteRemoveProcessor extends AbstractActionProcessor
 
     public function getItemId($item)
     {
-        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
+        /** @var \MakinaCorpus\Ucms\Site\GroupSite $item */
         return $item->getGroupId() . ':' . $item->getSiteId();
     }
 

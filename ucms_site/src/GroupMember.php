@@ -1,8 +1,7 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group;
+namespace MakinaCorpus\Ucms\Site;
 
-use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
 
@@ -11,7 +10,7 @@ use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
  *
  * This object is immutable
  */
-class GroupMember implements GroupAwareInterface, PartialUserInterface
+class GroupMember implements PartialUserInterface
 {
     use PartialUserTrait;
 

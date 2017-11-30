@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Event\AdminTableEvent;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -42,7 +42,7 @@ class AdminEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $group = $this->groupManager->getAccess()->getSiteGroup($site);
+        $group = $this->groupManager->getSiteGroup($site);
         if (!$group) {
             return;
         }
@@ -60,7 +60,7 @@ class AdminEventSubscriber implements EventSubscriberInterface
 
 
         $list = [];
-        $accessList = $this->groupManager->getAccess()->getUserGroups($account);
+        $accessList = $this->groupManager->getUserGroups($account);
         foreach ($this->groupManager->loadGroupsFrom($accessList) as $group) {
             $list[] = l($group->getTitle(), 'admin/dashboard/group/' . $group->getId());
         }

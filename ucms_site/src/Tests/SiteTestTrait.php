@@ -2,17 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Site\Tests;
 
-use Drupal\Core\Entity\EntityManager;
 use Drupal\node\Node;
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Ucms\Layout\DrupalStorage;
-use MakinaCorpus\Ucms\Seo\SeoService;
-use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Umenu\TreeManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Testing in site basics
@@ -35,12 +28,22 @@ trait SiteTestTrait
     protected $nidSeq = 0;
 
     /**
-     * @return ContainerInterface
+     * @var \MakinaCorpus\Ucms\Site\Group[]
+     */
+    protected $groups = [];
+
+    /**
+     * @return \Symfony\Component\DependencyInjection\ContainerInterface
      */
     abstract protected function getDrupalContainer();
 
     /**
-     * @return SiteManager
+     * @return \DatabaseConnection
+     */
+    abstract protected function getDatabaseConnection();
+
+    /**
+     * @return \MakinaCorpus\Ucms\Site\SiteManager
      */
     protected function getSiteManager()
     {
@@ -48,7 +51,7 @@ trait SiteTestTrait
     }
 
     /**
-     * @return EntityManager
+     * @return \Drupal\Core\Entity\EntityManager
      */
     protected function getEntityManager()
     {
@@ -56,7 +59,7 @@ trait SiteTestTrait
     }
 
     /**
-     * @return NodeManager
+     * @return \MakinaCorpus\Ucms\Site\NodeManager
      */
     protected function getNodeManager()
     {
@@ -64,7 +67,7 @@ trait SiteTestTrait
     }
 
     /**
-     * @return SeoService
+     * @return \MakinaCorpus\Ucms\Seo\SeoService
      */
     protected function getSeoService()
     {
@@ -72,7 +75,7 @@ trait SiteTestTrait
     }
 
     /**
-     * @return TreeManager
+     * @return \MakinaCorpus\Umenu\TreeManager
      */
     protected function getTreeManager()
     {
@@ -80,11 +83,21 @@ trait SiteTestTrait
     }
 
     /**
-     * @return DrupalStorage
+     * @return \MakinaCorpus\Ucms\Layout\DrupalStorage
      */
     protected function getLayoutStorage()
     {
         return $this->getDrupalContainer()->get('ucms_layout.storage');
+    }
+
+    /**
+     * Get testing group manager
+     *
+     * @return \MakinaCorpus\Ucms\Site\GroupManager
+     */
+    final protected function getGroupManager()
+    {
+        return $this->getDrupalContainer()->get('ucms_group.manager');
     }
 
     /**
@@ -95,7 +108,7 @@ trait SiteTestTrait
      *
      * @return bool
      */
-    protected function isNodeInSite($node, $site)
+    final protected function isNodeInSite($node, $site)
     {
         $site = (int)($site instanceof Site) ? $site->getId() : $site;
         $node = (int)($node instanceof NodeInterface) ? $node->id() : $node;
@@ -106,7 +119,7 @@ trait SiteTestTrait
     /**
      * Assert that given node is in site, in database
      */
-    protected function assertNotNodeInSite($node, $site)
+    final protected function assertNotNodeInSite($node, $site)
     {
         $this->assertFalse($this->isNodeInSite($node, $site));
     }
@@ -114,9 +127,49 @@ trait SiteTestTrait
     /**
      * Assert that given node is in site, in database
      */
-    protected function assertNodeInSite($node, $site)
+    final protected function assertNodeInSite($node, $site)
     {
         $this->assertTrue($this->isNodeInSite($node, $site));
+    }
+
+    /**
+     * Asserts that user is in group
+     */
+    final protected function assertUserInGroup($groupId, $userId)
+    {
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_access} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
+
+        $this->assertTrue($exists);
+    }
+
+    /**
+     * Asserts that user is not in group
+     */
+    final protected function assertUserNotInGroup($groupId, $userId)
+    {
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_access} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
+
+        $this->assertFalse($exists);
+    }
+
+    /**
+     * Asserts that site is in group
+     */
+    final protected function assertSiteInGroup($groupId, $siteId)
+    {
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_site} WHERE id = :s AND group_id = :g", [':s' => $siteId, ':g' => $groupId])->fetchField();
+
+        $this->assertTrue($exists);
+    }
+
+    /**
+     * Asserts that site is not in group
+     */
+    final protected function assertSiteNotInGroup($groupId, $siteId)
+    {
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_site} WHERE id = :s AND group_id = :g", [':s' => $siteId, ':g' => $groupId])->fetchField();
+
+        $this->assertFalse($exists);
     }
 
     /**
@@ -257,6 +310,9 @@ trait SiteTestTrait
         }
         foreach ($this->nodes as $node) {
             node_delete($node->nid);
+        }
+        foreach ($this->groups as $group) {
+            $this->getGroupManager()->delete($group);
         }
 
         $this->getSiteManager()->dropContext();

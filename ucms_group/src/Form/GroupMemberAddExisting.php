@@ -4,10 +4,8 @@ namespace MakinaCorpus\Ucms\Group\Form;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
-
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -108,7 +106,7 @@ class GroupMemberAddExisting extends FormBase
         /** @var \Drupal\user\UserInterface $user */
         $user = $form_state->getTemporaryValue('user');
 
-        if ($this->groupManager->getAccess()->addMember($form_state->getValue('group'), $user->id())) {
+        if ($this->groupManager->addMember($form_state->getValue('group'), $user->id())) {
             drupal_set_message($this->t("!name has been added to group.", [
                 '!name' => $user->getDisplayName(),
             ]));

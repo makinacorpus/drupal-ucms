@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\ACL;
+namespace MakinaCorpus\Ucms\Site\ACL;
 
 use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\ACL\Permission;
@@ -10,9 +10,9 @@ use MakinaCorpus\ACL\Collector\EntryListBuilder;
 use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
 use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
 use MakinaCorpus\ACL\Converter\ResourceConverterInterface;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 
 final class GroupEntryCollector implements EntryCollectorInterface, ProfileCollectorInterface, ResourceConverterInterface
 {
@@ -79,7 +79,7 @@ final class GroupEntryCollector implements EntryCollectorInterface, ProfileColle
             $builder->add(Access::PROFILE_GROUP_GOD, Access::ID_ALL);
         }
 
-        foreach ($this->groupManager->getAccess()->getUserGroups($account) as $access) {
+        foreach ($this->groupManager->getUserGroups($account) as $access) {
             $groupId = $access->getGroupId();
             $builder->add(Access::PROFILE_GROUP_MEMBER, $groupId);
             if ($access->isGroupAdmin()) {

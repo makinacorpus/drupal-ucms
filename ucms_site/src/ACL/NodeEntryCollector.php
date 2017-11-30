@@ -12,6 +12,7 @@ use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
 use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
@@ -36,14 +37,16 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
     ];
 
     private $entityManager;
+    private $groupManager;
     private $siteManager;
 
     /**
      * Default constructor
      */
-    public function __construct(EntityManager $entityManager, SiteManager $siteManager)
+    public function __construct(EntityManager $entityManager, SiteManager $siteManager, GroupManager $groupManager)
     {
         $this->entityManager = $entityManager;
+        $this->groupManager = $groupManager;
         $this->siteManager = $siteManager;
 
         // Easy and ulgy way (@todo fix me, do this at compile time)
@@ -275,6 +278,12 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
             return;
         }
 
+        // Some users have global permissions on the platform, we need to give
+        // them the right to see orphan content when group are enabled.
+        if ($account->hasPermission(Access::PERM_GROUP_MANAGE_ORPHAN)) {
+            $builder->add(Access::PROFILE_GROUP_ORPHAN_READER, Access::ID_ALL);
+        }
+
         // User should always be able to edit its own content, I guess.
         $builder->add(Access::PROFILE_OWNER, $account->id());
 
@@ -331,6 +340,41 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
                 }
             }
         }
+
+        // Then replicate all user permissions, but relative to groups.
+        // @todo this should be set using a relative group role instead..
+        foreach ($this->groupManager->getUserGroups($account) as $access) {
+
+            /** @var \MakinaCorpus\Ucms\Site\GroupMember $access */
+            $groupId = $access->getGroupId();
+            // @todo view all permission is global
+            $viewAll = $account->hasPermission(Access::PERM_CONTENT_VIEW_ALL);
+
+            if ($viewAll) {
+                $builder->add(Access::PROFILE_READONLY, $groupId);
+            }
+
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
+                $builder->add(Access::PROFILE_GLOBAL, $groupId);
+            }
+            if ($account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)) {
+                $builder->add(Access::PROFILE_CORPORATE_ADMIN, $groupId);
+            }
+
+            if ($account->hasPermission(Access::PERM_CONTENT_VIEW_ALL)) {
+                $builder->add(Access::PROFILE_READONLY, $groupId);
+            } else {
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_GLOBAL)) {
+                    $builder->add(Access::PROFILE_GLOBAL_READONLY, $groupId);
+                }
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_CORPORATE)) {
+                    $builder->add(Access::PROFILE_CORPORATE_READER, $groupId);
+                }
+                if ($account->hasPermission(Access::PERM_CONTENT_VIEW_OTHER)) {
+                    $builder->add(Access::PROFILE_OTHER, $groupId);
+                }
+            }
+        }
     }
 
     /**
@@ -349,7 +393,6 @@ final class NodeEntryCollector implements EntryCollectorInterface, ProfileCollec
         $access   = $this->siteManager->getAccess();
 
         if ('create' === $op) {
-
             if ($this->siteManager->hasContext()) {
                 $site = $this->siteManager->getContext();
 

@@ -1103,19 +1103,28 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
   if (!$query instanceof SelectQueryInterface) {
     return;
   }
+  if (drupal_is_cli()) {
+    // In theory, we should not have to do this, but it happens that during
+    // drush upgrade, which runs all update functions altogether one by one,
+    // it may happen that this module gets enable during the same run, and
+    // that the 'sf_dic' container, even if correctly rebuilt, may not be
+    // used because older object references are being used by the code (old
+    // services still referenced into some other being in use).
+    return;
+  }
 
   /* @var $account AccountInterface */
   if (!$account = $query->getMetaData('account')) {
     $account = \Drupal::currentUser();
   }
 
-  if ($account->hasPermission(Access::PERM_SITE_GOD) ||
-      $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) ||
-      $account->hasPermission(Access::PERM_SITE_VIEW_ALL)
-  ) {
+  if ($account->hasPermission(Access::PERM_SITE_GOD)) {
     return;
   }
 
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager */
+  $groupManager = \Drupal::service('ucms_group.manager');
+  $accessList   = $groupManager->getUserGroups($account);
   $siteAlias    = null;
   $accessAlias  = null;
 
@@ -1136,15 +1145,28 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     return;
   }
 
-  if (!$accessAlias) {
-    $query->join(
-      'ucms_site_access',
-      'access_sa',
-      "access_sa.site_id = " . $siteAlias . ".id AND access_sa.uid = :access_sa_uid",
-      [':access_sa_uid' => $account->id()]
-    );
-  } else {
-    $query->condition($accessAlias . '.uid', $account->id());
+  // Apply group conditions, but do not apply anything if the user is not
+  // member of any groups: it means that the user is a global administrator.
+  if ($accessList) {
+    $groupList = [];
+    foreach ($accessList as $access) {
+      $groupList[] = $access->getGroupId();
+    }
+    $query->condition($siteAlias . '.group_id', $groupList);
+  }
+
+  // Apply normal user permissions if the current user cannot see all sites
+  if (!$account->hasPermission(Access::PERM_SITE_MANAGE_ALL) && !$account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
+    if (!$accessAlias) {
+      $query->join(
+        'ucms_site_access',
+        'access_sa',
+        "access_sa.site_id = " . $siteAlias . ".id AND access_sa.uid = :access_sa_uid",
+        [':access_sa_uid' => $account->id()]
+      );
+    } else {
+      $query->condition($accessAlias . '.uid', $account->id());
+    }
   }
 }
 

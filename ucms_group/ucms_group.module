@@ -8,10 +8,10 @@
  */
 
 use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Group\Controller\AutocompleteController;
 use MakinaCorpus\Ucms\Group\Controller\DashboardController;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Group;
 
 /**
  * Implements hook_menu().
@@ -132,7 +132,7 @@ function ucms_group_menu() {
  */
 function ucms_group_menu_load($id) {
   try {
-    return \Drupal::service('ucms_group.manager')->getStorage()->findOne($id);
+    return \Drupal::service('ucms_group.manager')->findOne($id);
   } catch (\Exception $e) {}
   return false;
 }
@@ -195,68 +195,4 @@ function ucms_group_form_node_form_alter(&$form, &$form_state) {
       '#description'    => t("If you check this option, this content will be invisible outside of this group, except in sites it's being displayed into."),
     ];
   }
-}
-
-/**
- * Implements hook_query_TAG_alter().
- *
- * Implement site visibility access control for the admin UI, this is the only
- * query alteration for business purpose this module will ever do.
- */
-function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query) {
-
-  if (!$query instanceof SelectQueryInterface) {
-    return;
-  }
-  if (drupal_is_cli()) {
-    // In theory, we should not have to do this, but it happens that during
-    // drush upgrade, which runs all update functions altogether one by one,
-    // it may happen that this module gets enable during the same run, and
-    // that the 'sf_dic' container, even if correctly rebuilt, may not be
-    // used because older object references are being used by the code (old
-    // services still referenced into some other being in use).
-    return;
-  }
-
-  /** @var \Drupal\Core\Session\AccountInterface $account */
-  if (!$account = $query->getMetaData('account')) {
-    $account = \Drupal::currentUser();
-  }
-
-  // God mode.
-  if ($account->hasPermission(Access::PERM_SITE_GOD)) {
-    return;
-  }
-
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
-  $groupManager = \Drupal::service('ucms_group.manager');
-  $accessList   = $groupManager->getAccess()->getUserGroups($account);
-
-  // Normal user rights coming in!
-  if (!$accessList) {
-    return;
-  }
-
-  $siteAlias = null;
-
-  // If no base table is specified explicitly, search for one.
-  foreach ($query->getTables() as $alias => $table_info) {
-    if (!($table_info instanceof SelectQueryInterface)) {
-      // If the node table is in the query, it wins immediately.
-      if ('ucms_site' === $table_info['table']) {
-        $siteAlias = $alias;
-      }
-    }
-  }
-
-  if (!$siteAlias) {
-    return;
-  }
-
-  $groupList = [];
-  foreach ($accessList as $access) {
-    $groupList[] = $access->getGroupId();
-  }
-
-  $query->condition($siteAlias . '.group_id', $groupList);
 }

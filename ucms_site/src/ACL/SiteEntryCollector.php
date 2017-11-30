@@ -11,21 +11,22 @@ use MakinaCorpus\ACL\Collector\ProfileCollectorInterface;
 use MakinaCorpus\ACL\Collector\ProfileSetBuilder;
 use MakinaCorpus\ACL\Converter\ResourceConverterInterface;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollectorInterface, ResourceConverterInterface
 {
+    private $groupManager;
     private $siteManager;
 
     /**
      * Default constructor
-     *
-     * @param SiteManager $manager
      */
-    public function __construct(SiteManager $siteManager)
+    public function __construct(SiteManager $siteManager, GroupManager $groupManager)
     {
+        $this->groupManager = $groupManager;
         $this->siteManager = $siteManager;
     }
 
@@ -71,16 +72,17 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
         }
 
         $siteId = $site->getId();
+        $groupId = $site->getGroupId();
 
         // No matter the site state, admins can view them all.
         $builder->add(Access::PROFILE_SITE_GOD, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_MANAGE_USERS]);
-        $builder->add(Access::PROFILE_SITE_ADMIN, Access::ID_ALL, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_MANAGE_USERS]);
-        $builder->add(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL, [Permission::OVERVIEW]);
+        $builder->add(Access::PROFILE_SITE_ADMIN, $groupId, [Permission::OVERVIEW, Permission::UPDATE, Access::ACL_PERM_MANAGE_USERS]);
+        $builder->add(Access::PROFILE_SITE_ADMIN_RO, $groupId, [Permission::OVERVIEW]);
 
         // Sites cannot be viewed if they have not been created.
         if (SiteState::INIT <= $site->state) {
-            $builder->add(Access::PROFILE_SITE_ADMIN, Access::ID_ALL, [Permission::VIEW]);
-            $builder->add(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL, [Permission::VIEW]);
+            $builder->add(Access::PROFILE_SITE_ADMIN, $groupId, [Permission::VIEW]);
+            $builder->add(Access::PROFILE_SITE_ADMIN_RO, $groupId, [Permission::VIEW]);
         }
 
         // No matter the state, webmasters can always see site information
@@ -123,11 +125,26 @@ final class SiteEntryCollector implements EntryCollectorInterface, ProfileCollec
         if ($account->hasPermission(Access::PERM_SITE_GOD)) {
             $builder->add(Access::PROFILE_SITE_GOD, Access::ID_ALL);
         }
-        if ($account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
-            $builder->add(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL);
-        }
-        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
-            $builder->add(Access::PROFILE_SITE_ADMIN, Access::ID_ALL);
+
+        if ($groupAccessList = $this->groupManager->getUserGroups($account)) {
+            // @todo this should be using group relative roles instead
+            foreach ($groupAccessList as $access) {
+                $groupId = $access->getGroupId();
+
+                if ($account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
+                    $builder->add(Access::PROFILE_SITE_ADMIN_RO, $groupId);
+                }
+                if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL)) {
+                    $builder->add(Access::PROFILE_SITE_ADMIN, $groupId);
+                }
+            }
+        } else {
+            if ($account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
+                $builder->add(Access::PROFILE_SITE_ADMIN_RO, Access::ID_ALL);
+            }
+            if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
+                $builder->add(Access::PROFILE_SITE_ADMIN, Access::ID_ALL);
+            }
         }
     }
 }

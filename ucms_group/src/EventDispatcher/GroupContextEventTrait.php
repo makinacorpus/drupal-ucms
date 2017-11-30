@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 trait GroupContextEventTrait
@@ -37,7 +37,7 @@ trait GroupContextEventTrait
     {
         if ($this->siteManager->hasDependentContext('group')) {
 
-            /** @var \MakinaCorpus\Ucms\Group\Group $group */
+            /** @var \MakinaCorpus\Ucms\Site\Group $group */
             $group = $this->siteManager->getDependentContext('group');
 
             if ($group) {
@@ -47,7 +47,7 @@ trait GroupContextEventTrait
 
         // There is no context, this means we need to check with user current
         // groups instead; and set the first one we find onto the node
-        $accessList = $this->groupManager->getAccess()->getUserGroups($this->currentUser);
+        $accessList = $this->groupManager->getUserGroups($this->currentUser);
         if ($accessList) {
             return (int)reset($accessList)->getGroupId();
         }
@@ -56,12 +56,12 @@ trait GroupContextEventTrait
     /**
      * Same as findMostRelevantGroupId() but returning the group object
      *
-     * @return null|\MakinaCorpus\Ucms\Group\Group
+     * @return null|\MakinaCorpus\Ucms\Site\Group
      */
     private function findMostRelevantGroup()
     {
         if ($id = $this->findMostRelevantGroupId()) {
-            return $this->groupManager->getStorage()->findOne($id);
+            return $this->groupManager->findOne($id);
         }
     }
 
@@ -73,7 +73,7 @@ trait GroupContextEventTrait
     private function findMostRelevantGhostValue(NodeInterface $node)
     {
         if (!empty($node->group_id)) {
-            return (int)$this->groupManager->getStorage()->findOne($node->group_id)->isGhost();
+            return (int)$this->groupManager->findOne($node->group_id)->isGhost();
         }
 
         return 1;

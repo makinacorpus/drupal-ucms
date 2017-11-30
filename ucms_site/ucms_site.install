@@ -97,8 +97,8 @@ function ucms_site_schema() {
         'description' => "Account owner",
         'type'        => 'int',
         'unsigned'    => true,
-        'not null'    => true,
-        'default'     => 0,
+        'not null'    => false,
+        'default'     => null,
       ],
       'ts_created' => [
         'decription'  => "Creation date",
@@ -133,8 +133,7 @@ function ucms_site_schema() {
         'description' => "Group identifier",
         'type'        => 'int',
         'unsigned'    => true,
-        'not null'    => false,
-        'default'     => null,
+        'not null'    => true,
       ],
     ],
     'foreign keys' => [
@@ -698,6 +697,8 @@ function ucms_site_module_installed($modules) {
  */
 function ucms_site_install() {
   ucms_site_install_schema_fix();
+  ucms_site_install_default_group();
+  variable_set('node_access_needs_rebuild', 1);
 }
 
 /**
@@ -705,6 +706,34 @@ function ucms_site_install() {
  */
 function ucms_site_uninstall() {
   ucms_site_uninstall_schema_fix();
+}
+
+/**
+ * Creates the default plateform-wide group.
+ */
+function ucms_site_install_default_group() {
+  $defaultGroupId = db_query('SELECT id FROM {ucms_group} WHERE is_meta = 1')->fetchField();
+
+  if (!$defaultGroupId) {
+    $defaultGroupId = db_insert('ucms_group')->fields([
+      'title'      => "Default group",
+      // This group cannot be deleted
+      'is_meta'    => 1,
+      // Per default, already existing content will no be visible
+      'is_ghost'   => 1,
+      'ts_created' => (new DateTime())->format('Y-m-d H:i:s'),
+      'ts_changed' => (new DateTime())->format('Y-m-d H:i:s'),
+    ])->execute();
+  }
+
+  // Those two must be kept out of the if () because some existing platforms
+  // already have a default group, but may still have sites which don't belong
+  // to any groups.
+
+  // Set all sites with no groups into this group
+  db_query("UPDATE {ucms_site} SET group_id = ? WHERE group_id IS NULL", [$defaultGroupId]);
+  // Give all nodes without any group to this group
+  db_query("UPDATE {node} SET group_id = ? WHERE group_id IS NULL", [$defaultGroupId]);
 }
 
 /**
@@ -780,13 +809,15 @@ function ucms_site_update_7011() {
     INSERT INTO {ucms_site_access} (uid, site_id, role)
     SELECT s.uid, s.id, 1
     FROM {ucms_site} s
-    WHERE NOT EXISTS (
-      SELECT 1
-      FROM {ucms_site_access} a
-      WHERE
-        a.uid = s.uid
-        AND a.site_id = s.id
-    )
+    WHERE
+      s.uid IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1
+        FROM {ucms_site_access} a
+        WHERE
+          a.uid = s.uid
+          AND a.site_id = s.id
+      )
   ");
 }
 
@@ -964,4 +995,49 @@ function ucms_site_update_7025() {
   } else if (db_field_exists('node', 'is_group')) {
     db_drop_field('node', 'is_group');
   }
+}
+
+/**
+ * Creates the default plateform-wide group.
+ */
+function ucms_site_update_7026() {
+
+  ucms_site_install_default_group();
+
+  // Modify the {node}.is_ghost to be 1 per default
+  db_change_field('node', 'is_ghost', 'is_ghost', [
+    'description' => "Is this node visible by non-members of the group it is attached to",
+    'type'        => 'int',
+    'size'        => 'tiny',
+    'unsigned'    => true,
+    'not null'    => true,
+    'default'     => 1,
+  ]);
+
+  // Update existing content to match default
+  db_query("UPDATE {node} SET is_ghost = 1");
+
+  // We need rebuild
+  variable_set('node_access_needs_rebuild', 1);
+
+  // Fixes the {ucms_site} schema.
+  db_change_field('ucms_site', 'group_id', 'group_id', [
+    'description' => "Group identifier",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => true,
+  ]);
+}
+
+/**
+ * There is no reason why the uid column on site is not nullable.
+ */
+function ucms_site_update_7027() {
+  db_change_field('ucms_site', 'uid', 'uid', [
+    'description' => "Account owner",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => false,
+    'default'     => null,
+  ]);
 }

@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Group\Action;
 use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Calista\Action\AbstractActionProvider;
 use MakinaCorpus\Calista\Action\Action;
-use MakinaCorpus\Ucms\Group\GroupSite;
+use MakinaCorpus\Ucms\Site\GroupSite;
 
 /**
  * We only partially implement the site action provider, we do not want to
@@ -20,7 +20,7 @@ class GroupSiteActionProvider extends AbstractActionProvider
     {
         $ret = [];
 
-        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
+        /** @var \MakinaCorpus\Ucms\Site\GroupSite $item */
         $site = $item->getSite();
 
         if ($this->isGranted(Permission::OVERVIEW, $site)) {

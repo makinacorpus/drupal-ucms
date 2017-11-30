@@ -3,8 +3,8 @@
 namespace MakinaCorpus\Ucms\Group\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Group\Group;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Group;
 use MakinaCorpus\Ucms\Site\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

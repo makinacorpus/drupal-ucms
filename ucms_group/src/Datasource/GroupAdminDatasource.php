@@ -7,8 +7,8 @@ use MakinaCorpus\Calista\Datasource\AbstractDatasource;
 use MakinaCorpus\Calista\Datasource\Filter;
 use MakinaCorpus\Calista\Datasource\Query;
 use MakinaCorpus\Drupal\Calista\Datasource\QueryExtender\DrupalPager;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 
 class GroupAdminDatasource extends AbstractDatasource
 {
@@ -89,7 +89,7 @@ class GroupAdminDatasource extends AbstractDatasource
         $pager = $q->extend(DrupalPager::class)->setDatasourceQuery($query);
         $idList = $pager->execute()->fetchCol();
 
-        $items = $this->groupManager->getStorage()->loadAll($idList);
+        $items = $this->groupManager->loadAll($idList);
 
         return $this->createResult($items, $pager->getTotalCount());
     }

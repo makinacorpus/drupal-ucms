@@ -295,6 +295,12 @@ class SiteStorage
 
         $values['ts_changed'] = (new \DateTime())->format('Y-m-d H:i:s');
 
+        // Find default group and associate it to the site if it has no group
+        if (!$site->getGroupId()) {
+            $groupId = $this->db->query("SELECT id FROM {ucms_group} ORDER BY is_meta DESC, id ASC LIMIT 1")->fetchField();
+            $values['group_id'] = $site->group_id = $groupId;
+        }
+
         if ($site->id) {
             $this->dispatch($site, 'preSave', [], $userId);
 

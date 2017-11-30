@@ -1,20 +1,5 @@
 services:
 
-  ucms_group.storage:
-    public: false
-    class: MakinaCorpus\Ucms\Group\GroupStorage
-    arguments: ["@database", "@event_dispatcher"]
-
-  ucms_group.access:
-    public: false
-    class: MakinaCorpus\Ucms\Group\GroupAccessService
-    arguments: ["@database", "@ucms_group.storage"]
-
-  ucms_group.manager:
-    public: true
-    class: MakinaCorpus\Ucms\Group\GroupManager
-    arguments: ["@database", "@ucms_group.storage", "@ucms_group.access"]
-
   # Admin datasources
   ucms_group.admin.group_datasource:
     public: true
@@ -47,11 +32,6 @@ services:
     public: true
     class: MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextSubscriber
     arguments: ["@ucms_site.manager", "@ucms_group.manager"]
-  ucms_group.context_event_node_access_subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Group\NodeAccess\GroupContextSubscriber
-    arguments: ["@ucms_group.manager", "@ucms_site.manager", "@current_user"]
-    tags: [{ name: event_subscriber }]
   ucms_group.context_pane_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Group\EventDispatcher\ContextPaneEventSubscriber
@@ -62,31 +42,6 @@ services:
     class: MakinaCorpus\Ucms\Group\EventDispatcher\AdminEventSubscriber
     arguments: ["@ucms_group.manager"]
     tags: [{ name: event_subscriber }]
-
-  # Group ACL collector
-  ucms_group.acl.group_collector:
-    class: MakinaCorpus\Ucms\Group\ACL\GroupEntryCollector
-    arguments: ["@ucms_group.manager"]
-    tags:
-      - {name: php_acl.entry_collector}
-      - {name: php_acl.profile_collector}
-      - {name: php_acl.resource_converter}
-
-  # Node ACL collector
-  ucms_group.acl.node_collector:
-    class: MakinaCorpus\Ucms\Group\ACL\NodeEntryCollector
-    arguments: ["@ucms_group.manager"]
-    tags:
-      - {name: php_acl.profile_collector, priority: -32}
-
-  # Site ACL collector
-  ucms_group.acl.site_collector:
-    class: MakinaCorpus\Ucms\Group\ACL\SiteEntryCollector
-    arguments: ["@ucms_group.manager", "@ucms_site.manager"]
-    tags:
-      # Those must run after the ucms_site site collector
-      - {name: php_acl.entry_collector, priority: -32}
-      - {name: php_acl.profile_collector, priority: -32}
 
   # Action processors and providers
   ucms_group.action.group_delete:

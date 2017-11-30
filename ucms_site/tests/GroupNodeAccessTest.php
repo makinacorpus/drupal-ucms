@@ -1,13 +1,11 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\Tests;
+namespace MakinaCorpus\Ucms\Site\Tests;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\Tests\NodeAccessTestTrait;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Please note that there is actually not much to test, since that the global
@@ -24,7 +22,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
     private $groups = [];
 
     /**
-     * @return GroupManager
+     * @return \MakinaCorpus\Ucms\Site\GroupManager
      */
     private function getGroupManager()
     {
@@ -50,7 +48,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap, $name);
 
         $instance = $this->getGroup($group);
-        $this->getGroupManager()->getAccess()->addMember($instance->getId(), $this->contextualAccount->id());
+        $this->getGroupManager()->addMember($instance->getId(), $this->contextualAccount->id());
 
         return $this;
     }
@@ -58,7 +56,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
     protected function tearDown()
     {
         foreach ($this->groups as $group) {
-            $this->getGroupManager()->getStorage()->delete($group);
+            $this->getGroupManager()->delete($group);
         }
 
         $this->eraseAll();
@@ -89,11 +87,11 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         $groupB->setTitle('b');
         // Save groups
         $manager = $this->getGroupManager();
-        $manager->getStorage()->save($groupA);
-        $manager->getStorage()->save($groupB);
+        $manager->save($groupA);
+        $manager->save($groupB);
         // Set sites in groups
-        $manager->getAccess()->addSite($groupA->getId(), $this->sites['on']->getId(), true);
-        $manager->getAccess()->addSite($groupB->getId(), $this->sites['off']->getId(), true);
+        $manager->addSite($groupA->getId(), $this->sites['on']->getId(), true);
+        $manager->addSite($groupB->getId(), $this->sites['off']->getId(), true);
 
         // Create false set of nodes, a lot of them.
         $this->nodes['nogroup_site_on_published']   = $this->createDrupalNode(1, 'no_on', [], false, false, false, ['group_id' => null]);
@@ -119,7 +117,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         }
 
         $this->getSiteManager()->dropContext();
-        $this->getGroupManager()->getAccess()->resetCache();
+        $this->getGroupManager()->resetCache();
     }
 
     public function testPrettyMuchEverything()

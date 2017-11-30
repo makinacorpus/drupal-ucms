@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group;
+namespace MakinaCorpus\Ucms\Site;
 
 use MakinaCorpus\Ucms\Site\Structure\AttributesTrait;
 use MakinaCorpus\Ucms\Site\Structure\DatesTrait;

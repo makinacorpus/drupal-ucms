@@ -4,12 +4,9 @@ namespace MakinaCorpus\Ucms\Group\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -93,7 +90,7 @@ class SiteGroupAttach extends FormBase
         if (preg_match('/\[(\d+)\]$/', $string, $matches) !== 1 || $matches[1] < 2) {
             $form_state->setErrorByName('name', $this->t("The group can't be identified."));
         } else {
-            $group = $this->groupManager->getStorage()->findOne($matches[1]);
+            $group = $this->groupManager->findOne($matches[1]);
             if (null === $group) {
                 $form_state->setErrorByName('name', $this->t("The group doesn't exist."));
             } else {
@@ -107,12 +104,12 @@ class SiteGroupAttach extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        /** @var \MakinaCorpus\Ucms\Group\Group $group */
+        /** @var \MakinaCorpus\Ucms\Site\Group $group */
         $group  = $form_state->getTemporaryValue('group');
         $siteId = $form_state->getValue('site');
         $site   = $this->siteManager->getStorage()->findOne($siteId);
 
-        if ($this->groupManager->getAccess()->addSite($group->getId(), $siteId, true)) {
+        if ($this->groupManager->addSite($group->getId(), $siteId, true)) {
             drupal_set_message($this->t("%name has been added to group %group.", [
                 '%name' => $site->getAdminTitle(),
                 '%group'  => $group->getTitle(),
