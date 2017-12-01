@@ -92,6 +92,8 @@ class UserAdminDatasource extends AbstractDatasource
             ->fields('u', ['uid'])
         ;
 
+        $q->addTag('ucms_user_access');
+
         if ($query->has('status')) {
             $q->condition('u.status', $query->get('status'));
         }

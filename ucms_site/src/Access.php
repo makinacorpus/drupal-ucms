@@ -98,6 +98,16 @@ final class Access
     const PROFILE_GROUP_ORPHAN_READER = 'ucms_group_orphan_reader';
 
     /**
+     * Admins that can manage all users
+     */
+    const PROFILE_USER_GOD = 'user_admin_god';
+
+    /**
+     * Users that can see all other users
+     */
+    const PROFILE_USER_READER = 'user_reader';
+
+    /**
      * Default group identifier for grants where it does not make sense
      */
     const ID_ALL = 0;
@@ -196,6 +206,16 @@ final class Access
      * View all sites no matter the state permission
      */
     const PERM_SITE_VIEW_ALL = 'site view all';
+
+    /**
+     * View all users
+     */
+    const PERM_USER_VIEW_ALL = 'users view all';
+
+    /**
+     * Manage all users
+     */
+    const PERM_USER_MANAGE_ALL = 'users manage all';
 
     /**
      * ACL permission for site: manage webmasters

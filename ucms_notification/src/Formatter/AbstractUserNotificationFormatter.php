@@ -3,10 +3,9 @@
 namespace MakinaCorpus\Ucms\Notification\Formatter;
 
 use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\APubSub\Notification\NotificationInterface;
 use MakinaCorpus\Drupal\APubSub\Notification\AbstractNotificationFormatter;
-use MakinaCorpus\Ucms\User\UserAccess;
+use MakinaCorpus\Ucms\Site\Access;
 
 abstract class AbstractUserNotificationFormatter extends AbstractNotificationFormatter
 {
@@ -31,7 +30,7 @@ abstract class AbstractUserNotificationFormatter extends AbstractNotificationFor
     public function getURI(NotificationInterface $interface)
     {
         $userIdList = $interface->getResourceIdList();
-        if (count($userIdList) === 1 && $this->account->hasPermission(UserAccess::PERM_MANAGE_ALL)) {
+        if (count($userIdList) === 1 && $this->account->hasPermission(Access::PERM_USER_MANAGE_ALL)) {
             return 'admin/dashboard/user/' . reset($userIdList);
         }
     }

@@ -26,9 +26,18 @@ services:
     arguments: ["@database", "@event_dispatcher"]
 
   # Group ACL collector
-  ucms_group.acl.group_collector:
+  ucms_site.acl.group_collector:
     class: MakinaCorpus\Ucms\Site\ACL\GroupEntryCollector
     arguments: ["@ucms_group.manager"]
+    tags:
+      - {name: php_acl.entry_collector}
+      - {name: php_acl.profile_collector}
+      - {name: php_acl.resource_converter}
+
+  # User ACL collector
+  ucms_site.acl.user_collector:
+    class: MakinaCorpus\Ucms\Site\ACL\UserEntryCollector
+    arguments: ["@ucms_site.manager", "@ucms_group.manager"]
     tags:
       - {name: php_acl.entry_collector}
       - {name: php_acl.profile_collector}

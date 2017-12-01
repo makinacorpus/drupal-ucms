@@ -4,7 +4,7 @@ namespace MakinaCorpus\Ucms\User\Portlet;
 
 use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Drupal\Calista\Portlet\AbstractPortlet;
-use MakinaCorpus\Ucms\User\UserAccess;
+use MakinaCorpus\Ucms\Site\Access;
 
 /**
  * User portlet display for user administrators.
@@ -47,6 +47,6 @@ class UsersPortlet extends AbstractPortlet
      */
     public function isGranted()
     {
-        return $this->authorizationChecker->isGranted(UserAccess::PERM_MANAGE_ALL);
+        return $this->authorizationChecker->isGranted(Access::PERM_USER_MANAGE_ALL);
     }
 }

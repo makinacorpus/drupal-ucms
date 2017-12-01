@@ -4,6 +4,13 @@
 <tr>
   <td>{{ item.displayName }}</td>
   <td>{{ item.email|escape }}</td>
+  <td>
+    {% if item.isGroupAdmin %}
+      {{ "Administrator"|trans }}
+    {% else %}
+      {{ "Member"|trans }}
+    {% endif %}
+  </td>
   <td>{% if item.isActive %}{{ "enabled"|trans }}{% else %}{{ "disabled"|trans }}{% endif %}</td>
   <td>
     {{ calista_actions(item) }}
@@ -18,6 +25,7 @@
       <tr>
         <th>{{ "Name"|trans }}</th>
         <th>{{ "Email"|trans }}</th>
+        <th>{{ "Role"|trans }}</th>
         <th>
           {{ "Global status"|trans }}
           <span title="{{ "This is the global status for across the whole platform. Is a user is disabled, he/she won't be able to log in."|trans }}" class="fa fa-question-circle"></span>

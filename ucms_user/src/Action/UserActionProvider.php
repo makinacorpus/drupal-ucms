@@ -4,10 +4,10 @@ namespace MakinaCorpus\Ucms\User\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use MakinaCorpus\ACL\Permission;
 use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
-use MakinaCorpus\Ucms\User\UserAccess;
 
 class UserActionProvider extends AbstractActionProvider
 {
@@ -55,34 +55,37 @@ class UserActionProvider extends AbstractActionProvider
      */
     public function getActions($item, $primaryOnly = false, array $groups = [])
     {
-        if (!$this->isGranted(UserAccess::PERM_MANAGE_ALL)) {
-            return [];
-        }
-
         $actions = [];
 
         $userId = $this->getUserIdFrom($item);
-        $userStatus = $this->getStatusFrom($item);
 
-        $actions[] = new Action($this->t("View"), 'admin/dashboard/user/' . $userId, null, 'eye', 1, true, true);
-
-        if (!$userStatus) {
-            $action_title = $this->t("Enable");
-            $action_path  = 'admin/dashboard/user/' . $userId . '/enable';
-            $action_icon  = 'check-circle';
-        } else {
-            $action_title = $this->t("Disable");
-            $action_path  = 'admin/dashboard/user/' . $userId . '/disable';
-            $action_icon  = 'ban';
+        if ($this->isGranted(Permission::VIEW, $item)) {
+            $actions[] = new Action($this->t("View"), 'admin/dashboard/user/' . $userId, null, 'eye', 1, true, true);
         }
 
-        $action_disabled  = ($userId === $this->currentUser->id());
-        $actions[] = new Action($action_title, $action_path, 'dialog', $action_icon, 2, false, true, $action_disabled);
+        if ($this->isGranted(Permission::LOCK, $item)) {
+            if (!$this->getStatusFrom($item)) {
+                $action_title = $this->t("Enable");
+                $action_path  = 'admin/dashboard/user/' . $userId . '/enable';
+                $action_icon  = 'check-circle';
+            } else {
+                $action_title = $this->t("Disable");
+                $action_path  = 'admin/dashboard/user/' . $userId . '/disable';
+                $action_icon  = 'ban';
+            }
 
-        $actions[] = new Action($this->t("Edit"), 'admin/dashboard/user/' . $userId . '/edit', null, 'pencil', 3, false, true);
-        $actions[] = new Action($this->t("Change email"), 'admin/dashboard/user/' . $userId . '/change-email', 'dialog', 'pencil', 4, false, true);
-        $actions[] = new Action($this->t("Reset password"), 'admin/dashboard/user/' . $userId . '/reset-password', 'dialog', 'refresh', 5, false, true);
-        $actions[] = new Action($this->t("Delete"), 'admin/dashboard/user/' . $userId . '/delete', 'dialog', 'trash', 6, false, true);
+            $action_disabled  = ($userId === $this->currentUser->id());
+            $actions[] = new Action($action_title, $action_path, 'dialog', $action_icon, 2, false, true, $action_disabled);
+        }
+
+        if ($this->isGranted(Permission::UPDATE, $item)) {
+            $actions[] = new Action($this->t("Edit"), 'admin/dashboard/user/' . $userId . '/edit', null, 'pencil', 3, false, true);
+            $actions[] = new Action($this->t("Change email"), 'admin/dashboard/user/' . $userId . '/change-email', 'dialog', 'pencil', 4, false, true);
+            $actions[] = new Action($this->t("Reset password"), 'admin/dashboard/user/' . $userId . '/reset-password', 'dialog', 'refresh', 5, false, true);
+        }
+        if ($this->isGranted(Permission::DELETE, $item)) {
+            $actions[] = new Action($this->t("Delete"), 'admin/dashboard/user/' . $userId . '/delete', 'dialog', 'trash', 6, false, true);
+        }
 
         return $actions;
     }

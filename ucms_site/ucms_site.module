@@ -305,6 +305,12 @@ function ucms_site_permission() {
     Access::PERM_GROUP_MANAGE_ORPHAN => [
       'title' => t("Manage orphan content"),
     ],
+    Access::PERM_USER_MANAGE_ALL => [
+      'title' => t("Manage all users"),
+    ],
+    Access::PERM_USER_VIEW_ALL => [
+      'title' => t("View all users"),
+    ],
   ];
 }
 
@@ -1167,6 +1173,76 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     } else {
       $query->condition($accessAlias . '.uid', $account->id());
     }
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Implement site visibility access control for the admin UI, this is the only
+ * query alteration for business purpose this module will ever do.
+ */
+function ucms_site_query_ucms_user_access_alter(QueryAlterableInterface $query) {
+
+  if (!$query instanceof SelectQueryInterface) {
+    return;
+  }
+  if (drupal_is_cli()) {
+    // In theory, we should not have to do this, but it happens that during
+    // drush upgrade, which runs all update functions altogether one by one,
+    // it may happen that this module gets enable during the same run, and
+    // that the 'sf_dic' container, even if correctly rebuilt, may not be
+    // used because older object references are being used by the code (old
+    // services still referenced into some other being in use).
+    return;
+  }
+
+  /* @var $account AccountInterface */
+  if (!$account = $query->getMetaData('account')) {
+    $account = \Drupal::currentUser();
+  }
+
+  if ($account->hasPermission(Access::PERM_USER_MANAGE_ALL) || $account->hasPermission(Access::PERM_USER_VIEW_ALL)) {
+    return;
+  }
+
+  $userAlias = null;
+  $userGroupAlias = null;
+
+  // If no base table is specified explicitly, search for one.
+  foreach ($query->getTables() as $alias => $table_info) {
+    if (!($table_info instanceof SelectQueryInterface)) {
+      // If the node table is in the query, it wins immediately.
+      if ('users' === $table_info['table']) {
+        $userAlias = $alias;
+      }
+      if ('ucms_group_access' === $table_info['table']) {
+        $userGroupAlias = $alias;
+      }
+    }
+  }
+
+  if (!$userAlias) {
+    return;
+  }
+
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager */
+  $groupManager = \Drupal::service('ucms_group.manager');
+  $accessList   = $groupManager->getUserGroups($account);
+
+  // Group admins can view users from their own groups, at least in listings.
+  // But more than that, can ONLY see users from their groups.
+  if ($accessList) {
+    $groupList = [];
+    foreach ($accessList as $access) {
+      $groupList[] = $access->getGroupId();
+    }
+    if (!$userGroupAlias) {
+      $userGroupAlias = $query->join('ucms_group_access', 'uga', "uga.user_id = " . $userAlias . '.uid');
+    }
+    $query->condition($userGroupAlias . '.group_id', $groupList);
+  } else {
+    $query->where("1 = 0"); // You fool.
   }
 }
 

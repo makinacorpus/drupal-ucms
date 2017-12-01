@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Site\Controller;
 
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\User\UserAccess;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -48,7 +47,7 @@ class AutocompleteController extends Controller
         $manager = $this->getSiteManager();
         $account = $this->getCurrentUser();
 
-        if (!$manager->getAccess()->userIsWebmaster($account) && !$this->isGranted(UserAccess::PERM_MANAGE_ALL)) {
+        if (!$manager->getAccess()->userIsWebmaster($account) && !$this->isGranted(Access::PERM_USER_MANAGE_ALL)) {
             throw $this->createAccessDeniedException();
         }
 

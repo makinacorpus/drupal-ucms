@@ -3,9 +3,9 @@
 namespace MakinaCorpus\Ucms\Group\Action;
 
 use MakinaCorpus\ACL\Permission;
-use MakinaCorpus\Calista\Action\AbstractActionProvider;
 use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Site\GroupSite;
+use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 
 /**
  * We only partially implement the site action provider, we do not want to
