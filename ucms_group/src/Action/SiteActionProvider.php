@@ -2,10 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Group\Action;
 
-use MakinaCorpus\Calista\Action\AbstractActionProvider;
 use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 
 class SiteActionProvider extends AbstractActionProvider
 {

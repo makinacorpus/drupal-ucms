@@ -3,16 +3,13 @@
 namespace MakinaCorpus\Ucms\Cart\Action;
 
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Calista\Action\AbstractActionProvider;
 use MakinaCorpus\Calista\Action\Action;
 use MakinaCorpus\Ucms\Cart\Cart\CartStorageInterface;
+use MakinaCorpus\Ucms\Site\Action\AbstractActionProvider;
 
 class NodeActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
     /**
      * @var AccountInterface
      */

@@ -155,7 +155,6 @@ function ucms_site_schema() {
       'group_id' => [
         'table'   => 'ucms_group',
         'columns' => ['group_id' => 'id'],
-        'delete'  => 'set null',
       ],
     ],
     'primary key' => ['id'],

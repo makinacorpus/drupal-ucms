@@ -4,8 +4,7 @@
   <tr>
     <td>{{ item.mail|escape }}</td>
     <td>{{ item.displayName|escape }}</td>
-    <td>{% if item.status %}{{ "Yes"|trans }}{% else %}{{ "No"|trans }}{% endif %}</td>
-    <td>@todo</td>
+    <td>{% if item.status %}{{ "Enabled"|trans }}{% else %}{{ "Disabled"|trans }}{% endif %}</td>
     <td>{{ item.created|time_diff }}</td>
     <td>{% if item.login %}{{ item.login|time_diff }}{% else %}{{ "Never"|trans }}{% endif %}</td>
     <td>
@@ -21,7 +20,6 @@
         <th>{{ "Email"|trans }}</th>
         <th>{{ "Name"|trans }}</th>
         <th>{{ "Status"|trans }}</th>
-        <th>{{ "Is webmaster?"|trans }}</th>
         <th>{{ "Created"|trans }}</th>
         <th>{{ "Last connection"|trans }}</th>
         <th></th>
