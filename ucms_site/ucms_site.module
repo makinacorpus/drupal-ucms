@@ -1154,6 +1154,13 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
   // Apply group conditions, but do not apply anything if the user is not
   // member of any groups: it means that the user is a global administrator.
   if ($accessList) {
+    if (!$siteAlias) {
+      $siteAlias = $query->join(
+        'ucms_site',
+        'access_site',
+        "access_site.id = " . $accessAlias . ".site_id"
+      );
+    }
     $groupList = [];
     foreach ($accessList as $access) {
       $groupList[] = $access->getGroupId();
