@@ -328,9 +328,6 @@ function ucms_contrib_type_handler_get() {
  */
 function ucms_contrib_permission() {
   return [
-    'use favorites' => [
-      'title' => "Access the favorites feature",
-    ],
     'access ucms content overview' => [
       'title' => "Access the UCMS content overview page",
     ],

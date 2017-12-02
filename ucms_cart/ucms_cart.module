@@ -26,3 +26,17 @@ function ucms_cart_menu() {
 
   return $items;
 }
+
+/**
+ * Implements hook_permission().
+ */
+function ucms_cart_permission() {
+  return [
+    'use favorites' => [
+      'title' => "Access the favorites feature",
+    ],
+    'use context pane content search' => [
+      'title' => "Access the content search contextual pane",
+    ],
+  ];
+}

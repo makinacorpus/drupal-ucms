@@ -5,9 +5,9 @@ namespace MakinaCorpus\Ucms\Cart\EventDispatcher;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Controller\PageRenderer;
 use MakinaCorpus\Drupal\Calista\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
 
 /**
  * Add lots of stuff into the context pane.
@@ -63,6 +63,10 @@ class ContextPaneEventSubscriber implements EventSubscriberInterface
                     ),
                     'cart'
                 )
+            ;
+        }
+        if (user_access('use context pane content search')) {
+            $contextPane
                 // All content
                 ->addTab('cart_content', $this->t("All content"), 'file')
                 ->add(
