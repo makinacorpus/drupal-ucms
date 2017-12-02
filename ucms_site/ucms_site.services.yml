@@ -104,7 +104,7 @@ services:
 
   ucms_site.site_event_subscriber:
     class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventSubscriber
-    arguments: ["@ucms_site.manager", "@entity.manager"]
+    arguments: ["@ucms_site.manager"]
     tags: [{ name: event_subscriber }]
 
   ucms_site.menu_event_subscriber:

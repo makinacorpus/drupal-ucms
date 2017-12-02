@@ -43,7 +43,7 @@ class UserAdminController extends Controller
         $access = $this->getSiteManager()->getAccess();
         $roles = array_map(
             function ($roleId) use ($access) {
-                return check_plain($access->getDrupalRoleName($roleId));
+                return check_plain($access->getRelativeRoleName($roleId));
             },
             $account->getRoles(true)
         );

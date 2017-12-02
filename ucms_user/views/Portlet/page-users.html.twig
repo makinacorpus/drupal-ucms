@@ -41,7 +41,7 @@
 
             $roles = [];
             foreach ($item->getRoles(true) as $rid) {
-                $roles[] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
+                $roles[] = $this->siteManager->getAccess()->getRelativeRoleName($rid);
             }
 
             $rows[] = [

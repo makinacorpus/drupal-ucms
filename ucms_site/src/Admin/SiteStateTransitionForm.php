@@ -53,8 +53,18 @@ class SiteStateTransitionForm extends FormBase
         $form['#theme'] = 'ucms_site_state_transition_form';
 
         $access   = $this->manager->getAccess();
-        $roleMap  = $access->getDrupalRoleList();
+        $roleMap  = [];
         $matrix   = $access->getStateTransitionMatrix();
+
+        foreach ($access->collectRelativeRoles() as $role => $name) {
+            $roleMap['site:'.$role] = t("Site: @role", ['@role' => $name]);
+        }
+        foreach ($access->getDrupalRoleList() as $rid => $name) {
+            if ($rid != DRUPAL_ANONYMOUS_RID && $rid != DRUPAL_AUTHENTICATED_RID) {
+                $roleMap['drupal:'.$rid] = t("Global: @role", ['@role' => $name]);
+            }
+        }
+        asort($roleMap);
 
         $stateList = SiteState::getList();
         $s1 = array_keys($stateList);
@@ -63,8 +73,8 @@ class SiteStateTransitionForm extends FormBase
         foreach ($s1 as $d1) {
             foreach ($s2 as $d2) {
                 if ($d1 !== $d2) {
-                    foreach ($roleMap as $rid => $name) {
-                        $form['transitions'][$d1][$d2][$rid] = [
+                    foreach ($roleMap as $role => $name) {
+                        $form['transitions'][$d1][$d2][$role] = [
                             '#type'           => 'checkbox',
                             '#title'          => $name,
                             '#attributes'     => ['title' => $this->t("Allow @name to switch site state from @from to @to", [
@@ -72,8 +82,8 @@ class SiteStateTransitionForm extends FormBase
                                 '@from' => $this->t($stateList[$d1]),
                                 '@to'   => $this->t($stateList[$d2]),
                             ])],
-                            '#return_value'   => $rid,
-                            '#default_value'  => !empty($matrix[$d1][$d2][$rid]),
+                            '#return_value'   => $role,
+                            '#default_value'  => !empty($matrix[$d1][$d2][$role]),
                         ];
                     }
                 } else {

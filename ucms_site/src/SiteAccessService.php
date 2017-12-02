@@ -189,38 +189,14 @@ class SiteAccessService
      *
      * @param Site $context
      *
-     * @return [] Labels keyed by identifiers
+     * @return string[]
+     *   Integer keys are role constants, values are roles human readable names
      */
     public function collectRelativeRoles(Site $context = null)
     {
         $event = new RolesCollectionEvent($this->getDefaultRelativeRoles(), $context);
         $this->dispatcher->dispatch(RolesCollectionEvent::EVENT_NAME, $event);
         return $event->getRoles();
-    }
-
-    /**
-     * Get relative roles identifiers keyed by Drupal roles identifiers.
-     *
-     * @todo
-     *   This sadly fundamentally broken since role are identifiers, it should
-     *   use permissions instead, but this would be severly broken too somehow.
-     *
-     * @return int[]
-     *   Keys are Drupal roles identifiers, values are relative roles identifiers.
-     */
-    public function getRolesAssociations()
-    {
-        return variable_get('ucms_site_relative_roles');
-    }
-
-    /**
-     * Set relative role identifiers
-     *
-     * @param int[] $roleIdList
-     */
-    public function updateRolesAssociations($roleIdList)
-    {
-        variable_set('ucms_site_relative_roles', array_filter(array_map('intval', $roleIdList)));
     }
 
     /**
@@ -239,66 +215,19 @@ class SiteAccessService
     }
 
     /**
-     * Get a Drupal role name
+     * Get a relative role name
      *
-     * @param int $rid
+     * @param int $role
+     *   Relative role ID (Access::ROLE_* constant)
+     *
      * @return string
      */
-    public function getDrupalRoleName($rid)
+    public function getRelativeRoleName($role)
     {
-        $roles = $this->getDrupalRoleList();
-        return $roles[(string) $rid];
-    }
-
-    /**
-     * Get a relative role name, i.e. the name of the matching Drupal role
-     *
-     * @param int $rrid Relative role ID (Access::ROLE_* constant)
-     * @return string
-     */
-    public function getRelativeRoleName($rrid)
-    {
-        if ($rid = array_keys($this->getRolesAssociations(), $rrid)) {
-            return $this->getDrupalRoleName(reset($rid));
+        $roles = $this->collectRelativeRoles();
+        if (isset($roles[$role])) {
+            return $roles[$role];
         }
-    }
-
-    /**
-     * Get user relative role list to site, including global roles
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return int[]
-     */
-    public function getUserRelativeRoleList(AccountInterface $account, Site $site)
-    {
-        $ret = [];
-
-        $relativeRoles  = $this->getRolesAssociations();
-        $grant          = $this->getUserRoleCacheValue($account, $site);
-
-        // First check the user site roles if any
-        if ($grant) {
-            foreach ($relativeRoles as $rid => $role) {
-                if ($grant->getRole() === $role) {
-                    $ret[] = $rid;
-                }
-            }
-        }
-
-        foreach ($account->getRoles() as $rid) {
-            // Exlude relative role, they are not global but relative, the fact
-            // we set the role onto the Drupal user only means that it has this
-            // role only once
-            // @todo
-            //   consider removing those at the global level for once
-            if (!isset($relativeRoles[$rid])) {
-                $ret[] = $rid;
-            }
-        }
-
-        return $ret;
     }
 
     /**
@@ -338,32 +267,32 @@ class SiteAccessService
      *
      * @param AccountInterface $account
      * @param Site $site
-     * @param integer $rrid Relative role identifier
+     * @param int $role
      *
      * @return boolean
      */
-    public function userHasRole(AccountInterface $account, Site $site = null, $rrid = null)
+    public function userHasRole(AccountInterface $account, Site $site = null, $role = null)
     {
-        if (null === $site && null === $rrid) {
-          return (boolean) count($this->getUserRoleCacheValue($account));
+        if (null === $site && null === $role) {
+          return (bool)count($this->getUserRoleCacheValue($account));
         }
 
         if (null === $site) {
             foreach ($this->getUserRoleCacheValue($account) as $grant) {
-                if ((integer) $rrid === $grant->getRole()) {
+                if ($grant->getRole() === (int)$role) {
                     return true;
                 }
             }
             return false;
         }
 
-        if (null === $rrid) {
+        if (null === $role) {
             $grant = $this->getUserRoleCacheValue($account, $site);
             return ($grant instanceof SiteAccessRecord) && ($grant->getRole() !== Access::ROLE_NONE);
         }
 
         if ($grant = $this->getUserRoleCacheValue($account, $site)) {
-            return (integer) $rrid === $grant->getRole();
+            return $grant->getRole() === (int)$role;
         }
 
         return false;
@@ -399,12 +328,23 @@ class SiteAccessService
         $ret = [];
         $states = SiteState::getList();
         $matrix = $this->getStateTransitionMatrix();
-        $roles  = $this->getUserRelativeRoleList($account, $site);
+        $drupalRoles = $account->getRoles();
 
         foreach ($states as $state => $name) {
-            foreach ($roles as $rid) {
-                if (isset($matrix[$site->state][$state][$rid])) {
-                    $ret[$state] = $name;
+            if (isset($matrix[$site->state][$state])) {
+                foreach ($matrix[$site->state][$state] as $target) {
+                    list($type, $role) = explode(':', $target, 2);
+                    if ('site' === $type) {
+                        if ($this->userHasRole($account, $site, $role)) {
+                            $ret[$state] = $name;
+                            break;
+                        }
+                    } else if ('drupal' === $type) {
+                        if (in_array($role, $drupalRoles)) {
+                            $ret[$state] = $name;
+                            break;
+                        }
+                    }
                 }
             }
         }

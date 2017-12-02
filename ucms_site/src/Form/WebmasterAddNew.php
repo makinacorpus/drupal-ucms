@@ -6,18 +6,13 @@ namespace MakinaCorpus\Ucms\Site\Form;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\user\UserInterface;
-
-use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 
 /**
  * Form to assign a webmaster/contributor to a site.
@@ -36,33 +31,19 @@ class WebmasterAddNew extends FormBase
         );
     }
 
+    private $dispatcher;
+    private $entityManager;
+    private $siteManager;
 
     /**
-     * @var SiteManager
+     * Default constructor
      */
-    protected $siteManager;
-
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-
-    public function __construct(
-        SiteManager $siteManager,
-        EntityManager $entityManager,
-        EventDispatcherInterface $dispatcher
-    ) {
+    public function __construct(SiteManager $siteManager, EntityManager $entityManager, EventDispatcherInterface $dispatcher)
+    {
         $this->siteManager = $siteManager;
         $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
     }
-
 
     /**
      * {@inheritdoc}
@@ -71,7 +52,6 @@ class WebmasterAddNew extends FormBase
     {
         return 'ucms_webmaster_add_new';
     }
-
 
     /**
      * {@inheritdoc}
@@ -98,15 +78,7 @@ class WebmasterAddNew extends FormBase
             '#weight' => -5,
         );
 
-        $roles = [];
-        $relativeRoles = $this->siteManager->getAccess()->collectRelativeRoles($site);
-        $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();
-
-        foreach ($rolesAssociations as $rid => $rrid) {
-            if (isset($relativeRoles[$rrid])) {
-                $roles[$rid] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
-            }
-        }
+        $roles = $this->siteManager->getAccess()->collectRelativeRoles($site);
 
         $form['role'] = [
             '#type' => 'radios',
@@ -145,7 +117,6 @@ class WebmasterAddNew extends FormBase
         return $form;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -181,7 +152,6 @@ class WebmasterAddNew extends FormBase
         }
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -206,14 +176,13 @@ class WebmasterAddNew extends FormBase
         $this->entityManager->getStorage('user')->save($user);
 
         $site = $form_state->getTemporaryValue('site');
-        $rid = $form_state->getValue('role');
-        $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();
+        $role = $form_state->getValue('role');
 
-        $this->siteManager->getAccess()->mergeUsersWithRole($site, $user->id(), $rolesAssociations[$rid]);
+        $this->siteManager->getAccess()->mergeUsersWithRole($site, $user->id(), $role);
 
         drupal_set_message($this->t("!name has been created and added as %role.", [
             '!name' => $user->getDisplayName(),
-            '%role' => $this->siteManager->getAccess()->getDrupalRoleName($rid),
+            '%role' => $this->siteManager->getAccess()->getRelativeRoleName($role),
         ]));
 
         $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
@@ -222,4 +191,3 @@ class WebmasterAddNew extends FormBase
         $this->dispatcher->dispatch('user:add', new UserEvent($user->id(), $this->currentUser()->uid));
     }
 }
-

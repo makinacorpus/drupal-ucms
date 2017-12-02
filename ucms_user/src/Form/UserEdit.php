@@ -120,13 +120,11 @@ class UserEdit extends FormBase
         $allRoles = $this->siteManager->getAccess()->getDrupalRoleList();
         unset($allRoles[DRUPAL_ANONYMOUS_RID]);
         unset($allRoles[DRUPAL_AUTHENTICATED_RID]);
-        $siteRoles = $this->siteManager->getAccess()->getRolesAssociations();
-        $availableRoles = array_diff_key($allRoles, $siteRoles);
 
         $form['roles'] = [
             '#type' => 'checkboxes',
             '#title' => $this->t('Roles'),
-            '#options' => $availableRoles,
+            '#options' => $allRoles,
             '#default_value' => $user->getRoles(),
         ];
 
