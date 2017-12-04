@@ -398,9 +398,20 @@ function ucms_contrib_node_clone_form($node) {
 
   $clone = $manager->createUnsavedClone($node, ['uid' => \Drupal::currentUser()->id()]);
 
-  module_load_include('inc', 'node', 'node.pages');
-
   return drupal_get_form($clone->type . '_node_form', $clone);
+}
+
+/**
+ * Implements hook_form().
+ */
+function ucms_contrib_forms($form_id, $args) {
+  // Because we are going to get some node form out of context, we must ensure
+  // that its files are always loaded all right when doing AJAX queries over.
+  // @see ucms_contrib_node_clone_form()
+  // @see ucms_contrib_form_node_form_alter()
+  if ('_node_form' === substr($form_id, -10)) {
+    module_load_include('inc', 'node', 'node.pages');
+  }
 }
 
 /**
@@ -540,6 +551,9 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
   $user         = \Drupal::currentUser();
   $access       = \Drupal::service('ucms_site.node_access_helper');
   $siteManager  = ucms_site_manager();
+
+  // @see ucms_contrib_forms()
+  $form_state['build_info']['files'][] = drupal_get_path('module', 'node').'/node.pages.inc';
 
   // Node object and database have default values, so depending on context,
   // when creating the node, we do need to set those defaults to the current
