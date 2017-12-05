@@ -345,6 +345,20 @@ class SiteRequest extends FormBase
             ];
         }
 
+        // Favicon
+        $use_favicon = variable_get('ucms_site_use_custom_favicon', False);
+        if ($use_favicon) {
+            $form['favicon'] = [
+                '#title'         => $this->t("Favicon"),
+                '#type'          => 'file_chunked',
+                '#upload_validators'  => [''],
+                '#field types' => ['image'],
+                '#multiple'    => false,
+                '#default_value' => null,
+                '#required'      => false,
+            ];
+        }
+
         $form['attributes']['#tree'] = true;
 
         $form['actions']['#type'] = 'actions';
@@ -375,6 +389,10 @@ class SiteRequest extends FormBase
         $site->ts_created = $site->ts_changed = new \DateTime();
         $site->template_id = $form_state->getValue('is_template') ? 0 : $form_state->getValue('template_id');
         $site->is_template = $form_state->getValue('is_template');
+        $hashMap = @json_decode($form_state->getValue('favicon')['fid'],true);
+        if (count($hashMap)){
+            $site->favicon = array_keys($hashMap)[0];
+        }
 
         $formData['step'] = 'a';
         $form_state->setRebuild(true);
@@ -393,6 +411,10 @@ class SiteRequest extends FormBase
         $site->theme = $form_state->getValue('theme');
         $site->template_id = $form_state->getValue('is_template') ? 0 : $form_state->getValue('template_id');
         $site->is_template = $form_state->getValue('is_template');
+        $hashMap = @json_decode($form_state->getValue('favicon')['fid'],true);
+        if (count($hashMap)){
+            $site->favicon = array_keys($hashMap)[0];
+        }
         $attributes = $form_state->getValue('attributes', []);
         foreach ($attributes as $name => $attribute) {
             $site->setAttribute($name, $attribute);

@@ -171,6 +171,20 @@ class SiteEdit extends FormBase
             '#description'    => $this->t("This will be used for the whole site and cannot be changed once set")
         ];
 
+        // Favicon
+        $use_favicon = variable_get('ucms_site_use_custom_favicon', False);
+        if ($use_favicon) {
+            $form['favicon'] = [
+                '#title'         => $this->t("Favicon"),
+                '#type'          => 'file_chunked',
+                '#upload_validators'  => [''],
+                '#field types' => ['image'],
+                '#multiple'    => false,
+                '#default_value' => $site->getFavicon(),
+                '#required'      => false,
+            ];
+        }
+
         $form['attributes']['#tree'] = true;
 
         $form['actions']['#type'] = 'actions';
@@ -205,6 +219,10 @@ class SiteEdit extends FormBase
         $site->http_host      = $values['http_host'];
         $site->allowed_protocols = $values['allowed_protocols'];
         $site->theme          = $values['theme'];
+        $hashmap = @json_decode($values['favicon']['fid'],true);
+        if (count($hashmap)){
+            $site->favicon = array_keys($hashmap)[0];
+        }
         $attributes = $form_state->getValue('attributes', []);
         foreach ($attributes as $name => $attribute) {
             $site->setAttribute($name, $attribute);

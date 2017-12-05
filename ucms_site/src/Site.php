@@ -103,6 +103,11 @@ class Site
     /**
      * @var int
      */
+    public $favicon = null;
+
+    /**
+     * @var int
+     */
     public $group_id;
 
     public function getId()
@@ -199,5 +204,23 @@ class Site
     public function getGroupId()
     {
         return (int)$this->group_id;
+    }
+
+    /**
+     * Get favicon fid
+     * @return number
+     */
+    public function getFavicon()
+    {
+        return (int)$this->favicon;
+    }
+
+    /**
+     * Set favicon fid
+     * @param int $fid from fle_managed table
+     */
+    public function setFavicon($fid)
+    {
+        $this->favicon = $fid;
     }
 }

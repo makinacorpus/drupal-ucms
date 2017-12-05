@@ -258,6 +258,7 @@ class SiteStorage
             'is_public',
             'type',
             'home_nid',
+            'favicon',
             'attributes',
         ];
 

@@ -696,7 +696,6 @@ function ucms_site_boot() {
           $GLOBALS['conf']['site_frontpage'] = 'node';
         }
       }
-
     } else {
       $manager->dropContext();
 
@@ -1164,4 +1163,78 @@ function ucms_site_webmaster_home() {
  */
 function ucms_site_preprocess_ucms_dashboard_top(&$vars) {
   $vars['site'] = ucms_site_manager()->getContext();
+}
+
+/**
+ * Implements hook_image_default_styles()
+ */
+function ucms_site_image_default_styles() {
+  $styles = [];
+  $styles['ucms_site_favicon_32x32'] = [
+    'label' => 'Favicon 32x32px',
+    'effects' => [
+      [
+        'name' => 'image_scale',
+        'data' => [
+          'width' => 32,
+          'height' => 32,
+        ],
+        'weight' => 0,
+      ],
+    ],
+    'name' => 'ucms_favicon_32x32',
+    'storage' => IMAGE_STORAGE_DEFAULT,
+  ];
+  $styles['ucms_site_favicon_16x16'] = [
+    'label' => 'Favicon 16x16px',
+    'effects' => [
+      [
+        'name' => 'image_scale',
+        'data' => [
+          'width' => 16,
+          'height' => 16,
+        ],
+        'weight' => 0,
+      ],
+    ],
+    'name' => 'ucms_favicon_16x16',
+    'storage' => IMAGE_STORAGE_DEFAULT,
+  ];
+
+  return $styles;
+}
+
+/**
+ * Implements hook_page_build()
+ */
+function ucms_site_page_build(&$page) {
+  $manager = ucms_site_manager();
+
+  if ($manager->hasContext()) {
+    $site = $manager->getContext();
+
+    // Handling custom favicon
+    if ($favicon = $site->getFavicon()) {
+      $faviconUri = file_load($favicon)->uri;
+      $element = [
+        '#tag' => 'link',
+        '#attributes' => [
+          'href'  => image_style_url('ucms_site_favicon_32x32', $faviconUri),
+          'rel'   => 'icon',
+          'sizes' => "32x32"
+        ],
+      ];
+      drupal_add_html_head($element, 'ucms_site_favicon_32x32');
+
+      $element = [
+        '#tag' => 'link',
+        '#attributes' => [
+          'href'  => image_style_url('ucms_site_favicon_16x16', $faviconUri),
+          'rel'   => 'icon',
+          'sizes' => "16x16"
+        ],
+      ];
+      drupal_add_html_head($element, 'ucms_site_favicon_16x16');
+    }
+  }
 }
