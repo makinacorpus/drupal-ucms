@@ -1,10 +1,12 @@
 services:
 
   ucms_label.manager:
+    public: true
     class: MakinaCorpus\Ucms\Label\LabelManager
     arguments: ["@database", "@entity.manager"]
 
   ucms_label.admin.datasource:
+    public: true
     class: MakinaCorpus\Ucms\Label\Page\LabelAdminDatasource
     arguments: ["@database", "@ucms_label.manager"]
 
@@ -15,12 +17,14 @@ services:
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_label.context_pane_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Label\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_label.manager"]
     tags:
       - { name: event_listener, event: ucms_dashboard.context_init }
 
   ucms_label.node_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Label\EventDispatcher\NodeEventListener
     arguments: ["@entity.manager"]
     tags:

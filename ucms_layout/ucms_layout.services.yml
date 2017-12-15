@@ -4,6 +4,7 @@ parameters:
 services:
 
   ucms_layout.storage:
+    public: true
     # public: false
     # FIXME This is being used by a few unit tests, but this should be private
     class: MakinaCorpus\Ucms\Layout\DrupalStorage
@@ -15,15 +16,18 @@ services:
     arguments: ["@database"]
 
   ucms_layout.context_manager:
+    public: true
     class: MakinaCorpus\Ucms\Layout\ContextManager
     arguments: ["@ucms_layout.storage", "@ucms_layout.storage.temporary", "@ucms_site.manager"]
 
   ucms_layout.site_node_event_subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteNodeEventSubscriber
     arguments: ["@database", "@ucms_layout.context_manager", "@ucms_site.manager", "@entity.manager", "@request_stack"]
     tags: [{name: event_subscriber }]
 
   ucms_layout.site_event_subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\SiteEventSubscriber
     arguments: ["@database", "@ucms_layout.context_manager", "@ucms_site.manager", "@entity.manager", "@request_stack"]
     tags: [{name: event_subscriber}]
@@ -35,6 +39,7 @@ services:
     tags: [{ name: event_subscriber }]
 
   ucms_layout.context_pane_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Layout\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_site.manager", "@ucms_layout.context_manager"]
     tags:

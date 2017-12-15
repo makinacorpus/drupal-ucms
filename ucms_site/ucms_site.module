@@ -317,13 +317,27 @@ function ucms_site_permission() {
  * @return $path
  */
 function ucms_site_admin_path_is_allowed($path) {
-  // Give a chance to contrib modules to override this.
-  $ret = module_invoke_all('ucms_path_is_allowed', $path);
-  if (in_array(false, $ret, true)) {
-    return FALSE;
-  }
-  elseif (in_array(true, $ret, true)) {
-    return true;
+
+  // Proceed to node path check first: most URL will always be node URL
+  // we must shortcut them as quicly as possible to gain a few CPU cycles
+  // from there.
+  $arg = explode('/', $path);
+  if ($arg[0] === 'node') {
+    // Whitelist our custom node URLs.
+    if (is_numeric($arg[1])) {
+      if (isset($arg[2])) {
+        switch ($arg[2]) {
+          case 'clone':
+          case 'edit':
+          case 'gallery':
+          case 'seo-aliases':
+          case 'seo-edit':
+            return true;
+        }
+      }
+      // All nodes display should always be allowed.
+      return true;
+    }
   }
 
   // Our proper logic is following.
@@ -333,6 +347,15 @@ function ucms_site_admin_path_is_allowed($path) {
   if (minidialog_is_ajax()) {
     return true;
   }
+
+  // Give a chance to contrib modules to override this.
+  $ret = module_invoke_all('ucms_path_is_allowed', $path);
+  if (in_array(false, $ret, true)) {
+    return false;
+  } else if (in_array(true, $ret, true)) {
+    return true;
+  }
+
   if (path_is_admin($path)) {
     // Allow node/add
     if ('node/add' === substr($path, 0, 8)) {
@@ -356,24 +379,9 @@ function ucms_site_admin_path_is_allowed($path) {
     if ('admin/cart' === substr($path, 0, 10)) {
       return true;
     }
-
-    $arg = explode('/', $path);
-
-    if ($arg[0] === 'node') {
-      // Allow our own node actions.
-      if (is_numeric($arg[1]) && ($action = $arg[2])) {
-        switch ($action) {
-          case 'clone':
-          case 'edit':
-          case 'gallery':
-          case 'seo-aliases':
-          case 'seo-edit':
-            return true;
-        }
-      }
-    }
     return false;
   }
+
   return true;
 }
 

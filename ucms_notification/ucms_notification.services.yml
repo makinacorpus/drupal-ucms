@@ -17,92 +17,109 @@ services:
 
   # User notifications
   ucms_notification.user_add:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\UserAdd
     arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:add", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_edit:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\UserEdit
     arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:edit", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_enable:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\UserEnable
     arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:enable", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_disable:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\UserDisable
     arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:disable", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_change_email:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\UserChangeEmail
     arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:change_email", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_reset_password:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\UserResetPassword
     arguments: ["@current_user"]
     tags: [{ name: apb.notification.formatter, event: "user:reset_password", auto: true, channels: "admin:client" }]
 
   ucms_notification.user_delete:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\UserDelete
     tags: [{ name: apb.notification.formatter, event: "user:delete", auto: true, channels: "admin:client" }]
 
   # Extranet notifications
   ucms_notification.member_register:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberRegister
     arguments: ["@current_user", "@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "member:register" }]
 
   ucms_notification.member_accept:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberAccept
     arguments: ["@current_user", "@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "member:accept" }]
 
   ucms_notification.member_reject:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ExtranetMemberReject
     arguments: ["@current_user", "@ucms_site.manager"]
     tags: [{ name: apb.notification.formatter, event: "member:reject" }]
 
   # Content notifications
   ucms_notification.content_add:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentAdd
     tags:
       - { name: apb.notification.formatter, event: "node:add", auto: true, channels: "admin:content" }
       - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_edit:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentEdit
     tags:
       - { name: apb.notification.formatter, event: "node:edit", auto: true, channels: "admin:content" }
       - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_publish:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentPublish
     tags:
       - { name: apb.notification.formatter, event: "node:publish", auto: true, channels: "admin:content" }
       - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_unpublish:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentUnpublish
     tags:
       - { name: apb.notification.formatter, event: "node:unpublish", auto: true, channels: "admin:content" }
       - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_flag:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentFlag
     tags:
       - { name: apb.notification.formatter, event: "node:flag", auto: true, channels: "admin:content" }
       - { name: ucms_contrib.type_handler }
 
   ucms_notification.content_delete:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentDelete
     tags:
       - { name: apb.notification.formatter, event: "node:delete", auto: true, channels: "admin:content" }
 
   ucms_notification.content_new_labels:
+    public: true
     class: MakinaCorpus\Ucms\Notification\Formatter\ContentNewLabels
     tags:
       - { name: apb.notification.formatter, event: "node:new_labels", auto: true }
@@ -110,6 +127,7 @@ services:
 
   # Context pane event listener
   ucms_notification.context_pane_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_layout.context_manager", "@current_user", "@apb.notification"]
     tags:
@@ -117,6 +135,7 @@ services:
 
   # Site event listener
   ucms_notification.site_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\SiteEventListener
     arguments: ["@ucms_notification.service"]
     tags:

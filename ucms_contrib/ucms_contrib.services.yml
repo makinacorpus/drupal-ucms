@@ -6,12 +6,15 @@ services:
 
   # Site storage responsible for loading and updating site data
   ucms_contrib.cart.default:
+    public: false
     class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
     arguments: ["@database"]
   ucms_contrib.cart.bloom:
+    public: false
     class: MakinaCorpus\Ucms\Contrib\Cart\BloomCartStorage
     arguments: ["@ucms_contrib.cart.default", "@cache.default"]
   ucms_contrib.cart:
+    public: true
     alias: ucms_contrib.cart.bloom
     class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
 
@@ -34,6 +37,7 @@ services:
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_contrib.context_pane_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
     arguments:
       - "@ucms_contrib.content_action_provider"
@@ -65,6 +69,7 @@ services:
 
   # Component responsible for providing content type context
   ucms_contrib.type_handler:
+    public: true
     class: MakinaCorpus\Ucms\Contrib\TypeHandler
 
   ucms_contrib.media.subscriber:

@@ -1,14 +1,17 @@
 services:
 
   ucms_dashboard.context:
+    public: true
     class: MakinaCorpus\Ucms\Dashboard\Context\ContextPane
     arguments: ['@event_dispatcher', '@request_stack']
 
   ucms_dashboard.admin_widget_factory:
+    public: true
     class: MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory
     arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry", "@twig", "@event_dispatcher"]
 
   ucms_dashboard.processor_registry:
+    public: true
     class: MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 
@@ -17,9 +20,11 @@ services:
     class: MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry
 
   ucms_dashboard.portlet_registry:
+    public: true
     class: MakinaCorpus\Ucms\Dashboard\Portlet\PortletRegistry
 
   ucms_dashboard.transaction_handler:
+    public: true
     class: MakinaCorpus\Ucms\Dashboard\TransactionHandler
     arguments: ['@database']
 

@@ -27,6 +27,7 @@ parameters:
 services:
 
   ucms_search.index_storage:
+    public: true
     class: MakinaCorpus\Ucms\Search\IndexStorage
     arguments:
       - "@ucms_search.elastic.client"
@@ -56,6 +57,7 @@ services:
   #     storage/manager instance instead...
   #   - WAT DA FOUQUE!
   ucms_search.attachment_indexer:
+    public: true
     class: MakinaCorpus\Ucms\Search\Attachment\DefaultNodeAttachmentIndexer
     arguments:
       - "private"
@@ -65,15 +67,18 @@ services:
       - "private"
 
   ucms_search.elastic.client:
+    public: true
     class: Elasticsearch\Client
     factory: [Elasticsearch\ClientBuilder, fromConfig]
     arguments: ["%ucms_search.elastic.config%"]
 
   ucms_search.search_factory:
+    public: true
     class: MakinaCorpus\Ucms\Search\SearchFactory
     arguments: ["@ucms_search.elastic.client", "@ucms_search.index_storage", "@event_dispatcher"]
 
   ucms_search.mapping.type_registry:
+    public: true
     class: MakinaCorpus\Ucms\Search\Mapping\TypeRegistry
 
   ucms_search.mapping.boolean:
@@ -107,25 +112,30 @@ services:
     tags: [{ name: ucms_search.mapping.type }]
 
   ucms_search.event.dequeue_node:
+    public: true
     class: MakinaCorpus\Ucms\Search\EventDispatcher\DequeueNodeEventSubscriber
     arguments: ["@ucms_search.node_indexer"]
     tags: [{ name: event_subscriber}]
 
   ucms_search.site_event_subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Search\EventDispatcher\SiteEventSubscriber
     arguments: ["@ucms_search.index_storage", "@database"]
     tags: [{ name: event_subscriber }]
 
   ucms_search.node_access_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Search\EventDispatcher\SearchAccessEventListener
     arguments: ["@ucms_search.index_storage", "@entity.manager"]
     tags:
       - { name: event_listener, event: ucms_search.search_create }
 
   ucms_search.autocomplete:
+    public: true
     class: MakinaCorpus\Ucms\Search\Autocomplete
     arguments: ["@ucms_search.elastic.client", "@ucms_search.index_storage", "@ucms_site.manager"]
 
   ucms_search.formatter:
+    public: true
     class: MakinaCorpus\Ucms\Search\Formatter
     arguments: ["@ucms_search.search_factory", "@entity.manager", "@ucms_site.manager", "%ucms_search.full_limit%"]

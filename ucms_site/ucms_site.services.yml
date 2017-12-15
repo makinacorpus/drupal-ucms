@@ -14,28 +14,34 @@ services:
 
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:
+    public: true
     class: MakinaCorpus\Ucms\Site\SiteManager
     arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher"]
 
   # Node access helper
   ucms_site.node_access_helper:
+    public: true
     class: MakinaCorpus\Ucms\Site\NodeAccessService
     arguments: ["@ucms_site.manager"]
 
   # Node manager, handles node attach/detach/clone to sites
   ucms_site.node_manager:
+    public: true
     class: MakinaCorpus\Ucms\Site\NodeManager
     arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
 
   ucms_site.url_generator:
+    public: true
     class: MakinaCorpus\Ucms\Site\SiteUrlGenerator
     factory: ["@ucms_site.manager", getUrlGenerator]
 
   ucms_site.admin.datasource:
+    public: true
     class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
     arguments: ["@database", "@ucms_site.manager"]
 
   ucms_site.admin.webmaster_datasource:
+    public: true
     class: MakinaCorpus\Ucms\Site\Page\WebmasterAdminDatasource
     arguments: ["@database", "@ucms_site.manager"]
 
@@ -58,11 +64,13 @@ services:
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_site.context_pane_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_dashboard.action_provider_registry"]
     tags: [{name: event_listener, event: ucms_dashboard.context_init}]
 
   ucms_site.site_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventListener
     arguments: ["@ucms_site.manager", "@entity.manager"]
     tags:
@@ -77,6 +85,7 @@ services:
       - { name: event_listener, event: "site:webmaster_delete" }
 
   ucms_site.menu_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventListener
     arguments: ["@ucms_site.node_manager"]
     tags: [{name: event_listener, event: "menu:tree"}]

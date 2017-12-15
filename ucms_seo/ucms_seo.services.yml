@@ -1,6 +1,7 @@
 services:
 
   ucms_seo.seo_service:
+    public: true
     class: MakinaCorpus\Ucms\Seo\SeoService
     arguments:
       - "@entity.manager"
@@ -11,11 +12,13 @@ services:
       - "@database"
 
   ucms_seo.redirect_storage:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
 
   # This overrides the global one
   path.alias_storage:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
 
@@ -55,15 +58,19 @@ services:
 
   # Data sources
   ucms_seo.admin.node_alias_datasource:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Page\NodeAliasDatasource
     arguments: ["@database"]
   ucms_seo.admin.site_alias_datasource:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Page\SiteAliasDatasource
     arguments: ["@database"]
   ucms_seo.admin.node_redirect_datasource:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Page\NodeRedirectDatasource
     arguments: ["@database"]
   ucms_seo.admin.site_redirect_datasource:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Page\SiteRedirectDatasource
     arguments: ["@database"]
 
@@ -75,22 +82,27 @@ services:
 
   # A few various listeners
   ucms_seo.menu_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventListener
     arguments: ["@ucms_seo.seo_service", "@entity.manager"]
     tags: [{name: event_listener, event: "menu:tree"}]
   ucms_seo.site_attach.subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteAttachEventListener
     arguments: ["@ucms_seo.seo_service"]
     tags: [{ name: event_subscriber }]
   ucms_seo.site_clone.subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteCloneEventListener
     arguments: ["@database"]
     tags: [{name: event_listener, event: "site:clone"}]
   ucms_seo.node_event_subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\NodeEventSubscriber
     arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
     tags: [{ name: event_subscriber }]
   ucms_seo.context_pane_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_seo.seo_service"]
     tags:
@@ -99,6 +111,7 @@ services:
   # Store locator
   # @todo review the component
   ucms_seo.store_locator_factory:
+    public: true
     class: MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory
     arguments: ["@ucms_seo.seo_service"]
 
@@ -109,9 +122,11 @@ services:
     arguments: ["@ucms_seo.deadlinks.datasource", "@ucms_seo.deadlinks.display"]
     tags: [{ name: ucms_dashboard.portlet }]
   ucms_seo.deadlinks.datasource:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Page\DeadLinkDatasource
     arguments: ["@database", "@entity.manager"]
   ucms_seo.deadlinks.display:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortletDisplay
     arguments: ["@entity.manager"]
   ucms_seo.deadlinks.subsriber:

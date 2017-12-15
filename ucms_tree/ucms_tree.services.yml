@@ -6,16 +6,19 @@ parameters:
 services:
 
   ucms_tree.menu_access:
+    public: true
     class: MakinaCorpus\Ucms\Tree\MenuAccess
     arguments: ['@ucms_site.manager']
 
   ucms_tree.context_pane_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\ContextPaneEventListener
     arguments: ["@ucms_site.manager", "@umenu.manager"]
     tags: [{name: event_listener, event: ucms_dashboard.context_init}]
 
 
   ucms_tree.site_event_listener:
+    public: true
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventListener
     arguments: ["@database", "@ucms_site.manager", "%ucms_tree_site_menu%"]
     tags:
@@ -24,15 +27,18 @@ services:
       - {name: event_listener, event: "site:clone"}
 
   ucms_tree.node_event_subscriber:
+    public: true
     class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
     arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
     tags: [{ name: event_subscriber }]
 
   # Administrative components
   ucms_tree.admin.datasource:
+    public: true
     class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDatasource
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
   ucms_tree.admin.display:
+    public: true
     class: MakinaCorpus\Ucms\Tree\Page\TreeAdminDisplay
     arguments: ["@ucms_site.manager"]
 
