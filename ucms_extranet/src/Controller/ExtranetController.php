@@ -13,6 +13,6 @@ class ExtranetController extends Controller
      */
     public function confirmAction()
     {
-        return $this->render('module:ucms_extranet:views/confirmation.html.twig');
+        return $this->render('@ucms_extranet/views/confirmation.html.twig');
     }
 }

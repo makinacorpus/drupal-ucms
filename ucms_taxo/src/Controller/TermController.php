@@ -26,7 +26,7 @@ class TermController extends Controller
             ->execute()
         ;
 
-        return $this->render('module:ucms_taxo:views/term/vocabularies.html.twig', ['vocabularies' => $vocabularies]);
+        return $this->render('@ucms_taxo/views/term/vocabularies.html.twig', ['vocabularies' => $vocabularies]);
     }
 
     /**
@@ -65,6 +65,6 @@ class TermController extends Controller
             }
         }
 
-        return $this->render('module:ucms_taxo:views/term/terms.html.twig', ['terms' => $terms, 'users' => user_load_multiple($map)]);
+        return $this->render('@ucms_taxo/views/term/terms.html.twig', ['terms' => $terms, 'users' => user_load_multiple($map)]);
     }
 }

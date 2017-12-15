@@ -1161,7 +1161,7 @@ function theme_ucms_site_state_transition_form($variables) {
 function ucms_site_webmaster_home() {
   drupal_set_title(t('Welcome to @site-name', array('@site-name' => variable_get('site_name', 'Drupal'))), PASS_THROUGH);
 
-  return sf_dic_twig_render('module:ucms_site:views/Site/welcome.html.twig', ['site' => ucms_site_manager()->getContext()]);
+  return sf_dic_twig_render('@ucms_site/views/Site/welcome.html.twig', ['site' => ucms_site_manager()->getContext()]);
 }
 
 /**
