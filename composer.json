@@ -79,7 +79,7 @@
         "makinacorpus/drupal-minidialog": "*",
         "makinacorpus/drupal-umenu" : ">=1.1.5 <1.2",
         "makinacorpus/drupal-ulink" : "^2.0",
-        "makinacorpus/drupal-sf-dic" : "^3.3.5",
+        "makinacorpus/drupal-sf-dic" : "^3.3.5|^4",
         "makinacorpus/drupal-plusql" : "^1.0.4",
         "makinacorpus/drush-progressbar" : "^1.0",
         "makinacorpus/php-bloom" : "^2.0.1"
