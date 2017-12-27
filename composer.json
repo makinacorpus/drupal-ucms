@@ -76,7 +76,7 @@
         "makinacorpus/drupal-filechunk": "^1.0",
         "makinacorpus/drupal-minidialog": "*",
         "makinacorpus/drupal-phplayout": "*",
-        "makinacorpus/drupal-sf-dic": ">=3.3",
+        "makinacorpus/drupal-sf-dic": "^3.3.9 || ^4",
         "makinacorpus/drupal-ulink": "^2.0",
         "makinacorpus/drupal-umenu": "^2.0.5",
         "makinacorpus/drupal-usync": "^1.0",
@@ -84,7 +84,7 @@
         "makinacorpus/php-acl": "^1.0",
         "makinacorpus/php-bloom": "^2.0.1",
         "php": ">=7",
-        "symfony/security": "3.*"
+        "symfony/security": "^3 || ^4"
     },
     "suggests": {
         "drupal/redis": "Activates a few Redis-based caches",
