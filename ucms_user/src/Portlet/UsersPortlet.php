@@ -39,7 +39,7 @@ class UsersPortlet extends AbstractPortlet
 
     public function getContent()
     {
-        return $this->renderPage('ucms_user.admin.datasource', '@ucms_user/Portlet/page-users.html.twig');
+        return $this->renderPage('ucms_user.admin.datasource', '@ucms_user/views/Portlet/page-users.html.twig');
     }
 
     /**

@@ -20,7 +20,7 @@ class MySitesPortlet extends AbstractPortlet
      */
     public function getContent()
     {
-        return $this->renderPage('ucms_site.admin.datasource', '@ucms_site/Portlet/page-sites.html.twig', ['uid' => $GLOBALS['user']->uid]);
+        return $this->renderPage('ucms_site.admin.datasource', '@ucms_site/views/Portlet/page-sites.html.twig', ['uid' => $GLOBALS['user']->uid]);
     }
 
     /**

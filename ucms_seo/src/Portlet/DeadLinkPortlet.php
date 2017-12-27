@@ -19,6 +19,6 @@ class DeadLinkPortlet extends AbstractPortlet
      */
     public function getContent()
     {
-        return $this->renderPage('ucms_seo.deadlinks.datasource', '@ucms_seo/Portlet/page-deadlink.html.twig');
+        return $this->renderPage('ucms_seo.deadlinks.datasource', '@ucms_seo/views/Portlet/page-deadlink.html.twig');
     }
 }
