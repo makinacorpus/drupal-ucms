@@ -26,6 +26,6 @@ class PrivacyController extends Controller
             $providers['google-analytics'] = "Google Analytics";
         }
 
-        return $this->render('module:ucms_seo:views/privacy-settings.html.twig', ['providers' => $providers]);
+        return $this->render('@ucms_seo/views/privacy-settings.html.twig', ['providers' => $providers]);
     }
 }

@@ -53,7 +53,7 @@ class ContentPortlet extends AbstractPortlet
     {
         return $this->renderPage(
             'ucms_contrib.datasource.node',
-            'module:ucms_contrib:views/Portlet/page-node-portlet.html.twig',
+            '@ucms_contrib/views/Portlet/page-node-portlet.html.twig',
             [
                 'type' => $this->typeHandler->getContentTypes(),
             ]

@@ -20,7 +20,7 @@ class SitesPortlet extends AbstractPortlet
      */
     public function getContent()
     {
-        return $this->renderPage('ucms_site.admin.datasource', 'module:ucms_site:Portlet/page-sites.html.twig');
+        return $this->renderPage('ucms_site.admin.datasource', '@ucms_site/Portlet/page-sites.html.twig');
     }
 
     /**
