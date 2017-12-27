@@ -15,7 +15,7 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          default: module:ucms_group:views/Page/groupAdmin.html.twig
+          default: "@ucms_group/views/Page/groupAdmin.html.twig"
         view_type: twig_page
 
     ucms_group.list_members:
@@ -32,7 +32,7 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          default: module:ucms_group:views/Page/groupMemberAdmin.html.twig
+          default: "@ucms_group/views/Page/groupMemberAdmin.html.twig"
         view_type: twig_page
 
     ucms_group.list_by_site:
@@ -51,5 +51,5 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          default: module:ucms_group:views/Page/groupSiteAdmin.html.twig
+          default: "@ucms_group/views/Page/groupSiteAdmin.html.twig"
         view_type: twig_page

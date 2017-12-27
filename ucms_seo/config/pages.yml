@@ -17,7 +17,7 @@ calista:
         show_search: false
         show_sort: true
         templates:
-          default: module:ucms_seo:Page/page-site-aliases.html.twig
+          default: "@ucms_seo/Page/page-site-aliases.html.twig"
         view_type: twig_page
 
     ucms_seo.node_redirect:
@@ -36,7 +36,7 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          default: module:ucms_seo:Page/page-node-redirect.html.twig
+          default: "@ucms_seo/Page/page-node-redirect.html.twig"
         view_type: twig_page
 
     ucms_seo.site_redirect:
@@ -55,5 +55,5 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          default: module:ucms_seo:Page/page-site-redirect.html.twig
+          default: "@ucms_seo/Page/page-site-redirect.html.twig"
         view_type: twig_page

@@ -15,7 +15,7 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          default: module:ucms_site:Page/page-site-admin.html.twig
+          default: "@ucms_site/Page/page-site-admin.html.twig"
         view_type: twig_page
 
     ucms_site.list_members:
@@ -30,5 +30,5 @@ calista:
         show_search: false
         show_sort: false
         templates:
-          default: module:ucms_site:Page/page-site-users.html.twig
+          default: "@ucms_site/Page/page-site-users.html.twig"
         view_type: twig_page

@@ -14,5 +14,5 @@ calista:
         show_filters: true
         show_sort: true
         templates:
-          default: module:ucms_label:Page/page-label-admin.html.twig
+          default: "@ucms_label/Page/page-label-admin.html.twig"
         view_type: twig_page

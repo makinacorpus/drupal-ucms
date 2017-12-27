@@ -16,5 +16,5 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          default: module:ucms_user:views/Page/page-user.html.twig
+          default: "@ucms_user/views/Page/page-user.html.twig"
         view_type: twig_page

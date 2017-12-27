@@ -10,5 +10,5 @@ calista:
         show_filters: true
         show_pager: false
         templates:
-          default: module:ucms_tree:Page/page-tree-admin.html.twig
+          default: "@ucms_tree/Page/page-tree-admin.html.twig"
         view_type: twig_page

@@ -20,7 +20,7 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          cart: module:ucms_cart:views/Page/page-cart.html.twig
+          cart: "@ucms_cart/views/Page/page-cart.html.twig"
         view_type: twig_page
 
     # Content cart
@@ -39,5 +39,5 @@ calista:
         show_search: true
         show_sort: true
         templates:
-          cart: module:ucms_cart:views/Page/page-cart.html.twig
+          cart: "@ucms_cart/views/Page/page-cart.html.twig"
         view_type: twig_page
