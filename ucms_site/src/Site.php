@@ -208,11 +208,12 @@ class Site
 
     /**
      * Get favicon fid
-     * @return number
+     *
+     * @return null|int
      */
     public function getFavicon()
     {
-        return (int)$this->favicon;
+        return $this->favicon ? (int)$this->favicon : null;
     }
 
     /**
