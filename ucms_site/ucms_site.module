@@ -1223,26 +1223,27 @@ function ucms_site_page_build(&$page) {
 
     // Handling custom favicon
     if ($favicon = $site->getFavicon()) {
-      $faviconUri = file_load($favicon)->uri;
-      $element = [
-        '#tag' => 'link',
-        '#attributes' => [
-          'href'  => image_style_url('ucms_site_favicon_32x32', $faviconUri),
-          'rel'   => 'icon',
-          'sizes' => "32x32"
-        ],
-      ];
-      drupal_add_html_head($element, 'ucms_site_favicon_32x32');
+      if ($file = file_load($favicon)) {
+        $element = [
+          '#tag' => 'link',
+          '#attributes' => [
+            'href'  => image_style_url('ucms_site_favicon_32x32', $file->uri),
+            'rel'   => 'icon',
+            'sizes' => "32x32"
+          ],
+        ];
+        drupal_add_html_head($element, 'ucms_site_favicon_32x32');
 
-      $element = [
-        '#tag' => 'link',
-        '#attributes' => [
-          'href'  => image_style_url('ucms_site_favicon_16x16', $faviconUri),
-          'rel'   => 'icon',
-          'sizes' => "16x16"
-        ],
-      ];
-      drupal_add_html_head($element, 'ucms_site_favicon_16x16');
+        $element = [
+          '#tag' => 'link',
+          '#attributes' => [
+            'href'  => image_style_url('ucms_site_favicon_16x16', $file->uri),
+            'rel'   => 'icon',
+            'sizes' => "16x16"
+          ],
+        ];
+        drupal_add_html_head($element, 'ucms_site_favicon_16x16');
+      }
     }
   }
 }

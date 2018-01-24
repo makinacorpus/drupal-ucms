@@ -172,16 +172,16 @@ class SiteEdit extends FormBase
         ];
 
         // Favicon
-        $use_favicon = variable_get('ucms_site_use_custom_favicon', False);
-        if ($use_favicon) {
+        $useFavicon = variable_get('ucms_site_use_custom_favicon', false);
+        if ($useFavicon) {
             $form['favicon'] = [
-                '#title'         => $this->t("Favicon"),
-                '#type'          => 'file_chunked',
+                '#title'              => $this->t("Favicon"),
+                '#type'               => 'file_chunked',
                 '#upload_validators'  => [''],
-                '#field types' => ['image'],
-                '#multiple'    => false,
-                '#default_value' => $site->getFavicon(),
-                '#required'      => false,
+                '#field types'        => ['image'],
+                '#multiple'           => false,
+                '#default_value'      => $site->getFavicon(),
+                '#required'           => false,
             ];
         }
 
