@@ -883,6 +883,11 @@ function ucms_contrib_ckeditor_plugin() {
       'desc' => t("UCMS medias drop & paste management"),
       'path' => drupal_get_path('module', 'ucms_contrib') . '/js/ckeditor/',
     ],
+    'ucmsembed' => [
+      'name' => 'ucmsembed',
+      'desc' => t("UCMS copy/paste IFRAME elements"),
+      'path' => drupal_get_path('module', 'ucms_contrib') . '/js/ckeditor-embed/',
+    ],
   ];
 }
 
