@@ -3,7 +3,7 @@
     "type" : "drupal-module",
     "description" : " µCMS modules - Node/Elasticsearch/favorites based Drupal fast contribution UI/UX",
     "homepage" : "http://github.com/makinacorpus/drupal-ucms",
-    "license" : "GPL-2",
+    "license" : "GPL-2.0-or-later",
     "authors" : [
         {
             "name" : "Lonny Loquesol",
