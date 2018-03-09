@@ -27,6 +27,11 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 class SeoService
 {
     /**
+     * Default trim length for alias segments.
+     */
+    const SEGMENT_TRIM_LENGTH = 255;
+
+    /**
      * Manage SEO parameters on all content
      */
     const PERM_SEO_CONTENT_ALL = 'ucms seo content all manage';
@@ -412,7 +417,7 @@ class SeoService
      *
      * @return string
      */
-    public function normalizeSegment($value, $maxLength = UCMS_SEO_SEGMENT_TRIM_LENGTH)
+    public function normalizeSegment($value, $maxLength = self::SEGMENT_TRIM_LENGTH)
     {
         // Transliterate first
         if (class_exists('URLify')) {

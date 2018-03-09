@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Tree\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\TreeManager;
@@ -155,11 +156,11 @@ class TreeEditForm extends FormBase
 
                 if (!$name) {
                     // Auto-generation for name
-                    $name = \URLify::filter('site-' . $siteId . '-' . $values['title'], UCMS_SEO_SEGMENT_TRIM_LENGTH);
+                    $name = \URLify::filter('site-' . $siteId . '-' . $values['title'], SeoService::SEGMENT_TRIM_LENGTH);
                 }
             } else if (!$name) {
                 // Auto-generation for name
-                $name = \URLify::filter($values['title'], UCMS_SEO_SEGMENT_TRIM_LENGTH);
+                $name = \URLify::filter($values['title'], SeoService::SEGMENT_TRIM_LENGTH);
             }
 
             if ($form_state->getValue('is_creation')) {

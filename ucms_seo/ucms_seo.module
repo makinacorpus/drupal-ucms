@@ -26,6 +26,10 @@ use MakinaCorpus\Ucms\Seo\Controller\PrivacyController;
 
 /**
  * Default trim length for alias segments.
+ *
+ * @deprecated
+ *   Kept for backward compatibility only, use instead:
+ *     MakinaCorpus\Ucms\Seo\SeoService::SEGMENT_TRIM_LENGTH
  */
 const UCMS_SEO_SEGMENT_TRIM_LENGTH = 255;
 
