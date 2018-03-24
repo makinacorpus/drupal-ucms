@@ -70,9 +70,8 @@
     },
     "require": {
         "elasticsearch/elasticsearch": "2.2.0",
-        "makinacorpus/drupal-apubsub": "^4.0",
         "makinacorpus/drupal-calista": "^1",
-        "makinacorpus/drupal-filechunk": "^1.0 || ^2.0",
+        "makinacorpus/drupal-filechunk": "*",
         "makinacorpus/drupal-minidialog": "*",
         "makinacorpus/drupal-phplayout": "*",
         "makinacorpus/drupal-sf-dic": "^3.3.9 || ^4",
