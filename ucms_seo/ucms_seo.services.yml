@@ -23,6 +23,7 @@ services:
     class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
   ucms_seo.alias_cache_lookup:
+    public: true
     class: MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup
     arguments: ['@ucms_seo.alias_manager', '@database', '@cache.default', '%ucms_seo.alias_cache_lookup.allow_invalid%']
 

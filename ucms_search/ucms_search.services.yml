@@ -56,6 +56,7 @@ services:
   #     storage/manager instance instead...
   #   - WAT DA FOUQUE!
   ucms_search.attachment_indexer:
+    public: true
     class: MakinaCorpus\Ucms\Search\Attachment\DefaultNodeAttachmentIndexer
     arguments:
       - "private"

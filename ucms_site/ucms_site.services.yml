@@ -45,11 +45,13 @@ services:
 
   # Site manager, in all cases, it the component you want as dependency
   ucms_site.manager:
+    public: true
     class: MakinaCorpus\Ucms\Site\SiteManager
     arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher"]
 
   # Node access helper
   ucms_site.node_access_helper:
+    public: true
     class: MakinaCorpus\Ucms\Site\NodeAccessService
     arguments: ["@ucms_site.manager"]
   ucms_site.acl.node_collector:
@@ -62,6 +64,7 @@ services:
 
   # Node manager, handles node attach/detach/clone to sites
   ucms_site.node_manager:
+    public: true
     class: MakinaCorpus\Ucms\Site\NodeManager
     arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
 

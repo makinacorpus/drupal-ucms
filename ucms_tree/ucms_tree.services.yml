@@ -6,6 +6,7 @@ parameters:
 services:
 
   ucms_tree.menu_access:
+    public: true
     class: MakinaCorpus\Ucms\Tree\MenuAccess
     arguments: ['@ucms_site.manager']
 
@@ -27,19 +28,16 @@ services:
 
   # Action processors and providers
   ucms_tree.action.tree_delete:
-    public: false
     class: MakinaCorpus\Ucms\Tree\Action\TreeDeleteProcessor
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
     tags: [{name: calista.action}]
 
   ucms_tree.action.tree_set_main:
-    public: false
     class: MakinaCorpus\Ucms\Tree\Action\TreeSetMainProcessor
     arguments: ["@umenu.menu_storage", "@ucms_site.manager", "@current_user"]
     tags: [{name: calista.action}]
 
   ucms_tree.tree_action_provider:
-    public: false
     class: MakinaCorpus\Ucms\Tree\Action\TreeActionProvider
     arguments: ["@ucms_site.manager", "@current_user"]
     tags: [{name: calista.action_provider}]

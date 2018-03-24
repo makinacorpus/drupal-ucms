@@ -62,6 +62,7 @@ services:
 
   # Component responsible for providing content type context
   ucms_contrib.type_handler:
+    public: true
     class: MakinaCorpus\Ucms\Contrib\TypeHandler
     # @todo unhardcode the first parameter
     arguments: [{content: Content, media: Media}, '%ucms_contrib.admin_pages%']

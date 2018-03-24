@@ -12,8 +12,6 @@ services:
 
   ucms_cart.cart:
     alias: ucms_cart.cart.bloom
-    class: MakinaCorpus\Ucms\Cart\Cart\CartStorage
-    tags: [{name: calista.datasource}]
 
   ucms_cart.cart.preloader:
     public: false
