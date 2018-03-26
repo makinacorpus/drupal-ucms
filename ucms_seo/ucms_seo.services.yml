@@ -7,6 +7,7 @@ services:
 
   # Main services
   ucms_seo.seo_service:
+    public: true
     class: MakinaCorpus\Ucms\Seo\SeoService
     arguments:
       - "@ucms_seo.alias_manager"
