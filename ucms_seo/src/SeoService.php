@@ -72,6 +72,11 @@ class SeoService
     private $db;
 
     /**
+     * @var string[]
+     */
+    private $nodeTypeBlacklist = [];
+
+    /**
      * Default constructor
      *
      * @param EntityManager $entiyManager
@@ -80,6 +85,7 @@ class SeoService
      * @param RedirectStorageInterface $redirectStorage
      * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
+     * @param string[] $nodeTypeBlacklist
      */
     public function __construct(
         EntityManager $entiyManager,
@@ -87,7 +93,8 @@ class SeoService
         AliasStorageInterface $aliasStorage,
         RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
-        \DatabaseConnection $db)
+        \DatabaseConnection $db,
+        array $nodeTypeBlacklist = [])
     {
         $this->entityManager = $entiyManager;
         $this->aliasManager = $aliasManager;
@@ -95,6 +102,12 @@ class SeoService
         $this->redirectStorage = $redirectStorage;
         $this->siteManager = $siteManager;
         $this->db = $db;
+
+        if (!$nodeTypeBlacklist) {
+            if ($nodeTypeBlacklist = variable_get('ucms_seo_node_type_blacklist')) {
+                $this->nodeTypeBlacklist = array_flip($nodeTypeBlacklist);
+            }
+        }
     }
 
     /**
@@ -229,6 +242,30 @@ class SeoService
     }
 
     /**
+     * Is node type blacklisted for SEO handling
+     *
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function isNodeTypeBlacklisted($type)
+    {
+        return $this->nodeTypeBlacklist && isset($this->nodeTypeBlacklist[$type]);
+    }
+
+    /**
+     * Is node blacklisted for SEO handling
+     *
+     * @param NodeInterface $node
+     *
+     * @return bool
+     */
+    public function isNodeBlacklisted(NodeInterface $node)
+    {
+        return $this->nodeTypeBlacklist && isset($this->nodeTypeBlacklist[$node->bundle()]);
+    }
+
+    /**
      * Set node meta information
      *
      * @param NodeInterface $node
@@ -238,6 +275,10 @@ class SeoService
     public function setNodeMeta(NodeInterface $node, $values = [])
     {
         $sqlValues = [];
+
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
 
         foreach ($values as $key => $value) {
 
@@ -282,6 +323,10 @@ class SeoService
      */
     public function getNodeMeta(NodeInterface $node)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return [];
+        }
+
         return (array)$this->db->query("SELECT meta_title AS title, meta_description AS description FROM {ucms_seo_node} WHERE nid = ?", [$node->id()])->fetchAssoc();
     }
 
@@ -295,6 +340,10 @@ class SeoService
      */
     public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $restricToCurrentSite = false)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         // We need to directly query the path alias table from here.
         $query = $this
             ->db
@@ -402,6 +451,9 @@ class SeoService
         if ($node->isNew()) {
             return;
         }
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
 
         $map = $this->getNodeAliasMap([$node->id()]);
 
@@ -453,6 +505,10 @@ class SeoService
      */
     public function setNodeSegment(NodeInterface $node, $segment, $previous = null)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         if (!$previous) {
             $previous = $this->getNodeSegment($node);
         }
@@ -763,6 +819,10 @@ class SeoService
      */
     public function updateCanonicalForNode(NodeInterface $node, $alias, Site $site, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         $route  = 'node/' . $node->id();
 
         $this
@@ -846,6 +906,10 @@ class SeoService
      */
     public function onAliasChange(NodeInterface $node, $menuName = null)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         $nodeRoute  = 'node/' . $node->id();
         $langcode   = $node->language()->getId();
 
@@ -905,6 +969,10 @@ class SeoService
      */
     public function onAliasRemove(NodeInterface $node, $menuName = null)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         if ($menuName) {
             // This will work, since the whole menu will be recomputed
             $this->onAliasChange($node, $menuName);
@@ -1031,6 +1099,10 @@ class SeoService
      */
     public function ensureNodePrimaryAlias(NodeInterface $node)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         $nodeRoute  = 'node/' . $node->id();
         $segment    = $this->getNodeSegment($node);
         $langcode   = $node->language()->getId();
