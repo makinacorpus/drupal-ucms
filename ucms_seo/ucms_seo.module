@@ -190,11 +190,9 @@ function ucms_seo_init() {
       }
       elseif (!drupal_is_front_page()) {
         // Verify that we are on the best alias
-        $best_alias = ucms_seo_service()->getNodeCanonicalAlias($node, LanguageInterface::LANGCODE_NOT_SPECIFIED, TRUE);
+        $best_alias = ucms_seo_service()->getNodeCanonicalAlias($node, LanguageInterface::LANGCODE_NOT_SPECIFIED, true);
         if ($best_alias && $best_alias->alias !== request_path()) {
-          drupal_goto($best_alias->alias, [
-            'query' => drupal_get_query_parameters(),
-          ], 301);
+          drupal_goto($best_alias->alias, ['query' => drupal_get_query_parameters()], 301);
         }
       }
     }
