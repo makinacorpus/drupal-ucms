@@ -13,6 +13,7 @@ use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Main access point for SEO information, all Drupal-7-ish stuff will be
@@ -21,6 +22,10 @@ use MakinaCorpus\Ucms\Site\SiteManager;
  *
  * @todo
  *   - for Drupal 8 porting, overrides the NodeRouteProvider object
+ *
+ * FIXME:
+ *   - canonical is not consistent with findMostRevelantSiteFor(): it
+ *     should be!
  *
  * @see \Drupal\node\Entity\NodeRouteProvider
  */
@@ -77,6 +82,11 @@ class SeoService
     private $nodeTypeBlacklist = [];
 
     /**
+     * @var bool
+     */
+    private $shareCanonicalAcrossSites = false;
+
+    /**
      * Default constructor
      *
      * @param EntityManager $entiyManager
@@ -85,7 +95,8 @@ class SeoService
      * @param RedirectStorageInterface $redirectStorage
      * @param SiteManager $siteManager
      * @param \DatabaseConnection $db
-     * @param string[] $nodeTypeBlacklist
+     * @param null|string[] $nodeTypeBlacklist
+     * @param null|bool $shareCanonicalAcrossSites
      */
     public function __construct(
         EntityManager $entiyManager,
@@ -94,7 +105,8 @@ class SeoService
         RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
         \DatabaseConnection $db,
-        array $nodeTypeBlacklist = [])
+        array $nodeTypeBlacklist = null,
+        $shareCanonicalAcrossSites = null)
     {
         $this->entityManager = $entiyManager;
         $this->aliasManager = $aliasManager;
@@ -103,11 +115,17 @@ class SeoService
         $this->siteManager = $siteManager;
         $this->db = $db;
 
-        if (!$nodeTypeBlacklist) {
-            if ($nodeTypeBlacklist = variable_get('ucms_seo_node_type_blacklist')) {
-                $this->nodeTypeBlacklist = array_flip($nodeTypeBlacklist);
-            }
+        if (null === $nodeTypeBlacklist) {
+            $nodeTypeBlacklist = variable_get('ucms_seo_node_type_blacklist', []);
         }
+        $this->nodeTypeBlacklist = array_flip($nodeTypeBlacklist);
+
+        if (null === $shareCanonicalAcrossSites) {
+            // Default behavior is enabled in order to avoid backward
+            // compatibility to be broken for existing sites.
+            $shareCanonicalAcrossSites = variable_get('ucms_seo_share_canonical', true);
+        }
+        $this->shareCanonicalAcrossSites = (bool)$shareCanonicalAcrossSites;
     }
 
     /**
@@ -335,10 +353,14 @@ class SeoService
      *
      * @param NodeInterface $node
      * @param string $langcode
-     * @param bool $restricToCurrentSite
-     * @return
+     * @param bool $restrictToCurrentSite
+     * @param bool $onlyEnabled
+     *   Please note that this option will be ignored if alias are restricted
+     *   to the current site
+     *
+     * @return \stdClass
      */
-    public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $restricToCurrentSite = false)
+    public function getNodeCanonicalAlias(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $restrictToCurrentSite = false, $onlyEnabled = false)
     {
         if ($this->isNodeBlacklisted($node)) {
             return;
@@ -353,8 +375,14 @@ class SeoService
             ->condition('source', 'node/'.$node->id())
         ;
 
-        if ($restricToCurrentSite && $this->siteManager->hasContext()) {
+        if ($restrictToCurrentSite && $this->siteManager->hasContext()) {
             $query->condition('site_id', $this->siteManager->getContext()->getId());
+        } else if ($onlyEnabled) {
+            $query->leftJoin('ucms_site', 's', 's.id = u.site_id');
+            $query->condition(db_or()
+                ->isNull('s.id')
+                ->condition('s.state', SiteState::ON)
+            );
         }
 
         // Always lower the priority for expiring items.
@@ -399,13 +427,24 @@ class SeoService
     /**
      * Get node canonical URL
      *
+     * It will find a canonical URL only if one exists on an ENABLED site.
+     *
      * @param NodeInterface $node
      * @param string $langcode
+     * @param bool $restrictToCurrentSite
+     *   Will be forced to true if canonical share across sites is disabled
+     *
+     * @return string
+     *   Generated absolute URL
      */
-    public function getNodeCanonical(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED)
+    public function getNodeCanonical(NodeInterface $node, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED, $restrictToCurrentSite = false)
     {
+        if (!$this->shareCanonicalAcrossSites) {
+            $restrictToCurrentSite = true;
+        }
+
         $route  = 'node/' . $node->id();
-        $row = $this->getNodeCanonicalAlias($node, $langcode);
+        $row = $this->getNodeCanonicalAlias($node, $langcode, $restrictToCurrentSite, true);
 
         if (!$row) {
             // No alias at all means that the canonical is the node URL in the
