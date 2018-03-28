@@ -304,7 +304,8 @@ class SeoService
         }
 
         // Always lower the priority for expiring items.
-        $query->orderBy('u.expires', 'IS NULL DESC');
+        $query->orderBy('u.expires IS NULL', 'DESC');
+        $query->orderBy('u.expires', 'DESC');
 
         // Where the magic happens, if no canonical is present, this query
         // actually does reproduce the SeoAliasStorage::lookupPathAlias() order

@@ -167,7 +167,8 @@ class SeoAliasStorage implements AliasStorageInterface
         ;
 
         // Always lower the priority for expiring items.
-        $query->orderBy('u.expires', 'IS NULL DESC');
+        $query->orderBy('u.expires IS NULL', 'DESC');
+        $query->orderBy('u.expires', 'DESC');
 
         // Canonical property will never be set automatically sus ensuring that
         // what the user tells is what the user gets, so caninonical is *always*
@@ -218,7 +219,8 @@ class SeoAliasStorage implements AliasStorageInterface
         ;
 
         // Always lower the priority for expiring items.
-        $query->orderBy('u.expires', 'IS NULL DESC');
+        $query->orderBy('u.expires IS NULL', 'DESC');
+        $query->orderBy('u.expires', 'DESC');
 
         if (LanguageInterface::LANGCODE_NOT_SPECIFIED === $langcode) {
             $langcodeList = [$langcode];
@@ -303,7 +305,14 @@ class SeoAliasStorage implements AliasStorageInterface
         $query->condition($condition);
 
         // !!! condition here is inversed from the lookupPathAlias() method
-        $query->orderBy('u.expires', 'IS NULL ASC');
+        // Note that this solution for NULL DESC/ASC works with both MySQL
+        // and PostgreSQL. Using ANSI-92 standard with NULLS [FIRST|LAST]
+        // would probably have been better, but MySQL still is unable to
+        // speak the lowest common SQL standard from 30 years old ago.
+        // Seriously, what a shame.
+        // Solution found there: https://stackoverflow.com/a/9307657
+        $query->orderBy('u.expires IS NULL', 'ASC');
+        $query->orderBy('u.expires', 'ASC');
 
         // Canonical property will never be set automatically sus ensuring that
         // what the user tells is what the user gets, so caninonical is *always*
