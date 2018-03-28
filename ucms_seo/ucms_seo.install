@@ -248,6 +248,7 @@ function ucms_seo_install() {
  */
 function ucms_seo_uninstall() {
   ucms_seo_uninstall_schema_fix();
+  variable_del('ucms_seo_node_type_blacklist');
 }
 
 /**
