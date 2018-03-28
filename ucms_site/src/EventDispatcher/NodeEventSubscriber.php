@@ -10,6 +10,7 @@ use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeCollectionEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -138,8 +139,14 @@ class NodeEventSubscriber implements EventSubscriberInterface
         ;
 
         foreach ($nodes as $node) {
+            // Sites the node is really attached to
             $node->ucms_sites = [];
+            // Sites the node is attached to and the current user can see
+            $node->ucms_allowed_sites = [];
+            // Sites the node is attached to and are enabled
+            $node->ucms_enabled_sites = [];
         }
+
         foreach ($r as $row) {
             $node = $nodes[$row->nid];
             $node->ucms_sites[] = $row->site_id;
@@ -150,22 +157,21 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // extra query to master site only
         if (!$this->manager->hasContext()) {
 
-            $r = $this
-                ->db
-                ->select('ucms_site_node', 'usn')
-                ->fields('usn', ['nid', 'site_id'])
+            $q = $this->db->select('ucms_site_node', 'usn')->fields('usn', ['nid', 'site_id']);
+            $q->join('ucms_site', 'us', 'us.id = usn.site_id');
+            $r = $q
+                ->fields('us', ['state'])
                 ->condition('usn.nid', array_keys($nodes))
                 ->orderBy('usn.nid')
                 ->addTag('ucms_site_access')
                 ->execute()
             ;
-
-            foreach ($nodes as $node) {
-                $node->ucms_allowed_sites = [];
-            }
             foreach ($r as $row) {
                 $node = $nodes[$row->nid];
                 $node->ucms_allowed_sites[] = $row->site_id;
+                if (SiteState::ON === (int)$row->state) {
+                    $node->ucms_enabled_sites[] = $row->site_id;
+                }
             }
         } else {
             // Counterpart whenever there is a site context, if node is visible
@@ -173,10 +179,15 @@ class NodeEventSubscriber implements EventSubscriberInterface
             // revelant site IS the current context; in this very specific use
             // case we do believe that node access stuff has already run prior
             // to us, so we don't care about it
-            $siteId = $this->manager->getContext()->getId();
+            $context = $this->manager->getContext();
+            $siteId = $context->getId();
+            $enabled = SiteState::ON === $context->getState();
             foreach ($nodes as $node) {
                 if (in_array($siteId, $node->ucms_sites)) {
-                    $node->ucms_allowed_sites = [$siteId];
+                    $node->ucms_allowed_sites[] = $siteId;
+                    if ($enabled) {
+                        $node->ucms_enabled_sites[] = $siteId;
+                    }
                 }
             }
         }

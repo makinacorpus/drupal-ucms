@@ -389,6 +389,30 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
       $options['external'] = true;
       $path = ucms_site_master_absolute_url() . '/' . $path;
     }
+  } else {
+    // In case we have no site context, and we are actually trying to render a
+    // node link, we must enforce a local site to display it when relevant,
+    // especially that most nodes can't be seen on master.
+    $matches = [];
+    if (preg_match('/^node\/(\d+)/', $original_path, $matches)) {
+      // Please note that the following algorith will probably be very heavy
+      // in term of performances, but it can only happens in the administration
+      // pages, in which nodes will almost always be preloaded one prior to
+      // generating links to it.
+      $node = node_load($matches[1]);
+      if ($node) {
+        /** @var \MakinaCorpus\Ucms\Site\NodeAccessService $nodeAccessService */
+        $nodeAccessService = \Drupal::service('ucms_site.node_access_helper');
+        // findMostRelevantSiteFor() allows fetching URL for non enabled sites, but
+        // will always find a site the current user can see. This function will
+        // always be called when attempting to connect on the admin sites, so this
+        // fine to redirect on non enabled sites if no enabled site was found.
+        $mostRelevantSite = $nodeAccessService->findMostRelevantSiteFor($node);
+        if ($mostRelevantSite) {
+          $manager->getUrlGenerator()->forceSiteUrl($options, $mostRelevantSite);
+        }
+      }
+    }
   }
 }
 
@@ -864,6 +888,10 @@ function ucms_site_init_node_redirect() {
     return;
   }
   if ($node = menu_get_object()) {
+    // findMostRelevantSiteFor() allows fetching URL for non enabled sites, but
+    // will always find a site the current user can see. This function will
+    // always be called when attempting to connect on the admin sites, so this
+    // fine to redirect on non enabled sites if no enabled site was found.
     $siteId = ucms_site_node_access_helper()->findMostRelevantSiteFor($node);
     if ($siteId) {
       drupal_goto('sso/goto/' . $siteId, ['query' => ['destination' => current_path()]]);
