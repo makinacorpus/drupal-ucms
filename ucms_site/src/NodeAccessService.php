@@ -25,7 +25,7 @@ final class NodeAccessService
     }
 
     /**
-     * Find the most revelant site to view the node in
+     * Find the most revelant ENABLED site to view the node in
      *
      * @param NodeInterface $node
      *
@@ -35,8 +35,38 @@ final class NodeAccessService
      *   The site identifier is returned, we don't need to load it to build
      *   a node route
      */
+    public function findMostRelevantEnabledSiteFor(NodeInterface $node)
+    {
+        if (empty($node->ucms_enabled_sites)) {
+            return; // Node cannot be viewed
+        }
+
+        if (in_array($node->site_id, $node->ucms_enabled_sites)) {
+            // Per default, the primary site seems the best to work with
+            return $node->site_id;
+        }
+
+        return reset($node->ucms_enabled_sites); // Fallback on first
+    }
+
+    /**
+     * Find the most revelant site to view the node in
+     *
+     * @param NodeInterface $node
+     * @param bool $onlyEnabled
+     *   Search only in enabled sites
+     *
+     * @see \MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber::onLoad()
+     *
+     * @return int
+     *   The site identifier is returned, we don't need to load it to build
+     *   a node route
+     */
     public function findMostRelevantSiteFor(NodeInterface $node)
     {
+        if ($siteId = $this->findMostRelevantEnabledSiteFor($node)) {
+            return $siteId;
+        }
         if (empty($node->ucms_allowed_sites)) {
             return; // Node cannot be viewed
         }
@@ -46,8 +76,7 @@ final class NodeAccessService
             return $node->site_id;
         }
 
-        // First one seems the best one.
-        return reset($node->ucms_allowed_sites);
+        return reset($node->ucms_allowed_sites); // Fallback on first
     }
 
     /**

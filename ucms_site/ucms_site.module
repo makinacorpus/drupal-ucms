@@ -434,6 +434,10 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
       if ($node) {
         /** @var \MakinaCorpus\Ucms\Site\NodeAccessService $nodeAccessService */
         $nodeAccessService = \Drupal::service('ucms_site.node_access_helper');
+        // findMostRelevantSiteFor() allows fetching URL for non enabled sites, but
+        // will always find a site the current user can see. This function will
+        // always be called when attempting to connect on the admin sites, so this
+        // fine to redirect on non enabled sites if no enabled site was found.
         $mostRelevantSite = $nodeAccessService->findMostRelevantSiteFor($node);
         if ($mostRelevantSite) {
           $manager->getUrlGenerator()->forceSiteUrl($options, $mostRelevantSite);
@@ -947,6 +951,10 @@ function ucms_site_init_node_redirect() {
     return;
   }
   if ($node = menu_get_object()) {
+    // findMostRelevantSiteFor() allows fetching URL for non enabled sites, but
+    // will always find a site the current user can see. This function will
+    // always be called when attempting to connect on the admin sites, so this
+    // fine to redirect on non enabled sites if no enabled site was found.
     $siteId = ucms_site_node_access_helper()->findMostRelevantSiteFor($node);
     if ($siteId) {
       drupal_goto('sso/goto/' . $siteId, ['query' => ['destination' => current_path()]]);
