@@ -350,6 +350,10 @@ function ucms_seo_form_node_form_alter(&$form, &$form_state) {
   $account = \Drupal::currentUser();
   $service = ucms_seo_service();
 
+  if ($service->isNodeBlacklisted($form['#node'])) {
+    return;
+  }
+
   $form['ucms_seo'] = [
     '#type'        => 'fieldset',
     '#title'       => t('SEO'),
