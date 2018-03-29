@@ -215,6 +215,7 @@ function ucms_seo_uninstall_schema_fix() {
   drupal_get_complete_schema(true);
   db_constraint_add_all('ucms_layout', drupal_get_schema('ucms_layout'));
   db_constraint_add_all('ucms_layout_data', drupal_get_schema('ucms_layout_data'));
+  variable_del('ucms_seo_node_type_blacklist');
 }
 
 /**

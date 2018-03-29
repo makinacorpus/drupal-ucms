@@ -70,26 +70,31 @@ class SeoService implements AuthorizationAwareInterface
     private $authorizationChecker;
 
     /**
+     * @var string[]
+     */
+    private $nodeTypeBlacklist;
+
+    /**
      * Default constructor
-     *
-     * @param AliasManager $aliasManager
-     * @param AliasCacheLookup $aliasCacheLookup
-     * @param RedirectStorageInterface $redirectStorage
-     * @param SiteManager $siteManager
-     * @param \DatabaseConnection $db
      */
     public function __construct(
         AliasManager $aliasManager,
         AliasCacheLookup $aliasCacheLookup,
         RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
-        \DatabaseConnection $db)
+        \DatabaseConnection $db,
+        array $nodeTypeBlacklist = null)
     {
         $this->aliasManager = $aliasManager;
         $this->aliasCacheLookup = $aliasCacheLookup;
         $this->redirectStorage = $redirectStorage;
         $this->siteManager = $siteManager;
         $this->db = $db;
+
+        if (null === $nodeTypeBlacklist) {
+            $nodeTypeBlacklist = variable_get('ucms_seo_node_type_blacklist', []);
+        }
+        $this->nodeTypeBlacklist = array_flip($nodeTypeBlacklist);
     }
 
     /**
@@ -177,9 +182,27 @@ class SeoService implements AuthorizationAwareInterface
     public function userCanEditNodeSeo(AccountInterface $account, NodeInterface $node)
     {
         return
-            ($account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN) && $node->access('update', $account)) ||
-            ($account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) && $node->access('view', $account))
+            !$this->isNodeBlacklisted($node) && (
+                ($account->hasPermission(SeoService::PERM_SEO_CONTENT_OWN) && $node->access('update', $account)) ||
+                ($account->hasPermission(SeoService::PERM_SEO_CONTENT_ALL) && $node->access('view', $account))
+            )
         ;
+    }
+
+    /**
+     * Is node type blacklisted for SEO handling
+     */
+    public function isNodeTypeBlacklisted(string $type) : bool
+    {
+        return $this->nodeTypeBlacklist && isset($this->nodeTypeBlacklist[$type]);
+    }
+
+    /**
+     * Is node blacklisted for SEO handling
+     */
+    public function isNodeBlacklisted(NodeInterface $node) : bool
+    {
+        return $this->nodeTypeBlacklist && isset($this->nodeTypeBlacklist[$node->bundle()]);
     }
 
     /**
@@ -191,6 +214,10 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function setNodeMeta(NodeInterface $node, $values = [])
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         $sqlValues = [];
 
         foreach ($values as $key => $value) {
@@ -236,6 +263,10 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function getNodeMeta(NodeInterface $node)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return [];
+        }
+
         return (array)$this->db->query("SELECT meta_title AS title, meta_description AS description FROM {ucms_seo_node} WHERE nid = ?", [$node->id()])->fetchAssoc();
     }
 
@@ -248,6 +279,10 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function getNodeLocalCanonical(NodeInterface $node)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return 'node/' . $node->id();
+        }
+
         if ($this->siteManager->hasContext()) {
             return $this->aliasManager->getPathAlias($node->id(), $this->siteManager->getContext()->getId());
         }
@@ -263,6 +298,10 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function getNodeCanonical(NodeInterface $node)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         $storage = $this->siteManager->getStorage();
 
         // Very fist site is the right one for canonical URL
@@ -301,6 +340,10 @@ class SeoService implements AuthorizationAwareInterface
     public function getNodeSegment(NodeInterface $node)
     {
         if ($node->isNew()) {
+            return;
+        }
+
+        if ($this->isNodeBlacklisted($node)) {
             return;
         }
 
@@ -354,6 +397,10 @@ class SeoService implements AuthorizationAwareInterface
      */
     public function setNodeSegment(NodeInterface $node, $segment, $previous = null)
     {
+        if ($this->isNodeBlacklisted($node)) {
+            return;
+        }
+
         if (!$previous) {
             $previous = $this->getNodeSegment($node);
         }
