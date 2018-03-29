@@ -11,6 +11,7 @@ use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Cart\Cart\CartStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CartController extends Controller
 {
@@ -25,14 +26,6 @@ class CartController extends Controller
     }
 
     /**
-     * @return CartStorageInterface
-     */
-    private function getCartStorage()
-    {
-        return $this->get('ucms_cart.cart');
-    }
-
-    /**
      * @return EntityStorageInterface
      */
     private function getNodeStorage()
@@ -40,10 +33,9 @@ class CartController extends Controller
         return $this->get('entity.manager')->getStorage('node');
     }
 
-    public function addAction(Request $request, NodeInterface $node, $mode = 'normal')
+    public function addAction(Request $request, NodeInterface $node, CartStorageInterface $cart, string $mode = 'normal') : Response
     {
         $userId = $this->getCurrentUser()->id();
-        $cart   = $this->getCartStorage();
 
         if ($cart->addFor($userId, $node->nid)) {
             $node_view = node_view($node, CALISTA_VIEW_MODE_FAVORITE);
@@ -78,10 +70,9 @@ class CartController extends Controller
         }
     }
 
-    public function removeAction(Request $request, NodeInterface $node, $mode = null)
+    public function removeAction(Request $request, NodeInterface $node, CartStorageInterface $cart, string $mode = null) : Response
     {
         $userId = $this->getCurrentUser()->id();
-        $cart   = $this->getCartStorage();
 
         $cart->removeFor($userId, $node->nid);
 

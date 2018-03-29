@@ -1,5 +1,11 @@
 services:
 
+  MakinaCorpus\Ucms\Cart\Controller\:
+    resource: 'src/Controller'
+    autowire: true
+    public: false
+    tags: ['controller.service_arguments']
+
   ucms_cart.cart.default:
     public: false
     class: MakinaCorpus\Ucms\Cart\Cart\CartStorage
@@ -11,6 +17,7 @@ services:
     arguments: ["@ucms_cart.cart.default", "@cache.default"]
 
   ucms_cart.cart:
+    public: true
     alias: ucms_cart.cart.bloom
 
   ucms_cart.cart.preloader:
