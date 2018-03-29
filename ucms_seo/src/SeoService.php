@@ -44,35 +44,13 @@ class SeoService implements AuthorizationAwareInterface
      */
     const PERM_SEO_GLOBAL = 'ucms seo global manage';
 
-    /**
-     * @var AliasManager
-     */
     private $aliasManager;
-
-    /**
-     * @var AliasCacheLookup
-     */
     private $aliasCacheLookup;
-
-    /**
-     * @var SiteManager
-     */
     private $siteManager;
-
-    /**
-     * @var \DatabaseConnection
-     */
-    private $db;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
+    private $database;
     private $authorizationChecker;
-
-    /**
-     * @var string[]
-     */
     private $nodeTypeBlacklist;
+    private $shareCanonicalAcrossSites = false;
 
     /**
      * Default constructor
@@ -82,54 +60,56 @@ class SeoService implements AuthorizationAwareInterface
         AliasCacheLookup $aliasCacheLookup,
         RedirectStorageInterface $redirectStorage,
         SiteManager $siteManager,
-        \DatabaseConnection $db,
-        array $nodeTypeBlacklist = null)
+        \DatabaseConnection $database,
+        array $nodeTypeBlacklist = null,
+        ?bool $shareCanonicalAcrossSites = null)
     {
         $this->aliasManager = $aliasManager;
         $this->aliasCacheLookup = $aliasCacheLookup;
         $this->redirectStorage = $redirectStorage;
         $this->siteManager = $siteManager;
-        $this->db = $db;
+        $this->database = $database;
 
         if (null === $nodeTypeBlacklist) {
+            // @todo tainted
             $nodeTypeBlacklist = variable_get('ucms_seo_node_type_blacklist', []);
         }
         $this->nodeTypeBlacklist = array_flip($nodeTypeBlacklist);
+
+        if (null === $shareCanonicalAcrossSites) {
+            // @todo tainted
+            $shareCanonicalAcrossSites = variable_get('ucms_seo_share_canonical', false);
+        }
+        $this->shareCanonicalAcrossSites = $shareCanonicalAcrossSites;
     }
 
     /**
      * Clear alias cache, if any
      */
-    public function clearCache()
+    public function clearCache(): void
     {
     }
 
     /**
      * Get alias storage
-     *
-     * @return AliasManager
      */
-    public function getAliasManager()
+    public function getAliasManager() : AliasManager
     {
         return $this->aliasManager;
     }
 
     /**
      * Get alias cache lookup service
-     *
-     * @return AliasCacheLookup
      */
-    public function getAliasCacheLookup()
+    public function getAliasCacheLookup() : AliasCacheLookup
     {
         return $this->aliasCacheLookup;
     }
 
     /**
      * Get redirect storage
-     *
-     * @return RedirectStorageInterface
      */
-    public function getRedirectStorage()
+    public function getRedirectStorage() : RedirectStorageInterface
     {
         return $this->redirectStorage;
     }
@@ -137,17 +117,15 @@ class SeoService implements AuthorizationAwareInterface
     /**
      * Get aliases for the given nodes
      *
-     * @param int[] $nodeIdList
-     *
      * @return string[]
      *   Keys are node identifiers, values are alias segment for each node,
      *   order is no guaranted, non existing nodes or node without a segment
      *   will be excluded from the return array
      */
-    protected function getNodeAliasMap($nodeIdList)
+    protected function getNodeAliasMap(array $nodeIdList) : array
     {
         return $this
-            ->db
+            ->database
             ->select('ucms_seo_node', 'n')
             ->fields('n', ['nid', 'alias_segment'])
             ->condition('n.nid', $nodeIdList)
@@ -158,11 +136,8 @@ class SeoService implements AuthorizationAwareInterface
 
     /**
      * Can user edit SEO parameters for site
-     *
-     * @param AccountInterface $account
-     * @param Site $site
      */
-    public function userCanEditSiteSeo(AccountInterface $account, Site $site)
+    public function userCanEditSiteSeo(AccountInterface $account, Site $site) : bool
     {
         return
             $this->isGranted(Permission::VIEW, $site, $account) && (
@@ -175,11 +150,8 @@ class SeoService implements AuthorizationAwareInterface
 
     /**
      * Can user edit SEO parameters for node
-     *
-     * @param AccountInterface $account
-     * @param NodeInterface $node
      */
-    public function userCanEditNodeSeo(AccountInterface $account, NodeInterface $node)
+    public function userCanEditNodeSeo(AccountInterface $account, NodeInterface $node) : bool
     {
         return
             !$this->isNodeBlacklisted($node) && (
@@ -212,7 +184,7 @@ class SeoService implements AuthorizationAwareInterface
      * @param string[] $values
      *   Keys are meta tag title, values are meta tag content
      */
-    public function setNodeMeta(NodeInterface $node, $values = [])
+    public function setNodeMeta(NodeInterface $node, array $values = []) : void
     {
         if ($this->isNodeBlacklisted($node)) {
             return;
@@ -243,7 +215,7 @@ class SeoService implements AuthorizationAwareInterface
         }
 
         $this
-            ->db
+            ->database
             ->update('ucms_seo_node')
             ->fields($sqlValues)
             ->condition('nid', $node->id())
@@ -261,23 +233,19 @@ class SeoService implements AuthorizationAwareInterface
      * @return string[] $values
      *   Keys are meta tag title, values are meta tag content
      */
-    public function getNodeMeta(NodeInterface $node)
+    public function getNodeMeta(NodeInterface $node) : array
     {
         if ($this->isNodeBlacklisted($node)) {
             return [];
         }
 
-        return (array)$this->db->query("SELECT meta_title AS title, meta_description AS description FROM {ucms_seo_node} WHERE nid = ?", [$node->id()])->fetchAssoc();
+        return (array)$this->database->query("SELECT meta_title AS title, meta_description AS description FROM {ucms_seo_node} WHERE nid = ?", [$node->id()])->fetchAssoc();
     }
 
     /**
      * Get node canonical alias for the current site
-     *
-     * @param NodeInterface $node
-     *
-     * @return null|string
      */
-    public function getNodeLocalCanonical(NodeInterface $node)
+    public function getNodeLocalCanonical(NodeInterface $node) : ?string
     {
         if ($this->isNodeBlacklisted($node)) {
             return 'node/' . $node->id();
@@ -290,25 +258,25 @@ class SeoService implements AuthorizationAwareInterface
 
     /**
      * Get node canonical URL
-     *
-     * @param NodeInterface $node
-     * @param string $langcode
-     *
-     * @return null|string
      */
-    public function getNodeCanonical(NodeInterface $node)
+    public function getNodeCanonical(NodeInterface $node) : ?string
     {
         if ($this->isNodeBlacklisted($node)) {
-            return;
+            return null;
         }
 
-        $storage = $this->siteManager->getStorage();
+        $site = null;
+        $alias = null;
 
-        // Very fist site is the right one for canonical URL
-        if ($node->site_id) {
-            $site = $storage->findOne($node->site_id);
-            if ($site->getState() !== SiteState::ON) {
-                $site = null;
+        if ($this->shareCanonicalAcrossSites) {
+            $storage = $this->siteManager->getStorage();
+
+            // Very fist site is the right one for canonical URL
+            if ($node->site_id) {
+                $site = $storage->findOne($node->site_id);
+                if ($site->getState() !== SiteState::ON) {
+                    $site = null;
+                }
             }
         }
 
@@ -319,7 +287,9 @@ class SeoService implements AuthorizationAwareInterface
             }
         }
 
-        $alias = $this->aliasManager->getPathAlias($node->id(), $site->getId());
+        if ($site) {
+            $alias = $this->aliasManager->getPathAlias($node->id(), $site->getId());
+        }
 
         if (!$alias) {
             // No alias at all means that the canonical is the node URL in the
@@ -337,14 +307,14 @@ class SeoService implements AuthorizationAwareInterface
      *
      * @return string
      */
-    public function getNodeSegment(NodeInterface $node)
+    public function getNodeSegment(NodeInterface $node) : ?string
     {
         if ($node->isNew()) {
-            return;
+            return null;
         }
 
         if ($this->isNodeBlacklisted($node)) {
-            return;
+            return null;
         }
 
         $map = $this->getNodeAliasMap([$node->id()]);
@@ -362,7 +332,7 @@ class SeoService implements AuthorizationAwareInterface
      *
      * @return string
      */
-    public function normalizeSegment($value, $maxLength = UCMS_SEO_SEGMENT_TRIM_LENGTH)
+    public function normalizeSegment(string $value, int $maxLength = UCMS_SEO_SEGMENT_TRIM_LENGTH) : string
     {
         // Transliterate first
         if (class_exists('URLify')) {
@@ -395,10 +365,10 @@ class SeoService implements AuthorizationAwareInterface
      *   If by any chance you are sure you know the previous one, set it here
      *   to save a SQL query
      */
-    public function setNodeSegment(NodeInterface $node, $segment, $previous = null)
+    public function setNodeSegment(NodeInterface $node, string $segment, ?string $previous = null) : void
     {
         if ($this->isNodeBlacklisted($node)) {
-            return;
+            return null;
         }
 
         if (!$previous) {
@@ -409,11 +379,11 @@ class SeoService implements AuthorizationAwareInterface
         }
 
         if ($previous === $segment) {
-            return; // Nothing to do
+            return null; // Nothing to do
         }
 
         $this
-            ->db
+            ->database
             ->merge('ucms_seo_node')
             ->key(['nid' => $node->id()])
             ->fields(['alias_segment' => $segment])
@@ -432,7 +402,7 @@ class SeoService implements AuthorizationAwareInterface
      *
      * @param array $nodeIdList
      */
-    public function onAliasChange(array $nodeIdList)
+    public function onAliasChange(array $nodeIdList) : void
     {
         $this->aliasManager->invalidateRelated($nodeIdList);
         $this->aliasCacheLookup->refresh();
@@ -443,7 +413,7 @@ class SeoService implements AuthorizationAwareInterface
      *
      * @param int $menuId
      */
-    public function onMenuChange(Menu $menu)
+    public function onMenuChange(Menu $menu) : void
     {
         $this->aliasManager->invalidate(['site_id' => $menu->getSiteId()]);
         $this->aliasCacheLookup->refresh();
