@@ -368,7 +368,7 @@ class SeoService implements AuthorizationAwareInterface
     public function setNodeSegment(NodeInterface $node, string $segment, ?string $previous = null) : void
     {
         if ($this->isNodeBlacklisted($node)) {
-            return null;
+            return;
         }
 
         if (!$previous) {
@@ -379,7 +379,7 @@ class SeoService implements AuthorizationAwareInterface
         }
 
         if ($previous === $segment) {
-            return null; // Nothing to do
+            return; // Nothing to do
         }
 
         $this
