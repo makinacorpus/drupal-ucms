@@ -91,7 +91,7 @@ function ucms_dashboard_menu_breadcrumb_alter(&$active_trail, $item) {
       return;
     }
 
-    if ('admin/dashboard' !== $active_trail[0]['href']) {
+    if (isset($active_trail[0]) && 'admin/dashboard' !== $active_trail[0]['href']) {
       array_unshift($active_trail, [
         'title' => t("Dashboard"),
         'href'  => 'admin/dahsboard',
