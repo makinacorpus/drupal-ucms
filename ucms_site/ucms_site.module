@@ -378,13 +378,48 @@ function ucms_site_admin_path_is_allowed($path) {
 }
 
 /**
+ * Backport of SiteUrlGenerator::forceSiteUrl() from 1.4.x.
+ */
+function _ucms_site_force_site_url(&$options, $site) {
+  if (!$site instanceof Site) {
+      $site = ucms_site_manager()->getStorage()->findOne($site);
+  }
+  $options['https'] = $GLOBALS['is_https'];
+  $options['base_url'] = ($options['https'] ? 'https://' : 'http://') . $site->getHostname();
+  $options['absolute'] = true;
+}
+
+/**
  * Implements hook_url_outbound_alter().
  */
 function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
-  // Enforce master-only (administration pages) links to be absolute with the
-  // master hostname instead of being directed to the current site.
-  if ($path && !$options['absolute'] && ucms_site_manager()->hasContext()) {
-    if (!ucms_site_admin_path_is_allowed($path)) {
+
+  if (empty($original_path)) {
+    return;
+  }
+
+  // Skip external URLs, we cannot proceed them on both fronts, since other
+  // sites in the platform will actually be dealt as external by Drupal core
+  // let them pass, if you need to generate other site's URLs, please use
+  // the 'ucms_site.url_generator' service manually or the 'ucms_site_url'
+  // twig function.
+  if ($options['external']) {
+    return;
+  }
+
+  // Avoid reentrancy, especially if the URL was generated using the site
+  // manager, case in which we don't need to process it.
+  if (isset($options['ucms_processed'])) {
+    return;
+  }
+
+  $options['ucms_processed'] = true;
+  $manager = ucms_site_manager();
+
+  if ($manager->hasContext()) {
+    // Enforce master-only (administration pages) links to be absolute with the
+    // master hostname instead of being directed to the current site.
+    if ($path && !ucms_site_admin_path_is_allowed($path)) {
       $options['absolute'] = true;
       $options['external'] = true;
       $path = ucms_site_master_absolute_url() . '/' . $path;
@@ -409,7 +444,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
         // fine to redirect on non enabled sites if no enabled site was found.
         $mostRelevantSite = $nodeAccessService->findMostRelevantSiteFor($node);
         if ($mostRelevantSite) {
-          $manager->getUrlGenerator()->forceSiteUrl($options, $mostRelevantSite);
+          _ucms_site_force_site_url($options, $mostRelevantSite);
         }
       }
     }
