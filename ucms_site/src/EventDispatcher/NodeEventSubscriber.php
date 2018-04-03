@@ -45,6 +45,16 @@ class NodeEventSubscriber implements EventSubscriberInterface
     private $eventDispatcher;
 
     /**
+     * @var bool
+     */
+    private $nodeReferenceAll;
+
+    /**
+     * @var null|string[]
+     */
+    private $nodeReferenceWhitelist;
+
+    /**
      * {@inheritdoc}
      */
     static public function getSubscribedEvents()
@@ -63,6 +73,9 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 ['onInsert', 0],
                 ['onPostInsert', -32],
             ],
+            NodeEvent::EVENT_PRESAVE => [
+                ['onPresave', 0],
+            ],
             NodeEvent::EVENT_SAVE => [
                 ['onSave', 0]
             ],
@@ -80,19 +93,39 @@ class NodeEventSubscriber implements EventSubscriberInterface
      * @param SiteManager $nodeManager
      * @param EntityManager $entityManager
      * @param EventDispatcherInterface $eventDispatcher
+     * @param null|bool $nodeReferenceAll
+     *   If null, use the ucms_site_node_reference_all variable.
+     * @param null|string[] $nodeReferenceWhitelist
+     *   If null, use the ucms_site_node_reference_whitelist variable.
+     *   Ignored if $nodeReferenceAll is true. This is a list of field
+     *   names.
      */
     public function __construct(
         \DatabaseConnection $db,
         SiteManager $manager,
         NodeManager $nodeManager,
         EntityManager $entityManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        $nodeReferenceAll = null,
+        $nodeReferenceWhitelist = null
     ) {
         $this->db = $db;
         $this->manager = $manager;
         $this->nodeManager = $nodeManager;
         $this->entityManager = $entityManager;
         $this->eventDispatcher= $eventDispatcher;
+
+        if (null === $nodeReferenceAll) {
+            $nodeReferenceAll = variable_get('ucms_site_node_reference_all', true);
+        }
+        $this->nodeReferenceAll = (bool)$nodeReferenceAll;
+
+        if (!$this->nodeReferenceAll) {
+            if (null === $nodeReferenceWhitelist) {
+                $nodeReferenceWhitelist = variable_get('ucms_site_node_reference_whitelist', []);
+            }
+            $this->nodeReferenceWhitelist = $nodeReferenceWhitelist;
+        }
     }
 
     public function onPrepare(NodeEvent $event)
@@ -298,6 +331,90 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         // We do not need to delete from the {ucms_site_node} table since it's
         // being done by ON DELETE CASCADE deferred constraints
+    }
+
+    public function onPresave(NodeEvent $event)
+    {
+        //
+        // Ensure that node-referenced nodes will be attached to site as well.
+        // This will fix the following behavior:
+        //
+        // (sorry in french, I will translate later):
+        //
+        // 1. l'utilisateur créé des contenus A et B dans le site 1
+        // 2. il créé un contenu C dans le site 2
+        // 3. il créé ensuite un contenu D global
+        // 4. il créé un contenu dans le site 1 et met en node référence les contenus
+        //    A, B, C et D
+        //     => Première erreur: les contenus A et B sont déjà dans le site 1, mais C
+        //        et D ne sont pas référencé à ce moment là dans le site 1
+        // 5. il clone le site 1 en site 3
+        //     => A et B étant déjà dans le site 1, leurs références sont bien mises
+        //        à jour et reportées dans le site 3
+        //     => Deuxième erreur: les contenus C et D eux, n'ayant pas de référence
+        //        explicite dans le site 1, n'en ont pas non plus dans le site 3
+        //
+        // Basically, if a node is referenced by a field of another node, it
+        // will be seamlessly attached to site when we save the node that
+        // carries the reference.
+        //
+        // Because not all reference fields need the node to be referenced, it
+        // will be done by manually whitelisting fields (default is all nodes
+        // are referenced, except for already existing installations, since that
+        // this is a behavioral change).
+        //
+
+        $node = $event->getNode();
+
+        if (!$this->nodeReferenceWhitelist && !$this->nodeReferenceAll || empty($node->ucms_sites)) {
+            return; // Feature is completely disabled
+        }
+
+        $references = [];
+
+        foreach (field_info_instances('node', $node->bundle()) as $fieldname => $instance) {
+
+            if (!$this->nodeReferenceAll) {
+                if (!in_array($fieldname, $this->nodeReferenceWhitelist)) {
+                    continue;
+                }
+            }
+
+            $field = field_info_field($fieldname);
+
+            switch ($field['type']) {
+
+                case 'ulink':
+                    $items = field_get_items('node', $node, $fieldname);
+                    if ($items) {
+                        foreach ($items as $item) {
+                            $matches = [];
+                            if (preg_match('#^(entity:|)node(:|/)(\d+)$#', $item['value'], $matches)) {
+                                $references[] = $matches[3];
+                            }
+                        }
+                    }
+                    break;
+
+                case 'unoderef':
+                    $items = field_get_items('node', $node, $fieldname);
+                    if ($items) {
+                        foreach ($items as $item) {
+                            $references[] = $item['nid'];
+                        }
+                    }
+                    break;
+
+                default:
+                    break; // Nothing to do
+            }
+        }
+
+        if ($references) {
+            foreach ($node->ucms_sites as $siteId) {
+                $this->nodeManager->createReferenceBulkInSite($siteId, $references);
+            }
+        }
     }
 
     /**

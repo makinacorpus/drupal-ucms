@@ -38,7 +38,7 @@ class NodeManager
     private $nodeAccessService;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 
@@ -142,24 +142,66 @@ class NodeManager
      */
     public function createReferenceBulkInSite($siteId, $nodeIdList)
     {
-        // @todo Optimize me
-        foreach ($nodeIdList as $nodeId) {
-            $this
-                ->db
-                ->merge('ucms_site_node')
-                ->key(['nid' => $nodeId, 'site_id' => $siteId])
-                ->execute()
-            ;
+        //
+        // With PostgreSQL, I would have wrote a single SQL INSERT query that
+        // INSERT ... WHERE NOT IN to avoid duplicate, using a RETURNING clause
+        // allowing me to fetch directly the missing inserted items, and run
+        // the event only onto them. Also, it would be atomic, race would not
+        // be possible.
+        //
+        // But we are also supporting MySQL. I hate MySQL. Hence the 3-step
+        // (SELECT, array_diff, INSERT) dirty algorith right under us.
+        //
+        // It is prone to race conditions because we don't lock the table
+        // if 2 concurent requests attempt to insert the same node, they
+        // can, if you are unlucky, race altogether, one of them will fail
+        // with an exception raised. I hope this won't happen too much,
+        // hopefully, no data loss is posible here.
+        //
+
+        // Avoid SQL breakage with empty IN() clause in next SELECT query
+        if (!$nodeIdList) {
+            return;
         }
 
-        $this
-            ->entityManager
-            ->getStorage('node')
-            ->resetCache($nodeIdList)
+        // Ensures that nodes exists in the node table
+        $nodeIdList = $this
+            ->db
+            ->select('node', 'n')
+            ->fields('n', ['nid'])
+            ->condition('nid', $nodeIdList)
+            ->execute()
+            ->fetchCol()
         ;
 
-        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nodeIdList));
-        $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeIdList));
+        if (!$nodeIdList) {
+            return; // Nothing to be done, really
+        }
+
+        // Do NOT reinsert already referenced nodes
+        $existing = $this
+            ->db
+            ->select('ucms_site_node', 'usn')
+            ->fields('usn', ['nid'])
+            ->condition('usn.site_id', $siteId)
+            ->condition('usn.nid', $nodeIdList)
+            ->execute()
+            ->fetchCol()
+        ;
+
+        if ($missing = array_diff($nodeIdList, $existing)) {
+
+            $insert = $this->db->insert('ucms_site_node')->fields(['site_id', 'nid']);
+            foreach ($missing as $nodeId) {
+                $insert->values([$siteId, $nodeId]);
+            }
+            $insert->execute();
+
+            $this->entityManager->getStorage('node')->resetCache($missing);
+
+            $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $missing));
+            $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $missing));
+        }
     }
 
     /**

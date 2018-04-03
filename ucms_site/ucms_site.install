@@ -591,6 +591,8 @@ function ucms_site_install() {
  */
 function ucms_site_uninstall() {
   ucms_site_uninstall_schema_fix();
+  variable_del('ucms_site_node_reference_all');
+  variable_del('ucms_site_node_reference_whitelist');
 }
 
 /**
@@ -819,3 +821,11 @@ function ucms_site_update_7023() {
   ucms_site_install_schema_fix();
 }
 
+/**
+ * Node reference collection feature does not exists in previous versions
+ * but since now is enabled per default, in order to ensure that we don't
+ * break existing sites, disable it for updated sites.
+ */
+function ucms_site_update_7024() {
+  variable_sel('ucms_site_node_reference_all', false);
+}
