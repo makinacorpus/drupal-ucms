@@ -827,5 +827,5 @@ function ucms_site_update_7023() {
  * break existing sites, disable it for updated sites.
  */
 function ucms_site_update_7024() {
-  variable_sel('ucms_site_node_reference_all', false);
+  variable_set('ucms_site_node_reference_all', false);
 }
