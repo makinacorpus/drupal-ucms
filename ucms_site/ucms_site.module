@@ -327,6 +327,7 @@ function ucms_site_admin_path_is_allowed($path) {
     if (is_numeric($arg[1])) {
       if (isset($arg[2])) {
         switch ($arg[2]) {
+          case 'duplicate':
           case 'clone':
           case 'edit':
           case 'gallery':
@@ -425,7 +426,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
     // node link, we must enforce a local site to display it when relevant,
     // especially that most nodes can't be seen on master.
     $matches = [];
-    if (preg_match('/^node\/(\d+)/', $original_path, $matches)) {
+    if (preg_match('#^node/(\d+)(|/view)$#', $original_path, $matches)) {
       // Please note that the following algorith will probably be very heavy
       // in term of performances, but it can only happens in the administration
       // pages, in which nodes will almost always be preloaded one prior to
@@ -453,7 +454,7 @@ function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
 function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
   if (ucms_site_is_master()) {
     $matches = [];
-    if (module_exists('ucms_sso') && preg_match('@^node/(\d+)(/view)?$@', $path, $matches)) {
+    if (module_exists('ucms_sso') && preg_match('@^node/(\d+)(|/(view|edit))?$@', $path, $matches)) {
       $node = \Drupal::service('entity.manager')->getStorage('node')->load($matches[1]);
       if (!empty($node->site_id)) {
         $options['query'] = ['destination' => $path];
