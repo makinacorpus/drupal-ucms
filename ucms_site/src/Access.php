@@ -113,6 +113,11 @@ final class Access
     const PERM_SITE_VIEW_ALL = 'site view all';
 
     /**
+     * Import bulk media
+     */
+    const PERM_CONTENT_MEDIA_BULK_IMPORT = 'content media bulk import';
+
+    /**
      * Site relative role: none
      */
     const ROLE_NONE = 0;

@@ -288,6 +288,9 @@ function ucms_site_permission() {
     Access::PERM_CONTENT_VIEW_OTHER => [
       'title' => t("View other site content"),
     ],
+    Access::PERM_CONTENT_MEDIA_BULK_IMPORT => [
+      'title' => t("Bulk import medias"),
+    ],
     Access::PERM_SITE_MANGE_HOSTNAME => [
       'title' => t("Site change hostnames"),
       'description' => t("This permission bypasses everything that can be bypassed, for technical administrators only"),
