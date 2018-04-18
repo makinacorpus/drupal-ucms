@@ -1,17 +1,24 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Contrib;
+namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
-class NodeReference
+final class NodeReference
 {
-    // Those are the {ucms_node_reference} table column names, for PDO.
-    protected $source_id;
-    protected $target_id;
-    protected $type;
-    protected $field_name;
-    protected $target_exists = true;
+    const TYPE_FIELD = 'field';
+    const TYPE_LINK = 'link';
+    const TYPE_MEDIA = 'media';
 
-    public function __construct($sourceId = null, $targetId = null, $type = null, $fieldName = null, $exists = true)
+    // Those are the {ucms_node_reference} table column names, for PDO.
+    private $source_id;
+    private $target_id;
+    private $type;
+    private $field_name;
+    private $target_exists = true;
+
+    /**
+     * Default constructor
+     */
+    public function __construct(int $sourceId = null, int $targetId = null, string $type = null, string $fieldName = null, bool $exists = true)
     {
         // All are null because of PDO which in the end does not skip constructor...
         if (null !== $sourceId && null !== $targetId) {
@@ -23,27 +30,27 @@ class NodeReference
         }
     }
 
-    public function getSourceId()
+    public function getSourceId() : int
     {
         return $this->source_id;
     }
 
-    public function getTargetId()
+    public function getTargetId() : int
     {
         return $this->target_id;
     }
 
-    public function getType()
+    public function getType() : string
     {
         return null === $this->type ? 'unknown' : $this->type;
     }
 
-    public function getFieldName()
+    public function getFieldName() : string
     {
         return $this->field_name;
     }
 
-    public function targetExists()
+    public function targetExists() : bool
     {
         return $this->target_exists;
     }

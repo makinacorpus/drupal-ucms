@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Contrib\EventDispatcher;
 
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeReference;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeReferenceCollectEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -37,7 +39,7 @@ class MediaReferenceEventListener implements EventSubscriberInterface
                 $matches = [];
                 if (preg_match_all('@data-media-nid=([^\s\<\>]+)?@ims', $item['value'], $matches)) {
                     $idList = array_map(function ($id) { return trim($id, '\'"'); }, $matches[1]);
-                    $event->addReferences('media', $idList, $field);
+                    $event->addReferences(NodeReference::TYPE_MEDIA, $idList, $field);
                 }
             }
         }
@@ -50,7 +52,7 @@ class MediaReferenceEventListener implements EventSubscriberInterface
     {
         return [
             NodeReferenceCollectEvent::EVENT_NAME => [
-                ['onCollect', 0]
+                ['onCollect', 0],
             ],
         ];
     }

@@ -59,7 +59,7 @@ class EntityLinkFilterEventSubscriber implements EventSubscriberInterface
 
         $mapping = $this->nodeManager->getCloningMapping($this->siteManager->getContext());
         $uriInfo = &$event->getURIInfo();
-        
+
         foreach ($uriInfo as &$info) {
             if (isset($mapping[$info['id']])) {
                 $info['id'] = $mapping[$info['id']];

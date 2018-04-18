@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
-use MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeReferenceCollectEvent;
 use MakinaCorpus\ULink\EntityLinkGenerator;
-
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeReference;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeReferenceCollectEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -58,7 +58,7 @@ class LinkReferenceEventListener implements EventSubscriberInterface
 
             $idList = $this->extractData($items);
             if ($idList) {
-                $event->addReferences('link', $idList, $field);
+                $event->addReferences(NodeReference::TYPE_LINK, $idList, $field);
             }
         }
     }

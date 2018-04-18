@@ -4,11 +4,10 @@ namespace MakinaCorpus\Ucms\Seo\Portlet;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Ucms\Contrib\NodeReference;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeReference;
 
 class DeadLinkPortletDisplay extends AbstractDisplay
 {
@@ -27,14 +26,13 @@ class DeadLinkPortletDisplay extends AbstractDisplay
 
         $nodeStorage = $this->entityManager->getStorage('node');
 
+        /** @var \MakinaCorpus\Ucms\Site\EventDispatcher\NodeReference $item */
         foreach ($items as $item) {
-            /** @var $item NodeReference */
-
             switch ($item->getType()) {
-                case 'link':
+                case NodeReference::TYPE_LINK:
                     $typeLabel = $this->t("Link");
                     break;
-                case 'media':
+                case NodeReference::TYPE_MEDIA:
                     $typeLabel = $this->t("Media");
                     break;
                 case 'unknown':

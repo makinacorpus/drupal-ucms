@@ -4,14 +4,12 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeCollectionEvent;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -73,14 +71,14 @@ class NodeEventSubscriber implements EventSubscriberInterface
                 ['onInsert', 0],
                 ['onPostInsert', -32],
             ],
-            NodeEvent::EVENT_PRESAVE => [
-                ['onPresave', 0],
-            ],
             NodeEvent::EVENT_SAVE => [
                 ['onSave', 0]
             ],
             NodeEvents::ACCESS_CHANGE => [
                 ['onNodeAccessChange', 0],
+            ],
+            NodeReferenceCollectEvent::EVENT_NAME => [
+                ['onNodeReferenceCollect', 0],
             ],
         ];
     }
@@ -322,8 +320,25 @@ class NodeEventSubscriber implements EventSubscriberInterface
     public function onSave(NodeEvent $event)
     {
         $node = $event->getNode();
+
+        $event = new NodeReferenceCollectEvent($node);
+        $this->eventDispatcher->dispatch(NodeReferenceCollectEvent::EVENT_NAME, $event);
+
         if ($node->ucms_sites) {
-            $this->nodeManager->createReferenceBulkForNode($node->id(), $node->ucms_sites);
+            $references = [];
+            $references[] = $node->id();
+
+            foreach ($event->getReferences() as $reference) {
+                if (NodeReference::TYPE_MEDIA !== $reference->getType()) {
+                    $references[] = $reference->getTargetId();
+                }
+            }
+
+            if ($references) {
+                foreach ($node->ucms_sites as $siteId) {
+                    $this->nodeManager->createReferenceBulkInSite($siteId, $references);
+                }
+            }
         }
     }
 
@@ -333,7 +348,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // being done by ON DELETE CASCADE deferred constraints
     }
 
-    public function onPresave(NodeEvent $event)
+    public function onNodeReferenceCollect(NodeReferenceCollectEvent $event)
     {
         //
         // Ensure that node-referenced nodes will be attached to site as well.
@@ -370,10 +385,9 @@ class NodeEventSubscriber implements EventSubscriberInterface
             return; // Feature is completely disabled
         }
 
-        $references = [];
-
         foreach (field_info_instances('node', $node->bundle()) as $fieldname => $instance) {
 
+            // Honnor field whitelist if set
             if (!$this->nodeReferenceAll) {
                 if (!in_array($fieldname, $this->nodeReferenceWhitelist)) {
                     continue;
@@ -381,38 +395,29 @@ class NodeEventSubscriber implements EventSubscriberInterface
             }
 
             $field = field_info_field($fieldname);
-
             switch ($field['type']) {
 
                 case 'ulink':
-                    $items = field_get_items('node', $node, $fieldname);
-                    if ($items) {
+                    if ($items = field_get_items('node', $node, $fieldname)) {
                         foreach ($items as $item) {
                             $matches = [];
                             if (preg_match('#^(entity:|)node(:|/)(\d+)$#', $item['value'], $matches)) {
-                                $references[] = $matches[3];
+                                $event->addReferences(NodeReference::TYPE_FIELD, [$matches[3]], $fieldname);
                             }
                         }
                     }
                     break;
 
                 case 'unoderef':
-                    $items = field_get_items('node', $node, $fieldname);
-                    if ($items) {
+                    if ($items = field_get_items('node', $node, $fieldname)) {
                         foreach ($items as $item) {
-                            $references[] = $item['nid'];
+                            $event->addReferences(NodeReference::TYPE_FIELD, [$item['nid']], $fieldname);
                         }
                     }
                     break;
 
                 default:
                     break; // Nothing to do
-            }
-        }
-
-        if ($references) {
-            foreach ($node->ucms_sites as $siteId) {
-                $this->nodeManager->createReferenceBulkInSite($siteId, $references);
             }
         }
     }

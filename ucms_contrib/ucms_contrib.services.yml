@@ -80,7 +80,7 @@ services:
   ucms_contrib.node_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Contrib\EventDispatcher\NodeEventSubscriber
-    arguments: ["@database", "@event_dispatcher"]
+    arguments: ["@database"]
     tags: [{ name: event_subscriber }]
 
   ucms_contrib.node_access.subscriber:

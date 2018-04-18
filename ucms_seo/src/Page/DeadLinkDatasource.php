@@ -3,10 +3,9 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
-
-use MakinaCorpus\Ucms\Contrib\NodeReference;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeReference;
 
 class DeadLinkDatasource extends AbstractDatasource
 {
