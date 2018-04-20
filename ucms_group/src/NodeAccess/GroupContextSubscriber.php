@@ -2,19 +2,19 @@
 
 namespace MakinaCorpus\Ucms\Group\NodeAccess;
 
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
+use MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextEventTrait;
 use MakinaCorpus\Ucms\Group\GroupAccess;
 use MakinaCorpus\Ucms\Group\GroupManager;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\NodeAccess\NodeAccessEventSubscriber as NodeAccess;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
+use MakinaCorpus\Ucms\Site\NodeAccess\NodeAccessEventSubscriber as NodeAccess;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
-use MakinaCorpus\Ucms\Group\EventDispatcher\GroupContextEventTrait;
 
 /**
  * All context alterations events into the same subscriber, because it does
@@ -200,7 +200,7 @@ class GroupContextSubscriber implements EventSubscriberInterface
     /**
      * Set current group context
      */
-    public function onSiteInit(SiteEvent $event)
+    public function onSiteInit(SiteInitEvent $event)
     {
         $group = $this->groupManager->getAccess()->getSiteGroup($event->getSite());
 

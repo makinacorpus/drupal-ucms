@@ -8,8 +8,10 @@ use MakinaCorpus\Umenu\TreeItem;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class MenuEvent extends Event
+final class MenuEvent extends Event
 {
+    const EVENT_TREE = 'menu:tree';
+
     private $menuName;
     private $items;
     private $deletedItems;
@@ -19,7 +21,7 @@ class MenuEvent extends Event
      */
     private $site;
 
-    public function __construct($menuName, Tree $tree, $deletedItems = [], $site)
+    public function __construct(string $menuName, Tree $tree, array $deletedItems = [], Site $site = null)
     {
         $this->menuName = $menuName;
         $this->tree = $tree;
@@ -27,7 +29,7 @@ class MenuEvent extends Event
         $this->site = $site;
     }
 
-    public function hasSite()
+    public function hasSite() : bool
     {
         return $this->site instanceof Site;
     }
@@ -35,20 +37,20 @@ class MenuEvent extends Event
     /**
      * @return Site
      */
-    public function getSite()
+    public function getSite() : Site
     {
         return $this->site;
     }
 
-    public function getMenuName()
+    public function getMenuName() : string
     {
-        return $this->menuName;
+        return $this->menuName ?? '';
     }
 
     /**
      * @return Tree
      */
-    public function getTree()
+    public function getTree() : Tree
     {
         return $this->tree;
     }
@@ -56,7 +58,7 @@ class MenuEvent extends Event
     /**
      * @return TreeItem[]
      */
-    public function getDeletedItems()
+    public function getDeletedItems() : TreeItem
     {
         return $this->deletedItems;
     }

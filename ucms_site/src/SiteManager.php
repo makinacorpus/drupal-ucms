@@ -3,12 +3,12 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
-
+use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Facade for using both site storage and site access helpers, that will also
@@ -64,12 +64,15 @@ class SiteManager
      * Set current site context
      *
      * @param Site $site
+     *   Site we are initing
+     * @param Request $request
+     *   Incomming request that setup the site
      * @param bool $disablePostDispatch
      *   If set, no event will be raised, please note this should never ever
      *   be used, except during ucms_site_boot() which will pre-set the site
      *   without knowing if the context is valid or not
      */
-    public function setContext(Site $site, $disablePostDispatch = false)
+    public function setContext(Site $site, Request $request, $disablePostDispatch = false)
     {
         $doDispatch = false;
 
@@ -86,7 +89,7 @@ class SiteManager
             // would experience strict fails on dependent context set
             $this->dependentContext = [];
 
-            $this->dispatcher->dispatch(SiteEvents::EVENT_INIT, new SiteEvent($this->context));
+            $this->dispatcher->dispatch(SiteEvents::EVENT_INIT, new SiteInitEvent($this->context, $request));
 
             if ($disablePostDispatch) {
                 // We are in hook_boot(), set post-init to run later during

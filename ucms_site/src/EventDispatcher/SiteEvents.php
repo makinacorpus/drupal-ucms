@@ -2,6 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
+/**
+ * Site events
+ */
 final class SiteEvents
 {
     // Persistence
@@ -24,6 +27,9 @@ final class SiteEvents
     const EVENT_INIT = 'site:init';
     // Happens at hook_init() instead of hook_boot()
     const EVENT_POST_INIT = 'site:post-init';
+
+    // No site was inited, and we are currently in admin
+    const EVENT_MASTER_INIT = 'site:master-init';
 
     // Site context is being dropped
     const EVENT_DROP = 'site:drop';

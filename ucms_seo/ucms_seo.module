@@ -17,19 +17,13 @@
  *   - global configuration (administer path, canonicals)
  */
 
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Seo\Controller\PrivacyController;
 
 /**
  * Default trim length for alias segments.
- *
- * @deprecated
- *   Kept for backward compatibility only, use instead:
- *     MakinaCorpus\Ucms\Seo\SeoService::SEGMENT_TRIM_LENGTH
  */
 const UCMS_SEO_SEGMENT_TRIM_LENGTH = 255;
 
@@ -54,14 +48,6 @@ function ucms_seo_menu() {
     'title'             => "Edit SEO parameters",
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Seo\Form\SeoNodeForm', 1],
-    'access callback'   => 'ucms_seo_menu_access_node_edit',
-    'access arguments'  => [1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['node/%node/seo-aliases'] = [
-    'title'             => "Node path aliases",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['MakinaCorpus\Ucms\Seo\Controller\SeoController::nodeAliasList', 1],
     'access callback'   => 'ucms_seo_menu_access_node_edit',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
@@ -131,7 +117,6 @@ function ucms_seo_menu() {
 function ucms_seo_admin_paths() {
   return [
     'node/*/seo-edit' => true,
-    'node/*/seo-aliases' => true,
     'node/*/seo-redirects' => true,
   ];
 }
@@ -194,43 +179,45 @@ function ucms_seo_permission() {
  * Implements hook_init().
  */
 function ucms_seo_init() {
-  $manager = ucms_site_manager();
+
+  if (drupal_is_cli()) {
+    return; // Make drush happy.
+  }
 
   // Globalredirect behavior
-  if ($manager->hasContext()) {
-    $site = $manager->getContext();
+  // @todo can do better than that.
+  if (ucms_site_manager()->hasContext()) {
     // Check a whole lot of condition to be sure we are only viewing the node
-    if (
-      $site && !ucms_site_is_master() &&
-      !path_is_admin(current_path()) &&
-      ($node = menu_get_object()) &&
-      'node' === arg(0) && !arg(2)
-    ) {
+    if (!path_is_admin(current_path()) && ($node = menu_get_object()) && 'node' === arg(0) && !arg(2)) {
       // On front page, we should not have an alias
       if (drupal_is_front_page() && request_path() !== "") {
-        drupal_goto('', [
-          'query' => drupal_get_query_parameters(),
-        ], 301);
-      }
-      elseif (!drupal_is_front_page()) {
+        drupal_goto('', ['query' => drupal_get_query_parameters()], 301);
+      } else if (!drupal_is_front_page()) {
         // Verify that we are on the best alias
-        $best_alias = ucms_seo_service()->getNodeCanonicalAlias($node, LanguageInterface::LANGCODE_NOT_SPECIFIED, true);
-        if ($best_alias && $best_alias->alias !== request_path()) {
-          drupal_goto($best_alias->alias, ['query' => drupal_get_query_parameters()], 301);
+        $best_alias = ucms_seo_service()->getNodeLocalCanonical($node);
+        if ($best_alias && $best_alias !== request_path()) {
+          drupal_goto($best_alias, ['query' => drupal_get_query_parameters()], 301);
         }
       }
     }
   }
+}
 
-  // Redirect behavior for path with query strings
-  $uri = request_uri();
-  // We have an old path, if starting with /?q=, Drupal won't detect it as front
-  // page, so we check for a redirect only on frontpage with a query argument.
-  if ($manager->hasContext() && substr($uri, 0, 2) == '/?') {
-    $storage = ucms_seo_service()->getRedirectStorage();
-    if ($storage->pathHasMatchingRedirect($uri)) {
-      $redirect = $storage->load(['path' => $uri]);
-      drupal_goto('node/' . $redirect->nid, [], 301);
+/**
+ * Implements hook_url_outbound_alter().
+ */
+function ucms_seo_url_outbound_alter(&$path, &$options, $original_path) {
+
+  if (empty($options['ucms_site'])) {
+    return;
+  }
+
+  $matches = [];
+  if (preg_match('/^node\/(\d+)$/', $original_path, $matches)) {
+    /** @var \MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup $aliasLookup */
+    $aliasLookup = \Drupal::service('ucms_seo.alias_cache_lookup');
+    if ($alias = $aliasLookup->lookup($matches[1], $options['ucms_site'])) {
+      $path = $alias;
     }
   }
 }
@@ -433,13 +420,30 @@ function ucms_seo_page_delivery_callback_alter(&$callback) {
  * @param $page_callback_result
  */
 function ucms_seo_drupal_deliver_html_page($page_callback_result) {
-  $storage = ucms_seo_service()->getRedirectStorage();
-  $uri = request_uri();
-  if ($page_callback_result === MENU_NOT_FOUND && $storage->pathHasMatchingRedirect($uri)) {
-    $redirect = $storage->load(['path' => $uri]);
-    drupal_goto('node/' . $redirect->nid, [], 301);
+
+  if (drupal_is_cli()) {
+    return;
   }
-  else {
-    drupal_deliver_html_page($page_callback_result);
+
+    // Redirect behavior for path with query strings
+  if ($page_callback_result === MENU_NOT_FOUND) {
+
+    $manager = ucms_site_manager();
+    if ($manager->hasContext()) {
+
+      $redirect = ucms_seo_service()
+        ->getRedirectStorage()
+        ->load([
+            'path' => strtr(request_uri(), ['/?q=' => '/', '/index.php?q=' => '/']),
+            'site_id' => $manager->getContext()->getId(),
+        ])
+      ;
+
+      if ($redirect) {
+        return drupal_goto($redirect->getNodeRoute(), [], 301);
+      }
+    }
   }
+
+  drupal_deliver_html_page($page_callback_result);
 }

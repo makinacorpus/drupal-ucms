@@ -5,11 +5,13 @@ namespace MakinaCorpus\Ucms\Seo\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Seo\SeoService;
-
+use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * SEO information node edit form.
+ */
 class SeoNodeForm extends FormBase
 {
     /**
@@ -18,7 +20,8 @@ class SeoNodeForm extends FormBase
     static public function create(ContainerInterface $container)
     {
         return new self(
-            $container->get('ucms_seo.seo_service')
+            $container->get('ucms_seo.seo_service'),
+            $container->get('ucms_site.manager')
         );
     }
 
@@ -26,6 +29,11 @@ class SeoNodeForm extends FormBase
      * @var SeoService
      */
     private $seoService;
+
+    /**
+     * @var SiteManager
+     */
+    private $siteManager;
 
     /**
      * {@inheritdoc}
@@ -39,10 +47,12 @@ class SeoNodeForm extends FormBase
      * Default constructor
      *
      * @param SeoService $seoService
+     * @param SiteManager $siteManager
      */
-    public function __construct(SeoService $seoService)
+    public function __construct(SeoService $seoService, SiteManager $siteManager)
     {
         $this->seoService = $seoService;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -55,24 +65,42 @@ class SeoNodeForm extends FormBase
         }
 
         $formState->setTemporaryValue('node', $node);
-
         $form['#form_horizontal'] = true;
 
         // @todo
         //   fetch menu links for this node, in site context, in order to prefix the form field
 
-        $currentAlias = $this->seoService->getNodeSegment($node);
+        $currentSegment = $this->seoService->getNodeSegment($node);
+        $nodeId = $node->id();
         $meta = $this->seoService->getNodeMeta($node) + ['title' => null, 'description' => null];
 
         $form['segment'] = [
             '#title'            => t("Alias"),
             '#type'             => 'textfield',
             '#attributes'       => ['placeholder' => $this->t("about-us")],
-            '#default_value'    => $currentAlias,
+            '#default_value'    => $currentSegment,
             '#element_validate' => ['::validateSegment'],
             '#description'      => $this->t("This is the content alias that will be used in order to build URLs for the menu of your site"),
             '#field_prefix'     => 'some/path/', // @todo
         ];
+
+        if ($this->siteManager->hasContext()) {
+
+            $site         = $this->siteManager->getContext();
+            $siteId       = $site->getId();
+            $aliasManager = $this->seoService->getAliasManager();
+            $currentAlias = $aliasManager->getPathAlias($nodeId, $siteId);
+            $isProtected  = $currentAlias && $aliasManager->isPathAliasProtected($nodeId, $siteId);
+
+            $form['custom_alias'] = [
+                '#title'            => t("Alias in the current site"),
+                '#type'             => 'textfield',
+                '#attributes'       => ['placeholder' => ($currentAlias ? $currentAlias : $this->t("There is no computed alias yet"))],
+                '#default_value'    => $isProtected ? $currentAlias : null,
+                '#description'      => $this->t("Generated URL, if you change it, it won't be automatically generated anymore, to make it automatic back again, empty this field"),
+                '#field_prefix'     => 'http://' . $site->getHostname() . '/',
+            ];
+        }
 
         $form['sep1']['#markup'] = '<hr/>';
 
@@ -133,6 +161,19 @@ class SeoNodeForm extends FormBase
     {
         /** @var $node NodeInterface */
         $node = $formState->getTemporaryValue('node');
+
+        if ($this->siteManager->hasContext()) {
+
+            $siteId       = $this->siteManager->getContext()->getId();
+            $customAlias  = $formState->getValue('custom_alias');
+            $aliasManager = $this->seoService->getAliasManager();
+
+            if (empty($customAlias)) {
+                $aliasManager->removeCustomAlias($node->id(), $siteId);
+            } else {
+                $aliasManager->setCustomAlias($node->id(), $siteId, $customAlias);
+            }
+        }
 
         if ($segment = $formState->getValue('segment')) {
             $this->seoService->setNodeSegment($node, $segment);

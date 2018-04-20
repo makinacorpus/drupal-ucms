@@ -2,14 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Site\Controller;
 
-use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
-use MakinaCorpus\Ucms\User\UserAccess;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -18,7 +12,7 @@ class AutocompleteController extends Controller
     /**
      * Get current logged in user
      *
-     * @return AccountInterface
+     * @return \Drupal\Core\Session\AccountInterface
      */
     private function getCurrentUser()
     {
@@ -28,7 +22,7 @@ class AutocompleteController extends Controller
     /**
      * Get site manager
      *
-     * @return SiteManager
+     * @return \MakinaCorpus\Ucms\Site\SiteManager
      */
     private function getSiteManager()
     {

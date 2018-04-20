@@ -17,6 +17,7 @@ class RedirectForm extends FormBase
      * @var \MakinaCorpus\Ucms\Site\SiteManager
      */
     private $siteManager;
+
     /**
      * @var \MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface
      */
@@ -33,6 +34,12 @@ class RedirectForm extends FormBase
         );
     }
 
+    /**
+     * Default constructor
+     *
+     * @param SiteManager $siteManager
+     * @param RedirectStorageInterface $redirectStorage
+     */
     public function __construct(SiteManager $siteManager, RedirectStorageInterface $redirectStorage)
     {
         $this->siteManager = $siteManager;
@@ -107,11 +114,14 @@ class RedirectForm extends FormBase
         return $form;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function validateForm(array &$form, FormStateInterface $form_state)
     {
-        $node = &$form_state->getTemporaryValue('node');
-        $siteId = &$form_state->getValue('site_id');
-        $path = &$form_state->getValue('path');
+        $node   = $form_state->getTemporaryValue('node');
+        $siteId = $form_state->getValue('site_id');
+        $path   = $form_state->getValue('path');
 
         if (substr($path, 0, 1) !== '/') {
             $form_state->setError($form['path'], $this->t('The path should begin by a slash ("/")'));
@@ -121,15 +131,14 @@ class RedirectForm extends FormBase
         }
     }
 
-
     /**
-     * Form submit
+     * {@inheritdoc}
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        $node = &$form_state->getTemporaryValue('node');
-        $siteId = &$form_state->getValue('site_id');
-        $path = &$form_state->getValue('path');
+        $node   = $form_state->getTemporaryValue('node');
+        $siteId = $form_state->getValue('site_id');
+        $path   = $form_state->getValue('path');
 
         $this->storage->save($path, $node->nid, $siteId);
 

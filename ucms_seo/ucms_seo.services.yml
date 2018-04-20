@@ -1,32 +1,47 @@
+parameters:
+  # Allow invalid routes to be loaded at runtime to avoid massive rebuilds
+  # when all items are outdated in the database.
+  ucms_seo.alias_cache_lookup.allow_invalid: true
+
 services:
 
+  # Main services
   ucms_seo.seo_service:
     public: true
     class: MakinaCorpus\Ucms\Seo\SeoService
     arguments:
-      - "@entity.manager"
-      - "@path.alias_manager"
-      - "@path.alias_storage"
+      - "@ucms_seo.alias_manager"
+      - "@ucms_seo.alias_cache_lookup"
       - "@ucms_seo.redirect_storage"
       - "@ucms_site.manager"
       - "@database"
-
+  ucms_seo.alias_manager:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Path\AliasManager
+    arguments: ['@database', '@umenu.tree_provider']
   ucms_seo.redirect_storage:
     public: true
     class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
-
-  # This overrides the global one
-  path.alias_storage:
+  ucms_seo.alias_cache_lookup:
     public: true
-    class: MakinaCorpus\Ucms\Seo\Path\SeoAliasStorage
-    arguments: ['@database', '@module_handler', "@ucms_site.manager"]
+    class: MakinaCorpus\Ucms\Seo\Path\AliasCacheLookup
+    arguments: ['@ucms_seo.alias_manager', '@database', '@cache.default', '%ucms_seo.alias_cache_lookup.allow_invalid%']
+
+  # Good bye, Drupal alias manager
+  path.alias_manager:
+    class: MakinaCorpus\Ucms\Seo\Path\NullDrupalPathAliasManager
 
   # Various actions providers for node and site
   ucms_seo.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\NodeActionProvider
     arguments: ["@ucms_seo.seo_service", "@current_user"]
+    tags: [{name: ucms_dashboard.action_provider}]
+  ucms_seo.redirect_action_provider:
+    public: false
+    class: MakinaCorpus\Ucms\Seo\Action\RedirectActionProvider
+    arguments: ["@ucms_site.manager"]
     tags: [{name: ucms_dashboard.action_provider}]
   ucms_seo.site_action_provider:
     public: false
@@ -35,16 +50,6 @@ services:
     tags: [{name: ucms_dashboard.action_provider}]
 
   # Action processors
-  ucms_seo.action.alias_canonical:
-    public: false
-    class: MakinaCorpus\Ucms\Seo\Action\AliasCanonicalProcessor
-    arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action}]
-  ucms_seo.action.alias_delete:
-    public: false
-    class: MakinaCorpus\Ucms\Seo\Action\AliasDeleteProcessor
-    arguments: ["@ucms_seo.seo_service", "@current_user"]
-    tags: [{name: ucms_dashboard.action}]
   ucms_seo.action.redirect_delete:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\StoreLocatorAliasRebuildProcessor
@@ -57,10 +62,6 @@ services:
     tags: [{name: ucms_dashboard.action}]
 
   # Data sources
-  ucms_seo.admin.node_alias_datasource:
-    public: true
-    class: MakinaCorpus\Ucms\Seo\Page\NodeAliasDatasource
-    arguments: ["@database"]
   ucms_seo.admin.site_alias_datasource:
     public: true
     class: MakinaCorpus\Ucms\Seo\Page\SiteAliasDatasource
@@ -80,33 +81,29 @@ services:
     arguments: ["@ucms_seo.seo_service", "@ucms_site.manager"]
     tags: [{name: twig.extension}]
 
-  # A few various listeners
-  ucms_seo.menu_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventListener
-    arguments: ["@ucms_seo.seo_service", "@entity.manager"]
-    tags: [{name: event_listener, event: "menu:tree"}]
-  ucms_seo.site_attach.subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteAttachEventListener
+  # A few various event subscribers
+  ucms_seo.site_event_subscriber:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteEventSubscriber
     arguments: ["@ucms_seo.seo_service"]
-    tags: [{ name: event_subscriber }]
-  ucms_seo.site_clone.subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteCloneEventListener
-    arguments: ["@database"]
-    tags: [{name: event_listener, event: "site:clone"}]
+    tags: [{name: event_subscriber }]
+  ucms_seo.menu_event_subscriber:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventSubscriber
+    arguments: ["@ucms_seo.seo_service"]
+    tags: [{name: event_subscriber }]
   ucms_seo.node_event_subscriber:
-    public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\NodeEventSubscriber
     arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
     tags: [{ name: event_subscriber }]
-  ucms_seo.context_pane_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\Seo\EventDispatcher\ContextPaneEventListener
+  ucms_seo.context_pane_event_subscriber:
+    class: MakinaCorpus\Ucms\Seo\EventDispatcher\ContextPaneEventSubscriber
     arguments: ["@ucms_seo.seo_service"]
-    tags:
-      - { name: event_listener, event: ucms_dashboard.context_init }
+    tags: [{ name: event_subscriber }]
+
+  # Display site map
+  ucms_seo.widget.sitemap:
+    class: MakinaCorpus\Ucms\Seo\Widget\SiteMapWidget
+    arguments: ['@umenu.manager']
+    tags: [{name: ucms_widget, type: ucms_seo_sitemap}]
 
   # Store locator
   # @todo review the component

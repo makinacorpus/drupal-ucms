@@ -7,7 +7,11 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
 use MakinaCorpus\Ucms\Seo\SeoService;
+use MakinaCorpus\Ucms\Seo\Path\Redirect;
 
+/**
+ * Delete action on redirect entries.
+ */
 class RedirectDeleteProcessor extends AbstractActionProcessor
 {
     use StringTranslationTrait;
@@ -52,13 +56,13 @@ class RedirectDeleteProcessor extends AbstractActionProcessor
 
     public function appliesTo($item)
     {
-        return $item instanceof \stdClass && property_exists($item, 'path') && (property_exists($item, 'node_id') || property_exists($item, 'site_id'));
+        return $item instanceof Redirect;
     }
 
     public function processAll($items)
     {
         foreach ($items as $item) {
-            $this->service->getRedirectStorage()->delete(['id' => $item->id]);
+            $this->service->getRedirectStorage()->delete(['id' => $item->getId()]);
         }
 
         return $this->formatPlural(
@@ -70,13 +74,11 @@ class RedirectDeleteProcessor extends AbstractActionProcessor
 
     public function getItemId($item)
     {
-        return $item->id;
+        return $item->getId();
     }
 
     public function loadItem($id)
     {
-        // Convert the object to stdClass because the Drupal alias storage will
-        // give us an array
-        return (object)$this->service->getRedirectStorage()->load(['id' => $id]);
+        return $this->service->getRedirectStorage()->load(['id' => $id]);
     }
 }

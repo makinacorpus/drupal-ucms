@@ -6,7 +6,6 @@ use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class NodeEventSubscriber implements EventSubscriberInterface
@@ -34,12 +33,11 @@ class NodeEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(
-        \DatabaseConnection $db,
-        SeoService $service,
-        SiteManager $manager,
-        StoreLocatorFactory $locatorFactory
-    ) {
+    /**
+     * Default constructor
+     */
+    public function __construct(\DatabaseConnection $db, SeoService $service, SiteManager $manager, StoreLocatorFactory $locatorFactory)
+    {
         $this->db = $db;
         $this->service = $service;
         $this->manager = $manager;
@@ -109,16 +107,17 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // Aliases should be merged on with the parent ones, since the parent
         // is going to be dereferenced from the site.
         if ($event->isClone() && $node->site_id) {
-            $this->service->replaceNodeAliases($node->site_id, $node->parent_nid, $node->id());
+            $this->service->onAliasChange([$node->id(), $node->parent_nid]);
         }
     }
 
     public function onDelete(NodeEvent $event)
     {
-        $this->service->onAliasRemove($event->getNode());
+        $this->service->onAliasChange([$event->getNode()->id()]);
     }
 
-    private function onSaveStoreMeta(NodeEvent $event) {
+    private function onSaveStoreMeta(NodeEvent $event)
+    {
         $node = $event->getNode();
 
         $values = [];

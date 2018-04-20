@@ -3,9 +3,9 @@
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\TreeManager;
@@ -78,7 +78,7 @@ class SiteEventListener
      *
      * @param SiteEvent $event
      */
-    public function onSiteInit(SiteEvent $event)
+    public function onSiteInit(SiteInitEvent $event)
     {
         $site = $event->getSite();
 

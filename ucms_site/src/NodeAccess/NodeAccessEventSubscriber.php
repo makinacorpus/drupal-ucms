@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Site\NodeAccess;
 
 use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
@@ -11,9 +10,9 @@ use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessSubscriber as NodeAccessCac
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -142,7 +141,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     /**
      * On site init clear node access caches
      */
-    public function onSiteInit(SiteEvent $event)
+    public function onSiteInit(SiteInitEvent $event)
     {
         $this->resetCache();
     }

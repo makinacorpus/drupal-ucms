@@ -3,13 +3,15 @@
 namespace MakinaCorpus\Ucms\Seo\EventDispatcher;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
-use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
 use MakinaCorpus\Ucms\Seo\SeoService;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MakinaCorpus\Ucms\Dashboard\EventDispatcher\ContextPaneEvent;
+use MakinaCorpus\Ucms\Dashboard\Action\Action;
 
-class ContextPaneEventListener
+class ContextPaneEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
+
     /**
      * @var \MakinaCorpus\Ucms\Seo\SeoService
      */
@@ -20,14 +22,25 @@ class ContextPaneEventListener
      */
     public function __construct(SeoService $seoService)
     {
-
         $this->seoService = $seoService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ContextPaneEvent::EVENT_INIT => [
+                ['onContextPaneInit', 0],
+            ],
+        ];
     }
 
     /**
      * @param ContextPaneEvent $event
      */
-    public function onUcmsdashboardContextinit(ContextPaneEvent $event)
+    public function onContextPaneInit(ContextPaneEvent $event)
     {
         $contextPane = $event->getContextPane();
         $router_item = menu_get_item();

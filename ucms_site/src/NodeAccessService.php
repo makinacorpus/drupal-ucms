@@ -223,13 +223,14 @@ final class NodeAccessService
     public function userCanCreateInSite(AccountInterface $account, $type, Site $site)
     {
         // Damn this is ugly
+        $request = \Drupal::request();
         if ($this->manager->hasContext()) {
             $previous = $this->manager->getContext();
-            $this->manager->setContext($site);
+            $this->manager->setContext($site, $request);
             $result = $this->userCanCreate($account, $type);
-            $this->manager->setContext($previous);
+            $this->manager->setContext($previous, $request);
         } else {
-            $this->manager->setContext($site);
+            $this->manager->setContext($site, $request);
             $result = $this->userCanCreate($account, $type);
             $this->manager->dropContext();
         }
