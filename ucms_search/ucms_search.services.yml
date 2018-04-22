@@ -27,6 +27,7 @@ parameters:
 services:
 
   ucms_search.index_storage:
+    public: true
     class: MakinaCorpus\Ucms\Search\IndexStorage
     arguments:
       - "@ucms_search.elastic.client"
@@ -77,6 +78,7 @@ services:
     arguments: ["%ucms_search.elastic.config%"]
 
   ucms_search.search_factory:
+    public: true
     class: MakinaCorpus\Ucms\Search\SearchFactory
     arguments: ["@ucms_search.elastic.client", "@ucms_search.index_storage", "@event_dispatcher"]
 
