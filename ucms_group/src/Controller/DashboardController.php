@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Group\Controller;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
@@ -12,8 +11,8 @@ use MakinaCorpus\Ucms\Group\Form\GroupEdit;
 use MakinaCorpus\Ucms\Group\Form\GroupMemberAddExisting;
 use MakinaCorpus\Ucms\Group\Form\GroupSiteAdd;
 use MakinaCorpus\Ucms\Group\Form\SiteGroupAttach;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\Site;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -176,7 +175,7 @@ class DashboardController extends Controller
     {
         $account = $this->getCurrentUser();
 
-        if (!$this->getGroupManager()->getAccess()->userCanManageAll($account)) {
+        if (!$this->getGroupManager()->userCanManageAll($account)) {
             throw $this->createAccessDeniedException();
         }
 

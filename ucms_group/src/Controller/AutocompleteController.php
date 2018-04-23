@@ -3,14 +3,12 @@
 namespace MakinaCorpus\Ucms\Group\Controller;
 
 use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\Drupal\Sf\Controller;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
-
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
+use MakinaCorpus\Ucms\Site\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use MakinaCorpus\Ucms\Site\Site;
 
 class AutocompleteController extends Controller
 {
@@ -52,7 +50,7 @@ class AutocompleteController extends Controller
         $manager = $this->getGroupManager();
         $account = $this->getCurrentUser();
 
-        if (!$manager->getAccess()->userCanManageSites($account, $group)) {
+        if (!$manager->userCanManageSites($account, $group)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -91,7 +89,7 @@ class AutocompleteController extends Controller
         $manager = $this->getGroupManager();
         $account = $this->getCurrentUser();
 
-        if (!$manager->getAccess()->userCanManageAll($account)) {
+        if (!$manager->userCanManageAll($account)) {
             throw $this->createAccessDeniedException();
         }
 

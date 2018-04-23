@@ -4,10 +4,9 @@ namespace MakinaCorpus\Ucms\Group\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Group\GroupSite;
+use MakinaCorpus\Ucms\Site\GroupSite;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
@@ -23,9 +22,6 @@ class GroupSiteActionProvider implements ActionProviderInterface
 
     /**
      * Default constructor
-     *
-     * @param SiteManager $siteManager
-     * @param AccountInterface $currentUser
      */
     public function __construct(SiteManager $siteManager, AccountInterface $currentUser)
     {
@@ -43,7 +39,7 @@ class GroupSiteActionProvider implements ActionProviderInterface
         $account  = $this->currentUser;
         $access   = $this->siteManager->getAccess();
 
-        /** @var \MakinaCorpus\Ucms\Group\GroupSite $item */
+        /** @var \MakinaCorpus\Ucms\Site\GroupSite $item */
         $site = $item->getSite();
 
         if ($access->userCanOverview($account, $site)) {

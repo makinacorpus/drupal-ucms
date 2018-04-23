@@ -5,17 +5,14 @@ namespace MakinaCorpus\Ucms\Site\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\SiteAccessRecord;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-
 abstract class AbstractWebmasterActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
-
 
     /**
      * @var SiteManager
@@ -27,7 +24,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
      */
     protected $currentUser;
 
-
     /**
      * Default constructor
      *
@@ -38,7 +34,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
         $this->manager = $manager;
         $this->currentUser = $currentUser;
     }
-
 
     /**
      * {@inheritdoc}
@@ -56,7 +51,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
         return $item instanceof SiteAccessRecord;
     }
 
-
     /**
      * Builds the URI for a given operation on site accesses.
      *
@@ -71,7 +65,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
             . '/webmaster/' . $item->getUserId() . '/' . $op;
     }
 
-
     /**
      * Creates the action to delete a user from a site.
      *
@@ -84,7 +77,6 @@ abstract class AbstractWebmasterActionProvider implements ActionProviderInterfac
         $path = $this->buildWebmasterUri($item, 'delete');
         return new Action($this->t("Delete from this site"), $path, 'dialog', 'remove', 100, true, true);
     }
-
 
     /**
      * Creates the action to change the role of a user.

@@ -7,7 +7,6 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -260,12 +259,8 @@ class SiteStorage
             'home_nid',
             'favicon',
             'attributes',
+            'group_id',
         ];
-
-        // @todo this should be hardcoded in here
-        if (module_exists('ucms_group')) {
-            $eligible[] = 'group_id';
-        }
 
         if (null === $fields) {
             $fields = $eligible;
@@ -276,6 +271,15 @@ class SiteStorage
         $values = [];
         foreach ($fields as $field) {
             switch ($field) {
+
+                case 'template_id':
+                    // Avoid SQL constraints violation due to dangling 0 values
+                    if (!$site->template_id) {
+                        $values[$field] = null;
+                    } else {
+                        $values[$field] = $site->template_id;
+                    }
+                    break;
 
                 case 'attributes':
                     $attributes = $site->getAttributes();
@@ -292,6 +296,12 @@ class SiteStorage
         }
 
         $values['ts_changed'] = (new \DateTime())->format('Y-m-d H:i:s');
+
+        // Find default group and associate it to the site if it has no group
+        if (!$site->getGroupId()) {
+            $groupId = $this->db->query("SELECT id FROM {ucms_group} ORDER BY is_meta DESC, id ASC LIMIT 1")->fetchField();
+            $values['group_id'] = $site->group_id = $groupId;
+        }
 
         if ($site->id) {
             $this->dispatch($site, 'preSave', [], $userId);

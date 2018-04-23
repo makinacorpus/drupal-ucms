@@ -1,13 +1,11 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\Tests;
+namespace MakinaCorpus\Ucms\Site\Tests;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\Tests\NodeAccessTestTrait;
+use MakinaCorpus\Ucms\Site\Group;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
  * Please note that there is actually not much to test, since that the global
@@ -24,7 +22,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
     private $groups = [];
 
     /**
-     * @return GroupManager
+     * @return \MakinaCorpus\Ucms\Site\GroupManager
      */
     private function getGroupManager()
     {
@@ -50,7 +48,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         $this->contextualAccount = $this->createDrupalUser($permissionList, $siteMap);
 
         $instance = $this->getGroup($group);
-        $this->getGroupManager()->getAccess()->addMember($instance->getId(), $this->contextualAccount->id());
+        $this->getGroupManager()->addMember($instance->getId(), $this->contextualAccount->id());
 
         return $this;
     }
@@ -58,7 +56,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
     protected function tearDown()
     {
         foreach ($this->groups as $group) {
-            $this->getGroupManager()->getStorage()->delete($group);
+            $this->getGroupManager()->delete($group);
         }
 
         $this->eraseAll();
@@ -73,11 +71,6 @@ class GroupNodeAccessTest extends AbstractDrupalTest
     {
         parent::setUp();
 
-        if (!$this->moduleExists('ucms_group')) {
-            $this->markTestSkipped("You must enable the ucms_group module to run this test");
-            return;
-        }
-
         $this->sites['no_on']     = $this->createDrupalSite(SiteState::ON);
         $this->sites['no_off']    = $this->createDrupalSite(SiteState::OFF);
         $this->sites['on']        = $this->createDrupalSite(SiteState::ON);
@@ -90,11 +83,11 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         $groupB->setTitle('b');
         // Save groups
         $manager = $this->getGroupManager();
-        $manager->getStorage()->save($groupA);
-        $manager->getStorage()->save($groupB);
+        $manager->save($groupA);
+        $manager->save($groupB);
         // Set sites in groups
-        $manager->getAccess()->addSite($groupA->getId(), $this->sites['on']->getId(), true);
-        $manager->getAccess()->addSite($groupB->getId(), $this->sites['off']->getId(), true);
+        $manager->addSite($groupA->getId(), $this->sites['on']->getId(), true);
+        $manager->addSite($groupB->getId(), $this->sites['off']->getId(), true);
 
         // Create false set of nodes, a lot of them.
         $this->nodes['nogroup_site_on_published']   = $this->createDrupalNode(1, 'no_on', [], false, false, false);
@@ -120,14 +113,14 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         }
 
         $this->getSiteManager()->dropContext();
-        $this->getGroupManager()->getAccess()->resetCache();
+        $this->getGroupManager()->resetCache();
     }
 
     public function testPrettyMuchEverything()
     {
         // Group member, no site, should only site global published content
         $this
-            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], [])
+            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], [])
                 ->canSeeOnly([
                     'group_a_global_ghost',
                     'group_a_group_published',
@@ -138,7 +131,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
 
         // Group member a and b, no site, write on global, can see and write global
         $this
-            ->whenIAmMember('a', [Access::PERM_CONTENT_MANAGE_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], [])
+            ->whenIAmMember('a', [Access::PERM_CONTENT_MANAGE_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], [])
                 ->canSeeOnly([
                     'group_a_group_published',
                     //'group_b_group_published',
@@ -154,7 +147,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
 
         // Group member, webmaster, should see all site content and group content
         $this
-            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], ['on' => Access::ROLE_WEBMASTER])
+            ->whenIAmMember('a', [Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], ['on' => Access::ROLE_WEBMASTER])
                 ->canSeeOnly([
                     'group_a_site_on_published',
                     'group_a_group_published',
@@ -194,7 +187,7 @@ class GroupNodeAccessTest extends AbstractDrupalTest
         // No group, can see group content but no ghosts
         // This does not tests it fully, but it validates that normal rights are not changed
         $this
-            ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_GROUP], ['no_on' => Access::ROLE_WEBMASTER, 'no_off' => Access::ROLE_CONTRIB])
+            ->whenIAm([Access::PERM_CONTENT_VIEW_GLOBAL, Access::PERM_CONTENT_VIEW_CORPORATE], ['no_on' => Access::ROLE_WEBMASTER, 'no_off' => Access::ROLE_CONTRIB])
                 ->canSeeOnly([
                     'nogroup_site_on_published',
                     'nogroup_site_on_unpublished',

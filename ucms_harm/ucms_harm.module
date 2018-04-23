@@ -30,7 +30,7 @@ function ucms_harm_menu() {
       'title'             => "Group",
       'page callback'     => 'ucms_harm_admin_content_page_group',
       'page arguments'    => [$key],
-      'access arguments'  => [Access::PERM_CONTENT_VIEW_GROUP],
+      'access arguments'  => [Access::PERM_CONTENT_VIEW_CORPORATE],
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 100,
     ];

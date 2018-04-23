@@ -58,7 +58,7 @@ class NodeAddToSite extends FormBase
     public function buildForm(array $form, FormStateInterface $form_state, $type = null)
     {
         $user         = $this->currentUser();
-        $canDoGlobal  = $user->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL) || $user->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+        $canDoGlobal  = $user->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL) || $user->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE);
 
         if (!$type) {
             $this->logger('form')->critical("No content type provided.");

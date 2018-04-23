@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\Error;
+namespace MakinaCorpus\Ucms\Site\Error;
 
 class GroupMoveDisallowedException extends \LogicException
 {

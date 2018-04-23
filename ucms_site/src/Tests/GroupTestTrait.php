@@ -1,13 +1,9 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\Tests;
+namespace MakinaCorpus\Ucms\Site\Tests;
 
-use MakinaCorpus\Ucms\Group\EventDispatcher\GroupEvent;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupAccessService;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupStorage;
-
+use MakinaCorpus\Ucms\Site\GroupManager;
+use MakinaCorpus\Ucms\Site\EventDispatcher\GroupEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 trait GroupTestTrait
@@ -24,8 +20,6 @@ trait GroupTestTrait
     {
         $database   = $this->getDatabaseConnection();
         $dispatcher = new EventDispatcher();
-        $storage    = new GroupStorage($database, $dispatcher);
-        $access     = new GroupAccessService($database, $storage);
 
         $listener = function (GroupEvent $event) {
             $this->groups[] = $event->getGroup();
@@ -33,7 +27,7 @@ trait GroupTestTrait
         \Closure::bind($listener, $this);
         $dispatcher->addListener(GroupEvent::EVENT_CREATE, $listener);
 
-        return new GroupManager($database, $storage, $access);
+        return new GroupManager($database, $dispatcher);
     }
 
     /**
@@ -56,10 +50,10 @@ trait GroupTestTrait
     final protected function eraseGroupData()
     {
         if ($this->groups) {
-            $storage = $this->getGroupManager()->getStorage();
+            $groupManager = $this->getGroupManager();
 
             foreach ($this->groups as $group) {
-                $storage->delete($group);
+                $groupManager->delete($group);
             }
         }
     }
@@ -85,7 +79,7 @@ trait GroupTestTrait
      */
     final protected function assertUserInGroup($groupId, $userId)
     {
-        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_user} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_access} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
 
         $this->assertTrue($exists);
     }
@@ -95,7 +89,7 @@ trait GroupTestTrait
      */
     final protected function assertUserNotInGroup($groupId, $userId)
     {
-        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_user} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
+        $exists = (bool)$this->getDatabaseConnection()->query("SELECT 1 FROM {ucms_group_access} WHERE user_id = :u AND group_id = :g", [':u' => $userId, ':g' => $groupId])->fetchField();
 
         $this->assertFalse($exists);
     }

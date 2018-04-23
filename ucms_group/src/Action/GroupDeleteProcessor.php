@@ -4,10 +4,9 @@ namespace MakinaCorpus\Ucms\Group\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 
 class GroupDeleteProcessor extends AbstractActionProcessor
 {
@@ -46,14 +45,14 @@ class GroupDeleteProcessor extends AbstractActionProcessor
 
     public function appliesTo($item)
     {
-        return $item instanceof Group && $this->groupManager->getAccess()->userCanDelete($this->currentUser, $item);
+        return $item instanceof Group && $this->groupManager->userCanDelete($this->currentUser, $item);
     }
 
     public function processAll($items)
     {
-        /** @var \MakinaCorpus\Ucms\Group\Group $item */
+        /** @var \MakinaCorpus\Ucms\Site\Group $item */
         foreach ($items as $item) {
-            $this->groupManager->getStorage()->delete($item, $this->currentUser->id());
+            $this->groupManager->delete($item, $this->currentUser->id());
         }
 
         return $this->formatPlural(
@@ -65,12 +64,12 @@ class GroupDeleteProcessor extends AbstractActionProcessor
 
     public function getItemId($item)
     {
-        /** @var \MakinaCorpus\Ucms\Group\Group $item */
+        /** @var \MakinaCorpus\Ucms\Site\Group $item */
         return $item->getId();
     }
 
     public function loadItem($id)
     {
-        return $this->groupManager->getStorage()->findOne($id);
+        return $this->groupManager->findOne($id);
     }
 }

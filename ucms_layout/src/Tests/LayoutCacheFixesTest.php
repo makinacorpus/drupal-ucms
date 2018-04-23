@@ -6,6 +6,7 @@ use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\Tests\SiteTestTrait;
+use Symfony\Component\HttpFoundation\Request;
 
 class LayoutCacheFixesTest extends AbstractDrupalTest
 {
@@ -18,6 +19,10 @@ class LayoutCacheFixesTest extends AbstractDrupalTest
      */
     public function testCachedResultAreWipedOutAtRead()
     {
+        if (!$this->moduleExists('ucms_layout')) {
+            $this->markTestSkipped("'ucms_layout' module is disabled");
+        }
+
         // Create one site, which will contain one node, the future reference
         $site1 = $this->createDrupalSite();
         $bugCacheNode = $this->createDrupalNode('news', $site1, ['status' => 1]);
@@ -59,6 +64,10 @@ class LayoutCacheFixesTest extends AbstractDrupalTest
      */
     public function testClonedLayoutGetsTheRightNodeId()
     {
+        if (!$this->moduleExists('ucms_layout')) {
+            $this->markTestSkipped("'ucms_layout' module is disabled");
+        }
+
         // Create one site, which will contain one node, the future reference
         $site1 = $this->createDrupalSite();
         $bugNode = $this->createDrupalNode('news', $site1, ['status' => 1]);
@@ -85,7 +94,7 @@ class LayoutCacheFixesTest extends AbstractDrupalTest
         // Clone the node within the site, which will run all associated events
         // etc, which will actually change the layout data in database in order
         // to reference the new node (the clone)
-        $this->getSiteManager()->setContext($site2);
+        $this->getSiteManager()->setContext($site2, new Request());
         $clonedNode = $this->getNodeManager()->createAndSaveClone($bugNode);
 
         // Cloned layout are not statically cached, so reloading it is enough

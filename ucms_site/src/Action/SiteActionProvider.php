@@ -57,7 +57,7 @@ class SiteActionProvider implements ActionProviderInterface
             if ($access->userCanManage($account, $item)) {
                 $ret[] = new Action($this->t("Edit"), 'admin/dashboard/site/' . $item->id . '/edit', null, 'pencil', -2, false, true);
             }
-            if ($account->hasPermission(Access::PERM_SITE_MANGE_HOSTNAME)) {
+            if ($account->hasPermission(Access::PERM_SITE_MANAGE_HOSTNAME)) {
                 $ret[] = new Action($this->t("Change hostname"), 'admin/dashboard/site/' . $item->id . '/change-hostname', null, 'fire', 0, false, true);
             }
             $ret[] = new Action($this->t("History"), 'admin/dashboard/site/' . $item->id . '/log', null, 'list-alt', -1, false);

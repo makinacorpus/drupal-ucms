@@ -5,8 +5,8 @@ namespace MakinaCorpus\Ucms\Group\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\Group;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -143,7 +143,7 @@ class GroupEdit extends FormBase
 
         $isNew = !$group->getId();
 
-        $this->groupManager->getStorage()->save($group, ['title', 'is_ghost', 'attributes']);
+        $this->groupManager->save($group, ['title', 'is_ghost', 'attributes']);
         if ($isNew) {
             drupal_set_message($this->t("Group %title has been created", ['%title' => $group->getTitle()]));
         } else {

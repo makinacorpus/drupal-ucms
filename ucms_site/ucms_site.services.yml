@@ -18,6 +18,12 @@ services:
     class: MakinaCorpus\Ucms\Site\SiteManager
     arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher"]
 
+  # Group manager
+  ucms_group.manager:
+    public: true
+    class: MakinaCorpus\Ucms\Site\GroupManager
+    arguments: ["@database", "@event_dispatcher"]
+
   # Node access helper
   ucms_site.node_access_helper:
     public: true
@@ -93,7 +99,7 @@ services:
   ucms_site.node_access.subscriber:
     public: true
     class: MakinaCorpus\Ucms\Site\NodeAccess\NodeAccessEventSubscriber
-    arguments: ["@ucms_site.manager", "@sf_dic.node_access.subscriber"]
+    arguments: ["@ucms_site.manager", "@ucms_group.manager", "@sf_dic.node_access.subscriber"]
     tags: [{ name: event_subscriber }]
 
   ucms_site.admin_subscriber:

@@ -13,7 +13,6 @@ class WebmasterTest extends AbstractDrupalTest
 
     public function testNodeIndexerChain()
     {
-        /* @var $manager SiteManager */
         $manager  = $this->getDrupalContainer()->get('ucms_site.manager');
         $access   = $manager->getAccess();
 

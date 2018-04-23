@@ -96,7 +96,7 @@ final class NodeAccessService
         if ($node->is_global && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL)) {
             return true;
         }
-        if ($node->is_group && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)) {
+        if ($node->is_group && $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)) {
             return true;
         }
         if (!empty($node->site_id) && ($userSites = $this->manager->loadWebmasterSites($account))) {
@@ -146,7 +146,7 @@ final class NodeAccessService
      */
     public function userCanPromoteToGroup(AccountInterface $account, NodeInterface $node)
     {
-        return $node->access(Access::OP_VIEW, $account) && ($node->is_group || $node->is_global) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+        return $node->access(Access::OP_VIEW, $account) && ($node->is_group || $node->is_global) && $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE);
     }
 
     /**
@@ -252,7 +252,7 @@ final class NodeAccessService
         }
 
         if ($node->is_group) {
-            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP);
+            return $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE);
         }
 
         if ($node->is_global) {

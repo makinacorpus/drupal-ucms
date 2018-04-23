@@ -2,15 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Contrib\NodeAccess;
 
-use MakinaCorpus\Ucms\Contrib\TypeHandler;
-
-use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -89,7 +85,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 // long as content is editorial (text and media)
                 $canManage =
                     $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL) ||
-                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_GROUP)
+                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)
                 ;
 
                 if ($canManage && in_array($type, $this->typeHandler->getEditorialTypes())) {

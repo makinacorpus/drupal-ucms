@@ -4,9 +4,7 @@ namespace MakinaCorpus\Ucms\Site\Admin;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class SiteManagementForm extends FormBase

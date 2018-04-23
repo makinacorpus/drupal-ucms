@@ -129,6 +129,12 @@ function ucms_site_schema() {
         'not null'    => false,
         'default'     => null,
       ],
+      'group_id' => [
+        'description' => "Group identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
     ],
     'foreign keys' => [
       'uid' => [
@@ -145,6 +151,10 @@ function ucms_site_schema() {
         'table'   => 'ucms_site',
         'columns' => ['template_id' => 'id'],
         'delete'  => 'set null',
+      ],
+      'group_id' => [
+        'table'   => 'ucms_group',
+        'columns' => ['group_id' => 'id'],
       ],
     ],
     'primary key' => ['id'],
@@ -217,6 +227,102 @@ function ucms_site_schema() {
       ],
     ],
     'primary key' => ['site_id', 'nid'],
+  ];
+
+  $schema['ucms_group'] = [
+    'description' => 'Group definitions',
+    'fields' => [
+      'id' => [
+        'description' => "Group identifier",
+        'type'        => 'serial',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'title' => [
+        'description' => 'Group title',
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => true,
+        'default'     => '',
+      ],
+      'is_ghost' => [
+        'description' => "Default behavior for content visibility within this group",
+        'type'        => 'int',
+        'size'        => 'tiny',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 1,
+      ],
+      'is_meta' => [
+        'description' => "Indicates which is the platform level default group, only one should have this to 1",
+        'type'        => 'int',
+        'size'        => 'tiny',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+      'ts_created' => [
+        'decription'  => "Creation date",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => false,
+      ],
+      'ts_changed' => [
+        'decription'  => "Last updated time (state changed)",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => false,
+      ],
+      'attributes' => [
+        'description' => "Arbitrary site attributes, that other modules may use, this module will ignore it",
+        'type'        => 'text',
+        'not null'    => false,
+        'default'     => null,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  $schema['ucms_group_access'] = [
+    'description' => 'Group users mapping',
+    'fields' => [
+      'group_id' => [
+        'description' => "Group identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'user_id' => [
+        'description' => "User identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'role' => [
+        'description' => "Role in group, will be bitflags, nothing is simple user",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+    ],
+    'foreign keys' => [
+      'group_id' => [
+        'table'   => 'ucms_group',
+        'columns' => ['group_id' => 'id'],
+        'delete'  => 'cascade',
+      ],
+      'user_id' => [
+        'table'   => 'users',
+        'columns' => ['user_id' => 'uid'],
+        'delete'  => 'cascade',
+      ],
+    ],
+    'primary key' => ['group_id', 'user_id'],
   ];
 
   return $schema;
@@ -331,6 +437,21 @@ function ucms_site_schema_alter(&$schema) {
     ];
     $schema['node']['fields']['site_id'] = [
       'description' => "Original site identifier this node was created into",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ];
+    $schema['node']['fields']['is_ghost'] = [
+      'description' => "Is this node visible by non-members of the group it is attached to",
+      'type'        => 'int',
+      'size'        => 'tiny',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 1,
+    ];
+    $schema['node']['fields']['group_id'] = [
+      'description' => "Group identifier",
       'type'        => 'int',
       'unsigned'    => true,
       'not null'    => false,
@@ -484,9 +605,40 @@ function ucms_site_install_schema_fix() {
     ]);
   }
 
+    // Adds {node}.is_ghost column.
+  if (db_table_exists('node') && !db_field_exists('node', 'is_ghost')) {
+    db_add_field('node', 'is_ghost', [
+      'description' => "Is this node visible by non-members of the group it is attached to",
+      'type'        => 'int',
+      'size'        => 'tiny',
+      'unsigned'    => true,
+      'not null'    => true,
+      'default'     => 1,
+    ]);
+  }
+  // Adds {node}.group_id column.
+  if (db_table_exists('node') && !db_field_exists('node', 'group_id')) {
+    db_add_field('node', 'group_id', [
+      'description' => "Group identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+  if (db_table_exists('node') && !db_constraint_exists('node', 'fk', 'node_group')) {
+    db_constraint_add('node', 'fk', 'node_group', [
+      'table'   => 'ucms_group',
+      'columns' => ['group_id' => 'id'],
+      'delete'  => 'set null'
+    ]);
+  }
+
+
   // Add a few constraints.
   // Hopefully, this syntax should work on both PostgreSQL and MySQL although
   // this is pure coincidence, this is great for us.
+  // @todo change this to make use of plusql module.
   $constraints = [
     'ucms_site_access' => [
       'fk_ucms_site_access_site' => "ALTER TABLE {ucms_site_access} ADD CONSTRAINT {fk_ucms_site_access_site} FOREIGN KEY (site_id) REFERENCES {ucms_site} (id) ON DELETE CASCADE",
@@ -591,6 +743,8 @@ function ucms_site_module_installed($modules) {
  */
 function ucms_site_install() {
   ucms_site_install_schema_fix();
+  ucms_site_install_default_group();
+  variable_set('node_access_needs_rebuild', 1);
 }
 
 /**
@@ -600,6 +754,36 @@ function ucms_site_uninstall() {
   ucms_site_uninstall_schema_fix();
   variable_del('ucms_site_node_reference_all');
   variable_del('ucms_site_node_reference_whitelist');
+}
+
+/**
+ * Creates the default plateform-wide group.
+ */
+function ucms_site_install_default_group() {
+  ucms_site_install_schema_fix();
+
+  $defaultGroupId = db_query('SELECT id FROM {ucms_group} WHERE is_meta = 1')->fetchField();
+
+  if (!$defaultGroupId) {
+    $defaultGroupId = db_insert('ucms_group')->fields([
+      'title'      => "Default group",
+      // This group cannot be deleted
+      'is_meta'    => 1,
+      // Per default, already existing content will no be visible
+      'is_ghost'   => 1,
+      'ts_created' => (new DateTime())->format('Y-m-d H:i:s'),
+      'ts_changed' => (new DateTime())->format('Y-m-d H:i:s'),
+    ])->execute();
+  }
+
+  // Those two must be kept out of the if () because some existing platforms
+  // already have a default group, but may still have sites which don't belong
+  // to any groups.
+
+  // Set all sites with no groups into this group
+  db_query("UPDATE {ucms_site} SET group_id = ? WHERE group_id IS NULL", [$defaultGroupId]);
+  // Give all nodes without any group to this group
+  db_query("UPDATE {node} SET group_id = ? WHERE group_id IS NULL", [$defaultGroupId]);
 }
 
 /**
@@ -797,7 +981,6 @@ function ucms_site_update_7022() {
   ucms_site_install_schema_fix();
 }
 
-
 /**
  * Adds {ucms_site}.favicon column.
  */
@@ -837,4 +1020,121 @@ function ucms_site_update_7023() {
  */
 function ucms_site_update_7024() {
   variable_set('ucms_site_node_reference_all', false);
+}
+
+/**
+ * 'ucms_group' schema has been moved into this module.
+ */
+function ucms_site_update_7025() {
+
+  // Create {ucms_group} table.
+  if (!db_table_exists('ucms_group')) {
+    db_create_table('ucms_group', drupal_get_schema_unprocessed('ucms_site', 'ucms_group'));
+  }
+
+  // Create {ucms_group_access} table.
+  if (!db_table_exists('ucms_group_access')) {
+    db_create_table('ucms_group_access', drupal_get_schema_unprocessed('ucms_site', 'ucms_group_access'));
+
+    // Migrate data from old schema.
+    if (db_table_exists('ucms_group_user')) {
+      db_query("INSERT INTO {ucms_group_access} (group_id, user_id) SELECT group_id, user_id FROM {ucms_group_user}");
+      db_drop_table('ucms_group_user');
+    }
+  }
+
+  // Enforce missing {ucms_site}.group_id field.
+  if (db_table_exists('ucms_site') && !db_field_exists('ucms_site', 'group_id')) {
+    db_add_field('ucms_site', 'group_id', [
+      'description' => "Group identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+
+  db_change_field('ucms_site', 'uid', 'uid', [
+    'description' => "Account owner",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => false,
+    'default'     => null,
+  ]);
+
+  // Because we do add some foreign key constraints, we need to evacuate some
+  // stalled data from database.
+  $driver = \Database::getConnection()->driver();
+  switch ($driver) {
+
+    case 'pgsql':
+      db_query("UPDATE {ucms_site} SET template_id = NULL WHERE NOT EXISTS(SELECT 1 FROM {ucms_site} WHERE id = template_id)");
+      break;
+
+    case 'mysql':
+      // God I hate MySQL.
+      db_query("CREATE TEMPORARY TABLE {ucms_site_template} AS SELECT id FROM {ucms_site} WHERE template_id NOT IN (SELECT id FROM {ucms_site})");
+      db_query("UPDATE {ucms_site} SET template_id = NULL WHERE id IN (SELECT id FROM {ucms_site_template})");
+      break;
+
+    default:
+      throw new \Exception(sprintf("this update is unsupported for driver '%s'", $driver));
+      break;
+  }
+
+  // Add all missing database constraints.
+  db_constraint_fix('ucms_site');
+}
+
+/**
+ * Creates the default plateform-wide group.
+ */
+function ucms_site_update_7026() {
+
+  ucms_site_install_default_group();
+
+  // Modify the {node}.is_ghost to be 1 per default
+  db_change_field('node', 'is_ghost', 'is_ghost', [
+    'description' => "Is this node visible by non-members of the group it is attached to",
+    'type'        => 'int',
+    'size'        => 'tiny',
+    'unsigned'    => true,
+    'not null'    => true,
+    'default'     => 1,
+  ]);
+
+  // Update existing content to match default
+  db_query("UPDATE {node} SET is_ghost = 1");
+
+  // We need rebuild
+  variable_set('node_access_needs_rebuild', 1);
+
+  // Fixes the {ucms_site} schema.
+  db_change_field('ucms_site', 'group_id', 'group_id', [
+    'description' => "Group identifier",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => true,
+  ]);
+}
+
+/**
+ * There is no reason why the uid column on site is not nullable.
+ */
+function ucms_site_update_7027() {
+  db_change_field('ucms_site', 'uid', 'uid', [
+    'description' => "Account owner",
+    'type'        => 'int',
+    'unsigned'    => true,
+    'not null'    => false,
+    'default'     => null,
+  ]);
+}
+
+/**
+ * There is no Drupal role associated to site roles anymore.
+ */
+function ucms_site_update_7028() {
+  drupal_set_message(t("Drupal role to site role mapping has been removed, you must restore the site transition matrix manually."));
+  variable_del('ucms_site_relative_roles');
 }

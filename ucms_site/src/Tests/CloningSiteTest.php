@@ -2,12 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Site\Tests;
 
-use Drupal\node\Node;
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
 use MakinaCorpus\Ucms\Layout\Item;
 use MakinaCorpus\Ucms\Layout\Layout;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 class CloningSiteTest extends AbstractDrupalTest

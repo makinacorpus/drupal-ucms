@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group;
+namespace MakinaCorpus\Ucms\Site;
 
 use MakinaCorpus\Ucms\Site\Structure\PartialUserInterface;
 use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
@@ -10,7 +10,7 @@ use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
  *
  * This object is immutable
  */
-class GroupMember implements GroupAwareInterface, PartialUserInterface
+class GroupMember implements PartialUserInterface
 {
     use PartialUserTrait;
 
@@ -19,13 +19,15 @@ class GroupMember implements GroupAwareInterface, PartialUserInterface
      *
      * @param int $groupId
      * @param int $userId
+     * @param int $role
      */
-    static public function create($groupId, $userId)
+    static public function create($groupId, $userId, $role)
     {
         $instance = new self();
 
-        $instance->group_id = $groupId;
-        $instance->user_id = $userId;
+        $instance->group_id = (int)$groupId;
+        $instance->user_id = (int)$userId;
+        $instance->role = (int)$role;
 
         return $instance;
     }
@@ -41,6 +43,11 @@ class GroupMember implements GroupAwareInterface, PartialUserInterface
     private $user_id;
 
     /**
+     * @var int
+     */
+    private $role;
+
+    /**
      * {@inheritdoc}
      */
     public function getUserId()
@@ -54,5 +61,23 @@ class GroupMember implements GroupAwareInterface, PartialUserInterface
     public function getGroupId()
     {
         return (int)$this->group_id;
+    }
+
+    /**
+     * Get roles bitmask
+     *
+     * @return int
+     */
+    public function getRoleMask()
+    {
+        return (int)$this->role;
+    }
+
+    /**
+     * Is user group admin
+     */
+    public function isGroupAdmin()
+    {
+        return $this->role & Access::ROLE_GROUP_ADMIN;
     }
 }

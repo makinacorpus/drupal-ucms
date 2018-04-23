@@ -197,8 +197,6 @@ class Site
     /**
      * Get group identifier
      *
-     * If the 'ucms_group' module is not enabled, this will always be null
-     *
      * @return int
      */
     public function getGroupId()

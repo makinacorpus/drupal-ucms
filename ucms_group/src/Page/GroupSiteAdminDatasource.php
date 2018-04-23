@@ -9,8 +9,8 @@ use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupSite;
+use MakinaCorpus\Ucms\Site\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupSite;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -141,7 +141,7 @@ class GroupSiteAdminDatasource extends AbstractDatasource
         // Preload all sites, we will need it in display
         $siteIdList = array_map(function (GroupSite $item) { return $item->getSiteId(); }, $ret);
         $sites = $this->siteManager->getStorage()->loadAll($siteIdList, false);
-        /** @var \MakinaCorpus\Ucms\Group\GroupSite $record */
+        /** @var \MakinaCorpus\Ucms\Site\GroupSite $record */
         foreach ($ret as $record) {
             $siteId = $record->getSiteId();
             if (isset($sites[$siteId])) {

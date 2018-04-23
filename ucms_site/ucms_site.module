@@ -262,7 +262,7 @@ function ucms_site_permission() {
     Access::PERM_CONTENT_MANAGE_GLOBAL => [
       'title' => t("Manage global content"),
     ],
-    Access::PERM_CONTENT_MANAGE_GROUP => [
+    Access::PERM_CONTENT_MANAGE_CORPORATE => [
       'title' => t("Manage group content"),
     ],
     Access::PERM_CONTENT_MANAGE_STARRED => [
@@ -283,13 +283,13 @@ function ucms_site_permission() {
     Access::PERM_CONTENT_VIEW_GLOBAL => [
       'title' => t("View global published content"),
     ],
-    Access::PERM_CONTENT_VIEW_GROUP => [
+    Access::PERM_CONTENT_VIEW_CORPORATE => [
       'title' => t("View group published content"),
     ],
     Access::PERM_CONTENT_VIEW_OTHER => [
       'title' => t("View other site content"),
     ],
-    Access::PERM_SITE_MANGE_HOSTNAME => [
+    Access::PERM_SITE_MANAGE_HOSTNAME => [
       'title' => t("Site change hostnames"),
       'description' => t("This permission bypasses everything that can be bypassed, for technical administrators only"),
     ],
@@ -309,11 +309,28 @@ function ucms_site_permission() {
     Access::PERM_SITE_VIEW_ALL => [
       'title' => t("View all sites no matter their state is"),
     ],
+    Access::PERM_GROUP_DASHBOARD_ACCESS => [
+      'title' => t("Access to group dashboard"),
+    ],
+    Access::PERM_GROUP_MANAGE_ALL => [
+      'title' => t("Manage all groups"),
+    ],
+    Access::PERM_GROUP_MANAGE_ORPHAN => [
+      'title' => t("Manage orphan content"),
+    ],
+    Access::PERM_USER_MANAGE_ALL => [
+      'title' => t("Manage all users"),
+    ],
+    Access::PERM_USER_VIEW_ALL => [
+      'title' => t("View all users"),
+    ],
   ];
 }
 
 /**
  * Is the given path allowed on sites.
+ *
+ * @param string $path
  *
  * @return $path
  */
@@ -1129,6 +1146,9 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     return;
   }
 
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager */
+  $groupManager = \Drupal::service('ucms_group.manager');
+  $accessList   = $groupManager->getUserGroups($account);
   $siteAlias    = null;
   $accessAlias  = null;
 
@@ -1149,15 +1169,105 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     return;
   }
 
-  if (!$accessAlias) {
-    $query->join(
-      'ucms_site_access',
-      'access_sa',
-      "access_sa.site_id = " . $siteAlias . ".id AND access_sa.uid = :access_sa_uid",
-      [':access_sa_uid' => $account->id()]
-    );
+  // Apply group conditions, but do not apply anything if the user is not
+  // member of any groups: it means that the user is a global administrator.
+  if ($accessList) {
+    if (!$siteAlias) {
+      $siteAlias = $query->join(
+        'ucms_site',
+        'access_site',
+        "access_site.id = " . $accessAlias . ".site_id"
+      );
+    }
+    $groupList = [];
+    foreach ($accessList as $access) {
+      $groupList[] = $access->getGroupId();
+    }
+    $query->condition($siteAlias . '.group_id', $groupList);
+  }
+
+  // Apply normal user permissions if the current user cannot see all sites
+  if (!$account->hasPermission(Access::PERM_SITE_MANAGE_ALL) && !$account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
+    if (!$accessAlias) {
+      $query->join(
+        'ucms_site_access',
+        'access_sa',
+        "access_sa.site_id = " . $siteAlias . ".id AND access_sa.uid = :access_sa_uid",
+        [':access_sa_uid' => $account->id()]
+      );
+    } else {
+      $query->condition($accessAlias . '.uid', $account->id());
+    }
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Implement site visibility access control for the admin UI, this is the only
+ * query alteration for business purpose this module will ever do.
+ */
+function ucms_site_query_ucms_user_access_alter(QueryAlterableInterface $query) {
+
+  if (!$query instanceof SelectQueryInterface) {
+    return;
+  }
+  if (drupal_is_cli()) {
+    // In theory, we should not have to do this, but it happens that during
+    // drush upgrade, which runs all update functions altogether one by one,
+    // it may happen that this module gets enable during the same run, and
+    // that the 'sf_dic' container, even if correctly rebuilt, may not be
+    // used because older object references are being used by the code (old
+    // services still referenced into some other being in use).
+    return;
+  }
+
+  /* @var $account AccountInterface */
+  if (!$account = $query->getMetaData('account')) {
+    $account = \Drupal::currentUser();
+  }
+
+  if ($account->hasPermission(Access::PERM_USER_MANAGE_ALL) || $account->hasPermission(Access::PERM_USER_VIEW_ALL)) {
+    return;
+  }
+
+  $userAlias = null;
+  $userGroupAlias = null;
+
+  // If no base table is specified explicitly, search for one.
+  foreach ($query->getTables() as $alias => $table_info) {
+    if (!($table_info instanceof SelectQueryInterface)) {
+      // If the node table is in the query, it wins immediately.
+      if ('users' === $table_info['table']) {
+        $userAlias = $alias;
+      }
+      if ('ucms_group_access' === $table_info['table']) {
+        $userGroupAlias = $alias;
+      }
+    }
+  }
+
+  if (!$userAlias) {
+    return;
+  }
+
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager */
+  $groupManager = \Drupal::service('ucms_group.manager');
+  $accessList   = $groupManager->getUserGroups($account);
+
+  // Group admins can view users from their own groups, at least in listings.
+  // But more than that, can ONLY see users from their groups.
+  if ($accessList) {
+    $groupList = [];
+    foreach ($accessList as $access) {
+      $groupList[] = $access->getGroupId();
+    }
+    if (!$userGroupAlias) {
+      $userGroupAlias = $query->join('ucms_group_access', 'uga', "uga.user_id = " . $userAlias . '.uid');
+    }
+    $query->condition($userGroupAlias . '.group_id', $groupList);
   } else {
-    $query->condition($accessAlias . '.uid', $account->id());
+    $query->where("1 = 0"); // You fool.
   }
 }
 

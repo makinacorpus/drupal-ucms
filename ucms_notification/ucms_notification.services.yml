@@ -2,7 +2,7 @@ services:
 
   ucms_notification.service:
     class: MakinaCorpus\Ucms\Notification\NotificationService
-    arguments: ["@apb.notification", "@entity.manager", "@?ucms_group.manager"]
+    arguments: ["@apb.notification", "@entity.manager", "@ucms_group.manager"]
 
   # Site notifications
   ucms_notification.site_request:
@@ -155,7 +155,7 @@ services:
   ucms_notification.notification_context_event_subscriber:
     public: true
     class: MakinaCorpus\Ucms\Notification\EventDispatcher\NotificationContextEventSubscriber
-    arguments: ["@entity.manager", "@ucms_site.manager", "@?ucms_group.manager"]
+    arguments: ["@entity.manager", "@ucms_site.manager", "@ucms_group.manager"]
     tags: [{ name: event_subscriber }]
 
   # Extranet member event subscriber

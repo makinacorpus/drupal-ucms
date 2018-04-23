@@ -52,9 +52,8 @@ class SiteEventSubscriber implements EventSubscriberInterface
         }
 
         // This is unefficient, I am sorry...
-        $accessManager = $this->groupManager->getAccess();
-        foreach ($accessManager->getUserGroups($account) as $group) {
-            foreach ($accessManager->getUserGroups($target) as $targetGroup) {
+        foreach ($this->groupManager->getUserGroups($account) as $group) {
+            foreach ($this->groupManager->getUserGroups($target) as $targetGroup) {
                 if ($group->getGroupId() == $targetGroup->getGroupId()) {
                     return $event->allow();
                 }
@@ -80,7 +79,7 @@ class SiteEventSubscriber implements EventSubscriberInterface
         }
 
         if (!empty($site->group_id)) {
-            foreach ($this->groupManager->getAccess()->getUserGroups($account) as $group) {
+            foreach ($this->groupManager->getUserGroups($account) as $group) {
                 if ($group->getGroupId() == $site->group_id) {
                     return $event->allow();
                 }

@@ -5,7 +5,6 @@ namespace MakinaCorpus\Ucms\Site\Action;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\NodeAccessService;

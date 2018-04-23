@@ -4,11 +4,10 @@ namespace MakinaCorpus\Ucms\Notification;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;
-
 use MakinaCorpus\APubSub\Error\ChannelDoesNotExistException;
 use MakinaCorpus\APubSub\Field;
 use MakinaCorpus\APubSub\Notification\NotificationService as BaseNotificationService;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupManager;
 
 /**
  * Base helper methods for handling notifications
@@ -94,7 +93,7 @@ class NotificationService
             if ($this->groupManager) {
                 // @todo We MUST handle a role within the group instead of using
                 //   global permissions, this must be fixed in a near future.
-                $accessList = $this->groupManager->getAccess()->getUserGroups($account);
+                $accessList = $this->groupManager->getUserGroups($account);
                 if ($accessList) {
                     // Add group sites to user, but do not add anything else, when
                     // using the platform with groups, user with no groups are not

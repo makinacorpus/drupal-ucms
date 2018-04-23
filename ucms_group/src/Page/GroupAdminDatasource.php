@@ -3,12 +3,11 @@
 namespace MakinaCorpus\Ucms\Group\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupManager;
 
 class GroupAdminDatasource extends AbstractDatasource
 {
@@ -71,7 +70,7 @@ class GroupAdminDatasource extends AbstractDatasource
         ;
 
         if (!empty($query['uid'])) {
-            $q->join('ucms_group_user', 'gu', "gu.group_id = g.id");
+            $q->join('ucms_group_access', 'gu', "gu.group_id = g.id");
             $q->condition('gu.user_id', $query['uid']);
         }
         if (!empty($query['site'])) {
@@ -97,7 +96,7 @@ class GroupAdminDatasource extends AbstractDatasource
             ->fetchCol()
         ;
 
-        return $this->groupManager->getStorage()->loadAll($idList);
+        return $this->groupManager->loadAll($idList);
     }
 
     /**

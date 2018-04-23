@@ -27,6 +27,8 @@ class SeoBugfixesTest extends AbstractDrupalTest
      */
     public function testMenuRebuildAvoidsPrimaryKeyViolation()
     {
+        $this->markTestSkipped("Please rewrite me!");
+
         // First, create a duplicate alias, we need a node, and check the alias exists.
         $site = $this->createDrupalSite(SiteState::ON, null, 'some_name');
         $node = $this->createNodeWithAlias('some_alias', 'article', $site);

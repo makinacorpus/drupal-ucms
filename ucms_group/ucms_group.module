@@ -7,32 +7,10 @@
  * content visibility throught the admin will be altered to match the groups.
  */
 
-use MakinaCorpus\Ucms\Group\Controller\DashboardController;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupAccess;
+use MakinaCorpus\Ucms\Site\Group;
 use MakinaCorpus\Ucms\Group\Controller\AutocompleteController;
-use MakinaCorpus\Ucms\Site\Access as SiteAccess;
-use MakinaCorpus\Ucms\User\UserAccess;
-
-/**
- * Implements hook_permission().
- */
-function ucms_group_permission() {
-  return [
-    GroupAccess::PERM_DASHBOARD_ACCESS => [
-      'title' => t("Access to group dashboard"),
-    ],
-    GroupAccess::PERM_MANAGE_ALL => [
-      'title' => t("Manage all groups"),
-    ],
-    GroupAccess::PERM_MANAGE_ORPHAN => [
-      'title' => t("Manage orphan content"),
-    ],
-    GroupAccess::PERM_VIEW_ALL => [
-      'title' => t("View all groups"),
-    ],
-  ];
-}
+use MakinaCorpus\Ucms\Group\Controller\DashboardController;
+use MakinaCorpus\Ucms\Site\Access;
 
 /**
  * Implements hook_menu().
@@ -45,7 +23,7 @@ function ucms_group_menu() {
     'title'             => "Groups",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::viewMineAction'],
-    'access arguments'  => [GroupAccess::PERM_DASHBOARD_ACCESS],
+    'access arguments'  => [Access::PERM_GROUP_DASHBOARD_ACCESS],
     'type'              => MENU_NORMAL_ITEM,
   ];
   $items['admin/dashboard/group/mine'] = [
@@ -57,14 +35,14 @@ function ucms_group_menu() {
     'title'             => "All groups",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::viewAllAction'],
-    'access arguments'  => [GroupAccess::PERM_VIEW_ALL],
+    'access arguments'  => ['access administration pages'],
     'type'              => MENU_LOCAL_TASK,
   ];
   $items['admin/dashboard/group/add'] = [
     'title'             => "Add group",
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [DashboardController::class . '::addAction'],
-    'access arguments'  => [GroupAccess::PERM_MANAGE_ALL],
+    'access arguments'  => [Access::PERM_GROUP_MANAGE_ALL],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
@@ -153,7 +131,7 @@ function ucms_group_menu() {
  */
 function ucms_group_menu_load($id) {
   try {
-    return \Drupal::service('ucms_group.manager')->getStorage()->findOne($id);
+    return \Drupal::service('ucms_group.manager')->findOne($id);
   } catch (\Exception $e) {}
   return false;
 }
@@ -165,9 +143,9 @@ function ucms_group_menu_load($id) {
  */
 function ucms_group_menu_access_view(Group $group) {
   $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $manager */
   $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanView($account, $group);
+  return $manager->userCanView($account, $group);
 }
 
 /**
@@ -177,9 +155,9 @@ function ucms_group_menu_access_view(Group $group) {
  */
 function ucms_group_menu_access_manage(Group $group) {
   $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $manager */
   $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanManageAll($account);
+  return $manager->userCanManageAll($account);
 }
 
 /**
@@ -189,9 +167,9 @@ function ucms_group_menu_access_manage(Group $group) {
  */
 function ucms_group_menu_access_manage_members(Group $group) {
   $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $manager */
   $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanManageMembers($account, $group);
+  return $manager->userCanManageMembers($account, $group);
 }
 
 /**
@@ -201,9 +179,9 @@ function ucms_group_menu_access_manage_members(Group $group) {
  */
 function ucms_group_menu_access_edit(Group $group) {
   $account = \Drupal::currentUser();
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $manager */
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $manager */
   $manager = \Drupal::service('ucms_group.manager');
-  return $manager->getAccess()->userCanEdit($account, $group);
+  return $manager->userCanEdit($account, $group);
 }
 
 /**
@@ -237,139 +215,4 @@ function ucms_group_form_node_form_alter(&$form, &$form_state) {
       '#description'    => t("If you check this option, this content will be invisible outside of this group, except in sites it's being displayed into."),
     ];
   }
-}
-
-/**
- * Implements hook_query_TAG_alter().
- *
- * Only allow users to see other users from group they're in.
- */
-function ucms_group_query_ucms_user_access_alter(QueryAlterableInterface $query) {
-
-  if (!$query instanceof SelectQueryInterface) {
-    return;
-  }
-  if (drupal_is_cli()) {
-    // See comment in ucms_group_query_ucms_site_access_alter().
-    return;
-  }
-
-  /** @var \Drupal\Core\Session\AccountInterface $account */
-  if (!$account = $query->getMetaData('account')) {
-    $account = \Drupal::currentUser();
-  }
-
-    // God mode.
-  if ($account->hasPermission(UserAccess::PERM_USER_GOD)) {
-    return;
-  }
-
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
-  $groupManager = \Drupal::service('ucms_group.manager');
-  $accessList   = $groupManager->getAccess()->getUserGroups($account);
-
-  // Normal user rights coming in!
-  if (!$accessList) {
-    $query->condition("1 = 0");
-    return;
-  }
-
-  $userAlias = null;
-
-  // If no base table is specified explicitly, search for one.
-  foreach ($query->getTables() as $alias => $table_info) {
-    if (!($table_info instanceof SelectQueryInterface)) {
-      // If the node table is in the query, it wins immediately.
-      if ('users' === $table_info['table']) {
-        $userAlias = $alias;
-      }
-    }
-  }
-
-  if (!$userAlias) {
-    return;
-  }
-
-  $query->join('ucms_group_user', '_augu', "_augu.user_id = " . $userAlias . ".uid");
-
-  $groupList = [];
-  foreach ($accessList as $access) {
-    $groupList[] = $access->getGroupId();
-  }
-
-  $query->condition('_augu.group_id', $groupList);
-}
-
-/**
- * Implements hook_query_TAG_alter().
- */
-function ucms_group_query_ucms_site_template_access_alter(QueryAlterableInterface $query) {
-  ucms_group_query_ucms_site_access_alter($query);
-}
-
-/**
- * Implements hook_query_TAG_alter().
- *
- * Implement site visibility access control for the admin UI, this is the only
- * query alteration for business purpose this module will ever do.
- *
- * Its alter-ego for unitary actions is implemented using the SiteAccessEvent
- * in \MakinaCorpus\Ucms\Group\EventDispatcher\SiteEventSubscriber.
- */
-function ucms_group_query_ucms_site_access_alter(QueryAlterableInterface $query) {
-
-  if (!$query instanceof SelectQueryInterface) {
-    return;
-  }
-  if (drupal_is_cli()) {
-    // In theory, we should not have to do this, but it happens that during
-    // drush upgrade, which runs all update functions altogether one by one,
-    // it may happen that this module gets enable during the same run, and
-    // that the 'sf_dic' container, even if correctly rebuilt, may not be
-    // used because older object references are being used by the code (old
-    // services still referenced into some other being in use).
-    return;
-  }
-
-  /** @var \Drupal\Core\Session\AccountInterface $account */
-  if (!$account = $query->getMetaData('account')) {
-    $account = \Drupal::currentUser();
-  }
-
-  // God mode.
-  if ($account->hasPermission(SiteAccess::PERM_SITE_GOD)) {
-    return;
-  }
-
-  /** @var \MakinaCorpus\Ucms\Group\GroupManager $groupManager */
-  $groupManager = \Drupal::service('ucms_group.manager');
-  $accessList   = $groupManager->getAccess()->getUserGroups($account);
-
-  // Normal user rights coming in!
-  if (!$accessList) {
-    return;
-  }
-
-  $siteAlias = null;
-
-  // If no base table is specified explicitly, search for one.
-  foreach ($query->getTables() as $alias => $table_info) {
-    if (!($table_info instanceof SelectQueryInterface)) {
-      // If the node table is in the query, it wins immediately.
-      if ('ucms_site' === $table_info['table']) {
-        $siteAlias = $alias;
-      }
-    }
-  }
-
-  if (!$siteAlias) {
-    return;
-  }
-
-  $groupList = [];
-  foreach ($accessList as $access) {
-    $groupList[] = $access->getGroupId();
-  }
-
-  $query->condition($siteAlias . '.group_id', $groupList);
 }

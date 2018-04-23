@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Group\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
-use MakinaCorpus\Ucms\Group\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\User\EventDispatcher\UserEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -65,7 +65,7 @@ class UserEventSubscriber implements EventSubscriberInterface
             $found = false;
             $webmaster = $this->entityManger->getStorage('user')->load($webmasterUserId);
 
-            foreach ($this->groupManager->getAccess()->getUserGroups($webmaster) as $groupAccess) {
+            foreach ($this->groupManager->getUserGroups($webmaster) as $groupAccess) {
                 if ($groupId === $groupAccess->getGroupId()) {
                     $found = true;
                     break;
@@ -73,7 +73,7 @@ class UserEventSubscriber implements EventSubscriberInterface
             }
 
             if (!$found) {
-                $this->groupManager->getAccess()->addMember($groupId, $webmasterUserId);
+                $this->groupManager->addMember($groupId, $webmasterUserId);
             }
         }
     }
@@ -88,8 +88,8 @@ class UserEventSubscriber implements EventSubscriberInterface
 
         $webmaster = $this->entityManger->getStorage('user')->load($currentUserId);
 
-        foreach ($this->groupManager->getAccess()->getUserGroups($webmaster) as $groupAccess) {
-            $this->groupManager->getAccess()->addMember($groupAccess->getGroupId(), $userId);
+        foreach ($this->groupManager->getUserGroups($webmaster) as $groupAccess) {
+            $this->groupManager->addMember($groupAccess->getGroupId(), $userId);
             break;
         }
     }

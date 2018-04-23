@@ -1,9 +1,9 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Group\Tests;
+namespace MakinaCorpus\Ucms\Site\Tests;
 
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
-use MakinaCorpus\Ucms\Group\Group;
+use MakinaCorpus\Ucms\Site\Group;
 
 class GroupStorageTest extends AbstractDrupalTest
 {
@@ -12,19 +12,14 @@ class GroupStorageTest extends AbstractDrupalTest
     protected function setUp()
     {
         parent::setUp();
-
-        if (!$this->moduleExists('ucms_group')) {
-            $this->markTestSkipped("You must enable the ucms_group module to run this test");
-            return;
-        }
     }
 
     public function testBasicStorage()
     {
-        $storage = $this->getGroupManager()->getStorage();
+        $groupManager = $this->getGroupManager();
 
         try {
-            $storage->findOne(PHP_INT_MAX); // should never happen in dev env
+            $groupManager->findOne(PHP_INT_MAX); // should never happen in dev env
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             // OK
@@ -43,7 +38,7 @@ class GroupStorageTest extends AbstractDrupalTest
 
         // Save it, and prey for everything to have changed
         sleep(1); // Really sorry, but necessary
-        $storage->save($group);
+        $groupManager->save($group);
 
         // Check everything that should have been set is set
         $this->assertNotEmpty($group->getId());
@@ -57,11 +52,11 @@ class GroupStorageTest extends AbstractDrupalTest
         $group->setTitle('bouh');
         $group->setIsGhost(true);
         $group->setAttribute('foo', ['a' => 'b']);
-        $storage->save($group, ['is_ghost', 'is_meta', 'attributes']);
+        $groupManager->save($group, ['is_ghost', 'is_meta', 'attributes']);
 
         // Load instance of group, should not be the same instance, and the
         // title has not changed, the rest has
-        $otherGroup = $storage->findOne($group->getId());
+        $otherGroup = $groupManager->findOne($group->getId());
         $this->assertNotSame($otherGroup, $group);
         $this->assertSame('foo_bar_bar', $otherGroup->getTitle());
         $this->assertSame(['foo' => ['a' => 'b']], $otherGroup->getAttributes());

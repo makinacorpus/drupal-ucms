@@ -4,11 +4,9 @@ namespace MakinaCorpus\Ucms\Group\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor;
-use MakinaCorpus\Ucms\Group\Group;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupMember;
+use MakinaCorpus\Ucms\Site\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupMember;
 
 class GroupMemberRemoveProcessor extends AbstractActionProcessor
 {
@@ -19,9 +17,6 @@ class GroupMemberRemoveProcessor extends AbstractActionProcessor
 
     /**
      * Default constructor
-     *
-     * @param GroupManager $groupManager
-     * @param AccountInterface $currentUser
      */
     public function __construct(GroupManager $groupManager, AccountInterface $currentUser)
     {
@@ -51,17 +46,17 @@ class GroupMemberRemoveProcessor extends AbstractActionProcessor
             return false;
         }
 
-        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
-        $group = $this->groupManager->getStorage()->findOne($item->getGroupId());
+        /** @var \MakinaCorpus\Ucms\Site\GroupMember $item */
+        $group = $this->groupManager->findOne($item->getGroupId());
 
-        return $this->groupManager->getAccess()->userCanManageMembers($this->currentUser, $group);
+        return $this->groupManager->userCanManageMembers($this->currentUser, $group);
     }
 
     public function processAll($items)
     {
-        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
+        /** @var \MakinaCorpus\Ucms\Site\GroupMember $item */
         foreach ($items as $item) {
-            $this->groupManager->getAccess()->removeMember($item->getGroupId(), $item->getUserId());
+            $this->groupManager->removeMember($item->getGroupId(), $item->getUserId());
         }
 
         return $this->formatPlural(
@@ -73,7 +68,7 @@ class GroupMemberRemoveProcessor extends AbstractActionProcessor
 
     public function getItemId($item)
     {
-        /** @var \MakinaCorpus\Ucms\Group\GroupMember $item */
+        /** @var \MakinaCorpus\Ucms\Site\GroupMember $item */
         return $item->getGroupId() . ':' . $item->getUserId();
     }
 

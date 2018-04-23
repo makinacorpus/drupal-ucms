@@ -3,13 +3,12 @@
 namespace MakinaCorpus\Ucms\Group\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Group\GroupManager;
-use MakinaCorpus\Ucms\Group\GroupMember;
+use MakinaCorpus\Ucms\Site\GroupManager;
+use MakinaCorpus\Ucms\Site\GroupMember;
 
 class GroupMemberAdminDatasource extends AbstractDatasource
 {
@@ -64,7 +63,7 @@ class GroupMemberAdminDatasource extends AbstractDatasource
     {
         $q = $this
             ->database
-            ->select('ucms_group_user', 'gu')
+            ->select('ucms_group_access', 'gu')
             ->fields('gu', ['group_id', 'user_id'])
             ->fields('u', ['name', 'mail', 'status'])
             ->addTag('ucms_user_access')

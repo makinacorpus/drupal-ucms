@@ -1,20 +1,17 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\Form;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 
 /**
  * Form to assign a webmaster/contributor to a site.
@@ -33,33 +30,19 @@ class WebmasterAddExisting extends FormBase
         );
     }
 
+    private $dispatcher;
+    private $entityManager;
+    private $siteManager;
 
     /**
-     * @var SiteManager
+     * Default constructor
      */
-    protected $siteManager;
-
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-
-    public function __construct(
-        SiteManager $siteManager,
-        EntityManager $entityManager,
-        EventDispatcherInterface $dispatcher
-    ) {
+    public function __construct(SiteManager $siteManager, EntityManager $entityManager, EventDispatcherInterface $dispatcher)
+    {
         $this->siteManager = $siteManager;
         $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
     }
-
 
     /**
      * {@inheritdoc}
@@ -68,7 +51,6 @@ class WebmasterAddExisting extends FormBase
     {
         return 'ucms_webmaster_add_existing';
     }
-
 
     /**
      * {@inheritdoc}
@@ -120,7 +102,6 @@ class WebmasterAddExisting extends FormBase
         return $form;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -128,6 +109,7 @@ class WebmasterAddExisting extends FormBase
     {
         $user = $form_state->getValue('name');
 
+        $matches = [];
         if (preg_match('/\[(\d+)\]$/', $user, $matches) !== 1 || $matches[1] < 2) {
             $form_state->setErrorByName('name', $this->t("The user can't be identified."));
         } else {
@@ -139,7 +121,6 @@ class WebmasterAddExisting extends FormBase
             }
         }
     }
-
 
     /**
      * {@inheritdoc}
@@ -160,7 +141,6 @@ class WebmasterAddExisting extends FormBase
         ]));
 
         $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
-        $this->dispatcher->dispatch('site:webmaster_add_existing', $event);
+        $this->dispatcher->dispatch(SiteEvents::EVENT_WEBMASTER_ATTACH, $event);
     }
 }
-

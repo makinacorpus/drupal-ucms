@@ -4,11 +4,9 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Site\EventDispatcher\RolesCollectionEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAccessEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -161,7 +159,7 @@ class SiteAccessService
      *   - second dimension is to state
      *   - third dimension is a list of roles identifiers
      *
-     * @see MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
+     * @see \MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
      *
      * @return int[int[int[]]]
      */
@@ -305,6 +303,10 @@ class SiteAccessService
 
         $relativeRoles  = $this->getRolesAssociations();
         $grant          = $this->getUserRoleCacheValue($account, $site);
+
+        if (!$relativeRoles) {
+            $relativeRoles = [];
+        }
 
         // First check the user site roles if any
         if ($grant) {
