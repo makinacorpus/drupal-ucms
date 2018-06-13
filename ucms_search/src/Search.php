@@ -439,6 +439,43 @@ class Search
     }
 
     /**
+     * Be smart, attempt to fix what the user wrote.
+     */
+    private function fixSmartSearch($value)
+    {
+        //
+        // OK, this needs some bits of explaination. We have the following behavior:
+        //
+        //   - in a site, there's a lot of city names in text,
+        //   - lots are "Saint-Something",
+        //   - when the client types "Saint A" in the search query, all
+        //     "Saint Something" will match, and "Saint" will have a higher
+        //     score than "A",
+        //
+        // To fix this, we convert every "any number of words" queries to:
+        //
+        //     @todo separate with the first 2
+        //     "any number of words"^20 or "any number"^20 or (any number of words)^1
+        //
+        // Which literally means:
+        //
+        //     "The phrase with all the words in the right order matches 10 times
+        //     more score than those with all the words placed anywhere in any
+        //     order."
+        //
+        // And it does seem to fix it, now "Saint A" comes first in the results
+        // instead of being lowered than text with many times the name "Saint".
+        //
+        $value = trim($value);
+
+        if (\preg_match('/^[^\+\(\)"]+$/ims', $value)) {
+            return '"'.$value.'"^10 or ('.$value.')^1';
+        }
+
+        return $value;
+    }
+
+    /**
      * Run the search and return the response
      *
      * @param string[] $query
@@ -461,7 +498,7 @@ class Search
 
             $queryPart = [
                 'query_string' => [
-                    'query' => (string)$value,
+                    'query' => $this->fixSmartSearch((string)$value),
                     'fields' => $this->fulltextFields,
                  ],
             ];
