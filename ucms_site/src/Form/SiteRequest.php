@@ -191,7 +191,10 @@ class SiteRequest extends FormBase
         }
 
         // Validate host name format
-        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@i';
+        if (preg_match('@[A-Z]@', $value)) {
+            $form_state->setError($element, $this->t("Site name cannot contain uppercase letters"));
+        }
+        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@';
         if (!preg_match($regex, $value)) {
             $form_state->setError($element, $this->t("Host name contains invalid characters or has a wrong format"));
         }
