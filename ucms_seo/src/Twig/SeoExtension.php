@@ -37,6 +37,11 @@ class SeoExtension extends \Twig_Extension
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
             new \Twig_SimpleFunction(
+                'google_tag_manager',
+                [$this, 'renderGoogleTagManager'],
+                ['is_safe' => ['html'], 'needs_environment' => true]
+            ),
+            new \Twig_SimpleFunction(
                 'piwik',
                 [$this, 'renderPiwik'],
                 ['is_safe' => ['html'], 'needs_environment' => true]
@@ -52,6 +57,19 @@ class SeoExtension extends \Twig_Extension
                 return $twig->render(
                     '@ucms_seo/views/ga.html.twig',
                     ['googleAnalyticsId' => $site->getAttribute('seo.google.ga_id')]
+                );
+            }
+        }
+    }
+
+    public function renderGoogleTagManager(\Twig_Environment $twig)
+    {
+        if ($this->siteManager->hasContext()) {
+            $site = $this->siteManager->getContext();
+            if ($site->hasAttribute('seo.google.gtm_id')) {
+                return $twig->render(
+                    'module:ucms_seo:views/gtm.html.twig',
+                    ['googleTagManagerId' => $site->getAttribute('seo.google.gtm_id')]
                 );
             }
         }

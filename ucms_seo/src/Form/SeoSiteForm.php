@@ -72,6 +72,12 @@ class SeoSiteForm extends FormBase
             '#attributes'       => ['placeholder' => 'UA-123456'],
             '#default_value'    => $site->getAttribute('seo.google.ga_id'),
         ];
+        $form['gtm_id'] = [
+            '#title'            => t("Google tag manager identifier"),
+            '#type'             => 'textfield',
+            '#attributes'       => ['placeholder' => 'GTM-123456'],
+            '#default_value'    => $site->getAttribute('seo.google.gtm_id'),
+        ];
 
         $form['piwik']['#tree'] = true;
         $form['piwik']['url'] = [
@@ -112,6 +118,11 @@ class SeoSiteForm extends FormBase
             $site->setAttribute('seo.google.ga_id', $gaId);
         } else {
             $site->deleteAttribute('seo.google.ga_id');
+        }
+        if ($gtmId = $formState->getValue('gtm_id')) {
+            $site->setAttribute('seo.google.gtm_id', $gtmId);
+        } else {
+            $site->deleteAttribute('seo.google.gtm_id');
         }
 
         if ($url = $formState->getValue(['piwik', 'url'])) {
