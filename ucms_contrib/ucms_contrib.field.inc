@@ -10,14 +10,18 @@ function ucms_contrib_field_formatter_info() {
       'label'       => t("Clone aware"),
       'field types' => ['unoderef'],
       'settings'    => [
-        'view_mode' => 'teaser',
+        'access_check'    => false,
+        'published_only'  => false,
+        'view_mode'       => 'teaser',
       ],
     ],
     'ucms_unoderef_clone_aware_first' => [
       'label'       => t("Clone aware (first item only)"),
       'field types' => ['unoderef'],
       'settings'    => [
-        'view_mode' => 'teaser',
+        'access_check'    => false,
+        'published_only'  => false,
+        'view_mode'       => 'teaser',
       ],
     ],
     'ucms_ulink_clone_aware' => [
@@ -76,21 +80,17 @@ function ucms_contrib_field_formatter_settings_summary($field, $instance, $view_
 function ucms_contrib_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = [];
   $settings = $display['settings'];
-  if (isset($settings['view_mode'])) {
-    $view_mode = $settings['view_mode'];
-  } else {
-    $view_mode = 'default';
-  }
+  $view_mode = $settings['view_mode'] ?? 'default';
+  $first_only = 'unoderef_first' === $display['type'];
 
   switch ($display['type']) {
 
-    case 'ucms_unoderef_clone_aware_first':
-      // Just reduces the items array and lets the next case do the job.
-      $items = array_slice($items, 0, 1);
-
     case 'ucms_unoderef_clone_aware':
+    case 'ucms_unoderef_clone_aware_first':
       $context = ucms_site_manager()->getContext();
 
+      // Fromt the given site context, replaces all nodes from their existing
+      // clones in the current site.
       if ($context) {
         $nids = [];
         $mapping = \Drupal::service('ucms_site.node_manager')->getCloningMapping($context);
@@ -105,13 +105,21 @@ function ucms_contrib_field_formatter_view($entity_type, $entity, $field, $insta
       } else {
         $nids = array_column($items, 'nid');
       }
+      if (!$nids) {
+        return $element;
+      }
 
-      if (count($nids)) {
-        $nodes = node_load_multiple($nids);
-        $views = node_view_multiple($nodes, $view_mode);
-        foreach ($nids as $delta => $nid) {
-          if (isset($views['nodes'][$nid])) {
-            $element[$delta] = $views['nodes'][$nid];
+      // This is a copy/paste from the 'unoderef' module
+      if ($nodes = unoderef_field_formatter_view_filter_nodes(node_load_multiple($nids), $settings)) {
+        if ($first_only) { // unoderef_first
+          $first = array_shift($nodes);
+          $element[0] = node_view($first, $view_mode);
+        } else { // unoderef
+          $delta = -1;
+          foreach (node_view_multiple($nodes, $view_mode)['nodes'] as $view) {
+            if (is_array($view)) {
+              $element[$delta++] = $view;
+            }
           }
         }
       }
