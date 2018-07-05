@@ -444,3 +444,14 @@ function ucms_seo_update_7018() {
 function ucms_seo_update_7019() {
   db_query("UPDATE {ucms_seo_redirect} SET path = CONCAT('/', path) WHERE LEFT(path, 1) != '/'")->execute();
 }
+
+/**
+ * Fixes database redirections.
+ */
+function ucms_seo_update_7023() {
+  foreach (db_query("SELECT id, path FROM {ucms_seo_redirect}") as $row) {
+    if ('/' === substr($row->path, -1)) {
+      db_query("UPDATE {ucms_seo_redirect} SET path = ? WHERE id = ?", [rtrim($row->path, '/'), $row->id]);
+    }
+  }
+}

@@ -422,7 +422,7 @@ function ucms_seo_theme() {
  */
 function ucms_seo_page_delivery_callback_alter(&$callback) {
   // Wrap the drupal_deliver_html_page() function to handle our own behavior.
-  if ($callback === 'drupal_deliver_html_page') {
+  if ($callback === 'drupal_deliver_html_page' || $callback === 'sf_dic_page_delivery_html') {
     $callback = 'ucms_seo_drupal_deliver_html_page';
   }
 }
@@ -433,13 +433,21 @@ function ucms_seo_page_delivery_callback_alter(&$callback) {
  * @param $page_callback_result
  */
 function ucms_seo_drupal_deliver_html_page($page_callback_result) {
-  $storage = ucms_seo_service()->getRedirectStorage();
-  $uri = request_uri();
-  if ($page_callback_result === MENU_NOT_FOUND && $storage->pathHasMatchingRedirect($uri)) {
-    $redirect = $storage->load(['path' => $uri]);
-    drupal_goto('node/' . $redirect->nid, [], 301);
+  if ($page_callback_result === MENU_NOT_FOUND) {
+    $storage = ucms_seo_service()->getRedirectStorage();
+
+    $uri = request_uri();
+    if ($storage->pathHasMatchingRedirect($uri)) {
+      if ($redirect = $storage->load(['path' => $uri])) {
+        return drupal_goto('node/' . $redirect->nid, [], 301);
+      }
+    }
   }
-  else {
+
+  // @todo altered callback name should be stored instead
+  if (function_exists('sf_dic_page_delivery_html')) {
+    sf_dic_page_delivery_html($page_callback_result);
+  } else {
     drupal_deliver_html_page($page_callback_result);
   }
 }
