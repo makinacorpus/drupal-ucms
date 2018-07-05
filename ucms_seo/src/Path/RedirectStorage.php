@@ -52,9 +52,9 @@ class RedirectStorage implements RedirectStorageInterface
         }
 
         $redirect = [
-            'path'    => $path,
-            'nid'     => $nodeId,
-            'site_id' => $siteId,
+            'path'    => rtrim($path, '/'),
+            'nid'     => $node_id,
+            'site_id' => $site_id,
         ];
 
         if ($id) {
@@ -86,6 +86,26 @@ class RedirectStorage implements RedirectStorageInterface
     }
 
     /**
+     * Specific path processing for database
+     */
+    private function addPathCondition(\QueryConditionInterface $query, $field, $path)
+    {
+        // Handle trailing slash, in theory database is not supposed to contain
+        // any with a trailing slash, but in doubt, query with both (any other
+        // module or user could manually insert data).
+        // Paths are supposed to be lower case too.
+        $path = drupal_strtolower(rtrim($path, '/'));
+        $candidates = [$path, $path.'/'];
+
+        $predicates = db_or();
+        foreach ($candidates as $candidate) {
+            // Use LIKE for case-insensitive matching in MySQL (stupid).
+            $predicates->condition($field, $this->database->escapeLike($candidate), 'LIKE');
+        }
+        $query->condition($predicates);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function load($conditions)
@@ -94,8 +114,7 @@ class RedirectStorage implements RedirectStorageInterface
 
         foreach ($conditions as $field => $value) {
             if ($field == 'path') {
-                // Use LIKE for case-insensitive matching (stupid).
-                $select->condition('u.'.$field, $this->database->escapeLike($value), 'LIKE');
+                $this->addPathCondition($select, 'u.'.$field, $value);
             } else {
                 $select->condition('u.'.$field, $value);
             }
@@ -120,8 +139,7 @@ class RedirectStorage implements RedirectStorageInterface
 
         foreach ($conditions as $field => $value) {
             if ($field == 'path') {
-                // Use LIKE for case-insensitive matching (still stupid).
-                $query->condition($field, $this->database->escapeLike($value), 'LIKE');
+                $this->addPathCondition($query, 'u.'.$field, $value);
             } else {
                 $query->condition($field, $value);
             }
@@ -150,11 +168,10 @@ class RedirectStorage implements RedirectStorageInterface
         $query = $this
             ->database
             ->select('ucms_seo_redirect', 'u')
-            ->condition('u.path', $this->database->escapeLike($path), 'LIKE')
             ->condition('u.nid', $nodeId)
             ->condition('u.site_id', $siteId)
         ;
-
+        $this->addPathCondition($query, 'u.path', $path);
         $query->addExpression('1');
 
         return (bool)$query
@@ -177,10 +194,11 @@ class RedirectStorage implements RedirectStorageInterface
             }
             $siteId = $this->siteManager->getContext()->getId();
         }
+
+        $this->addPathCondition($query, 'u.path', $path);
         $query->addExpression(1);
 
         return (bool)$query
-            ->condition('u.path', $path)
             ->condition('u.site_id', $siteId)
             ->range(0, 1)
             ->execute()

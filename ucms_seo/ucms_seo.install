@@ -490,3 +490,14 @@ function ucms_seo_update_7022() {
       break;
   }
 }
+
+/**
+ * Fixes database redirections.
+ */
+function ucms_seo_update_7023() {
+  foreach (db_query("SELECT id, path FROM {ucms_seo_redirect}") as $row) {
+    if ('/' === substr($row->path, -1)) {
+      db_query("UPDATE {ucms_seo_redirect} SET path = ? WHERE id = ?", [rtrim($row->path, '/'), $row->id]);
+    }
+  }
+}

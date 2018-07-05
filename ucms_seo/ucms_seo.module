@@ -409,7 +409,7 @@ function ucms_seo_theme() {
  */
 function ucms_seo_page_delivery_callback_alter(&$callback) {
   // Wrap the drupal_deliver_html_page() function to handle our own behavior.
-  if ($callback === 'drupal_deliver_html_page') {
+  if ($callback === 'drupal_deliver_html_page' || $callback === 'sf_dic_page_delivery_html') {
     $callback = 'ucms_seo_drupal_deliver_html_page';
   }
 }
@@ -425,7 +425,6 @@ function ucms_seo_drupal_deliver_html_page($page_callback_result) {
     return;
   }
 
-    // Redirect behavior for path with query strings
   if ($page_callback_result === MENU_NOT_FOUND) {
 
     $manager = ucms_site_manager();
@@ -445,5 +444,9 @@ function ucms_seo_drupal_deliver_html_page($page_callback_result) {
     }
   }
 
+  // @todo altered callback name should be stored instead
+  if (function_exists('sf_dic_page_delivery_html')) {
+    sf_dic_page_delivery_html($page_callback_result);
+  }
   drupal_deliver_html_page($page_callback_result);
 }
