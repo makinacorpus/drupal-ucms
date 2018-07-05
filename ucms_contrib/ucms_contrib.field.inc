@@ -83,6 +83,10 @@ function ucms_contrib_field_formatter_view($entity_type, $entity, $field, $insta
   $view_mode = $settings['view_mode'] ?? 'default';
   $first_only = 'unoderef_first' === $display['type'];
 
+  if (!$items) {
+    return $element;
+  }
+
   switch ($display['type']) {
 
     case 'ucms_unoderef_clone_aware':
