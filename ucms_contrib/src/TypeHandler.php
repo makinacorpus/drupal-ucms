@@ -2,7 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Contrib;
 
-class TypeHandler
+final class TypeHandler
 {
     const TAB_CONTENT = 'content';
     const TAB_MEDIA = 'media';
@@ -11,15 +11,37 @@ class TypeHandler
     const TYPE_EDITORIAL = 'editorial';
     const TYPE_MEDIA = 'media';
 
+    private $metaTypeMap;
+
+    /**
+     * Default constructor
+     */
+    public function __construct()
+    {
+        $this->rebuildCache();
+    }
+
     /**
      * Cleans variable value
      *
      * @param $name
      * @return mixed
      */
-    protected function filterVariable($name)
+    private function filterVariable($name)
     {
         return array_filter(variable_get($name, []));
+    }
+
+    /**
+     * Rebuild meta type cache
+     */
+    private function rebuildCache()
+    {
+        $this->metaTypeMap = [
+            self::TYPE_COMPONENT => $this->filterVariable('ucms_contrib_tab_media_type'),
+            self::TYPE_EDITORIAL => $this->filterVariable('ucms_contrib_editorial_types'),
+            self::TYPE_MEDIA => $this->filterVariable('ucms_contrib_component_types'),
+        ];
     }
 
     /**
@@ -54,15 +76,21 @@ class TypeHandler
         }
     }
 
+    /**
+     * Get content type meta type
+     */
+    public function getMetaType(string $contentType) : string
+    {
+    }
 
     /**
      * Get all media types.
      *
      * @return string[]
      */
-    public function getMediaTypes()
+    public function getMediaTypes() : array
     {
-        return $this->filterVariable('ucms_contrib_tab_media_type');
+        return $this->metaTypeMap[self::TYPE_MEDIA];
     }
 
     /**
@@ -70,9 +98,9 @@ class TypeHandler
      *
      * @return string[]
      */
-    public function getEditorialContentTypes()
+    public function getEditorialContentTypes() : array
     {
-        return $this->filterVariable('ucms_contrib_editorial_types');
+        return $this->metaTypeMap[self::TYPE_EDITORIAL];
     }
 
     /**
@@ -80,9 +108,9 @@ class TypeHandler
      *
      * @return string[]
      */
-    public function getComponentTypes()
+    public function getComponentTypes() : array
     {
-        return $this->filterVariable('ucms_contrib_component_types');
+        return $this->metaTypeMap[self::TYPE_COMPONENT];
     }
 
     /**
@@ -90,7 +118,7 @@ class TypeHandler
      *
      * @return string[]
      */
-    public function getLockedTypes()
+    public function getLockedTypes()  : array
     {
         return $this->filterVariable('ucms_contrib_locked_types');
     }
@@ -138,51 +166,63 @@ class TypeHandler
     /**
      * Set all media types.
      *
-     * @param array $types
+     * @param string[] $types
      */
     public function setMediaTypes(array $types)
     {
         variable_set('ucms_contrib_tab_media_type', $types);
+        $this->rebuildCache();
     }
 
     /**
      * Set editorial content types.
      *
-     * @param array $types
+     * @param string[] $types
      */
     public function setEditorialContentTypes(array $types)
     {
         variable_set('ucms_contrib_editorial_types', $types);
+        $this->rebuildCache();
     }
 
     /**
      * Set component types.
      *
-     * @param array $types
+     * @param string[] $types
      */
     public function setComponentTypes(array $types)
     {
         variable_set('ucms_contrib_component_types', $types);
+        $this->rebuildCache();
     }
 
     /**
      * Set component types.
      *
-     * @param array $types
+     * @param string[] $types
      */
     public function setLockedTypes(array $types)
     {
         variable_set('ucms_contrib_locked_types', $types);
+        $this->rebuildCache();
+    }
+
+    /**
+     * Get content type human readable label
+     */
+    public function getTypeLabel(string $contentType) : string
+    {
+        return \node_type_get_names()[$contentType] ?? '';
     }
 
     /**
      * Given an array of type, return the human-readable types keyed by type.
      *
-     * @param array $types
+     * @param string[] $types
      *
-     * @return mixed
+     * @return string[]
      */
-    public function getTypesAsHumanReadableList(array $types)
+    public function getTypesAsHumanReadableList(array $types) : array
     {
         return array_intersect_key(node_type_get_names(), drupal_map_assoc($types));
     }
