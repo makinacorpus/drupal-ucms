@@ -45,35 +45,35 @@ class NodeTabsForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        $form['media'] = [
+        $form[TypeHandler::TAB_MEDIA] = [
             '#title' => $this->t("Media tab"),
             '#type'  => 'fieldset',
         ];
-        $form['media']['media_types'] = [
+        $form[TypeHandler::TAB_MEDIA]['media_types'] = [
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
             '#default_value' => $this->typeHandler->getMediaTypes(),
         ];
 
-        $form['content'] = [
+        $form[TypeHandler::TAB_CONTENT] = [
             '#title' => $this->t("Content tab"),
             '#type'  => 'fieldset',
         ];
-        $form['content']['editorial'] = [
+        $form[TypeHandler::TAB_CONTENT]['editorial'] = [
             '#title'         => $this->t("Editorial content types"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
             '#default_value' => $this->typeHandler->getEditorialContentTypes(),
         ];
 
-        $form['content']['component'] = [
+        $form[TypeHandler::TAB_CONTENT]['component'] = [
             '#title'         => $this->t("Component content types"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
             '#default_value' => $this->typeHandler->getComponentTypes(),
         ];
 
-        $form['content']['locked'] = [
+        $form[TypeHandler::TAB_CONTENT]['locked'] = [
             '#title'         => $this->t("Locked components"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),

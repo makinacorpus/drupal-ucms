@@ -4,6 +4,9 @@ namespace MakinaCorpus\Ucms\Contrib;
 
 class TypeHandler
 {
+    const TAB_CONTENT = 'content';
+    const TAB_MEDIA = 'media';
+
     /**
      * Cleans variable value
      *
@@ -23,8 +26,8 @@ class TypeHandler
     public function getTabs()
     {
         return [
-            'content' => "Content",
-            'media'   => "Media",
+            self::TAB_CONTENT => "Content",
+            self::TAB_MEDIA => "Media",
         ];
     }
 
@@ -33,14 +36,14 @@ class TypeHandler
      *
      * @param $tab
      *
-     * @return \string[]
+     * @return string[]
      */
     public function getTabTypes($tab)
     {
         switch ($tab) {
-            case 'content':
+            case self::TAB_CONTENT:
                 return $this->getContentTypes();
-            case 'media':
+            case self::TAB_MEDIA:
                 return $this->getMediaTypes();
             default:
                 throw new \Exception("Tab not implemented");

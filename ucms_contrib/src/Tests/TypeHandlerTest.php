@@ -2,8 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Contrib\Tests;
 
-
 use MakinaCorpus\Drupal\Sf\Tests\AbstractDrupalTest;
+use MakinaCorpus\Ucms\Contrib\TypeHandler;
 
 class TypeHandlerTest extends AbstractDrupalTest
 {
@@ -71,8 +71,8 @@ class TypeHandlerTest extends AbstractDrupalTest
         // Testing functions
         $this->assertArrayAreSimilar($typeHandler->getAllTypes(), array_merge($editorial, $components, $media));
         $this->assertArrayAreSimilar($typeHandler->getEditorialTypes(), array_merge($editorial, $media));
-        $this->assertArrayAreSimilar($typeHandler->getTabTypes('media'), $media);
-        $this->assertArrayAreSimilar($typeHandler->getTabTypes('content'), array_merge($components, $editorial));
+        $this->assertArrayAreSimilar($typeHandler->getTabTypes(TypeHandler::TAB_MEDIA), $media);
+        $this->assertArrayAreSimilar($typeHandler->getTabTypes(TypeHandler::TAB_CONTENT), array_merge($components, $editorial));
 
         $this->expectException(\Exception::class);
         $typeHandler->getTabTypes('foo');

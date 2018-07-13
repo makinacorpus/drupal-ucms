@@ -86,8 +86,8 @@ class ContextPaneEventListener
 
         // Add node creation link on dashboard
         // FIXME kill it with fire!
-        if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), ['content', 'media'])) {
-            if (arg(2) == 'content') {
+        if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), [TypeHandler::TAB_CONTENT, TypeHandler::TAB_MEDIA])) {
+            if (arg(2) == TypeHandler::TAB_CONTENT) {
                 $actions = [];
                 $actions = array_merge($actions, $this->contentActionProvider->getActions('editorial'));
                 $actions = array_merge($actions, $this->contentActionProvider->getActions('component'));
