@@ -18,8 +18,6 @@ class SiteExtension extends \Twig_Extension
 
     /**
      * Default constructor
-     *
-     * @param ActionRegistry $actionRegistry
      */
     public function __construct(SiteManager $siteManager)
     {
@@ -67,7 +65,7 @@ class SiteExtension extends \Twig_Extension
     /**
      * Render site link
      *
-     * @param int|Site $site
+     * @param int|\MakinaCorpus\Ucms\Site\Site $site
      *   Site identifier, if site is null
      * @param string $path
      *   Drupal path to hit in site
