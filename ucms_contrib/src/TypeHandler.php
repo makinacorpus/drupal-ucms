@@ -7,6 +7,10 @@ class TypeHandler
     const TAB_CONTENT = 'content';
     const TAB_MEDIA = 'media';
 
+    const TYPE_COMPONENT = 'component';
+    const TYPE_EDITORIAL = 'editorial';
+    const TYPE_MEDIA = 'media';
+
     /**
      * Cleans variable value
      *

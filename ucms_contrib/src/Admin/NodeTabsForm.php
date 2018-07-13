@@ -59,14 +59,14 @@ class NodeTabsForm extends FormBase
             '#title' => $this->t("Content tab"),
             '#type'  => 'fieldset',
         ];
-        $form[TypeHandler::TAB_CONTENT]['editorial'] = [
+        $form[TypeHandler::TAB_CONTENT][TypeHandler::TYPE_EDITORIAL] = [
             '#title'         => $this->t("Editorial content types"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
             '#default_value' => $this->typeHandler->getEditorialContentTypes(),
         ];
 
-        $form[TypeHandler::TAB_CONTENT]['component'] = [
+        $form[TypeHandler::TAB_CONTENT][TypeHandler::TYPE_COMPONENT] = [
             '#title'         => $this->t("Component content types"),
             '#type'          => 'checkboxes',
             '#options'       => node_type_get_names(),
@@ -94,8 +94,8 @@ class NodeTabsForm extends FormBase
      */
     public function validateForm(array &$form, FormStateInterface $form_state)
     {
-        $components = array_filter($form_state->getValue('component'));
-        $editorial = array_filter($form_state->getValue('editorial'));
+        $components = array_filter($form_state->getValue(TypeHandler::TYPE_COMPONENT));
+        $editorial = array_filter($form_state->getValue(TypeHandler::TYPE_EDITORIAL));
         $media = array_filter($form_state->getValue('media_types'));
 
         // Media and content can't be both
@@ -116,8 +116,8 @@ class NodeTabsForm extends FormBase
     {
 
         $this->typeHandler->setMediaTypes($form_state->getValue('media_types'));
-        $this->typeHandler->setEditorialContentTypes($form_state->getValue('editorial'));
-        $this->typeHandler->setComponentTypes($form_state->getValue('component'));
+        $this->typeHandler->setEditorialContentTypes($form_state->getValue(TypeHandler::TYPE_EDITORIAL));
+        $this->typeHandler->setComponentTypes($form_state->getValue(TypeHandler::TYPE_COMPONENT));
         $this->typeHandler->setLockedTypes($form_state->getValue('locked'));
 
         drupal_set_message($this->t('The configuration options have been saved.'));

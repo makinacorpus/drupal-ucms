@@ -84,7 +84,7 @@ class MediaPortlet extends AbstractAdminPortlet
      */
     public function getActions()
     {
-        return $this->actionProvider->getActions('media');
+        return $this->actionProvider->getActions(TypeHandler::TYPE_MEDIA);
     }
 
     /**

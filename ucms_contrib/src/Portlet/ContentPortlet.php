@@ -94,15 +94,15 @@ class ContentPortlet extends AbstractAdminPortlet
         $build = [];
 
         // FIXME, allow to have multiple action groups
-        $build['editorial'] = [
+        $build[TypeHandler::TYPE_EDITORIAL] = [
           '#theme'      => 'ucms_dashboard_actions',
-          '#actions'    => $this->actionProvider->getActions('editorial'),
+          '#actions'    => $this->actionProvider->getActions(TypeHandler::TYPE_EDITORIAL),
           '#show_title' => true,
           '#title'      => $this->t("Create content"),
         ];
-        $build['component'] = [
+        $build[TypeHandler::TYPE_COMPONENT] = [
           '#theme'      => 'ucms_dashboard_actions',
-          '#actions'    => $this->actionProvider->getActions('component'),
+          '#actions'    => $this->actionProvider->getActions(TypeHandler::TYPE_COMPONENT),
           '#show_title' => true,
           '#title'      => $this->t("Create component"),
         ];

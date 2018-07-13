@@ -89,12 +89,12 @@ class ContextPaneEventListener
         if (substr(current_path(), 0, 16) == 'admin/dashboard/' && in_array(arg(2), [TypeHandler::TAB_CONTENT, TypeHandler::TAB_MEDIA])) {
             if (arg(2) == TypeHandler::TAB_CONTENT) {
                 $actions = [];
-                $actions = array_merge($actions, $this->contentActionProvider->getActions('editorial'));
-                $actions = array_merge($actions, $this->contentActionProvider->getActions('component'));
+                $actions = array_merge($actions, $this->contentActionProvider->getActions(TypeHandler::TYPE_EDITORIAL));
+                $actions = array_merge($actions, $this->contentActionProvider->getActions(TypeHandler::TYPE_COMPONENT));
                 $contextPane->addActions($actions, $this->t("Create"), 'plus');
             } else {
                 $actions = [];
-                $actions = array_merge($actions, $this->contentActionProvider->getActions('media'));
+                $actions = array_merge($actions, $this->contentActionProvider->getActions(TypeHandler::TYPE_MEDIA));
                 $contextPane->addActions($actions, $this->t("Create"), 'plus');
             }
         }
@@ -106,9 +106,9 @@ class ContextPaneEventListener
         // FIXME kill it with acid!
         if ($this->siteManager->hasContext() && !path_is_admin(current_path())) {
             $actions = [];
-            $actions = array_merge($actions, $this->contentActionProvider->getActions('editorial'));
-            $actions = array_merge($actions, $this->contentActionProvider->getActions('media'));
-            $actions = array_merge($actions, $this->contentActionProvider->getActions('component'));
+            $actions = array_merge($actions, $this->contentActionProvider->getActions(TypeHandler::TYPE_EDITORIAL));
+            $actions = array_merge($actions, $this->contentActionProvider->getActions(TypeHandler::TYPE_MEDIA));
+            $actions = array_merge($actions, $this->contentActionProvider->getActions(TypeHandler::TYPE_COMPONENT));
             $contextPane->addActions($actions, $this->t("Create"), 'plus');
         }
 

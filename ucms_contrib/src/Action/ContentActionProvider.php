@@ -85,13 +85,13 @@ class ContentActionProvider implements ActionProviderInterface
         }
 
         $types = [
-            'editorial' => $this->typeHandler->getEditorialContentTypes(),
-            'component' => $this->typeHandler->getComponentTypes(),
-            'media'     => $this->typeHandler->getMediaTypes(),
+            TypeHandler::TYPE_EDITORIAL => $this->typeHandler->getEditorialContentTypes(),
+            TypeHandler::TYPE_COMPONENT => $this->typeHandler->getComponentTypes(),
+            TypeHandler::TYPE_MEDIA => $this->typeHandler->getMediaTypes(),
         ];
 
         foreach ($types[$item] as $index => $type) {
-            $addCurrentDestination = 'media' === $item;
+            $addCurrentDestination = TypeHandler::TYPE_MEDIA === $item;
             if (
                 !$this->siteManager->hasContext() &&
                 ($siteAccess->userIsWebmaster($this->currentUser) || $siteAccess->userIsContributor($this->currentUser)) &&
@@ -121,6 +121,6 @@ class ContentActionProvider implements ActionProviderInterface
      */
     public function supports($item)
     {
-        return in_array($item, ['editorial', 'component', 'media']);
+        return in_array($item, [TypeHandler::TYPE_COMPONENT, TypeHandler::TYPE_EDITORIAL, TypeHandler::TYPE_MEDIA]);
     }
 }
