@@ -1,5 +1,5 @@
 <div class="col-md-12">
-  <table class="table table-striped table-condensed">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>{{ "Source"|trans }}</th>
@@ -15,23 +15,23 @@
         <tr class="{% if not item.targetExists %}danger{% endif %}">
           <td>
             <a href="{{ path('node/'~item.sourceId) }}">
-              {{ item.sourceTitle }}<br/>
-              {% set time = item.sourceUpdatedAt|time_diff %}
-              {% set name = ucms_user_name(item.sourceUserId) %}
-              <small>
-                {{ ucms_content_type(item.sourceId) }},
-                {{ "updated @time ago by @name"|trans({'@time': time, '@name': name}) }}
-              </small>
-            </a>
+              {{ item.sourceTitle }}
+            </a><br/>
+            {% set time = item.sourceUpdatedAt|time_diff %}
+            {% set name = ucms_user_name(item.sourceUserId) %}
+            <small>
+              {{ ucms_content_type(item.sourceId) }},
+              {{ "updated @time ago by @name"|trans({'@time': time, '@name': name}) }}
+            </small>
           </td>
           <td>
             {% if item.targetExists %}
               <a href="{{ path('node/'~item.targetId) }}">
-                {{ item.targetTitle }}<br/>
-                <small>
-                  {{ ucms_content_type(item.targetId) }}
-                </small>
-              </a>
+                {{ item.targetTitle }}
+              </a><br/>
+              <small>
+                {{ ucms_content_type(item.targetId) }}
+              </small>
             {% else %}
               <a href="">
                 {{ "Deleted content \#@id"|trans({'@id': item.targetId}) }}
@@ -42,7 +42,7 @@
             {{ item.type }}
           </td>
           <td>
-            {{ item.fieldName }}
+            {{ ucms_field_label(item.fieldName) }}
           </td>
           <td>
             {{ item.touchedAt|time_diff }}

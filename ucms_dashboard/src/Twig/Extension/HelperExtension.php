@@ -33,6 +33,7 @@ class HelperExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('ucms_content_type', [$this, 'renderContentType']),
+            new \Twig_SimpleFunction('ucms_field_label', [$this, 'renderFieldLabel']),
             new \Twig_SimpleFunction('ucms_user_name', [$this, 'renderUserName']),
         ];
     }
@@ -73,9 +74,24 @@ class HelperExtension extends \Twig_Extension
     }
 
     /**
+     * Render human readable field label
+     */
+    public function renderFieldLabel(string $fieldName, string $bundle = null, $entityType = 'node') : string
+    {
+        if ($bundle && ($instance = \field_info_instance($entityType, $fieldName, $bundle))) {
+            return $instance['label'];
+        }
+        if ($field = \field_info_field($fieldName)) {
+            return $field['label'];
+        }
+
+        return $this->t("Unknown");
+    }
+
+    /**
      * Render user name
      */
-    public function renderUserName($accountOrId, bool $withLink = false) : string
+    public function renderUserName($accountOrId) : string
     {
         $account = null;
 

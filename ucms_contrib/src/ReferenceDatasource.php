@@ -52,7 +52,7 @@ class ReferenceDatasource extends AbstractDatasource
         return [
             't.ts_touched'  => $this->t("update date"),
             't.type'        => $this->t("type"),
-            't.field_name'  => $this->t("field name"),
+            't.field_name'  => $this->t("field"),
             'n.title'       => $this->t("node title"),
             's.title'       => $this->t("target title")
         ];
