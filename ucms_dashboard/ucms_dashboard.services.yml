@@ -28,6 +28,12 @@ services:
     class: MakinaCorpus\Ucms\Dashboard\TransactionHandler
     arguments: ['@database']
 
+  ucms_dashboard.twig.helper_extension:
+    public: false
+    class: MakinaCorpus\Ucms\Dashboard\Twig\Extension\HelperExtension
+    arguments: ["@entity.manager", "@?ucms_contrib.type_handler", "%kernel.debug%"]
+    tags: [{name: twig.extension}]
+
   ucms_dashboard.twig.action_extension:
     public: false
     class: MakinaCorpus\Ucms\Dashboard\Twig\Extension\ActionExtension

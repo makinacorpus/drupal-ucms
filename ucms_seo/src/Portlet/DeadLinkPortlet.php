@@ -28,7 +28,10 @@ class DeadLinkPortlet extends AbstractAdminPortlet
         return $this->t("Dead links");
     }
 
-    public function getPath() {}
+    public function getPath()
+    {
+      return 'admin/dashboard/content/links';
+    }
 
     public function getActions()
     {

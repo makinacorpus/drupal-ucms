@@ -15,6 +15,7 @@ use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Contrib\Controller\DashboardController;
 
 require_once __DIR__ . '/ucms_contrib.field.inc';
 
@@ -100,6 +101,17 @@ function ucms_contrib_menu() {
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 210,
     ];
+    if (TypeHandler::TAB_CONTENT === $key) {
+      $items['admin/dashboard/' . $key . '/links'] = [
+        'title'             => "Links",
+        'page callback'     => 'sf_dic_page',
+        'page arguments'    => [DashboardController::class.'::viewAllReference'],
+        'access arguments'  => ['access ucms content overview'],
+        'file'              => 'ucms_contrib.pages.inc',
+        'type'              => MENU_LOCAL_TASK,
+        'weight'            => 300,
+      ];
+    }
   }
 
   // Node actions.

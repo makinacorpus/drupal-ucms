@@ -53,6 +53,11 @@ services:
     class: MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource
     arguments: ["@ucms_search.search_factory", "@ucms_site.manager", "@entity.manager", "@current_user"]
 
+  # References datasource
+  ucms_contrib.datasource.reference:
+    class: MakinaCorpus\Ucms\Contrib\ReferenceDatasource
+    arguments: ["@entity.manager", "@database"]
+
   # Content portlet
   ucms_contrib.content_portlet:
     public: false
