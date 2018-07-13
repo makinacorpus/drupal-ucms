@@ -35,7 +35,8 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
         if ($references = $event->getReferences()) {
             // Proceed only if references are found.
-            $query = $this->database->insert('ucms_node_reference')->fields(['source_id', 'target_id', 'type', 'field_name']);
+            $query = $this->database->insert('ucms_node_reference')->fields(['source_id', 'target_id', 'type', 'field_name', 'ts_touched']);
+            $now = (new \DateTime())->format('Y-m-d H:i:s');
 
             foreach ($references as $reference) {
                 $query->values([
@@ -43,6 +44,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
                     $reference->getTargetId(),
                     $reference->getType(),
                     $reference->getFieldName(),
+                    $now
                 ]);
             }
 

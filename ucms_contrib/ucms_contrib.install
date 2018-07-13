@@ -76,6 +76,14 @@ function ucms_contrib_schema() {
         'not null'    => false,
         'default'     => null,
       ],
+      'ts_touched' => [
+        'decription'  => "Latest modification date",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => true,
+      ],
     ],
     'foreign keys' => [
       'source_id' => [
@@ -183,6 +191,31 @@ function ucms_contrib_update_7005() {
     db_query("UPDATE {ucms_contrib_cart} SET ts_added = ?", [(new \DateTime())->format('Y-m-d H:i:s')]);
     db_change_field('ucms_contrib_cart', 'ts_added', 'ts_added', [
       'decription'  => "Creation date",
+      'mysql_type'  => 'datetime',
+      'pgsql_type'  => 'timestamp',
+      'type'        => 'varchar',
+      'length'      => 16,
+      'not null'    => true,
+    ]);
+  }
+}
+
+/**
+ * Adds the {ucms_node_reference}.ts_touched column.
+ */
+function ucms_contrib_update_7006() {
+  if (!db_field_exists('ucms_node_reference', 'ts_touched')) {
+    db_add_field('ucms_node_reference', 'ts_touched', [
+      'decription'  => "Latest modification date",
+      'mysql_type'  => 'datetime',
+      'pgsql_type'  => 'timestamp',
+      'type'        => 'varchar',
+      'length'      => 16,
+      'not null'    => false,
+    ]);
+    db_query("UPDATE {ucms_node_reference} SET ts_touched = :date", [':date' => (new \DateTime())->format('Y-m-d H:i:s')]);
+    db_change_field('ucms_node_reference', 'ts_touched', 'ts_touched', [
+      'decription'  => "Latest modification date",
       'mysql_type'  => 'datetime',
       'pgsql_type'  => 'timestamp',
       'type'        => 'varchar',
