@@ -2,10 +2,9 @@
 
 use MakinaCorpus\Ucms\Contrib\NodeAdminDisplay;
 use MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource;
-use MakinaCorpus\Ucms\Dashboard\Page\Page;
 
 function ucms_contrib_admin_content_page_mine($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('owner', $GLOBALS['user']->uid);
@@ -13,7 +12,7 @@ function ucms_contrib_admin_content_page_mine($tab = null) {
 }
 
 function ucms_contrib_admin_content_page_global($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
   $search
@@ -25,7 +24,7 @@ function ucms_contrib_admin_content_page_global($tab = null) {
 }
 
 function ucms_contrib_admin_content_page_local($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_global', 0);
@@ -40,7 +39,7 @@ function ucms_contrib_admin_content_page_local($tab = null) {
 }
 
 function ucms_contrib_admin_content_page_flagged($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_flagged', 1);
@@ -48,7 +47,7 @@ function ucms_contrib_admin_content_page_flagged($tab = null) {
 }
 
 function ucms_contrib_admin_content_page_starred($tab = null) {
-  /* @var $datasource PrivateNodeDataSource */
+  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
   $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
   $search = $datasource->getSearch();
   $search->getFilterQuery()->matchTerm('is_starred', 1);
