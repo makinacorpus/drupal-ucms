@@ -188,14 +188,12 @@ function ucms_user_menu_alter(&$items) {
   $items['user/password']['page arguments'] = ['MakinaCorpus\Ucms\User\Form\UserRequestNewPassword'];
 }
 
-
 /**
  * Title callback for menu items.
  */
 function ucms_user_menu_item_title($user) {
   return t("User @name", ['@name' => $user->name]);
 }
-
 
 /**
  * Implements hook_permission().
@@ -320,7 +318,6 @@ It expires after [user:password-url-lifespan] and nothing will happen if it's no
   $message['body'][0] = token_replace($message['body'][0], $variables, $options);
 }
 
-
 /**
  * Callback to add exceptional tokens.
  */
@@ -332,7 +329,6 @@ function ucms_user_replace_tokens(&$replacements, $data, $options) {
   $lifespan = variable_get('user_password_reset_timeout', 86400);
   $replacements['[user:password-url-lifespan]'] = format_interval($lifespan, -1, $options['language']->language);
 }
-
 
 /**
  * Just for translation.

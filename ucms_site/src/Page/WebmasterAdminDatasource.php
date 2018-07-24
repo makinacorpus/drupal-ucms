@@ -1,46 +1,29 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\Page;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
-use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
 
 class WebmasterAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
-
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var SiteManager
-     */
     private $manager;
-
 
     /**
      * Default constructor
-     *
-     * @param \DatabaseConnection $db
-     * @param SiteManager $manager
      */
-    public function __construct(\DatabaseConnection $db, SiteManager $manager)
+    public function __construct(Connection $db, SiteManager $manager)
     {
         $this->db = $db;
         $this->manager = $manager;
     }
-
 
     /**
      * {@inheritdoc}
@@ -61,7 +44,6 @@ class WebmasterAdminDatasource extends AbstractDatasource
 
         return [(new LinksFilterDisplay('role', $this->t("Role")))->setChoicesMap($choices)];
     }
-
 
     /**
      * {@inheritdoc}
@@ -86,7 +68,6 @@ class WebmasterAdminDatasource extends AbstractDatasource
 
         return $accessRecords;
     }
-
 
     /**
      * {@inheritdoc}

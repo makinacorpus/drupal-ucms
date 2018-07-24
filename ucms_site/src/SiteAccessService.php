@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Site\EventDispatcher\RolesCollectionEvent;
@@ -16,34 +17,15 @@ class SiteAccessService
 {
     use StringTranslationTrait;
 
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var EventDispatcherInterface
-     */
     private $dispatcher;
-
-    /**
-     * User access cache
-     *
-     * @var boolean[][]
-     */
     private $accessCache = [];
-
-    /**
-     * @var string[]
-     */
     private $roleListCache;
 
     /**
      * Default constructor
-     *
-     * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db, EventDispatcherInterface $dispatcher)
+    public function __construct(Connection $db, EventDispatcherInterface $dispatcher)
     {
         $this->db = $db;
         $this->dispatcher = $dispatcher;

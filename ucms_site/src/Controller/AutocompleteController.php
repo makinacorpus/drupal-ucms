@@ -2,41 +2,37 @@
 
 namespace MakinaCorpus\Ucms\Site\Controller;
 
-use MakinaCorpus\Drupal\Sf\Controller;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\Condition;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\User\UserAccess;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use MakinaCorpus\Ucms\Site\SiteManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class AutocompleteController extends Controller
+class AutocompleteController extends ControllerBase
 {
+    private $database;
+    private $siteManager;
+
     /**
-     * Get current logged in user
-     *
-     * @return \Drupal\Core\Session\AccountInterface
+     * {@inheritdoc}
      */
-    private function getCurrentUser()
+    public static function create(ContainerInterface $container)
     {
-        return $this->get('current_user');
+        return new self($container->get('ucms_site.manager'), $container->get('database'));
     }
 
     /**
-     * Get site manager
-     *
-     * @return \MakinaCorpus\Ucms\Site\SiteManager
+     * Default constructor
      */
-    private function getSiteManager()
+    public function __construct(SiteManager $siteManager, Connection $database)
     {
-        return $this->get('ucms_site.manager');
-    }
-
-    /**
-     * Get database connection
-     *
-     * @return \DatabaseConnection
-     */
-    private function getDatabaseConnection()
-    {
-        return $this->get('database');
+        $this->database = $database;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -44,18 +40,16 @@ class AutocompleteController extends Controller
      */
     public function userAutocompleteAction($string)
     {
-        $manager = $this->getSiteManager();
-        $account = $this->getCurrentUser();
+        $account = $this->currentUser();
 
-        if (!$manager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(UserAccess::PERM_MANAGE_ALL) && !$this->account->hasPermission(UserAccess::PERM_USER_GOD)) {
-            throw $this->createAccessDeniedException();
+        if (!$this->siteManager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(UserAccess::PERM_MANAGE_ALL) && !$this->account->hasPermission(UserAccess::PERM_USER_GOD)) {
+            throw new AccessDeniedHttpException();
         }
 
-        $database = $this->getDatabaseConnection();
-        $q = $database
+        $q = $this->database
             ->select('users', 'u')
             ->fields('u', ['uid', 'name'])
-            ->condition('u.name', '%' . $database->escapeLike($string) . '%', 'LIKE')
+            ->condition('u.name', '%' . $this->database->escapeLike($string) . '%', 'LIKE')
             ->condition('u.uid', [0, 1], 'NOT IN')
             ->orderBy('u.name', 'asc')
             ->range(0, 16)
@@ -74,26 +68,24 @@ class AutocompleteController extends Controller
 
     public function siteAutocompleteAction(Request $request, $string)
     {
-        $manager = $this->getSiteManager();
-        $account = $this->getCurrentUser();
+        $account = $this->currentUser();
 
-        if (!$manager->getAccess()->userIsWebmaster($account) &&
+        if (!$this->siteManager->getAccess()->userIsWebmaster($account) &&
             !$account->hasPermission(Access::PERM_SITE_VIEW_ALL) &&
             !$account->hasPermission(Access::PERM_SITE_MANAGE_ALL) &&
             !$account->hasPermission(Access::PERM_SITE_GOD)
         ) {
-            throw $this->createAccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
 
-        $database = $this->getDatabaseConnection();
-        $q = $database
+        $q = $this->database
             ->select('ucms_site', 's')
             ->fields('s', ['id', 'title_admin'])
             ->condition(
-                (new \DatabaseCondition('OR'))
-                    ->condition('s.title', '%' . $database->escapeLike($string) . '%', 'LIKE')
-                    ->condition('s.title_admin', '%' . $database->escapeLike($string) . '%', 'LIKE')
-                    ->condition('s.http_host', '%' . $database->escapeLike($string) . '%', 'LIKE')
+                (new Condition('OR'))
+                    ->condition('s.title', '%' . $this->database->escapeLike($string) . '%', 'LIKE')
+                    ->condition('s.title_admin', '%' . $this->database->escapeLike($string) . '%', 'LIKE')
+                    ->condition('s.http_host', '%' . $this->database->escapeLike($string) . '%', 'LIKE')
             )
             ->orderBy('s.title_admin', 'asc')
             ->groupBy('s.id')

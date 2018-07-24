@@ -22,7 +22,7 @@ use MakinaCorpus\Ucms\Site\Form\SiteHostnameChange;
 
 /**
  * Implements hook_menu().
- */
+ *
 function ucms_site_menu() {
   $items = [];
 
@@ -249,10 +249,11 @@ function ucms_site_menu() {
 
   return $items;
 }
+ */
 
 /**
  * Implements hook_permission().
- */
+ *
 function ucms_site_permission() {
   return [
     Access::PERM_CONTENT_GOD => [
@@ -326,6 +327,7 @@ function ucms_site_permission() {
     ],
   ];
 }
+ */
 
 /**
  * Is the given path allowed on sites.
@@ -704,7 +706,7 @@ function ucms_site_fast_404() {
 
 /**
  * Implements hook_boot().
- */
+ * /
 function ucms_site_boot() {
 
   // Yes, this should also happen in Drush environment.
@@ -756,10 +758,11 @@ function ucms_site_boot() {
     $manager->dropContext();
   }
 }
+ */
 
 /**
  * Implements hook_module_implements_alter().
- */
+ * /
 function ucms_site_module_implements_alter(&$implementations, $hook) {
   switch ($hook) {
 
@@ -779,10 +782,11 @@ function ucms_site_module_implements_alter(&$implementations, $hook) {
       break;
   }
 }
+ */
 
 /**
  * Implements hook_menu_site_status_alter().
- */
+ * /
 function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
 
   if (drupal_is_cli()) {
@@ -829,21 +833,23 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
     $menu_site_status = $event->getStatus();
   }
 }
+ */
 
 /**
  * Implements hook_stream_wrappers_alter().
  * For CDN static domain replacement on public:// stream wrapper
- */
+ * /
 function ucms_site_stream_wrappers_alter(&$wrappers) {
   // Connect our override of the public:// stream wrapper for
   // static file CDN redirection (if any)
   $wrappers['public']['class'] = PublicStreamWrapper::class;
 }
+ */
 
 /**
  * Implements hook_file_url_alter
  * For CDN static domain replacement on all file related urls
- */
+ * /
 function ucms_site_file_url_alter(&$original_uri) {
   $scheme = file_uri_scheme($original_uri);
 
@@ -895,37 +901,41 @@ function ucms_site_file_url_alter(&$original_uri) {
     $original_uri = $cdn . '/' . $original_uri;
   }
 }
+ */
 
 /**
  * Is current site master.
  *
  * @return boolean
- */
+ * /
 function ucms_site_is_master() {
   return variable_get('ucms_site_master_hostname') === $_SERVER['HTTP_HOST'];
 }
+ */
 
 /**
  * Is current site CDN.
  *
  * @return boolean
- */
+ * /
 function ucms_site_is_cdn() {
   return $_SERVER['HTTP_HOST'] === variable_get('ucms_site_cdn_domain');
 }
+ */
 
 /**
  * Get master absolute URL
  *
  * @return string
- */
+ * /
 function ucms_site_master_absolute_url() {
   return ($GLOBALS['is_https'] ? 'https' : 'http') . '://' . variable_get('ucms_site_master_hostname');
 }
+ */
 
 /**
  * Redirect to mater
- */
+ * /
 function ucms_site_redirect_to_master() {
   $path = 'admin/dashboard';
   if (path_is_admin(current_path())) {
@@ -933,19 +943,21 @@ function ucms_site_redirect_to_master() {
   }
   drupal_goto(ucms_site_master_absolute_url() . '/' . $path);
 }
+ */
 
 /**
  * Redirect to mater
- */
+ * /
 function ucms_site_redirect_to_default() {
   if ($uri = variable_get('ucms_site.redirect.uri')) {
     drupal_goto($uri, [], variable_get('ucms_site.redirect.http_code', 307));
   }
 }
+ */
 
 /**
  * Redirect on node view if node can be viewed elsewhere than master.
- */
+ * /
 function ucms_site_init_node_redirect() {
   if (user_is_anonymous()) { // Better be safe than sorry.
     return;
@@ -968,10 +980,11 @@ function ucms_site_init_node_redirect() {
     }
   }
 }
+ */
 
 /**
  * Implements hook_init().
- */
+ * /
 function ucms_site_init() {
 
   if (drupal_is_cli()) {
@@ -1012,10 +1025,11 @@ function ucms_site_init() {
 
   ucms_site_init_node_redirect();
 }
+ */
 
 /**
  * Implements hook_form_FORM_ID_alter().
- */
+ * /
 function ucms_site_form_user_login_alter(&$form, &$form_state) {
   // Username is still a unique value but it's preferable to invite users
   // to connect with its e-mail.
@@ -1024,10 +1038,11 @@ function ucms_site_form_user_login_alter(&$form, &$form_state) {
   $form['name']['#description'] = t('Enter your @s e-mail address.', array('@s' => variable_get('site_name', 'Drupal')));
   $form['password']['#description'] = t('Enter the password that accompanies your e-mail address.');
 }
+ */
 
 /**
  * Implements hook_custom_theme().
- */
+ * /
 function ucms_site_custom_theme() {
 
   if (path_is_admin(current_path())) {
@@ -1063,13 +1078,14 @@ function ucms_site_custom_theme() {
     }
   }
 }
+ */
 
 /**
  * Implements hook_query_TAG_alter().
  *
  * This is required in order for users that may bypass node access (UID 1 is
  * one of them) to have site content correctly isolated depending on context.
- */
+ * /
 function ucms_site_query_node_access_alter(QueryAlterableInterface $query) {
 
   $site = ucms_site_manager()->getContext();
@@ -1084,7 +1100,7 @@ function ucms_site_query_node_access_alter(QueryAlterableInterface $query) {
     return;
   }
 
-  /* @var $account AccountInterface */
+  /* @var $account AccountInterface * /
   if (!$account = $query->getMetaData('account')) {
     $account = \Drupal::currentUser();
   }
@@ -1112,13 +1128,14 @@ function ucms_site_query_node_access_alter(QueryAlterableInterface $query) {
     [':access_sn_site_id' => $site->getId()]
   );
 }
+ */
 
 /**
  * Implements hook_query_TAG_alter().
  *
  * Implement site visibility access control for the admin UI, this is the only
  * query alteration for business purpose this module will ever do.
- */
+ *
 function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) {
 
   if (!$query instanceof SelectQueryInterface) {
@@ -1134,7 +1151,7 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     return;
   }
 
-  /* @var $account AccountInterface */
+  /* @var $account AccountInterface * /
   if (!$account = $query->getMetaData('account')) {
     $account = \Drupal::currentUser();
   }
@@ -1146,7 +1163,7 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     return;
   }
 
-  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager */
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager * /
   $groupManager = \Drupal::service('ucms_group.manager');
   $accessList   = $groupManager->getUserGroups($account);
   $siteAlias    = null;
@@ -1200,13 +1217,14 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     }
   }
 }
+ */
 
 /**
  * Implements hook_query_TAG_alter().
  *
  * Implement site visibility access control for the admin UI, this is the only
  * query alteration for business purpose this module will ever do.
- */
+ *
 function ucms_site_query_ucms_user_access_alter(QueryAlterableInterface $query) {
 
   if (!$query instanceof SelectQueryInterface) {
@@ -1222,7 +1240,7 @@ function ucms_site_query_ucms_user_access_alter(QueryAlterableInterface $query) 
     return;
   }
 
-  /* @var $account AccountInterface */
+  /* @var $account AccountInterface * /
   if (!$account = $query->getMetaData('account')) {
     $account = \Drupal::currentUser();
   }
@@ -1251,7 +1269,7 @@ function ucms_site_query_ucms_user_access_alter(QueryAlterableInterface $query) 
     return;
   }
 
-  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager */
+  /** @var \MakinaCorpus\Ucms\Site\GroupManager $groupManager * /
   $groupManager = \Drupal::service('ucms_group.manager');
   $accessList   = $groupManager->getUserGroups($account);
 
@@ -1270,20 +1288,22 @@ function ucms_site_query_ucms_user_access_alter(QueryAlterableInterface $query) 
     $query->where("1 = 0"); // You fool.
   }
 }
+ */
 
 /**
  * Implements hook_taxonomy_term_presave().
- */
+ *
 function ucms_site_taxonomy_term_presave($term) {
   // Maintain term creators.
   if (empty($term->original) && !empty($GLOBALS['user']->uid)) {
     $term->user_id = $GLOBALS['user']->uid;
   }
 }
+ */
 
 /**
  * Render the state transition form.
- */
+ *
 function theme_ucms_site_state_transition_form($variables) {
   $form = $variables['form'];
 
@@ -1307,28 +1327,31 @@ function theme_ucms_site_state_transition_form($variables) {
 
   return theme('table', ['header' => $header, 'rows' => $rows]) . drupal_render_children($form);
 }
+ */
 
 /**
  * Home page for webmasters when a site has no frontpage
- */
+ *
 function ucms_site_webmaster_home() {
   drupal_set_title(t('Welcome to @site-name', array('@site-name' => variable_get('site_name', 'Drupal'))), PASS_THROUGH);
 
   return sf_dic_twig_render('@ucms_site/views/Site/welcome.html.twig', ['site' => ucms_site_manager()->getContext()]);
 }
+ */
 
 /**
  * Preprocess dashboard top bar.
  *
  * @param $vars
- */
+ *
 function ucms_site_preprocess_ucms_dashboard_top(&$vars) {
   $vars['site'] = ucms_site_manager()->getContext();
 }
+ */
 
 /**
  * Implements hook_image_default_styles()
- */
+ *
 function ucms_site_image_default_styles() {
   $styles = [];
   $styles['ucms_site_favicon_32x32'] = [
@@ -1364,10 +1387,11 @@ function ucms_site_image_default_styles() {
 
   return $styles;
 }
+ */
 
 /**
  * Implements hook_page_build()
- */
+ *
 function ucms_site_page_build(&$page) {
   $manager = ucms_site_manager();
 
@@ -1400,3 +1424,5 @@ function ucms_site_page_build(&$page) {
     }
   }
 }
+ */
+

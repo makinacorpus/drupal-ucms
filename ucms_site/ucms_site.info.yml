@@ -1,9 +1,8 @@
-name = "UCMS - Site"
-description = "Provide site entity, site workflow, site node access machinery"
-core = 7.x
-package = UCMS
-php = 7
-dependencies[] = minidialog
-dependencies[] = sf_dic
-dependencies[] = sf_entity_event
-dependencies[] = ucms_dashboard
+name: µCMS - Site
+type: module
+description: Provide site entity, site workflow, site node access machinery
+package: µCMS
+core: 8.x
+php: 7
+#dependencies:
+#  - sf_int

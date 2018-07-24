@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
@@ -17,47 +17,18 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class NodeManager
 {
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var SiteManager
-     */
     private $manager;
-
-    /**
-     * @var EntityManager
-     */
     private $entityManager;
-
-    /**
-     * @var NodeAccessService
-     */
     private $nodeAccessService;
-
-    /**
-     * @var EventDispatcherInterface
-     */
     private $eventDispatcher;
-
-    /**
-     * @var array
-     */
     private $cloningMapping = [];
 
     /**
      * Default constructor
-     *
-     * @param \DatabaseConnection $db
-     * @param SiteManager $manager
-     * @param EntityManager $entityManager
-     * @param NodeAccessService $nodeAccessService
-     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        \DatabaseConnection $db,
+        Connection $db,
         SiteManager $manager,
         EntityManager $entityManager,
         NodeAccessService $nodeAccessService,
@@ -102,7 +73,8 @@ class NodeManager
             $node->ucms_sites[] = $siteId;
         }
 
-        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
+        // FIXME: is that useful?
+        //$this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeId));
     }
 
@@ -199,7 +171,8 @@ class NodeManager
 
             $this->entityManager->getStorage('node')->resetCache($missing);
 
-            $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $missing));
+            // FIXME: is that useful?
+            //$this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $missing));
             $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $missing));
         }
     }
@@ -308,7 +281,8 @@ class NodeManager
             ->resetCache($nodeIdList)
         ;
 
-        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nodeIdList));
+        // FIXME: is that useful?
+        //$this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nodeIdList));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_DETACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 

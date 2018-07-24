@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\Ucms\Site\Error\GroupMoveDisallowedException;
 use MakinaCorpus\Ucms\Site\EventDispatcher\GroupEvent;
@@ -16,7 +17,7 @@ class GroupManager
     /**
      * Default constructor
      */
-    public function __construct(\DatabaseConnection $database, EventDispatcherInterface $dispatcher = null)
+    public function __construct(Connection $database, EventDispatcherInterface $dispatcher = null)
     {
         $this->database = $database;
         $this->dispatcher = $dispatcher;

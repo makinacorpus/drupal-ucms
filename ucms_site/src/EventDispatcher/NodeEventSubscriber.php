@@ -2,9 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeCollectionEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
 use MakinaCorpus\Ucms\Site\NodeManager;
@@ -17,39 +17,12 @@ class NodeEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var SiteManager
-     */
     private $manager;
-
-    /**
-     * @var NodeManager
-     */
     private $nodeManager;
-
-    /**
-     * @var EntityManager
-     */
     private $entityManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
     private $eventDispatcher;
-
-    /**
-     * @var bool
-     */
     private $nodeReferenceAll;
-
-    /**
-     * @var null|string[]
-     */
     private $nodeReferenceWhitelist;
 
     /**
@@ -86,7 +59,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
     /**
      * Constructor
      *
-     * @param \DatabaseConnection $db
+     * @param Connection $db
      * @param SiteManager $manager
      * @param SiteManager $nodeManager
      * @param EntityManager $entityManager
@@ -99,7 +72,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
      *   names.
      */
     public function __construct(
-        \DatabaseConnection $db,
+        Connection $db,
         SiteManager $manager,
         NodeManager $nodeManager,
         EntityManager $entityManager,
@@ -424,7 +397,8 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
     /**
      * @todo move this somewhere else, maybe generic in 'sf_dic' module
-     */
+     * FIXME: fix this
+     *
     public function onNodeAccessChange(ResourceEvent $event)
     {
         // Rebuild node access rights
@@ -438,4 +412,5 @@ class NodeEventSubscriber implements EventSubscriberInterface
             node_access_acquire_grants($node);
         }
     }
+     */
 }

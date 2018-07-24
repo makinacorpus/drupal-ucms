@@ -72,15 +72,10 @@
         "exclude-from-classmap": ["**/Tests/"]
     },
     "require" : {
-        "elasticsearch/elasticsearch" : "2.2.0",
-        "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-filechunk": "^1.0 || ^2.0.2",
-        "makinacorpus/drupal-minidialog": "*",
         "makinacorpus/drupal-plusql" : "^1.0.4",
         "makinacorpus/drupal-sf-dic" : "^3.3.5|^4",
         "makinacorpus/drupal-ulink" : "^2.0",
-        "makinacorpus/drupal-umenu" : "^2",
-        "makinacorpus/drush-progressbar" : "^1.0",
         "makinacorpus/php-bloom" : "^2.0.1",
         "php" : ">= 7"
     },

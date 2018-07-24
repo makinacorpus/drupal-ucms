@@ -2,8 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Site\Page;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
@@ -16,23 +16,13 @@ class SiteAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var SiteManager
-     */
     private $manager;
 
     /**
      * Default constructor
-     *
-     * @param \DatabaseConnection $db
-     * @param SiteManager $manager
      */
-    public function __construct(\DatabaseConnection $db, SiteManager $manager)
+    public function __construct(Connection $db, SiteManager $manager)
     {
         $this->db = $db;
         $this->manager = $manager;

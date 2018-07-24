@@ -2,13 +2,14 @@
 
 namespace MakinaCorpus\Ucms\Site\Form;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -17,6 +18,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SiteSwitch extends FormBase
 {
+    private $manager;
+    private $dispatcher;
+    private $db;
+
     /**
      * {inheritdoc}
      */
@@ -30,28 +35,9 @@ class SiteSwitch extends FormBase
     }
 
     /**
-     * @var SiteManager
-     */
-    private $manager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var \DatabaseConnection
-     */
-    private $db;
-
-    /**
      * Default constructor
-     *
-     * @param SiteManager $manager
-     * @param EventDispatcherInterface $dispatcher
-     * @param \DatabaseConnection $db
      */
-    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher, \DatabaseConnection $db)
+    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher, Connection $db)
     {
         $this->manager = $manager;
         $this->dispatcher = $dispatcher;

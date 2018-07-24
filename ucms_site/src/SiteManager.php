@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
@@ -37,17 +38,11 @@ class SiteManager
 
     /**
      * Default constructor
-     *
-     * @param SiteStorage $storage
-     * @param SiteAccessService $access
-     * @param SiteUrlGenerator $urlGenerator
-     * @param \DatabaseConnection $db
-     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         SiteStorage $storage,
         SiteAccessService $access,
-        \DatabaseConnection $db,
+        Connection $db,
         EventDispatcherInterface $dispatcher
     ) {
         $this->storage = $storage;

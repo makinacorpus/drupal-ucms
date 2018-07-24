@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Site\Tests;
 use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\EventDispatcher\GroupEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Drupal\Core\Database\Connection;
 
 trait GroupTestTrait
 {
@@ -59,9 +60,9 @@ trait GroupTestTrait
     }
 
     /**
-     * @return \DatabaseConnection
+     * Get database connection
      */
-    abstract protected function getDatabaseConnection();
+    abstract protected function getDatabaseConnection(): Connection;
 
     /**
      * If you don't implement tearDown() this'll do it for you, if you do

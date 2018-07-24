@@ -75,11 +75,11 @@ services:
     arguments: ["@ucms_site.manager", "@current_user"]
     tags: [{name: ucms_dashboard.action_provider}]
 
-  ucms_site.context_pane_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventListener
-    arguments: ["@ucms_dashboard.action_provider_registry"]
-    tags: [{name: event_listener, event: ucms_dashboard.context_init}]
+#  ucms_site.context_pane_event_listener:
+#    public: true
+#    class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventListener
+#    arguments: ["@ucms_dashboard.action_provider_registry"]
+#    tags: [{name: event_listener, event: ucms_dashboard.context_init}]
 
   ucms_site.site_event_listener:
     public: true

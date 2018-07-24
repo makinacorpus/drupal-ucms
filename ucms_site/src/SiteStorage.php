@@ -2,8 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
-use MakinaCorpus\APubSub\Notification\EventDispatcher\ResourceEvent;
-use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
+use Drupal\Core\Database\Connection;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
@@ -14,22 +13,15 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SiteStorage
 {
-    /**
-     * @var \DatabaseConnection
-     */
     private $db;
-
-    /**
-     * @var EventDispatcherInterface
-     */
     private $dispatcher;
 
     /**
      * Default constructor
      *
-     * @param \DatabaseConnection $db
+     * @param Connection $db
      */
-    public function __construct(\DatabaseConnection $db, EventDispatcherInterface $dispatcher = null)
+    public function __construct(Connection $db, EventDispatcherInterface $dispatcher = null)
     {
         $this->db = $db;
         $this->dispatcher = $dispatcher;
@@ -402,7 +394,8 @@ class SiteStorage
             ->execute()
             ->fetchCol();
 
-        $this->dispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nidList));
+        // FIXME: fix this
+        // $this->dispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nidList));
 
         // Dispatch event for others.
         $this->dispatcher->dispatch(SiteEvents::EVENT_CLONE, new SiteCloneEvent($target, $source));
