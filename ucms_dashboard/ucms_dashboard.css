@@ -127,10 +127,6 @@
 /**
  * Dashboard
  */
-#dashboard .portlet {
-  min-width: 415px;
-}
-
 #dashboard .scrolling {
   overflow: auto;
   max-height: 250px;
@@ -153,9 +149,6 @@
   max-height: 195px;
 }
 
-#dashboard #porlet-ucms_site_sites_portlet table td:nth-of-type(2) {
-  white-space: nowrap
-}
 .dropdown-menu > input,
 .dropdown-menu > button {
   display: block;

@@ -80,7 +80,6 @@ msgstr "Créer !content_type"
 #: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:82
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:40
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:25
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:90
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:55
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Action/TreeActionProvider.php:44
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:83
@@ -155,7 +154,6 @@ msgstr "Supprimer"
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupSiteActionProvider.php:50
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Action/SiteActionProvider.php:49
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Action/UserActionProvider.php:68
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:49
 #: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:67
 msgid "View"
 msgstr "Voir"
@@ -458,14 +456,12 @@ msgid "This is a group content"
 msgstr "Ce contenu est un contenu groupe"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:83
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:34
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:39
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:48
 msgid "Never"
 msgstr "Jamais"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:94
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:42
 msgid "published"
 msgstr "publié"
 
@@ -474,37 +470,29 @@ msgid "unpublished"
 msgstr "dépublié"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:107
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:50
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:80
 #: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:5
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:89
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:61
 msgid "Type"
 msgstr "Type"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:108
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:49
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Controller/DashboardController.php:130
 #: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupAdmin.html.twig:5
 #: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:7
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:85
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:58
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:63
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:62
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:93
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:74
 msgid "Title"
 msgstr "Titre"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:109
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:53
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:116
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:62
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDisplay.php:50
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:64
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:71
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:60
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:71
 msgid "Status"
 msgstr "Statut"
 
@@ -526,45 +514,11 @@ msgstr "Dernière mise à jour"
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:67
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:242;248
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:90
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:77
 msgid "Content"
 msgstr "Contenu"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:101
-msgid "Create content"
-msgstr "Créer du contenu"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:107
-msgid "Create component"
-msgstr "Créer un composant"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:136
-msgid "You have no content yet."
-msgstr "Vous n'avez pas de contenu pour le moment."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/MediaPortlet.php:68
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:38
-msgid "Media"
-msgstr "Média"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/MediaPortlet.php:96
-msgid "Create media"
-msgstr "Créer un média"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/MediaPortlet.php:124
-msgid "You have no media yet."
-msgstr "Vous n'avez pas de média pour le moment."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:51
-msgid "Site(s)"
-msgstr "Site(s)"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/NodePortletDisplay.php:52
-msgid "Updated"
-msgstr "Mis à jour"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:108
 msgid "Tags"
@@ -575,12 +529,10 @@ msgid "Published"
 msgstr "Publié"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:114
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:76
 msgid "Unpublished"
 msgstr "Dépublié"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:130
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:24
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:42
 msgid "My sites"
 msgstr "Mes sites"
@@ -829,7 +781,6 @@ msgid "Add existing member"
 msgstr "Ajouter un membre existant"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupActionProvider.php:50
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitesPortlet.php:22
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:35
 msgid "All sites"
 msgstr "Tous les sites"
@@ -918,7 +869,6 @@ msgstr "Ajouter un groupe"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:86
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:58
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:59
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:68
 msgid "Name"
 msgstr "Nom"
 
@@ -1423,7 +1373,6 @@ msgstr ""
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:66
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:45
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:60
 msgid "Disabled"
 msgstr "Désactivé"
 
@@ -2170,41 +2119,6 @@ msgstr "Expire le"
 msgid "Path"
 msgstr "Chemin"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortlet.php:28
-msgid "Dead links"
-msgstr "Liens morts"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:35
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:65
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:72
-msgid "Link"
-msgstr "Lien"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:41
-msgid "Undefined"
-msgstr "Indéfini"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:76
-msgid "Deleted"
-msgstr "Supprimé"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:86
-msgid "Field"
-msgstr "Champ"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:87
-msgid "Destination"
-msgstr "Destination"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:88
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteSwitch.php:87
-msgid "Reason"
-msgstr "Raison"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Portlet/DeadLinkPortletDisplay.php:93
-msgid "No dead link"
-msgstr "Aucun lien mort"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/ucms_seo.info:0
 msgid ""
 "All you need is a bit of canonical magic and some fixed node aliases, menu "
@@ -2440,7 +2354,6 @@ msgid "Pending requests"
 msgstr "Demandes en attente"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/ContextPaneEventListener.php:26
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:43
 msgid "Request site"
 msgstr "Demander un site"
 
@@ -2676,7 +2589,6 @@ msgstr "Il y a une erreur pour passer le site @site de l'état @from à @to"
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:82
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:77
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:70
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:66
 msgid "Role"
 msgstr "Rôle"
 
@@ -2692,7 +2604,6 @@ msgstr "Nom / Prénom"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:112
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:51
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:128
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:70
 msgid "Roles"
 msgstr "Rôles"
 
@@ -2787,21 +2698,8 @@ msgstr "nom du propriétaire"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:65
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:45
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:60
 msgid "Enabled"
 msgstr "Activé"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/MySitesPortlet.php:56
-msgid "No attached site yet."
-msgstr "Pas de site rattaché pour le moment."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitePortletDisplay.php:63
-msgid "Request date"
-msgstr "Date de demande"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Portlet/SitesPortlet.php:40
-msgid "No site created yet."
-msgstr "Pas de site créé pour le moment."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/SiteAccessService.php:183
 msgid "Webmaster"
@@ -2875,7 +2773,6 @@ msgid "Switch site state"
 msgstr "Changer l'état du site"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:111
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortlet.php:45
 #: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:25
 msgid "Users"
 msgstr "Utilisateurs"
@@ -3158,7 +3055,6 @@ msgid "Last connection at"
 msgstr "Dernière connexion le"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/EventDispatcher/ContextPaneEventListener.php:20
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortlet.php:64
 #: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:33
 msgid "Create user"
 msgstr "Créer un utilisateur"
@@ -3180,7 +3076,6 @@ msgid "Your new password has been saved."
 msgstr "Votre nouveau mot de passe a été enregistré."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountEdit.php:58
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:54
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
@@ -3379,30 +3274,6 @@ msgstr "Est webmestre ?"
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDisplay.php:63
 msgid "Last connection"
 msgstr "Dernière connexion"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:21
-msgid "My account"
-msgstr "Mon compte"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:40
-msgid "Edit my information"
-msgstr "Modifier mes informations"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:41
-msgid "Edit my password"
-msgstr "Modifier mon mot de passe"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/AccountPortlet.php:55
-msgid "E-mail"
-msgstr "E-mail"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortlet.php:76
-msgid "No user created yet."
-msgstr "Aucun utilisateur créé pour le moment."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Portlet/UsersPortletDisplay.php:69
-msgid "Creation"
-msgstr "Création"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.dashboard.inc:12
 msgid "There is no users yet."

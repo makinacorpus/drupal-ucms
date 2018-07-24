@@ -31,22 +31,3 @@ services:
     public: true
     class: MakinaCorpus\Ucms\User\EventDispatcher\ContextPaneEventListener
     tags: [{ name: event_listener, event: ucms_dashboard.context_init }]
-
-  # Dashboard event listener to provide portlets
-  ucms_user.dashboard_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\User\EventDispatcher\DashboardEventListener
-    tags: [{name: event_listener, event: ucms_dashboard.dashboard_init}]
-
-  # Account portlet
-  ucms_user.account_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\User\Portlet\AccountPortlet
-    tags: [{ name: ucms_dashboard.portlet }]
-
-  # Users portlet
-  ucms_user.users_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\User\Portlet\UsersPortlet
-    arguments: ["@ucms_user.admin.datasource", "@ucms_site.manager"]
-    tags: [{ name: ucms_dashboard.portlet }]

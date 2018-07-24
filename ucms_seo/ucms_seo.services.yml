@@ -112,20 +112,11 @@ services:
     class: MakinaCorpus\Ucms\Seo\StoreLocator\StoreLocatorFactory
     arguments: ["@ucms_seo.seo_service"]
 
-  # Deadlinks tracking and portlet
-  ucms_seo.deadlinks.portlet:
-    public: false
-    class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortlet
-    arguments: ["@ucms_seo.deadlinks.datasource", "@ucms_seo.deadlinks.display"]
-    tags: [{ name: ucms_dashboard.portlet }]
+  # Deadlinks tracking
   ucms_seo.deadlinks.datasource:
     public: true
     class: MakinaCorpus\Ucms\Seo\Page\DeadLinkDatasource
     arguments: ["@database", "@entity.manager"]
-  ucms_seo.deadlinks.display:
-    public: true
-    class: MakinaCorpus\Ucms\Seo\Portlet\DeadLinkPortletDisplay
-    arguments: ["@entity.manager"]
   ucms_seo.deadlinks.subsriber:
     public: true
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\LinkReferenceEventListener

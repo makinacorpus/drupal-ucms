@@ -58,20 +58,6 @@ services:
     class: MakinaCorpus\Ucms\Contrib\ReferenceDatasource
     arguments: ["@entity.manager", "@database"]
 
-  # Content portlet
-  ucms_contrib.content_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Portlet\ContentPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
-    tags: [{ name: ucms_dashboard.portlet }]
-
-  # Media portlet
-  ucms_contrib.media_portlet:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Portlet\MediaPortlet
-    arguments: ["@ucms_contrib.datasource.elastic", "@ucms_contrib.content_action_provider", "@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
-    tags: [{ name: ucms_dashboard.portlet }]
-
   # Component responsible for providing content type context
   ucms_contrib.type_handler:
     public: true

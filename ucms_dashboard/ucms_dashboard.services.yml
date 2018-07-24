@@ -19,10 +19,6 @@ services:
     public: false
     class: MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry
 
-  ucms_dashboard.portlet_registry:
-    public: true
-    class: MakinaCorpus\Ucms\Dashboard\Portlet\PortletRegistry
-
   ucms_dashboard.transaction_handler:
     public: true
     class: MakinaCorpus\Ucms\Dashboard\TransactionHandler

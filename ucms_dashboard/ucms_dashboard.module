@@ -272,18 +272,6 @@ function ucms_dashboard_context_get() {
 }
 
 /**
- * Get dashboard.
- *
- * @return \MakinaCorpus\Ucms\Dashboard\Portlet\PortletRegistry
- *
- * @deprecated
- *   Will be replaced by services one day.
- */
-function ucms_dashboard_portlet_registry_get() {
-  return \Drupal::service('ucms_dashboard.portlet_registry');
-}
-
-/**
  * Implements hook_theme().
  */
 function ucms_dashboard_theme() {
@@ -306,10 +294,6 @@ function ucms_dashboard_theme() {
         'actions'     => [],
       ],
       'template' => 'ucms_dashboard-context',
-    ],
-    'ucms_dashboard_page' => [
-      'variables' => ['portlets' => []],
-      'template'  => 'ucms_dashboard-page',
     ],
     'ucms_dashboard_page_list' => [
       'variables' => [

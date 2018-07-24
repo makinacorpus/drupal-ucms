@@ -214,25 +214,6 @@ function ucms_user_permission() {
   ];
 }
 
-
-/**
- * Implements hook_theme().
- */
-function ucms_user_theme($existing, $type, $theme, $path) {
-  return [
-    'ucms_user_account_portlet' => array(
-      'render element' => 'element',
-    ),
-  ];
-}
-
-/**
- * Allows to override account portlet from theme.
- */
-function theme_ucms_user_account_portlet($variables) {
-  return $variables['element']['#children'];
-}
-
 /**
  * Implements hook_mail().
  */
