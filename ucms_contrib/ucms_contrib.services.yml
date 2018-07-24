@@ -36,17 +36,6 @@ services:
     class: MakinaCorpus\Ucms\Contrib\Action\SiteActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 
-  ucms_contrib.context_pane_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\Contrib\EventDispatcher\ContextPaneEventListener
-    arguments:
-      - "@ucms_contrib.content_action_provider"
-      - "@ucms_dashboard.action_provider_registry"
-      - "@ucms_site.manager"
-      - "@ucms_contrib.type_handler"
-    tags:
-      - { name: event_listener, event: ucms_dashboard.context_init }
-
   # Datasource via elastic search
   ucms_contrib.datasource.elastic:
     shared: false

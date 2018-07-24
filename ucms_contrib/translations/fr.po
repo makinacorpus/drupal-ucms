@@ -66,7 +66,6 @@ msgid "Failed to load the element"
 msgstr "Impossible de charger l'élement"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/ContentActionProvider.php:77
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:103
 msgid "Refresh"
 msgstr "Rafraichir"
 
@@ -213,15 +212,6 @@ msgstr "Les options de configuration ont été enregistrées"
 msgid "%title is already a favorite"
 msgstr "%title est déjà un favori"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:70
-msgid "Cart"
-msgstr "Panier"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:79
-msgid "Go to dashboard"
-msgstr "Aller au dashboard"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/EventDispatcher/ContextPaneEventListener.php:94;98;112
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:141
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:159
 msgid "Create"
@@ -854,7 +844,6 @@ msgstr "Groupe"
 msgid "Groups"
 msgstr "Groupes"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/EventDispatcher/ContextPaneEventSubscriber.php:58
 #: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.module:63
 msgid "Add group"
 msgstr "Ajouter un groupe"
@@ -1223,10 +1212,6 @@ msgstr "S’abonner aux notifications"
 msgid "Unsubscribe from the notifications"
 msgstr "Se désabonner des notifications"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_label/src/EventDispatcher/ContextPaneEventListener.php:40
-msgid "Create label"
-msgstr "Créer une étiquette"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Form/LabelDelete.php:71
 msgid "Do you really want to delete the \"@name\" label?"
 msgstr "Êtes-vous sûr de vouloir supprimer l'étiquette \"@name\" ?"
@@ -1439,10 +1424,6 @@ msgstr "Modifier les régions du thème &theme"
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.module:100
 msgid "Edit theme regions"
 msgstr "Modifier les régions du thème"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/EventDispatcher/ContextPaneEventListener.php:69
-msgid "Notifications"
-msgstr "Notifications"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/AbstractContentNotificationFormatter.php:86
 msgid "@count content"
@@ -1933,10 +1914,6 @@ msgstr "Ce contenu n'a pas de redirection SEO."
 msgid "This site has no SEO redirect."
 msgstr "Ce site n'a pas de redirections SEO."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/EventDispatcher/ContextPaneEventListener.php:41;43
-msgid "Add SEO redirect"
-msgstr "Ajouter une redirection SEO"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:56
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/NodeReference.php:52
 msgid "There is no node to reference!"
@@ -2352,10 +2329,6 @@ msgstr "Pas de requête"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/AdminEventSubscriber.php:77
 msgid "Pending requests"
 msgstr "Demandes en attente"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/ContextPaneEventListener.php:26
-msgid "Request site"
-msgstr "Demander un site"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/EventDispatcher/NodeEventSubscriber.php:255
 msgid "The site home page has been changed to the current content."
@@ -2939,10 +2912,6 @@ msgid_plural "@count menus have been set as main site menu"
 msgstr[0] "Le menu a été défini comme menu principal du site"
 msgstr[1] "Les @count menus ont été défini comme menu principal du site"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_tree/src/EventDispatcher/ContextPaneEventListener.php:38
-msgid "Menu tree"
-msgstr "Arborescence de menu"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:71
 msgid "Leave this field empty for auto-generation"
 msgstr "Laisser ce champ vide pour une génération automatique"
@@ -3053,11 +3022,6 @@ msgstr "Réinitialiser le mot de passe"
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Controller/AccountController.php:41
 msgid "Last connection at"
 msgstr "Dernière connexion le"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/EventDispatcher/ContextPaneEventListener.php:20
-#: sites/all/modules/composer/drupal-ucms/ucms_user/ucms_user.module:33
-msgid "Create user"
-msgstr "Créer un utilisateur"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/MyAccountChangePassword.php:63
 msgid "Current password"

@@ -125,14 +125,6 @@ services:
       - { name: apb.notification.formatter, event: "node:new_labels", auto: true }
       - { name: ucms_contrib.type_handler }
 
-  # Context pane event listener
-  ucms_notification.context_pane_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\Notification\EventDispatcher\ContextPaneEventListener
-    arguments: ["@ucms_layout.context_manager", "@current_user", "@apb.notification"]
-    tags:
-      - { name: event_listener, event: ucms_dashboard.context_init }
-
   # Site event listener
   ucms_notification.site_event_listener:
     public: true

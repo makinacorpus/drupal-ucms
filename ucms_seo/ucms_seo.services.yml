@@ -94,10 +94,6 @@ services:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\NodeEventSubscriber
     arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
     tags: [{ name: event_subscriber }]
-  ucms_seo.context_pane_event_subscriber:
-    class: MakinaCorpus\Ucms\Seo\EventDispatcher\ContextPaneEventSubscriber
-    arguments: ["@ucms_seo.seo_service"]
-    tags: [{ name: event_subscriber }]
 
   # Display site map
   ucms_seo.widget.sitemap:

@@ -252,28 +252,17 @@ function ucms_dashboard_page_get(DatasourceInterface $datasource, DisplayInterfa
  * @return AdminTable
  *
  * @deprecated
- */
+ *
 function ucms_dashboard_admin_table_get($name, array $attributes = []) {
-  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory */
+  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory * /
   $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
   return $factory->getTable($name, $attributes);
 }
-
-/**
- * Get current context pane.
- *
- * @return \MakinaCorpus\Ucms\Dashboard\Context\ContextPane
- *
- * @deprecated
- *   Will be replaced by services one day.
  */
-function ucms_dashboard_context_get() {
-  return \Drupal::service('ucms_dashboard.context');
-}
 
 /**
  * Implements hook_theme().
- */
+ *
 function ucms_dashboard_theme() {
   return [
     'ucms_dashboard_actions' => [
@@ -317,52 +306,12 @@ function ucms_dashboard_theme() {
     ],
   ];
 }
+ */
 
 /**
  * Implements hook_page_build().
- */
+ *
 function ucms_dashboard_page_build(&$page) {
-
-  if (user_access(UCMS_DASHBOARD_PERM_USE_CONTEXT_PANE)) {
-
-    $context = ucms_dashboard_context_get();
-
-    $context->init();
-
-    $actions = [];
-    foreach ($context->getActions() as $data) {
-      if (is_array($data['actions']) && count($data['actions']) && reset($data['actions']) instanceof \MakinaCorpus\Ucms\Dashboard\Action\Action) {
-        $actions[] = [
-          '#theme'      => 'ucms_dashboard_actions',
-          '#actions'    => $data['actions'],
-          '#title'      => $data['title'],
-          '#icon'       => $data['icon'],
-          '#show_title' => $data['showTitle'],
-        ];
-      } else {
-        $actions[] = $data['actions'];
-      }
-    }
-    $js_setting = [
-      'type' => 'setting',
-      'data' => [
-        'ucms_dashboard' => [
-          'defaultPane' => $context->getDefaultTab(),
-          'isOpened'    => $context->isOpened(),
-        ],
-      ],
-    ];
-    $page['page_top']['ucms_context_pane'] = [
-      '#theme'    => 'ucms_dashboard_context',
-      '#items'    => $context->getAll(),
-      '#tabs'     => $context->getTabs(),
-      '#actions'  => $actions,
-      '#attached' => [
-        'library' => [['ucms_dashboard', 'ucms_dashboard'], ['system', 'jquery.once']],
-        'js'      => [$js_setting],
-      ],
-    ];
-  }
 
   if (user_is_logged_in() || path_is_admin(current_path())) {
     $links = menu_navigation_links('main-menu');
