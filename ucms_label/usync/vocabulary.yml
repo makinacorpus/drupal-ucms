@@ -1,5 +1,0 @@
-entity:
-  vocabulary:
-    labels:
-      name: Labels
-      description: Vocabulaire pour la catégorisation des contenus.
