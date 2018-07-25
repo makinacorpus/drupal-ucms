@@ -90,7 +90,8 @@ class MemberRejectionForm extends FormBase
         /** @var $account UserInterface */
         $account = $formState->getTemporaryValue('account');
 
-        $this->entityManager->getStorage('user')->delete([$account]);
+        user_cancel([], $account->id(), 'user_cancel_reassign');
+        // $this->entityManager->getStorage('user')->delete([$account]);
 
         drupal_set_message($this->t("Registration of !name has been rejected.", ['!name' => $account->getDisplayName()]));
 
