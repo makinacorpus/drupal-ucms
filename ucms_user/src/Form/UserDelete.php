@@ -83,7 +83,8 @@ class UserDelete extends FormBase
         /* @var $user UserInterface */
         $user = $form_state->getTemporaryValue('user');
 
-        $this->entityManager->getStorage('user')->delete([$user]);
+        user_cancel([], $user->id(), 'user_cancel_reassign');
+        //$this->entityManager->getStorage('user')->delete([$user]);
 
         drupal_set_message($this->t("User @name has been deleted.", array('@name' => $user->name)));
         $this->dispatcher->dispatch('user:delete', new UserEvent($user->uid, $this->currentUser()->uid, ['name' => $user->getDisplayName()]));

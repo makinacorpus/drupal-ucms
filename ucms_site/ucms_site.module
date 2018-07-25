@@ -738,6 +738,14 @@ function ucms_site_module_implements_alter(&$implementations, $hook) {
     case 'menu_site_status_alter':
       unset($implementations['user']);
       break;
+
+    case 'user_delete':
+      // Never allow node module to delete nodes when a user is deleted
+      // preventing accidental content losses when user_delete() is called
+      // one way or the other. user_cancel() must always be used instead
+      // of user_delete().
+      unset($implementations['node']);
+      break;
   }
 }
 
