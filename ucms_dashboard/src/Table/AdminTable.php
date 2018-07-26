@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Dashboard\Table;
 
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\AdminTableEvent;
 use MakinaCorpus\Ucms\Site\Structure\AttributesTrait;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AdminTable
@@ -14,10 +13,6 @@ class AdminTable
     private $name;
     private $currentSection;
     private $eventDispatcher;
-
-    /**
-     * @var AdminTableSection[]
-     */
     private $sections = [];
 
     /**
@@ -31,19 +26,19 @@ class AdminTable
      * @param EventDispatcherInterface $eventDispatcher
      *   Event dispatcher
      */
-    public function __construct($name = 'admin_details', array $attributes = [], EventDispatcherInterface $eventDispatcher = null)
+    public function __construct(string $name = 'admin_details', array $attributes = [], EventDispatcherInterface $eventDispatcher = null)
     {
         $this->name = $name;
         $this->attributes = $attributes;
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function hasSection($key)
+    public function hasSection(string $key): bool
     {
         return isset($this->sections[$key]);
     }
 
-    public function getSection($key)
+    public function getSection(string $key): AdminTableSection
     {
         if (!isset($this->sections[$key])) {
             throw new \InvalidArgumentException(sprintf("section '%s' does not exists in table '%s'", $key, $this->name));
@@ -52,7 +47,7 @@ class AdminTable
         return $this->sections[$key];
     }
 
-    public function removeSection($key)
+    public function removeSection(string $key): self
     {
         $this->getSection($key);
 
@@ -69,7 +64,7 @@ class AdminTable
      *
      * @return $this
      */
-    public function addHeader($label, $key = null)
+    public function addHeader(string $label, string $key = null): self
     {
         $section = new AdminTableSection($label, $key);
 
@@ -84,7 +79,7 @@ class AdminTable
         return $this;
     }
 
-    public function addRow($label, $value, $key = null)
+    public function addRow(string $label, $value, string $key = null): self
     {
         if (!$this->currentSection) {
             $this->addHeader(null);
@@ -95,7 +90,7 @@ class AdminTable
         return $this;
     }
 
-    public function render()
+    public function render(): array
     {
         if ($this->eventDispatcher) {
             $this->eventDispatcher->dispatch('admin:table:' . $this->name, new AdminTableEvent($this));
@@ -117,8 +112,8 @@ class AdminTable
         }
 
         return [
-            '#theme'  => 'table__' . $this->name,
-            '#rows'   => $rows,
+            '#theme' => 'table__' . $this->name,
+            '#rows' => $rows,
         ];
     }
 }

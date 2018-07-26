@@ -11,12 +11,10 @@ class ProcessorActionProvider implements ActionProviderInterface
     /**
      * @var AbstractActionProcessor[]
      */
-    private $processors;
+    private $processors = [];
 
     /**
      * Register processor instance
-     *
-     * @param AbstractActionProcessor $processors
      */
     public function register(AbstractActionProcessor $processor)
     {
@@ -25,10 +23,8 @@ class ProcessorActionProvider implements ActionProviderInterface
 
     /**
      * Get processor instance
-     *
-     * @return AbstractActionProcessor
      */
-    public function get($id)
+    public function get($id): AbstractActionProcessor
     {
         if (!isset($this->processors[$id])) {
             throw new \InvalidArgumentException(sprintf("processor with id '%s' does not exist", $id));
@@ -45,7 +41,7 @@ class ProcessorActionProvider implements ActionProviderInterface
      *
      * @return Action[]
      */
-    public function getActions($item)
+    public function getActions($item, $primaryOnly = false, array $groups = []): array
     {
         $ret = [];
 
@@ -60,12 +56,8 @@ class ProcessorActionProvider implements ActionProviderInterface
 
     /**
      * Does this provider supports the given item
-     *
-     * @param mixed $item
-     *
-     * @return boolean
      */
-    public function supports($item)
+    public function supports($item): bool
     {
         return true;
     }

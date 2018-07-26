@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Dashboard\Twig\Extension;
+namespace MakinaCorpus\Ucms\Dashboard\Twig;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Session\AccountInterface;

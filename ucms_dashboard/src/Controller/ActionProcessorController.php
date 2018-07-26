@@ -7,7 +7,6 @@ use Drupal\Core\Form\FormBuilderInterface;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Form\ActionProcessForm;
-use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -27,14 +26,6 @@ class ActionProcessorController extends Controller
     private function getActionProcessorRegistry()
     {
         return $this->get('ucms_dashboard.processor_registry');
-    }
-
-    /**
-     * @return TransactionHandler
-     */
-    private function getTransactionHandler()
-    {
-        return $this->get('ucms_dashboard.transaction_handler');
     }
 
     public function processAction(Request $request)
@@ -65,11 +56,6 @@ class ActionProcessorController extends Controller
 
         $builder = $this->getFormBuilder();
 
-        return $this
-            ->getTransactionHandler()
-            ->run(function () use ($builder, $processor, $item) {
-                return $builder->getForm($processor->getFormClass(), $processor, $item);
-            })
-        ;
+        return $builder->getForm($processor->getFormClass(), $processor, $item);
     }
 }

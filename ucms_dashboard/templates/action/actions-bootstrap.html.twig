@@ -1,17 +1,17 @@
 {# No spaces between tags for inline-block override #}
 {% spaceless %}
-  <div class="btn-group" role="group" aria-label="actions">
+  <div class="btn-group ucms-actions" role="group" aria-label="actions">
     {% if primary %}
       {% for group in primary %}
-        {% for link in group %}
-          <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
-            {% if link.icon %}
-              <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+        {% for action in group %}
+          <a href="{{ ucms_actions_url(action) }}" class="{% if action.isAjax() %}use-ajax {% endif %}{% if action.isDialog() %}use-ajax {% endif %}btn btn-default">
+            {% if action.icon %}
+              <span class="glyphicon glyphicon-{{ action.icon }}" aria-hidden="true"></span>
             {% endif %}
-            {% if link.icon and not show_title %}
-              <span class="sr-only">{{ link.title|check_plain }}</span>
+            {% if action.icon and not show_title %}
+              <span class="sr-only">{{ action.title }}</span>
             {% else %}
-              {{ link.title|check_plain }}
+              {{ action.title }}
             {% endif %}
           </a>
         {% endfor %}
@@ -26,13 +26,13 @@
             {% endif %}
             {% if title %}
               {% if show_title %}
-                {{ title|check_plain }}
+                {{ title }}
               {% else %}
-                <span class="sr-only">{{ title|check_plain }}</span>
+                <span class="sr-only">{{ title }}</span>
               {% endif %}
             {% endif %}
           {% else %}
-            <span{% if primary %} class="sr-only"{% endif %}>{{ "More actions"|t }}</span>
+            <span{% if primary %} class="sr-only"{% endif %}>{{ "More actions"|trans }}</span>
           {% endif %}
           <span class="caret"></span>
         </button>
@@ -40,17 +40,15 @@
           {% set sep = false %}
           {% for group in secondary %}
             {% if sep %}
-              <li class="separator">
-                <hr/>
-              </li>
+              <li role="separator" class="divider"></li>
             {% endif %}
-            {% for link in group %}
+            {% for action in group %}
               <li>
-                <a href="{{ url(link.href, link.options) }}"{{ link.options.attributes|attributes }}>
-                  {% if link.icon %}
-                    <span class="glyphicon glyphicon-{{ link.icon }}" aria-hidden="true"></span>
+                <a href="{{ ucms_actions_url(action) }}" class="{% if action.isAjax() %}use-ajax {% endif %}{% if action.isDialog() %}use-ajax {% endif %}">
+                  {% if action.icon %}
+                    <span class="glyphicon glyphicon-{{ action.icon }}" aria-hidden="true"></span>
                   {% endif %}
-                  {{ link.title|check_plain }}
+                  {{ action.title }}
                 </a>
               </li>
             {% endfor %}

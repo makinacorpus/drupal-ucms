@@ -1,0 +1,61 @@
+{# No spaces between tags for inline-block override #}
+{% spaceless %}
+  <div class="btn-group ucms-actions" role="group" aria-label="actions">
+    {% if primary %}
+      {% for group in primary %}
+        {% for action in group %}
+          <a href="{{ ucms_actions_url(action) }}" class="{% if action.isAjax() %}use-ajax {% endif %}{% if action.isDialog() %}use-ajax {% endif %}btn btn-default">
+            {% if action.icon %}
+              <span class="glyphicon glyphicon-{{ action.icon }}" aria-hidden="true"></span>
+            {% endif %}
+            {% if action.icon and not show_title %}
+              <span class="sr-only">{{ action.title }}</span>
+            {% else %}
+              {{ action.title }}
+            {% endif %}
+          </a>
+        {% endfor %}
+      {% endfor %}
+    {% endif %}
+    {% if secondary %}
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" name="actions">
+          {% if not primary %}
+            {% if icon %}
+              <span class="glyphicon glyphicon-{{ icon }}" aria-hidden="true"></span>
+            {% endif %}
+            {% if title %}
+              {% if show_title %}
+                {{ title }}
+              {% else %}
+                <span class="sr-only">{{ title }}</span>
+              {% endif %}
+            {% endif %}
+          {% else %}
+            <span{% if primary %} class="sr-only"{% endif %}>{{ "More actions"|trans }}</span>
+          {% endif %}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+          {% set sep = false %}
+          {% for group in secondary %}
+            {% if sep %}
+              <li role="separator" class="divider"></li>
+            {% endif %}
+            {% for action in group %}
+              <li>
+                <a href="{{ ucms_actions_url(action) }}" class="{% if action.isAjax() %}use-ajax {% endif %}{% if action.isDialog() %}use-ajax {% endif %}">
+                  {% if action.icon %}
+                    <span class="glyphicon glyphicon-{{ action.icon }}" aria-hidden="true"></span>
+                  {% endif %}
+                  {{ action.title }}
+                </a>
+              </li>
+            {% endfor %}
+            {% set sep = true %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+{% endspaceless %}

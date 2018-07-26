@@ -3,41 +3,19 @@
  * UCMS - Dashboard and fioritures.
  */
 
-use MakinaCorpus\Ucms\Dashboard\Controller\ActionProcessorController;
-use MakinaCorpus\Ucms\Dashboard\Page\DatasourceInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface;
-use MakinaCorpus\Ucms\Dashboard\Page\Page;
-use MakinaCorpus\Ucms\Dashboard\Table\AdminTable;
-use MakinaCorpus\Ucms\Dashboard\TransactionHandler;
-
-/**
- * Use contextual pane permission.
- */
-const UCMS_DASHBOARD_PERM_USE_CONTEXT_PANE = 'use contextual pane';
-
-/**
- * Implements hook_permission().
- */
-function ucms_dashboard_permission() {
-  return [
-    UCMS_DASHBOARD_PERM_USE_CONTEXT_PANE => [
-      'title' => t("Use contextual pane"),
-    ],
-  ];
-}
-
 /**
  * Implements hook_admin_custom_theme().
- */
+ *
 function ucms_dashboard_custom_theme() {
   if (module_exists('ucms_site') && ucms_site_is_master()) {
     return variable_get('admin_theme', variable_get('theme_default', 'bartik'));
   }
 }
+ */
 
 /**
  * Implements hook_menu().
- */
+ *
 function ucms_dashboard_menu() {
 
   $items = [];
@@ -62,10 +40,11 @@ function ucms_dashboard_menu() {
 
   return $items;
 }
+ */
 
 /**
  * Implements hook_menu_breadcrumb_alter().
- */
+ *
 function ucms_dashboard_menu_breadcrumb_alter(&$active_trail, $item) {
   if (path_is_admin(current_path())) {
 
@@ -111,26 +90,11 @@ function ucms_dashboard_menu_breadcrumb_alter(&$active_trail, $item) {
     }
   }
 }
-
-/**
- * Do it in a transaction!
  */
-function ucms_dashboard_transaction_form() {
-  if ('GET' !== \Drupal::requestStack()->getCurrentRequest()->getMethod()) {
-    $args = func_get_args();
-    /** @var $helper TransactionHandler */
-    $helper = \Drupal::get('ucms_dashboard.transaction_handler');
-    $helper->run(function () use ($args) {
-      return sf_dic_page_form($args);
-    });
-  } else {
-    return sf_dic_page_form(func_get_args());
-  }
-}
 
 /**
  * Implements hook_menu_alter().
- */
+ *
 function ucms_dashboard_menu_alter(&$items) {
 
   // Remove all the unnecessary pages using the 'access administration pages'
@@ -164,17 +128,19 @@ function ucms_dashboard_menu_alter(&$items) {
     'module'            => 'ucms_dashboard',
   ];
 }
+ */
 
 /**
  * Menu callback.
- */
+ *
 function ucms_dashboard_admin_redirect() {
   drupal_goto('admin/dashboard');
 }
+ */
 
 /**
  * Admin home.
- */
+ *
 function ucms_dashboard_home() {
   if (drupal_is_cli()) {
     return; // Make drush happy.
@@ -187,10 +153,11 @@ function ucms_dashboard_home() {
   }
   drupal_goto('admin/dashboard');
 }
+ */
 
 /**
  * Implements hook_user_login().
- */
+ *
 function ucms_dashboard_user_login(&$edit, $account) {
   // When a user logs in, he must be redirected to main dashboard.
   if (drupal_is_cli()) {
@@ -201,10 +168,11 @@ function ucms_dashboard_user_login(&$edit, $account) {
   }
   $GLOBALS['ucms_dashboard_login_redirect'] = true;
 }
+ */
 
 /**
  * Implements hook_drupal_goto_alter().
- */
+ *
 function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_code) {
   // This is the most proper way to provide a user login redirect.
   if (!empty($GLOBALS['ucms_dashboard_login_redirect'])) {
@@ -214,6 +182,7 @@ function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_cod
     $path = 'admin/dashboard';
   }
 }
+ */
 
 /**
  * Fetch a specific page.
@@ -232,12 +201,13 @@ function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_cod
  * @return Page
  *
  * @deprecated
- */
+ *
 function ucms_dashboard_page_get(DatasourceInterface $datasource, DisplayInterface $display, $suggestions) {
-  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory */
+  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory * /
   $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
   return $factory->getPage($datasource, $display, $suggestions);
 }
+ */
 
 /**
  * Create an admin table.
@@ -331,22 +301,24 @@ function ucms_dashboard_page_build(&$page) {
     ];
   }
 }
+ */
 
 /**
  * Implements template_preprocess_HOOK().
- */
+ *
 function template_preprocess_ucms_dashboard_page_list(&$variables) {
-  /* @var $display \MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface */
+  /* @var $display \MakinaCorpus\Ucms\Dashboard\Page\DisplayInterface * /
   $display = $variables['display'];
   $variables['displayView']   = $display->render($variables['items']);
   $variables['displayLinks']  = $display->renderLinks(current_path());
 }
+ */
 
 /**
  * Render item actions.
  *
  * @param array $variables
- */
+ *
 function template_preprocess_ucms_dashboard_actions(&$variables) {
   // Clean title that may be === 0
   if (empty($variables['title'])) {
@@ -360,7 +332,7 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
   }
 
   foreach ($variables['actions'] as $key => $action) {
-    /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action */
+    /* @var $action \MakinaCorpus\Ucms\Dashboard\Action\Action * /
     // Remove actions for which the path is the same.
     if (current_path() === $action->getURI()) {
       continue;
@@ -405,10 +377,11 @@ function template_preprocess_ucms_dashboard_actions(&$variables) {
     $variables['mode'] === 'icon';
   }
 }
+ */
 
 /**
  * Implements hook_library().
- */
+ *
 function ucms_dashboard_library() {
   return [
     'ucms_dashboard' => [
@@ -420,3 +393,4 @@ function ucms_dashboard_library() {
     ],
   ];
 }
+ */

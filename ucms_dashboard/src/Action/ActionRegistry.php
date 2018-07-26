@@ -2,11 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Action;
 
-final class ActionRegistry
+/**
+ * Actions registry is what fetches actions from any object.
+ */
+final class ActionRegistry implements ActionProviderInterface
 {
-    /**
-     * @var ActionProviderInterface[]
-     */
     private $providers = [];
 
     /**
@@ -23,17 +23,34 @@ final class ActionRegistry
      * Get actions for item
      *
      * @param mixed $item
+     *   Item to get actions for
+     * @param bool $primaryOnly
+     *   If set to true, only primary actions are returned
+     * @param string[] $groups
+     *   If not empty, only given action groups are returned
      *
      * @return Action[]
      */
-    public function getActions($item)
+    public function getActions($item, bool $primaryOnly = false, array $groups = []): array
     {
         $ret = [];
 
         foreach ($this->providers as $provider) {
             if ($provider->supports($item)) {
-                $ret = array_merge($ret, $provider->getActions($item));
+                $ret = array_merge($ret, $provider->getActions($item, $primaryOnly, $groups));
             }
+        }
+
+        if ($primaryOnly) {
+            $ret = array_filter($ret, function (Action $action) {
+                return $action->isPrimary();
+            });
+        }
+
+        if ($groups) {
+            $ret = array_filter($ret, function (Action $action) use ($groups) {
+                return in_array($action->getGroup(), $groups);
+            });
         }
 
         usort($ret, function (Action $a, Action $b) {
@@ -46,5 +63,13 @@ final class ActionRegistry
         });
 
         return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($item): bool
+    {
+        return true;
     }
 }

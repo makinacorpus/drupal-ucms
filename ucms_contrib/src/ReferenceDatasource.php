@@ -104,7 +104,7 @@ class ReferenceDatasource extends AbstractDatasource
         $select = $this->database->select('ucms_node_reference', 't');
 
         // Add join to node only for node_access, necessary
-        $select->join('node', 'n', "n.nid = t.source_id");
+        $select->join('node_field_data', 'n', "n.nid = t.source_id");
         $select->addTag('node_access');
         $select->addMetaData('op', 'update');
 

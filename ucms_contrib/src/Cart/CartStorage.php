@@ -99,7 +99,7 @@ final class CartStorage implements CartStorageInterface
             ->orderBy('nid', 'DESC')
         ;
 
-        $q->join('node', 'n', "n.nid = c.nid");
+        $q->join('node_field_data', 'n', "n.nid = c.nid");
 
         return $q
             //->extend('PagerDefault')

@@ -30,7 +30,7 @@ abstract class AbstractActionProcessor
      * @param boolean $isDialog
      * @param string $description
      */
-    public function __construct($title, $icon = null, $priority = 0, $isPrimary = true, $isDangerous = false, $isDialog = true, $group = null, $description = null)
+    public function __construct(string $title, $icon = null, int $priority = 0, bool $isPrimary = true, bool $isDangerous = false, bool $isDialog = true, string $group = Action::GROUP_DEFAULT, string $description = '')
     {
         $this->title = $title;
         $this->icon = $icon;
@@ -44,10 +44,8 @@ abstract class AbstractActionProcessor
 
     /**
      * Get unique string identifier that will be used for links
-     *
-     * @return string
      */
-    abstract public function getId();
+    abstract public function getId(): string;
 
     /**
      * Does this provider applies to the given item
@@ -55,12 +53,8 @@ abstract class AbstractActionProcessor
      * This is the right place to apply access checks, and other stuff like
      * that. Make it very fast to execute, it might ran hundreds of time during
      * the same request!
-     *
-     * @param mixed $item
-     *
-     * @return boolean
      */
-    abstract public function appliesTo($item);
+    abstract public function appliesTo($item): bool;
 
     /**
      * Get action question
@@ -71,10 +65,8 @@ abstract class AbstractActionProcessor
      *   Total count of items to process, if count is different from the items
      *   list count, then you may set a message "... and X more to process" for
      *   example
-     *
-     * @return string
      */
-    abstract public function getQuestion($items, $totalCount);
+    abstract public function getQuestion($items, int $totalCount): string;
 
     /**
      * Process all provided items
@@ -84,22 +76,23 @@ abstract class AbstractActionProcessor
      * @return string
      *   Human localized readable status message, can be empty
      */
-    abstract public function processAll($items);
+    abstract public function processAll($items): string;
 
     /**
      * Get form class
-     *
-     * @return string
      */
-    public function getFormClass()
+    public function getFormClass(): string
     {
         return ActionProcessForm::class;
     }
 
     /**
      * Process a single item
+     *
+     * @return string
+     *   Human localized readable status message, can be empty
      */
-    public function process($item)
+    public function process($item): string
     {
         return $this->processAll([$item]);
     }
@@ -165,9 +158,9 @@ abstract class AbstractActionProcessor
      *
      * @return string
      */
-    public function getLinkTitle()
+    public function getLinkTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     /**
@@ -175,9 +168,9 @@ abstract class AbstractActionProcessor
      *
      * @return int
      */
-    public function getLinkPriority()
+    public function getLinkPriority(): int
     {
-        return $this->priority;
+        return $this->priority ?? 0;
     }
 
     /**
@@ -185,60 +178,50 @@ abstract class AbstractActionProcessor
      *
      * @return string
      */
-    public function getLinkIcon()
+    public function getLinkIcon(): string
     {
-        return $this->icon;
+        return $this->icon ?? '';
     }
 
     /**
      * Should the link open a dialog
-     *
-     * @return string
      */
-    public function isLinkDialog()
+    public function isLinkDialog(): bool
     {
-        return $this->isDialog;
+        return (bool)$this->isDialog;
     }
 
     /**
      * Is link primary
-     *
-     * @return boolean
      */
-    public function isLinkPrimary()
+    public function isLinkPrimary(): bool
     {
-        return $this->isPrimary;
+        return (bool)$this->isPrimary;
     }
 
     /**
      * Get action link group
-     *
-     * @return string
      */
-    public function getLinkGroup()
+    public function getLinkGroup(): string
     {
-        return $this->group;
+        return $this->group ?? Action::GROUP_DEFAULT;
     }
 
     /**
      * Get action description, this is optionnal
-     *
-     * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? '';
     }
 
     /**
      * Is this action dangerous
      *
      * This will only have UX/theming implications
-     *
-     * @return boolean
      */
-    public function isDangerous()
+    public function isDangerous(): bool
     {
-        return $this->isDangerous;
+        return (bool)$this->isDangerous;
     }
 }

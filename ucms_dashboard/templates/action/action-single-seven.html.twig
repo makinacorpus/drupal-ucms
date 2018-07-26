@@ -1,0 +1,14 @@
+{% spaceless %}
+  <div class="ucms-actions">
+    <a href="{{ ucms_actions_url(action) }}" class="{% if action.isAjax() %}use-ajax {% endif %}{% if action.isDialog() %}minidialog {% endif %}btn btn-default">
+      {% if action.icon %}
+        <span class="glyphicon glyphicon-{{ action.icon }}" aria-hidden="true"></span>
+      {% endif %}
+      {% if action.icon and not show_title %}
+        <span class="sr-only">{{ link.title }}</span>
+      {% else %}
+        {{ action.title }}
+      {% endif %}
+    </a>
+  </div>
+{% endspaceless %}
