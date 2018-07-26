@@ -199,7 +199,7 @@ class NodeIndexer implements NodeIndexerInterface
 
         $query = $this
             ->db
-            ->select('node', 'n')
+            ->select('node_field_data', 'n')
             ->fields('n', ['nid'])
         ;
 

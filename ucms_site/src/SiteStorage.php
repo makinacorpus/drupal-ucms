@@ -46,7 +46,7 @@ class SiteStorage
         $site = $this
             ->db
             ->query(
-                "SELECT s.*, n.nid AS has_home FROM {ucms_site} s LEFT JOIN {node} n ON n.nid = s.home_nid WHERE http_host = :host LIMIT 1 OFFSET 0",
+                "SELECT s.*, n.nid AS has_home FROM {ucms_site} s LEFT JOIN {node_field_data} n ON n.nid = s.home_nid WHERE http_host = :host LIMIT 1 OFFSET 0",
                 [':host' => $hostname]
             )
             ->fetchObject(Site::class)
@@ -79,7 +79,7 @@ class SiteStorage
         $site = $this
             ->db
             ->query(
-                "SELECT s.*, n.nid AS has_home FROM {ucms_site} s LEFT JOIN {node} n ON n.nid = s.home_nid WHERE s.id = :id LIMIT 1 OFFSET 0",
+                "SELECT s.*, n.nid AS has_home FROM {ucms_site} s LEFT JOIN {node_field_data} n ON n.nid = s.home_nid WHERE s.id = :id LIMIT 1 OFFSET 0",
                 [':id' => $id]
             )
             ->fetchObject(Site::class)
@@ -120,7 +120,7 @@ class SiteStorage
             ->fields('s')
         ;
 
-        $q->leftJoin('node', 'n', 'n.nid = s.home_nid');
+        $q->leftJoin('node_field_data', 'n', 'n.nid = s.home_nid');
         $q->addExpression('n.nid', 'has_home');
 
         if ($withAccess) {
@@ -197,7 +197,7 @@ class SiteStorage
             $q->addTag('ucms_site_access');
         }
 
-        $q->leftJoin('node', 'n', 'n.nid = s.home_nid');
+        $q->leftJoin('node_field_data', 'n', 'n.nid = s.home_nid');
         $q->addExpression('n.nid', 'has_home');
 
         $sites = $q
@@ -351,7 +351,7 @@ class SiteStorage
                 SELECT
                     :target, usn.nid
                 FROM {ucms_site_node} usn
-                JOIN {node} n ON n.nid = usn.nid
+                JOIN {node_field_data} n ON n.nid = usn.nid
                 WHERE
                     usn.site_id = :source
                     AND (n.status = 1 OR n.is_global = 0)

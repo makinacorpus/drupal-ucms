@@ -4,5 +4,4 @@ description: Provide site entity, site workflow, site node access machinery
 package: µCMS
 core: 8.x
 php: 7
-#dependencies:
-#  - sf_int
+dependencies: [sf_int, ucms_dashboard]

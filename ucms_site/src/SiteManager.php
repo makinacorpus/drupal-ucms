@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
@@ -10,6 +11,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 
 /**
  * Facade for using both site storage and site access helpers, that will also
@@ -35,6 +37,9 @@ class SiteManager
     private $db;
     private $dispatcher;
     private $postInitRun = false;
+    private $themeHandler;
+    private $masterHostname;
+    private $isMaster = false;
 
     /**
      * Default constructor
@@ -43,16 +48,36 @@ class SiteManager
         SiteStorage $storage,
         SiteAccessService $access,
         Connection $db,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        ThemeHandlerInterface $themeHandler,
+        $masterHostname = null
     ) {
         $this->storage = $storage;
         $this->access = $access;
         $this->db = $db;
         $this->dispatcher = $dispatcher;
+        $this->themeHandler = $themeHandler;
+        $this->masterHostname = $masterHostname;
 
         // This object is derived for the only reason to keep its internal logic
         // decoupled from this
         $this->urlGenerator = new SiteUrlGenerator($this);
+    }
+
+    /**
+     * Get master hostname
+     */
+    public function getMasterHostname(): string
+    {
+        return $this->masterHostname ?? '';
+    }
+
+    /**
+     * Is current context master site
+     */
+    public function isMaster(): bool
+    {
+        return $this->isMaster;
     }
 
     /**
@@ -75,6 +100,7 @@ class SiteManager
             $doDispatch = true;
         }
 
+        $this->isMaster = false;
         $this->context = $site;
 
         // Dispatch the context init event
@@ -125,18 +151,22 @@ class SiteManager
      */
     public function dropContext()
     {
-        $oldContext = false;
-
-        if ($this->context) {
-            $oldContext = $this->context;
-        }
+        $previous = $this->context ?? false;
 
         $this->context = null;
         $this->dependentContext = [];
 
-        if ($oldContext) {
-            $this->dispatcher->dispatch(SiteEvents::EVENT_DROP, new SiteEvent($oldContext));
+        if ($previous) {
+            $this->dispatcher->dispatch(SiteEvents::EVENT_DROP, new SiteEvent($previous));
         }
+    }
+
+    public function setContextAsMaster(Request $request)
+    {
+        $this->dropContext();
+        $this->isMaster = true;
+
+        $this->eventDispatcher->dispatch(SiteEvents::EVENT_MASTER_INIT, new MasterInitEvent($request));
     }
 
     /**
@@ -228,7 +258,7 @@ class SiteManager
      */
     public function getAllowedThemes()
     {
-        $event = new AllowListEvent(AllowListEvent::THEMES, variable_get('ucms_site_allowed_themes', []));
+        $event = new AllowListEvent(AllowListEvent::THEMES, [$this->themeHandler->getDefault()]);
         $this->dispatcher->dispatch(AllowListEvent::EVENT_THEMES, $event);
 
         return $event->getAllowedItems();
@@ -328,7 +358,7 @@ class SiteManager
         $templates = [];
 
         foreach ($this->storage->findTemplates() as $site) {
-            $templates[$site->id] = $site->title;
+            $templates[$site->id] = $site->getAdminTitle();
         }
 
         return $templates;

@@ -422,7 +422,7 @@ class GroupManager
             // exists, and since we have the instance, it's all good!
             $q->addExpression(':name', 'name', [':name' => $account->getAccountName()]);
             $q->addExpression(':mail', 'mail', [':mail' => $account->getEmail()]);
-            $q->addExpression(':status', 'status', [':status' => $account->status]);
+            $q->addExpression(':status', 'status', [':status' => 1 /* @todo user status on accountinterface? */]);
 
             $r = $q->execute();
             $r->setFetchMode(\PDO::FETCH_CLASS, GroupMember::class);

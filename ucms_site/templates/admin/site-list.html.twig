@@ -1,0 +1,32 @@
+{% extends '@calista/page/page.html.twig' %}
+
+{%- block item -%}
+    <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.adminTitle }}</td>
+        <td>{{ item.hostname }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{ ucms_actions(item) }}</td>
+    </tr>
+{%- endblock -%}
+
+{% block item_list %}
+    <table>
+        <thead>
+            <th>{{ "Id."|t }}</th>
+            <th>{{ "Name"|t }}</th>
+            <th>{{ "Hostname"|t }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                {{ block('item') }}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

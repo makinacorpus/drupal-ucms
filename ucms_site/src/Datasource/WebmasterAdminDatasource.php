@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\Page;
+namespace MakinaCorpus\Ucms\Site\Datasource;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\StringTranslation\StringTranslationTrait;

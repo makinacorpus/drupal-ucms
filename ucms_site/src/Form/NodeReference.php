@@ -70,7 +70,7 @@ class NodeReference extends FormBase
 
         $options = [];
         foreach ($sites as $site) {
-            $options[$site->id] = $site->title;
+            $options[$site->id] = $site->getAdminTitle();
         }
 
         $form_state->setTemporaryValue('node', $node);
@@ -107,17 +107,19 @@ class NodeReference extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
+        /** @var \Drupal\node\NodeInterface $node */
         $node   = &$form_state->getTemporaryValue('node');
+        /** @var \MakinaCorpus\Ucms\Site\Site[] $sites */
         $sites  = &$form_state->getTemporaryValue('sites');
         $siteId = &$form_state->getValue('site');
 
         $this->nodeManager->createReference($sites[$siteId], $node);
 
         drupal_set_message($this->t("%title has been added to site %site", [
-            '%title'  => $node->title,
-            '%site'   => $sites[$siteId]->title,
+            '%title'  => $node->getTitle(),
+            '%site'   => $sites[$siteId]->getAdminTitle(),
         ]));
 
-        $form_state->setRedirect('node/' . $node->nid);
+        $form_state->setRedirect('node/' . $node->id());
     }
 }

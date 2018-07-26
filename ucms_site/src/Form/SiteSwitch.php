@@ -63,7 +63,7 @@ class SiteSwitch extends FormBase
         $question = $this->t(
             "Switch site @site to state @state ?",
             [
-                '@site'  => $site->title,
+                '@site'  => $site->getAdminTitle(),
                 '@state' => $this->t(SiteState::getList()[$state]),
             ]
         );
@@ -82,6 +82,7 @@ class SiteSwitch extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
+        /** @var \MakinaCorpus\Ucms\Site\Site $site */
         $site = $form_state->getTemporaryValue('site');
         $state = (int)$form_state->getTemporaryValue('state');
         $data = ['from' => $site->state, 'to' => $state, 'message' => $form_state->getValue('message')];
@@ -103,7 +104,7 @@ class SiteSwitch extends FormBase
                 $this->t(
                     "Site @site has been switched from @from to @to",
                     [
-                        '@site' => $site->title,
+                        '@site' => $site->getAdminTitle(),
                         '@from' => $this->t($list[$data['from']]),
                         '@to'   => $this->t($list[$data['to']]),
                     ]
@@ -123,7 +124,7 @@ class SiteSwitch extends FormBase
                     $this->t(
                         "There was an error switching site @site from @from to @to",
                         [
-                            '@site' => $site->title,
+                            '@site' => $site->getAdminTitle(),
                             '@from' => $this->t($list[$data['from']]),
                             '@to'   => $this->t($list[$data['to']]),
                         ]

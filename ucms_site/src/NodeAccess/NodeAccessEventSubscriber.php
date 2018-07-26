@@ -108,12 +108,12 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         $readWrite    = [Access::OP_VIEW, Access::OP_UPDATE, Access::OP_DELETE];
         $readUpdate   = [Access::OP_VIEW, Access::OP_UPDATE];
          */
-        $isGlobal     = $node->is_global;
-        $isCorporate  = $node->is_group;
-        $isGhost      = $node->is_ghost;
+        $isGlobal     = (bool)$node->get('is_global')->value;
+        $isCorporate  = (bool)$node->get('is_corporate')->value;
+        $isGhost      = (bool)$node->get('is_ghost')->value;
         $isNotLocal   = $isGlobal || $isCorporate;
         $isPublished  = $node->isPublished();
-        $groupId      = $node->group_id ?? Access::ID_ALL;
+        $groupId      = (int)($node->get('group_id')->value ?? Access::ID_ALL);
 
         // People with "view all" permissions should view it
         $builder->add(Access::PROFILE_READONLY, $groupId, true, false, false /* $readOnly */);
@@ -195,8 +195,9 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         // grant, this will be determined at runtime: the reason for this is that if
         // you change a site state, you would need to rebuild all its nodes grants
         // and this would not be tolerable.
-        if (property_exists($node, 'ucms_sites') && !empty($node->ucms_sites)) {
-            foreach (array_unique($node->ucms_sites) as $siteId) {
+        $siteItems = $node->get('ucms_sites');
+        if (!$siteItems->isEmpty()) {
+            foreach (array_unique(array_column($siteItems->getValue(), 'value')) as $siteId) {
 
                 // Grant that reprensents the node in the site for anonymous
                 // as long as it exists, not may show up anytime when the site
@@ -216,7 +217,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                     }
                 } else  {
                     $builder->add(Access::PROFILE_SITE_READONLY, $siteId, true, false, false /* $readOnly */);
-                    if ($siteId === $node->site_id) { // Avoid data volume exploding
+                    if ($siteId === (int)$node->get('site_id')->value) { // Avoid data volume exploding
                         $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, true, false, false /* $readOnly */);
                         /*
                         $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, Permission::PUBLISH);
@@ -385,11 +386,13 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         // For some reasons, and because we don't care about the 'update'
         // operation in listings, we are going to hardcode a few behaviors
         // in this method, which won't affect various listings
-        if ('update' === $op && $account->uid && $node->uid == $account->uid) {
-            if ($node->ucms_sites) {
+        if ('update' === $op && !$account->isAnonymous() && $node->getOwnerId() == $account->id()) {
+            $siteItems = $node->get('ucms_sites');
+            if (!$siteItems->isEmpty()) {
+                $siteIdList = \array_column($siteItems->getValue(), 'value');
                 // Site contributors can update their own content in sites
                 foreach ($access->getUserRoles($account) as $grant) {
-                    if (in_array($grant->getSiteId(), $node->ucms_sites)) {
+                    if (in_array($grant->getSiteId(), $siteIdList)) {
                         return $event->allow();
                     }
                 }

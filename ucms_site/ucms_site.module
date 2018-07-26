@@ -2,23 +2,25 @@
 /**
  * @file
  * UCMS - Site context and management.
- *
- * @todo
- *   - Implement variables overloading for site: name, home
  */
 
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\PublicStreamWrapper;
 use MakinaCorpus\Ucms\Site\Site;
-use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\Controller\AutocompleteController;
-use MakinaCorpus\Ucms\Site\Controller\DashboardController;
-use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
-use MakinaCorpus\Ucms\Site\Form\SiteHostnameChange;
+use MakinaCorpus\Ucms\Site\Entity\NodeDefinition;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function ucms_site_entity_base_field_info(EntityTypeInterface $entity_type) {
+  switch ($entity_type->id()) {
+
+    case 'node':
+      return NodeDefinition::getAdditionalBaseFields();
+  }
+}
 
 /**
  * Implements hook_menu().
@@ -32,24 +34,6 @@ function ucms_site_menu() {
     'access callback'   => 'ucms_site_menu_access_manage_current',
     'type'              => MENU_CALLBACK,
   ];
-  $items['admin/dashboard/site'] = [
-    'title'             => "Sites",
-    'page callback'     => 'ucms_site_dashboard_site_list_mine',
-    'access arguments'  => [Access::PERM_SITE_DASHBOARD_ACCESS],
-    'type'              => MENU_NORMAL_ITEM,
-    'file'              => 'ucms_site.dashboard.inc',
-  ];
-  $items['admin/dashboard/site/all'] = [
-    'title'             => "All sites",
-    'page callback'     => 'ucms_site_dashboard_site_list_all',
-    'access callback'   => 'ucms_site_menu_access_view_all',
-    'file'              => 'ucms_site.dashboard.inc',
-    'type'              => MENU_LOCAL_TASK,
-  ];
-  $items['admin/dashboard/site/mine'] = [
-    'title'             => "My sites",
-    'type'              => MENU_DEFAULT_LOCAL_TASK,
-  ];
   $items['admin/dashboard/site/archive'] = [
     'title'             => "Archives",
     'page callback'     => 'ucms_site_dashboard_site_list_archive',
@@ -57,13 +41,6 @@ function ucms_site_menu() {
     'type'              => MENU_LOCAL_TASK,
     'weight'            => 100,
     'file'              => 'ucms_site.dashboard.inc',
-  ];
-  $items['admin/dashboard/site/request'] = [
-    'title'             => "Request new site",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\SiteRequest'],
-    'access arguments'  => [Access::PERM_SITE_REQUEST],
-    'type'              => MENU_NORMAL_ITEM,
   ];
 
   $items['admin/dashboard/site/%ucms_site'] = [
@@ -705,62 +682,6 @@ function ucms_site_fast_404() {
 }
 
 /**
- * Implements hook_boot().
- * /
-function ucms_site_boot() {
-
-  // Yes, this should also happen in Drush environment.
-  if (!function_exists('drupal_path_initialize')) {
-    $GLOBALS['conf']['path_inc'] = substr(__DIR__, strlen(realpath(DRUPAL_ROOT))) . '/../ucms_seo/includes/path.inc';
-  }
-
-  if (drupal_is_cli()) {
-    return; // Make drush happy.
-  }
-
-  // hook_boot() is the perfect place to set any context long before anything
-  // else get initialized (except locale).
-  $manager = ucms_site_manager();
-  $request = \Drupal::request();
-  $hostname = $request->server->get('HTTP_HOST');
-
-  if ($hostname) {
-    if ($site = $manager->getStorage()->findByHostname($hostname)) {
-      // @todo find a better way then disabling the init event
-      $manager->setContext($site, $request, true);
-
-      // This has to be done before drupal_path_initialize() which is run right
-      // before the hook_init(), so this will be the one and only alteration
-      // being done on hook_boot().
-      if ($site->hasHome()) {
-        $GLOBALS['conf']['site_frontpage'] = 'node/' . $site->home_nid;
-      } else {
-        // We do need a fallback, else the dashboard module will hit us.
-        if ($manager->getAccess()->userIsWebmaster($GLOBALS['user'], $site)) {
-          $GLOBALS['conf']['site_frontpage'] = 'welcome';
-        } else {
-          $GLOBALS['conf']['site_frontpage'] = 'node';
-        }
-      }
-
-    } else {
-      $manager->dropContext();
-
-      if (ucms_site_is_master()) {
-        // Trigger the admin init event
-        \Drupal::service('event_dispatcher')->dispatch(SiteEvents::EVENT_MASTER_INIT, new MasterInitEvent($request));
-      } else if (!ucms_site_is_cdn()) {
-        // This will trigger the maintainance page.
-        ucms_site_fast_404();
-      }
-    }
-  } else {
-    $manager->dropContext();
-  }
-}
- */
-
-/**
  * Implements hook_module_implements_alter().
  * /
 function ucms_site_module_implements_alter(&$implementations, $hook) {
@@ -900,26 +821,6 @@ function ucms_site_file_url_alter(&$original_uri) {
     // classical file paths like '/foo/css/toto.css'
     $original_uri = $cdn . '/' . $original_uri;
   }
-}
- */
-
-/**
- * Is current site master.
- *
- * @return boolean
- * /
-function ucms_site_is_master() {
-  return variable_get('ucms_site_master_hostname') === $_SERVER['HTTP_HOST'];
-}
- */
-
-/**
- * Is current site CDN.
- *
- * @return boolean
- * /
-function ucms_site_is_cdn() {
-  return $_SERVER['HTTP_HOST'] === variable_get('ucms_site_cdn_domain');
 }
  */
 

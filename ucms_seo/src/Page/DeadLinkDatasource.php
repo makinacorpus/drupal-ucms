@@ -34,7 +34,7 @@ class DeadLinkDatasource extends AbstractDatasource
         $query = $this->db->select('ucms_node_reference', 't');
 
         // Add join to node only for node_access, necessary
-        $query->join('node', 'n', "n.nid = t.source_id");
+        $query->join('node_field_data', 'n', "n.nid = t.source_id");
         $query->addTag('node_access');
         $query->addMetaData('op', 'update');
 

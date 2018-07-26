@@ -50,7 +50,7 @@ class GroupMember implements PartialUserInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserId()
+    public function getUserId(): int
     {
         return (int)$this->user_id;
     }
@@ -58,17 +58,15 @@ class GroupMember implements PartialUserInterface
     /**
      * {@inheritdoc}
      */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return (int)$this->group_id;
     }
 
     /**
      * Get roles bitmask
-     *
-     * @return int
      */
-    public function getRoleMask()
+    public function getRoleMask(): int
     {
         return (int)$this->role;
     }
@@ -76,7 +74,7 @@ class GroupMember implements PartialUserInterface
     /**
      * Is user group admin
      */
-    public function isGroupAdmin()
+    public function isGroupAdmin(): bool
     {
         return $this->role & Access::ROLE_GROUP_ADMIN;
     }

@@ -69,7 +69,7 @@ class SiteEdit extends FormBase
         $form['title'] = [
             '#title'          => $this->t("Name"),
             '#type'           => 'textfield',
-            '#default_value'  => $site->title,
+            '#default_value'  => $site->getTitle(),
             '#attributes'     => ['placeholder' => $this->t("Martin's blog")],
             '#description'    => $this->t("This will appear as the site's title on the frontoffice."),
             '#maxlength'      => 255,
@@ -79,7 +79,7 @@ class SiteEdit extends FormBase
         $form['title_admin'] = [
             '#title'          => $this->t("Administrative title"),
             '#type'           => 'textfield',
-            '#default_value'  => $site->title_admin,
+            '#default_value'  => $site->getRawAdminTitle(),
             '#attributes'     => ['placeholder' => $this->t("Martin's blog")],
             '#description'    => $this->t("This will be the site's title for the backoffice."),
             '#maxlength'      => 255,
@@ -90,7 +90,7 @@ class SiteEdit extends FormBase
             '#title'            => $this->t("Host name"),
             '#type'             => 'textfield',
             '#field_prefix'     => "http://",
-            '#default_value'    => $site->http_host,
+            '#default_value'    => $site->getHostname(),
             '#attributes'       => ['placeholder' => "martin-blog.fr"],
             '#description'      => $this->t("Type here the site URL"),
             '#element_validate' => ['::validateHttpHost'],
@@ -107,7 +107,7 @@ class SiteEdit extends FormBase
                 Site::ALLOWED_PROTOCOL_ALL    => $this->t("Both secure HTTPS and unsecure HTTP"),
                 Site::ALLOWED_PROTOCOL_PASS   => $this->t("Let Drupal decide depending on the environment")
             ],
-            '#default_value'    => $site->allowed_protocols,
+            '#default_value'    => $site->getAllowedProtocols(),
             '#description'      => $this->t("This is a technical setting that depends on the web server configuration, the technical administrators might change it."),
             '#required'         => !user_access(Access::PERM_SITE_GOD),
         ];
@@ -115,7 +115,7 @@ class SiteEdit extends FormBase
         $form['replacement_of'] = [
             '#title'          => $this->t("Replaces"),
             '#type'           => 'textarea',
-            '#default_value'  => $site->replacement_of,
+            '#default_value'  => $site->getReplacementOf(),
             '#attributes'     => ['placeholder' => "martin-blog.fr"],
             '#description'    => $this->t("If the new site aims to replace an existing site, please copy/paste the site URI into this textarea, you may write more than one URI or any useful textual information."),
             '#required'       => false,
@@ -125,7 +125,7 @@ class SiteEdit extends FormBase
         $form['http_redirects'] = [
             '#title'          => $this->t("Host name redirects"),
             '#type'           => 'textarea',
-            '#default_value'  => $site->http_redirects,
+            '#default_value'  => $site->getHttpRedirects(),
             '#attributes'     => ['placeholder' => "www.my-domain.com, example.fr"],
             '#description'    => $this->t("List of domain names that should redirect on this site, this is, you may write more than one URI or any useful textual information."),
             '#required'       => false,

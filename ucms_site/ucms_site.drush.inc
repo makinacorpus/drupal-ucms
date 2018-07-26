@@ -24,7 +24,7 @@ function ucms_site_drush_node_access_rebuild() {
     return;
   }
 
-  $total  = db_query("SELECT COUNT(*) FROM {node}")->fetchField();
+  $total  = db_query("SELECT COUNT(*) FROM {node_field_data}")->fetchField();
   if (!$total) {
     drush_print("No node access to rebuild.");
     return;
@@ -38,7 +38,7 @@ function ucms_site_drush_node_access_rebuild() {
   // Got a lot of nodes, so let's load them bulk.
   $bar->start();
   do {
-    $idList = db_query("SELECT nid FROM {node} WHERE nid > :max ORDER BY nid ASC LIMIT " . $limit, [':max' => $latest])->fetchCol();
+    $idList = db_query("SELECT nid FROM {node_field_data} WHERE nid > :max ORDER BY nid ASC LIMIT " . $limit, [':max' => $latest])->fetchCol();
 
     foreach (node_load_multiple($idList) as $node) {
       $latest = $node->nid;

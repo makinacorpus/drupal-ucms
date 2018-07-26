@@ -41,27 +41,23 @@ class SiteAccessRecord implements PartialUserInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserId()
+    public function getUserId(): int
     {
         return (int)$this->uid;
     }
 
     /**
      * Get site identifier
-     *
-     * @return int
      */
-    public function getSiteId()
+    public function getSiteId(): int
     {
         return (int)$this->site_id;
     }
 
     /**
      * Denormalized site state value
-     *
-     * @return int
      */
-    public function getSiteState()
+    public function getSiteState(): int
     {
         return (int)$this->site_state;
     }
@@ -72,7 +68,7 @@ class SiteAccessRecord implements PartialUserInterface
      * @return int
      *   One of the Access:ROLE_* constant
      */
-    public function getRole()
+    public function getRole(): int
     {
         return (int)$this->role;
     }

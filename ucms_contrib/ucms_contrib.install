@@ -45,55 +45,6 @@ function ucms_contrib_schema() {
     'primary key' => ['uid', 'nid'],
   ];
 
-  $schema['ucms_node_reference'] = [
-    'description' => 'Internal table that tracks node references',
-    'fields' => [
-      'source_id' => [
-        'description' => "Source node identifier (contains the reference)",
-        'type'        => 'int',
-        'unsigned'    => true,
-        'not null'    => true,
-        'default'     => 0,
-      ],
-      'target_id' => [
-        'description' => "Target node identifier (the referenced node)",
-        'type'        => 'int',
-        'unsigned'    => true,
-        'not null'    => true,
-        'default'     => 0,
-      ],
-      'type' => [
-        'description' => "Reference type, should be 'link' or 'media', 'unknown' is default",
-        'type'        => 'varchar',
-        'length'      => 64,
-        'not null'    => true,
-        'default'     => 'unknown',
-      ],
-      'field_name' => [
-        'description' => "Field name this reference was found into",
-        'type'        => 'varchar',
-        'length'      => 255,
-        'not null'    => false,
-        'default'     => null,
-      ],
-      'ts_touched' => [
-        'decription'  => "Latest modification date",
-        'mysql_type'  => 'datetime',
-        'pgsql_type'  => 'timestamp',
-        'type'        => 'varchar',
-        'length'      => 16,
-        'not null'    => true,
-      ],
-    ],
-    'foreign keys' => [
-      'source_id' => [
-        'table'   => 'node',
-        'columns' => ['source_id' => 'nid'],
-      ],
-    ],
-    'primary key' => ['source_id', 'target_id', 'type'],
-  ];
-
   return $schema;
 }
 

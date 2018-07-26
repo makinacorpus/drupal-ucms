@@ -15,31 +15,31 @@ trait PartialUserTrait /* implements PartialUserInterface */
     /**
      * {@inheritdoc}
      */
-    public function getAccountName()
+    public function getAccountName(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDisplayName()
+    public function getDisplayName(): string
     {
-        return check_plain($this->name); // @todo this would need format_username
+        return $this->name ?? '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEmail()
+    public function getEmail(): string
     {
-        return $this->mail;
+        return $this->mail ?? '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return (bool)$this->status;
     }
@@ -47,7 +47,7 @@ trait PartialUserTrait /* implements PartialUserInterface */
     /**
      * {@inheritdoc}
      */
-    public function isBlocked()
+    public function isBlocked(): bool
     {
         return !$this->status;
     }

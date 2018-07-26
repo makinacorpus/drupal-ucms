@@ -1,5 +1,7 @@
 <?php
 
+use MakinaCorpus\Ucms\Site\Entity\NodeDefinition;
+
 /**
  * Implements hook_schema().
  */
@@ -325,6 +327,55 @@ function ucms_site_schema() {
     'primary key' => ['group_id', 'user_id'],
   ];
 
+  $schema['ucms_node_reference'] = [
+    'description' => 'Internal table that tracks node references',
+    'fields' => [
+      'source_id' => [
+        'description' => "Source node identifier (contains the reference)",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+      'target_id' => [
+        'description' => "Target node identifier (the referenced node)",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 0,
+      ],
+      'type' => [
+        'description' => "Reference type, should be 'link' or 'media', 'unknown' is default",
+        'type'        => 'varchar',
+        'length'      => 64,
+        'not null'    => true,
+        'default'     => 'unknown',
+      ],
+      'field_name' => [
+        'description' => "Field name this reference was found into",
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => false,
+        'default'     => null,
+      ],
+      'ts_touched' => [
+        'decription'  => "Latest modification date",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'source_id' => [
+        'table'   => 'node',
+        'columns' => ['source_id' => 'nid'],
+      ],
+    ],
+    'primary key' => ['source_id', 'target_id', 'type'],
+  ];
+
   return $schema;
 }
 
@@ -367,184 +418,12 @@ function ucms_site_schema_alter(&$schema) {
       'delete'  => 'set null',
     ];
   }
-
-  if (isset($schema['url_alias'])) {
-    $schema['url_alias']['fields']['is_canonical'] = [
-      'description' => "Is this alias the canonical alias for the source path",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 0,
-    ];
-    $schema['url_alias']['fields']['site_id'] = [
-      'description' => "Site identifier the alias lies on",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ];
-  }
-
-  if (isset($schema['node'])) {
-    $schema['node']['fields']['is_global'] = [
-      'description' => "Does this node belongs to the global base",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 1,
-    ];
-    $schema['node']['fields']['is_group'] = [
-      'description' => "Does this node belongs to the group base",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 0,
-    ];
-    $schema['node']['fields']['is_flagged'] = [
-      'description' => "Is this node marked as innapropriate",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 0,
-    ];
-    $schema['node']['fields']['is_starred'] = [
-      'description' => "Is this content starred",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 0,
-    ];
-    $schema['node']['fields']['is_clonable'] = [
-      'description' => "Is this node clonable",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 1,
-    ];
-    $schema['node']['fields']['origin_nid'] = [
-      'description' => "Original parent of all parents this node was cloned with",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ];
-    $schema['node']['fields']['parent_nid'] = [
-      'description' => "Node from which this node was cloned with",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ];
-    $schema['node']['fields']['site_id'] = [
-      'description' => "Original site identifier this node was created into",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ];
-    $schema['node']['fields']['is_ghost'] = [
-      'description' => "Is this node visible by non-members of the group it is attached to",
-      'type'        => 'int',
-      'size'        => 'tiny',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 1,
-    ];
-    $schema['node']['fields']['group_id'] = [
-      'description' => "Group identifier",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ];
-  }
 }
 
 /**
  * Adds missing database table columns and constraints
  */
 function ucms_site_install_schema_fix() {
-
-  // Adds {node}.is_global column.
-  if (db_table_exists('node') && !db_field_exists('node', 'is_global')) {
-    db_add_field('node', 'is_global', [
-      'description' => "Does this node belongs to the global base",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 1,
-    ]);
-  }
-  // Adds {node}.is_group column.
-  if (db_table_exists('node') && !db_field_exists('node', 'is_group')) {
-    db_add_field('node', 'is_group', [
-      'description' => "Does this node belongs to the group base",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 0,
-    ]);
-  }
-  // Adds {node}.is_flagged column.
-  if (db_table_exists('node') && !db_field_exists('node', 'is_flagged')) {
-    db_add_field('node', 'is_flagged', [
-      'description' => "Is this node marked as innapropriate",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 0,
-    ]);
-  }
-  // Adds {node}.is_starred column.
-  if (db_table_exists('node') && !db_field_exists('node', 'is_starred')) {
-    db_add_field('node', 'is_starred', [
-      'description' => "Is this content starred",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 0,
-    ]);
-  }
-  // Adds {node}.is_clonable column.
-  if (db_table_exists('node') && !db_field_exists('node', 'is_clonable')) {
-    db_add_field('node', 'is_clonable', [
-      'description' => "Is this node clonable",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 1,
-    ]);
-  }
-  // Adds {node}.is_clonable column.
-  if (db_table_exists('node') && !db_field_exists('node', 'site_id')) {
-    db_add_field('node', 'site_id', [
-      'description' => "Original site identifier this node was created into",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ]);
-  }
-  // Adds {node}.parent_nid column.
-  if (db_table_exists('node') && !db_field_exists('node', 'origin_nid')) {
-    db_add_field('node', 'origin_nid', [
-      'description' => "Original parent of all parents this node was cloned with",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ]);
-  }
-  // Adds {node}.parent_nid column.
-  if (db_table_exists('node') && !db_field_exists('node', 'parent_nid')) {
-    db_add_field('node', 'parent_nid', [
-      'description' => "Node from which this node was cloned with",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ]);
-  }
 
   // Adds {taxonomy_term_data}.is_locked column.
   if (db_table_exists('taxonomy_term_data') && !db_field_exists('taxonomy_term_data', 'is_locked')) {
@@ -605,37 +484,6 @@ function ucms_site_install_schema_fix() {
     ]);
   }
 
-    // Adds {node}.is_ghost column.
-  if (db_table_exists('node') && !db_field_exists('node', 'is_ghost')) {
-    db_add_field('node', 'is_ghost', [
-      'description' => "Is this node visible by non-members of the group it is attached to",
-      'type'        => 'int',
-      'size'        => 'tiny',
-      'unsigned'    => true,
-      'not null'    => true,
-      'default'     => 1,
-    ]);
-  }
-  // Adds {node}.group_id column.
-  if (db_table_exists('node') && !db_field_exists('node', 'group_id')) {
-    db_add_field('node', 'group_id', [
-      'description' => "Group identifier",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => null,
-    ]);
-  }
-  /*
-  if (db_table_exists('node') && !db_constraint_exists('node', 'fk', 'node_group')) {
-    db_constraint_add('node', 'fk', 'node_group', [
-      'table'   => 'ucms_group',
-      'columns' => ['group_id' => 'id'],
-      'delete'  => 'set null'
-    ]);
-  }
-   */
-
   /*
   db_constraint_fix_processed('menu');
   db_constraint_fix_processed('node');
@@ -689,5 +537,12 @@ function ucms_site_install_default_group() {
   // Set all sites with no groups into this group
   db_query("UPDATE {ucms_site} SET group_id = ? WHERE group_id IS NULL", [$defaultGroupId]);
   // Give all nodes without any group to this group
-  db_query("UPDATE {node} SET group_id = ? WHERE group_id IS NULL", [$defaultGroupId]);
+  db_query("UPDATE {node_field_data} SET group_id = ? WHERE group_id IS NULL", [$defaultGroupId]);
+}
+
+function ucms_site_update_8003() {
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+  foreach (NodeDefinition::getAdditionalBaseFields() as $name => $definition) {
+    $definition_manager->installFieldStorageDefinition($name, 'node', 'node', $definition);
+  }
 }

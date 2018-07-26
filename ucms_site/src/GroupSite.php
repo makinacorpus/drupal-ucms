@@ -2,8 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
-use MakinaCorpus\Ucms\Site\Site;
-
 /**
  * Single access record for a group and site couple
  *
@@ -22,7 +20,7 @@ class GroupSite
      * @param int $groupId
      * @param int $userId
      */
-    static public function create($groupId, $siteId, Site $site = null)
+    static public function create(int $groupId, int $siteId, Site $site = null)
     {
         $instance = new self();
 
@@ -32,27 +30,14 @@ class GroupSite
         return $instance;
     }
 
-    /**
-     * @var int
-     */
     private $group_id;
-
-    /**
-     * @var int
-     */
     private $site_id;
-
-    /**
-     * @var Site
-     */
     private $site;
 
     /**
      * Get site identifier
-     *
-     * @return int
      */
-    public function getSiteId()
+    public function getSiteId(): int
     {
         return (int)$this->site_id;
     }
@@ -60,15 +45,13 @@ class GroupSite
     /**
      * {@inheritdoc}
      */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return (int)$this->group_id;
     }
 
     /**
      * Set preloaded site
-     *
-     * @param Site $site
      */
     public function setSite(Site $site)
     {
@@ -81,10 +64,8 @@ class GroupSite
 
     /**
      * Get site
-     *
-     * @return Site
      */
-    public function getSite()
+    public function getSite(): Site
     {
         return $this->site;
     }

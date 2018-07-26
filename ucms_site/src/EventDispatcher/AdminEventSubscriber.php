@@ -45,7 +45,7 @@ class AdminEventSubscriber implements EventSubscriberInterface
 
         $requests = [];
         foreach ($sites as $id => $site) {
-            $siteName = l($site->title_admin, 'admin/dashboard/site/' . $site->id); //@todo generate url
+            $siteName = l($site->getAdminTitle(), 'admin/dashboard/site/' . $site->id); //@todo generate url
 
             if ($site->getState() == SiteState::REQUESTED) {
                 $requests[] = $siteName;

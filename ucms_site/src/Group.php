@@ -60,35 +60,35 @@ class Group
 
     public function getId()
     {
-        return $this->id ? (int)$this->id : null;
+        return $this->id ?? 0;
     }
 
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
-        $this->title = (string)$title;
+        $this->title = $title;
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
-    public function setIsGhost($isGhost)
+    public function setIsGhost(bool $isGhost)
     {
-        $this->is_ghost = (bool)$isGhost;
+        $this->is_ghost = $isGhost;
     }
 
-    public function isGhost()
+    public function isGhost(): bool
     {
         return (bool)$this->is_ghost;
     }
 
-    public function setIsMeta($isMeta)
+    public function setIsMeta(bool $isMeta)
     {
-        $this->is_meta = (bool)$isMeta;
+        $this->is_meta = $isMeta;
     }
 
-    public function isMeta()
+    public function isMeta(): bool
     {
         return (bool)$this->is_meta;
     }

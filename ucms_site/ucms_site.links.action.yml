@@ -1,0 +1,5 @@
+ucms_site.site.request:
+    route_name: ucms_site.admin.site.request
+    title: Request site
+    appears_on:
+        - ucms_site.admin.site_list

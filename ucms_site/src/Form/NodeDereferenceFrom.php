@@ -66,8 +66,8 @@ class NodeDereferenceFrom extends FormBase
         return confirm_form(
             $form,
             $this->t("Remove %title from the %site site?", [
-                '%title'  => $node->title,
-                '%site'   => $site->title,
+                '%title'  => $node->getTitle(),
+                '%site'   => $site->getAdminTitle(),
             ]),
             'node/' . $node->id()
         );
@@ -78,14 +78,15 @@ class NodeDereferenceFrom extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
+        /** @var \Drupal\node\NodeInterface $node */
         $node = $form_state->getTemporaryValue('node');
         $site = $this->siteManager->getContext();
 
         $this->nodeManager->deleteReferenceBulkFromSite($site->getId(), [$node->id()]);
 
         drupal_set_message($this->t("%title has been removed from site %site", [
-            '%title'  => $node->title,
-            '%site'   => $site->title,
+            '%title'  => $node->getTitle(),
+            '%site'   => $site->getAdminTitle(),
         ]));
 
         $form_state->setRedirect('node/' . $node->id());

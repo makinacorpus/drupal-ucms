@@ -184,22 +184,6 @@ function ucms_seo_schema() {
 }
 
 /**
- * Get constraints.
- */
-function ucms_seo_install_constraints() {
-  // Hopefully, this syntax should work on both PostgreSQL and MySQL although
-  // this is pure coincidence, this is great for us.
-  return [
-    'ucms_seo_node' => [
-      'ucms_seo_node_fk' => "ALTER TABLE {ucms_seo_node} ADD CONSTRAINT {ucms_seo_node_fk} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
-    ],
-    'ucms_seo_node' => [
-      'ucms_seo_node_fk' => "ALTER TABLE {ucms_seo_node} ADD CONSTRAINT {ucms_seo_node_fk} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
-    ],
-  ];
-}
-
-/**
  * Adds database constraints.
  */
 function ucms_seo_install_schema_fix() {

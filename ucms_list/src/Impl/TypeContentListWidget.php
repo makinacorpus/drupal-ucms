@@ -48,7 +48,7 @@ class TypeContentListWidget extends AbstractContentList
               $exclude[] = $current->id();
           }
 
-          $query = db_select('node', 'n');
+          $query = db_select('node_field_data', 'n');
           $query->join('ucms_site_node', 'un', 'un.nid = n.nid');
 
           if ($exclude) {

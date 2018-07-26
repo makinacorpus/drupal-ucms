@@ -1,0 +1,30 @@
+
+ucms_site.admin.site_list:
+    path: /admin/structure/site
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteList
+        _title: Sites
+    requirements:
+        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_DASHBOARD_ACCESS)
+
+ucms_site.admin.site.request:
+    path: /admin/structure/site/request
+    defaults:
+        _form: \MakinaCorpus\Ucms\Site\Form\SiteRequest
+        _title: Request site
+    requirements:
+        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_REQUEST)
+
+ucms_site.admin.site.view:
+    path: /admin/structure/site/{site}
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteView
+        _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteViewTitle
+    requirements:
+        id: \d+
+        # @todo implement an access checker
+        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_DASHBOARD_ACCESS)
+    options:
+        parameters:
+            site:
+                type: ucms_site

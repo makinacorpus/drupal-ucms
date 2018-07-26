@@ -1,14 +1,15 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\Page;
+namespace MakinaCorpus\Ucms\Site\Datasource;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
-use MakinaCorpus\Ucms\Dashboard\Page\PageState;
-use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
-use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
+use MakinaCorpus\Calista\Datasource\AbstractDatasource;
+use MakinaCorpus\Calista\Datasource\DatasourceResultInterface;
+use MakinaCorpus\Calista\Query\Filter;
+use MakinaCorpus\Calista\Query\Query;
+use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -16,136 +17,143 @@ class SiteAdminDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
-    private $db;
+    private $database;
     private $manager;
 
     /**
      * Default constructor
      */
-    public function __construct(Connection $db, SiteManager $manager)
+    public function __construct(Connection $database, SiteManager $manager)
     {
-        $this->db = $db;
+        $this->database = $database;
         $this->manager = $manager;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFilters($query)
+    public function getItemClass(): string
+    {
+        return Site::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters(): array
     {
         $states = SiteState::getList(SiteState::ARCHIVE);
 
         foreach ($states as $key => $label) {
-          $states[$key] = $this->t($label);
+            $states[$key] = $this->t($label);
         }
 
         return [
-            (new LinksFilterDisplay('state', $this->t("State")))->setChoicesMap($states),
+            (new Filter('uid')),
+            (new Filter('state', $this->t("State")))->setChoicesMap($states),
             // @todo missing site type registry or variable somewhere
-            (new LinksFilterDisplay('theme', $this->t("Theme")))->setChoicesMap($this->manager->getAllowedThemesOptionList()),
-            (new LinksFilterDisplay('template', $this->t("Template")))->setChoicesMap($this->manager->getTemplateList()),
-            (new LinksFilterDisplay('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
+            (new Filter('theme', $this->t("Theme")))->setChoicesMap($this->manager->getAllowedThemesOptionList()),
+            (new Filter('template', $this->t("Template")))->setChoicesMap($this->manager->getTemplateList()),
+            (new Filter('other', $this->t("Other")))->setChoicesMap(['t' => "template"]),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSortFields($query)
+    public function getSorts(): array
     {
         return [
-            's.id'          => $this->t("identifier"),
-            's.title'       => $this->t("title"),
-            's.title_admin' => $this->t("administrative title"),
-            's.http_host'   => $this->t("hostname"),
-            's.state'       => $this->t("state"),
-            's.type'        => $this->t("type"),
-            's.ts_changed'  => $this->t("lastest update date"),
-            's.ts_created'  => $this->t("creation date"),
-            'u.name'        => $this->t("owner name"),
+            's.id'          => $this->t("Identifier"),
+            's.title'       => $this->t("Title"),
+            's.title_admin' => $this->t("Administrative title"),
+            's.http_host'   => $this->t("Hostname"),
+            's.state'       => $this->t("State"),
+            's.type'        => $this->t("Type"),
+            's.ts_changed'  => $this->t("Lastest update date"),
+            's.ts_created'  => $this->t("Creation date"),
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDefaultSort()
+    public function supportsPagination(): bool
     {
-        return ['s.ts_changed', SortManager::DESC];
+        return true;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getItems($query, PageState $pageState)
+    public function supportsFulltextSearch(): bool
     {
-        $q = $this
-            ->db
-            ->select('ucms_site', 's')
-            ->fields('s', ['id'])
-            ->addTag('ucms_site_access')
-        ;
-        $q->leftJoin('users', 'u', "u.uid = s.uid");
+        return true;
+    }
 
-        if (isset($query['state'])) {
-            $q->condition('s.state', $query['state']);
+    /**
+     * {@inheritdoc}
+     */
+    public function getItems(Query $query): DatasourceResultInterface
+    {
+        $select = $this->database->select('ucms_site', 's')->fields('s');
+        $select->addTag('ucms_site_access');
+        $select->leftJoin('users', 'u', "u.uid = s.uid");
+        $select->groupBy('s.id');
+
+        if ($query->has('state')) {
+            $select->condition('s.state', $query->get('state'));
         }
-        if (isset($query['theme'])) {
-            $q->condition('s.theme', $query['theme']);
+        if ($query->has('theme')) {
+            $select->condition('s.theme', $query->get('theme'));
         }
-        if (isset($query['template'])) {
-            $q->condition('s.template_id', $query['template']);
+        if ($query->has('template')) {
+            $select->condition('s.template_id', $query->get('template'));
         }
-        if (!empty($query['uid'])) {
-            $q->join('ucms_site_access', 'sa', "sa.site_id = s.id");
-            $q->condition('sa.uid', $query['uid']);
+        if ($query->has('uid')) {
+            $select->join('ucms_site_access', 'sa', "sa.site_id = s.id");
+            $select->condition('sa.uid', $query->get('uid'));
         }
 
         // Quite ugly, but working as of now
-        // @todo find a more elegant way
-        if (isset($query['other'])) {
-            if (!is_array($query['other'])) {
-                $query['other'] = [$query['other']];
-            }
-            foreach ($query['other'] as $value) {
+        if ($query->has('other')) {
+            foreach ((array)$query->get('other') as $value) {
                 switch ($value) {
                     case 't':
-                        $q->condition('s.is_template', 1);
+                        $select->condition('s.is_template', 1);
                         break;
                 }
             }
         }
 
-        if ($pageState->hasSortField()) {
-            $q->orderBy($pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        if ($query->hasSortField()) {
+            $select->orderBy($query->getSortField(), Query::SORT_DESC === $query->getSortOrder() ? 'desc' : 'asc');
         }
-        $q->orderBy('s.id', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        $select->orderBy('s.id', Query::SORT_DESC === $query->getSortOrder() ? 'desc' : 'asc');
 
-        $sParam = SearchForm::DEFAULT_PARAM_NAME;
-        if (!empty($query[$sParam])) {
-            $q->condition(
-                db_or()
-                  ->condition('s.title', '%' . db_like($query[$sParam]) . '%', 'LIKE')
-                  ->condition('s.http_host', '%' . db_like($query[$sParam]) . '%', 'LIKE')
+        if ($search = $query->getRawSearchString()) {
+            $escaped = $this->database->escapeLike($search);
+            $select->condition(
+                (new Condition('OR'))
+                  ->condition('s.http_host', '%'.$escaped.'%', 'LIKE')
+                  ->condition('s.title', '%'.$escaped.'%', 'LIKE')
+                  ->condition('s.title_admin', '%'.$escaped.'%', 'LIKE')
             );
         }
 
-        $idList = $q
-            ->groupBy('s.id')
-            ->extend('PagerDefault')
-            ->limit($pageState->getLimit())
+        $countQuery = $select->countQuery();
+        $total = $countQuery->execute()->fetchField();
+
+        if (!$total) {
+            return $this->createEmptyResult();
+        }
+
+        $result = $select
+            ->range($query->getOffset(), $query->getLimit())
             ->execute()
-            ->fetchCol()
+            ->fetchAll(\PDO::FETCH_CLASS, Site::class)
         ;
 
-        return $this->manager->getStorage()->loadAll($idList);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasSearchForm()
-    {
-        return true;
+        return $this->createResult($result, $total);
     }
  }

@@ -58,8 +58,8 @@ class RolesCollectionEvent extends Event
      * @param mixed $label
      *  The relative role label.
      *
-     * @throws InvalidArgumentException if the provided role identifier is not an integer.
-     * @throws LogicException if the provided role identifier is already used.
+     * @throws \InvalidArgumentException if the provided role identifier is not an integer.
+     * @throws \LogicException if the provided role identifier is already used.
      *
      * @return RolesCollectionEvent
      */

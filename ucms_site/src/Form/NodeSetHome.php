@@ -75,12 +75,13 @@ class NodeSetHome extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
+        /** @var \Drupal\node\NodeInterface $node */
         $node = &$form_state->getTemporaryValue('node');
         $site = $this->siteManager->getContext();
         $site->home_nid = $node->id();
 
         $this->siteManager->getStorage()->save($site, ['home_nid']);
 
-        $form_state->setRedirect('node/' . $node->nid);
+        $form_state->setRedirect('node/' . $node->id());
     }
 }

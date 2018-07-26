@@ -1,138 +1,153 @@
+parameters:
+
+    # Master (admin) site hostname
+    ucms_site_master_hostname: admin.d8-ucms.guinevere
+
+    # If set to false, ucms_site_node_reference_whitelist is a whitelist,
+    # otherwise it's a blacklist.
+    ucms_site_node_reference_all: true
+
+    # List of field names that should never be parsed to find implicit node
+    # references within.
+    ucms_site_node_reference_whitelist: []
+
 services:
 
-  # Site storage responsible for loading and updating site data
-  ucms_site.storage:
-    public: false
-    class: MakinaCorpus\Ucms\Site\CachedSiteStorage
-    arguments: ["@database", "@event_dispatcher"]
+    ucms_site.storage:
+        public: false
+        class: MakinaCorpus\Ucms\Site\CachedSiteStorage
+        arguments: ["@database", "@event_dispatcher"]
 
-  # Site access helper
-  ucms_site.access:
-    public: false
-    class: MakinaCorpus\Ucms\Site\SiteAccessService
-    arguments: ["@database", "@event_dispatcher"]
+    ucms_site.access:
+        public: false
+        class: MakinaCorpus\Ucms\Site\SiteAccessService
+        arguments: ["@database", "@event_dispatcher"]
 
-  # Site manager, in all cases, it the component you want as dependency
-  ucms_site.manager:
-    public: true
-    class: MakinaCorpus\Ucms\Site\SiteManager
-    arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher"]
+    ucms_site.manager:
+        public: true
+        class: MakinaCorpus\Ucms\Site\SiteManager
+        arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher", "@theme_handler", "%ucms_site_master_hostname%"]
 
-  # Group manager
-  ucms_group.manager:
-    public: true
-    class: MakinaCorpus\Ucms\Site\GroupManager
-    arguments: ["@database", "@event_dispatcher"]
+    ucms_group.manager:
+        public: true
+        class: MakinaCorpus\Ucms\Site\GroupManager
+        arguments: ["@database", "@event_dispatcher"]
 
-  # Node access helper
-  ucms_site.node_access_helper:
-    public: true
-    class: MakinaCorpus\Ucms\Site\NodeAccessService
-    arguments: ["@ucms_site.manager"]
+    ucms_site.node_access_helper:
+        public: true
+        class: MakinaCorpus\Ucms\Site\NodeAccessService
+        arguments: ["@ucms_site.manager"]
 
-  # Node manager, handles node attach/detach/clone to sites
-  ucms_site.node_manager:
-    public: true
-    class: MakinaCorpus\Ucms\Site\NodeManager
-    arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
+    ucms_site.node_manager:
+        public: true
+        class: MakinaCorpus\Ucms\Site\NodeManager
+        arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
 
-  ucms_site.url_generator:
-    public: true
-    class: MakinaCorpus\Ucms\Site\SiteUrlGenerator
-    factory: ["@ucms_site.manager", getUrlGenerator]
+    ucms_site.url_generator:
+        public: true
+        class: MakinaCorpus\Ucms\Site\SiteUrlGenerator
+        factory: ["@ucms_site.manager", getUrlGenerator]
 
-  ucms_site.admin.datasource:
-    public: true
-    class: MakinaCorpus\Ucms\Site\Page\SiteAdminDatasource
-    arguments: ["@database", "@ucms_site.manager"]
+    ucms_site.admin.datasource:
+        public: true
+        class: MakinaCorpus\Ucms\Site\Datasource\SiteAdminDatasource
+        arguments: ["@database", "@ucms_site.manager"]
 
-  ucms_site.admin.webmaster_datasource:
-    public: true
-    class: MakinaCorpus\Ucms\Site\Page\WebmasterAdminDatasource
-    arguments: ["@database", "@ucms_site.manager"]
+    # Determines the site context at bootstrap
+    ucms_site.kernel.subscriber:
+        public: true
+        class: MakinaCorpus\Ucms\Site\Environment\KernelEventSubscriber
+        arguments: ["@ucms_site.manager", "@event_dispatcher", "@config.factory"]
+        tags: [{ name: event_subscriber }]
 
-  ucms_site.site_action_provider:
-    public: false
-    class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider
-    arguments: ["@ucms_site.manager"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    # Overrides config using site context
+    ucms_site.site_context_overrider:
+        class: MakinaCorpus\Ucms\Site\Environment\SiteConfigOverrides
+        arguments: ['@service_container']
+        tags: [{name: config.factory.override, priority: 1000}]
 
-  ucms_site.node_action_provider:
-    public: false
-    class: MakinaCorpus\Ucms\Site\Action\NodeActionProvider
-    arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+#    ucms_site.admin.webmaster_datasource:
+#      public: true
+#      class: MakinaCorpus\Ucms\Site\Datasource\WebmasterAdminDatasource
+#      arguments: ["@database", "@ucms_site.manager"]
 
-  ucms_site.node_reference_action_provider:
-    public: false
-    class: MakinaCorpus\Ucms\Site\Action\NodeReferenceActionProvider
-    arguments: ["@entity.manager"]
-    tags: [{name: ucms_dashboard.action_provider}]
+    ucms_site.site_action_provider:
+        public: false
+        class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider
+        arguments: ["@ucms_site.manager"]
+        tags: [{name: ucms.action_provider}]
 
-  ucms_site.webmaster_action_provider:
-    public: false
-    class: MakinaCorpus\Ucms\Site\Action\WebmasterActionProvider
-    arguments: ["@ucms_site.manager", "@current_user"]
-    tags: [{name: ucms_dashboard.action_provider}]
+#    ucms_site.node_action_provider:
+#        public: false
+#        class: MakinaCorpus\Ucms\Site\Action\NodeActionProvider
+#        arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@current_user"]
+#        tags: [{name: ucms.action_provider}]
 
-#  ucms_site.context_pane_event_listener:
-#    public: true
-#    class: MakinaCorpus\Ucms\Site\EventDispatcher\ContextPaneEventListener
-#    arguments: ["@ucms_dashboard.action_provider_registry"]
-#    tags: [{name: event_listener, event: ucms_dashboard.context_init}]
+#    ucms_site.node_reference_action_provider:
+#        public: false
+#        class: MakinaCorpus\Ucms\Site\Action\NodeReferenceActionProvider
+#        arguments: ["@entity.manager"]
+#        tags: [{name: ucms.action_provider}]
 
-  ucms_site.site_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventListener
-    arguments: ["@ucms_site.manager", "@entity.manager"]
-    tags:
-      - { name: event_listener, event: "site:create" }
-      - { name: event_listener, event: "site:save" }
-      - { name: event_listener, event: "site:switch" }
-      - { name: event_listener, event: "site:webmaster_add_new" }
-      - { name: event_listener, event: "site:webmaster_add_existing" }
-      - { name: event_listener, event: "site:webmaster_change_role" }
-      - { name: event_listener, event: "site:webmaster_promote" }
-      - { name: event_listener, event: "site:webmaster_demote" }
-      - { name: event_listener, event: "site:webmaster_delete" }
+#    ucms_site.webmaster_action_provider:
+#        public: false
+#        class: MakinaCorpus\Ucms\Site\Action\WebmasterActionProvider
+#        arguments: ["@ucms_site.manager", "@current_user"]
+#        tags: [{name: ucms.action_provider}]
 
-  ucms_site.menu_event_listener:
-    public: true
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventListener
-    arguments: ["@ucms_site.node_manager"]
-    tags: [{name: event_listener, event: "menu:tree"}]
+    ucms_site.site_event_listener:
+        public: true
+        class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventListener
+        arguments: ["@ucms_site.manager", "@entity.manager"]
+        tags:
+            - { name: event_listener, event: "site:create" }
+            - { name: event_listener, event: "site:save" }
+            - { name: event_listener, event: "site:switch" }
+            - { name: event_listener, event: "site:webmaster_add_new" }
+            - { name: event_listener, event: "site:webmaster_add_existing" }
+            - { name: event_listener, event: "site:webmaster_change_role" }
+            - { name: event_listener, event: "site:webmaster_promote" }
+            - { name: event_listener, event: "site:webmaster_demote" }
+            - { name: event_listener, event: "site:webmaster_delete" }
 
-  ucms_site.node_access.subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Site\NodeAccess\NodeAccessEventSubscriber
-    arguments: ["@ucms_site.manager", "@ucms_group.manager", "@sf_dic.node_access.subscriber"]
-    tags: [{ name: event_subscriber }]
+    ucms_site.menu_event_listener:
+        public: true
+        class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventListener
+        arguments: ["@ucms_site.node_manager"]
+        tags: [{name: event_listener, event: "menu:tree"}]
 
-  ucms_site.admin_subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\AdminEventSubscriber
-    arguments: ["@ucms_site.manager"]
-    tags: [{ name: event_subscriber }]
+    ucms_site.node_access.subscriber:
+        public: true
+        class: MakinaCorpus\Ucms\Site\NodeAccess\NodeAccessEventSubscriber
+        arguments: ["@ucms_site.manager", "@ucms_group.manager", "@sf_dic.node_access.subscriber"]
+        tags: [{ name: event_subscriber }]
 
-  ucms_site.node_event_subscriber:
-    public: true
-    class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber
-    arguments:
-      - "@database"
-      - "@ucms_site.manager"
-      - "@ucms_site.node_manager"
-      - "@entity.manager"
-      - "@event_dispatcher"
-    tags: [{ name: event_subscriber }]
+    ucms_site.admin_subscriber:
+        public: true
+        class: MakinaCorpus\Ucms\Site\EventDispatcher\AdminEventSubscriber
+        arguments: ["@ucms_site.manager"]
+        tags: [{ name: event_subscriber }]
 
-  ucms_site.twig.site_extension:
-    public: false
-    class: MakinaCorpus\Ucms\Site\Twig\Extension\SiteExtension
-    arguments: ["@ucms_site.manager"]
-    tags: [{ name: twig.extension }]
+    ucms_site.node_event_subscriber:
+        public: true
+        class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber
+        arguments: ["@database", "@ucms_site.manager", "@ucms_site.node_manager", "@entity.manager", "@event_dispatcher", "%ucms_site_node_reference_all%", "%ucms_site_node_reference_whitelist%"]
+        tags: [{ name: event_subscriber }]
 
-  ucms_site.argument_value_resolver.current_site:
-    class: MakinaCorpus\Ucms\Site\Controller\ArgumentResolver\CurrentSiteValueResolver
-    public: false
-    arguments: ["@ucms_site.manager"]
-    tags: [{name: controller.argument_value_resolver, priority: 128}]
+    ucms_site.twig.site_extension:
+        public: false
+        class: MakinaCorpus\Ucms\Site\Twig\Extension\SiteExtension
+        arguments: ["@ucms_site.manager"]
+        tags: [{ name: twig.extension }]
+
+    ucms_site.argument_value_resolver.current_site:
+        class: MakinaCorpus\Ucms\Site\Controller\ArgumentResolver\CurrentSiteValueResolver
+        public: false
+        arguments: ["@ucms_site.manager"]
+        tags: [{name: controller.argument_value_resolver, priority: 128}]
+
+    ucms_site.param_converter:
+        class: MakinaCorpus\Ucms\Site\Controller\ParamConverter\SiteParamConverter
+        arguments: ['@ucms_site.manager']
+        tags: [{name: paramconverter}]
+

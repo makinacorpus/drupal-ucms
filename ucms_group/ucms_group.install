@@ -1,8 +1,0 @@
-<?php
-
-/**
- * Skipped update.
- */
-function ucms_group_update_7003() {
-  // Function dropped, kept for numbering.
-}

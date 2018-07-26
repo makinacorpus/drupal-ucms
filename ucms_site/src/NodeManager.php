@@ -69,8 +69,11 @@ class NodeManager
             ->execute()
         ;
 
-        if (!in_array($siteId, $node->ucms_sites)) {
-            $node->ucms_sites[] = $siteId;
+        $nodeSites = $node->get('ucms_sites')->value;
+
+        if (!in_array($siteId, $nodeSites)) {
+            $nodeSites[] = $siteId;
+            $node->set('ucms_sites', $nodeSites);
         }
 
         // FIXME: is that useful?
@@ -102,7 +105,8 @@ class NodeManager
             ->resetCache([$nodeId])
         ;
 
-        $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
+        // @todo ResourceEvent must die
+        // $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteIdList, $nodeId));
     }
 
@@ -139,7 +143,7 @@ class NodeManager
         // Ensures that nodes exists in the node table
         $nodeIdList = $this
             ->db
-            ->select('node', 'n')
+            ->select('node_field_data', 'n')
             ->fields('n', ['nid'])
             ->condition('nid', $nodeIdList)
             ->execute()
@@ -191,6 +195,8 @@ class NodeManager
      */
     public function createUnsavedClone(NodeInterface $original, array $updates = [])
     {
+        throw new \Exception("Implement me");
+
         // This method, instead of the clone operator, will actually drop all
         // existing references and pointers and give you raw values.
         // All credits to https://stackoverflow.com/a/10831885/5826569
@@ -354,7 +360,7 @@ class NodeManager
 
         $sq = $this
             ->db
-            ->select('node', 'en')
+            ->select('node_field_data', 'en')
             ->where('en.site_id = sa.site_id')
             ->where('en.parent_nid = :nid1 OR nid = :nid2', [':nid1' => $node->id(), ':nid2' => $node->id()])
         ;
@@ -373,8 +379,8 @@ class NodeManager
         $q->condition('sn.nid', $node->id());
 
         // The node might not be attached to any site if it is a global content
-        if ($node->site_id) {
-            $q->condition('sa.site_id', $node->site_id, '<>');
+        if ($nodeSiteId = $node->get('site_id')->value) {
+            $q->condition('sa.site_id', $nodeSiteId, '<>');
         }
 
         $idList = $q
@@ -404,7 +410,7 @@ class NodeManager
         }
 
         $q = $this->db
-            ->select('node', 'n')
+            ->select('node_field_data', 'n')
             ->fields('n', ['parent_nid', 'nid'])
             ->isNotNull('parent_nid')
             ->condition('site_id', $site->id)
@@ -415,10 +421,10 @@ class NodeManager
         $mapping = [];
 
         foreach ($q->execute()->fetchAll() as $row) {
-            if (isset($mapping[(int) $row->parent_nid])) {
+            if (isset($mapping[(int)$row->parent_nid])) {
                 continue;
             }
-            $mapping[(int) $row->parent_nid] = (int) $row->nid;
+            $mapping[(int) $row->parent_nid] = (int)$row->nid;
         }
 
         $this->cloningMapping[$site->getId()] = $mapping;

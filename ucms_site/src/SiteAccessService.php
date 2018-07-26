@@ -50,10 +50,11 @@ class SiteAccessService
                     "
                         SELECT
                             a.uid, a.site_id, a.role, s.state AS site_state,
-                            u.name, u.mail, u.status
+                            fu.name, fu.mail, fu.status
                         FROM {ucms_site_access} a
                         JOIN {users} u
                             ON u.uid = a.uid
+                        LEFT JOIN {users_field_data} fu ON fu.uid = u.uid
                         JOIN {ucms_site} s
                             ON s.id = a.site_id
                         WHERE
@@ -147,7 +148,9 @@ class SiteAccessService
      */
     public function getStateTransitionMatrix()
     {
-        return variable_get('ucms_site_state_transition_matrix', []);
+        //return variable_get('ucms_site_state_transition_matrix', []);
+        // FIXME: SERIOUS FIXME
+        return [];
     }
 
     /**
@@ -214,7 +217,9 @@ class SiteAccessService
      */
     public function getRolesAssociations()
     {
-        return variable_get('ucms_site_relative_roles');
+        // FIXME: @todo serious fixme
+        // return variable_get('ucms_site_relative_roles');
+        return [];
     }
 
     /**
@@ -224,7 +229,9 @@ class SiteAccessService
      */
     public function updateRolesAssociations($roleIdList)
     {
-        variable_set('ucms_site_relative_roles', array_filter(array_map('intval', $roleIdList)));
+        // FIXME SERIOUS @todo 
+        // variable_set('ucms_site_relative_roles', array_filter(array_map('intval', $roleIdList)));
+        return array_filter(array_map('intval', $roleIdList));
     }
 
     /**
@@ -652,7 +659,6 @@ class SiteAccessService
 
         $q->join('users', 'u', "u.uid = sa.uid");
 
-        /* @var $q \SelectQuery */
         $r = $q
             ->range($offset, $limit)
             ->orderBy('sa.uid')
@@ -676,7 +682,6 @@ class SiteAccessService
      */
     public function countUsersWithRole(Site $site, $role = null)
     {
-        /* @var $q \SelectQuery */
         $q = $this->db
             ->select('ucms_site_access', 'u')
             ->condition('u.site_id', $site->id);
@@ -687,7 +692,6 @@ class SiteAccessService
 
         $q->addExpression('COUNT(*)');
 
-        /* @var $r \PDOStatement */
         $r = $q->execute();
 
         return $r->fetchField();

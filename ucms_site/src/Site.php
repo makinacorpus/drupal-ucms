@@ -110,40 +110,60 @@ class Site
      */
     public $group_id;
 
-    public function getId()
+    public function getId(): int
     {
         return (int)$this->id;
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
-    public function getAdminTitle()
+    public function getAdminTitle(): string
     {
-        return $this->title_admin;
+        return $this->title_admin ?? $this->title ?? '';
     }
 
-    public function getState()
+    public function getRawAdminTitle(): string
+    {
+        return $this->title_admin ?? '';
+    }
+
+    public function getType(): string
+    {
+        return $this->type ?? '';
+    }
+
+    public function getState(): int
     {
         return (int)$this->state;
     }
 
-    public function getHostname()
+    public function getHostname(): string
     {
-        return $this->http_host;
+        return $this->http_host ?? '';
     }
 
-    public function getTheme()
+    public function getTheme(): string
     {
-        return $this->theme;
+        return $this->theme ?? '';
+    }
+
+    public function getTemplateId(): int
+    {
+        return (int)$this->template_id;
+    }
+
+    public function isTemplate(): bool
+    {
+        return (bool)$this->is_template;
     }
 
     /**
      * Is the 'https' secure protocol allowed
      */
-    public function isHttpsAllowed()
+    public function isHttpsAllowed(): bool
     {
         return self::ALLOWED_PROTOCOL_HTTP != $this->allowed_protocols;
     }
@@ -153,7 +173,7 @@ class Site
      *
      * @return boolean
      */
-    public function isHttpAllowed()
+    public function isHttpAllowed(): bool
     {
         return self::ALLOWED_PROTOCOL_HTTPS != $this->allowed_protocols;
     }
@@ -164,62 +184,67 @@ class Site
      * @return int
      *   One of the Site::ALLOWED_PROTOCOL_* constants
      */
-    public function getAllowedProtocols()
+    public function getAllowedProtocols(): int
     {
         return (int)$this->allowed_protocols;
     }
 
-    public function getOwnerUserId()
+    public function getOwnerUserId(): int
     {
-        return $this->uid;
+        return $this->uid ?? 0;
     }
 
-    public function setHomeNodeId($nodeId)
+    public function setHomeNodeId(int $nodeId)
     {
         $this->home_nid = $nodeId;
     }
 
-    public function hasHome()
+    public function hasHome(): bool
     {
         return (bool)$this->has_home;
     }
 
-    public function getHomeNodeId()
+    public function getHomeNodeId(): int
     {
-        return $this->home_nid;
+        return (int)$this->home_nid;
     }
 
-    public function isPublic()
+    public function isPublic(): bool
     {
         return (bool)$this->is_public;
     }
 
     /**
      * Get group identifier
-     *
-     * @return int
      */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return (int)$this->group_id;
     }
 
     /**
      * Get favicon fid
-     *
-     * @return null|int
      */
-    public function getFavicon()
+    public function getFavicon(): int
     {
-        return $this->favicon ? (int)$this->favicon : null;
+        return (int)$this->favicon;
     }
 
     /**
      * Set favicon fid
-     * @param int $fid from fle_managed table
      */
-    public function setFavicon($fid)
+    public function setFavicon(int $fid)
     {
         $this->favicon = $fid;
+    }
+
+    public function getReplacementOf(): string
+    {
+        return $this->replacement_of ?? '';
+    }
+
+    public function getHttpRedirects(): string
+    {
+        return $this->http_redirects ?? '';
     }
 }

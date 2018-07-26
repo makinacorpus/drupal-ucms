@@ -17,7 +17,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
-    private $db;
+    private $database;
     private $manager;
     private $nodeManager;
     private $entityManager;
@@ -58,44 +58,24 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
     /**
      * Constructor
-     *
-     * @param Connection $db
-     * @param SiteManager $manager
-     * @param SiteManager $nodeManager
-     * @param EntityManager $entityManager
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param null|bool $nodeReferenceAll
-     *   If null, use the ucms_site_node_reference_all variable.
-     * @param null|string[] $nodeReferenceWhitelist
-     *   If null, use the ucms_site_node_reference_whitelist variable.
-     *   Ignored if $nodeReferenceAll is true. This is a list of field
-     *   names.
      */
     public function __construct(
-        Connection $db,
+        Connection $database,
         SiteManager $manager,
         NodeManager $nodeManager,
         EntityManager $entityManager,
         EventDispatcherInterface $eventDispatcher,
-        $nodeReferenceAll = null,
-        $nodeReferenceWhitelist = null
+        bool $nodeReferenceAll = true,
+        array $nodeReferenceWhitelist = []
     ) {
-        $this->db = $db;
+        $this->database = $database;
         $this->manager = $manager;
         $this->nodeManager = $nodeManager;
         $this->entityManager = $entityManager;
         $this->eventDispatcher= $eventDispatcher;
-
-        if (null === $nodeReferenceAll) {
-            $nodeReferenceAll = variable_get('ucms_site_node_reference_all', true);
-        }
         $this->nodeReferenceAll = (bool)$nodeReferenceAll;
-
         if (!$this->nodeReferenceAll) {
-            if (null === $nodeReferenceWhitelist) {
-                $nodeReferenceWhitelist = variable_get('ucms_site_node_reference_whitelist', []);
-            }
-            $this->nodeReferenceWhitelist = $nodeReferenceWhitelist;
+            $this->nodeReferenceWhitelist = [];
         }
     }
 
@@ -117,43 +97,37 @@ class NodeEventSubscriber implements EventSubscriberInterface
             }
 
             // Initializes the ucms_sites property
-            $node->ucms_sites = [];
+            $node->set('ucms_sites', []);
         }
     }
 
     public function onLoad(NodeCollectionEvent $event)
     {
+        /** @var \Drupal\node\NodeInterface $nodes */
         $nodes = $event->getNodes();
 
         // Attach site identifiers list to each node being loaded. Althought it does
         // and extra SQL query, this being the core of the whole site business, we
         // can't bypass this step nor risk it being stalled with unsynchronized data
         // in cache.
+        $map = [];
+        $allowed = [];
+        $enabled = [];
 
         // @todo Later in the future, determiner an efficient way of caching it,
         // we'll need this data to be set in Elastic Search anyway so we'll risk data
         // stalling in there.
         $r = $this
-            ->db
+            ->database
             ->select('ucms_site_node', 'usn')
             ->fields('usn', ['nid', 'site_id'])
-            ->condition('usn.nid', array_keys($nodes))
+            ->condition('usn.nid', array_keys($nodes), 'IN')
             ->orderBy('usn.nid')
             ->execute()
         ;
 
-        foreach ($nodes as $node) {
-            // Sites the node is really attached to
-            $node->ucms_sites = [];
-            // Sites the node is attached to and the current user can see
-            $node->ucms_allowed_sites = [];
-            // Sites the node is attached to and are enabled
-            $node->ucms_enabled_sites = [];
-        }
-
         foreach ($r as $row) {
-            $node = $nodes[$row->nid];
-            $node->ucms_sites[] = $row->site_id;
+            $map[$row->nid][] = (int)$row->site_id;
         }
 
         // Repeat it with user visible sites allowing administration pages to
@@ -161,20 +135,19 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // extra query to master site only
         if (!$this->manager->hasContext()) {
 
-            $q = $this->db->select('ucms_site_node', 'usn')->fields('usn', ['nid', 'site_id']);
+            $q = $this->database->select('ucms_site_node', 'usn')->fields('usn', ['nid', 'site_id']);
             $q->join('ucms_site', 'us', 'us.id = usn.site_id');
             $r = $q
                 ->fields('us', ['state'])
-                ->condition('usn.nid', array_keys($nodes))
+                ->condition('usn.nid', array_keys($nodes), 'IN')
                 ->orderBy('usn.nid')
                 ->addTag('ucms_site_access')
                 ->execute()
             ;
             foreach ($r as $row) {
-                $node = $nodes[$row->nid];
-                $node->ucms_allowed_sites[] = $row->site_id;
+                $allowed[$row->nid][] = (int)$row->site_id;
                 if (SiteState::ON === (int)$row->state) {
-                    $node->ucms_enabled_sites[] = $row->site_id;
+                    $enabled[$row->nid][] = (int)$row->site_id;
                 }
             }
         } else {
@@ -184,16 +157,28 @@ class NodeEventSubscriber implements EventSubscriberInterface
             // case we do believe that node access stuff has already run prior
             // to us, so we don't care about it
             $context = $this->manager->getContext();
+            $isEnabled = SiteState::ON === $context->getState();
             $siteId = $context->getId();
-            $enabled = SiteState::ON === $context->getState();
+
             foreach ($nodes as $node) {
-                if (in_array($siteId, $node->ucms_sites)) {
-                    $node->ucms_allowed_sites[] = $siteId;
-                    if ($enabled) {
-                        $node->ucms_enabled_sites[] = $siteId;
+                $nodeId = $node->id();
+                if (in_array($siteId, $map[$nodeId] ?? [])) {
+                    $allowed[$nodeId][] = $siteId;
+                    if ($isEnabled) {
+                        $enabled[$nodeId][] = $siteId;
                     }
                 }
             }
+        }
+
+        // Populate nodes last. We can't do it along the way upper because
+        // when we attempt nodes property write using magic accessors, it
+        // will not work because arrays get copied instead of referenced.
+        foreach ($nodes as $node) {
+            $nodeId = $node->id();
+            $node->set('ucms_sites', $map[$nodeId] ?? []);
+            $node->set('ucms_allowed_sites', $allowed[$nodeId] ?? []);
+            $node->set('ucms_enabled_sites', $enabled[$nodeId] ?? []);
         }
     }
 
@@ -201,69 +186,63 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
-        if (!property_exists($node, 'ucms_sites')) {
-            $node->ucms_sites = [];
-        }
-
-        if (!property_exists($node, 'site_id')) {
-            $node->site_id = null;
-        }
+        $isGlobal = (bool)$node->get('is_global')->value;
+        $parentNodeId = (int)$node->get('parent_nid')->value;
+        $nodeSiteId = (int)$node->get('site_id')->value;
 
         // Do not continue if we are creating a global node from a local one.
-        if ($node->is_global == 1 && !empty($node->parent_nid)) {
+        if ($isGlobal && $parentNodeId) {
             return;
         }
 
         // If the node is created in a specific site context, then gives the
         // node ownership to this site, note this might change in the end, it
         // is mostly the node original site.
-        if (!empty($node->site_id)) {
-            $node->ucms_sites[] = $node->site_id;
-            $node->is_global = 0;
-        } else if (false !== $node->site_id) {
+        if ($nodeSiteId) {
+            $node->set('ucms_sites', [$nodeSiteId]);
+            $node->set('is_global', false);
+        } else if (false !== $nodeSiteId) {
+            // @todo check what does this false mean...
             if ($site = $this->manager->getContext()) {
-
-                $node->site_id = $site->id;
-
-                // This will happen in case a node is cloned.
-                if (!in_array($site->id, $node->ucms_sites)) {
-                    $node->ucms_sites[] = $site->id;
-                }
-                $node->is_global = 0;
+                $siteId = $site->getId();
+                $node->set('site_id', $siteId);
+                // When a node is cloned, site list already exist from the
+                // parent node. Drop all other sites and set this one.
+                $node->set('ucms_sites', [$siteId]);
+                $node->set('is_global', false);
             } else {
-                $node->is_global = 1;
+                $node->set('is_global', true);
             }
         } else {
-            $node->site_id = null;
-            $node->is_global = 1;
+            $node->set('is_global', true);
         }
     }
 
     public function onInsert(NodeEvent $event)
     {
         $node = $event->getNode();
+        $nodeSiteId = $node->get('site_id')->value;
+        $site = $nodeSiteId ? $this->manager->getStorage()->findOne($nodeSiteId) : null;
 
-        if (!empty($node->site_id)) {
-            $site = $this->manager->getStorage()->findOne($node->site_id);
-
+        if ($site) {
             $this->nodeManager->createReference($site, $node);
 
             // Site might not have an homepage, because the factory wasn't
             // configured properly before creation, so just set this node
             // as home page.
             if (!$site->hasHome()) {
-                $site->home_nid = $node->nid;
+                $site->home_nid = $node->id();
                 $this->manager->getStorage()->save($site, ['home_nid']);
             }
         }
 
-        if ($event->isClone() && $node->site_id) {
-
+        if ($event->isClone() && $site) {
             $storage = $this->manager->getStorage();
-            $site = $storage->findOne($node->site_id);
+            $site = $storage->findOne($nodeSiteId);
 
             // Replace the new node home page if the original was the home page
             if ($site->getHomeNodeId() == $node->parent_nid) {
+
                 $site->setHomeNodeId($node->id());
                 $storage->save($site, ['home_nid']);
 
@@ -276,6 +255,9 @@ class NodeEventSubscriber implements EventSubscriberInterface
         }
     }
 
+    /*
+     * @todo Investigate this - a clone should not have been referenced to parent site's
+     *
     public function onPostInsert(NodeEvent $event)
     {
         $node = $event->getNode();
@@ -283,15 +265,20 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // This MUST happen after the layouts are being changed, else the
         // foreign key cascade constraints will happen and nothing will be
         // duplicated
-        if ($event->isClone() && $node->site_id && $node->parent_nid) {
+        if ($event->isClone() && $node->  si  te_id && $node->  pare  nt_nid) {
+            $siteId = (int)$node->get('site_id')->value();
+            $parentNid = (int)$node->get():
             // Dereference node from the clone site, since it will be replaced
             // by the new one in all contextes it can be
             $this->nodeManager->deleteReferenceBulkFromSite($node->site_id, [$node->parent_nid]);
         }
     }
+     */
 
     public function onSave(NodeEvent $event)
     {
+        return; // @todo implement me
+
         $node = $event->getNode();
 
         $event = new NodeReferenceCollectEvent($node);

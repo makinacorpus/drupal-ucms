@@ -1,0 +1,5 @@
+ucms_site.admin.site_list:
+    title: Sites
+    parent: system.admin_structure
+    description: Create and manage sites.
+    route_name: ucms_site.admin.site_list
