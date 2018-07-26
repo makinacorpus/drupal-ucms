@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Database\Connection;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessChangeEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
@@ -394,10 +395,7 @@ class SiteStorage
             ->execute()
             ->fetchCol();
 
-        // FIXME: fix this
-        // $this->dispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nidList));
-
-        // Dispatch event for others.
+        $this->dispatcher->dispatch(NodeAccessChangeEvent::EVENT_NAME, new NodeAccessChangeEvent($nidList));
         $this->dispatcher->dispatch(SiteEvents::EVENT_CLONE, new SiteCloneEvent($target, $source));
     }
 

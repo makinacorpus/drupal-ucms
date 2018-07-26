@@ -15,57 +15,6 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 /**
- * All sites list page.
- */
-function ucms_site_dashboard_site_list_all() {
-
-  $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(ucms_site_manager(), t("There is no sites yet."));
-
-  return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])
-    ->render(drupal_get_query_parameters(), current_path())
-  ;
-}
-
-/**
- * My sites list page.
- */
-function ucms_site_dashboard_site_list_mine() {
-  global $user;
-
-  $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(ucms_site_manager(), t("You have no site."));
-
-  return ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site'])
-    ->setBaseQuery(['uid' => $user->uid])
-    ->render(drupal_get_query_parameters(), current_path())
-  ;
-}
-
-/**
- * All sites list page.
- */
-function ucms_site_dashboard_site_list_archive() {
-  global $user;
-
-  $datasource = \Drupal::service('ucms_site.admin.datasource');
-  $display    = new SiteAdminDisplay(ucms_site_manager(), t("There is no archives."));
-  $page       = ucms_dashboard_page_get($datasource, $display, ['dashboard', 'site']);
-  $query      = ['state' => SiteState::ARCHIVE];
-
-  if (!user_access(Access::PERM_SITE_GOD) &&
-      !user_access(Access::PERM_SITE_MANAGE_ALL) &&
-      !user_access(Access::PERM_SITE_VIEW_ALL)
-  ) {
-      $query['uid'] = $user->uid;
-  }
-
-  return $page->setBaseQuery($query)
-    ->render(drupal_get_query_parameters(), current_path())
-  ;
-}
-
-/**
  * Site page details
  */
 function ucms_site_dashboard_site_page_log(Site $site) {

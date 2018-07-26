@@ -3,7 +3,7 @@
 ## Minimal viable product
 
  - PENDING - ucms_site
- - ucms_dashboard
+ - PENDING - ucms_dashboard
  - ucms_contrib
 
 ## Necessary
@@ -11,8 +11,9 @@
  - ucms_tree
  - ucms_user
  - ucms_seo
+ - Rewrite all tests
 
-## Addittional
+## Additional
 
  - ucms_group
  - ucms_taxo
@@ -24,7 +25,7 @@
  - ucms_debug
  - ucms_list
  - ucms_extranet
- - ucms_harm
- - ucms_label
+ - ucms_harm -> ucms_corporate
+ - DELETED - ucms_label
  - ucms_layout
  - ucms_notification

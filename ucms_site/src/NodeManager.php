@@ -5,7 +5,7 @@ namespace MakinaCorpus\Ucms\Site;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Ucms\Site\EventDispatcher\NodeEvents;
+use MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessChangeEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAttachEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -76,8 +76,7 @@ class NodeManager
             $node->set('ucms_sites', $nodeSites);
         }
 
-        // FIXME: is that useful?
-        //$this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
+        $this->eventDispatcher->dispatch(NodeAccessChangeEvent::EVENT_NAME, new NodeAccessChangeEvent([$nodeId]));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $nodeId));
     }
 
@@ -99,14 +98,9 @@ class NodeManager
             ;
         }
 
-        $this
-            ->entityManager
-            ->getStorage('node')
-            ->resetCache([$nodeId])
-        ;
+        $this->entityManager->getStorage('node')->resetCache([$nodeId]);
 
-        // @todo ResourceEvent must die
-        // $this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', [$nodeId]));
+        $this->eventDispatcher->dispatch(NodeAccessChangeEvent::EVENT_NAME, new NodeAccessChangeEvent([]));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteIdList, $nodeId));
     }
 
@@ -145,7 +139,7 @@ class NodeManager
             ->db
             ->select('node_field_data', 'n')
             ->fields('n', ['nid'])
-            ->condition('nid', $nodeIdList)
+            ->condition('nid', $nodeIdList, 'IN')
             ->execute()
             ->fetchCol()
         ;
@@ -160,7 +154,7 @@ class NodeManager
             ->select('ucms_site_node', 'usn')
             ->fields('usn', ['nid'])
             ->condition('usn.site_id', $siteId)
-            ->condition('usn.nid', $nodeIdList)
+            ->condition('usn.nid', $nodeIdList, 'IN')
             ->execute()
             ->fetchCol()
         ;
@@ -175,8 +169,7 @@ class NodeManager
 
             $this->entityManager->getStorage('node')->resetCache($missing);
 
-            // FIXME: is that useful?
-            //$this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $missing));
+            $this->eventDispatcher->dispatch(NodeAccessChangeEvent::EVENT_NAME, new NodeAccessChangeEvent($missing));
             $this->eventDispatcher->dispatch(SiteEvents::EVENT_ATTACH, new SiteAttachEvent($siteId, $missing));
         }
     }
@@ -281,14 +274,9 @@ class NodeManager
             ->execute()
         ;
 
-        $this
-            ->entityManager
-            ->getStorage('node')
-            ->resetCache($nodeIdList)
-        ;
+        $this->entityManager->getStorage('node')->resetCache($nodeIdList);
 
-        // FIXME: is that useful?
-        //$this->eventDispatcher->dispatch(NodeEvents::ACCESS_CHANGE, new ResourceEvent('node', $nodeIdList));
+        $this->eventDispatcher->dispatch(NodeAccessChangeEvent::EVENT_NAME, new NodeAccessChangeEvent($nodeIdList));
         $this->eventDispatcher->dispatch(SiteEvents::EVENT_DETACH, new SiteAttachEvent($siteId, $nodeIdList));
     }
 

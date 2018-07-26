@@ -47,11 +47,12 @@ class NodeEventSubscriber implements EventSubscriberInterface
             NodeEvent::EVENT_SAVE => [
                 ['onSave', 0]
             ],
-            NodeEvents::ACCESS_CHANGE => [
+            NodeAccessChangeEvent::EVENT_NAME => [
                 ['onNodeAccessChange', 0],
             ],
             NodeReferenceCollectEvent::EVENT_NAME => [
                 ['onNodeReferenceCollect', 0],
+                ['onNodeReferenceCollectPersist', -2048],
             ],
         ];
     }
@@ -277,14 +278,12 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
     public function onSave(NodeEvent $event)
     {
-        return; // @todo implement me
-
         $node = $event->getNode();
 
         $event = new NodeReferenceCollectEvent($node);
         $this->eventDispatcher->dispatch(NodeReferenceCollectEvent::EVENT_NAME, $event);
 
-        if ($node->ucms_sites) {
+        if (!($items = $node->get('ucms_sites'))->isEmpty()) {
             $references = [];
             $references[] = $node->id();
 
@@ -295,8 +294,8 @@ class NodeEventSubscriber implements EventSubscriberInterface
             }
 
             if ($references) {
-                foreach ($node->ucms_sites as $siteId) {
-                    $this->nodeManager->createReferenceBulkInSite($siteId, $references);
+                foreach ($items->getValue() as $item) {
+                    $this->nodeManager->createReferenceBulkInSite((int)$item['value'], $references);
                 }
             }
         }
@@ -341,38 +340,42 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
         $node = $event->getNode();
 
-        if (!$this->nodeReferenceWhitelist && !$this->nodeReferenceAll || empty($node->ucms_sites)) {
+        if ((!$this->nodeReferenceWhitelist && !$this->nodeReferenceAll) || $node->get('ucms_sites')->isEmpty()) {
             return; // Feature is completely disabled
         }
 
-        foreach (field_info_instances('node', $node->bundle()) as $fieldname => $instance) {
+        foreach ($node->getFields() as $fieldname => $items) {
 
-            // Honnor field whitelist if set
-            if (!$this->nodeReferenceAll) {
-                if (!in_array($fieldname, $this->nodeReferenceWhitelist)) {
-                    continue;
-                }
+            // Honnor field whitelist if set, also don't process empty fields.
+            if ($items->isEmpty() || (!$this->nodeReferenceAll && !\in_array($fieldname, $this->nodeReferenceWhitelist))) {
+                continue;
             }
 
-            $field = field_info_field($fieldname);
-            switch ($field['type']) {
+            switch ($items->getFieldDefinition()->getType()) {
+
+                case 'text':
+                case 'text_long':
+                case 'text_with_summary':
+                    foreach ($items as $item) {
+                        $matches = [];
+                        if (\preg_match('#(entity:|)node(:|/)(\d+)#', $item->value, $matches)) {
+                            $event->addReferences(NodeReference::TYPE_FIELD, [$matches[3]], $fieldname);
+                        }
+                    }
+                    break;
 
                 case 'ulink':
-                    if ($items = field_get_items('node', $node, $fieldname)) {
-                        foreach ($items as $item) {
-                            $matches = [];
-                            if (preg_match('#^(entity:|)node(:|/)(\d+)$#', $item['value'], $matches)) {
-                                $event->addReferences(NodeReference::TYPE_FIELD, [$matches[3]], $fieldname);
-                            }
+                    foreach ($items as $item) {
+                        $matches = [];
+                        if (\preg_match('#^(entity:|)node(:|/)(\d+)$#', $item->value, $matches)) {
+                            $event->addReferences(NodeReference::TYPE_FIELD, [$matches[3]], $fieldname);
                         }
                     }
                     break;
 
                 case 'unoderef':
-                    if ($items = field_get_items('node', $node, $fieldname)) {
-                        foreach ($items as $item) {
-                            $event->addReferences(NodeReference::TYPE_FIELD, [$item['nid']], $fieldname);
-                        }
+                    foreach ($items as $item) {
+                        $event->addReferences(NodeReference::TYPE_FIELD, [$item->nid], $fieldname);
                     }
                     break;
 
@@ -382,22 +385,45 @@ class NodeEventSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @todo move this somewhere else, maybe generic in 'sf_dic' module
-     * FIXME: fix this
-     *
-    public function onNodeAccessChange(ResourceEvent $event)
+    public function onNodeReferenceCollectPersist(NodeReferenceCollectEvent $event)
     {
-        // Rebuild node access rights
-        $nodes = $this
-            ->entityManager
-            ->getStorage('node')
-            ->loadMultiple($event->getResourceIdList())
-        ;
+        $node = $event->getNode();
 
-        foreach ($nodes as $node) {
-            node_access_acquire_grants($node);
+        // This will happen anyway, references are going to be rebuilt each save.
+        $this->database->delete('ucms_node_reference')->condition('source_id', $node->id())->execute();
+
+        if ($references = $event->getReferences()) {
+            // Proceed only if references are found.
+            $query = $this->database->insert('ucms_node_reference')->fields(['source_id', 'target_id', 'type', 'field_name', 'ts_touched']);
+            $now = (new \DateTime())->format('Y-m-d H:i:s');
+
+            foreach ($references as $reference) {
+                $query->values([
+                    $reference->getSourceId(),
+                    $reference->getTargetId(),
+                    $reference->getType(),
+                    $reference->getFieldName(),
+                    $now
+                ]);
+            }
+
+            $query->execute();
         }
     }
+
+    /**
+     * @todo move this somewhere else, maybe generic in 'sf_dic' module
      */
+    public function onNodeAccessChange(NodeAccessChangeEvent $event)
+    {
+        // Rebuild node access rights
+        $nodes = $this->entityManager->getStorage('node')->loadMultiple($event->getNodeIdList());
+
+        $accessControlHandler = $this->entityManager->getAccessControlHandler('node');
+
+        foreach ($nodes as $node) {
+            $grants = $accessControlHandler->acquireGrants($node);
+            \Drupal::service('node.grant_storage')->write($node, $grants, null, true);
+        }
+    }
 }
