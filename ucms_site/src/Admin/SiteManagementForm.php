@@ -48,16 +48,6 @@ class SiteManagementForm extends FormBase
         $form['#form_horizontal'] = true;
         $form['#tree'] = true;
 
-        $form['home_node_type'] = [
-            '#title'          => $this->t("Default node type for site home page"),
-            '#type'           => 'radios',
-            '#options'        => node_type_get_names(),
-            '#default_value'  => $this->manager->getHomeNodeType(),
-            '#description'    => $this->t("When a site is created, a node with the given type will be automatically created and set as the site page"),
-        ];
-
-        $form['sep0']['#markup'] = '<hr/>';
-
         $options = [];
         foreach (list_themes() as $theme => $data) {
             if ($data->status) {
@@ -121,8 +111,6 @@ class SiteManagementForm extends FormBase
           }
         }
         $this->manager->getAccess()->updateRolesAssociations($values);
-
-        $this->manager->setHomeNodeType($form_state->getValue('home_node_type'));
 
         drupal_set_message($this->t('The configuration options have been saved.'));
     }

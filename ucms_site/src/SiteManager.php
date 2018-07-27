@@ -427,27 +427,6 @@ class SiteManager
     }
 
     /**
-     * Get site home node type
-     *
-     * @return string
-     *   It may be null, beware
-     */
-    public function getHomeNodeType()
-    {
-        return variable_get('ucms_site_home_node_type');
-    }
-
-    /**
-     * Set home node type
-     *
-     * @param string $type
-     */
-    public function setHomeNodeType($type)
-    {
-        variable_set('ucms_site_home_node_type', $type);
-    }
-
-    /**
      * Load sites for which the user is webmaster
      *
      * @param AccountInterface $account
