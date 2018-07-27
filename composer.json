@@ -74,7 +74,7 @@
     "require" : {
         "makinacorpus/drupal-filechunk": "^1.0 || ^2.0.2",
         "makinacorpus/drupal-plusql" : "^1.0.4",
-        "makinacorpus/drupal-sf-int" : "^3.3.5|^4",
+        "makinacorpus/drupal-sf-int" : "^3.4|^4",
         "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/php-bloom" : "^2.0.1",
         "php" : ">= 7"
