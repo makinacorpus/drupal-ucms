@@ -3,6 +3,9 @@ parameters:
     # Master (admin) site hostname.
     ucms_site_master_hostname: admin.d8-ucms.guinevere
 
+    # Is master HTTPs.
+    ucms_site_master_is_https: false
+
     # If set to false, ucms_site_node_reference_whitelist is a whitelist,
     # otherwise it's a blacklist.
     ucms_site_node_reference_all: true
@@ -47,7 +50,7 @@ services:
     ucms_site.manager:
         public: true
         class: MakinaCorpus\Ucms\Site\SiteManager
-        arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher", "@theme_handler", "%ucms_site_master_hostname%"]
+        arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher", "@theme_handler", "%ucms_site_master_hostname%", "%ucms_site_master_is_https%"]
 
     # Handles groups
     ucms_group.manager:
@@ -77,15 +80,15 @@ services:
     # Overrides config using site context
     ucms_site.site_context_overrider:
         class: MakinaCorpus\Ucms\Site\Environment\SiteConfigOverrides
-        arguments: ['@service_container']
+        arguments: ["@service_container"]
         tags: [{name: config.factory.override, priority: 1000}]
 
-    # Handles outbound URLs processing
-    ucms_site.url_processor:
+    # Custom URL generator that decorates core's one
+    ucms_site.url_generator:
         public: false
-        class: MakinaCorpus\Ucms\Site\Environment\CrossSitePathProcessor
-        arguments: ['@entity_type.manager', '@ucms_site.manager']
-        tags: [{name: path_processor_outbound}]
+        decorates: url_generator
+        class: MakinaCorpus\Ucms\Site\Environment\CrossSiteUrlGenerator
+        arguments: ["@ucms_site.manager", "@ucms_site.url_generator.inner", "@router.route_provider"]
 
     ucms_site.admin.datasource:
         public: true

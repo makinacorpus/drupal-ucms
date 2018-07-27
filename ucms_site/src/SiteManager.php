@@ -30,15 +30,16 @@ use Symfony\Component\HttpFoundation\Request;
 class SiteManager
 {
     private $access;
-    private $storage;
     private $context;
-    private $dependentContext = [];
     private $db;
+    private $dependentContext = [];
     private $dispatcher;
-    private $postInitRun = false;
-    private $themeHandler;
-    private $masterHostname;
     private $isMaster = false;
+    private $masterIsHttps = false;
+    private $masterHostname;
+    private $postInitRun = false;
+    private $storage;
+    private $themeHandler;
 
     /**
      * Default constructor
@@ -49,14 +50,16 @@ class SiteManager
         Connection $db,
         EventDispatcherInterface $dispatcher,
         ThemeHandlerInterface $themeHandler,
-        $masterHostname = null
+        $masterHostname = null,
+        $masterIsHttps = false
     ) {
         $this->storage = $storage;
         $this->access = $access;
         $this->db = $db;
         $this->dispatcher = $dispatcher;
         $this->themeHandler = $themeHandler;
-        $this->masterHostname = $masterHostname;
+        $this->masterHostname = (string)$masterHostname;
+        $this->masterIsHttps = (bool)$masterIsHttps;
     }
 
     /**
@@ -73,6 +76,14 @@ class SiteManager
     public function isMaster(): bool
     {
         return $this->isMaster;
+    }
+
+    /**
+     * Is master secure (using https)
+     */
+    public function isMasterHttps(): bool
+    {
+        return $this->masterIsHttps;
     }
 
     /**
@@ -161,7 +172,7 @@ class SiteManager
         $this->dropContext();
         $this->isMaster = true;
 
-        $this->eventDispatcher->dispatch(SiteEvents::EVENT_MASTER_INIT, new MasterInitEvent($request));
+        $this->dispatcher->dispatch(SiteEvents::EVENT_MASTER_INIT, new MasterInitEvent($request));
     }
 
     /**

@@ -1,8 +1,12 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site;
+namespace MakinaCorpus\Ucms\Site\Environment;
 
-use Drupal\Core\Routing\UrlGeneratorTrait;
+use Drupal\Core\Routing\UrlGeneratorInterface;
+use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Site\SiteManager;
+use Symfony\Cmf\Component\Routing\RouteProviderInterface;
+use Symfony\Component\Routing\RequestContext;
 
 /**
  * Deals with platform wide inter-sites URL generation.
@@ -11,21 +15,21 @@ use Drupal\Core\Routing\UrlGeneratorTrait;
  *   arround the Drupal default URL generator instead
  * @todo rework destination parameter handling correctly
  */
-class SiteUrlGenerator
+class CrossSiteUrlGenerator implements UrlGeneratorInterface
 {
-    use UrlGeneratorTrait;
-
-    private $manager;
-    private $storage;
+    private $nested;
+    private $routeProvider;
+    private $siteManager;
     private $ssoEnabled = false; // @todo fixme later
 
     /**
      * Default constructor
      */
-    public function __construct(SiteManager $manager)
+    public function __construct(SiteManager $siteManager, UrlGeneratorInterface $nested, RouteProviderInterface $routeProvider)
     {
-        $this->manager = $manager;
-        $this->storage = $manager->getStorage();
+        $this->nested = $nested;
+        $this->routeProvider = $routeProvider;
+        $this->siteManager = $siteManager;
 
         // @todo sad hack, we cannot use module_exists() because this will be
         //   instanciated during hook_boot() and modules are not yet been
@@ -34,10 +38,145 @@ class SiteUrlGenerator
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setContext(RequestContext $context)
+    {
+        $this->nested->setContext($context);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    {
+        return $this->generateFromRoute($name, $parameters, [
+            'absolute' => is_bool($referenceType) ? $referenceType : $referenceType === self::ABSOLUTE_URL,
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContext()
+    {
+        return $this->nested->getContext();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($name)
+    {
+        return $this->nested->supports($name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRouteDebugMessage($name, array $parameters = [])
+    {
+        return $this->nested->getRouteDebugMessage($name, $parameters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPathFromRoute($name, $parameters = [])
+    {
+        return $this->nested->getPathFromRoute($name, $parameters);
+    }
+
+    /**
+     * Is route allowed on site
+     */
+    private function isRouteAllowedOnSite(string $route): bool
+    {
+        if (!$this->routeProvider) {
+            return true;
+        }
+
+        // @todo allow node edit routes
+
+        return !$this->routeProvider->getRouteByName($route)->hasOption('_admin_route');
+    }
+
+    /**
+     * Is route allowed on master
+     */
+    private function isRouteAllowedInMaster(string $route): bool
+    {
+        if (!$this->routeProvider) {
+            return true;
+        }
+
+        return $this->routeProvider->getRouteByName($route)->hasOption('_admin_route');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateFromRoute($name, $parameters = [], $options = [], $collectBubbleableMetadata = false)
+    {
+        $manager = $this->siteManager;
+
+        // With no master hostname, there is nothing that can be done,
+        // environment is misconfigured.
+        if (!$masterHostname = $this->siteManager->getMasterHostname()) {
+            return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+        }
+
+        // Undocumented if null is allowed or not, better be safe than sorry.
+        $options = $options ?? [];
+
+        if ($site = $options['ucms_site'] ?? null) {
+            if (!$site instanceof Site) {
+                // @todo should we catch exceptions and be resilient to errors here?
+                $site = $manager->getStorage()->findOne($options['ucms_site']);
+            }
+        }
+
+        if ($site) {
+            // When a site is given, force it into the URL and pass.
+            if (Site::ALLOWED_PROTOCOL_PASS !== $site->getAllowedProtocols()) {
+                if ($options['https'] = $site->isHttpsAllowed()) {
+                    $options['base_url'] = 'https://'.$site->getHostname();
+                } else {
+                    $options['base_url'] = 'http://'.$site->getHostname();
+                }
+            }
+
+            return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+
+        } else if ($manager->hasContext()) {
+
+            // Master allowed URLs must go to master.
+            if (!$this->isRouteAllowedOnSite($name)) {
+                if ($options['https'] = $manager->isMasterHttps()) {
+                    $options['base_url'] = 'https://'.$masterHostname;
+                } else {
+                    $options['base_url'] = 'http://'.$masterHostname;
+                }
+
+                return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+            }
+
+            // Pass.
+            return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+
+        } else {
+            // @todo check for route node, and redirect to suitable site
+            //   for redirecting
+        }
+
+        return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+    }
+
+    /**
      * Is the given path allowed in sites
      *
      * @todo for now, it's hardcoded.
-     */
+     *
     public function isPathAllowedOnSite(string $path): bool
     {
         // Proceed to node path check first: most URL will always be node URL
@@ -67,6 +206,7 @@ class SiteUrlGenerator
         if ('system/ajax' === $path) {
             return true;
         }
+
         /*
          * @todo answer true for all ajax requests/urls
          */
@@ -81,7 +221,7 @@ class SiteUrlGenerator
         } else if (\in_array(true, $ret, true)) {
             return true;
         }
-         */
+         * /
 
         $pathinfo = $path;
         if ('/' !== \substr($path, 0, 1)) {
@@ -94,7 +234,7 @@ class SiteUrlGenerator
         try {
             // @todo Drupal 8 does not handle circular dependencies very well yet
             $router = \Drupal::service('router');
-            /** @var \Symfony\Component\Routing\Route $route */
+            /** @var \Symfony\Component\Routing\Route $route * /
             $route = $router->match($pathinfo)['_route_object'];
             $isAdmin = $route->hasOption('_admin_route');
         } catch (\Exception $e) {
@@ -122,43 +262,7 @@ class SiteUrlGenerator
 
         return true;
     }
-
-    /**
-     * Alter parameters for the url outbound alter hook
-     *
-     * @param mixed[] $options
-     *   Link options, see url()
-     * @param int|Site $site
-     *   Site identifier, if site is null
      */
-    public function forceSiteUrl(&$options, $site)
-    {
-        if (!$site instanceof Site) {
-            $site = $this->storage->findOne($site);
-        }
-
-        /*
-         * @todo Re-implement me
-         *
-        if ($GLOBALS['is_https']) {
-            $options['https'] = !$site->isHttpsAllowed();
-        } else if (variable_get('https', false)) {
-            $options['https'] = !$site->isHttpAllowed();
-        } else {
-            // Sorry, HTTPS is disabled at the Drupal level, note that it is not
-            // mandatory to this because url() will do the check by itself, but
-            // because there is in here one code path in which we are going to
-            // manually set the base URL, we need to compute that by ourselves.
-            $options['https'] = false;
-        } */
-
-        // Warning, this is a INTERNAL url() function behavior, so we have
-        // to reproduce a few other behaviours to go along with it, such as
-        // manual http vs https handling. Please see the variable_get('https')
-        // documentation above.
-        $options['base_url'] = (($options['https'] ?? false) ? 'https://' : 'http://') . $site->getHostname();
-        $options['absolute'] = true;
-    }
 
     /**
      * Get URL in site
@@ -175,7 +279,7 @@ class SiteUrlGenerator
      * @return mixed
      *   First value is the string path
      *   Second value are updates $options
-     */
+     *
     public function getRouteAndParams($site, $path = null, array $options = [], bool $ignoreSso = false, bool $dropDestination = false): array
     {
         if (!$site instanceof Site) {
@@ -223,6 +327,7 @@ class SiteUrlGenerator
 
         return ['sso/goto/' . $site->getId(), $options];
     }
+     */
 
     /**
      * Alias of getRouteAndParams() that returns the generated URL
@@ -237,9 +342,10 @@ class SiteUrlGenerator
      *   If you're sure you are NOT in a form, just set this to true
      *
      * @return string
-     */
+     *
     public function generateUrl($site, $path = null, array $options = [], bool $ignoreSso = false, bool $dropDestination = false): string
     {
         return call_user_func_array([$this, 'url'], $this->getRouteAndParams($site, $path, $options, $ignoreSso, $dropDestination));
     }
+     */
 }

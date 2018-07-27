@@ -15,7 +15,6 @@ class Site
     const ALLOWED_PROTOCOL_PASS = 0;
     const ALLOWED_PROTOCOL_HTTP = 1;
     const ALLOWED_PROTOCOL_HTTPS = 2;
-    const ALLOWED_PROTOCOL_ALL = 3;
 
     use AttributesTrait;
     use DatesTrait;

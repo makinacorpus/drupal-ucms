@@ -53,7 +53,7 @@ function ucms_site_schema() {
         'default'     => null,
       ],
       'allowed_protocols' => [
-        'description' => "1 = HTTP only, 2 = HTTPS only, 3 = both, 0 = let Drupal discover it",
+        'description' => "1 = HTTP only, 2 = HTTPS only, 0 = let Drupal discover it",
         'type'        => 'int',
         'not null'    => true,
         'default'     => 0,
