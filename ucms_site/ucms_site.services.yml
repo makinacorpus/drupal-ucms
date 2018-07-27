@@ -11,6 +11,24 @@ parameters:
     # references within.
     ucms_site_node_reference_whitelist: []
 
+    # Allowed site types, site types don't change any business behaviour, they
+    # only are a way to categorize and filter sites in admin interface.
+    ucms_site_allowed_types:
+        site: Site
+
+    # Allow sites to upload a custom favicon.
+    ucms_site_use_custom_favicon: false;
+
+    # Dispatch static assets on a common CDN.
+    ucms_site_use_cdn: false
+
+    # Dynamic CDN hostname, must point to the same Drupal instance.
+    ucms_site_cdn_uri: ~
+
+    # Drupal role to attach to site roles.
+    # @todo THIS MUST DIE
+    ucms_site_allowed_roles: ~
+
 services:
 
     # Stores sites
@@ -49,16 +67,6 @@ services:
         class: MakinaCorpus\Ucms\Site\NodeManager
         arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
 
-    ucms_site.url_generator:
-        public: true
-        class: MakinaCorpus\Ucms\Site\SiteUrlGenerator
-        factory: ["@ucms_site.manager", getUrlGenerator]
-
-    ucms_site.admin.datasource:
-        public: true
-        class: MakinaCorpus\Ucms\Site\Datasource\SiteAdminDatasource
-        arguments: ["@database", "@ucms_site.manager"]
-
     # Determines the site context at bootstrap
     ucms_site.kernel.subscriber:
         public: true
@@ -71,6 +79,24 @@ services:
         class: MakinaCorpus\Ucms\Site\Environment\SiteConfigOverrides
         arguments: ['@service_container']
         tags: [{name: config.factory.override, priority: 1000}]
+
+    # Generate cross-sites URLs
+    ucms_site.url_generator:
+        public: true
+        class: MakinaCorpus\Ucms\Site\SiteUrlGenerator
+        factory: ["@ucms_site.manager", getUrlGenerator]
+
+    # Handles outbound URLs processing
+    ucms_site.url_processor:
+        public: false
+        class: MakinaCorpus\Ucms\Site\Environment\CrossSitePathProcessor
+        arguments: ['@entity_type.manager', '@ucms_site.manager']
+        tags: [{name: path_processor_outbound}]
+
+    ucms_site.admin.datasource:
+        public: true
+        class: MakinaCorpus\Ucms\Site\Datasource\SiteAdminDatasource
+        arguments: ["@database", "@ucms_site.manager"]
 
 #    ucms_site.admin.webmaster_datasource:
 #      public: true
