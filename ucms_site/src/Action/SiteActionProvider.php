@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
+use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
@@ -12,6 +13,7 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 class SiteActionProvider extends AbstractActionProvider
 {
     use StringTranslationTrait;
+    use UrlGeneratorTrait;
 
     private $manager;
     private $currentUser;
@@ -44,7 +46,7 @@ class SiteActionProvider extends AbstractActionProvider
             // should not end up being checked against here (since SQL query
             // alteration will forbid it).
             if ($access->userCanView($account, $item)) {
-                $uri = $this->manager->getUrlGenerator()->generateUrl($item->id);
+                // $uri = $this->url('<front>', [], ['ucms_site' => $item->id]); // @todo
                 $ret[] = new Action($this->t("Go to site"), 'ucms_site.admin.site.view', ['site' => $item->id], 'share-alt', -5, true);
             }
             if ($access->userCanManage($account, $item)) {

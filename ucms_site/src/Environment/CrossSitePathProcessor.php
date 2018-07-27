@@ -30,11 +30,6 @@ class CrossSitePathProcessor implements OutboundPathProcessorInterface
      */
     public function processOutbound($path, &$options = [], Request $request = null, BubbleableMetadata $bubbleableMetadata = null)
     {
-        // Skip external URLs, we cannot proceed them on both fronts, since other
-        // sites in the platform will actually be dealt as external by Drupal core
-        // let them pass, if you need to generate other site's URLs, please use
-        // the 'ucms_site.url_generator' service manually or the 'ucms_site_url'
-        // twig function.
         if ($options['external'] ?? false) {
             return;
         }

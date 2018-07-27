@@ -2,23 +2,14 @@
 
 namespace MakinaCorpus\Ucms\Site\Twig\Extension;
 
+use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 class SiteExtension extends \Twig_Extension
 {
     use StringTranslationTrait;
-
-    private $siteManager;
-
-    /**
-     * Default constructor
-     */
-    public function __construct(SiteManager $siteManager)
-    {
-        $this->siteManager = $siteManager;
-    }
+    use UrlGeneratorTrait;
 
     /**
      * {@inheritdoc}
@@ -63,17 +54,18 @@ class SiteExtension extends \Twig_Extension
      *
      * @param int|\MakinaCorpus\Ucms\Site\Site $site
      *   Site identifier, if site is null
-     * @param string $path
-     *   Drupal path to hit in site
+     * @param string $route
+     *   Drupal route to hit in site
+     * @param mixed[] $params
+     *   Route parameters, see \Symfony\Component\Routing\Generator\UrlGeneratorInterface::generateUrl()
      * @param mixed[] $options
-     *   Link options, see url()
+     *   Link options, see \Drupal\Core\Routing\UrlGeneratorInterface::generateUrl()
      *
      * @return string
      */
-    public function renderSiteUrl($site, $path = null, array $options = [], $ignoreSso = false, $dropDestination = true): string
+    public function renderSiteUrl($site, $route = null, array $params = [], array $options = [], $ignoreSso = false, $dropDestination = true): string
     {
-        // return $this->siteManager->getUrlGenerator()->generateUrl($site, $path, $options, $ignoreSso, $dropDestination);
-        return '';
+        return $this->url($route ?? '<front>', [], ['ucms_site' => $site]);
     }
 
     /**

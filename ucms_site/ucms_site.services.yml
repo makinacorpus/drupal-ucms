@@ -80,12 +80,6 @@ services:
         arguments: ['@service_container']
         tags: [{name: config.factory.override, priority: 1000}]
 
-    # Generate cross-sites URLs
-    ucms_site.url_generator:
-        public: true
-        class: MakinaCorpus\Ucms\Site\SiteUrlGenerator
-        factory: ["@ucms_site.manager", getUrlGenerator]
-
     # Handles outbound URLs processing
     ucms_site.url_processor:
         public: false

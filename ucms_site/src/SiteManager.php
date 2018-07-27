@@ -31,7 +31,6 @@ class SiteManager
 {
     private $access;
     private $storage;
-    private $urlGenerator;
     private $context;
     private $dependentContext = [];
     private $db;
@@ -58,10 +57,6 @@ class SiteManager
         $this->dispatcher = $dispatcher;
         $this->themeHandler = $themeHandler;
         $this->masterHostname = $masterHostname;
-
-        // This object is derived for the only reason to keep its internal logic
-        // decoupled from this
-        $this->urlGenerator = new SiteUrlGenerator($this);
     }
 
     /**
@@ -222,16 +217,6 @@ class SiteManager
     }
 
     /**
-     * Get the site URL generator
-     *
-     * @return SiteUrlGenerator
-     */
-    public function getUrlGenerator()
-    {
-        return $this->urlGenerator;
-    }
-
-    /**
      * Get storage service
      *
      * @return SiteStorage
@@ -284,52 +269,6 @@ class SiteManager
         return variable_get('ucms_site_allowed_types', [
             'default' => t("Default"), // @todo
         ]);
-    }
-
-    /**
-     * Get URL in site
-     *
-     * @param int|Site $site
-     *   Site identifier, if site is null
-     * @param string $path
-     *   Drupal path to hit in site
-     * @param mixed[] $options
-     *   Link options, see url()
-     * @param boolean $dropDestination
-     *   If you're sure you are NOT in a form, just set this to true
-     *
-     * @return mixed
-     *   First value is the string path
-     *   Second value are updates $options
-     *
-     * @deprecated
-     *   Please use the url generator service directly
-     */
-    public function getUrlInSite($site, $path = null, $options = [], $ignoreSso = false, $dropDestination = false)
-    {
-        return $this->urlGenerator->getRouteAndParams($site, $path, $options, $ignoreSso, $dropDestination);
-    }
-
-    /**
-     * Alias of getUrlInSite() that returns the generated URL
-     *
-     * @param int|Site $site
-     *   Site identifier, if site is null
-     * @param string $path
-     *   Drupal path to hit in site
-     * @param mixed[] $options
-     *   Link options, see url()
-     * @param boolean $dropDestination
-     *   If you're sure you are NOT in a form, just set this to true
-     *
-     * @return string
-     *
-     * @deprecated
-     *   Please use the url generator service directly
-     */
-    public function generateUrlInSite($site, $path = null, $options = [], $ignoreSso = false, $dropDestination = false)
-    {
-        return $this->urlGenerator->generateUrl($site, $path, $options, $ignoreSso, $dropDestination);
     }
 
     /**
