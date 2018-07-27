@@ -147,6 +147,46 @@ function ucms_seo_schema() {
     'primary key' => ['id'],
   ];
 
+  $schema['ucms_seo_redirect_external'] = [
+    'description'  => 'Allow external redirects',
+    'fields' => [
+      'id' => [
+        'description' => "Redirect identifier",
+        'type'        => 'serial',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'site_id' => [
+        'description' => "Site identifier from which to redirect",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'path' => [
+        'description' => "Path to redirect from",
+        'type'        => 'varchar',
+        'length'      => 512,
+        'not null'    => true,
+      ],
+      'external_url' => [
+        'description' => "Arbitrary external URL",
+        'type'        => 'text',
+        'not null'    => true,
+      ],
+    ],
+    'unique keys' => [
+      'site_path' => ['site_id', 'path'],
+    ],
+    'foreign keys' => [
+      'site_id' => [
+        'table'   => 'ucms_site',
+        'columns' => ['ucms_site' => 'id'],
+        'delete'  => 'cascade',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
   return $schema;
 }
 
@@ -453,5 +493,15 @@ function ucms_seo_update_7023() {
     if ('/' === substr($row->path, -1)) {
       db_query("UPDATE {ucms_seo_redirect} SET path = ? WHERE id = ?", [rtrim($row->path, '/'), $row->id]);
     }
+  }
+}
+
+/**
+ * Creates a table for external redirections.
+ */
+function ucms_seo_update_7024() {
+  $table = 'ucms_seo_redirect_external';
+  if (!db_table_exists($table)) {
+    db_create_table($table, drupal_get_schema_unprocessed('ucms_seo', $table));
   }
 }

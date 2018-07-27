@@ -16,6 +16,11 @@ services:
     class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
     arguments: ['@database', '@module_handler', "@ucms_site.manager"]
 
+  ucms_seo.external_redirect_storage:
+    public: true
+    class: MakinaCorpus\Ucms\Seo\Path\ExternalRedirectStorage
+    arguments: ['@database']
+
   # This overrides the global one
   path.alias_storage:
     public: true

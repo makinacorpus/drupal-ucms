@@ -442,6 +442,17 @@ function ucms_seo_drupal_deliver_html_page($page_callback_result) {
         return drupal_goto('node/' . $redirect->nid, [], 301);
       }
     }
+
+    $manager = ucms_site_manager();
+    if ($manager->hasContext()) {
+      // Attempt with external storage
+      // @todo Do it better
+      /** @var \MakinaCorpus\Ucms\Seo\Path\ExternalRedirectStorage $externalStorage */
+      $externalStorage = \Drupal::service('ucms_seo.external_redirect_storage');
+      if ($externalUrl = $externalStorage->find($manager->getContext()->getId(), trim($uri, '/'))) {
+        return drupal_goto($externalUrl, ['external' => true]);
+      }
+    }
   }
 
   // @todo altered callback name should be stored instead
