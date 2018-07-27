@@ -1,6 +1,6 @@
 parameters:
 
-    # Master (admin) site hostname
+    # Master (admin) site hostname.
     ucms_site_master_hostname: admin.d8-ucms.guinevere
 
     # If set to false, ucms_site_node_reference_whitelist is a whitelist,
@@ -13,31 +13,37 @@ parameters:
 
 services:
 
+    # Stores sites
     ucms_site.storage:
         public: false
         class: MakinaCorpus\Ucms\Site\CachedSiteStorage
         arguments: ["@database", "@event_dispatcher"]
 
+    # Handles site access checks
     ucms_site.access:
         public: false
         class: MakinaCorpus\Ucms\Site\SiteAccessService
         arguments: ["@database", "@event_dispatcher"]
 
+    # Handles sites
     ucms_site.manager:
         public: true
         class: MakinaCorpus\Ucms\Site\SiteManager
         arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher", "@theme_handler", "%ucms_site_master_hostname%"]
 
+    # Handles groups
     ucms_group.manager:
         public: true
         class: MakinaCorpus\Ucms\Site\GroupManager
         arguments: ["@database", "@event_dispatcher"]
 
+    # Handle node access checks
     ucms_site.node_access_helper:
         public: true
         class: MakinaCorpus\Ucms\Site\NodeAccessService
         arguments: ["@ucms_site.manager"]
 
+    # Handles node linking/unlinking to sites
     ucms_site.node_manager:
         public: true
         class: MakinaCorpus\Ucms\Site\NodeManager

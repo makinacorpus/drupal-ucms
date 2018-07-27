@@ -3,13 +3,9 @@
 namespace MakinaCorpus\Ucms\Site\Twig\Extension;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
-/**
- * Displays any object's actions
- */
 class SiteExtension extends \Twig_Extension
 {
     use StringTranslationTrait;
@@ -51,7 +47,7 @@ class SiteExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderState($state)
+    public function renderState($state): string
     {
         $list = SiteState::getList();
 
@@ -74,9 +70,10 @@ class SiteExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function renderSiteUrl($site, $path = null, array $options = [], $ignoreSso = false, $dropDestination = true)
+    public function renderSiteUrl($site, $path = null, array $options = [], $ignoreSso = false, $dropDestination = true): string
     {
-        return $this->siteManager->getUrlGenerator()->generateUrl($site, $path, $options, $ignoreSso, $dropDestination);
+        // return $this->siteManager->getUrlGenerator()->generateUrl($site, $path, $options, $ignoreSso, $dropDestination);
+        return '';
     }
 
     /**

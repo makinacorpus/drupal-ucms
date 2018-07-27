@@ -4,7 +4,6 @@
  * Implements hook_schema().
  */
 function ucms_sso_schema() {
-  
   $schema = array();
   $schema['cache_sso'] = drupal_get_schema_unprocessed('system', 'cache');
   return $schema;

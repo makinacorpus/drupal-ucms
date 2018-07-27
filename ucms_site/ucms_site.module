@@ -307,151 +307,6 @@ function ucms_site_permission() {
  */
 
 /**
- * Is the given path allowed on sites.
- *
- * @param string $path
- *
- * @return $path
- */
-function ucms_site_admin_path_is_allowed($path) {
-
-  // Proceed to node path check first: most URL will always be node URL
-  // we must shortcut them as quicly as possible to gain a few CPU cycles
-  // from there.
-  $arg = explode('/', $path);
-  if ($arg[0] === 'node') {
-    // Whitelist our custom node URLs.
-    if (is_numeric($arg[1])) {
-      if (isset($arg[2])) {
-        switch ($arg[2]) {
-          case 'duplicate':
-          case 'clone':
-          case 'edit':
-          case 'gallery':
-          case 'seo-edit':
-            return true;
-        }
-      }
-      // All nodes display should always be allowed.
-      return true;
-    }
-  }
-
-  // Our proper logic is following.
-  if ('system/ajax' === $path) {
-    return true;
-  }
-  if (minidialog_is_ajax()) {
-    return true;
-  }
-
-  // Give a chance to contrib modules to override this.
-  $ret = module_invoke_all('ucms_path_is_allowed', $path);
-  if (in_array(false, $ret, true)) {
-    return false;
-  } else if (in_array(true, $ret, true)) {
-    return true;
-  }
-
-  if (path_is_admin($path)) {
-    // Allow node/add
-    if ('node/add' === substr($path, 0, 8)) {
-      return true;
-    }
-    if ('admin/action/process' === substr($path, 0, 20)) {
-      return true;
-    }
-    if ('admin/dashboard/tree' === substr($path, 0, 20)) {
-      return true;
-    }
-    if ('admin/dashboard/content' === substr($path, 0, 23)) {
-      return true;
-    }
-    if ('admin/dashboard/media' === substr($path, 0, 21)) {
-      return true;
-    }
-    if ('admin/cart/refresh' === substr($path, 0, 18)) {
-      return true;
-    }
-    if ('admin/cart' === substr($path, 0, 10)) {
-      return true;
-    }
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Implements hook_url_outbound_alter().
- */
-function ucms_site_url_outbound_alter(&$path, &$options, $original_path) {
-
-  if (empty($original_path)) {
-    return;
-  }
-
-  // Skip external URLs, we cannot proceed them on both fronts, since other
-  // sites in the platform will actually be dealt as external by Drupal core
-  // let them pass, if you need to generate other site's URLs, please use
-  // the 'ucms_site.url_generator' service manually or the 'ucms_site_url'
-  // twig function.
-  if ($options['external']) {
-    return;
-  }
-
-  // Avoid reentrancy, especially if the URL was generated using the site
-  // manager, case in which we don't need to process it.
-  if (isset($options['ucms_processed'])) {
-    return;
-  }
-
-  $options['ucms_processed'] = true;
-  $options['ucms_site'] = false;
-  $manager = ucms_site_manager();
-
-  if ($manager->hasContext()) {
-    // Enforce master-only (administration pages) links to be absolute with the
-    // master hostname instead of being directed to the current site.
-    if ($path && !ucms_site_admin_path_is_allowed($path)) {
-      $options['absolute'] = true;
-      $options['external'] = true;
-      $path = ucms_site_master_absolute_url() . '/' . $path;
-    } else {
-      $options['ucms_site'] = $manager->getContext()->getId();
-    }
-  } else {
-    if (drupal_is_cli() && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-      return;
-    }
-    // In case we have no site context, and we are actually trying to render a
-    // node link, we must enforce a local site to display it when relevant,
-    // especially that most nodes can't be seen on master.
-    $matches = [];
-    if (preg_match('#^node/(\d+)(|/view)$#', $original_path, $matches)) {
-      // Please note that the following algorith will probably be very heavy
-      // in term of performances, but it can only happens in the administration
-      // pages, in which nodes will almost always be preloaded one prior to
-      // generating links to it.
-      $node = node_load($matches[1]);
-      if ($node) {
-        /** @var \MakinaCorpus\Ucms\Site\NodeAccessService $nodeAccessService */
-        $nodeAccessService = \Drupal::service('ucms_site.node_access_helper');
-        // findMostRelevantSiteFor() allows fetching URL for non enabled sites, but
-        // will always find a site the current user can see. This function will
-        // always be called when attempting to connect on the admin sites, so this
-        // fine to redirect on non enabled sites if no enabled site was found.
-        $mostRelevantSite = $nodeAccessService->findMostRelevantSiteFor($node);
-        if ($mostRelevantSite) {
-          $manager->getUrlGenerator()->forceSiteUrl($options, $mostRelevantSite);
-          $options['ucms_site'] = $mostRelevantSite;
-        }
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_drupal_goto_alter().
  */
 function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
@@ -929,19 +784,6 @@ function ucms_site_init() {
  */
 
 /**
- * Implements hook_form_FORM_ID_alter().
- * /
-function ucms_site_form_user_login_alter(&$form, &$form_state) {
-  // Username is still a unique value but it's preferable to invite users
-  // to connect with its e-mail.
-  $form['name']['#title_force'] = true;
-  $form['name']['#title'] = t("Your e-mail address");
-  $form['name']['#description'] = t('Enter your @s e-mail address.', array('@s' => variable_get('site_name', 'Drupal')));
-  $form['password']['#description'] = t('Enter the password that accompanies your e-mail address.');
-}
- */
-
-/**
  * Implements hook_custom_theme().
  * /
 function ucms_site_custom_theme() {
@@ -1252,6 +1094,8 @@ function ucms_site_preprocess_ucms_dashboard_top(&$vars) {
 
 /**
  * Implements hook_image_default_styles()
+ *
+ * @todo https://www.drupal.org/docs/8/theming-drupal-8/including-default-image-styles-with-your-theme
  *
 function ucms_site_image_default_styles() {
   $styles = [];

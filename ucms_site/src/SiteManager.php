@@ -6,12 +6,12 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 
 /**
  * Facade for using both site storage and site access helpers, that will also
