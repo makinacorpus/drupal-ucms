@@ -12,20 +12,22 @@
  - ucms_user
  - ucms_seo
  - Rewrite all tests
+ - Restore SQL constraints
+ - PENDING - Modern front assets toolchain
 
 ## Additional
 
- - ucms_group
+ - ONLY UI - ucms_group
  - ucms_taxo
  - ucms_widget
  - ucms_search
 
 ## To be done differently
 
- - ucms_debug
+ - [x] DELETED - ucms_debug
  - ucms_list
  - ucms_extranet
- - ucms_harm -> ucms_corporate
- - DELETED - ucms_label
+ - ONLY UI - ucms_harm -> ucms_corporate
+ - [x] DELETED - ucms_label
  - ucms_layout
  - ucms_notification

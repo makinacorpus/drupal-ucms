@@ -689,10 +689,6 @@ msgstr "Transforme le balisage UCMS  DnD en contenu"
 msgid "Local"
 msgstr "Local"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Form/ActionProcessForm.php:58
-msgid "Action was done"
-msgstr "L’action a été réalisée"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_dashboard/src/Page/AbstractDisplay.php:176
 msgid "Display as @mode"
 msgstr "Afficher comme @mode"

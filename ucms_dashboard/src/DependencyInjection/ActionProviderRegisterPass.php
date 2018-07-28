@@ -39,30 +39,5 @@ class ActionProviderRegisterPass implements CompilerPassInterface
 
             $definition->addMethodCall('register', [new Reference($id)]);
         }
-
-        /*
-         * FIXME
-         *
-        if (!$container->hasDefinition('ucms_dashboard.processor_registry')) {
-            return;
-        }
-        $definition = $container->getDefinition('ucms_dashboard.processor_registry');
-
-        // Register automatic action provider based on action processors
-        $taggedServices = $container->findTaggedServiceIds('ucms_dashboard.action');
-        foreach ($taggedServices as $id => $attributes) {
-            $def = $container->getDefinition($id);
-
-            $class = $container->getParameterBag()->resolveValue($def->getClass());
-            $refClass = new \ReflectionClass($class);
-            $parentClass = '\MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProcessor';
-
-            if (!$refClass->isSubclassOf($parentClass)) {
-                throw new \InvalidArgumentException(sprintf('Service "%s" must implement extend "%s".', $id, $parentClass));
-            }
-
-            $definition->addMethodCall('register', [new Reference($id)]);
-        }
-         */
     }
 }

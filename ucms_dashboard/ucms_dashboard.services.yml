@@ -16,11 +16,6 @@ services:
         class: MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory
         arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry", "@twig", "@event_dispatcher"]
 
-    ucms_dashboard.processor_registry:
-        public: true
-        class: MakinaCorpus\Ucms\Dashboard\Action\ProcessorActionProvider
-        tags: [{name: ucms.action_provider}]
-
     ucms_dashboard.action_provider_registry:
         public: false
         class: MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry

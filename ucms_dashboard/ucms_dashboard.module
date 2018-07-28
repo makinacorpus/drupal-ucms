@@ -43,11 +43,6 @@ function ucms_dashboard_menu() {
     'type'              => MENU_NORMAL_ITEM,
     'file'              => 'ucms_dashboard.pages.inc',
   ];
-  $items['admin/action/process'] = [
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [ActionProcessorController::class .  '::process'],
-    'type'              => MENU_CALLBACK,
-  ];
 
   return $items;
 }
