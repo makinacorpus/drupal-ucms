@@ -17,6 +17,21 @@ use Symfony\Component\Routing\RequestContext;
  */
 class CrossSiteUrlGenerator implements UrlGeneratorInterface
 {
+    const ALLOWED_SITE_ADMIN_ROUTES = [
+        'node.multiple_delete_confirm' => true,
+        'entity.node.delete_multiple_form' => true,
+        'entity.node.delete_form' => true,
+        'entity.node.edit_form' => true,
+        'node.add_page' => true,
+        'node.add' => true,
+        'entity.node.preview' => true,
+        'entity.node.version_history' => true,
+        'entity.node.revision' => true,
+        'node.revision_revert_confirm' => true,
+        'node.revision_revert_translation_confirm' => true,
+        'node.revision_delete_confirm' => true,
+    ];
+
     private $nested;
     private $routeProvider;
     private $siteManager;
@@ -96,7 +111,9 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             return true;
         }
 
-        // @todo allow node edit routes
+        if (isset(self::ALLOWED_SITE_ADMIN_ROUTES[$route])) {
+            return true;
+        }
 
         return !$this->routeProvider->getRouteByName($route)->hasOption('_admin_route');
     }
