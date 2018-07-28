@@ -4,6 +4,17 @@
  */
 
 /**
+ * Implements hook_page_attachments().
+ */
+function ucms_dashboard_page_attachments(array &$attachments) {
+  // Attach seven theme fixes if enabled
+  $themeManager = \Drupal::theme();
+  if ('seven' === $themeManager->getActiveTheme()->getName()) {
+    $attachments['#attached']['library'][] = 'ucms_dashboard/ucms_dashboard.seven_fixes';
+  }
+}
+
+/**
  * Implements hook_admin_custom_theme().
  *
 function ucms_dashboard_custom_theme() {
@@ -181,100 +192,6 @@ function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_cod
     }
     $path = 'admin/dashboard';
   }
-}
- */
-
-/**
- * Fetch a specific page.
- *
- * Sad but true story, because we are not going to inject the controllers we
- * are forced to keep this in the procedural code, in order for page callbacks
- * to be able to use it.
- *
- * @param DatasourceInterface $datasource
- * @param DisplayInterface $display
- * @param string[] $suggestions
- *   An arbitrary number of string which will derivate the template suggestions
- *   for example, let's say you set here ['foo', 'bar'], the derivative template
- *   to use will be: 'ucms_dashboard-page-list--foo--bar'.
- *
- * @return Page
- *
- * @deprecated
- *
-function ucms_dashboard_page_get(DatasourceInterface $datasource, DisplayInterface $display, $suggestions) {
-  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory * /
-  $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
-  return $factory->getPage($datasource, $display, $suggestions);
-}
- */
-
-/**
- * Create an admin table.
- *
- * Sad but true story, because we are not going to inject the controllers we
- * are forced to keep this in the procedural code, in order for page callbacks
- * to be able to use it.
- *
- * @param string $name
- * @param mixed[] $attributes
- *
- * @return AdminTable
- *
- * @deprecated
- *
-function ucms_dashboard_admin_table_get($name, array $attributes = []) {
-  /** @var \MakinaCorpus\Ucms\Dashboard\AdminWidgetFactory $factory * /
-  $factory = \Drupal::service('ucms_dashboard.admin_widget_factory');
-  return $factory->getTable($name, $attributes);
-}
- */
-
-/**
- * Implements hook_theme().
- *
-function ucms_dashboard_theme() {
-  return [
-    'ucms_dashboard_actions' => [
-      'variables' => [
-        'item'        => null,
-        'actions'     => [],
-        'mode'        => 'link',
-        'title'       => '',
-        'icon'        => null,
-        'show_title'  => false,
-      ],
-      'template'  => 'ucms_dashboard-actions',
-    ],
-    'ucms_dashboard_context' => [
-      'variables' => [
-        'tabs'        => [],
-        'items'       => [],
-        'actions'     => [],
-      ],
-      'template' => 'ucms_dashboard-context',
-    ],
-    'ucms_dashboard_page_list' => [
-      'variables' => [
-        'display'     => null,
-        'filters'     => [],
-        'items'       => [],
-        'search'      => null,
-        'pager'       => null,
-        'sort_field'  => null,
-        'sort_order'  => null,
-      ],
-      'template' => 'ucms_dashboard-page-list',
-    ],
-    'ucms_dashboard_top' => [
-      'variables' => ['links' => []],
-      'template'  => 'ucms_dashboard-top',
-    ],
-    'description_list' => [
-      'variables' => ['items' => []],
-      'template'  => 'templates/description-list',
-    ],
-  ];
 }
  */
 

@@ -1,0 +1,371 @@
+
+@border-radius-base: 20px;
+@border-radius-dropdown: 4px;
+@cursor-disabled: '';
+@line-height-base: 13px;
+@line-height-computed: 20px;
+@padding-base-horizontal: 5px;
+@padding-base-vertical: 10px;
+@padding-button-horizontal: 4px;
+@padding-button-vertical: 17px;
+@pager-bg: '';
+@pager-border-radius: '';
+@pager-border: '';
+@pager-disabled-color: '';
+@pager-hover-bg: '';
+@pagination-active-bg: '';
+@pagination-active-border: '';
+@pagination-active-color: '';
+@pagination-bg: '';
+@pagination-border: '';
+@pagination-color: '';
+@pagination-disabled-bg: '';
+@pagination-disabled-border: '';
+@pagination-disabled-color: '';
+@pagination-hover-bg: '';
+@pagination-hover-border: '';
+@pagination-hover-color: '';
+
+/******************************************************************************
+ *
+ * Utility classes
+ *
+ ******************************************************************************/
+
+.sr-only {
+  display: none;
+}
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+ul.list-unstyled {
+  list-style: none;
+  margin: 0;
+}
+
+/******************************************************************************
+ *
+ * Fixes layout
+ *
+ ******************************************************************************/
+
+.udashboard-page:after {
+  /* Apply clearfix */
+  clear: both;
+}
+
+.udashboard-page .col-md-2 {
+  /* Left */
+  width: 220px;
+  padding: 20px 15px 0;
+  float: left;
+}
+
+.udashboard-page .col-md-10 {
+  /* Right */
+  margin-left: 250px;
+}
+
+.udashboard-page ul.list-unstyled {
+  list-style-type: none;
+  margin: 10px 0;
+}
+
+/******************************************************************************
+ *
+ * Buttons
+ *
+ ******************************************************************************/
+
+.btn-active() {
+  border-color: #555555;
+  background-image: none;
+  background-color: #666666;
+  color: white;
+}
+
+.btn {
+  cursor: pointer;
+  padding: @padding-button-horizontal @padding-button-vertical;
+  margin-bottom: 1em;
+  margin-right: 1em; /* LTR */
+  color: #5a5a5a;
+  text-align: center;
+  font-weight: normal;
+  font-size: 1.077em;
+  font-family: "Lucida Grande", Verdana, sans-serif;
+  border: 1px solid #e4e4e4;
+  border-bottom: 1px solid #b4b4b4;
+  border-left-color: #d2d2d2;
+  border-right-color: #d2d2d2;
+  background: url(/themes/seven/images/buttons.png) 0 0 repeat-x;
+  -moz-border-radius: @border-radius-base;
+  -webkit-border-radius: @border-radius-base;
+  border-radius: @border-radius-base;
+
+  &:hover {
+    .btn-active();
+  }
+}
+a.btn:hover {
+  text-decoration: none;
+}
+
+/******************************************************************************
+ *
+ * Pagination (bootstrap code)
+ *
+ ******************************************************************************/
+
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: @line-height-computed 0;
+  border-radius: @border-radius-base;
+
+  > li {
+    display: inline; // Remove list-style and block-level defaults
+    > a,
+    > span {
+      // Make it Drupalist
+      .btn();
+      margin: 0;
+      border-radius: 0;
+
+      position: relative;
+      float: left; // Collapse white-space
+      padding: @padding-button-horizontal @padding-button-vertical;
+      line-height: @line-height-base;
+      text-decoration: none;
+      color: @pagination-color;
+      background-color: @pagination-bg;
+      border: 1px solid @pagination-border;
+      margin-left: -1px;
+    }
+    &:first-child {
+      > a,
+      > span {
+        margin-left: 0;
+        border-top-left-radius: @border-radius-base;
+        border-bottom-left-radius: @border-radius-base;
+      }
+    }
+    &:last-child {
+      > a,
+      > span {
+        border-top-right-radius: @border-radius-base;
+        border-bottom-right-radius: @border-radius-base;
+      }
+    }
+  }
+
+  > li > a,
+  > li > span {
+    &:hover,
+    &:focus {
+      z-index: 2;
+      color: @pagination-hover-color;
+      background-color: @pagination-hover-bg;
+      border-color: @pagination-hover-border;
+    }
+  }
+
+  > .active > a,
+  > .active > span {
+    &,
+    &:hover,
+    &:focus {
+      z-index: 3;
+      .btn-active();
+      cursor: default;
+    }
+  }
+
+  > .disabled {
+    > span,
+    > span:hover,
+    > span:focus,
+    > a,
+    > a:hover,
+    > a:focus {
+      color: @pagination-disabled-color;
+      background-color: @pagination-disabled-bg;
+      border-color: @pagination-disabled-border;
+      cursor: @cursor-disabled;
+    }
+  }
+}
+
+.pager {
+  padding-left: 0;
+  margin: @line-height-computed 0;
+  list-style: none;
+  text-align: center;
+  &:extend(.clearfix all);
+  li {
+    display: inline;
+    > a,
+    > span {
+      display: inline-block;
+      padding: 5px 14px;
+      background-color: @pager-bg;
+      border: 1px solid @pager-border;
+      border-radius: @pager-border-radius;
+    }
+
+    > a:hover,
+    > a:focus {
+      text-decoration: none;
+      background-color: @pager-hover-bg;
+    }
+  }
+
+  .next {
+    > a,
+    > span {
+      float: right;
+    }
+  }
+
+  .previous {
+    > a,
+    > span {
+      float: left;
+    }
+  }
+
+  .disabled {
+    > a,
+    > a:hover,
+    > a:focus,
+    > span {
+      color: @pager-disabled-color;
+      background-color: @pager-bg;
+      cursor: @cursor-disabled;
+    }
+  }
+}
+
+/******************************************************************************
+ *
+ * Dropdowns
+ *
+ ******************************************************************************/
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  vertical-align: middle;
+  border-top:   4px dashed;
+  border-top:   4px solid ~"\9";
+  border-right: 4px solid transparent;
+  border-left:  4px solid transparent;
+}
+
+.dropdown-toggle {
+  position: relative;
+}
+
+.dropdown-toggle:focus {
+  outline: 0;
+}
+
+/*
+.dropdown-menu {
+  background: white;
+  list-style: none;
+  margin: 0;
+  padding: 7px 15px;
+  border: 1px solid #bebfb9;
+} */
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  z-index: 100;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  text-align: left;
+  background-color: white;
+
+  border: 1px solid #e4e4e4;
+  border-bottom: 1px solid #b4b4b4;
+  border-left-color: #d2d2d2;
+  border-right-color: #d2d2d2;
+
+  -moz-border-radius: @border-radius-dropdown;
+  -webkit-border-radius: @border-radius-dropdown;
+  border-radius: @border-radius-dropdown;
+
+  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  background-clip: padding-box;
+
+  right: 0;
+  left: auto;
+}
+
+.dropdown-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  line-height: 2em;
+  white-space: nowrap;
+
+  cursor: pointer;
+  color: #5a5a5a;
+  font-weight: normal;
+  font-family: "Lucida Grande", Verdana, sans-serif;
+}
+.dropdown-menu > li > a:hover {
+  text-decoration: none;
+}
+
+/* Fix for Drupal table items */
+table .dropdown-menu > li > a {
+  font-size: 1.077em;
+}
+
+/******************************************************************************
+ *
+ * Button groups
+ *
+ ******************************************************************************/
+
+.btn-group {
+  display: inline;
+  position: relative;
+}
+
+.btn-group > .btn {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  margin: 0;
+}
+.btn-group .btn:first-child {
+  border-top-left-radius: @border-radius-base;
+  border-bottom-left-radius: @border-radius-base;
+}
+.btn-group > .btn:last-child, .btn-group > .btn-group > .btn:last-of-type {
+  border-top-right-radius: @border-radius-base;
+  border-bottom-right-radius: @border-radius-base;
+}
+.btn-group .btn-group > .btn {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+}
+
+.btn-group > a, .btn-group > button, .btn-group > .btn-group {
+  display: inline;
+}
+

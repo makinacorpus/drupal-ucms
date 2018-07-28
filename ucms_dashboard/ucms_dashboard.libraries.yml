@@ -1,0 +1,10 @@
+ucms_dashboard.seven_fixes:
+  version: VERSION
+  css:
+    theme:
+      dist/style.css: {}
+  js:
+    dist/seven-fixes.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
