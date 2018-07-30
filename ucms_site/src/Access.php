@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
 /**
  * Access constants
  */
@@ -283,4 +285,75 @@ final class Access
      * whenever the query is tagged with 'node_access'.
      */
     const QUERY_TAG_CONTEXT_OPT_OUT = 'ucms_site_access_opt_out';
+
+    /**
+     * Drupal did not enabled the Yaml::PARSE_CONSTANT flag on Symfony's YAML
+     * component while parsing permission, so we use dynamic permission spawn
+     * instead so we can use them as array keys.
+     */
+    public static function getPermissionArray(): array
+    {
+        return [
+            self::PERM_CONTENT_GOD => [
+                'title' => new TranslatableMarkup("Content god mode"),
+                'description' => new TranslatableMarkup("This permission bypasses everything that can be bypassed, for technical administrators only"),
+            ],
+            self::PERM_CONTENT_MANAGE_GLOBAL => [
+                'title' => new TranslatableMarkup("Manage global content"),
+            ],
+            self::PERM_CONTENT_MANAGE_CORPORATE => [
+                'title' => new TranslatableMarkup("Manage group content"),
+            ],
+            self::PERM_CONTENT_TRANSFER_OWNERSHIP => [
+                'title' => new TranslatableMarkup("Transfer content ownership to another user"),
+            ],
+            self::PERM_CONTENT_VIEW_ALL => [
+                'title' => new TranslatableMarkup("View all content no matter where it stands"),
+            ],
+            self::PERM_CONTENT_VIEW_GLOBAL => [
+                'title' => new TranslatableMarkup("View global published content"),
+            ],
+            self::PERM_CONTENT_VIEW_CORPORATE => [
+                'title' => new TranslatableMarkup("View group published content"),
+            ],
+            self::PERM_CONTENT_VIEW_OTHER => [
+                'title' => new TranslatableMarkup("View other site content"),
+            ],
+            self::PERM_SITE_MANAGE_HOSTNAME => [
+                'title' => new TranslatableMarkup("Site change hostnames"),
+                'description' => new TranslatableMarkup("This permission bypasses everything that can be bypassed, for technical administrators only"),
+            ],
+            self::PERM_SITE_GOD => [
+                'title' => new TranslatableMarkup("Site god mode"),
+                'description' => new TranslatableMarkup("This permission bypasses everything that can be bypassed, for technical administrators only"),
+            ],
+            self::PERM_SITE_REQUEST => [
+                'title' => new TranslatableMarkup("Request new site"),
+            ],
+            self::PERM_SITE_DASHBOARD_ACCESS => [
+                'title' => new TranslatableMarkup("Access to site dashboard"),
+            ],
+            self::PERM_SITE_MANAGE_ALL => [
+                'title' => new TranslatableMarkup("Manage all sites no matter their state is"),
+            ],
+            self::PERM_SITE_VIEW_ALL => [
+                'title' => new TranslatableMarkup("View all sites no matter their state is"),
+            ],
+            self::PERM_GROUP_DASHBOARD_ACCESS => [
+                'title' => new TranslatableMarkup("Access to group dashboard"),
+            ],
+            self::PERM_GROUP_MANAGE_ALL => [
+                'title' => new TranslatableMarkup("Manage all groups"),
+            ],
+            self::PERM_GROUP_MANAGE_ORPHAN => [
+                'title' => new TranslatableMarkup("Manage orphan content"),
+            ],
+            self::PERM_USER_MANAGE_ALL => [
+                'title' => new TranslatableMarkup("Manage all users"),
+            ],
+            self::PERM_USER_VIEW_ALL => [
+                'title' => new TranslatableMarkup("View all users"),
+            ],
+        ];
+    }
 }

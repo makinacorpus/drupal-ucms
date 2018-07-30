@@ -1,0 +1,2 @@
+permission_callbacks:
+    - MakinaCorpus\Ucms\Site\Access::getPermissionArray
