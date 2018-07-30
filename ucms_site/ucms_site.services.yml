@@ -26,11 +26,8 @@ parameters:
     # Allow sites to upload a custom favicon.
     ucms_site_use_custom_favicon: false;
 
-    # Dispatch static assets on a common CDN.
-    ucms_site_use_cdn: false
-
     # Dynamic CDN hostname, must point to the same Drupal instance.
-    ucms_site_cdn_uri: ~
+    ucms_site_cdn_hostname: static.d8-ucms.guinevere
 
     # Drupal role to attach to site roles.
     # @todo THIS MUST DIE

@@ -535,72 +535,42 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
  */
 
 /**
- * Implements hook_stream_wrappers_alter().
- * For CDN static domain replacement on public:// stream wrapper
- * /
-function ucms_site_stream_wrappers_alter(&$wrappers) {
-  // Connect our override of the public:// stream wrapper for
-  // static file CDN redirection (if any)
-  $wrappers['public']['class'] = PublicStreamWrapper::class;
-}
- */
-
-/**
  * Implements hook_file_url_alter
  * For CDN static domain replacement on all file related urls
- * /
-function ucms_site_file_url_alter(&$original_uri) {
-  $scheme = file_uri_scheme($original_uri);
+ */
+function ucms_site_file_url_alter(&$uri) {
+  $scheme = file_uri_scheme($uri);
 
-  $use_cdn_here = variable_get('ucms_site_use_cdn', False);
-
-  // local CDN Not activated?
-  if (!$use_cdn_here) {
- //   return;
-  }
-
-  $cdn = variable_get('ucms_site_cdn_uri', $GLOBALS['base_url']);
-
-  // If the current URI is an absolute or protocol-relative URI, return
-  // immediately.
-  // it may be an already altered public:// url
-  // we do not also alter the favicon sitemap or robots files which should be
-  // managed by all real domain-related sites
-  if (($scheme && ($scheme === 'http' || $scheme === 'https'))
-      || (drupal_substr($original_uri, 0, 2) == '//')
-      || (in_array(drupal_substr($original_uri, -11), array('favicon.ico', 'sitemap.xml')))
-      || (drupal_substr($original_uri, -10) == 'robots.txt')
-  ) {
+  // When there is no scheme, this means we are dealing with core or module
+  // packaged files, such as static JS or CSS files.
+  if ($scheme && 'public' !== $scheme) {
     return;
   }
-  else if ($scheme) {
 
-    // Explicitly exclude the local private:// stream wrapper.
-    // as we do not want it managed like public files
-    // And also remove the public:// stream wrapper as it is managed by
-    // ucms_site_stream_wrappers_alter
-    if ($scheme === 'private' || $scheme === 'public') {
-      return;
-    }
-
-    // We work only on file delivered locally (not rewriting imgur things, for example)
-    $local_schemes = array_keys(file_get_stream_wrappers(STREAM_WRAPPERS_LOCAL));
-    if (!in_array($scheme, $local_schemes)) {
-      return;
-    }
-
-    // Attempt to get an external URL using the appropriate wrapper.
-    if ($wrapper = file_stream_wrapper_get_instance_by_uri($original_uri)) {
-      $original_uri = str_replace($GLOBALS['base_url'] . '/', $cdn, $wrapper->getExternalUrl());
-    } else {
-      return;
-    }
-  } else {
-    // classical file paths like '/foo/css/toto.css'
-    $original_uri = $cdn . '/' . $original_uri;
+  $container = \Drupal::getContainer();
+  if (!$container->hasParameter('ucms_site_cdn_hostname')) {
+    return;
   }
+
+  if (!$hostname = $container->getParameter('ucms_site_cdn_hostname')) {
+    return; // Misconfigured parameter.
+  }
+
+  if (!$scheme) {
+    // Module or core packaged files.
+    $path = $uri;
+  } else {
+    // This code comes from the official documentation.
+    $wrapper = \Drupal::service('stream_wrapper_manager')->getViaScheme($scheme);
+    $path = $wrapper->getDirectoryPath().'/'.file_uri_target($uri);
+  }
+
+  // Clean up Windows paths.
+  $path = str_replace('\\', '/', $path);
+  $request = \Drupal::hasRequest() ? \Drupal::request() : null;
+
+  $uri = ($request && $request->isSecure() ? 'https://' : 'http://').$hostname.'/'.$path;
 }
- */
 
 /**
  * Redirect on node view if node can be viewed elsewhere than master.
