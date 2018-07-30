@@ -4,12 +4,23 @@ namespace MakinaCorpus\Ucms\Site\Twig\Extension;
 
 use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
 class SiteExtension extends \Twig_Extension
 {
     use StringTranslationTrait;
     use UrlGeneratorTrait;
+
+    private $siteManager;
+
+    /**
+     * Default constructor
+     */
+    public function __construct(SiteManager $siteManager)
+    {
+        $this->siteManager = $siteManager;
+    }
 
     /**
      * {@inheritdoc}
@@ -27,16 +38,14 @@ class SiteExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
+            new \Twig_SimpleFunction('ucms_site_role', [$this, 'renderRole'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('ucms_site_state', [$this, 'renderState'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('ucms_site_url', [$this, 'renderSiteUrl']),
         ];
     }
 
     /**
-     * Render state
-     *
-     * @param int $state
-     *
-     * @return string
+     * Render state label
      */
     public function renderState($state): string
     {
@@ -44,6 +53,24 @@ class SiteExtension extends \Twig_Extension
 
         if (isset($list[$state])) {
             return $this->t($list[$state]);
+        }
+
+        return $this->t("Unknown");
+    }
+
+    /**
+     * Render role label
+     */
+    public function renderRole($role): string
+    {
+        // FIXME: make this dynamic
+        switch ((int)$role) {
+
+            case 1:
+                return $this->t("Webmaster");
+
+            case 0:
+                return $this->t("Contributor");
         }
 
         return $this->t("Unknown");

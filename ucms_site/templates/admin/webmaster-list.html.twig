@@ -4,7 +4,7 @@
     <tr>
         <td>{{ item.displayName }}</td>
         <td>{{ item.email }}</td>
-        <td>{{ item.role }}</td>
+        <td>{{ ucms_site_role(item.role) }}</td>
         <td>{% if item.isActive %}{{ "Active"|t }}{% else %}{{ "Disabled"|t }}{% endif %}</td>
         <td>{{ ucms_actions(item) }}</td>
     </tr>

@@ -30,9 +30,9 @@ class WebmasterAddExisting extends FormBase
         );
     }
 
-    private $dispatcher;
-    private $entityManager;
-    private $siteManager;
+    protected $dispatcher;
+    protected $entityManager;
+    protected $siteManager;
 
     /**
      * Default constructor

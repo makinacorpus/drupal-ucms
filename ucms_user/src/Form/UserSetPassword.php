@@ -80,7 +80,6 @@ class UserSetPassword extends FormBase
             return [];
         }
 
-        /* @var Token $token */
         $token = $this->tokenManager->loadToken($token);
         if ($token === null) {
             drupal_set_message(

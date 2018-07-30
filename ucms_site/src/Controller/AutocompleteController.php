@@ -23,7 +23,10 @@ class AutocompleteController extends ControllerBase
      */
     public static function create(ContainerInterface $container)
     {
-        return new self($container->get('ucms_site.manager'), $container->get('database'));
+        return new self(
+            $container->get('ucms_site.manager'),
+            $container->get('database')
+        );
     }
 
     /**
