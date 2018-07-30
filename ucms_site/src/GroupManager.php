@@ -4,7 +4,6 @@ namespace MakinaCorpus\Ucms\Site;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
-use MakinaCorpus\Ucms\Site\Error\GroupMoveDisallowedException;
 use MakinaCorpus\Ucms\Site\EventDispatcher\GroupEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -317,7 +316,7 @@ class GroupManager
         ;
 
         if (!$allowChange && $currentGroupId && $currentGroupId !== (int)$groupId) {
-            throw new GroupMoveDisallowedException("site group change is not allowed");
+            throw new \InvalidArgumentException("site group change is not allowed");
         }
 
         if ($currentGroupId !== (int)$groupId) {
@@ -357,7 +356,7 @@ class GroupManager
         ;
 
         if ($currentGroupId !== (int)$groupId) {
-            throw new GroupMoveDisallowedException(sprintf("%s site is not in group %s", $siteId, $groupId));
+            throw new \InvalidArgumentException(sprintf("%s site is not in group %s", $siteId, $groupId));
         }
 
         $this
