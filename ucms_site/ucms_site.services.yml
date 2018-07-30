@@ -102,6 +102,12 @@ services:
         class: MakinaCorpus\Ucms\Site\Environment\CrossSiteUrlGenerator
         arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@ucms_site.url_generator.inner", "@router.route_provider"]
 
+    # Handles theme negaciation
+    ucms_site.theme.negotiator:
+        class: MakinaCorpus\Ucms\Site\Environment\SiteThemeNegociator
+        arguments: ["@service_container", "@config.factory"]
+        tags: [{name: theme_negotiator, priority: 2048}]
+
     ucms_site.admin.datasource:
         public: true
         class: MakinaCorpus\Ucms\Site\Datasource\SiteAdminDatasource
