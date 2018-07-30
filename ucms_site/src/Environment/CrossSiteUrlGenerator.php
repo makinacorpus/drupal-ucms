@@ -3,11 +3,11 @@
 namespace MakinaCorpus\Ucms\Site\Environment;
 
 use Drupal\Core\Routing\UrlGeneratorInterface;
+use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\RequestContext;
-use MakinaCorpus\Ucms\Site\NodeAccessService;
 
 /**
  * Deals with platform wide inter-sites URL generation.
@@ -229,6 +229,10 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
                                 } else {
                                     $options['base_url'] = 'http://'.$site->getHostname();
                                 }
+                            } else {
+                                // @todo find http/https from request isSecure() instead.
+                                //    This probably will need to inject the requeststack service.
+                                $options['base_url'] = ($options['https'] ?? false ? 'https' : 'http').'://'.$site->getHostname();
                             }
 
                             return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);

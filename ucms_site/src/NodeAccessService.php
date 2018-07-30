@@ -35,16 +35,20 @@ final class NodeAccessService
      */
     public function findMostRelevantEnabledSiteFor(NodeInterface $node)
     {
-        if (empty($node->ucms_enabled_sites)) {
-            return; // Node cannot be viewed
+        $enabled = $node->get('ucms_enabled_sites');
+        if ($enabled->isEmpty()) {
+            return; // Node cannot be viewed.
+        }
+        $enabled = \array_column($enabled->getValue(), 'value');
+
+        // If original site is enabled, use this one, it's the most relevant.
+        $siteId = $node->get('site_id')->value;
+        if ($siteId && \in_array($siteId, $enabled)) {
+            return $siteId;
         }
 
-        if (in_array($node->site_id, $node->ucms_enabled_sites)) {
-            // Per default, the primary site seems the best to work with
-            return $node->site_id;
-        }
-
-        return reset($node->ucms_enabled_sites); // Fallback on first
+        // Fallback on first.
+        return reset($enabled);
     }
 
     /**
@@ -65,16 +69,20 @@ final class NodeAccessService
         if ($siteId = $this->findMostRelevantEnabledSiteFor($node)) {
             return $siteId;
         }
-        if (empty($node->ucms_allowed_sites)) {
-            return; // Node cannot be viewed
+
+        $allowed = $node->get('ucms_allowed_sites');
+        if ($allowed->isEmpty()) {
+            return; // Node cannot be viewed.
+        }
+        $allowed = \array_column($allowed->getValue(), 'value');
+
+        // If original site is enabled, use this one, it's the most relevant.
+        $siteId = $node->get('site_id')->value;
+        if ($siteId && \in_array($siteId, $allowed)) {
+            return $siteId;
         }
 
-        if (in_array($node->site_id, $node->ucms_allowed_sites)) {
-            // Per default, the primary site seems the best to work with
-            return $node->site_id;
-        }
-
-        return reset($node->ucms_allowed_sites); // Fallback on first
+        return reset($allowed); // Fallback on first
     }
 
     /**
