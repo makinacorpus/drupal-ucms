@@ -31,6 +31,8 @@ class SiteManager
 {
     private $access;
     private $allowedThemes = [];
+    private $cdnIsSecure = false;
+    private $cdnUrl;
     private $context;
     private $db;
     private $dependentContext = [];
@@ -53,7 +55,8 @@ class SiteManager
         ThemeHandlerInterface $themeHandler,
         $masterHostname = null,
         $masterIsHttps = false,
-        $allowedThemes = []
+        $allowedThemes = [],
+        $cdnUrl = null
     ) {
         $this->storage = $storage;
         $this->access = $access;
@@ -63,6 +66,7 @@ class SiteManager
         $this->masterHostname = (string)$masterHostname;
         $this->masterIsHttps = (bool)$masterIsHttps;
         $this->allowedThemes = $allowedThemes;
+        $this->cdnUrl = $cdnUrl;
     }
 
     /**
@@ -90,6 +94,22 @@ class SiteManager
     }
 
     /**
+     * Get CDN URL, can return an empty string
+     */
+    public function getCdnUrl(): string
+    {
+        if (!$this->cdnUrl) {
+            return '';
+        }
+
+        if (false === \strpos($this->cdnUrl, '://')) {
+            return ($this->cdnIsSecure ? 'https://' : 'http://').$this->cdnUrl;
+        }
+
+        return $this->cdnUrl;
+    }
+
+    /**
      * Set current site context
      *
      * @param Site $site
@@ -110,6 +130,7 @@ class SiteManager
         }
 
         $this->isMaster = false;
+        $this->cdnIsSecure = $request->isSecure();
         $this->context = $site;
 
         // Dispatch the context init event
@@ -174,6 +195,7 @@ class SiteManager
     {
         $this->dropContext();
         $this->isMaster = true;
+        $this->cdnIsSecure = $request->isSecure();
 
         $this->dispatcher->dispatch(SiteEvents::EVENT_MASTER_INIT, new MasterInitEvent($request));
     }

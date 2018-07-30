@@ -462,8 +462,7 @@ function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
  */
 
 /**
- * Implements hook_file_url_alter
- * For CDN static domain replacement on all file related urls
+ * Implements hook_file_url_alter().
  */
 function ucms_site_file_url_alter(&$uri) {
   $scheme = file_uri_scheme($uri);
@@ -474,12 +473,10 @@ function ucms_site_file_url_alter(&$uri) {
     return;
   }
 
-  $container = \Drupal::getContainer();
-  if (!$container->hasParameter('ucms_site_cdn_hostname')) {
-    return;
-  }
+  /** @var \MakinaCorpus\Ucms\Site\SiteManager $manager */
+  $manager = \Drupal::service('ucms_site.manager');
 
-  if (!$hostname = $container->getParameter('ucms_site_cdn_hostname')) {
+  if (!$hostname = $manager->getCdnUrl()) {
     return; // Misconfigured parameter.
   }
 
@@ -494,9 +491,8 @@ function ucms_site_file_url_alter(&$uri) {
 
   // Clean up Windows paths.
   $path = str_replace('\\', '/', $path);
-  $request = \Drupal::hasRequest() ? \Drupal::request() : null;
 
-  $uri = ($request && $request->isSecure() ? 'https://' : 'http://').$hostname.'/'.$path;
+  $uri = $hostname.'/'.$path;
 }
 
 /**
