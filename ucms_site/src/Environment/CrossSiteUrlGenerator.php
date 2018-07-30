@@ -108,6 +108,8 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
 
     /**
      * Is route allowed on site
+     *
+     * @todo answer true for all ajax requests/urls
      */
     private function isRouteAllowedOnSite(string $route): bool
     {
@@ -119,17 +121,43 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             return true;
         }
 
+        // Give a chance to contrib modules to override this.
+        /*
+         * @todo restore this
+         *
+        $ret = module_invoke_all('ucms_path_is_allowed', $path);
+        if (\in_array(false, $ret, true)) {
+            return false;
+        } else if (\in_array(true, $ret, true)) {
+            return true;
+        }
+         */
+
         return !$this->routeProvider->getRouteByName($route)->hasOption('_admin_route');
     }
 
     /**
      * Is route allowed on master
+     *
+     * @todo answer true for all ajax requests/urls
      */
     private function isRouteAllowedInMaster(string $route): bool
     {
         if (!$this->routeProvider) {
             return true;
         }
+
+        // Give a chance to contrib modules to override this.
+        /*
+         * @todo restore this
+         *
+        $ret = module_invoke_all('ucms_path_is_allowed', $path);
+        if (\in_array(false, $ret, true)) {
+            return false;
+        } else if (\in_array(true, $ret, true)) {
+            return true;
+        }
+         */
 
         return $this->routeProvider->getRouteByName($route)->hasOption('_admin_route');
     }
@@ -212,98 +240,6 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
 
         return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
     }
-
-    /**
-     * Is the given path allowed in sites
-     *
-     * @todo for now, it's hardcoded.
-     *
-    public function isPathAllowedOnSite(string $path): bool
-    {
-        // Proceed to node path check first: most URL will always be node URL
-        // we must shortcut them as quicly as possible to gain a few CPU cycles
-        // from there.
-        $arg = \explode('/', $path);
-        if ('node' === $arg[0]) {
-            // Whitelist our custom node URLs.
-            if (\is_numeric($arg[1])) {
-                if (isset($arg[2])) {
-                    switch ($arg[2]) {
-                        case 'duplicate':
-                        case 'clone':
-                        case 'edit':
-                        case 'gallery':
-                        case 'seo-edit':
-                            return true;
-                    }
-                }
-
-                // All nodes display should always be allowed.
-                return true;
-            }
-        }
-
-        // Our proper logic is following.
-        if ('system/ajax' === $path) {
-            return true;
-        }
-
-        /*
-         * @todo answer true for all ajax requests/urls
-         */
-
-        // Give a chance to contrib modules to override this.
-        /*
-         * @todo restore this
-         *
-        $ret = module_invoke_all('ucms_path_is_allowed', $path);
-        if (\in_array(false, $ret, true)) {
-            return false;
-        } else if (\in_array(true, $ret, true)) {
-            return true;
-        }
-         * /
-
-        $pathinfo = $path;
-        if ('/' !== \substr($path, 0, 1)) {
-            // @todo this is so wrong, we need to build a valid path info
-            //   using the base url, or find another way
-            $pathinfo = '/'.$pathinfo;
-        }
-
-        $isAdmin = false;
-        try {
-            // @todo Drupal 8 does not handle circular dependencies very well yet
-            $router = \Drupal::service('router');
-            /** @var \Symfony\Component\Routing\Route $route * /
-            $route = $router->match($pathinfo)['_route_object'];
-            $isAdmin = $route->hasOption('_admin_route');
-        } catch (\Exception $e) {
-            // Last resort options.
-            $isAdmin = 'admin' === \substr($path, 0, 5);
-        }
-
-        if ($isAdmin) {
-            // Allow node/add
-            if ('node/add' === \substr($path, 0, 8)) {
-                return true;
-            }
-            if ('admin/dashboard/tree' === \substr($path, 0, 20)) {
-                return true;
-            }
-            if ('admin/dashboard/content' === \substr($path, 0, 23)) {
-                return true;
-            }
-            if ('admin/dashboard/media' === \substr($path, 0, 21)) {
-                return true;
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-     */
 
     /**
      * Get URL in site
