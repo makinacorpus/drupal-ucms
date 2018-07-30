@@ -130,10 +130,9 @@ class SiteRequest extends FormBase
             '#title'            => $this->t("Allowed protocols"),
             '#type'             => 'select',
             '#options'          => [
+                Site::ALLOWED_PROTOCOL_PASS   => $this->t("Let Drupal decide"),
                 Site::ALLOWED_PROTOCOL_HTTPS  => $this->t("Secure HTTPS only"),
                 Site::ALLOWED_PROTOCOL_HTTP   => $this->t("Unsecure HTTP only"),
-                Site::ALLOWED_PROTOCOL_ALL    => $this->t("Both secure HTTPS and unsecure HTTP"),
-                Site::ALLOWED_PROTOCOL_PASS   => $this->t("Let Drupal decide depending on the environment")
             ],
             '#default_value'    => $site->getAllowedProtocols(),
             '#description'      => $this->t("This is a technical setting that depends on the web server configuration, the technical administrators might change it."),
@@ -254,7 +253,6 @@ class SiteRequest extends FormBase
     {
         $options = [];
         foreach ($this->manager->getAllowedThemes() as $theme) {
-
             if (!$this->themeHandler->themeExists($theme)) {
                 $this->logger('default')->alert(\sprintf("Theme '%s' does not exist or is not installed yet is referenced into sites possible selection", $theme));
                 continue;

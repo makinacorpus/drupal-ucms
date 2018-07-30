@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SiteManager
 {
     private $access;
+    private $allowedThemes = [];
     private $context;
     private $db;
     private $dependentContext = [];
@@ -51,7 +52,8 @@ class SiteManager
         EventDispatcherInterface $dispatcher,
         ThemeHandlerInterface $themeHandler,
         $masterHostname = null,
-        $masterIsHttps = false
+        $masterIsHttps = false,
+        $allowedThemes = []
     ) {
         $this->storage = $storage;
         $this->access = $access;
@@ -60,6 +62,7 @@ class SiteManager
         $this->themeHandler = $themeHandler;
         $this->masterHostname = (string)$masterHostname;
         $this->masterIsHttps = (bool)$masterIsHttps;
+        $this->allowedThemes = $allowedThemes;
     }
 
     /**
@@ -254,7 +257,7 @@ class SiteManager
      */
     public function getAllowedThemes()
     {
-        $event = new AllowListEvent(AllowListEvent::THEMES, [$this->themeHandler->getDefault()]);
+        $event = new AllowListEvent(AllowListEvent::THEMES, $this->getDefaultAllowedThemes());
         $this->dispatcher->dispatch(AllowListEvent::EVENT_THEMES, $event);
 
         return $event->getAllowedItems();
@@ -267,7 +270,11 @@ class SiteManager
      */
     public function getDefaultAllowedThemes()
     {
-        return variable_get('ucms_site_allowed_themes', []);
+        if ($this->allowedThemes) {
+            return $this->allowedThemes;
+        }
+
+        return [$this->themeHandler->getDefault()];
     }
 
     /**

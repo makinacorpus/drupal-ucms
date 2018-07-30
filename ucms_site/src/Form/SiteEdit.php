@@ -10,6 +10,7 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Drupal\Core\Extension\ThemeHandlerInterface;
 
 /**
  * Request site creation form
@@ -23,24 +24,20 @@ class SiteEdit extends FormBase
     {
         return new self(
             $container->get('ucms_site.manager'),
-            $container->get('event_dispatcher')
+            $container->get('event_dispatcher'),
+            $container->get('theme_handler')
         );
     }
 
-    /**
-     * @var SiteManager
-     */
     protected $manager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
     protected $dispatcher;
+    protected $themeHandler;
 
-    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher)
+    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher, ThemeHandlerInterface $themeHandler)
     {
         $this->manager = $manager;
         $this->dispatcher = $dispatcher;
+        $this->themeHandler = $themeHandler;
     }
 
     /**
@@ -95,7 +92,7 @@ class SiteEdit extends FormBase
             '#description'      => $this->t("Type here the site URL"),
             '#element_validate' => ['::validateHttpHost'],
             '#required'         => true,
-            '#disabled'         => !user_access(Access::PERM_SITE_GOD),
+            '#disabled'         => true, // !user_access(Access::PERM_SITE_GOD),
         ];
 
         $form['allowed_protocols'] = [
@@ -108,7 +105,7 @@ class SiteEdit extends FormBase
             ],
             '#default_value'    => $site->getAllowedProtocols(),
             '#description'      => $this->t("This is a technical setting that depends on the web server configuration, the technical administrators might change it."),
-            '#required'         => !user_access(Access::PERM_SITE_GOD),
+            '#required'         => true, // !user_access(Access::PERM_SITE_GOD),
         ];
 
         $form['replacement_of'] = [
@@ -131,46 +128,26 @@ class SiteEdit extends FormBase
             '#rows'           => 2,
         ];
 
-        // WARNING I won't fetch the whole Drupal 8 API in the sf_dic module,
-        // this has to stop at some point, so I'll use only Drupal 7 API to
-        // handle themes, this will need porting.
-        $themes = list_themes();
-
         $options = [];
         foreach ($this->manager->getAllowedThemes() as $theme) {
-
-            if (!isset($themes[$theme])) {
-                $this->logger('default')->alert(sprintf("Theme '%s' does not exist but is referenced into sites possible selection", $theme));
+            if (!$this->themeHandler->themeExists($theme)) {
+                $this->logger('default')->alert(\sprintf("Theme '%s' does not exist or is not installed yet is referenced into sites possible selection", $theme));
                 continue;
             }
-            if (!$themes[$theme]->status) {
-                $this->logger('default')->alert(sprintf("Theme '%s' is not enabled but is referenced into sites possible selection", $theme));
-                continue;
-            }
-
-            if (isset($themes[$theme]) && file_exists($themes[$theme]->info['screenshot'])) {
-                $text = theme('image', [
-                    'path'        => $themes[$theme]->info['screenshot'],
-                    'alt'         => $this->t('Screenshot for !theme theme', ['!theme' => $themes[$theme]->info['name']]),
-                    'attributes'  => ['class' => ['screenshot']],
-                ]);
-                $text .= '<p>'.$themes[$theme]->info['name'].'</p>';
-            } else {
-                $text = $themes[$theme]->info['name'];
-            }
-
-            $options[$theme] = $text;
+            $options[$theme] = $this->themeHandler->getName($theme);
         }
 
         $form['theme'] = [
             '#title'          => $this->t("Theme"),
             '#type'           => 'radios',
             '#options'        => $options,
-            '#default_value'  => $site->theme,
-            '#description'    => $this->t("This will be used for the whole site and cannot be changed once set")
+            '#default_value'  => $site->getTheme(),
         ];
 
         // Favicon
+        /*
+         * FIXME
+         *
         $useFavicon = variable_get('ucms_site_use_custom_favicon', false);
         if ($useFavicon) {
             $form['favicon'] = [
@@ -183,6 +160,7 @@ class SiteEdit extends FormBase
                 '#required'           => false,
             ];
         }
+         */
 
         $form['attributes']['#tree'] = true;
 
@@ -191,13 +169,17 @@ class SiteEdit extends FormBase
             '#type'   => 'submit',
             '#value'  => $this->t("Save"),
         ];
+        /*
+         * FIXME?
+         *
         $form['actions']['cancel'] = [
             '#markup' => l(
                 $this->t("Cancel"),
-                isset($_GET['destination']) ? $_GET['destination'] : 'admin/dashboard/site/' . $site->id,
+                isset($_GET['destination']) ? $_GET['destination'] : 'admin/dashboard/site/' . $site->getId(),
                 ['attributes' => ['class' => ['btn', 'btn-danger']]]
             ),
         ];
+         */
 
         return $form;
     }
@@ -218,28 +200,29 @@ class SiteEdit extends FormBase
         $site->http_host      = $values['http_host'];
         $site->allowed_protocols = $values['allowed_protocols'];
         $site->theme          = $values['theme'];
+        /*
+         * FIXME
+         *
         $hashmap = @json_decode($values['favicon']['fid'],true);
         if (count($hashmap)){
             $site->favicon = array_keys($hashmap)[0];
         }
+         */
         $attributes = $form_state->getValue('attributes', []);
         foreach ($attributes as $name => $attribute) {
             $site->setAttribute($name, $attribute);
         }
 
         $this->manager->getStorage()->save($site);
-        drupal_set_message($this->t("Site modifications have been saved"));
+        \drupal_set_message($this->t("Site modifications have been saved"));
 
-        $this->dispatcher->dispatch('site:update', new SiteEvent($site, $this->currentUser()->uid));
+        $this->dispatcher->dispatch('site:update', new SiteEvent($site, $this->currentUser()->id()));
 
-        $form_state->setRedirect('admin/dashboard/site/' . $site->id);
+        $form_state->setRedirect('ucms_site.admin.site_list');
     }
 
     /**
      * Validate HTTP host (must be unique and valid)
-     *
-     * @param $element
-     * @param \Drupal\Core\Form\FormStateInterface $form_state
      */
     public function validateHttpHost(&$element, FormStateInterface $form_state)
     {
@@ -247,7 +230,6 @@ class SiteEdit extends FormBase
 
         if (empty($value)) {
             $form_state->setError($element, $this->t("Host name cannot be empty"));
-
             return;
         }
 
@@ -257,7 +239,10 @@ class SiteEdit extends FormBase
         }
 
         // Validate host name format
-        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@i';
+        if (preg_match('@[A-Z]@', $value)) {
+            $form_state->setError($element, $this->t("Site name cannot contain uppercase letters"));
+        }
+        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@';
         if (!preg_match($regex, $value)) {
             $form_state->setError($element, $this->t("Host name contains invalid characters or has a wrong format"));
         }

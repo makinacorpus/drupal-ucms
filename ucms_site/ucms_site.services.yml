@@ -14,6 +14,10 @@ parameters:
     # references within.
     ucms_site_node_reference_whitelist: []
 
+    # List of allowed theme for sites, values are theme internal names, keys
+    # don't matter, and will be lost.
+    ucms_site_allowed_themes: [bartik, classy]
+
     # Allowed site types, site types don't change any business behaviour, they
     # only are a way to categorize and filter sites in admin interface.
     ucms_site_allowed_types:
@@ -50,7 +54,15 @@ services:
     ucms_site.manager:
         public: true
         class: MakinaCorpus\Ucms\Site\SiteManager
-        arguments: ["@ucms_site.storage", "@ucms_site.access", "@database", "@event_dispatcher", "@theme_handler", "%ucms_site_master_hostname%", "%ucms_site_master_is_https%"]
+        arguments:
+            - "@ucms_site.storage"
+            - "@ucms_site.access"
+            - "@database"
+            - "@event_dispatcher"
+            - "@theme_handler"
+            - "%ucms_site_master_hostname%"
+            - "%ucms_site_master_is_https%"
+            - "%ucms_site_allowed_themes%"
 
     # Handles groups
     ucms_group.manager:

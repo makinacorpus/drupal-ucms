@@ -81,6 +81,14 @@ class AdminController extends ControllerBase
     }
 
     /**
+     * Edit site form title callback
+     */
+    public function siteEditTitle(Site $site): string
+    {
+        return $site->getAdminTitle();
+    }
+
+    /**
      * View site details title callback
      */
     public function siteViewTitle(Site $site): string
