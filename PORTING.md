@@ -5,6 +5,8 @@
  - PENDING - ucms_site
  - PENDING - ucms_dashboard
  - ucms_contrib
+ - Restore SQL constraints
+ - PENDING - Modern front assets toolchain
 
 ## Necessary
 
@@ -12,8 +14,7 @@
  - ucms_user
  - ucms_seo
  - Rewrite all tests
- - Restore SQL constraints
- - PENDING - Modern front assets toolchain
+ - userCanX() methods must die
 
 ## Additional
 

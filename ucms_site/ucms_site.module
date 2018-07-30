@@ -5,10 +5,6 @@
  */
 
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\node\NodeInterface;
-use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\Entity\NodeDefinition;
 
 /**
@@ -230,7 +226,7 @@ function ucms_site_menu() {
 
 /**
  * Implements hook_drupal_goto_alter().
- */
+ *
 function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
   if (ucms_site_is_master()) {
     $matches = [];
@@ -243,19 +239,11 @@ function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
     }
   }
 }
-
-/**
- * Title callback for menu items.
- *
- * @param Site $site
  */
-function ucms_site_menu_item_title(Site $site) {
-  return $site->title_admin;
-}
 
 /**
  * Implements hook_theme().
- */
+ *
 function ucms_site_theme() {
   return [
     'ucms_site_state_transition_form' => [
@@ -263,6 +251,7 @@ function ucms_site_theme() {
     ],
   ];
 }
+ */
 
 /**
  * Get site manager service.
@@ -295,7 +284,7 @@ function ucms_site_load($id) {
 
 /**
  * Menu helper.
- */
+ *
 function ucms_site_menu_access_view_all($account = null) {
   if (!$account) {
     $account = \Drupal::currentUser();
@@ -306,72 +295,7 @@ function ucms_site_menu_access_view_all($account = null) {
     $account->hasPermission(Access::PERM_SITE_GOD)
   ;
 }
-
-/**
- * Menu helper.
  */
-function ucms_site_menu_access_view($site, $account = null) {
-  if (!$site instanceof Site) {
-    return false;
-  }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return ucms_site_manager()->getAccess()->userCanView($account, $site);
-}
-
-/**
- * Menu helper.
- */
-function ucms_site_menu_access_overview($site, $account = null) {
-  if (!$site instanceof Site) {
-    return false;
-  }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return ucms_site_manager()->getAccess()->userCanOverview($account, $site);
-}
-
-/**
- * Menu helper.
- */
-function ucms_site_menu_access_manage_current($account = null) {
-  $manager = ucms_site_manager();
-  if (!$manager->hasContext()) {
-    return false;
-  }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return $manager->getAccess()->userCanManage($account, $manager->getContext());
-}
-
-/**
- * Menu helper.
- */
-function ucms_site_menu_access_manage($site, $account = null) {
-  if (!$site instanceof Site) {
-    return false;
-  }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return ucms_site_manager()->getAccess()->userCanManage($account, $site);
-}
-
-/**
- * Menu access check helper.
- */
-function ucms_site_menu_access_switch($site, $state, $account = null) {
-  if (!$site instanceof Site) {
-    return false;
-  }
-  if (!$account) {
-    $account = \Drupal::currentUser();
-  }
-  return ucms_site_manager()->getAccess()->userCanSwitch($account, $site, $state);
-}
 
 /**
  * Menu access check helper.
@@ -382,7 +306,7 @@ function ucms_site_menu_access_switch($site, $state, $account = null) {
  * @param AccountInterface $account
  *
  * @return boolean
- */
+ *
 function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $webmaster = null, AccountInterface $account = null) {
   if (!$account) {
     $account = \Drupal::currentUser();
@@ -419,20 +343,22 @@ function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $web
 
   return false;
 }
+ */
 
 /**
  * Menu access check helper.
- */
+ *
 function ucms_site_menu_access_reference(NodeInterface $node, $account = null) {
   if (!$account) {
     $account = \Drupal::currentUser();
   }
   return $node->access('view', $account) && ucms_site_node_access_helper()->userCanReference($account, $node);
 }
+ */
 
 /**
  * Menu access check helper.
- */
+ *
 function ucms_site_menu_access_dereference_from(NodeInterface $node, $site = null, $account = null) {
   if (!$account) {
     $account = \Drupal::currentUser();
@@ -446,6 +372,7 @@ function ucms_site_menu_access_dereference_from(NodeInterface $node, $site = nul
   }
   return ucms_site_node_access_helper()->userCanDereference($account, $node, $site);
 }
+ */
 
 /**
  * Mostly copy-pasted code from drupal_fast_404(), use it wisely
