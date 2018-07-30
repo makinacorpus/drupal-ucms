@@ -88,7 +88,7 @@ services:
         public: false
         decorates: url_generator
         class: MakinaCorpus\Ucms\Site\Environment\CrossSiteUrlGenerator
-        arguments: ["@ucms_site.manager", "@ucms_site.url_generator.inner", "@router.route_provider"]
+        arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@ucms_site.url_generator.inner", "@router.route_provider"]
 
     ucms_site.admin.datasource:
         public: true

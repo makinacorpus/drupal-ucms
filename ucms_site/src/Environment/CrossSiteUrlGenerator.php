@@ -7,6 +7,7 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\RequestContext;
+use MakinaCorpus\Ucms\Site\NodeAccessService;
 
 /**
  * Deals with platform wide inter-sites URL generation.
@@ -24,6 +25,7 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
         'entity.node.edit_form' => true,
         'node.add_page' => true,
         'node.add' => true,
+        'entity.node.view' => true,
         'entity.node.preview' => true,
         'entity.node.version_history' => true,
         'entity.node.revision' => true,
@@ -33,6 +35,7 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
     ];
 
     private $nested;
+    private $nodeAccessService;
     private $routeProvider;
     private $siteManager;
     private $ssoEnabled = false; // @todo fixme later
@@ -40,9 +43,10 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
     /**
      * Default constructor
      */
-    public function __construct(SiteManager $siteManager, UrlGeneratorInterface $nested, RouteProviderInterface $routeProvider)
+    public function __construct(SiteManager $siteManager, NodeAccessService $nodeAccessService, UrlGeneratorInterface $nested, RouteProviderInterface $routeProvider)
     {
         $this->nested = $nested;
+        $this->nodeAccessService = $nodeAccessService;
         $this->routeProvider = $routeProvider;
         $this->siteManager = $siteManager;
 
@@ -182,8 +186,28 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
 
         } else {
-            // @todo check for route node, and redirect to suitable site
-            //   for redirecting
+            // Check for route node, and redirect to suitable site.
+            // @todo this is ugly, rewrite this
+            if ('entity.node' === substr($name, 0, 11)) {
+                /** @var \Drupal\node\NodeInterface $node */
+                if ($node = $options['entity'] ?? null) {
+                    if ($siteId = $this->nodeAccessService->findMostRelevantSiteFor($node)) {
+                        // @todo should we catch exception and be resilient to errors here.?
+                        if ($site = $manager->getStorage()->findOne($siteId)) {
+
+                            if (Site::ALLOWED_PROTOCOL_PASS !== $site->getAllowedProtocols()) {
+                                if ($options['https'] = $site->isHttpsAllowed()) {
+                                    $options['base_url'] = 'https://'.$site->getHostname();
+                                } else {
+                                    $options['base_url'] = 'http://'.$site->getHostname();
+                                }
+                            }
+
+                            return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+                        }
+                    }
+                }
+            }
         }
 
         return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
@@ -343,26 +367,6 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
         }
 
         return ['sso/goto/' . $site->getId(), $options];
-    }
-     */
-
-    /**
-     * Alias of getRouteAndParams() that returns the generated URL
-     *
-     * @param int|Site $site
-     *   Site identifier, if site is null
-     * @param string $path
-     *   Drupal path to hit in site
-     * @param mixed[] $options
-     *   Link options, see url()
-     * @param boolean $dropDestination
-     *   If you're sure you are NOT in a form, just set this to true
-     *
-     * @return string
-     *
-    public function generateUrl($site, $path = null, array $options = [], bool $ignoreSso = false, bool $dropDestination = false): string
-    {
-        return call_user_func_array([$this, 'url'], $this->getRouteAndParams($site, $path, $options, $ignoreSso, $dropDestination));
     }
      */
 }
