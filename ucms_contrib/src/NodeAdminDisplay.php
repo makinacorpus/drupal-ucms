@@ -58,12 +58,6 @@ class NodeAdminDisplay extends AbstractDisplay
 
                     $titleSuffix = [];
                     $titleSuffix[] = '<span class="pull-right">';
-                    if ((bool)$node->is_flagged) {
-                        $titleSuffix[] = '<span class="glyphicon glyphicon-flag" data-toggle="tooltip" title="' . $this->t("This has been flagged as innapropriate") . '"></span>&nbsp;';
-                    }
-                    if ((bool)$node->is_starred) {
-                        $titleSuffix[] = '<span class="glyphicon glyphicon-star" data-toggle="tooltip" title="' . $this->t("This content has been flagged as important") . '"></span>&nbsp;';
-                    }
                     if (!(bool)$node->is_clonable) {
                         $titleSuffix[] = '<span class="glyphicon glyphicon-lock" data-toggle="tooltip" title="' . $this->t("This content may not be cloned") . '"></span>&nbsp;';
                     }

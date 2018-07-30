@@ -120,25 +120,6 @@ class NodeActionProvider implements ActionProviderInterface
             $ret[] = new Action($this->t("Add to global contents"), 'node/' . $item->id() . '/make-global', 'dialog', 'globe', -30, false, true, false, 'edit');
         }
 
-        if ($this->account->hasPermission(Access::PERM_CONTENT_MANAGE_STARRED)) {
-            $ret[] = Action::create([
-                'title'     => $item->is_starred ? $this->t("Unstar") : $this->t("Star"),
-                'uri'       => 'node/' . $item->id() . ($item->is_starred ? '/unstar' : '/star'),
-                'options'   => 'dialog',
-                'icon'      => $item->is_starred ? 'star-empty' : 'star',
-                'primary'   => false,
-                'priority'  => -20,
-                'redirect'  => true,
-                'group'     => 'mark',
-            ]);
-        }
-
-        if (empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_FLAG)) {
-            $ret[] = new Action($this->t("Flag as inappropriate"), 'node/' . $item->id() . '/report', 'dialog', 'flag', -10, false, true, false, 'mark');
-        } else if (!empty($item->is_flagged) && $this->account->hasPermission(Access::PERM_CONTENT_UNFLAG) && $item->access(Access::OP_UPDATE))  {
-            $ret[] = new Action($this->t("Un-flag as innappropriate"), 'node/' . $item->id() . '/unreport', 'dialog', 'flag', -10, false, true, false, 'mark');
-        }
-
         if ($item->access('delete')) {
             $ret[] = new Action($this->t("Delete"), 'node/' . $item->id() . '/delete', 'dialog', 'trash', 500, false, true, false, 'delete');
         }

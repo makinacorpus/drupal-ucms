@@ -275,8 +275,6 @@ class NodeIndexer implements NodeIndexerInterface
             'body'        => [],
             'status'      => (int)$node->isPublished(),
             'tags'        => [],
-            'is_starred'  => (bool)$node->is_starred,
-            'is_flagged'  => (bool)$node->is_flagged,
             'is_global'   => (bool)$node->is_global,
             'is_group'    => (bool)$node->is_group,
             'is_locked'   => !(bool)$node->is_clonable,

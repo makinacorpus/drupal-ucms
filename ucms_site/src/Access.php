@@ -148,21 +148,6 @@ final class Access
     const PERM_CONTENT_MANAGE_CORPORATE = 'content manage group';
 
     /**
-     * Star content
-     */
-    const PERM_CONTENT_MANAGE_STARRED = 'content manage starred';
-
-    /**
-     * Flag content
-     */
-    const PERM_CONTENT_FLAG = 'content flag';
-
-    /**
-     * Flag content
-     */
-    const PERM_CONTENT_UNFLAG = 'content unflag';
-
-    /**
      * Transfer content ownership.
      */
     const PERM_CONTENT_TRANSFER_OWNERSHIP = 'content transfer ownership';

@@ -38,22 +38,6 @@ function ucms_contrib_admin_content_page_local($tab = null) {
   return ucms_contrib_admin_content_page($datasource, $tab);
 }
 
-function ucms_contrib_admin_content_page_flagged($tab = null) {
-  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
-  $search = $datasource->getSearch();
-  $search->getFilterQuery()->matchTerm('is_flagged', 1);
-  return ucms_contrib_admin_content_page($datasource, $tab);
-}
-
-function ucms_contrib_admin_content_page_starred($tab = null) {
-  /** @var \MakinaCorpus\Ucms\Contrib\PrivateNodeDataSource $datasource */
-  $datasource = \Drupal::service('ucms_contrib.datasource.elastic');
-  $search = $datasource->getSearch();
-  $search->getFilterQuery()->matchTerm('is_starred', 1);
-  return ucms_contrib_admin_content_page($datasource, $tab);
-}
-
 /**
  * Main content page.
  *

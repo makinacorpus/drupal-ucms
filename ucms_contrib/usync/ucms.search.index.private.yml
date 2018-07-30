@@ -90,12 +90,6 @@ mappings:
       tags:
         type:         integer
 
-      is_flagged:
-        type:         boolean
-
-      is_starred:
-        type:         boolean
-
       is_global:
         type:         boolean
 

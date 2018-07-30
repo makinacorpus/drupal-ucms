@@ -106,11 +106,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
 
         $newEvent = new ResourceEvent('node', $node->nid, $this->currentUser->id());
 
-        if ($node->is_flagged != $node->original->is_flagged) {
-            if ($node->is_flagged) {
-                $this->dispatcher->dispatch('node:flag', $newEvent);
-            }
-        } else if ($node->status != $node->original->status) {
+        if ($node->status != $node->original->status) {
             if ($node->status) {
                 $this->dispatcher->dispatch('node:publish', $newEvent);
             } else {

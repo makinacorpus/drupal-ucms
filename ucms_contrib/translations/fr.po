@@ -116,26 +116,6 @@ msgstr "Retirer du panier"
 msgid "Add to global contents"
 msgstr "Ajouter au contenu global"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:125
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:153
-msgid "Star"
-msgstr "Marquer comme important"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:125
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:161
-msgid "Unstar"
-msgstr "Retirer le marquage important"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:137
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:137
-msgid "Flag as inappropriate"
-msgstr "Signaler comme inapproprié"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:139
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:145
-msgid "Un-flag as innappropriate"
-msgstr "Retirer le marquage comme inapproprié"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:143
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Action/GroupDeleteProcessor.php:30
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Action/LabelActionProvider.php:41
@@ -311,14 +291,6 @@ msgstr ""
 "Vous êtes en train de modifier le contenu, tous les sites où il est partagé "
 "verront les modifications que vous y apporterez."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeFlag.php:26
-msgid "Flag %title has innapropriate ?"
-msgstr "Signaler %title comme inapproprié ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeFlag.php:40
-msgid "%title has been flagged has innapropriate."
-msgstr "%title a été signalé comme inapproprié."
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeLock.php:26
 msgid "Lock %title ?"
 msgstr "Verouiller %title ?"
@@ -342,14 +314,6 @@ msgstr "Publier %title ?"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodePublish.php:40
 msgid "%title has been published."
 msgstr "%title a été publié."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeStar.php:26
-msgid "Star %title ?"
-msgstr "Marquer %title comme important ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeStar.php:40
-msgid "%title has been starred."
-msgstr "%title a été marqué comme important"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeTransfer.php:84
 msgid "Transfer ownership to:"
@@ -381,14 +345,6 @@ msgstr "L'utilisateur %user n'est pas autorisé à modifier ce type de contenu."
 msgid "The content %title has been transferred to %user."
 msgstr "%title a été transféré à %user."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnflag.php:26
-msgid "Un-flag %title ?"
-msgstr "Retirer le signalement sur %title ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnflag.php:40
-msgid "%title has been un-flagged."
-msgstr "Le signalement sur %title a été retiré."
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnlock.php:26
 msgid "Unlock %title ?"
 msgstr "Déverrouiller %title ?"
@@ -405,14 +361,6 @@ msgstr "Dépublier %title ?"
 msgid "%title has been unpublished."
 msgstr "%title a été dépublié."
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnstar.php:26
-msgid "Unstar %title ?"
-msgstr "Retirer l'importance de %title ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Form/NodeUnstar.php:40
-msgid "%title has been unstarred."
-msgstr "%title n'est plus marqué comme important."
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:18
 msgid "table"
 msgstr "table"
@@ -424,14 +372,6 @@ msgstr "grille de vignettes"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:20
 msgid "teaser list"
 msgstr "liste d'accroches"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:62
-msgid "This has been flagged as innapropriate"
-msgstr "Ce contenu a été signalé comme étant innaproprié"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:65
-msgid "This content has been flagged as important"
-msgstr "Ce conteny est marqué comme important"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/NodeAdminDisplay.php:68
 msgid "This content may not be cloned"
@@ -557,10 +497,6 @@ msgstr "propriétaire"
 msgid "title"
 msgstr "titre"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:163
-msgid "flag"
-msgstr "marquage"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms-contrib-cart.html.twig:4
 msgid "Your cart"
 msgstr "Votre panier"
@@ -602,14 +538,6 @@ msgstr "Mon contenu"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:67
 msgid "Global"
 msgstr "Global"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:86
-msgid "Flagged"
-msgstr "Signalé"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:95
-msgid "Starred"
-msgstr "Important"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:111
 msgid "New !type for my site"
@@ -1478,22 +1406,6 @@ msgstr "@title de type @type a été mis à jour"
 #: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentEdit.php:37
 msgid "@title of type @type have been updated"
 msgstr "@title de type @type ont été mis à jour"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:36
-msgid "@title of type @type has been flagged by @name"
-msgstr "@title de type @type a été signalé par @name"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:37
-msgid "@title of type @type have been flagged by @name"
-msgstr "@title de type @type ont été signalés par @name"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:38
-msgid "@title of type @type has been flagged"
-msgstr "@title de type @type a été signalé"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentFlag.php:39
-msgid "@title of type @type have been flagged"
-msgstr "@title de type @type ont été signalés"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_notification/src/Formatter/ContentNewLabels.php:35
 msgid ""
@@ -2794,18 +2706,6 @@ msgstr "Gérer le contenu global"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:241
 msgid "Manage group content"
 msgstr "Gérer le contenu Groupe"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:244
-msgid "Manage starred content"
-msgstr "Gérer le contenu important"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:247
-msgid "Flag content as inappropriate"
-msgstr "Signaler le contenu comme inapproprié"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:250
-msgid "Unflag content flagged as inappropriate"
-msgstr "Retirer du contenu le marquage comme inapproprié"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/ucms_site.module:253
 msgid "Transfer content ownership to another user"

@@ -46,9 +46,6 @@ class NotificationContextEventSubscriber implements EventSubscriberInterface
             'node:unpublish' => [
                 ['onNodeResourceEventAlterChannels', self::DEFAULT_PRIORITY],
             ],
-            'node:flag' => [
-                ['onNodeResourceEventAlterChannels', self::DEFAULT_PRIORITY],
-            ],
             'node:delete' => [
                 ['onNodeResourceEventAlterChannels', self::DEFAULT_PRIORITY],
             ],

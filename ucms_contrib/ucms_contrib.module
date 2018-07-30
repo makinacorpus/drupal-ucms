@@ -83,24 +83,6 @@ function ucms_contrib_menu() {
       'type'              => MENU_LOCAL_TASK,
       'weight'            => 80,
     ];
-    $items['admin/dashboard/' . $key . '/flagged'] = [
-      'title'             => "Flagged",
-      'page callback'     => 'ucms_contrib_admin_content_page_flagged',
-      'page arguments'    => [$key],
-      'access callback'   => 'ucms_contrib_menu_node_access_global',
-      'file'              => 'ucms_contrib.pages.inc',
-      'type'              => MENU_LOCAL_TASK,
-      'weight'            => 200,
-    ];
-    $items['admin/dashboard/' . $key . '/starred'] = [
-      'title'             => "Starred",
-      'page callback'     => 'ucms_contrib_admin_content_page_starred',
-      'page arguments'    => [$key],
-      'access arguments'  => [Access::PERM_CONTENT_MANAGE_GLOBAL],
-      'file'              => 'ucms_contrib.pages.inc',
-      'type'              => MENU_LOCAL_TASK,
-      'weight'            => 210,
-    ];
     if (TypeHandler::TAB_CONTENT === $key) {
       $items['admin/dashboard/' . $key . '/links'] = [
         'title'             => "Links",
@@ -142,38 +124,6 @@ function ucms_contrib_menu() {
     'page callback'     => 'sf_dic_page_form',
     'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnpublish', 1],
     'access callback'   => 'ucms_contrib_menu_node_access_publish',
-    'access arguments'  => [1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['node/%node/report'] = [
-    'title'             => "Flag as inappropriate",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeFlag', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_flag',
-    'access arguments'  => [1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['node/%node/unreport'] = [
-    'title'             => "Un-flag as innappropriate",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnflag', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_unflag',
-    'access arguments'  => [1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['node/%node/star'] = [
-    'title'             => "Star",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeStar', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_star',
-    'access arguments'  => [1],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['node/%node/unstar'] = [
-    'title'             => "Unstar",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeUnstar', 1],
-    'access callback'   => 'ucms_contrib_menu_node_access_star',
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
@@ -328,27 +278,6 @@ function ucms_contrib_admin_content_page_title() {
  */
 function ucms_contrib_menu_node_access_publish(NodeInterface $node) {
   return ucms_site_node_access_helper()->userCanPublish(\Drupal::currentUser(), $node);
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_menu_node_access_star(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_MANAGE_STARRED);
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_menu_node_access_flag(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_FLAG);
-}
-
-/**
- * Menu access helper.
- */
-function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
-  return user_access(Access::PERM_CONTENT_UNFLAG) && $node->access(Access::OP_UPDATE);
 }
 
 /**
