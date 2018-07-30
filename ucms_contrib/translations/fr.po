@@ -469,14 +469,11 @@ msgstr "Mes sites"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:158
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:49
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:74
-#: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:85
 msgid "creation date"
 msgstr "date de création"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:159
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:48
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:73
 msgid "lastest update date"
 msgstr "dernière mise à jour"
 
@@ -492,8 +489,6 @@ msgstr "propriétaire"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/PrivateNodeDataSource.php:162
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:47
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:65
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:68
 msgid "title"
 msgstr "titre"
 
@@ -885,9 +880,7 @@ msgid "The group doesn't exist."
 msgstr "Ce groupe n'existe pas."
 
 #: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupAdminDatasource.php:46
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:64
 #: sites/all/modules/composer/drupal-ucms/ucms_label/src/Page/LabelAdminDatasource.php:73
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:67
 msgid "identifier"
 msgstr "identifiant"
 
@@ -899,51 +892,18 @@ msgstr "identifiant du membre"
 msgid "member name"
 msgstr "nom du membre"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:50
 #: sites/all/modules/composer/drupal-ucms/ucms_group/views/Page/groupSiteAdmin.html.twig:8
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:57
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:53
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDisplay.php:64
 msgid "State"
 msgstr "État"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:52
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/ucms_layout.admin.inc:12
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:67
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteEdit.php:167
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/SiteRequest.php:293
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:55
 msgid "Theme"
 msgstr "Thème"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:53
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:56
-msgid "Template"
-msgstr "Gabarit"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:54
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:57
-msgid "Other"
-msgstr "Autre"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:66
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:69
-msgid "administrative title"
-msgstr "titre administratif"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:67
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:71
-msgid "state"
-msgstr "état"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:68
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:72
-msgid "type"
-msgstr "type"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_group/src/Page/GroupSiteAdminDatasource.php:69
-msgid "domain name"
-msgstr "nom de domaine"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_group/ucms_group.info:0
 msgid "Provides user group and site group feature"
@@ -2465,7 +2425,6 @@ msgstr "Il y a une erreur pour passer le site @site de l'état @from à @to"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddExisting.php:104
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterChangeRole.php:104
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDatasource.php:62
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:60
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:82
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:77
@@ -2567,14 +2526,6 @@ msgstr "Promouvoir @name en tant que webmestre ?"
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterPromote.php:93
 msgid "!name has been promoted as %role."
 msgstr "@name a été promu en tant que webmestre."
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:70
-msgid "hostname"
-msgstr "nom de domaine"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/SiteAdminDatasource.php:75
-msgid "owner name"
-msgstr "nom du propriétaire"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Page/WebmasterAdminDisplay.php:46
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Page/UserAdminDatasource.php:65

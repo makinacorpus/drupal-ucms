@@ -13,7 +13,7 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
-class SiteAdminDatasource extends AbstractDatasource
+class SiteDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 

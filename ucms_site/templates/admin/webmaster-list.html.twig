@@ -1,0 +1,28 @@
+{% extends '@calista/page/page.html.twig' %}
+
+{%- block item -%}
+    <tr>
+        <td>{{ item.displayName }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.role }}</td>
+        <td>{% if item.isActive %}{{ "Active"|t }}{% else %}{{ "Disabled"|t }}{% endif %}</td>
+        <td>{{ ucms_actions(item) }}</td>
+    </tr>
+{%- endblock -%}
+
+{% block item_list %}
+    <table>
+        <thead>
+            <th>{{ "Name."|t }}</th>
+            <th>{{ "Email"|t }}</th>
+            <th>{{ "Role"|t }}</th>
+            <th>{{ "Global status"|t }}</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                {{ block('item') }}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

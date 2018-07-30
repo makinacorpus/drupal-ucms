@@ -3,3 +3,9 @@ ucms_site.site.request:
     title: Request site
     appears_on:
         - ucms_site.admin.site_list
+
+ucms_site.admin.site.webmaster_add:
+    route_name: ucms_site.admin.site.webmaster_add
+    title: Add existing webmaster
+    appears_on:
+        - ucms_site.admin.site.webmaster

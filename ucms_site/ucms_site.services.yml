@@ -108,15 +108,15 @@ services:
         arguments: ["@service_container", "@config.factory"]
         tags: [{name: theme_negotiator, priority: 2048}]
 
-    ucms_site.admin.datasource:
+    ucms_site.datasource:
         public: true
-        class: MakinaCorpus\Ucms\Site\Datasource\SiteAdminDatasource
+        class: MakinaCorpus\Ucms\Site\Datasource\SiteDatasource
         arguments: ["@database", "@ucms_site.manager"]
 
-#    ucms_site.admin.webmaster_datasource:
-#      public: true
-#      class: MakinaCorpus\Ucms\Site\Datasource\WebmasterAdminDatasource
-#      arguments: ["@database", "@ucms_site.manager"]
+    ucms_site.webmaster_datasource:
+        public: true
+        class: MakinaCorpus\Ucms\Site\Datasource\WebmasterDatasource
+        arguments: ["@database", "@ucms_site.manager"]
 
     ucms_site.site_action_provider:
         public: false

@@ -2,10 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Site\Controller;
 
+use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Url;
+use MakinaCorpus\Calista\Datasource\DatasourceInterface;
 use MakinaCorpus\Calista\Query\InputDefinition;
 use MakinaCorpus\Calista\Query\QueryFactory;
 use MakinaCorpus\Calista\Twig\View\TwigView;
@@ -14,10 +15,10 @@ use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\Datasource\SiteAdminDatasource;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use MakinaCorpus\Calista\Datasource\DatasourceInputDefinition;
 
 class AdminController extends ControllerBase
 {
@@ -25,10 +26,11 @@ class AdminController extends ControllerBase
     use PageControllerTrait;
     use StringTranslationTrait;
 
-    private $siteAdminDatasource;
+    private $eventDispatcher;
+    private $siteDatasource;
     private $siteManager;
     private $twig;
-    private $eventDispatcher;
+    private $webmasterDatasource;
 
     /**
      * {@inheritdoc}
@@ -39,7 +41,8 @@ class AdminController extends ControllerBase
             $container->get('event_dispatcher'),
             $container->get('twig'),
             $container->get('ucms_site.manager'),
-            $container->get('ucms_site.admin.datasource')
+            $container->get('ucms_site.datasource'),
+            $container->get('ucms_site.webmaster_datasource')
         );
     }
 
@@ -50,12 +53,14 @@ class AdminController extends ControllerBase
         EventDispatcherInterface $eventDispatcher,
         \Twig_Environment $twig,
         SiteManager $siteManager,
-        SiteAdminDatasource $siteAdminDatasource
+        DatasourceInterface $siteDatasource,
+        DatasourceInterface $webmasterDatasource
     ) {
         $this->eventDispatcher = $eventDispatcher;
-        $this->twig = $twig;
-        $this->siteAdminDatasource = $siteAdminDatasource;
+        $this->siteDatasource = $siteDatasource;
         $this->siteManager = $siteManager;
+        $this->twig = $twig;
+        $this->webmasterDatasource = $webmasterDatasource;
     }
 
     /**
@@ -71,7 +76,7 @@ class AdminController extends ControllerBase
         ]);
 
         $query = (new QueryFactory())->fromRequest($inputDefinition, $request);
-        $items = $this->siteAdminDatasource->getItems($query);
+        $items = $this->siteDatasource->getItems($query);
 
         $view = new TwigView($this->twig, $this->eventDispatcher);
 
@@ -81,7 +86,49 @@ class AdminController extends ControllerBase
     }
 
     /**
-     * Edit site form title callback
+     * Webmaster list action
+     */
+    public function webmasterList(Request $request, Site $site)
+    {
+        $inputDefinition = new DatasourceInputDefinition($this->webmasterDatasource, [
+            'base_query' => [
+                'site_id' => $site->getId(),
+            ],
+        ]);
+        $viewDefinition = new ViewDefinition([
+            'templates' => [
+                'default' => '@ucms_site/admin/webmaster-list.html.twig'
+            ]
+        ]);
+
+        $query = (new QueryFactory())->fromRequest($inputDefinition, $request);
+        $items = $this->webmasterDatasource->getItems($query);
+
+        $view = new TwigView($this->twig, $this->eventDispatcher);
+
+        return [
+            '#markup' => $view->render($viewDefinition, $items, $query),
+        ];
+    }
+
+    /**
+     * Routing title callback
+     */
+    public function siteWebmasterListTitle(Site $site): string
+    {
+        return $this->t("@site webmasters", ['@site' => $site->getAdminTitle()]);
+    }
+
+    /**
+     * Routing title callback
+     */
+    public function siteWebmasterAddTitle(Site $site): string
+    {
+        return $this->t("Add webmaster in @site", ['@site' => $site->getAdminTitle()]);
+    }
+
+    /**
+     * Routing title callback
      */
     public function siteEditTitle(Site $site): string
     {
@@ -89,7 +136,7 @@ class AdminController extends ControllerBase
     }
 
     /**
-     * View site details title callback
+     * Routing title callback
      */
     public function siteViewTitle(Site $site): string
     {
