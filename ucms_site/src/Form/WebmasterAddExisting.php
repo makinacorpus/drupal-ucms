@@ -61,8 +61,6 @@ class WebmasterAddExisting extends FormBase
             return [];
         }
 
-        $form['#form_horizontal'] = true;
-
         $form['name'] = [
             '#type' => 'textfield',
             '#title' => $this->t("Name"),

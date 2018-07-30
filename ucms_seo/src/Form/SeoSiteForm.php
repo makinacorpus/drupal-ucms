@@ -64,8 +64,6 @@ class SeoSiteForm extends FormBase
 
         $formState->setTemporaryValue('site', $site);
 
-        $form['#form_horizontal'] = true;
-
         $form['ga_id'] = [
             '#title'            => t("Google analytics identifier"),
             '#type'             => 'textfield',

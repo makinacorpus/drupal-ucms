@@ -91,8 +91,6 @@ class RedirectForm extends FormBase
             '#required' => true,
         ];
 
-        $form['#form_horizontal'] = true;
-
 
         $form_state->setTemporaryValue('node', $node);
 

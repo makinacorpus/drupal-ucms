@@ -55,8 +55,6 @@ class GroupSiteAdd extends FormBase
             return $form;
         }
 
-        $form['#form_horizontal'] = true;
-
         $form['name'] = [
             '#type'               => 'textfield',
             '#title'              => $this->t("Title, administrative title, hostname..."),

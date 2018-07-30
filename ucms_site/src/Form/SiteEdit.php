@@ -53,8 +53,6 @@ class SiteEdit extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, Site $site = null)
     {
-        $form['#form_horizontal'] = true;
-
         if (!$site) {
             $this->logger('form')->critical("There is not site to edit!");
             return $form;

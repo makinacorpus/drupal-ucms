@@ -39,8 +39,6 @@ class TermEdit extends FormBase
         $form_state->setTemporaryValue('vocabulary', $vocabulary);
         $form_state->setTemporaryValue('term', $term);
 
-        $form['#form_horizontal'] = true;
-
         $form['name'] = array(
             '#type' => 'textfield',
             '#title' => $this->t('Name'),

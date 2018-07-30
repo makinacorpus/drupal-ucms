@@ -57,8 +57,6 @@ class TreeEditForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, Menu $menu = null)
     {
-        $form['#form_horizontal'] = true;
-
         $isCreation = false;
 
         if (!$menu) {

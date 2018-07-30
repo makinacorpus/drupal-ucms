@@ -85,8 +85,6 @@ class UserEdit extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, UserInterface $user = null)
     {
-        $form['#form_horizontal'] = true;
-
         if ($user === null) {
             $user = $this->entityManager->getStorage('user')->create();
         }

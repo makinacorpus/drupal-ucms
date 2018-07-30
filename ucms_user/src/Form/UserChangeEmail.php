@@ -67,8 +67,6 @@ class UserChangeEmail extends FormBase
 
         $form_state->setTemporaryValue('user', $user);
 
-        $form['#form_horizontal'] = true;
-
         $form['mail'] = array(
             '#type' => 'textfield',
             '#title' => $this->t('Email'),

@@ -54,8 +54,6 @@ class SiteRequest extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        $form['#form_horizontal'] = true;
-
         $formData = &$form_state->getStorage();
 
         if (empty($formData['site'])) {

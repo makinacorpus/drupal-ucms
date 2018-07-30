@@ -89,8 +89,6 @@ class RegisterForm extends FormBase
 
         $formState->setTemporaryValue('site', $this->siteManager->getContext());
 
-        $form['#form_horizontal'] = true;
-
         $form['name'] = array(
             '#type' => 'textfield',
             '#title' => $this->t('Lastname / Firstname'),

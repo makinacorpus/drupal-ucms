@@ -45,7 +45,6 @@ class SiteManagementForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        $form['#form_horizontal'] = true;
         $form['#tree'] = true;
 
         $options = [];

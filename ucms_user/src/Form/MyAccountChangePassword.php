@@ -56,8 +56,6 @@ class MyAccountChangePassword extends FormBase
         $account = $this->entityManager->getStorage('user')->load($this->currentUser()->id());
         $form_state->setTemporaryValue('account', $account);
 
-        $form['#form_horizontal'] = true;
-
         $form['current_password'] = [
             '#type' => 'password',
             '#title' => $this->t('Current password'),
@@ -71,7 +69,6 @@ class MyAccountChangePassword extends FormBase
             '#required' => true,
             '#description' => $this->t("!count characters at least. Mix letters, digits and special characters for a better password.", ['!count' => UCMS_USER_PWD_MIN_LENGTH]),
             // Fix display
-            '#form_horizontal' => false,
             '#nowrapper' => true,
         ];
 

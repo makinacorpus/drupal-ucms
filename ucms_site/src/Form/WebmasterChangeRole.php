@@ -82,8 +82,6 @@ class WebmasterChangeRole extends FormBase
         $formState->setTemporaryValue('site', $site);
         $formState->setTemporaryValue('user', $user);
 
-        $form['#form_horizontal'] = true;
-
         $roles = [];
         $relativeRoles = $this->siteManager->getAccess()->collectRelativeRoles($site);
         $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();

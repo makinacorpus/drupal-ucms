@@ -58,8 +58,6 @@ class GroupEdit extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, Group $group = null)
     {
-        $form['#form_horizontal'] = true;
-
         if (!$group) {
             $group = new Group();
         }

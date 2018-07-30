@@ -77,8 +77,6 @@ class WebmasterAddNew extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, Site $site = null)
     {
-        $form['#form_horizontal'] = true;
-
         $form_state->setTemporaryValue('site', $site);
 
         $form['name'] = array(

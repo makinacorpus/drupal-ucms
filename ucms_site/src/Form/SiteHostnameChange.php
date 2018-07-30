@@ -59,8 +59,6 @@ class SiteHostnameChange extends FormBase
             return $form;
         }
 
-        $form['#form_horizontal'] = true;
-
         $formData = &$form_state->getStorage();
 
         if (empty($formData['site'])) {

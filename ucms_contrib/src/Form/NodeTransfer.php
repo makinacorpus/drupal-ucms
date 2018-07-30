@@ -77,8 +77,6 @@ class NodeTransfer extends FormBase
     {
         $formState->setTemporaryValue('node', $node);
 
-        $form['#form_horizontal'] = false;
-
         $form['user'] = [
             '#type' => 'textfield',
             '#title' => $this->t("Transfer ownership to:"),

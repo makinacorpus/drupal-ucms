@@ -65,7 +65,6 @@ class SeoNodeForm extends FormBase
         }
 
         $formState->setTemporaryValue('node', $node);
-        $form['#form_horizontal'] = true;
 
         // @todo
         //   fetch menu links for this node, in site context, in order to prefix the form field

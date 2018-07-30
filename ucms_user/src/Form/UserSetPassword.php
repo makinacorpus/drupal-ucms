@@ -126,8 +126,6 @@ class UserSetPassword extends FormBase
                 $form_state->setTemporaryValue('token', $token);
                 $form_state->setTemporaryValue('user', $user);
 
-                $form['#form_horizontal'] = true;
-
                 $form['password'] = [
                     '#type' => 'password_confirm',
                     '#size' => 20,

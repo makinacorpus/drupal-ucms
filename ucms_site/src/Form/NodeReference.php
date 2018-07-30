@@ -66,8 +66,6 @@ class NodeReference extends FormBase
             return $form;
         }
 
-        $form['#form_horizontal'] = true;
-
         $options = [];
         foreach ($sites as $site) {
             $options[$site->id] = $site->getAdminTitle();

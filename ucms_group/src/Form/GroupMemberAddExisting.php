@@ -54,8 +54,6 @@ class GroupMemberAddExisting extends FormBase
             return $form;
         }
 
-        $form['#form_horizontal'] = true;
-
         $form['name'] = [
             '#type'               => 'textfield',
             '#title'              => $this->t("Name"),
