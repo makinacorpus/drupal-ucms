@@ -42,7 +42,7 @@ class SiteActionProvider extends AbstractActionProvider
         $siteId = $item->getId();
 
         if ($access->userCanOverview($account, $item)) {
-            $ret[] = new Action($this->t("View"), 'ucms_site.admin.site.view', ['site' => $siteId], 'eye-open', -10);
+            $ret[] = new Action($this->t("Informations"), 'ucms_site.admin.site.view', ['site' => $siteId], 'eye-open', -10);
             // We do not check site state, because if user cannot view site, it
             // should not end up being checked against here (since SQL query
             // alteration will forbid it).
