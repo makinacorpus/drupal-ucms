@@ -1,4 +1,12 @@
 
+ucms_site.admin.user_autocomplete:
+    path: /admin/ucms/ajax/users-autocomplete
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Site\Controller\AutocompleteController::userAutocomplete
+        _title: Sites
+    requirements:
+        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_DASHBOARD_ACCESS)
+
 ucms_site.admin.site_list:
     path: /admin/structure/site
     defaults:
@@ -23,11 +31,8 @@ ucms_site.admin.site.view:
     requirements:
         id: \d+
         # @todo implement an access checker
-        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_DASHBOARD_ACCESS)
-    options:
-        parameters:
-            site:
-                type: ucms_site
+        _permission: NOPE PLEASE FIXME
+    options: {parameters: {site: {type: ucms_site}}}
 
 ucms_site.admin.site.edit:
     path: /admin/structure/site/{site}/edit
@@ -50,3 +55,25 @@ ucms_site.admin.site.webmaster:
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}}}
+
+ucms_site.admin.site.webmaster_add:
+    path: /admin/structure/site/{site}/webmaster/add
+    defaults:
+        _form: \MakinaCorpus\Ucms\Site\Form\WebmasterAddExisting
+        _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterAddTitle
+    requirements:
+        id: \d+
+        # @todo implement an access checker
+        _permission: NOPE PLEASE FIXME
+    options: {parameters: {site: {type: ucms_site}}}
+
+ucms_site.admin.site.webmaster_delete:
+    path: /admin/structure/site/{site}/webmaster/{user}/delete
+    defaults:
+        _form: \MakinaCorpus\Ucms\Site\Form\WebmasterDelete
+        _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterDeleteTitle
+    requirements:
+        id: \d+
+        # @todo implement an access checker
+        _permission: NOPE PLEASE FIXME
+    options: {parameters: {site: {type: ucms_site}, user: {type: "entity:user"}}}

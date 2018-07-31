@@ -6,10 +6,10 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -65,10 +65,13 @@ class WebmasterAddExisting extends FormBase
             '#type' => 'textfield',
             '#title' => $this->t("Name"),
             '#description' => $this->t("Please make your choice in the suggestions list."),
-            '#autocomplete_path' => 'admin/dashboard/ajax/users-ac',
+            '#autocomplete_route_name' => 'ucms_site.admin.user_autocomplete',
             '#required' => true,
         ];
 
+        /*
+         * FIXME
+         *
         $roles = [];
         $relativeRoles = $this->siteManager->getAccess()->collectRelativeRoles($site);
         $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();
@@ -78,11 +81,15 @@ class WebmasterAddExisting extends FormBase
                 $roles[$rid] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
             }
         }
+         */
 
         $form['role'] = [
             '#type' => 'radios',
             '#title' => $this->t("Role"),
-            '#options' => $roles,
+            '#options' => [
+                Access::ROLE_WEBMASTER => $this->t("Webmaster"),
+                Access::ROLE_CONTRIB => $this->t("Contributor")
+            ],
             '#required' => true,
         ];
 
@@ -108,7 +115,7 @@ class WebmasterAddExisting extends FormBase
         $user = $form_state->getValue('name');
 
         $matches = [];
-        if (preg_match('/\[(\d+)\]$/', $user, $matches) !== 1 || $matches[1] < 2) {
+        if (\preg_match('/\[(\d+)\]$/', $user, $matches) !== 1 || $matches[1] < 2) {
             $form_state->setErrorByName('name', $this->t("The user can't be identified."));
         } else {
             $user = $this->entityManager->getStorage('user')->load($matches[1]);
@@ -123,22 +130,24 @@ class WebmasterAddExisting extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function submitForm(array &$form, FormStateInterface $form_state)
+    public function submitForm(array &$form, FormStateInterface $formState)
     {
         /* @var Site $site */
-        $site = $this->siteManager->getStorage()->findOne($form_state->getValue('site'));
-        $user = $form_state->getTemporaryValue('user');
+        $site = $this->siteManager->getStorage()->findOne($formState->getValue('site'));
+        /** @var \Drupal\Core\Session\AccountInterface $user */
+        $user = $formState->getTemporaryValue('user');
 
-        $rid = $form_state->getValue('role');
-        $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();
-        $this->siteManager->getAccess()->mergeUsersWithRole($site, $user->id(), $rolesAssociations[$rid]);
+        $role = (int)$formState->getValue('role');
+        $this->siteManager->getAccess()->mergeUsersWithRole($site, $user->id(), $role);
 
-        drupal_set_message($this->t("!name has been added as %role.", [
-            '!name' => $user->getDisplayName(),
-            '%role' => $this->siteManager->getAccess()->getDrupalRoleName($rid),
+        \drupal_set_message($this->t("@name has been added as @role.", [
+            '@name' => $user->getDisplayName(),
+            '@role' => "ROLE FIXME",
         ]));
 
         $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
         $this->dispatcher->dispatch(SiteEvents::EVENT_WEBMASTER_ATTACH, $event);
+
+        $formState->setRedirect('ucms_site.admin.site.webmaster', ['site' => $site->getId()]);
     }
 }

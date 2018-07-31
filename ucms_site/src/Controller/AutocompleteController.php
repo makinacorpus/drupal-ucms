@@ -6,12 +6,13 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Condition;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\User\UserAccess;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use MakinaCorpus\Ucms\Site\SiteManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Drupal\Component\Utility\Html;
 
 class AutocompleteController extends ControllerBase
 {
@@ -41,18 +42,22 @@ class AutocompleteController extends ControllerBase
     /**
      * User autocomplete callback
      */
-    public function userAutocompleteAction($string)
+    public function userAutocomplete(Request $request)
     {
+        if (!$input = $request->query->get('q')) {
+            return new JsonResponse([]);
+        }
+
         $account = $this->currentUser();
 
         if (!$this->siteManager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(UserAccess::PERM_MANAGE_ALL) && !$this->account->hasPermission(UserAccess::PERM_USER_GOD)) {
             throw new AccessDeniedHttpException();
         }
 
-        $q = $this->database
-            ->select('users', 'u')
+        $select = $this->database
+            ->select('users_field_data', 'u')
             ->fields('u', ['uid', 'name'])
-            ->condition('u.name', '%' . $this->database->escapeLike($string) . '%', 'LIKE')
+            ->condition('u.name', '%' . $this->database->escapeLike($input) . '%', 'LIKE')
             ->condition('u.uid', [0, 1], 'NOT IN')
             ->orderBy('u.name', 'asc')
             ->range(0, 16)
@@ -61,14 +66,16 @@ class AutocompleteController extends ControllerBase
 
         $suggest = [];
 
-        foreach ($q->execute()->fetchAll() as $record) {
-            $key = $record->name . ' [' . $record->uid . ']';
-            $suggest[$key] = check_plain($record->name);
+        foreach ($select->execute()->fetchAll() as $record) {
+            $name = trim(Html::decodeEntities(\strip_tags($record->name)));
+            $value = $name.' ['.$record->uid.']';
+            $suggest[] = ['value' => $value, 'label' => $name];
         }
 
         return new JsonResponse($suggest);
     }
 
+    /*
     public function siteAutocompleteAction(Request $request, $string)
     {
         $account = $this->currentUser();
@@ -105,4 +112,5 @@ class AutocompleteController extends ControllerBase
 
         return new JsonResponse($suggest);
     }
+     */
 }

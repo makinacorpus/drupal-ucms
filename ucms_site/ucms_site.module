@@ -97,23 +97,6 @@ function ucms_site_menu() {
     'access arguments'  => [3, 5],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
-  $items['admin/dashboard/site/%ucms_site/webmaster'] = [
-    'title'             => "Users",
-    'page callback'     => 'ucms_site_dashboard_site_page_webmasters',
-    'page arguments'    => [3],
-    'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => ['list', 3],
-    'type'              => MENU_LOCAL_TASK,
-    'file'              => 'ucms_site.dashboard.inc',
-  ];
-  $items['admin/dashboard/site/%ucms_site/webmaster/add-existing'] = [
-    'title'             => "Add an existing user",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterAddExisting', 3],
-    'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => ['add-existing', 3],
-    'type'              => MENU_CALLBACK,
-  ];
   $items['admin/dashboard/site/%ucms_site/webmaster/add-new'] = [
     'title'             => "Create a new webmaster or contributor",
     'page callback'     => 'sf_dic_page_form',
@@ -146,20 +129,7 @@ function ucms_site_menu() {
     'access arguments'  => ['demote', 3, 5],
     'type'              => MENU_CALLBACK,
   ];
-  $items['admin/dashboard/site/%ucms_site/webmaster/%user/delete'] = [
-    'title'             => "Delete the user from this site",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterDelete', 3, 5],
-    'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => ['delete', 3, 5],
-    'type'              => MENU_CALLBACK,
-  ];
 
-  $items['admin/dashboard/ajax/users-ac'] = [
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [AutocompleteController::class . '::userAutocompleteAction'],
-    'type'              => MENU_CALLBACK,
-  ];
   $items['admin/dashboard/ajax/sites-ac'] = [
     'page callback'     => 'sf_dic_page',
     'page arguments'    => [AutocompleteController::class . '::siteAutocompleteAction'],

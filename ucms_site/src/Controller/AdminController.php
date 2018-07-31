@@ -5,7 +5,9 @@ namespace MakinaCorpus\Ucms\Site\Controller;
 use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Routing\LinkGeneratorTrait;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use MakinaCorpus\Calista\Datasource\DatasourceInputDefinition;
 use MakinaCorpus\Calista\Datasource\DatasourceInterface;
 use MakinaCorpus\Calista\Query\InputDefinition;
 use MakinaCorpus\Calista\Query\QueryFactory;
@@ -18,7 +20,6 @@ use MakinaCorpus\Ucms\Site\SiteState;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use MakinaCorpus\Calista\Datasource\DatasourceInputDefinition;
 
 class AdminController extends ControllerBase
 {
@@ -125,6 +126,17 @@ class AdminController extends ControllerBase
     public function siteWebmasterAddTitle(Site $site): string
     {
         return $this->t("Add webmaster in @site", ['@site' => $site->getAdminTitle()]);
+    }
+
+    /**
+     * Routing title callback
+     */
+    public function siteWebmasterDeleteTitle(Site $site, AccountInterface $user): string
+    {
+        return $this->t("Remove @name in @site", [
+            '@name' => $user->getDisplayName(),
+            '@site' => $site->getAdminTitle(),
+        ]);
     }
 
     /**

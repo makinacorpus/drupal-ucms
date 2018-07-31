@@ -1,24 +1,18 @@
 <?php
 
-
 namespace MakinaCorpus\Ucms\Site\Form;
 
-use Drupal\Core\Form\FormBase;
+use Drupal\Core\Url;
+use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
-
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-
-/**
- * Form to delete a webmaster as contributor.
- */
-class WebmasterDelete extends FormBase
+class WebmasterDelete extends ConfirmFormBase
 {
     /**
      * {inheritdoc}
@@ -31,24 +25,30 @@ class WebmasterDelete extends FormBase
         );
     }
 
-
-    /**
-     * @var SiteManager
-     */
     protected $manager;
+    protected $dispatcher;
+    protected $site;
+    protected $user;
 
     /**
-     * @var EventDispatcherInterface
+     * Default constructor
      */
-    protected $dispatcher;
-
-
     public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher)
     {
         $this->manager = $manager;
         $this->dispatcher = $dispatcher;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(array $form, FormStateInterface $form_state, Site $site = null, AccountInterface $user = null)
+    {
+        $this->site = $site;
+        $this->user = $user;
+
+        return parent::buildForm($form, $form_state);
+    }
 
     /**
      * {@inheritdoc}
@@ -58,42 +58,42 @@ class WebmasterDelete extends FormBase
         return 'ucms_webmaster_delete';
     }
 
-
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state, Site $site = null, AccountInterface $user = null)
+    public function getQuestion()
     {
-        if (null === $site || null === $user) {
-            return [];
-        }
-
-        $form_state->setTemporaryValue('site', $site);
-        $form_state->setTemporaryValue('user', $user);
-
-        return confirm_form(
-            $form,
-            $this->t("Delete @name from webmasters / contributors?", ['@name' => $user->name]),
-            'admin/dashboard/site/' . $site->id . '/webmaster',
-            ''
-        );
+        return $this->t("Remove @name from @site webmasters?", [
+            '@name' => $this->user->getDisplayName(),
+            '@site' => $this->site->getAdminTitle(),
+        ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getCancelUrl()
+    {
+        return new Url('ucms_site.admin.site.webmaster', ['site' => $this->site->getId()]);
+    }
 
     /**
      * {@inheritdoc}
      */
-    public function submitForm(array &$form, FormStateInterface $form_state)
+    public function submitForm(array &$form, FormStateInterface $formState)
     {
-        $site   = $form_state->getTemporaryValue('site');
-        $user   = $form_state->getTemporaryValue('user');
-        $access = $this->manager->getAccess()->getUserRole($user, $site);
-        $this->manager->getAccess()->removeUsers($site, $user->id());
+        $access = $this->manager->getAccess()->getUserRole($this->user, $this->site);
+        $this->manager->getAccess()->removeUsers($this->site, [$this->user->id()]);
 
-        drupal_set_message($this->t("!name has been removed from the webmasters / contributors.", ['!name' => $user->getDisplayName()]));
+        \drupal_set_message($this->t("@name has been removed from @site webmasters.", [
+            '@name' => $this->user->getDisplayName(),
+            '@site' => $this->site->getAdminTitle(),
+        ]));
 
-        $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id(), 'role' => $access->getRole()]);
+        $event = new SiteEvent($this->site, $this->currentUser()->id(), ['webmaster_id' => $this->user->id(), 'role' => $access->getRole()]);
         $this->dispatcher->dispatch('site:webmaster_delete', $event);
+
+        $formState->setRedirect('ucms_site.admin.site.webmaster', ['site' => $this->site->getId()]);
     }
 }
 

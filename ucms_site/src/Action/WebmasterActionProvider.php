@@ -2,52 +2,67 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\Action\AbstractWebmasterActionProvider;
+use MakinaCorpus\Ucms\Site\SiteAccessRecord;
+use MakinaCorpus\Ucms\Site\SiteManager;
 
-class WebmasterActionProvider extends AbstractWebmasterActionProvider
+class WebmasterActionProvider extends AbstractActionProvider
 {
+    use StringTranslationTrait;
+
+    private $siteManager;
+    private $currentUser;
+
     /**
-     * {@inheritdoc}
+     * Default constructor
      */
-    public function getActions($item)
+    public function __construct(SiteManager $manager, AccountInterface $currentUser)
     {
-        if ($item->getUserId() == $this->currentUser->id()) {
-            return [];
-        }
-
-        $relativeRoles = $this->manager->getAccess()->collectRelativeRoles();
-
-        $actions = [];
-
-        if (count($relativeRoles) > 2) {
-            $actions[] = $this->createChangeRoleAction($item);
-        } else {
-            if ($item->getRole() === Access::ROLE_WEBMASTER) {
-                $path = $this->buildWebmasterUri($item, 'demote');
-                $actions[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 50, true, true);
-            }
-            elseif ($item->getRole() === Access::ROLE_CONTRIB) {
-                $path = $this->buildWebmasterUri($item, 'promote');
-                $actions[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 50, true, true);
-            }
-        }
-
-        $actions[] = $this->createDeleteAction($item);
-
-        return $actions;
+        $this->siteManager = $manager;
+        $this->currentUser = $currentUser;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($item)
+    public function getActions($item, bool $primaryOnly = false, array $groups = []): array
     {
-        // We act only on the roles known by ucms_site and let other modules
-        // provide actions for their own roles.
-        $roles = [Access::ROLE_WEBMASTER, Access::ROLE_CONTRIB];
+        /** @var \MakinaCorpus\Ucms\Site\SiteAccessRecord $item */
+        $ret = [];
+        $isCurrentUser = $item->getUserId() == $this->currentUser->id();
 
-        return parent::supports($item) && in_array($item->getRole(), $roles);
+        /*
+        if ($item->getRole() === Access::ROLE_WEBMASTER) {
+            $path = $this->buildWebmasterUri($item, 'demote');
+            $ret[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 50, true, true);
+        } else if ($item->getRole() === Access::ROLE_CONTRIB) {
+            $path = $this->buildWebmasterUri($item, 'promote');
+            $ret[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 50, true, true);
+        }
+         */
+
+        if (!$isCurrentUser || $this->currentUser->hasPermission(Access::PERM_SITE_GOD) || $this->currentUser->hasPermission(Access::PERM_SITE_MANAGE_ALL)) {
+            $ret[] = Action::create([
+                'title'     => $this->t("Remove"),
+                'route'     => 'ucms_site.admin.site.webmaster_delete',
+                'options'   => ['site' => $item->getSiteId(), 'user' => $item->getUserId()],
+                'icon'      => 'trash',
+                'primary'   => true,
+            ]);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($item): bool
+    {
+        return $item instanceof SiteAccessRecord;
     }
 }

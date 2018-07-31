@@ -39,7 +39,7 @@ class NodeActionProvider implements ActionProviderInterface
     /**
      * {inheritdoc}
      */
-    public function getActions($item)
+    public function getActions($item, bool $primaryOnly = false, array $groups = []): array
     {
         $ret = [];
 
@@ -52,6 +52,7 @@ class NodeActionProvider implements ActionProviderInterface
         $account = $this->currentUser;
 
         // Check if current content is a reference within the current context
+        /*
         if ($this->siteManager->hasContext()) {
             $site = $this->siteManager->getContext();
 
@@ -70,7 +71,9 @@ class NodeActionProvider implements ActionProviderInterface
             // We are not on a site, just display "normal" action
             $ret[] = new Action($this->t("Use on my site"), 'node/'.$nodeId.'/reference', 'dialog', 'download-alt', 2, true, true, false, 'site');
         }
+         */
 
+        /*
         if ($this->nodeAccess->userCanLock($account, $item)) {
             if ($nodeIsClonable) {
                 $ret[] = new Action($this->t("Lock"), 'node/'.$nodeId.'/lock', 'dialog', 'lock', 2, false, true, false, 'edit');
@@ -78,6 +81,7 @@ class NodeActionProvider implements ActionProviderInterface
                 $ret[] = new Action($this->t("Unlock"), 'node/'.$nodeId.'/unlock', 'dialog', 'lock', 2, false, true, false, 'edit');
             }
         }
+         */
 
         // $ret[] = new Action($this->t("View in site"), 'node/' . $item->id() . '/site-list', 'dialog', 'search', 100, false, true, false, 'view');
 
@@ -87,7 +91,7 @@ class NodeActionProvider implements ActionProviderInterface
     /**
      * {inheritdoc}
      */
-    public function supports($item)
+    public function supports($item): bool
     {
         return $item instanceof NodeInterface;
     }

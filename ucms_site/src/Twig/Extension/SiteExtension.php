@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Site\Twig\Extension;
 
 use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
 
@@ -66,10 +67,10 @@ class SiteExtension extends \Twig_Extension
         // FIXME: make this dynamic
         switch ((int)$role) {
 
-            case 1:
+            case Access::ROLE_WEBMASTER:
                 return $this->t("Webmaster");
 
-            case 0:
+            case Access::ROLE_CONTRIB:
                 return $this->t("Contributor");
         }
 
