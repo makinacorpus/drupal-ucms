@@ -302,7 +302,7 @@ final class Access
                 'title' => new TranslatableMarkup("Manage global content"),
             ],
             self::PERM_CONTENT_MANAGE_CORPORATE => [
-                'title' => new TranslatableMarkup("Manage group content"),
+                'title' => new TranslatableMarkup("Manage corporate content"),
             ],
             self::PERM_CONTENT_TRANSFER_OWNERSHIP => [
                 'title' => new TranslatableMarkup("Transfer content ownership to another user"),
