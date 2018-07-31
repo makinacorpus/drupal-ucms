@@ -1,6 +1,6 @@
 {% spaceless %}
   <div class="ucms-actions">
-    <a href="{{ ucms_actions_url(action) }}" class="{% if action.isAjax() %}use-ajax {% endif %}{% if action.isDialog() %}minidialog {% endif %}btn btn-default">
+    <a href="{{ ucms_actions_url(action) }}" title="{{ link.title }}" class="{% if action.isAjax() %}use-ajax {% endif %}{% if action.isDialog() %}minidialog {% endif %}btn btn-default">
       {% if action.icon %}
         <span class="glyphicon glyphicon-{{ action.icon }}" aria-hidden="true"></span>
       {% endif %}

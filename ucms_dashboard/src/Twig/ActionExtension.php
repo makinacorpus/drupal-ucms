@@ -6,6 +6,7 @@ use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Drupal\Core\Url;
 
 /**
  * Displays any object's actions
@@ -68,8 +69,8 @@ class ActionExtension extends \Twig_Extension
     public function renderSingleAction(\Twig_Environment $environment, array $options, $showTitle = false)
     {
         return $environment->render(sprintf('@ucms_dashboard/action/actions-%s.html.twig', $this->getSkin()), [
-            'show_title'  => $showTitle,
-            'action'      => Action::create($options),
+            'show_title' => $showTitle,
+            'action' => Action::create($options),
         ]);
     }
 
@@ -168,22 +169,20 @@ class ActionExtension extends \Twig_Extension
      */
     public function renderActionsRaw(\Twig_Environment $environment, array $actions, $icon = '', $mode = 'icon', $title = '', $showTitle = false)
     {
+        // Temporary fix for correct display in Drupal admin theme
+        if ('seven' === $this->getSkin()) {
+            return $this->renderActionsAsDropButton($actions);
+        }
+
         $context = [
-            'title'       => $title,
-            'icon'        => $icon,
-            'show_title'  => $showTitle,
-            'mode'        => $mode,
+            'title' => $title,
+            'icon' => $icon,
+            'show_title' => $showTitle,
+            'mode' => $mode,
         ];
 
         /** @var \MakinaCorpus\Ucms\Dashboard\Action\Action $action */
         foreach ($actions as $key => $action) {
-            // Remove actions for which the path is the same.
-            /* @todo
-            if (current_path() === $action->getRoute()) {
-                continue;
-            }
-             */
-
             if ($action->isPrimary()) {
                 $target = 'primary';
             } else {
@@ -206,6 +205,28 @@ class ActionExtension extends \Twig_Extension
         }
 
         return $environment->render(sprintf('@ucms_dashboard/action/actions-%s.html.twig', $this->getSkin()), $context);
+    }
+
+    /**
+     * Render actions as Drupal dropbutton
+     */
+    private function renderActionsAsDropButton(array $actions)
+    {
+        usort($actions, function (Action $a, Action $b) {
+            return $a->getPriority() - $b->getPriority();
+        });
+
+        $links = [];
+
+        /** @var \MakinaCorpus\Ucms\Dashboard\Action\Action $action */
+        foreach ($actions as $action) {
+            $links[$action->getDrupalId()] = [
+                'title' => $action->getTitle(),
+                'url' => $action->getDrupalUrl(),
+            ];
+        }
+
+        return ['#type' => 'dropbutton', '#links' => $links];
     }
 
     /**

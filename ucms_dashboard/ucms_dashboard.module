@@ -3,6 +3,10 @@
  * UCMS - Dashboard and fioritures.
  */
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+use Drupal\Component\Utility\Html;
+
 /**
  * Implements hook_page_attachments().
  */
@@ -12,6 +16,29 @@ function ucms_dashboard_page_attachments(array &$attachments) {
   if ('seven' === $themeManager->getActiveTheme()->getName()) {
     $attachments['#attached']['library'][] = 'ucms_dashboard/ucms_dashboard.seven_fixes';
   }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function ucms_dashboard_entity_operation(EntityInterface $entity) {
+  $ret = [];
+
+  /** @var \MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry $actionRegistry */
+  $actionRegistry = \Drupal::service('ucms_dashboard.action_provider_registry');
+
+  if ($actions = $actionRegistry->getActions($entity)) {
+    /** @var \MakinaCorpus\Ucms\Dashboard\Action\Action $action */
+    foreach ($actions as $action) {
+      $ret[$action->getDrupalId()] = [
+        'title' => $action->getTitle(),
+        'url' => $action->getDrupalUrl(),
+        'weight' => (0 - $action->getPriority()),
+      ];
+    }
+  }
+
+  return $ret;
 }
 
 /**

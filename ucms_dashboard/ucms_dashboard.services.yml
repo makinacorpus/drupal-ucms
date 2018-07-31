@@ -17,7 +17,7 @@ services:
         arguments: ["@form_builder", "@ucms_dashboard.action_provider_registry", "@twig", "@event_dispatcher"]
 
     ucms_dashboard.action_provider_registry:
-        public: false
+        public: true # Could be false, but needed by ucms_dashboard_entity_operation()
         class: MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry
 
     ucms_dashboard.twig.helper_extension:

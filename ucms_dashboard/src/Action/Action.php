@@ -2,6 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Action;
 
+use Drupal\Core\Url;
+use Drupal\Core\Language\LanguageInterface;
+
 /**
  * Represent a possible action over a certain item, this is just a value
  * object that will be used to build UI links or buttons
@@ -121,6 +124,27 @@ class Action
             $this->withDestination = true;
             $this->routeParameters['_destination'] = 1;
         }
+    }
+
+    /**
+     * Get action unique identifier
+     */
+    public function getDrupalId(): string
+    {
+        // @todo I am not proud of this one (code from BlockBase).
+        $transliterated = \Drupal::transliteration()->transliterate($this->title ?? $this->route, LanguageInterface::LANGCODE_DEFAULT, '_');
+        $transliterated = \mb_strtolower($transliterated);
+        $transliterated = \preg_replace('@[^a-z0-9_.]+@', '', $transliterated);
+
+        return $transliterated;
+    }
+
+    /**
+     * Get Drupal URL
+     */
+    public function getDrupalUrl(): Url
+    {
+        return new Url($this->route, $this->routeParameters ?? [], $this->linkOptions ?? []);
     }
 
     /**
