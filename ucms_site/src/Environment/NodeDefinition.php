@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Site\Entity;
+namespace MakinaCorpus\Ucms\Site\Environment;
 
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;

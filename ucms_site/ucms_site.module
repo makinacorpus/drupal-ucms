@@ -5,7 +5,7 @@
  */
 
 use Drupal\Core\Entity\EntityTypeInterface;
-use MakinaCorpus\Ucms\Site\Entity\NodeDefinition;
+use MakinaCorpus\Ucms\Site\Environment\NodeDefinition;
 
 /**
  * Implements hook_entity_base_field_info().

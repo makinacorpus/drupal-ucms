@@ -1,6 +1,6 @@
 <?php
 
-use MakinaCorpus\Ucms\Site\Entity\NodeDefinition;
+use MakinaCorpus\Ucms\Site\Environment\NodeDefinition;
 
 /**
  * Implements hook_schema().
