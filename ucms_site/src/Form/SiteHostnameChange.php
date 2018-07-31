@@ -2,11 +2,13 @@
 
 namespace MakinaCorpus\Ucms\Site\Form;
 
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Dashboard\Form\FormHelper;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -23,22 +25,16 @@ class SiteHostnameChange extends FormBase
         );
     }
 
-    /**
-     * @var SiteManager
-     */
-    protected $manager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
     protected $dispatcher;
+    protected $site;
+    protected $siteManager;
 
     /**
      * Constructor
      */
-    public function __construct(SiteManager $manager, EventDispatcherInterface $dispatcher)
+    public function __construct(SiteManager $siteManager, EventDispatcherInterface $dispatcher)
     {
-        $this->manager = $manager;
+        $this->siteManager = $siteManager;
         $this->dispatcher = $dispatcher;
     }
 
@@ -59,36 +55,17 @@ class SiteHostnameChange extends FormBase
             return $form;
         }
 
+        $this->site = $site;
         $formData = &$form_state->getStorage();
-
-        if (empty($formData['site'])) {
-            $site = $formData['site'] = $site;
-            $site->uid = $this->currentUser()->uid;
-        } else {
-            $site = $formData['site'];
-        }
-        $form['#site'] = $site; // This is used in *_form_alter()
-
-        if (empty($formData['step'])) {
-            $step = $formData['step'] = 'a';
-        } else {
-            $step = $formData['step'];
-        }
+        $step = $formData['step'] ?? 'a';
 
         switch ($step) {
-
           case 'a':
-              // Basic information about site
-              return $this->buildStepA($form, $form_state, $site);
-              break;
-
+              return $this->buildStepA($form, $form_state, $this->site);
           case 'b':
-              // Information about template and theme
-              return $this->buildStepB($form, $form_state, $site);
-              break;
+              return $this->buildStepB($form, $form_state);
         }
 
-        // This is an error...
         $this->logger('form')->critical("Invalid step @step", ['@step' => $step]);
 
         return $form;
@@ -116,13 +93,7 @@ class SiteHostnameChange extends FormBase
             '#value'  => $this->t("Continue"),
             '#submit' => ['::submitStepA'],
         ];
-        $form['actions']['cancel'] = [
-            '#markup' => l(
-                $this->t("Cancel"),
-                isset($_GET['destination']) ? $_GET['destination'] : 'admin/dashboard/site',
-                ['attributes' => ['class' => ['btn', 'btn-danger']]]
-            ),
-        ];
+        $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_site.admin.site_list'));
 
         return $form;
     }
@@ -139,7 +110,7 @@ class SiteHostnameChange extends FormBase
             return;
         }
 
-        if ($this->manager->getStorage()->findByHostname($value)) {
+        if ($this->siteManager->getStorage()->findByHostname($value)) {
             $form_state->setError($element, $this->t("Host name already exists"));
         }
 
@@ -147,12 +118,11 @@ class SiteHostnameChange extends FormBase
         if (preg_match('@[A-Z]@', $value)) {
             $form_state->setError($element, $this->t("Site name cannot contain uppercase letters"));
         }
-        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@i';
+        $regex = '@^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$@';
         if (!preg_match($regex, $value)) {
             $form_state->setError($element, $this->t("Host name contains invalid characters or has a wrong format"));
         }
     }
-
 
     /**
      * Step B form submit
@@ -169,17 +139,32 @@ class SiteHostnameChange extends FormBase
     /**
      * Step B form builder
      */
-    private function buildStepB(array $form, FormStateInterface $form_state, Site $site)
+    private function buildStepB(array $form, FormStateInterface $form_state)
     {
         $formData = &$form_state->getStorage();
-        /** @var \MakinaCorpus\Ucms\Site\Site $site */
-        $site = $formData['site'];
 
-        return confirm_form($form, $this->t("Change hostname for site %title from %hostname_current to %hostname_new?", [
-            '%title' => $site->getAdminTitle(),
-            '%hostname_current' => $site->http_host,
+        $form['#title'] = $this->t("Change hostname for site %title from %hostname_current to %hostname_new?", [
+            '%title' => $this->site->getAdminTitle(),
+            '%hostname_current' => $this->site->getHostname(),
             '%hostname_new' => $formData['http_host'],
-        ]), 'admin/dashboard/sites');
+        ]);
+
+        $form['#attributes']['class'][] = 'confirmation';
+        $form['description'] = ['#markup' => $this->t("This action cannot be undone.")];
+        $form['actions'] = ['#type' => 'actions'];
+        $form['actions']['submit'] = [
+            '#type' => 'submit',
+            '#value' => $this->t("Confirm"),
+            '#button_type' => 'primary',
+        ];
+
+        $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_site.admin.site_list'));
+
+        if (!isset($form['#theme'])) {
+            $form['#theme'] = 'confirm_form';
+        }
+
+        return $form;
     }
 
     /**
@@ -199,18 +184,16 @@ class SiteHostnameChange extends FormBase
     {
         $formData = &$form_state->getStorage();
 
-        /** @var $site Site */
-        $site = $formData['site'];
-        $site->http_host = $formData['http_host'];
+        $this->site->http_host = $formData['http_host'];
 
-        $this->manager->getStorage()->save($site, ['http_host']);
-        drupal_set_message($this->t("Site %title hostname has been changed to %hostname", [
-            '%title' => $site->getAdminTitle(),
-            '%hostname' => $site->http_host,
+        $this->siteManager->getStorage()->save($this->site, ['http_host']);
+        \drupal_set_message($this->t("Site %title hostname has been changed to %hostname", [
+            '%title' => $this->site->getAdminTitle(),
+            '%hostname' => $this->site->getHostname(),
         ]));
 
-        $this->dispatcher->dispatch('site:hostname-change', new SiteEvent($site, $this->currentUser()->uid));
+        $this->dispatcher->dispatch('site:hostname-change', new SiteEvent($this->site, $this->currentUser()->id()));
 
-        $form_state->setRedirect('admin/dashboard/site');
+        $form_state->setRedirect('ucms_site.admin.site_list');
     }
 }

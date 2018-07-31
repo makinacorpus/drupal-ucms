@@ -34,6 +34,17 @@ ucms_site.admin.site.view:
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}}}
 
+ucms_site.admin.site.change_hostname:
+    path: /admin/structure/site/{site}/change-hostname
+    defaults:
+        _form: \MakinaCorpus\Ucms\Site\Form\SiteHostnameChange
+        _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteEditTitle
+    requirements:
+        id: \d+
+        # @todo implement an access checker
+        _permission: NOPE PLEASE FIXME
+    options: {parameters: {site: {type: ucms_site}}}
+
 ucms_site.admin.site.edit:
     path: /admin/structure/site/{site}/edit
     defaults:

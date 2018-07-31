@@ -53,7 +53,7 @@ class SiteActionProvider extends AbstractActionProvider
                 $ret[] = new Action($this->t("Edit"), 'ucms_site.admin.site.edit', ['site' => $item->id], 'pencil', -2, false, true);
             }
             if ($account->hasPermission(Access::PERM_SITE_MANAGE_HOSTNAME)) {
-                $ret[] = new Action($this->t("Change hostname"), 'ucms_site.admin.site.view', ['site' => $item->id], 'fire', 0, false, true);
+                $ret[] = new Action($this->t("Change hostname"), 'ucms_site.admin.site.change_hostname', ['site' => $siteId], 'fire', 0, false, true);
             }
             //$ret[] = new Action($this->t("History"), 'ucms_site.admin.site.view', ['site' => $item->id], 'list-alt', -1, false);
         }
