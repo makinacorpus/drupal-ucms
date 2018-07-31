@@ -422,17 +422,5 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
         return $event->ignore();
     }
-
-    /**
-     * Set current group context
-     * /
-    public function onSiteInit(SiteInitEvent $event)
-    {
-        $group = $this->groupManager->getSiteGroup($event->getSite());
-
-        if ($group) {
-            $this->siteManager->setDependentContext('group', $group);
-        }
-    }
      */
 }

@@ -35,7 +35,6 @@ class SiteManager
     private $cdnUrl;
     private $context;
     private $db;
-    private $dependentContext = [];
     private $dispatcher;
     private $isMaster = false;
     private $masterIsHttps = false;
@@ -136,10 +135,6 @@ class SiteManager
         // Dispatch the context init event
         if ($doDispatch) {
 
-            // On context change, we need to remove the older contextes else we
-            // would experience strict fails on dependent context set
-            $this->dependentContext = [];
-
             $this->dispatcher->dispatch(SiteEvents::EVENT_INIT, new SiteInitEvent($this->context, $request));
 
             if ($disablePostDispatch) {
@@ -184,7 +179,6 @@ class SiteManager
         $previous = $this->context ?? false;
 
         $this->context = null;
-        $this->dependentContext = [];
 
         if ($previous) {
             $this->dispatcher->dispatch(SiteEvents::EVENT_DROP, new SiteEvent($previous));
@@ -208,48 +202,6 @@ class SiteManager
     public function hasContext()
     {
         return !!$this->context;
-    }
-
-    /**
-     * Has dependent context
-     *
-     * @param string $name
-     */
-    public function hasDependentContext($name)
-    {
-        return isset($this->dependentContext[$name]);
-    }
-
-    /**
-     * Get dependent context
-     *
-     * @param string $name
-     *
-     * @param mixed
-     */
-    public function getDependentContext($name)
-    {
-        if (!isset($this->dependentContext[$name])) {
-            throw new \InvalidArgumentException(sprintf("there is no dependent context '%s'", $name));
-        }
-
-        return $this->dependentContext[$name];
-    }
-
-    /**
-     * Set dependent context
-     *
-     * @param string $name
-     * @param mixed $value
-     * @param bool $allowOverride
-     */
-    public function setDependentContext($name, $value, $allowOverride = false)
-    {
-        if (!$allowOverride && isset($this->dependentContext[$name])) {
-            throw new \LogicException(sprintf("you are overriding an existing dependent context '%s', are you sure you meant to do this?", $name));
-        }
-
-        $this->dependentContext[$name] = $value;
     }
 
     /**

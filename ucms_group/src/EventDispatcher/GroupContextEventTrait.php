@@ -35,16 +35,6 @@ trait GroupContextEventTrait
      */
     private function findMostRelevantGroupId()
     {
-        if ($this->siteManager->hasDependentContext('group')) {
-
-            /** @var \MakinaCorpus\Ucms\Site\Group $group */
-            $group = $this->siteManager->getDependentContext('group');
-
-            if ($group) {
-                return (int)$group->getId();
-            }
-        }
-
         // There is no context, this means we need to check with user current
         // groups instead; and set the first one we find onto the node
         $accessList = $this->groupManager->getUserGroups($this->currentUser);
