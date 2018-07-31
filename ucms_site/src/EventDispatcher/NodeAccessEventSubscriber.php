@@ -10,9 +10,6 @@ use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
