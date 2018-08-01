@@ -7,11 +7,13 @@
  - ucms_contrib
  - Restore SQL constraints
  - PENDING - Modern front assets toolchain
+ - Handle caching gracefully
 
 ## Necessary
 
  - umenu
  - ucms_tree
+ - Plug ucms_site on umenu using MenuEnvEvent to set site_id condition
  - ucms_user
  - ucms_seo
  - Rewrite all tests
@@ -24,6 +26,7 @@
  - ucms_taxo
  - ucms_widget
  - ucms_search
+ - Rework UI
 
 ## To be done differently
 
