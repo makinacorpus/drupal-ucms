@@ -25,7 +25,7 @@ final class SiteInitEvent extends SiteEvent
     /**
      * Get request
      */
-    public function getRequest() : Request
+    public function getRequest(): Request
     {
         return $this->request;
     }

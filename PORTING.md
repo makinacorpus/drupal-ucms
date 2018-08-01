@@ -10,11 +10,13 @@
 
 ## Necessary
 
+ - umenu
  - ucms_tree
  - ucms_user
  - ucms_seo
  - Rewrite all tests
  - userCanX() methods must die
+ - Node published state per site
 
 ## Additional
 

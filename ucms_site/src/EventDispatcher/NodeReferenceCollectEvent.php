@@ -40,14 +40,14 @@ class NodeReferenceCollectEvent extends GenericEvent
     /**
      * Add one or more references
      *
-     * @param int|int[] $nodeIdList
-     *   Node identifiers list
      * @param string $type
      *   Reference type for business purposes, 'media', 'link' or any other
+     * @param int|int[] $nodeIdList
+     *   Node identifiers list
      * @param string $field
      *   Field name this reference was found into
      */
-    public function addReferences($type, $nodeIdList, $field = null)
+    public function addReferences(string $type, $nodeIdList, $field = null)
     {
         if (!is_array($nodeIdList)) {
             $nodeIdList = [$nodeIdList];
@@ -66,7 +66,7 @@ class NodeReferenceCollectEvent extends GenericEvent
      * @return NodeReference[]
      *   There will no duplicates
      */
-    public function getReferences()
+    public function getReferences(): array
     {
         return $this->references;
     }

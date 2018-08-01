@@ -3,80 +3,54 @@
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use MakinaCorpus\Ucms\Site\Site;
-
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-/**
- * Event class for the alteration of the site's status.
- */
 class SiteStatusEvent extends GenericEvent
 {
     const EVENT_NAME = 'site:status_alter';
 
-    /**
-     * Site's status.
-     *
-     * @var integer
-     */
     private $status;
-
-    /**
-     * Path concerned by the alteration.
-     *
-     * @var string
-     */
     private $path;
 
     /**
      * Constructor.
-     *
-     * @param Site $site
-     * @param integer $initialStatus
-     * @param array $arguments
      */
-    public function __construct(Site $site, $initialStatus, $path, array $arguments = [])
+    public function __construct(Site $site, int $initialStatus, string $path, array $arguments = [])
     {
         $this->status = $initialStatus;
         $this->path = $path;
+
         parent::__construct($site, $arguments);
     }
 
     /**
-     * Get site.
-     *
-     * @return Site
+     * Get site
      */
-    public function getSite()
+    public function getSite(): Site
     {
         return $this->getSubject();
     }
 
     /**
-     * Get the path.
-     *
-     * @return string
+     * Get the path
      */
-    public function getPath()
+    public function getPath(): string
     {
-        return $this->path;
+        return $this->path ?? '';
     }
 
     /**
      * Get the status.
-     *
-     * @return integer
      */
-    public function getStatus()
+    public function getStatus(): int
     {
-        return $this->status;
+        return (int)$this->status;
     }
 
     /**
-     * Set the status.
-     *
-     * @param integer $status
+     * Set the status
      */
-    public function setStatus($status)
+    public function setStatus(int $status)
     {
         $this->status = $status;
     }

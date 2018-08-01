@@ -26,20 +26,16 @@ class SiteEvent extends GenericEvent
 
     /**
      * Who did this
-     *
-     * @return int
      */
-    public function getUserId()
+    public function getUserId(): int
     {
-        return $this->getArgument('uid');
+        return (int)$this->getArgument('uid');
     }
 
     /**
      * Get site
-     *
-     * @return Site
      */
-    public function getSite()
+    public function getSite(): Site
     {
         return $this->getSubject();
     }

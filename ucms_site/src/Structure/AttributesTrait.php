@@ -4,12 +4,9 @@ namespace MakinaCorpus\Ucms\Site\Structure;
 
 trait AttributesTrait
 {
-    /**
-     * @var string
-     */
-    protected $attributes;
+    private $attributes;
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         // When loading objects from PDO with 'class' fetch mode, the
         // constructor won't be called, hence this lazy init
@@ -21,10 +18,10 @@ trait AttributesTrait
             }
         }
 
-        return $this->attributes;
+        return $this->attributes ?? [];
     }
 
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, $default = null)
     {
         if ($this->hasAttribute($name)) {
             return $this->attributes[$name];
@@ -33,14 +30,14 @@ trait AttributesTrait
         return $default;
     }
 
-    public function hasAttribute($name)
+    public function hasAttribute($name): bool
     {
         $this->getAttributes();
 
         return array_key_exists($name, $this->attributes);
     }
 
-    public function setAttribute($name, $value)
+    public function setAttribute(string $name, $value)
     {
         if (null === $value) {
             $this->deleteAttribute($name);
@@ -51,7 +48,7 @@ trait AttributesTrait
         $this->attributes[$name] = $value;
     }
 
-    public function deleteAttribute($name)
+    public function deleteAttribute(string $name)
     {
         if ($this->hasAttribute($name)) {
             unset($this->attributes[$name]);

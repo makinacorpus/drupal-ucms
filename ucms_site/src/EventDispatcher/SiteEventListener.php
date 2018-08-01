@@ -4,32 +4,19 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
-use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Access;
+use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\SiteState;
-use MakinaCorpus\Umenu\MenuStorageInterface;
 
 class SiteEventListener
 {
     use StringTranslationTrait;
 
-    /**
-     * @var SiteManager
-     */
     private $manager;
-
-    /**
-     * @var EntityManager
-     */
     private $entityManager;
 
     /**
      * Default constructor
-     *
-     * @param SiteManager $manager
-     * @param EntityManager $entityManager
-     * @param MenuStorageInterface $menuStorage
      */
     public function __construct(SiteManager $manager, EntityManager $entityManager)
     {

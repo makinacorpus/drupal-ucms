@@ -8,11 +8,6 @@ class SiteAttachEvent extends SiteEvent
 {
     /**
      * Default constructor
-     *
-     * @param Site $site
-     * @param int[] $nodeIdList
-     * @param int $userId
-     * @param array $arguments
      */
     public function __construct($siteIdList, $nodeIdList, $userId = null, array $arguments = [])
     {
@@ -29,22 +24,18 @@ class SiteAttachEvent extends SiteEvent
 
     /**
      * Get attached or dettached site identifier list
-     *
-     * @return int[]
      */
-    public function getSiteIdList()
+    public function getSiteIdList(): array
     {
-        return $this->getArgument('sites');
+        return (array)$this->getArgument('sites');
     }
 
     /**
      * Get attached or dettached node identifier list
-     *
-     * @return int[]
      */
-    public function getNodeIdList()
+    public function getNodeIdList(): array
     {
-        return $this->getArgument('nodes');
+        return (int)$this->getArgument('nodes');
     }
 
     /**
@@ -58,7 +49,7 @@ class SiteAttachEvent extends SiteEvent
     /**
      * {@inheritdoc}
      */
-    public function getSite()
+    public function getSite(): Site
     {
         throw new \LogicException("This event works on multiple sites and should, getSite() cannot be called");
     }

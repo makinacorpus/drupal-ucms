@@ -10,11 +10,6 @@ class SiteCloneEvent extends SiteEvent
 
     /**
      * Default constructor
-     *
-     * @param Site $site
-     * @param Site $template
-     * @param int $userId
-     * @param array $arguments
      */
     public function __construct(Site $site, Site $template, $userId = null, array $arguments = [])
     {
@@ -27,10 +22,8 @@ class SiteCloneEvent extends SiteEvent
 
     /**
      * Get site
-     *
-     * @return Site
      */
-    public function getTemplateSite()
+    public function getTemplateSite(): Site
     {
         return $this->template;
     }

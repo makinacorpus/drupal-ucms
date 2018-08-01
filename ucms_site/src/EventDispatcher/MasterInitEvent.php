@@ -26,7 +26,7 @@ final class MasterInitEvent extends Event
     /**
      * Get request
      */
-    public function getRequest() : Request
+    public function getRequest(): Request
     {
         return $this->request;
     }

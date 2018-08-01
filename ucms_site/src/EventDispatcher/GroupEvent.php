@@ -16,10 +16,6 @@ class GroupEvent extends GenericEvent
 
     /**
      * Default constructor
-     *
-     * @param Group $group
-     * @param int $userId
-     * @param array $arguments
      */
     public function __construct(Group $group, $userId = null, array $arguments = [])
     {
@@ -30,20 +26,16 @@ class GroupEvent extends GenericEvent
 
     /**
      * Who did this
-     *
-     * @return int
      */
-    public function getUserId()
+    public function getUserId(): int
     {
-        return $this->getArgument('uid');
+        return (int)$this->getArgument('uid');
     }
 
     /**
      * Get group
-     *
-     * @return Group
      */
-    public function getGroup()
+    public function getGroup(): Group
     {
         return $this->getSubject();
     }

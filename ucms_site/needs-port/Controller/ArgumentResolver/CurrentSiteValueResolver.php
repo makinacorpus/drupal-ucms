@@ -15,6 +15,9 @@ class CurrentSiteValueResolver implements ArgumentValueResolverInterface
 {
     private $siteManager;
 
+    /**
+     * Default constructor
+     */
     public function __construct(SiteManager $siteManager)
     {
         $this->siteManager = $siteManager;

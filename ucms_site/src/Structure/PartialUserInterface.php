@@ -10,42 +10,31 @@ interface PartialUserInterface
 {
     /**
      * Get user identifier
-     *
-     * @return int
      */
-    public function getUserId();
+    public function getUserId(): int;
 
     /**
      * Get user unescaped account name
-     *
-     * @return string
      */
-    public function getAccountName();
+    public function getAccountName(): string;
 
     /**
      * Get user escaped display name
-     *
-     * @return string
      */
-    public function getDisplayName();
+    public function getDisplayName(): string;
 
     /**
      * Get user email
-     *
-     * @return string
      */
-    public function getEmail();
+    public function getEmail(): string;
 
     /**
      * Is this user active
-     *
-     * @return bool
      */
-    public function isActive();
+    public function isActive(): bool;
 
     /**
      * Is this user blocked
-     *
      */
-    public function isBlocked();
+    public function isBlocked(): bool;
 }

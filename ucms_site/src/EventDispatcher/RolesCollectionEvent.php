@@ -12,82 +12,53 @@ class RolesCollectionEvent extends Event
 {
     const EVENT_NAME = 'roles:collection';
 
-    /**
-     * Relative roles.
-     *
-     * @var string[]
-     */
-    protected $roles;
+    private $roles;
+    private $context;
 
     /**
-     * Contextual site of the event.
+     * Default constructor
      *
-     * @var Site
+     * @param string[] $defaultRoles
+     *   Keys are identifiers, values are labels
      */
-    protected $context;
-
-    /**
-     * Constructor.
-     *
-     * @param [] $baseRoles
-     *  Base roles provided by default.
-     * @param Site $context
-     *  Site for which we want to collect relative roles.
-     */
-    public function __construct(array $baseRoles = [], Site $context = null)
+    public function __construct(array $defaultRoles = [], Site $context = null)
     {
-        $this->roles = $baseRoles;
+        $this->roles = $defaultRoles;
         $this->context = $context;
     }
 
     /**
-     * Getter for roles property.
-     *
-     * @return [] Labels keyed by identifiers.
+     * Getter for roles property
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->roles;
     }
 
     /**
-     * Add a relative role.
-     *
-     * @param integer $rrid
-     *  The relative role identifier.
-     * @param mixed $label
-     *  The relative role label.
-     *
-     * @throws \InvalidArgumentException if the provided role identifier is not an integer.
-     * @throws \LogicException if the provided role identifier is already used.
-     *
-     * @return RolesCollectionEvent
+     * Add a relative role
      */
-    public function addRole($rrid, $label)
+    public function addRole(int $id, string $label): self
     {
-        if (!is_integer($rrid)) {
-            throw new \InvalidArgumentException("The relative role identifier must be an integer.");
-        }
-        if (isset($this->roles[$rrid])) {
-            throw new \LogicException(sprintf("This relative role identifier is already used (%d).", $rrid));
+        if (isset($this->roles[$id])) {
+            throw new \LogicException(sprintf("This relative role identifier is already used (%d).", $id));
         }
 
-        $this->roles[$rrid] = $label;
+        $this->roles[$id] = $label;
+
         return $this;
     }
 
     /**
-     * Does the event have a context.
-     *
-     * @return boolean
+     * Does the event have a context
      */
-    public function hasContext()
+    public function hasContext(): bool
     {
-        return (boolean) $this->context;
+        return isset($this->context);
     }
 
     /**
-     * Get the event's context.
+     * Get the event's context
      *
      * @return Site|null
      */
