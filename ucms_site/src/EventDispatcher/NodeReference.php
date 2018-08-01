@@ -32,12 +32,12 @@ final class NodeReference
 
     public function getSourceId() : int
     {
-        return $this->source_id;
+        return (int)$this->source_id;
     }
 
     public function getTargetId() : int
     {
-        return $this->target_id;
+        return (int)$this->target_id;
     }
 
     public function getType() : string
@@ -47,11 +47,11 @@ final class NodeReference
 
     public function getFieldName() : string
     {
-        return $this->field_name;
+        return $this->field_name ?? '';
     }
 
     public function targetExists() : bool
     {
-        return $this->target_exists;
+        return (bool)$this->target_exists;
     }
 }
