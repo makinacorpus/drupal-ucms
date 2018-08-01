@@ -5,6 +5,7 @@ namespace MakinaCorpus\Ucms\Site;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MakinaCorpus\Ucms\Site\EventDispatcher\AllowListEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
@@ -303,13 +304,12 @@ class SiteManager
     public function getAllowedThemesOptionList()
     {
         $ret = [];
-        $all = list_themes();
 
         foreach ($this->getAllowedThemes() as $theme) {
-            if (isset($all[$theme])) {
-                $ret[$theme] = $all[$theme]->info['name'];
+            if ($label = $this->themeHandler->getName($theme)) {
+                $ret[$theme] = $label;
             } else {
-                $ret[$theme] = "oups";
+                $ret[$theme] = new TranslatableMarkup("Non existing theme @theme", ['@theme' => $theme]);
             }
         }
 
@@ -324,27 +324,16 @@ class SiteManager
     public function getDefaultAllowedThemesOptionList()
     {
         $ret = [];
-        $all = list_themes();
 
         foreach ($this->getDefaultAllowedThemes() as $theme) {
-            if (isset($all[$theme])) {
-                $ret[$theme] = $all[$theme]->info['name'];
+            if ($label = $this->themeHandler->getName($theme)) {
+                $ret[$theme] = $label;
             } else {
-                $ret[$theme] = "oups";
+                $ret[$theme] = new TranslatableMarkup("Non existing theme @theme", ['@theme' => $theme]);
             }
         }
 
         return $ret;
-    }
-
-    /**
-     * Set allowed front-end themes
-     *
-     * @param string[] $themes
-     */
-    public function setAllowedThemes($themes)
-    {
-        variable_set('ucms_site_allowed_themes', array_unique($themes));
     }
 
     /**
