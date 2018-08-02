@@ -1,7 +1,7 @@
 {
     "name" : "makinacorpus/drupal-ucms",
     "type" : "drupal-module",
-    "description" : " µCMS modules - Node/Elasticsearch/favorites based Drupal fast contribution UI/UX",
+    "description" : " µCMS - Drupal multisite platform with content sharing ability",
     "homepage" : "http://github.com/makinacorpus/drupal-ucms",
     "license" : "GPL-2.0-or-later",
     "authors" : [
@@ -68,20 +68,20 @@
             "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
             "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src"
-        },
-        "exclude-from-classmap": ["**/Tests/"]
+        }
     },
     "require" : {
-        "makinacorpus/drupal-filechunk": "^1.0 || ^2.0.2",
-        "makinacorpus/drupal-plusql" : "^1.0.4",
+        "makinacorpus/calista-core": "^1.0",
         "makinacorpus/drupal-sf-int" : "^3.4|^4",
-        "makinacorpus/drupal-ulink" : "^2.0",
-        "makinacorpus/php-bloom" : "^2.0.1",
+        "makinacorpus/drupal-umenu": "^3.0",
         "php" : ">= 7"
     },
-    "suggests" : {
+    "suggest" : {
+        "drupal/redis" : "Activates a few Redis-based caches",
         "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs",
-        "drupal/redis" : "Activates a few Redis-based caches"
+        "makinacorpus/drupal-filechunk": "To be ported to Drupal 8",
+        "makinacorpus/drupal-plusql" : "To be ported to Drupal 8",
+        "makinacorpus/drupal-ulink" : "To be ported to Drupal 8"
     },
     "minimum-stability" : "dev"
 }
