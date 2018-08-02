@@ -44,7 +44,7 @@ class SiteAccessService
         $userId = $account->id();
 
         if (!isset($this->accessCache[$userId])) {
-            $r = $this
+            $result = $this
                 ->db
                 ->query(
                     "
@@ -64,12 +64,12 @@ class SiteAccessService
                 )
             ;
 
-            $r->setFetchMode(\PDO::FETCH_CLASS, SiteAccessRecord::class);
+            $result->setFetchMode(\PDO::FETCH_CLASS, SiteAccessRecord::class);
 
             // Can't use fetchAllAssoc() because properties are private on the
             // objects built by PDO
             $this->accessCache[$userId] = [];
-            foreach ($r->fetchAll() as $record) {
+            foreach ($result as $record) {
                 $this->accessCache[$userId][$record->getSiteId()] = $record;
             }
         }
@@ -178,146 +178,25 @@ class SiteAccessService
     }
 
     /**
-     * Get the default relative roles provided by ucms_site.
-     *
-     * @return [] Labels keyed by identifiers
+     * Get the default roles.
      */
-    public function getDefaultRelativeRoles()
+    public function getDefaultSiteRoles(): array
     {
         return [
-            Access::ROLE_WEBMASTER  => $this->t("Webmaster"),
-            Access::ROLE_CONTRIB    => $this->t("Contributor"),
+            Access::ROLE_WEBMASTER => $this->t("Webmaster"),
+            Access::ROLE_CONTRIB => $this->t("Contributor"),
         ];
     }
 
     /**
-     * Collect relative roles according to an optional context (site).
-     * No context means that we expect all existing relative roles.
-     *
-     * @param Site $context
-     *
-     * @return [] Labels keyed by identifiers
+     * Collect relative roles for a given site.
      */
-    public function collectRelativeRoles(Site $context = null)
+    public function getSiteRoles(Site $context): array
     {
-        $event = new RolesCollectionEvent($this->getDefaultRelativeRoles(), $context);
+        $event = new RolesCollectionEvent($this->getDefaultSiteRoles(), $context);
         $this->dispatcher->dispatch(RolesCollectionEvent::EVENT_NAME, $event);
+
         return $event->getRoles();
-    }
-
-    /**
-     * Get relative roles identifiers keyed by Drupal roles identifiers.
-     *
-     * @todo
-     *   This sadly fundamentally broken since role are identifiers, it should
-     *   use permissions instead, but this would be severly broken too somehow.
-     *
-     * @return int[]
-     *   Keys are Drupal roles identifiers, values are relative roles identifiers.
-     */
-    public function getRolesAssociations()
-    {
-        // FIXME: @todo serious fixme
-        // return variable_get('ucms_site_relative_roles');
-        return [];
-    }
-
-    /**
-     * Set relative role identifiers
-     *
-     * @param int[] $roleIdList
-     */
-    public function updateRolesAssociations($roleIdList)
-    {
-        // FIXME SERIOUS @todo 
-        // variable_set('ucms_site_relative_roles', array_filter(array_map('intval', $roleIdList)));
-        return array_filter(array_map('intval', $roleIdList));
-    }
-
-    /**
-     * Get Drupal role list
-     *
-     * @return string(]
-     *   Keys are internal role identifiers, values are role names
-     */
-    public function getDrupalRoleList($onlyAllowed = true)
-    {
-        if (null === $this->roleListCache) {
-            $this->roleListCache = $this->db->query("SELECT rid, name FROM {role} ORDER BY rid")->fetchAllKeyed();
-        }
-
-        if ($onlyAllowed && ($allowed = variable_get('ucms_site_allowed_roles'))) {
-            return array_intersect_key($this->roleListCache, array_flip($allowed));
-        }
-
-        return $this->roleListCache;
-    }
-
-    /**
-     * Get a Drupal role name
-     *
-     * @param int $rid
-     * @return string
-     */
-    public function getDrupalRoleName($rid)
-    {
-        $roles = $this->getDrupalRoleList(false);
-        return $roles[(string) $rid];
-    }
-
-    /**
-     * Get a relative role name, i.e. the name of the matching Drupal role
-     *
-     * @param int $rrid Relative role ID (Access::ROLE_* constant)
-     * @return string
-     */
-    public function getRelativeRoleName($rrid)
-    {
-        if ($rid = array_keys($this->getRolesAssociations(), $rrid)) {
-            return $this->getDrupalRoleName(reset($rid));
-        }
-    }
-
-    /**
-     * Get user relative role list to site, including global roles
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return int[]
-     */
-    public function getUserRelativeRoleList(AccountInterface $account, Site $site)
-    {
-        $ret = [];
-
-        $relativeRoles  = $this->getRolesAssociations();
-        $grant          = $this->getUserRoleCacheValue($account, $site);
-
-        if (!$relativeRoles) {
-            $relativeRoles = [];
-        }
-
-        // First check the user site roles if any
-        if ($grant) {
-            foreach ($relativeRoles as $rid => $role) {
-                if ($grant->getRole() === $role) {
-                    $ret[] = $rid;
-                }
-            }
-        }
-
-        foreach ($account->getRoles() as $rid) {
-            // Exlude relative role, they are not global but relative, the fact
-            // we set the role onto the Drupal user only means that it has this
-            // role only once
-            // @todo
-            //   consider removing those at the global level for once
-            if (!isset($relativeRoles[$rid])) {
-                $ret[] = $rid;
-            }
-        }
-
-        return $ret;
     }
 
     /**
@@ -555,7 +434,11 @@ class SiteAccessService
         $ret = [];
         $states = SiteState::getList();
         $matrix = $this->getStateTransitionMatrix();
-        $roles  = $this->getUserRelativeRoleList($account, $site);
+        // @todo Drupal roles here, maybe ?
+        //   we have two problems:
+        //     - admin can switch (drupal permissions)
+        //     - site webmaster can go from on to off and vice versa
+        $roles  = $this->getDefaultSiteRoles($account, $site);
 
         foreach ($states as $state => $name) {
             foreach ($roles as $rid) {

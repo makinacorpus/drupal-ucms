@@ -14,6 +14,7 @@
  - dashboard: untangle display skin
  - PENDING - Modern front assets toolchain
  - PENDING - ucms_site
+ - site: get rid once for all of Drupal role to site role relationship
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
  - site: restore menu site status alteration
  - site: restore state transition matrix
@@ -28,7 +29,7 @@
  - site: node published state per site
  - site: restore node reference/dereference actions with a better UI
  - site: restore SSO
- - site: userCanX() methods must die
+ - site: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
  - ucms_seo
  - ucms_user
 

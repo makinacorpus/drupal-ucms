@@ -150,14 +150,7 @@ services:
         arguments: ["@ucms_site.manager", "@entity.manager"]
         tags:
             - { name: event_listener, event: "site:create" }
-            - { name: event_listener, event: "site:save" }
             - { name: event_listener, event: "site:switch" }
-            - { name: event_listener, event: "site:webmaster_add_new" }
-            - { name: event_listener, event: "site:webmaster_add_existing" }
-            - { name: event_listener, event: "site:webmaster_change_role" }
-            - { name: event_listener, event: "site:webmaster_promote" }
-            - { name: event_listener, event: "site:webmaster_demote" }
-            - { name: event_listener, event: "site:webmaster_delete" }
 
     ucms_site.menu_event_listener:
         public: true

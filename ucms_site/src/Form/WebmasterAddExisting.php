@@ -69,20 +69,6 @@ class WebmasterAddExisting extends FormBase
             '#required' => true,
         ];
 
-        /*
-         * FIXME
-         *
-        $roles = [];
-        $relativeRoles = $this->siteManager->getAccess()->collectRelativeRoles($site);
-        $rolesAssociations = $this->siteManager->getAccess()->getRolesAssociations();
-
-        foreach ($rolesAssociations as $rid => $rrid) {
-            if (isset($relativeRoles[$rrid])) {
-                $roles[$rid] = $this->siteManager->getAccess()->getDrupalRoleName($rid);
-            }
-        }
-         */
-
         $form['role'] = [
             '#type' => 'radios',
             '#title' => $this->t("Role"),
@@ -142,7 +128,7 @@ class WebmasterAddExisting extends FormBase
 
         \drupal_set_message($this->t("@name has been added as @role.", [
             '@name' => $user->getDisplayName(),
-            '@role' => "ROLE FIXME",
+            '@role' => "ROLE FIXME", // @todo
         ]));
 
         $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
