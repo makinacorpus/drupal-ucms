@@ -31,7 +31,6 @@
  - site: restore SSO
  - site: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
  - ucms_seo
- - ucms_user
 
 ## Additional
 
@@ -40,6 +39,7 @@
  - site: restore favicon
  - ucms_search
  - ucms_taxo
+ - ucms_user
  - ucms_widget
 
 ## To be done differently

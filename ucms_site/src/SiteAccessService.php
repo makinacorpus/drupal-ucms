@@ -9,6 +9,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\RolesCollectionEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAccessEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Handles site access
@@ -186,6 +187,15 @@ class SiteAccessService
             Access::ROLE_WEBMASTER => $this->t("Webmaster"),
             Access::ROLE_CONTRIB => $this->t("Contributor"),
         ];
+    }
+
+    /**
+     * Get a single role name.
+     */
+    public function getRoleName(int $role): string
+    {
+        // @todo and site contextual roles?
+        return $this->getDefaultSiteRoles()[$role] ?? new TranslatableMarkup("None");
     }
 
     /**

@@ -2,10 +2,12 @@
 
 namespace MakinaCorpus\Ucms\Site\Form;
 
+use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MakinaCorpus\Ucms\Site\Access;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use MakinaCorpus\Ucms\Dashboard\Form\FormHelper;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
@@ -32,6 +34,7 @@ class WebmasterAddExisting extends FormBase
 
     protected $dispatcher;
     protected $entityManager;
+    protected $site;
     protected $siteManager;
 
     /**
@@ -61,34 +64,29 @@ class WebmasterAddExisting extends FormBase
             return [];
         }
 
+        $this->site = $site;
+
         $form['name'] = [
             '#type' => 'textfield',
-            '#title' => $this->t("Name"),
-            '#description' => $this->t("Please make your choice in the suggestions list."),
+            '#title' => new TranslatableMarkup("Name"),
+            '#description' => new TranslatableMarkup("Please make your choice in the suggestions list."),
             '#autocomplete_route_name' => 'ucms_site.admin.user_autocomplete',
             '#required' => true,
         ];
 
         $form['role'] = [
             '#type' => 'radios',
-            '#title' => $this->t("Role"),
-            '#options' => [
-                Access::ROLE_WEBMASTER => $this->t("Webmaster"),
-                Access::ROLE_CONTRIB => $this->t("Contributor")
-            ],
+            '#title' => new TranslatableMarkup("Role"),
+            '#options' => $this->siteManager->getAccess()->getSiteRoles($this->site),
             '#required' => true,
-        ];
-
-        $form['site'] = [
-            '#type' => 'value',
-            '#value' => $site->id,
         ];
 
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type' => 'submit',
-            '#value' => $this->t("Add"),
+            '#value' => new TranslatableMarkup("Add"),
         ];
+        $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_site.admin.site_list'));
 
         return $form;
     }
@@ -102,11 +100,11 @@ class WebmasterAddExisting extends FormBase
 
         $matches = [];
         if (\preg_match('/\[(\d+)\]$/', $user, $matches) !== 1 || $matches[1] < 2) {
-            $form_state->setErrorByName('name', $this->t("The user can't be identified."));
+            $form_state->setErrorByName('name', new TranslatableMarkup("The user can't be identified."));
         } else {
             $user = $this->entityManager->getStorage('user')->load($matches[1]);
             if (null === $user) {
-                $form_state->setErrorByName('name', $this->t("The user doesn't exist."));
+                $form_state->setErrorByName('name', new TranslatableMarkup("The user doesn't exist."));
             } else {
                 $form_state->setTemporaryValue('user', $user);
             }
@@ -118,22 +116,20 @@ class WebmasterAddExisting extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $formState)
     {
-        /* @var Site $site */
-        $site = $this->siteManager->getStorage()->findOne($formState->getValue('site'));
         /** @var \Drupal\Core\Session\AccountInterface $user */
         $user = $formState->getTemporaryValue('user');
 
         $role = (int)$formState->getValue('role');
-        $this->siteManager->getAccess()->mergeUsersWithRole($site, $user->id(), $role);
+        $this->siteManager->getAccess()->mergeUsersWithRole($this->site, $user->id(), $role);
 
-        \drupal_set_message($this->t("@name has been added as @role.", [
+        \drupal_set_message(new TranslatableMarkup("@name has been added as @role.", [
             '@name' => $user->getDisplayName(),
-            '@role' => "ROLE FIXME", // @todo
+            '@role' => $this->siteManager->getAccess()->getRoleName($role),
         ]));
 
-        $event = new SiteEvent($site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
+        $event = new SiteEvent($this->site, $this->currentUser()->id(), ['webmaster_id' => $user->id()]);
         $this->dispatcher->dispatch(SiteEvents::EVENT_WEBMASTER_ATTACH, $event);
 
-        $formState->setRedirect('ucms_site.admin.site.webmaster', ['site' => $site->getId()]);
+        $formState->setRedirect('ucms_site.admin.site.webmaster', ['site' => $this->site->getId()]);
     }
 }
