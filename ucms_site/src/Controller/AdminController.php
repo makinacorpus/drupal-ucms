@@ -142,6 +142,17 @@ class AdminController extends ControllerBase
     /**
      * Routing title callback
      */
+    public function siteWebmasterChangeTitle(Site $site, AccountInterface $user): string
+    {
+        return $this->t("Change @name's role in @site", [
+            '@name' => $user->getDisplayName(),
+            '@site' => $site->getAdminTitle(),
+        ]);
+    }
+
+    /**
+     * Routing title callback
+     */
     public function siteWebmasterDeleteTitle(Site $site, AccountInterface $user): string
     {
         return $this->t("Remove @name in @site", [

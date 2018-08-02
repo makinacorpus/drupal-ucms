@@ -53,6 +53,13 @@ class WebmasterActionProvider extends AbstractActionProvider
                 'icon'      => 'trash',
                 'primary'   => true,
             ]);
+            $ret[] = Action::create([
+                'title'     => $this->t("Change role"),
+                'route'     => 'ucms_site.admin.site.webmaster_change',
+                'options'   => ['site' => $item->getSiteId(), 'user' => $item->getUserId()],
+                'icon'      => 'switch  ',
+                'primary'   => true,
+            ]);
         }
 
         return $ret;
