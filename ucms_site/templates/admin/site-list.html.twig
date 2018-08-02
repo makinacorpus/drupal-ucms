@@ -1,23 +1,17 @@
-{% extends '@calista/page/page.html.twig' %}
-
-{%- block item -%}
-    <tr>
-        <td>{{ item.id }}</td>
-        <td>{{ item.adminTitle }}</td>
-        <td>{{ item.hostname }}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>{{ ucms_actions(item) }}</td>
-    </tr>
-{%- endblock -%}
+{% extends '@ucms_dashboard/page/page-table.html.twig' %}
 
 {% block item_list %}
     <table>
         <thead>
-            <th>{{ "Id."|t }}</th>
-            <th>{{ "Name"|t }}</th>
-            <th>{{ "Hostname"|t }}</th>
+            {% with {label: "Id."|t, field: 's.id'} %}
+                {{ block('table_header') }}
+            {% endwith %}
+            {% with {label: "Name"|t, field: 's.title'} %}
+                {{ block('table_header') }}
+            {% endwith %}
+            {% with {label: "Hostname"|t, field: 's.http_host'} %}
+                {{ block('table_header') }}
+            {% endwith %}
             <th></th>
             <th></th>
             <th></th>
@@ -30,3 +24,15 @@
         </tbody>
     </table>
 {% endblock %}
+
+{%- block item -%}
+    <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.adminTitle }}</td>
+        <td>{{ item.hostname }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{ ucms_actions(item) }}</td>
+    </tr>
+{%- endblock -%}

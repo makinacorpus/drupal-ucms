@@ -4,12 +4,12 @@ namespace MakinaCorpus\Ucms\Site\Controller;
 
 use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Datasource\DatasourceInputDefinition;
 use MakinaCorpus\Calista\Datasource\DatasourceInterface;
-use MakinaCorpus\Calista\Query\InputDefinition;
 use MakinaCorpus\Calista\Query\QueryFactory;
 use MakinaCorpus\Calista\Twig\View\TwigView;
 use MakinaCorpus\Calista\View\ViewDefinition;
@@ -69,7 +69,9 @@ class AdminController extends ControllerBase
      */
     public function siteList(Request $request)
     {
-        $inputDefinition = new InputDefinition();
+        $inputDefinition = new DatasourceInputDefinition($this->siteDatasource, [
+            'search_enable' => true,
+        ]);
         $viewDefinition = new ViewDefinition([
             'templates' => [
                 'default' => '@ucms_site/admin/site-list.html.twig'
@@ -82,7 +84,9 @@ class AdminController extends ControllerBase
         $view = new TwigView($this->twig, $this->eventDispatcher);
 
         return [
-            '#markup' => $view->render($viewDefinition, $items, $query),
+            // Drupal 8 will filter for XSS if you provide a raw string here
+            // hence the need of encapsulating it into Markup::create().
+            '#markup' => Markup::create($view->render($viewDefinition, $items, $query)),
         ];
     }
 
@@ -95,6 +99,7 @@ class AdminController extends ControllerBase
             'base_query' => [
                 'site_id' => $site->getId(),
             ],
+            'search_enable' => true,
         ]);
         $viewDefinition = new ViewDefinition([
             'templates' => [
@@ -108,7 +113,9 @@ class AdminController extends ControllerBase
         $view = new TwigView($this->twig, $this->eventDispatcher);
 
         return [
-            '#markup' => $view->render($viewDefinition, $items, $query),
+            // Drupal 8 will filter for XSS if you provide a raw string here
+            // hence the need of encapsulating it into Markup::create().
+            '#markup' => Markup::create($view->render($viewDefinition, $items, $query)),
         ];
     }
 

@@ -102,13 +102,25 @@ class SiteDatasource extends AbstractDatasource
         $select->groupBy('s.id');
 
         if ($query->has('state')) {
-            $select->condition('s.state', $query->get('state'));
+            if (\is_array($value = $query->get('state'))) {
+                $select->condition('s.state', $value, 'IN');
+            } else {
+                $select->condition('s.state', $value);
+            }
         }
         if ($query->has('theme')) {
-            $select->condition('s.theme', $query->get('theme'));
+            if (\is_array($value = $query->get('theme'))) {
+                $select->condition('s.theme', $value, 'IN');
+            } else {
+                $select->condition('s.theme', $value);
+            }
         }
         if ($query->has('template')) {
-            $select->condition('s.template_id', $query->get('template'));
+            if (\is_array($value = $query->get('template'))) {
+                $select->condition('s.template_id', $value, 'IN');
+            } else {
+                $select->condition('s.template_id', $value);
+            }
         }
         if ($query->has('uid')) {
             $select->join('ucms_site_access', 'sa', "sa.site_id = s.id");

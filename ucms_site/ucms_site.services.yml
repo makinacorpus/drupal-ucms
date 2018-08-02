@@ -142,6 +142,7 @@ services:
         arguments: ["@ucms_site.manager", "@current_user"]
         tags: [{name: ucms.action_provider}]
 
+    # @todo convert this to a subscriber
     ucms_site.site_event_listener:
         public: true
         class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventListener
@@ -169,11 +170,11 @@ services:
         arguments: ["@ucms_site.manager", "@ucms_group.manager", "@sf_dic.node_access.subscriber"]
         tags: [{ name: event_subscriber }]
 
-    ucms_site.admin_subscriber:
-        public: true
-        class: MakinaCorpus\Ucms\Site\EventDispatcher\AdminEventSubscriber
-        arguments: ["@ucms_site.manager"]
-        tags: [{ name: event_subscriber }]
+#    ucms_site.admin_subscriber:
+#        public: true
+#        class: MakinaCorpus\Ucms\Site\EventDispatcher\AdminEventSubscriber
+#        arguments: ["@ucms_site.manager"]
+#        tags: [{ name: event_subscriber }]
 
     ucms_site.node_event_subscriber:
         public: true

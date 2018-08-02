@@ -1,0 +1,45 @@
+{% extends '@calista/page/page.html.twig' %}
+
+{% block sort_link %}
+    {% spaceless %}
+        {% set isActive = (field == query.sortField) %}
+        {% set mergeParams = {(input.sortFieldParameter): field, (input.sortOrderParameter): query.sortOrder} %}
+        <a href="{{ path(query.route, query.routeParameters|merge(mergeParams)) }}" {% if isActive %}class="active"{% endif %} data-page-link>
+            {{ label }}
+            {% if isActive %}
+                {% if 'desc' == query.sortOrder %}
+                    <span class="tablesort tablesort--asc"></span>
+                {% else %}
+                    <span class="tablesort tablesort--desc"></span>
+                {% endif %}
+            {% endif %}
+        </a>
+    {% endspaceless %}
+{% endblock %}
+
+{% block table_header %}
+    {% spaceless %}
+        {% set isActive = (field == query.sortField) %}
+        <th {% if isActive %}class="is-active"{% endif %} scope="col">
+            {{ block('sort_link') }}
+        </th>
+    {% endspaceless %}
+{% endblock %}
+
+{% block page_content %}
+    {% if input.isSearchEnabled %}
+        <div data-page-block="search_form">
+            {{ block('search_form') }}
+        </div>
+    {% endif %}
+    <div data-page-block="item_list">
+        {{ block('item_list') }}
+    </div>
+    {% if pagerEnabled %}
+        <div data-page-block="pager">
+            {% if query.limit < items.totalCount %}
+                {{ block('pager') }}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
