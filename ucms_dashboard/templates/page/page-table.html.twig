@@ -3,7 +3,16 @@
 {% block sort_link %}
     {% spaceless %}
         {% set isActive = (field == query.sortField) %}
-        {% set mergeParams = {(input.sortFieldParameter): field, (input.sortOrderParameter): query.sortOrder} %}
+        {% if isActive %}
+            {% if 'desc' == query.sortOrder %}
+                {% set linkOrder = 'asc' %}
+            {% else %}
+                {% set linkOrder = 'desc' %}
+            {% endif %}
+        {% else %}
+            {% set linkOrder = query.sortOrder %}
+        {% endif %}
+        {% set mergeParams = {(input.sortFieldParameter): field, (input.sortOrderParameter): linkOrder} %}
         <a href="{{ path(query.route, query.routeParameters|merge(mergeParams)) }}" {% if isActive %}class="active"{% endif %} data-page-link>
             {{ label }}
             {% if isActive %}

@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Datasource\DatasourceInputDefinition;
 use MakinaCorpus\Calista\Datasource\DatasourceInterface;
+use MakinaCorpus\Calista\Query\Query;
 use MakinaCorpus\Calista\Query\QueryFactory;
 use MakinaCorpus\Calista\Twig\View\TwigView;
 use MakinaCorpus\Calista\View\ViewDefinition;
@@ -100,6 +101,9 @@ class AdminController extends ControllerBase
                 'site_id' => $site->getId(),
             ],
             'search_enable' => true,
+            'search_parse' => false,
+            'sort_default_field' => 'u.name',
+            'sort_default_order' => Query::SORT_ASC,
         ]);
         $viewDefinition = new ViewDefinition([
             'templates' => [

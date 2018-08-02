@@ -13,9 +13,15 @@
 {% block item_list %}
     <table>
         <thead>
-            <th>{{ "Name."|t }}</th>
-            <th>{{ "Email"|t }}</th>
-            <th>{{ "Role"|t }}</th>
+            {% with {label: "Name"|t, field: 'u.name'} %}
+                {{ block('table_header') }}
+            {% endwith %}
+            {% with {label: "Email"|t, field: 'u.mail'} %}
+                {{ block('table_header') }}
+            {% endwith %}
+            {% with {label: "Role"|t, field: 'sa.role'} %}
+                {{ block('table_header') }}
+            {% endwith %}
             <th>{{ "Global status"|t }}</th>
             <th></th>
         </thead>

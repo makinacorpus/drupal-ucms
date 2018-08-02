@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Site\Datasource;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Calista\Datasource\AbstractDatasource;
 use MakinaCorpus\Calista\Datasource\DatasourceResultInterface;
@@ -16,15 +17,15 @@ class WebmasterDatasource extends AbstractDatasource
     use StringTranslationTrait;
 
     private $database;
-    private $manager;
+    private $siteManager;
 
     /**
      * Default constructor
      */
-    public function __construct(Connection $database, SiteManager $manager)
+    public function __construct(Connection $database, SiteManager $siteManager)
     {
         $this->database = $database;
-        $this->manager = $manager;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -38,27 +39,43 @@ class WebmasterDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
+    public function supportsPagination(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsFulltextSearch(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFilters(): array
     {
-        /*
-          if (empty($query['site_id'])) {
-              return [];
-          }
-          $site = $this->manager->getStorage()->findOne($query['site_id']);
+        $ret = [];
 
-          if ($site) {
-              $relativeRoles = $this->manager->getAccess()->collectRelativeRoles($site);
-          } else {
-              $relativeRoles = [];
-          }
-  
-          return [
-              new Filter('site'),
-              (new Filter('role'), $this->t("Role"))->setChoicesMap($relativeRoles),
-          ];
-         */
+        $ret[] = new Filter('site_id');
+        // @todo collect site for relative to site roles
+        $ret[] = (new Filter('role', $this->t("Role")))->setChoicesMap($this->siteManager->getAccess()->getDefaultSiteRoles());
 
-        return [new Filter('site_id')];
+        return $ret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSorts(): array
+    {
+        return [
+            'u.name'  => $this->t("Name"),
+            'u.mail'  => $this->t("Email"),
+            'sa.role' => $this->t("Role"),
+        ];
     }
 
     /**
@@ -70,17 +87,7 @@ class WebmasterDatasource extends AbstractDatasource
             return $this->createEmptyResult();
         }
 
-        $site = $this->manager->getStorage()->findOne($query->get('site_id'));
-
-        /*
-        if (!empty($query['role'])) {
-            $total = $this->manager->getAccess()->countUsersWithRole($site, $query['role']);
-            $accessRecords = $this->manager->getAccess()->listUsersWithRole($site, $query['role'], $pageState->getLimit(), $pageState->getOffset());
-        } else {
-            $total = $this->manager->getAccess()->countUsersWithRole($site);
-            $accessRecords = $this->manager->getAccess()->listUsersWithRole($site, null, $pageState->getLimit(), $pageState->getOffset());
-        }
-         */
+        $site = $this->siteManager->getStorage()->findOne($query->get('site_id'));
 
         $select = $this
             ->database
@@ -94,21 +101,37 @@ class WebmasterDatasource extends AbstractDatasource
         //  - should we add an added date in the access table?
         //  - return a cursor instead ? with a count() method for paging
 
-        if (false /* $role */) {
-            $select->condition('sa.role', null /* $role */);
+        if ($query->has('role')) {
+            if (\is_array($value = $query->get('role'))) {
+                $select->condition('sa.role', $value, 'IN');
+            } else {
+                $select->condition('sa.role', $value);
+            }
         }
 
         $select->join('users_field_data', 'u', "u.uid = sa.uid");
 
+        if ($search = $query->getRawSearchString()) {
+            $escaped = $this->database->escapeLike($search);
+            $select->condition(
+                (new Condition('OR'))
+                  ->condition('u.name', '%'.$escaped.'%', 'LIKE')
+                  ->condition('u.mail', '%'.$escaped.'%', 'LIKE')
+            );
+        }
         $total = $select->countQuery()->execute()->fetchField();
         if (!$total) {
             return $this->createEmptyResult();
         }
 
+        if ($query->hasSortField()) {
+            $select->orderBy($query->getSortField(), Query::SORT_DESC === $query->getSortOrder() ? 'desc' : 'asc');
+        }
+
         /** @var \PDOStatement $result */
         $result = $select
             ->range($query->getOffset(), $query->getLimit())
-            ->orderBy('sa.uid')
+            ->orderBy('sa.uid', $query->getSortOrder())
             ->execute()
         ;
 

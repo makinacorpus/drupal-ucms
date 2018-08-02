@@ -40,6 +40,22 @@ class SiteDatasource extends AbstractDatasource
     /**
      * {@inheritdoc}
      */
+    public function supportsPagination(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsFulltextSearch(): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFilters(): array
     {
         $states = SiteState::getList(SiteState::ARCHIVE);
@@ -73,22 +89,6 @@ class SiteDatasource extends AbstractDatasource
             's.ts_changed'  => $this->t("Lastest update date"),
             's.ts_created'  => $this->t("Creation date"),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsPagination(): bool
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsFulltextSearch(): bool
-    {
-        return true;
     }
 
     /**
