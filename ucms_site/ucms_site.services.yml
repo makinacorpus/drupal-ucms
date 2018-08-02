@@ -62,6 +62,7 @@ services:
             - "%ucms_site_master_hostname%"
             - "%ucms_site_master_is_https%"
             - "%ucms_site_allowed_themes%"
+            - "%ucms_site_allowed_types%"
             - "%ucms_site_cdn_hostname%"
 
     # Handles groups

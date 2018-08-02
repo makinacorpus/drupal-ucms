@@ -67,19 +67,3 @@ function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_cod
   }
 }
  */
-
-/**
- * Implements hook_page_build().
- *
-function ucms_dashboard_page_build(&$page) {
-  if (user_is_logged_in() || path_is_admin(current_path())) {
-    $page['page_top']['ucms_dashboard_top'] = [
-      '#theme' => 'ucms_dashboard_top',
-      '#links' => [
-        '#theme' => 'links__main_menu',
-        '#links' => $links,
-      ],
-    ];
-  }
-}
- */

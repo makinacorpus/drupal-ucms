@@ -24,12 +24,6 @@ function ucms_site_entity_base_field_info(EntityTypeInterface $entity_type) {
 function ucms_site_menu() {
   $items = [];
 
-  $items['welcome'] = [
-    'title'             => "Welcome",
-    'page callback'     => 'ucms_site_webmaster_home',
-    'access callback'   => 'ucms_site_menu_access_manage_current',
-    'type'              => MENU_CALLBACK,
-  ];
   $items['admin/dashboard/site/archive'] = [
     'title'             => "Archives",
     'page callback'     => 'ucms_site_dashboard_site_list_archive',
@@ -37,20 +31,6 @@ function ucms_site_menu() {
     'type'              => MENU_LOCAL_TASK,
     'weight'            => 100,
     'file'              => 'ucms_site.dashboard.inc',
-  ];
-
-  $items['admin/dashboard/site/%ucms_site'] = [
-    'title callback'    => 'ucms_site_menu_item_title',
-    'title arguments'   => [3],
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => [DashboardController::class . '::viewAction', 3],
-    'access callback'   => 'ucms_site_menu_access_overview',
-    'access arguments'  => [3],
-    'type'              => MENU_NORMAL_ITEM,
-  ];
-  $items['admin/dashboard/site/%ucms_site/view'] = [
-    'title'             => "Details",
-    'type'              => MENU_DEFAULT_LOCAL_TASK,
   ];
   if (module_exists('ucms_notification')) {
     $items['admin/dashboard/site/%ucms_site/log'] = [
@@ -63,15 +43,6 @@ function ucms_site_menu() {
       'file'              => 'ucms_site.dashboard.inc',
     ];
   }
-  $items['admin/dashboard/site/%ucms_site/edit'] = [
-    'title'             => "Site edit",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\SiteEdit', 3],
-    'access callback'   => 'ucms_site_menu_access_manage',
-    'access arguments'  => [3],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-    'file'              => 'ucms_site.dashboard.inc',
-  ];
   $items['admin/dashboard/site/%ucms_site/delete'] = [
     'title'             => "Site delete",
     'page callback'     => 'sf_dic_page_form',
@@ -79,15 +50,6 @@ function ucms_site_menu() {
     'access callback'   => 'ucms_site_menu_access_manage',
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['admin/dashboard/site/%ucms_site/change-hostname'] = [
-    'title'             => "Change site hostname",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => [SiteHostnameChange::class, 3],
-    'access callback'   => 'ucms_site_menu_access_manage',
-    'access arguments'  => [3],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-    'file'              => 'ucms_site.dashboard.inc',
   ];
   $items['admin/dashboard/site/%ucms_site/switch/%'] = [
     'title'             => "Switch site state",
@@ -170,18 +132,6 @@ function ucms_site_menu() {
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
 
-  $items['admin/structure/site'] = [
-    'title'             => "Site factory configuration",
-    'description'       => "Global site configuration, such as allowed themes for sites",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Admin\SiteManagementForm'],
-    'access arguments'  => ['administer site configuration'],
-    'type'              => MENU_NORMAL_ITEM,
-  ];
-  $items['admin/structure/site/global'] = [
-    'title'             => "Settings",
-    'type'              => MENU_DEFAULT_LOCAL_TASK,
-  ];
   $items['admin/structure/site/transitions'] = [
     'title'             => "Transitions",
     'page callback'     => 'sf_dic_page_form',
@@ -208,18 +158,6 @@ function ucms_site_drupal_goto_alter(&$path, &$options, &$http_response_code) {
       }
     }
   }
-}
- */
-
-/**
- * Implements hook_theme().
- *
-function ucms_site_theme() {
-  return [
-    'ucms_site_state_transition_form' => [
-      'render element' => 'form',
-    ],
-  ];
 }
  */
 
@@ -341,42 +279,6 @@ function ucms_site_menu_access_dereference_from(NodeInterface $node, $site = nul
     $site = $manager->getContext();
   }
   return ucms_site_node_access_helper()->userCanDereference($account, $node, $site);
-}
- */
-
-/**
- * Mostly copy-pasted code from drupal_fast_404(), use it wisely
- *
-function ucms_site_fast_404() {
-  drupal_add_http_header('Status', '404 Not Found');
-  $fast_404_html = variable_get('404_fast_html', '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>');
-  // Replace @path in the variable with the page path.
-  print strtr($fast_404_html, array('@path' => check_plain(request_uri())));
-  exit;
-}
- */
-
-/**
- * Implements hook_module_implements_alter().
- * /
-function ucms_site_module_implements_alter(&$implementations, $hook) {
-  switch ($hook) {
-
-    case 'menu_site_status_alter':
-      unset($implementations['user']);
-      break;
-
-    case 'url_outbound_alter':
-      // Always be the last, so that we can safely rewrite the URL
-      $group = $implementations['ucms_site'];
-      unset($implementations['ucms_site']);
-      $implementations['ucms_site'] = $group;
-      // And just set the SEO module after us, he will use our information
-      $group = $implementations['ucms_seo'];
-      unset($implementations['ucms_seo']);
-      $implementations['ucms_seo'] = $group;
-      break;
-  }
 }
  */
 
@@ -519,14 +421,6 @@ function ucms_site_init() {
         ucms_site_redirect_to_master();
       }
     } else {
-
-      // Normal runtime, there is a context, and path is not admin.
-      $site = $manager->getContext();
-
-      if ($site->title) {
-        $GLOBALS['conf']['site_name'] = $site->title;
-      }
-
       $manager->dispatchPostInit();
     }
   } else if (user_is_logged_in() && !ucms_site_is_master()) {
@@ -534,46 +428,6 @@ function ucms_site_init() {
   }
 
   ucms_site_init_node_redirect();
-}
- */
-
-/**
- * Implements hook_custom_theme().
- * /
-function ucms_site_custom_theme() {
-
-  if (path_is_admin(current_path())) {
-    // Because there is actually a few admin paths that are accessible from
-    // the sites themselves (node add, edit and menu tree) we can't override
-    // the theme when we are working in an admin path.
-    return;
-  }
-
-  // This should be called way after the hook_init() run, so we are sure the
-  // site has been rightly set, and if we are in admin site has been removed,
-  // so if we have a site structure, we are 100% sure we are not in an admin
-  // path.
-  $manager = ucms_site_manager();
-  $site = $manager->getContext();
-
-  if (!$site) {
-    return;
-  }
-
-  $manager->dispatchPostInit();
-
-  if (!$site->theme) {
-    return;
-  }
-
-  // Ensure the theme is enabled for security, Drupal won't do it for
-  // you, you might experience surprises. There is sadly no shortcut
-  // we have to iterate over the full list of themes.
-  foreach (list_themes() as $name => $data) {
-    if ($site->theme === $name && $data->status) {
-      return $site->theme;
-    }
-  }
 }
  */
 

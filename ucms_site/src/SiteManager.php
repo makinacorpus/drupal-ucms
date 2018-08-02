@@ -32,6 +32,7 @@ class SiteManager
 {
     private $access;
     private $allowedThemes = [];
+    private $allowedTypes = [];
     private $cdnIsSecure = false;
     private $cdnUrl;
     private $context;
@@ -56,17 +57,19 @@ class SiteManager
         $masterHostname = null,
         $masterIsHttps = false,
         $allowedThemes = [],
+        $allowedTypes = [],
         $cdnUrl = null
     ) {
-        $this->storage = $storage;
         $this->access = $access;
+        $this->allowedThemes = $allowedThemes;
+        $this->allowedTypes = $allowedTypes;
+        $this->cdnUrl = $cdnUrl;
         $this->db = $db;
         $this->dispatcher = $dispatcher;
-        $this->themeHandler = $themeHandler;
         $this->masterHostname = (string)$masterHostname;
         $this->masterIsHttps = (bool)$masterIsHttps;
-        $this->allowedThemes = $allowedThemes;
-        $this->cdnUrl = $cdnUrl;
+        $this->storage = $storage;
+        $this->themeHandler = $themeHandler;
     }
 
     /**
@@ -254,32 +257,18 @@ class SiteManager
 
     /**
      * Get allowed site types
-     *
-     * @return string[]
      */
-    public function getAllowedTypes()
+    public function getAllowedTypes(): array
     {
-        return variable_get('ucms_site_allowed_types', [
-            'default' => t("Default"), // @todo
-        ]);
+        return $this->allowedTypes ? $this->allowedTypes : ['site' => new TranslatableMarkup("Site")];
     }
 
     /**
      * Get type human readable name
-     *
-     * @param string $type
-     *
-     * @return string
      */
-    public function getTypeName($type)
+    public function getTypeName(string $type): string
     {
-        $allowedTypes = $this->getAllowedTypes();
-
-        if ($type && isset($allowedTypes[$type])) {
-            return $allowedTypes[$type];
-        }
-
-        return t("None"); // @todo
+        return $this->getAllowedTypes()[$type] ?? new TranslatableMarkup("None");
     }
 
     /**

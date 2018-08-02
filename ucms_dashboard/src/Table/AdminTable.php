@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Table;
 
+use Drupal\Core\Render\Markup;
 use MakinaCorpus\Ucms\Dashboard\EventDispatcher\AdminTableEvent;
 use MakinaCorpus\Ucms\Site\Structure\AttributesTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -104,10 +105,15 @@ class AdminTable
             $title = $section->getTitle();
 
             if ($title) {
-                $rows[] = [['data' => '<strong>' . $title . '</strong>', 'colspan' => 2]];
+                $rows[] = [['data' => Markup::create('<strong>' . $title . '</strong>'), 'colspan' => 2]];
             }
             foreach ($section->getAllRows() as $row) {
-                $rows[] = $row;
+                $rows[] = \array_map(function ($value) {
+                    if (\is_string($value)) {
+                        return Markup::create($value);
+                    }
+                    return $value;
+                }, $row);
             }
         }
 

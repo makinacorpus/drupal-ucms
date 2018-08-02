@@ -9,12 +9,15 @@
             {% with {label: "Name"|t, field: 's.title'} %}
                 {{ block('table_header') }}
             {% endwith %}
+            {% with {label: "Type"|t, field: 's.type'} %}
+                {{ block('table_header') }}
+            {% endwith %}
             {% with {label: "Hostname"|t, field: 's.http_host'} %}
                 {{ block('table_header') }}
             {% endwith %}
-            <th></th>
-            <th></th>
-            <th></th>
+            {% with {label: "State"|t, field: 's.state'} %}
+                {{ block('table_header') }}
+            {% endwith %}
             <th></th>
         </thead>
         <tbody>
@@ -28,11 +31,13 @@
 {%- block item -%}
     <tr>
         <td>{{ item.id }}</td>
-        <td>{{ item.adminTitle }}</td>
+        <td>
+          {{ item.adminTitle }}<br/>
+          <small>{{ item.title }}</small>
+        </td>
+        <td>{{ ucms_site_type(item.type) }}</td>
         <td>{{ item.hostname }}</td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td>{{ ucms_site_state(item.state) }}</td>
         <td>{{ ucms_actions(item) }}</td>
     </tr>
 {%- endblock -%}

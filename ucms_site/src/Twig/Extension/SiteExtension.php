@@ -41,6 +41,7 @@ class SiteExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('ucms_site_role', [$this, 'renderRole'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('ucms_site_state', [$this, 'renderState'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('ucms_site_type', [$this, 'renderType'], ['is_safe' => ['html']]),
             new \Twig_SimpleFunction('ucms_site_url', [$this, 'renderSiteUrl']),
         ];
     }
@@ -50,13 +51,15 @@ class SiteExtension extends \Twig_Extension
      */
     public function renderState($state): string
     {
-        $list = SiteState::getList();
+        return SiteState::getList()[$state] ?? $this->t("Unknown");
+    }
 
-        if (isset($list[$state])) {
-            return $this->t($list[$state]);
-        }
-
-        return $this->t("Unknown");
+    /**
+     * Render site type
+     */
+    public function renderType($type): string
+    {
+        return $this->siteManager->getTypeName($type ?? '');
     }
 
     /**

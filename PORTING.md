@@ -2,38 +2,51 @@
 
 ## Minimal viable product
 
- - PENDING - ucms_site
- - PENDING - ucms_dashboard
- - ucms_contrib
- - Restore SQL constraints
+ - [x] FIXED - dashboard: bug in calista search (search parameter override itself)
+ - [x] PORTED - ucms_dashboard
+ - [x] PORTED - umenu
+ - [x] site: finish site listing screen
+ - all: handle caching gracefully
+ - all: restore SQL constraints
+ - dashboard: icons in admin (provide theme and skin)
+ - dashboard: improve page controller trait
+ - dashboard: improve seven fixes
+ - dashboard: untangle display skin
  - PENDING - Modern front assets toolchain
- - Handle caching gracefully
+ - PENDING - ucms_site
+ - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
+ - site: restore menu site status alteration
+ - site: restore state transition matrix
+ - ucms_contrib
+ - ucms_tree
 
 ## Necessary
 
- - umenu
- - ucms_tree
- - Plug ucms_site on umenu using MenuEnvEvent to set site_id condition
- - ucms_user
+ - all: rewrite all tests
+ - dashboard: style filter display in calista pages
+ - site: handle redirects between sites and master
+ - site: node published state per site
+ - site: restore node reference/dereference actions with a better UI
+ - site: restore SSO
+ - site: userCanX() methods must die
  - ucms_seo
- - Rewrite all tests
- - userCanX() methods must die
- - Node published state per site
+ - ucms_user
 
 ## Additional
 
+ - all: Rework UI
  - ONLY UI - ucms_group
+ - site: restore favicon
+ - ucms_search
  - ucms_taxo
  - ucms_widget
- - ucms_search
- - Rework UI
 
 ## To be done differently
 
  - [x] DELETED - ucms_debug
- - ucms_list
- - ucms_extranet
- - ONLY UI - ucms_harm -> ucms_corporate
  - [x] DELETED - ucms_label
+ - ONLY UI - ucms_harm -> ucms_corporate
+ - ucms_extranet
  - ucms_layout
+ - ucms_list
  - ucms_notification
