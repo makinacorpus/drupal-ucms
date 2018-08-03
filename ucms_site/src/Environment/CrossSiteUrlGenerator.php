@@ -19,6 +19,7 @@ use Symfony\Component\Routing\RequestContext;
 class CrossSiteUrlGenerator implements UrlGeneratorInterface
 {
     const ALLOWED_SITE_ADMIN_ROUTES = [
+        // Node screens, all node screens.
         'node.multiple_delete_confirm' => true,
         'entity.node.delete_multiple_form' => true,
         'entity.node.delete_form' => true,
@@ -32,6 +33,43 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
         'node.revision_revert_confirm' => true,
         'node.revision_revert_translation_confirm' => true,
         'node.revision_delete_confirm' => true,
+
+        //
+        // Arbitrary ones below.
+        //
+        // @todo use paths, instead of this.
+        //
+        //   To be noted that Drupal with its menu alteration allows views and
+        //   modules to override paths, but the route system allows paths to
+        //   be dynamic and be changed, ideally, that's the whole point of it.
+        //   So, in the end, which is the canonical one ? The route name or the
+        //   Drupal path ?
+        //
+        //   There is nothing canonical, in the end.
+        //
+        //   I guess that in Drupal developers own head, the canonical one is
+        //   probably still the path, which in the end, in my opinion, defies
+        //   the whole point of using routes everywhere.
+        //
+        //   For exemple, if I set a redirect on a form to the content admin
+        //   list, which is the route, should I guess it is a view ? A module
+        //   page using some hook alter ? Or is it the core default when views
+        //   module is not enabled ?
+        //
+        //   Bah. Stupid. I hate Drupal - so many inconsistencies.
+        //
+        // Anyway, we need the paths for this check, we cannot use routes.
+        //
+
+        'view.content.page_1' => true, // /admin/content
+       'system.admin_content' => true, // /admin/content (Yes, there are two of it!)
+       'view.files.page_1' => true, // /admin/content/files
+       'view.files.page_2' => true, // /admin/content/files/usage/{arg_0}
+       'entity.media.collection' => true, // /admin/content/media
+       'view.media.media_page_list' => true, // /admin/content/media (Two, once again)
+       'entity.media.multiple_delete_confirm' => true, // /admin/content/media/delete
+       'entity.node.delete_multiple_form' => true, // /admin/content/node/delete
+       'node.multiple_delete_confirm' => true, // /admin/content/node/delete
     ];
 
     private $nested;
