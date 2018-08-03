@@ -103,11 +103,18 @@ services:
         class: MakinaCorpus\Ucms\Site\Environment\CrossSiteUrlGenerator
         arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@ucms_site.url_generator.inner", "@router.route_provider"]
 
-    # Handles theme negaciation
+    # Handles theme negociation
     ucms_site.theme.negotiator:
         class: MakinaCorpus\Ucms\Site\Environment\SiteThemeNegociator
         arguments: ["@service_container", "@config.factory"]
         tags: [{name: theme_negotiator, priority: 2048}]
+
+    # Handles disabled state of sites (dynamic maintenance mode)
+    ucms_site.maintenance_mode:
+        public: false
+        decorates: maintenance_mode
+        class: MakinaCorpus\Ucms\Site\Environment\SiteMaintenanceMode
+        arguments: ["@ucms_site.manager", "@ucms_site.maintenance_mode.inner"]
 
     ucms_site.datasource:
         public: true

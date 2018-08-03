@@ -262,57 +262,6 @@ function ucms_site_menu_access_dereference_from(NodeInterface $node, $site = nul
  */
 
 /**
- * Implements hook_menu_site_status_alter().
- * /
-function ucms_site_menu_site_status_alter(&$menu_site_status, $path) {
-
-  if (drupal_is_cli()) {
-    return; // Make drush happy.
-  }
-  if (!ucms_site_manager()->hasContext()) {
-    return; // Do not alter proper behavior on master.
-  }
-
-  // Allow SSO login when site is down.
-  if ('sso/login' === current_path()) {
-    $menu_site_status = MENU_SITE_ONLINE;
-    return;
-  }
-
-  // Do not alter an already offline site.
-  if (MENU_SITE_OFFLINE === $menu_site_status) {
-    return;
-  }
-
-  $site = ucms_site_manager()->getContext();
-
-  if (!$site) {
-    return; // No site in context, nothing to check for.
-  }
-
-  if (SiteState::ON != $site->state && !ucms_site_manager()->getAccess()->userCanView(\Drupal::currentUser(), $site)) {
-    $menu_site_status = MENU_SITE_OFFLINE;
-    // State off means that the site is valid and up, but in maintainance mode,
-    // case in which we should just set the maintainance mode and leave,
-    // otherwise would mean that the site is neither ON nor OFF and does not
-    // exist for the outside, so redirect to something that exists (the main
-    // site). If we have nothing to redirect to, at least this code will
-    // fallback on site being offline.
-    if (SiteState::OFF != $site->state) {
-      ucms_site_redirect_to_default();
-    }
-  }
-
-  // Trigger an event allowing status alteration, only if the site is currently online.
-  if (MENU_SITE_ONLINE === $menu_site_status) {
-    $event = new SiteStatusEvent($site, $menu_site_status, $path);
-    \Drupal::service('event_dispatcher')->dispatch(SiteStatusEvent::EVENT_NAME, $event);
-    $menu_site_status = $event->getStatus();
-  }
-}
- */
-
-/**
  * Implements hook_file_url_alter().
  */
 function ucms_site_file_url_alter(&$uri) {
@@ -399,8 +348,6 @@ function ucms_site_init() {
         // Logged-in users should not 403 on sites, but go to dashboard instead.
         ucms_site_redirect_to_master();
       }
-    } else {
-      $manager->dispatchPostInit();
     }
   } else if (user_is_logged_in() && !ucms_site_is_master()) {
     ucms_site_redirect_to_master(); // Site does not exists.
@@ -649,16 +596,6 @@ function theme_ucms_site_state_transition_form($variables) {
   }
 
   return theme('table', ['header' => $header, 'rows' => $rows]) . drupal_render_children($form);
-}
- */
-
-/**
- * Preprocess dashboard top bar.
- *
- * @param $vars
- *
-function ucms_site_preprocess_ucms_dashboard_top(&$vars) {
-  $vars['site'] = ucms_site_manager()->getContext();
 }
  */
 

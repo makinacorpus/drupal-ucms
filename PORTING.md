@@ -2,12 +2,14 @@
 
 ## Minimal viable product
 
+ - [x] DELETED - site: restore post init event
  - [x] FIXED - dashboard: bug in calista search (search parameter override itself)
+ - [x] FIXED - site: finish site listing screen
+ - [x] FIXED - site: get rid once for all of Drupal role to site role relationship
+ - [x] FIXED - site: restore menu site status alteration
+ - [x] PORTED - site: restore node access query alter
  - [x] PORTED - ucms_dashboard
  - [x] PORTED - umenu
- - [x] site: finish site listing screen
- - [x] site: get rid once for all of Drupal role to site role relationship
- - [x] site: restore node access query alter
  - all: fixe destination parameter usage
  - all: handle caching gracefully
  - all: restore SQL constraints
@@ -19,8 +21,6 @@
  - PENDING - ucms_site
  - site: fix cross url route generator to use path matching
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
- - site: restore menu site status alteration
- - site: restore post init event
  - site: restore site access query alter
  - site: restore state transition matrix
  - ucms_contrib

@@ -41,7 +41,6 @@ class SiteManager
     private $isMaster = false;
     private $masterIsHttps = false;
     private $masterHostname;
-    private $postInitRun = false;
     private $storage;
     private $themeHandler;
 
@@ -138,30 +137,7 @@ class SiteManager
 
         // Dispatch the context init event
         if ($doDispatch) {
-
             $this->dispatcher->dispatch(SiteEvents::EVENT_INIT, new SiteInitEvent($this->context, $request));
-
-            if ($disablePostDispatch) {
-                // We are in hook_boot(), set post-init to run later during
-                // hook_init() ensuring that Drupal is fully bootstrapped,
-                // it fixes lots of bugs such has the layout manager may use
-                // the Drupal menu to find the current node context
-                $this->postInitRun = false;
-            } else {
-                $this->dispatchPostInit();
-            }
-        }
-    }
-
-    /**
-     * This is public because it must be run manually from Drupal code, but
-     * please never, ever, run this manually or I'll do kill you. Slowly.
-     */
-    public function dispatchPostInit()
-    {
-        if (!$this->postInitRun && $this->context) {
-            $this->postInitRun = true;
-            $this->dispatcher->dispatch(SiteEvents::EVENT_POST_INIT, new SiteEvent($this->context));
         }
     }
 
