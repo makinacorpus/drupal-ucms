@@ -8,6 +8,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MakinaCorpus\Ucms\Site\Access;
 
 
 class SiteStatusEventSubscriber implements EventSubscriberInterface
@@ -59,7 +60,7 @@ class SiteStatusEventSubscriber implements EventSubscriberInterface
         if (
             !drupal_match_path($event->getPath(), $valid_paths) &&
             !$user->hasPermission(ExtranetAccess::PERM_EXTRANET_ACCESS_ALL) &&
-            !$this->manager->getAccess()->userHasRole($user, $event->getSite())
+            $this->manager->getAccess()->getUserRole($user, $event->getSite()) !== Access::ROLE_NONE
         ) {
             $event->setStatus(MENU_ACCESS_DENIED);
         }

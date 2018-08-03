@@ -60,12 +60,10 @@ class SiteActionProvider extends AbstractActionProvider
         }
 
         // Append all possible state switch operations
-        /*
         $i = 10;
         foreach ($access->getAllowedTransitions($account, $item) as $state => $name) {
-            $ret[] = new Action($this->t("Switch to @state", ['@state' => $this->t($name)]), 'ucms_site.admin.site.view', ['site' => $item->id, 'dialog' => true], 'refresh', ++$i, false, true, false, 'switch');
+            $ret[] = new Action($this->t("Switch to @state", ['@state' => $this->t($name)]), 'ucms_site.admin.site.switch', ['site' => $siteId, 'state' => $state], 'refresh', ++$i, false, true, false, 'switch');
         }
-         */
 
         // @todo Consider delete as a state
 

@@ -126,6 +126,14 @@ class AdminController extends ControllerBase
     /**
      * Routing title callback
      */
+    public function siteSwitchTitle(Site $site): string
+    {
+        return $this->t("Switch @site state", ['@site' => $site->getAdminTitle()]);
+    }
+
+    /**
+     * Routing title callback
+     */
     public function siteWebmasterListTitle(Site $site): string
     {
         return $this->t("@site webmasters", ['@site' => $site->getAdminTitle()]);

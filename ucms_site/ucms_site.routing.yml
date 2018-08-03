@@ -29,7 +29,7 @@ ucms_site.admin.site.view:
         _controller: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteView
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteViewTitle
     requirements:
-        id: \d+
+        site: \d+
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}}}
@@ -40,7 +40,19 @@ ucms_site.admin.site.change_hostname:
         _form: \MakinaCorpus\Ucms\Site\Form\SiteHostnameChange
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteEditTitle
     requirements:
-        id: \d+
+        site: \d+
+        # @todo implement an access checker
+        _permission: NOPE PLEASE FIXME
+    options: {parameters: {site: {type: ucms_site}}}
+
+ucms_site.admin.site.switch:
+    path: /admin/structure/site/{site}/switch-state/{state}
+    defaults:
+        _form: \MakinaCorpus\Ucms\Site\Form\SiteSwitch
+        _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteSwitchTitle
+    requirements:
+        site: \d+
+        state: \d+
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}}}
@@ -51,7 +63,7 @@ ucms_site.admin.site.edit:
         _form: \MakinaCorpus\Ucms\Site\Form\SiteEdit
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteEditTitle
     requirements:
-        id: \d+
+        site: \d+
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}}}
@@ -62,7 +74,7 @@ ucms_site.admin.site.webmaster:
         _controller: \MakinaCorpus\Ucms\Site\Controller\AdminController::webmasterList
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterListTitle
     requirements:
-        id: \d+
+        site: \d+
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}}}
@@ -73,7 +85,7 @@ ucms_site.admin.site.webmaster_add:
         _form: \MakinaCorpus\Ucms\Site\Form\WebmasterAddExisting
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterAddTitle
     requirements:
-        id: \d+
+        site: \d+
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}}}
@@ -84,7 +96,8 @@ ucms_site.admin.site.webmaster_change:
         _form: \MakinaCorpus\Ucms\Site\Form\WebmasterChangeRole
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterChangeTitle
     requirements:
-        id: \d+
+        site: \d+
+        user: \d+
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}, user: {type: "entity:user"}}}
@@ -95,7 +108,8 @@ ucms_site.admin.site.webmaster_delete:
         _form: \MakinaCorpus\Ucms\Site\Form\WebmasterDelete
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterDeleteTitle
     requirements:
-        id: \d+
+        site: \d+
+        user: \d+
         # @todo implement an access checker
         _permission: NOPE PLEASE FIXME
     options: {parameters: {site: {type: ucms_site}, user: {type: "entity:user"}}}

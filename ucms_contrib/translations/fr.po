@@ -168,7 +168,6 @@ msgstr "Composant verrouillé"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:86
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:83
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:103
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteStateTransitionForm.php:90
 msgid "Save configuration"
 msgstr "Enregistrer la configuration"
 
@@ -184,7 +183,6 @@ msgstr "Les contenus éditoriaux ne peuvent pas être des composants."
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Admin/NodeTabsForm.php:123
 #: sites/all/modules/composer/drupal-ucms/ucms_layout/src/Admin/ThemeRegionsForm.php:97
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:129
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteStateTransitionForm.php:103
 msgid "The configuration options have been saved."
 msgstr "Les options de configuration ont été enregistrées"
 
@@ -2124,10 +2122,6 @@ msgstr "Thèmes autorisés"
 msgid ""
 "Themes available in the site request form to be choosen by the requester"
 msgstr "Les thèmes disponibles au choix dans le formulaire de création de site"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteStateTransitionForm.php:70
-msgid "Allow @name to switch site state from @from to @to"
-msgstr "Autoriser @name à permuter l'état des sites de @from à @to"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Controller/DashboardController.php:44
 msgid "Template does not exist anymore"

@@ -5,11 +5,11 @@ namespace MakinaCorpus\Ucms\Site;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MakinaCorpus\Ucms\Site\EventDispatcher\RolesCollectionEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteAccessEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Handles site access
@@ -124,7 +124,8 @@ class SiteAccessService
      * @param AccountInterface $account
      * @param Site $site
      *
-     * @return SiteAccessRecord
+     * @return int|SiteAccessRecord
+     *   An access instance, or Access::ROLE_NONE if none
      */
     public function getUserRole(AccountInterface $account, Site $site)
     {
@@ -143,39 +144,37 @@ class SiteAccessService
      *   - second dimension is to state
      *   - third dimension is a list of roles identifiers
      *
-     * @see \MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
-     *
      * @return int[int[int[]]]
      */
     public function getStateTransitionMatrix()
     {
         //return variable_get('ucms_site_state_transition_matrix', []);
         // FIXME: SERIOUS FIXME
-        return [];
-    }
-
-    /**
-     * Update state transition matrix
-     *
-     * @param int[int[int[]]] $matrix
-     *   The full matrix as described in the ::getStateTransitionMatrix()
-     *   method
-     */
-    public function updateStateTransitionMatrix(array $matrix)
-    {
-        // Do some cleanup, we don't need to store too many things
-        foreach ($matrix as $from => $toList) {
-            foreach ($toList as $to => $roleList) {
-                $current = array_filter($roleList);
-                if ($from == $to || empty($current)) {
-                    unset($matrix[$from][$to]);
-                } else {
-                    // Store the role list as key-value for easier usage
-                    $matrix[$from][$to] = array_combine($current, $current);
-                }
-            }
-        }
-        variable_set('ucms_site_state_transition_matrix', $matrix);
+        return [
+            SiteState::REQUESTED => [
+                SiteState::REJECTED => [1 => 1],
+                SiteState::PENDING => [1 => 1],
+            ],
+            SiteState::REJECTED => [
+                SiteState::REQUESTED => [1 => 1],
+            ],
+            SiteState::PENDING => [
+                SiteState::INIT => [1 => 1],
+            ],
+            SiteState::INIT => [
+                SiteState::OFF => [1 => 1],
+            ],
+            SiteState::OFF => [
+                SiteState::ON => [1 => 1],
+                SiteState::ARCHIVE => [1 => 1],
+            ],
+            SiteState::ON => [
+                SiteState::OFF => [1 => 1],
+            ],
+            SiteState::ARCHIVE => [
+                SiteState::OFF => [1 => 1],
+            ],
+        ];
     }
 
     /**
@@ -210,71 +209,29 @@ class SiteAccessService
     }
 
     /**
-     * Is the given user a webmaster.
-     * If a site is given, is the given user webmaster of this site.
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return boolean
+     * Is the given user a webmaster of the given site.
      */
-    public function userIsWebmaster(AccountInterface $account, Site $site = null)
+    public function userIsWebmaster(AccountInterface $account, Site $site): bool
     {
         return $this->userHasRole($account, $site, Access::ROLE_WEBMASTER);
     }
 
     /**
-     * Is the given user a contributor.
-     * If a site is given, the given user contributor of this site.
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return boolean
+     * Is the given user a contributor of the given site.
      */
-    public function userIsContributor(AccountInterface $account, Site $site = null)
+    public function userIsContributor(AccountInterface $account, Site $site): bool
     {
         return $this->userHasRole($account, $site, Access::ROLE_CONTRIB);
     }
 
     /**
      * Has the user the given role for the given site.
-     *
-     * If no site is provided, informs if the user has the given relative role
-     * for any site.
-     * If no role is provided, informs if the user has any relative role.
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     * @param integer $rrid Relative role identifier
-     *
-     * @return boolean
      */
-    public function userHasRole(AccountInterface $account, Site $site = null, $rrid = null)
+    public function userHasRole(AccountInterface $account, Site $site, int $role): bool
     {
-        if (null === $site && null === $rrid) {
-          return (boolean) count($this->getUserRoleCacheValue($account));
-        }
+        $grant = $this->getUserRoleCacheValue($account, $site);
 
-        if (null === $site) {
-            foreach ($this->getUserRoleCacheValue($account) as $grant) {
-                if ((integer) $rrid === $grant->getRole()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if (null === $rrid) {
-            $grant = $this->getUserRoleCacheValue($account, $site);
-            return ($grant instanceof SiteAccessRecord) && ($grant->getRole() !== Access::ROLE_NONE);
-        }
-
-        if ($grant = $this->getUserRoleCacheValue($account, $site)) {
-            return (integer) $rrid === $grant->getRole();
-        }
-
-        return false;
+        return Access::ROLE_NONE !== $grant && $role === $grant->getRole();
     }
 
     /**
@@ -442,17 +399,17 @@ class SiteAccessService
     public function getAllowedTransitions(AccountInterface $account, Site $site)
     {
         $ret = [];
-        $states = SiteState::getList();
         $matrix = $this->getStateTransitionMatrix();
         // @todo Drupal roles here, maybe ?
         //   we have two problems:
         //     - admin can switch (drupal permissions)
         //     - site webmaster can go from on to off and vice versa
-        $roles  = $this->getDefaultSiteRoles($account, $site);
 
-        foreach ($states as $state => $name) {
-            foreach ($roles as $rid) {
-                if (isset($matrix[$site->state][$state][$rid])) {
+        if (Access::ROLE_NONE !== ($role = $this->getUserRole($account, $site))) {
+            $siteState = $site->getState();
+
+            foreach (SiteState::getList() as $state => $name) {
+                if (isset($matrix[$siteState][$state][$role->getRole()])) {
                     $ret[$state] = $name;
                 }
             }

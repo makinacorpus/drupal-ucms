@@ -51,14 +51,6 @@ function ucms_site_menu() {
     'access arguments'  => [3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
-  $items['admin/dashboard/site/%ucms_site/switch/%'] = [
-    'title'             => "Switch site state",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\SiteSwitch', 3, 5],
-    'access callback'   => 'ucms_site_menu_access_switch',
-    'access arguments'  => [3, 5],
-    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
   $items['admin/dashboard/site/%ucms_site/webmaster/add-new'] = [
     'title'             => "Create a new webmaster or contributor",
     'page callback'     => 'sf_dic_page_form',
@@ -66,14 +58,6 @@ function ucms_site_menu() {
     'access callback'   => 'ucms_site_menu_access_webmasters',
     'access arguments'  => ['add-new', 3],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-  $items['admin/dashboard/site/%ucms_site/webmaster/%user/change-role'] = [
-    'title'             => "Change user's role",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Form\WebmasterChangeRole', 3, 5],
-    'access callback'   => 'ucms_site_menu_access_webmasters',
-    'access arguments'  => ['change-role', 3, 5],
-    'type'              => MENU_CALLBACK,
   ];
   $items['admin/dashboard/site/%ucms_site/webmaster/%user/promote'] = [
     'title'             => "Promote as webmaster",
@@ -130,14 +114,6 @@ function ucms_site_menu() {
     'access callback'   => 'node_access',
     'access arguments'  => ['view', 1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
-  ];
-
-  $items['admin/structure/site/transitions'] = [
-    'title'             => "Transitions",
-    'page callback'     => 'sf_dic_page_form',
-    'page arguments'    => ['MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm'],
-    'access arguments'  => ['administer site configuration'],
-    'type'              => MENU_LOCAL_TASK,
   ];
 
   return $items;
