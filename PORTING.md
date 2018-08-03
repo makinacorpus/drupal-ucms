@@ -9,6 +9,7 @@
  - [x] FIXED - site: restore menu site status alteration
  - [x] PORTED - site: restore node access query alter
  - [x] PORTED - ucms_dashboard
+ - [x] PORTED - ucms_site
  - [x] PORTED - umenu
  - all: fixe destination parameter usage
  - all: handle caching gracefully
@@ -18,7 +19,6 @@
  - dashboard: improve seven fixes
  - dashboard: untangle display skin
  - PENDING - Modern front assets toolchain
- - PENDING - ucms_site
  - site: fix cross url route generator to use path matching
  - site: fix missing site frontpage (home node)
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
@@ -42,7 +42,7 @@
 
  - all: Rework UI
  - ONLY UI - ucms_group
- - site: restore favicon
+ - site: restore favicon feature
  - ucms_search
  - ucms_taxo
  - ucms_user

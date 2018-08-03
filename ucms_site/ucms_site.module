@@ -160,17 +160,6 @@ function ucms_site_node_access_helper() {
 
 /**
  * Menu helper.
- */
-function ucms_site_load($id) {
-  try {
-    return ucms_site_manager()->getStorage()->findOne($id);
-  } catch (\InvalidArgumentException $e) {
-    return false;
-  }
-}
-
-/**
- * Menu helper.
  *
 function ucms_site_menu_access_view_all($account = null) {
   if (!$account) {
@@ -265,7 +254,7 @@ function ucms_site_menu_access_dereference_from(NodeInterface $node, $site = nul
  * Implements hook_file_url_alter().
  */
 function ucms_site_file_url_alter(&$uri) {
-  $scheme = file_uri_scheme($uri);
+  $scheme = \Drupal::service('file_system')->uriScheme($uri);
 
   // When there is no scheme, this means we are dealing with core or module
   // packaged files, such as static JS or CSS files.
