@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class NodeManager
 {
-    private $db;
+    private $database;
     private $manager;
     private $entityManager;
     private $nodeAccessService;
@@ -28,13 +28,13 @@ class NodeManager
      * Default constructor
      */
     public function __construct(
-        Connection $db,
+        Connection $database,
         SiteManager $manager,
         EntityManager $entityManager,
         NodeAccessService $nodeAccessService,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->db = $db;
+        $this->database = $database;
         $this->manager = $manager;
         $this->entityManager = $entityManager;
         $this->nodeAccessService = $nodeAccessService;
@@ -63,17 +63,23 @@ class NodeManager
         $siteId = $site->getId();
 
         $this
-            ->db
+            ->database
             ->merge('ucms_site_node')
             ->key(['nid' => $nodeId, 'site_id' => $siteId])
             ->execute()
         ;
 
-        $nodeSites = $node->get('ucms_sites')->value;
+        $siteIdList = [];
+        $items = $node->get('ucms_sites');
+        if (!$items->isEmpty()) {
+            foreach (array_unique(array_column($items->getValue(), 'value')) as $siteId) {
+                $siteIdList[] = $siteId;
+            }
+        }
 
-        if (!in_array($siteId, $nodeSites)) {
-            $nodeSites[] = $siteId;
-            $node->set('ucms_sites', $nodeSites);
+        if (!\in_array($siteId, $siteIdList)) {
+            $siteIdList[] = $siteId;
+            $node->set('ucms_sites', $siteIdList);
         }
 
         $this->eventDispatcher->dispatch(NodeAccessChangeEvent::EVENT_NAME, new NodeAccessChangeEvent([$nodeId]));
@@ -91,7 +97,7 @@ class NodeManager
         // @todo Optimize me
         foreach ($siteIdList as $siteId) {
             $this
-                ->db
+                ->database
                 ->merge('ucms_site_node')
                 ->key(['nid' => $nodeId, 'site_id' => $siteId])
                 ->execute()
@@ -136,7 +142,7 @@ class NodeManager
 
         // Ensures that nodes exists in the node table
         $nodeIdList = $this
-            ->db
+            ->database
             ->select('node_field_data', 'n')
             ->fields('n', ['nid'])
             ->condition('nid', $nodeIdList, 'IN')
@@ -150,7 +156,7 @@ class NodeManager
 
         // Do NOT reinsert already referenced nodes
         $existing = $this
-            ->db
+            ->database
             ->select('ucms_site_node', 'usn')
             ->fields('usn', ['nid'])
             ->condition('usn.site_id', $siteId)
@@ -161,7 +167,7 @@ class NodeManager
 
         if ($missing = array_diff($nodeIdList, $existing)) {
 
-            $insert = $this->db->insert('ucms_site_node')->fields(['site_id', 'nid']);
+            $insert = $this->database->insert('ucms_site_node')->fields(['site_id', 'nid']);
             foreach ($missing as $nodeId) {
                 $insert->values([$siteId, $nodeId]);
             }
@@ -267,7 +273,7 @@ class NodeManager
         }
 
         $this
-            ->db
+            ->database
             ->delete('ucms_site_node')
             ->condition('nid', $nodeIdList)
             ->condition('site_id', $siteId)
@@ -291,7 +297,7 @@ class NodeManager
     public function findSiteCandidatesForReference(NodeInterface $node, $userId)
     {
         $ne = $this
-            ->db
+            ->database
             ->select('ucms_site_node', 'sn')
             ->where("sn.site_id = sa.site_id")
             ->condition('sn.nid', $node->id())
@@ -299,7 +305,7 @@ class NodeManager
         $ne->addExpression('1');
 
         $idList = $this
-            ->db
+            ->database
             ->select('ucms_site_access', 'sa')
             ->fields('sa', ['site_id'])
             ->condition('sa.uid', $userId)
@@ -347,7 +353,7 @@ class NodeManager
           */
 
         $sq = $this
-            ->db
+            ->database
             ->select('node_field_data', 'en')
             ->where('en.site_id = sa.site_id')
             ->where('en.parent_nid = :nid1 OR nid = :nid2', [':nid1' => $node->id(), ':nid2' => $node->id()])
@@ -356,7 +362,7 @@ class NodeManager
         $sq->addExpression('1');
 
         $q = $this
-            ->db
+            ->database
             ->select('ucms_site_access', 'sa')
             ->fields('sa', ['site_id'])
             ->condition('sa.uid', $userId)
@@ -397,7 +403,7 @@ class NodeManager
             return $this->cloningMapping[$site->getId()];
         }
 
-        $q = $this->db
+        $q = $this->database
             ->select('node_field_data', 'n')
             ->fields('n', ['parent_nid', 'nid'])
             ->isNotNull('parent_nid')

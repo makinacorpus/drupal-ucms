@@ -42,7 +42,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
             ],
             NodeEvent::EVENT_INSERT => [
                 ['onInsert', 0],
-                ['onPostInsert', -32],
+                // ['onPostInsert', -32],
             ],
             NodeEvent::EVENT_SAVE => [
                 ['onSave', 0]
@@ -222,8 +222,19 @@ class NodeEventSubscriber implements EventSubscriberInterface
     public function onInsert(NodeEvent $event)
     {
         $node = $event->getNode();
+
+        // Node is being programatically created, then it might hold a site
+        // identifier set programmatically by the code that created it.
         $nodeSiteId = $node->get('site_id')->value;
         $site = $nodeSiteId ? $this->manager->getStorage()->findOne($nodeSiteId) : null;
+
+        // No site identifier, or no site, fallback on creating the node within
+        // the current context if it holds one.
+        // @todo In theory, this should not happen, because the site identifier
+        //   is supposed to be set elsewhere, maybe on prepare, I can't remember.
+        if (!$site && $this->manager->hasContext()) {
+            $site = $this->manager->getContext();
+        }
 
         if ($site) {
             $this->nodeManager->createReference($site, $node);

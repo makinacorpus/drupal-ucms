@@ -3,10 +3,10 @@
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
 use Drupal\node\NodeInterface;
-use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessSubscriber as NodeAccessCache;
+use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAddAccessEvent;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\GroupManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -40,8 +40,8 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            NodeAccessEvent::EVENT_NODE_ACCESS => [
-                ['onNodeAccess', 128],
+            NodeAddAccessEvent::EVENT => [
+                ['onNodeAccessEnsureContext', 128],
                 ['onNodeAccessCheckCreation', 48],
             ],
             NodeAccessRecordEvent::EVENT_NODE_ACCESS_RECORD => [
@@ -201,9 +201,9 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         // grant, this will be determined at runtime: the reason for this is that if
         // you change a site state, you would need to rebuild all its nodes grants
         // and this would not be tolerable.
-        $siteItems = $node->get('ucms_sites');
-        if (!$siteItems->isEmpty()) {
-            foreach (array_unique(array_column($siteItems->getValue(), 'value')) as $siteId) {
+        $items = $node->get('ucms_sites');
+        if (!$items->isEmpty()) {
+            foreach (array_unique(array_column($items->getValue(), 'value')) as $siteId) {
 
                 // Grant that reprensents the node in the site for anonymous
                 // as long as it exists, not may show up anytime when the site
@@ -358,37 +358,29 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
 
     /**
      * Check node access event listener
-     *
-     * @see \MakinaCorpus\Ucms\Contrib\NodeAccess\NodeAccessEventSubscriber
-     *   Important note: if you are looking for CREATION ACCESS, please look
-     *   into the 'ucms_contrib' module, which drives creation access rights
-     *   using the type handler.
      */
-    public function onNodeAccess(NodeAccessEvent $event)
+    public function onNodeAccessEnsureContext(NodeAddAccessEvent $event)
     {
-        $node     = $event->getNode();
-        $account  = $event->getAccount();
-        $op       = $event->getOperation();
-        $access   = $this->siteManager->getAccess();
+        $access = $this->siteManager->getAccess();
 
-        if (Access::OP_CREATE === $op) {
+        if ($this->siteManager->hasContext()) {
+            $site = $this->siteManager->getContext();
 
-            if ($this->siteManager->hasContext()) {
-                $site = $this->siteManager->getContext();
-
-                // Prevent creating content on disabled or pending sites
-                if (!in_array($site->getState(), [SiteState::INIT, SiteState::OFF, SiteState::ON])) {
-                    return $event->deny();
-                }
+            // Prevent creating content on disabled or pending sites
+            if (!\in_array($site->getState(), [SiteState::INIT, SiteState::OFF, SiteState::ON])) {
+                return $event->deny();
             }
-
-            // All other use cases will be driven by other modules; depending
-            // on the user role (webmaser, admin, contributor, or any other)
-            // the content creation will be authorized or denied by Drupal core
-            // permissions
-            return $event->ignore();
         }
 
+        // All other use cases will be driven by other modules; depending
+        // on the user role (webmaser, admin, contributor, or any other)
+        // the content creation will be authorized or denied by Drupal core
+        // permissions
+        return $event->ignore();
+
+        /*
+         * @todo port me
+         *
         // For some reasons, and because we don't care about the 'update'
         // operation in listings, we are going to hardcode a few behaviors
         // in this method, which won't affect various listings
@@ -404,6 +396,14 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 }
             }
         }
+         */
+
+        /* }  @todo else if (Access::OP_DELETE === $op) {
+            // Locked types
+            if (\in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
+                return $event->deny();
+            }
+        } */
 
         return $event->ignore();
     }
@@ -411,66 +411,50 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
     /**
      * Checks node access for content creation
      */
-    public function onNodeAccessCheckCreation(NodeAccessEvent $event)
+    public function onNodeAccessCheckCreation(NodeAddAccessEvent $event)
     {
-        $node     = $event->getNode();
-        $account  = $event->getAccount();
-        $op       = $event->getOperation();
-        $access   = $this->siteManager->getAccess();
+        $account = $event->getAccount();
+        $access = $this->siteManager->getAccess();
+        // $bundle = $event->getBundle();
 
-        if (Access::OP_CREATE === $op) {
+        // Locked types
+        /*
+         * @todo
+         *
+        if (in_array($type, $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
+            return $event->deny();
+        }
+         */
 
-            // Drupal gave a wrong input, this may happen
-            if (!\is_string($node) && !$node instanceof NodeInterface) {
-                return $this->deny();
+        if ($this->siteManager->hasContext()) {
+            $site = $this->siteManager->getContext();
+
+            // Contributor can only create editorial content
+            // @todo
+            if ($access->userIsContributor($account, $site) /* && \in_array($bundle, $this->typeHandler->getEditorialTypes()) */) {
+                return $event->allow();
             }
 
-            $type = \is_string($node) ? $node : $node->bundle();
-
-            // Locked types
-            /*
-             * @todo
-             *
-            if (in_array($type, $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
-                return $event->deny();
+            // Webmasters can create anything
+            // @todo
+            if ($access->userIsWebmaster($account, $site) /* && \in_array($bundle, $this->typeHandler->getAllTypes()) */) {
+                return $event->allow();
             }
-             */
+        } else {
 
-            if ($this->siteManager->hasContext()) {
-                $site = $this->siteManager->getContext();
+            // All user that may manage global content or manage group
+            // content may create content outside of a site context, as
+            // long as content is editorial (text and media)
+            $canManage =
+                $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL) ||
+                $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)
+            ;
 
-                // Contributor can only create editorial content
-                // @todo
-                if ($access->userIsContributor($account, $site) /* && \in_array($type, $this->typeHandler->getEditorialTypes()) */) {
-                    return $event->allow();
-                }
-
-                // Webmasters can create anything
-                // @todo
-                if ($access->userIsWebmaster($account, $site) /* && \in_array($type, $this->typeHandler->getAllTypes()) */) {
-                    return $event->allow();
-                }
-            } else {
-
-                // All user that may manage global content or manage group
-                // content may create content outside of a site context, as
-                // long as content is editorial (text and media)
-                $canManage =
-                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_GLOBAL) ||
-                    $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE)
-                ;
-
-                // @todo
-                if ($canManage /* && \in_array($type, $this->typeHandler->getEditorialTypes()) */) {
-                    return $event->allow();
-                }
+            // @todo
+            if ($canManage /* && \in_array($type, $this->typeHandler->getEditorialTypes()) */) {
+                return $event->allow();
             }
-        } /* @todo else if (Access::OP_DELETE === $op) {
-            // Locked types
-            if (\in_array($node->bundle(), $this->typeHandler->getLockedTypes()) && !$account->hasPermission(Access::PERM_CONTENT_GOD)) {
-                return $event->deny();
-            }
-        } */
+        }
 
         return $event->ignore();
     }
