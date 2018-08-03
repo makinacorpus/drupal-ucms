@@ -18,6 +18,7 @@
  - dashboard: improve seven fixes
  - dashboard: untangle display skin
  - PENDING - Modern front assets toolchain
+ - sf-int: write a proxy to router access check system to symfony authorization checker
  - site: fix cross url route generator to use path matching
  - site: fix missing site frontpage (home node)
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
