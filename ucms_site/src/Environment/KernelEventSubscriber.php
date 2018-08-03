@@ -74,10 +74,6 @@ class KernelEventSubscriber implements EventSubscriberInterface
                     $GLOBALS['conf']['site_frontpage'] = 'node';
                 }
 
-                // If we have a site, it might be pending maintainance independently
-                // from global Drupal site status.
-                time();
-
             } else {
                 if ($manager->getMasterHostname() === $hostname) {
                     $manager->setContextAsMaster($request);

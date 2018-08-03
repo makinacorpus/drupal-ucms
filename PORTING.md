@@ -20,6 +20,7 @@
  - PENDING - Modern front assets toolchain
  - PENDING - ucms_site
  - site: fix cross url route generator to use path matching
+ - site: fix missing site frontpage (home node)
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
  - site: restore site access query alter
  - site: restore state transition matrix
