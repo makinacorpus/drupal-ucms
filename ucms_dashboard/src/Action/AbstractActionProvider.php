@@ -3,6 +3,7 @@
 namespace MakinaCorpus\Ucms\Dashboard\Action;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Implementation that sets up environment information for you, leaving
@@ -25,12 +26,11 @@ abstract class AbstractActionProvider implements ActionProviderInterface
      * Set authorization checker
      *
      * @param AuthorizationCheckerInterface $authorizationChecker
-     *
+     */
     final public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
     }
-     */
 
     /**
      * Get the container
@@ -50,7 +50,6 @@ abstract class AbstractActionProvider implements ActionProviderInterface
      */
     final protected function isGranted($attributes, $object = null): bool
     {
-        // return (bool)$this->authorizationChecker->isGranted($attributes, $object);
-        return true;
+        return (bool)$this->authorizationChecker->isGranted($attributes, $object);
     }
 }

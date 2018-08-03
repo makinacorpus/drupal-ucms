@@ -47,7 +47,7 @@ class SiteMaintenanceMode implements MaintenanceModeInterface
          * @todo
          *   piece of code from Drupal 7, this needs some thinking...
          *
-          if (SiteState::ON != $site->state && !ucms_site_manager()->getAccess()->userCanView(\Drupal::currentUser(), $site)) {
+          if (SiteState::ON != $site->state && !ucms_site_manager()->getAccess()->user CanView(\Drupal::currentUser(), $site)) {
             $menu_site_status = MENU_SITE_OFFLINE;
             // State off means that the site is valid and up, but in maintainance mode,
             // case in which we should just set the maintainance mode and leave,

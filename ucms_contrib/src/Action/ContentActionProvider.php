@@ -5,11 +5,9 @@ namespace MakinaCorpus\Ucms\Contrib\Action;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 
@@ -38,7 +36,7 @@ class ContentActionProvider implements ActionProviderInterface
     private $currentUser;
 
     /**
-     * @var \MakinaCorpus\Ucms\Site\NodeAccessService
+     * @var \MakinaCorpus\Ucms\Site\SiteAccessService
      */
     private $access;
 
@@ -49,14 +47,13 @@ class ContentActionProvider implements ActionProviderInterface
      * @param TypeHandler $typeHandler
      * @param SiteManager $siteManager
      * @param AccountInterface $currentUser
-     * @param NodeAccessService $access
      */
-    public function __construct(TypeHandler $typeHandler, SiteManager $siteManager, AccountInterface $currentUser, NodeAccessService $access)
+    public function __construct(TypeHandler $typeHandler, SiteManager $siteManager, AccountInterface $currentUser)
     {
         $this->typeHandler = $typeHandler;
         $this->siteManager = $siteManager;
         $this->currentUser = $currentUser;
-        $this->access = $access;
+        $this->access = $siteManager->getAccess();
     }
 
 

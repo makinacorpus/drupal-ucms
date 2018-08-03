@@ -29,7 +29,27 @@ final class Access
      */
     const OP_DELETE = 'delete';
 
-        /**
+    /**
+     * Site overview details in admin
+     */
+    const OP_SITE_VIEW_IN_ADMIN = 'view_admin';
+
+    /**
+     * Manage site webmasters
+     */
+    const OP_SITE_MANAGE_WEBMASTERS = 'manage_members';
+
+    /**
+     * Manage group sites
+     */
+    const OP_GROUP_MANAGE_SITES = 'manage_sites';
+
+    /**
+     * Manage group sites
+     */
+    const OP_GROUP_MANAGE_MEMBERS = 'manage_members';
+
+    /**
      * Grants for anonymous users
      */
     const PROFILE_PUBLIC = 'ucms_public';

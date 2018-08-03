@@ -21,12 +21,12 @@ services:
   ucms_contrib.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
-    arguments: ["@ucms_site.node_access_helper", "@ucms_site.manager", "@current_user", "@ucms_contrib.cart"]
+    arguments: ["@ucms_site.manager", "@current_user", "@ucms_contrib.cart"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_contrib.content_action_provider:
     public: false
-    arguments: ["@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user", "@ucms_site.node_access_helper"]
+    arguments: ["@ucms_contrib.type_handler", "@ucms_site.manager", "@current_user"]
     class: MakinaCorpus\Ucms\Contrib\Action\ContentActionProvider
     tags: [{name: ucms_dashboard.action_provider}]
 

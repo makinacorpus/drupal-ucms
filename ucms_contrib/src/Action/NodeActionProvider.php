@@ -10,16 +10,12 @@ use MakinaCorpus\Ucms\Contrib\Cart\CartStorageInterface;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
 use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class NodeActionProvider implements ActionProviderInterface
 {
     use StringTranslationTrait;
 
-    /**
-     * @var NodeAccessService
-     */
     private $access;
 
     /**
@@ -37,10 +33,10 @@ class NodeActionProvider implements ActionProviderInterface
      */
     private $cart;
 
-    public function __construct(NodeAccessService $access, SiteManager $siteManager, AccountInterface $account, CartStorageInterface $cart)
+    public function __construct(SiteManager $siteManager, AccountInterface $account, CartStorageInterface $cart)
     {
-        $this->access = $access;
         $this->siteManager = $siteManager;
+        $this->access = $this->siteManager->getAccess();
         $this->account = $account;
         $this->cart = $cart;
     }
@@ -56,7 +52,7 @@ class NodeActionProvider implements ActionProviderInterface
 
         // Select the most revelant site to view node in, avoiding the user to
         // view nodes on master site.
-        $siteId = $this->access->findMostRelevantSiteFor($item);
+        $siteId = $this->siteManager->findMostRelevantSiteFor($item);
         if ($siteId) {
             $uri = $this->siteManager->getUrlGenerator()->generateUrl($siteId, 'node/' . $item->id());
             $ret[] = new Action($this->t("View"), $uri, [], 'eye-open');

@@ -150,15 +150,6 @@ function ucms_site_manager() {
 }
 
 /**
- * Get node access helper.
- *
- * @return \MakinaCorpus\Ucms\Site\NodeAccessService
- */
-function ucms_site_node_access_helper() {
-  return \Drupal::service('ucms_site.node_access_helper');
-}
-
-/**
  * Menu helper.
  *
 function ucms_site_menu_access_view_all($account = null) {
@@ -190,7 +181,7 @@ function ucms_site_menu_access_webmasters($op, Site $site, AccountInterface $web
 
   $manager = ucms_site_manager();
 
-  if ($manager->getAccess()->userCanManageWebmasters($account, $site)) {
+  if ($manager->getAccess()->user CanManageWebmasters($account, $site)) {
     switch ($op) {
       case 'change-role':
         // Prevents to give a role to a user which doesn't belong to the site
@@ -228,7 +219,7 @@ function ucms_site_menu_access_reference(NodeInterface $node, $account = null) {
   if (!$account) {
     $account = \Drupal::currentUser();
   }
-  return $node->access('view', $account) && ucms_site_node_access_helper()->userCanReference($account, $node);
+  return $node->access('view', $account) && ucms_site_node_ access_helper()->user CanReference($account, $node);
 }
  */
 
@@ -246,7 +237,7 @@ function ucms_site_menu_access_dereference_from(NodeInterface $node, $site = nul
     }
     $site = $manager->getContext();
   }
-  return ucms_site_node_access_helper()->userCanDereference($account, $node, $site);
+  return ucms_site_node_access_ helper()->user CanDereference($account, $node, $site);
 }
  */
 
@@ -299,11 +290,11 @@ function ucms_site_init_node_redirect() {
     return;
   }
   if ($node = menu_get_object()) {
-    // findMostRelevantSiteFor() allows fetching URL for non enabled sites, but
+    // findMostRelevant SiteFor() allows fetching URL for non enabled sites, but
     // will always find a site the current user can see. This function will
     // always be called when attempting to connect on the admin sites, so this
     // fine to redirect on non enabled sites if no enabled site was found.
-    $siteId = ucms_site_node_access_helper()->findMostRelevantSiteFor($node);
+    $siteId = ucms_site_node_ access_helper()->findMost RelevantSiteFor($node);
     if ($siteId) {
       drupal_goto('sso/goto/' . $siteId, ['query' => ['destination' => current_path()]]);
     }

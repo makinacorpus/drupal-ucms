@@ -3,7 +3,6 @@
 namespace MakinaCorpus\Ucms\Site\Environment;
 
 use Drupal\Core\Routing\UrlGeneratorInterface;
-use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
@@ -73,7 +72,6 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
     ];
 
     private $nested;
-    private $nodeAccessService;
     private $routeProvider;
     private $siteManager;
     private $ssoEnabled = false; // @todo fixme later
@@ -81,10 +79,9 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
     /**
      * Default constructor
      */
-    public function __construct(SiteManager $siteManager, NodeAccessService $nodeAccessService, UrlGeneratorInterface $nested, RouteProviderInterface $routeProvider)
+    public function __construct(SiteManager $siteManager, UrlGeneratorInterface $nested, RouteProviderInterface $routeProvider)
     {
         $this->nested = $nested;
-        $this->nodeAccessService = $nodeAccessService;
         $this->routeProvider = $routeProvider;
         $this->siteManager = $siteManager;
 
@@ -257,7 +254,7 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             if ('entity.node' === substr($name, 0, 11)) {
                 /** @var \Drupal\node\NodeInterface $node */
                 if ($node = $options['entity'] ?? null) {
-                    if ($siteId = $this->nodeAccessService->findMostRelevantSiteFor($node)) {
+                    if ($siteId = $this->siteManager->findMostRelevantSiteFor($node)) {
                         // @todo should we catch exception and be resilient to errors here.?
                         if ($site = $manager->getStorage()->findOne($siteId)) {
 

@@ -58,10 +58,11 @@ function ucms_harm_menu() {
 
 /**
  * Menu access helper.
- */
+ *
 function ucms_harm_menu_node_access_group(NodeInterface $node) {
-  return ucms_site_node_access_helper()->userCanPromoteToGroup(\Drupal::currentUser(), $node);
+  return ucms_site_node_ access_helper()->user CanPromoteToGroup(\Drupal::currentUser(), $node);
 }
+ */
 
 /**
  * Group content admin.

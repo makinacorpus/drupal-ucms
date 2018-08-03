@@ -14,7 +14,6 @@
  - all: fixe destination parameter usage
  - all: handle caching gracefully
  - all: restore SQL constraints
- - dashboard: icons in admin (provide theme and skin)
  - dashboard: improve page controller trait
  - dashboard: improve seven fixes
  - dashboard: untangle display skin
@@ -31,16 +30,18 @@
 
  - all: rewrite all tests
  - dashboard: style filter display in calista pages
+ - PENDING: all: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
  - site: handle redirects between sites and master
  - site: node published state per site
  - site: restore node reference/dereference actions with a better UI
  - site: restore SSO
- - site: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
  - ucms_seo
 
 ## Additional
 
+ - all: replace voters by more flexible ACL system (to be determined)
  - all: Rework UI
+ - dashboard: icons in admin (provide theme and skin)
  - ONLY UI - ucms_group
  - site: restore favicon feature
  - ucms_search

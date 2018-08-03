@@ -20,7 +20,6 @@ class NodeManager
     private $database;
     private $manager;
     private $entityManager;
-    private $nodeAccessService;
     private $eventDispatcher;
     private $cloningMapping = [];
 
@@ -31,24 +30,12 @@ class NodeManager
         Connection $database,
         SiteManager $manager,
         EntityManager $entityManager,
-        NodeAccessService $nodeAccessService,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->database = $database;
         $this->manager = $manager;
         $this->entityManager = $entityManager;
-        $this->nodeAccessService = $nodeAccessService;
         $this->eventDispatcher= $eventDispatcher;
-    }
-
-    /**
-     * Get node access service
-     *
-     * @return NodeAccessService
-     */
-    public function getAccessService()
-    {
-        return $this->nodeAccessService;
     }
 
     /**

@@ -7,7 +7,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
-use MakinaCorpus\Ucms\Site\NodeAccessService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 /**
@@ -24,15 +23,10 @@ class NodeActionProvider implements ActionProviderInterface
 
     /**
      * Default constructor
-     *
-     * @param SiteManager $mananger
-     * @param NodeAccessService $nodeAccess
-     * @param AccountInterface $currentUser
      */
-    public function __construct(SiteManager $siteManager, NodeAccessService $nodeAccess, AccountInterface $currentUser)
+    public function __construct(SiteManager $siteManager, AccountInterface $currentUser)
     {
         $this->siteManager = $siteManager;
-        $this->nodeAccess = $nodeAccess;
         $this->currentUser = $currentUser;
     }
 

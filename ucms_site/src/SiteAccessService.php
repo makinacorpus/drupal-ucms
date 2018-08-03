@@ -91,19 +91,31 @@ class SiteAccessService
      *
      * Only Access::OP_VIEW, Access::OP_UPDATE and Access::OP_DELETE are supported.
      *
-     * @param AccountInterface $account
-     * @param Site $site
-     * @param string $operation
-     *
-     * @return boolean
+     * @internal You should not use this manually, it's only for the security voter use.
      */
-    private function accessIsDenied(AccountInterface $account, Site $site, $operation = Access::OP_VIEW)
+    public function accessIsDenied(AccountInterface $account, Site $site, $operation = Access::OP_VIEW): bool
     {
         $event = new SiteAccessEvent($site, $account, $operation);
 
         $this->dispatcher->dispatch(SiteEvents::EVENT_ACCESS, $event);
 
         return !$event->isGranted();
+    }
+
+    /**
+     * Can the given user switch the given site to the given state
+     *
+     * @param AccountInterface $account
+     * @param Site $site
+     * @param int $state
+     *
+     * @return boolean
+     */
+    public function userCanSwitch(AccountInterface $account, $site, $state)
+    {
+        $allowed = $this->getAllowedTransitions($account, $site);
+
+        return isset($allowed[$state]);
     }
 
     /**
@@ -232,159 +244,6 @@ class SiteAccessService
         $grant = $this->getUserRoleCacheValue($account, $site);
 
         return Access::ROLE_NONE !== $grant && $role === $grant->getRole();
-    }
-
-    /**
-     * Can the given user view the given site
-     *
-     * @param Site $site
-     * @param int $userId
-     *
-     * @return boolean
-     */
-    public function userCanView(AccountInterface $account, Site $site)
-    {
-        // This is OK because userCanView() is only in use in admin
-        if ($this->accessIsDenied($account, $site, Access::OP_VIEW)) {
-            return false;
-        }
-
-        if (SiteState::ON == $site->state) {
-            return true;
-        }
-
-        // @todo
-        //   this should be based upon a matrix
-        switch ($site->state) {
-
-            case SiteState::INIT:
-            case SiteState::ARCHIVE:
-                return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
-                    || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)
-                    || $account->hasPermission(Access::PERM_SITE_GOD)
-                    || $this->userIsWebmaster($account, $site)
-                ;
-
-            case SiteState::OFF:
-                return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL)
-                    || $account->hasPermission(Access::PERM_SITE_VIEW_ALL)
-                    || $account->hasPermission(Access::PERM_SITE_GOD)
-                    || $this->userIsWebmaster($account, $site)
-                    || $this->userIsContributor($account, $site)
-                ;
-        }
-
-        return false;
-    }
-
-    /**
-     * Can the given user see administrative information about the site
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     */
-    public function userCanOverview(AccountInterface $account, Site $site)
-    {
-        if ($this->accessIsDenied($account, $site, Access::OP_VIEW)) {
-            return false;
-        }
-
-        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
-            return true;
-        }
-
-        switch ($site->state) {
-
-            case SiteState::INIT:
-            case SiteState::OFF:
-            case SiteState::ON:
-                return $this->userIsContributor($account, $site)
-                    || $this->userIsWebmaster($account, $site);
-
-            default:
-                return $this->userIsWebmaster($account, $site);
-        }
-
-        return false;
-    }
-
-    /**
-     * Can the given user manage the given site
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return boolean
-     */
-    public function userCanManage(AccountInterface $account, Site $site)
-    {
-        if ($this->accessIsDenied($account, $site, Access::OP_UPDATE)) {
-            return false;
-        }
-
-        if ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD)) {
-            return true;
-        }
-
-        switch ($site->state) {
-
-            case SiteState::INIT:
-            case SiteState::OFF:
-            case SiteState::ON:
-                return $this->userIsWebmaster($account, $site);
-        }
-
-        return false;
-    }
-
-    /**
-     * Can the given user manage the given site webmasters
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return boolean
-     */
-    public function userCanManageWebmasters(AccountInterface $account, Site $site)
-    {
-        if ($this->accessIsDenied($account, $site, Access::OP_UPDATE)) {
-            return false;
-        }
-
-        return $account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD) || $this->userIsWebmaster($account, $site);
-    }
-
-    /**
-     * Can the given user switch the given site to the given state
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     * @param int $state
-     *
-     * @return boolean
-     */
-    public function userCanSwitch(AccountInterface $account, $site, $state)
-    {
-        $allowed = $this->getAllowedTransitions($account, $site);
-
-        return isset($allowed[$state]);
-    }
-
-    /**
-     * Can the given user delete the given site
-     *
-     * @param AccountInterface $account
-     * @param Site $site
-     *
-     * @return boolean
-     */
-    public function userCanDelete(AccountInterface $account, Site $site)
-    {
-        if ($this->accessIsDenied($account, $site, Access::OP_DELETE)) {
-            return false;
-        }
-
-        return SiteState::ARCHIVE == $site->state && ($account->hasPermission(Access::PERM_SITE_MANAGE_ALL) || $account->hasPermission(Access::PERM_SITE_GOD));
     }
 
     /**

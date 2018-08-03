@@ -13,6 +13,7 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Drupal\node\NodeInterface;
 
 /**
  * Facade for using both site storage and site access helpers, that will also
@@ -343,5 +344,72 @@ class SiteManager
         $roles = $this->getAccess()->getUserRoles($account);
 
         return $this->getStorage()->loadAll(array_keys($roles));
+    }
+
+    /**
+     * Find the most revelant ENABLED site to view the node in
+     *
+     * @todo not sure this is the right place (object responsability)
+     *
+     * @param NodeInterface $node
+     *
+     * @see \MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber::onLoad()
+     *
+     * @return int
+     *   The site identifier is returned, we don't need to load it to build
+     *   a node route
+     */
+    public function findMostRelevantEnabledSiteFor(NodeInterface $node)
+    {
+        $enabled = $node->get('ucms_enabled_sites');
+        if ($enabled->isEmpty()) {
+            return; // Node cannot be viewed.
+        }
+        $enabled = \array_column($enabled->getValue(), 'value');
+
+        // If original site is enabled, use this one, it's the most relevant.
+        $siteId = $node->get('site_id')->value;
+        if ($siteId && \in_array($siteId, $enabled)) {
+            return $siteId;
+        }
+
+        // Fallback on first.
+        return reset($enabled);
+    }
+
+    /**
+     * Find the most revelant site to view the node in
+     *
+     * @todo not sure this is the right place (object responsability)
+     *
+     * @param NodeInterface $node
+     * @param bool $onlyEnabled
+     *   Search only in enabled sites
+     *
+     * @see \MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber::onLoad()
+     *
+     * @return int
+     *   The site identifier is returned, we don't need to load it to build
+     *   a node route
+     */
+    public function findMostRelevantSiteFor(NodeInterface $node)
+    {
+        if ($siteId = $this->findMostRelevantEnabledSiteFor($node)) {
+            return $siteId;
+        }
+
+        $allowed = $node->get('ucms_allowed_sites');
+        if ($allowed->isEmpty()) {
+            return; // Node cannot be viewed.
+        }
+        $allowed = \array_column($allowed->getValue(), 'value');
+
+        // If original site is enabled, use this one, it's the most relevant.
+        $siteId = $node->get('site_id')->value;
+        if ($siteId && \in_array($siteId, $allowed)) {
+            return $siteId;
+        }
+
+        return reset($allowed); // Fallback on first
     }
 }

@@ -37,6 +37,12 @@ parameters:
 
 services:
 
+    ###########################################################################
+    #
+    # Storage and managers (core feature)
+    #
+    ###########################################################################
+
     # Stores sites
     ucms_site.storage:
         public: false
@@ -49,7 +55,7 @@ services:
         class: MakinaCorpus\Ucms\Site\SiteAccessService
         arguments: ["@database", "@event_dispatcher"]
 
-    # Handles sites
+    # Handles sites - this is the most important component
     ucms_site.manager:
         public: true
         class: MakinaCorpus\Ucms\Site\SiteManager
@@ -71,17 +77,17 @@ services:
         class: MakinaCorpus\Ucms\Site\GroupManager
         arguments: ["@database", "@event_dispatcher"]
 
-    # Handle node access checks
-    ucms_site.node_access_helper:
-        public: true
-        class: MakinaCorpus\Ucms\Site\NodeAccessService
-        arguments: ["@ucms_site.manager"]
-
     # Handles node linking/unlinking to sites
     ucms_site.node_manager:
         public: true
         class: MakinaCorpus\Ucms\Site\NodeManager
-        arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@ucms_site.node_access_helper", "@event_dispatcher"]
+        arguments: ["@database", "@ucms_site.manager", "@entity.manager", "@event_dispatcher"]
+
+    ###########################################################################
+    #
+    # Drupal 8 integration and alteration
+    #
+    ###########################################################################
 
     # Determines the site context at bootstrap
     ucms_site.kernel.subscriber:
@@ -101,7 +107,7 @@ services:
         public: false
         decorates: url_generator
         class: MakinaCorpus\Ucms\Site\Environment\CrossSiteUrlGenerator
-        arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@ucms_site.url_generator.inner", "@router.route_provider"]
+        arguments: ["@ucms_site.manager", "@ucms_site.url_generator.inner", "@router.route_provider"]
 
     # Handles theme negociation
     ucms_site.theme.negotiator:
@@ -116,6 +122,41 @@ services:
         class: MakinaCorpus\Ucms\Site\Environment\SiteMaintenanceMode
         arguments: ["@ucms_site.manager", "@ucms_site.maintenance_mode.inner"]
 
+    # Param converter for controllers and Drupal own router
+    ucms_site.param_converter:
+        class: MakinaCorpus\Ucms\Site\Controller\ParamConverter\SiteParamConverter
+        arguments: ['@ucms_site.manager']
+        tags: [{name: paramconverter}]
+
+    ###########################################################################
+    #
+    # Security and voters
+    #
+    ###########################################################################
+
+    ucms_site.security.site_voter:
+        public: false
+        class: MakinaCorpus\Ucms\Site\Security\SiteVoter
+        arguments: ["@ucms_site.access"]
+        tags: [{name: security.voter}]
+
+#    ucms_site.security.node_voter:
+#        public: false
+#        class: MakinaCorpus\Ucms\Site\Security\NodeVoter
+#        tags: [{name: security.voter}]
+
+    ucms_site.security.group_voter:
+        public: false
+        class: MakinaCorpus\Ucms\Site\Security\GroupVoter
+        arguments: ["@ucms_group.manager"]
+        tags: [{name: security.voter}]
+
+    ###########################################################################
+    #
+    # Datasources
+    #
+    ###########################################################################
+
     ucms_site.datasource:
         public: true
         class: MakinaCorpus\Ucms\Site\Datasource\SiteDatasource
@@ -126,6 +167,12 @@ services:
         class: MakinaCorpus\Ucms\Site\Datasource\WebmasterDatasource
         arguments: ["@database", "@ucms_site.manager"]
 
+    ###########################################################################
+    #
+    # Action providers
+    #
+    ###########################################################################
+
     ucms_site.site_action_provider:
         public: false
         class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider
@@ -135,7 +182,7 @@ services:
     ucms_site.node_action_provider:
         public: false
         class: MakinaCorpus\Ucms\Site\Action\NodeActionProvider
-        arguments: ["@ucms_site.manager", "@ucms_site.node_access_helper", "@current_user"]
+        arguments: ["@ucms_site.manager", "@current_user"]
         tags: [{name: ucms.action_provider}]
 
 #    ucms_site.node_reference_action_provider:
@@ -149,6 +196,12 @@ services:
         class: MakinaCorpus\Ucms\Site\Action\WebmasterActionProvider
         arguments: ["@ucms_site.manager", "@current_user"]
         tags: [{name: ucms.action_provider}]
+
+    ###########################################################################
+    #
+    # Event subscribers
+    #
+    ###########################################################################
 
     # @todo convert this to a subscriber
     ucms_site.site_event_listener:
@@ -183,14 +236,15 @@ services:
         arguments: ["@database", "@ucms_site.manager", "@ucms_site.node_manager", "@entity.manager", "@event_dispatcher", "%ucms_site_node_reference_all%", "%ucms_site_node_reference_whitelist%"]
         tags: [{ name: event_subscriber }]
 
+    ###########################################################################
+    #
+    # Twig integration
+    #
+    ###########################################################################
+
     ucms_site.twig.site_extension:
         public: false
         class: MakinaCorpus\Ucms\Site\Twig\Extension\SiteExtension
         arguments: ["@ucms_site.manager"]
         tags: [{ name: twig.extension }]
-
-    ucms_site.param_converter:
-        class: MakinaCorpus\Ucms\Site\Controller\ParamConverter\SiteParamConverter
-        arguments: ['@ucms_site.manager']
-        tags: [{name: paramconverter}]
 
