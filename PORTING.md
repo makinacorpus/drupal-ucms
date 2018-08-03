@@ -7,6 +7,7 @@
  - [x] PORTED - umenu
  - [x] site: finish site listing screen
  - [x] site: get rid once for all of Drupal role to site role relationship
+ - [x] site: restore node access query alter
  - all: fixe destination parameter usage
  - all: handle caching gracefully
  - all: restore SQL constraints
@@ -16,8 +17,11 @@
  - dashboard: untangle display skin
  - PENDING - Modern front assets toolchain
  - PENDING - ucms_site
+ - site: fix cross url route generator to use path matching
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
  - site: restore menu site status alteration
+ - site: restore post init event
+ - site: restore site access query alter
  - site: restore state transition matrix
  - ucms_contrib
  - ucms_tree

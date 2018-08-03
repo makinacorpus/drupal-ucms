@@ -4,7 +4,10 @@
  * UCMS - Site context and management.
  */
 
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Database\Query\Select;
 use Drupal\Core\Entity\EntityTypeInterface;
+use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Environment\NodeDefinition;
 
 /**
@@ -412,50 +415,43 @@ function ucms_site_init() {
  *
  * This is required in order for users that may bypass node access (UID 1 is
  * one of them) to have site content correctly isolated depending on context.
- * /
-function ucms_site_query_node_access_alter(QueryAlterableInterface $query) {
+ */
+function ucms_site_query_node_access_alter(AlterableInterface $query) {
+  $siteManager = ucms_site_manager();
 
-  $site = ucms_site_manager()->getContext();
-
-  if (!$site) {
+  if (!$siteManager->hasContext() || $query->hasTag(Access::QUERY_TAG_CONTEXT_OPT_OUT) || !$query instanceof Select) {
     return;
   }
-  if (!$query instanceof SelectQueryInterface) {
-    return;
-  }
-  if ($query->hasTag(Access::QUERY_TAG_CONTEXT_OPT_OUT)) {
-    return;
-  }
-
-  /* @var $account AccountInterface * /
-  if (!$account = $query->getMetaData('account')) {
-    $account = \Drupal::currentUser();
-  }
-
 
   // If no base table is specified explicitly, search for one.
-  $nodeAlias = null;
-  foreach ($query->getTables() as $alias => $table_info) {
-    if (!($table_info instanceof SelectQueryInterface)) {
-      // If the node table is in the query, it wins immediately.
-      if ('node' === $table_info['table']) {
-        $nodeAlias = $alias;
+  if (!$nodeAlias = $query->getMetaData('base_table')) {
+    foreach ($query->getTables() as $alias => $table_info) {
+      if (!($table_info instanceof Select)) {
+        // If the node table is in the query, it wins immediately.
+        $table = $table_info['table'];
+        if ('node' === $table || 'node_field_data' === $table) {
+          $nodeAlias = $alias;
+          // Ensure that 'node' and 'node_field_data' are prefered over revisions.
+          break;
+        }
+        if ('node_revision' === $table || 'node_field_revision' === $table) {
+          $nodeAlias = $alias;
+        }
       }
     }
   }
+
+  // There's no table to join.
   if (!$nodeAlias) {
     return;
   }
 
   // Where the magic happens.
-  $query->join(
-    'ucms_site_node',
-    'access_sn',
+  $query->join('ucms_site_node', 'access_sn',
     "access_sn.nid = " . $nodeAlias . ".nid AND access_sn.site_id = :access_sn_site_id",
-    [':access_sn_site_id' => $site->getId()]
+    [':access_sn_site_id' => $siteManager->getContext()->getId()]
   );
 }
- */
 
 /**
  * Implements hook_query_TAG_alter().
