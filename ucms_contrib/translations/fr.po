@@ -13,58 +13,6 @@ msgstr ""
 "X-Generator: Poedit 1.8.6\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "100% (default)"
-msgstr "100% (défaut)"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "25%"
-msgstr "25%"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "50%"
-msgstr "50%"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "75%"
-msgstr "75%"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "Left of text"
-msgstr "À gauche du texte"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "Media properties"
-msgstr "Propriétés du média"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "Normal"
-msgstr "Normal"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "Position"
-msgstr "Position"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "Properties"
-msgstr "Propriétés"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "Right of text"
-msgstr "À droite du texte"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
-msgid "Width (remains at 100% if not left or right)"
-msgstr "Largeur (conservée à 100% en positionnement normal)"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/plugin.js:0
-msgid "Edit media display"
-msgstr "Modifier l'affichage du média"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/plugin.js:0;0
-msgid "Failed to load the element"
-msgstr "Impossible de charger l'élement"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/ContentActionProvider.php:77
 msgid "Refresh"
 msgstr "Rafraichir"
@@ -102,14 +50,6 @@ msgstr "Révisions"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:209
 msgid "Transfer ownership"
 msgstr "Transférer la propriété"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:108
-msgid "Add to cart"
-msgstr "Ajouter au panier"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:108
-msgid "Remove from cart"
-msgstr "Retirer du panier"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Action/NodeActionProvider.php:120
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:201
@@ -185,10 +125,6 @@ msgstr "Les contenus éditoriaux ne peuvent pas être des composants."
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:129
 msgid "The configuration options have been saved."
 msgstr "Les options de configuration ont été enregistrées"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Controller/CartController.php:57
-msgid "%title is already a favorite"
-msgstr "%title est déjà un favori"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Form/WebmasterAddNew.php:141
 #: sites/all/modules/composer/drupal-ucms/ucms_user/src/Form/UserEdit.php:159
@@ -490,10 +426,6 @@ msgstr "propriétaire"
 msgid "title"
 msgstr "titre"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms-contrib-cart.html.twig:4
-msgid "Your cart"
-msgstr "Votre panier"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.field.inc:17
 msgid "Clone aware (first item only)"
 msgstr "Prise en compte du clonage (premier élément seulement)"
@@ -574,25 +506,13 @@ msgstr "Dans ce site"
 msgid "Content admin display"
 msgstr "Affichage d'administration du contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:438
-msgid "Favorite in cart"
-msgstr "Favori dans le panier"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:538
 msgid "Lock this content"
 msgstr "Vérrouiller ce contenu"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:563
-msgid "Save and add to cart"
-msgstr "Enregistrer et ajouter au panier"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:574
 msgid "Save and publish"
 msgstr "Enregistrer et publier"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:585
-msgid "Save, publish and add to cart"
-msgstr "Enregistrer, publier et ajouter au panier"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:869
 msgid "UCMS medias drop & paste management"

@@ -2,10 +2,12 @@
 
 namespace MakinaCorpus\Ucms\Site\Form;
 
+use Drupal\Core\Url;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\LinkGeneratorTrait;
+use MakinaCorpus\Ucms\Dashboard\Form\FormHelper;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
@@ -171,17 +173,7 @@ class SiteRequest extends FormBase
             '#value'  => $this->t("Continue"),
             '#submit' => ['::submitStepA'],
         ];
-        /*
-         * FIXME?
-         *
-        $form['actions']['cancel'] = [
-            '#markup' => $this->l(
-                $this->t("Cancel"),
-                isset($_GET['destination']) ? $_GET['destination'] : 'admin/dashboard/site',
-                ['attributes' => ['class' => ['btn', 'btn-danger']]]
-            ),
-        ];
-         */
+        $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_site.admin.site_list'));
 
         return $form;
     }

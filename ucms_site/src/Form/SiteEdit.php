@@ -2,15 +2,16 @@
 
 namespace MakinaCorpus\Ucms\Site\Form;
 
+use Drupal\Core\Url;
+use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use MakinaCorpus\Ucms\Site\Access;
-use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
+use MakinaCorpus\Ucms\Dashboard\Form\FormHelper;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Drupal\Core\Extension\ThemeHandlerInterface;
 
 /**
  * Request site creation form
@@ -167,17 +168,7 @@ class SiteEdit extends FormBase
             '#type'   => 'submit',
             '#value'  => $this->t("Save"),
         ];
-        /*
-         * FIXME?
-         *
-        $form['actions']['cancel'] = [
-            '#markup' => l(
-                $this->t("Cancel"),
-                isset($_GET['destination']) ? $_GET['destination'] : 'admin/dashboard/site/' . $site->getId(),
-                ['attributes' => ['class' => ['btn', 'btn-danger']]]
-            ),
-        ];
-         */
+        $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_site.admin.site_list'));
 
         return $form;
     }

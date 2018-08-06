@@ -4,24 +4,10 @@ parameters:
 
 services:
 
-  # Site storage responsible for loading and updating site data
-  ucms_contrib.cart.default:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
-    arguments: ["@database"]
-  ucms_contrib.cart.bloom:
-    public: false
-    class: MakinaCorpus\Ucms\Contrib\Cart\BloomCartStorage
-    arguments: ["@ucms_contrib.cart.default", "@cache.default"]
-  ucms_contrib.cart:
-    public: true
-    alias: ucms_contrib.cart.bloom
-    class: MakinaCorpus\Ucms\Contrib\Cart\CartStorage
-
   ucms_contrib.node_action_provider:
     public: false
     class: MakinaCorpus\Ucms\Contrib\Action\NodeActionProvider
-    arguments: ["@ucms_site.manager", "@current_user", "@ucms_contrib.cart"]
+    arguments: ["@ucms_site.manager", "@current_user"]
     tags: [{name: ucms_dashboard.action_provider}]
 
   ucms_contrib.content_action_provider:

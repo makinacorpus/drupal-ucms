@@ -74,38 +74,6 @@ class SiteEventListener
     }
 
     /**
-     * On site context initialization.
-     *
-     * @param SiteEvent $event
-     */
-    public function onSiteInit(SiteInitEvent $event)
-    {
-        $site = $event->getSite();
-
-        // Reset menus.
-        $activeMenus = [];
-        if ($this->treeManager) {
-
-            $menuList = $this->treeManager->getMenuStorage()->loadWithConditions(['site_id' => $site->getId()]);
-
-            if (empty($menuList)) {
-                $menuList = $this->ensureSiteMenus($event->getSite());
-            }
-
-            // @todo
-            //   pri: keeping this code in case it happens again, on my env
-            //   all menus have been droppped for an obscure reason...
-            if (false && $menuList) {
-                foreach ($menuList as $menu) {
-                    $activeMenus[] = $menu['name'];
-                }
-            }
-        }
-        $activeMenus[] = 'navigation';
-        $GLOBALS['conf']['menu_default_active_menus'] = $activeMenus;
-    }
-
-    /**
      * On site creation.
      *
      * @param SiteEvent $event

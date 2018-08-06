@@ -2,42 +2,14 @@
 /**
  * @file
  * UCMS  - Contribution.
- *
- * @todo
- *   - Keep cart items order same as insert
- *   - Add other possible cart view modes (grid, list, ...)
- *   - Add other possible UI view modes (grid, list, ...)
- *   - Add UI sorting
  */
 
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Contrib\TypeHandler;
-use MakinaCorpus\Ucms\Contrib\Controller\CartController;
-use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Contrib\Controller\DashboardController;
 
 require_once __DIR__ . '/ucms_contrib.field.inc';
-
-/**
- * View mode for content display.
- */
-const UCMS_VIEW_MODE_CONTENTADMIN = 'contentadmin';
-
-/**
- * View mode for cart display.
- */
-const UCMS_VIEW_MODE_FAVORITE = 'favorite';
-
-/**
- * Image style for search.
- */
-const UCMS_STYLE_CONTENTADMIN = 'contentadmin';
-
-/**
- * Image style for favorite.
- */
-const UCMS_STYLE_FAVORITE = 'favorite';
 
 /**
  * Implements hook_menu().
@@ -194,25 +166,6 @@ function ucms_contrib_menu() {
     'type'              => MENU_NORMAL_ITEM,
   ];
 
-  // Cart operations.
-  $items['admin/cart/refresh'] = [
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::refresh'],
-    'access arguments'  => ['use favorites'],
-  ];
-  $items['admin/cart/%node/add'] = [
-    'title'             => "Content",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::add', 2],
-    'access arguments'  => ['use favorites'],
-  ];
-  $items['admin/cart/%node/remove'] = [
-    'title'             => "Content",
-    'page callback'     => 'sf_dic_page',
-    'page arguments'    => ['\MakinaCorpus\Ucms\Contrib\Controller\CartController::remove', 2],
-    'access arguments'  => ['use favorites'],
-  ];
-
   return $items;
 }
 
@@ -340,127 +293,6 @@ function ucms_contrib_type_handler_get() {
 }
 
 /**
- * Implements hook_permission().
- */
-function ucms_contrib_permission() {
-  return [
-    'use favorites' => [
-      'title' => "Access the favorites feature",
-    ],
-    'access ucms content overview' => [
-      'title' => "Access the UCMS content overview page",
-    ],
-  ];
-}
-
-/**
- * Implements hook_theme().
- */
-function ucms_contrib_theme() {
-  return [
-    'ucms_contrib_cart' => [
-      'variables' => [
-        'account' => null,
-        'items'   => [],
-        'actions' => null,
-        'display' => null,
-      ],
-      'template'  => 'ucms-contrib-cart',
-    ],
-    'ucms_contrib_content_result_grid' => [
-      'variables' => [
-        'nodes'     => [],
-        'view_mode' => UCMS_VIEW_MODE_CONTENTADMIN,
-        'mode'      => '',
-      ],
-      'template'  => 'ucms-contrib-content-result-grid',
-    ],
-  ];
-}
-
-/**
- * Implements hook_entity_info_alter().
- */
-function ucms_contrib_entity_info_alter(&$entity_info) {
-  $entity_info['node']['view modes'][UCMS_VIEW_MODE_CONTENTADMIN] = [
-    'label' => t('Content admin display'),
-    'custom settings' => false,
-  ];
-  $entity_info['node']['view modes'][UCMS_VIEW_MODE_FAVORITE] = [
-    'label' => t('Favorite in cart'),
-    'custom settings' => false,
-  ];
-}
-
-/**
- * Implements hook_image_default_styles().
- */
-function ucms_contrib_image_default_styles() {
-  return [
-    UCMS_STYLE_CONTENTADMIN => [
-      'effects' => [[
-        'name' => 'image_scale_and_crop',
-        'data' => [
-          'width'   => 285, // ~ col-md-3
-          'height'  => 285,
-          'upscale' => 1,
-        ],
-        'weight' => 0,
-      ]],
-    ],
-    UCMS_STYLE_FAVORITE => [
-      'effects' => [[
-        'name' => 'image_scale_and_crop',
-        'data' => [
-          'width'   => 120, // ~ col-md-6 in cart
-          'height'  => 120,
-          'upscale' => 1,
-        ],
-        'weight' => 0,
-      ]],
-    ],
-  ];
-}
-
-/**
- * Implements hook_node_view_alter().
- *
- * Removes links from nodes when in build modes used for back office.
- */
-function ucms_contrib_node_view_alter(&$build) {
-  switch ($build['#view_mode']) {
-
-    case UCMS_VIEW_MODE_CONTENTADMIN:
-    case UCMS_VIEW_MODE_FAVORITE:
-      $build['links']['#access'] = false;
-      break;
-  }
-}
-
-/**
- * Implements hook_preprocess_node().
- *
- * Removes submitted information and adds necessary stuff for JS.
- */
-function ucms_contrib_preprocess_node(&$variables) {
-
-  // Adds the data-nid attribute on all nodes.
-  // @todo exclude cart as of now else it'll trigger bugs:
-  //   - remove custom template for cart items
-  if ('favorite' !== $variables['view_mode']) {
-    $variables['attributes_array']['data-nid'] = $variables['node']->nid;
-  }
-
-  switch ($variables['view_mode']) {
-
-    case UCMS_VIEW_MODE_CONTENTADMIN:
-    case UCMS_VIEW_MODE_FAVORITE:
-      $variables['submitted'] = null;
-      break;
-  }
-}
-
-/**
  * Implements hook_form_node_form_alter().
  */
 function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
@@ -507,19 +339,6 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     ];
   }
 
-  // Adds the 'submit and add to cart' button. Button group will be done
-  // by the theme layer.
-  $add_to_cart = !$node->id() || !\Drupal::service('ucms_contrib.cart')->has($user->id(), $node->id());
-  if ($add_to_cart) {
-    $submit = $form['actions']['submit']['#submit'];
-    $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
-    $form['actions']['submit_add_to_cart'] = [
-      '#type' => 'submit',
-      '#value' => t("Save and add to cart"),
-      '#submit' => $submit,
-    ];
-  }
-
   $add_and_publish = !$node->status && (!$access || $access->userCanPublish($user, $node));
   if ($add_and_publish) {
     $submit = $form['actions']['submit']['#submit'];
@@ -530,28 +349,6 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
       '#submit' => $submit,
     ];
   }
-
-  if ($add_to_cart && $add_and_publish) {
-    $submit = $form['actions']['submit']['#submit'];
-    array_unshift($submit, 'ucms_contrib_form_node_form_submit_publish');
-    $submit[] = 'ucms_contrib_form_node_form_submit_add_to_cart';
-    $form['actions']['submit_publish_add_to_cart'] = [
-      '#type' => 'submit',
-      '#value' => t("Save, publish and add to cart"),
-      '#submit' => $submit,
-    ];
-  }
-}
-
-/**
- * Add to cart action for node form.
- */
-function ucms_contrib_form_node_form_submit_add_to_cart($form, &$form_state) {
-  // $form['#node'] is the wrong node, when you are creating a new node, it's
-  // the non-saved empty version of the node instead of being the one that
-  // gets submitted. This would work in update scenario, but for an obscure
-  // reason won't when we clone.
-  \Drupal::service('ucms_contrib.cart')->addFor(\Drupal::currentUser()->id(), $form_state['node']->id());
 }
 
 /**
@@ -569,199 +366,6 @@ function ucms_contrib_node_submit($node, $form, &$form_state) {
 }
 
 /**
- * Render one's favorite cart.
- *
- * @return []
- *   drupal_render() friendly structure.
- */
-function ucms_contrib_favorite_render() {
-
-  $controller = new CartController();
-  $controller->setContainer(\Drupal::getContainer());
-
-  return $controller
-    ->renderAction(
-      \Drupal::requestStack()->getCurrentRequest(),
-      \Drupal::currentUser()->id()
-    )
-  ;
-}
-
-/**
- * Implements hook_library().
- */
-function ucms_contrib_library() {
-  return [
-    'ucms_contrib' => [
-      'title'   => 'UCMS - Contrib',
-      'version' => '0.1',
-      'js'      => [
-        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.js' => [],
-      ],
-      'css'     => [
-        drupal_get_path('module', 'ucms_contrib') . '/ucms_contrib.css' => [
-          'type'  => 'file',
-          'media' => 'screen',
-        ],
-      ],
-      'dependencies' => [
-        ['system', 'ui.draggable'],
-        ['system', 'ui.droppable'],
-      ],
-    ],
-    'dragula' => [
-      'title'   => 'DragulaJS',
-      'version' => '3.7.1+dragscroll',
-      'js'      => [
-        drupal_get_path('module', 'ucms_contrib') . '/lib/dragula/dragula.min.js' => [],
-      ],
-      'css'     => [
-        drupal_get_path('module', 'ucms_contrib') . '/lib/dragula/dragula.min.css' => [
-          'type'  => 'file',
-          'media' => 'screen',
-        ],
-      ],
-    ],
-  ];
-}
-
-/**
- * Implements hook_field_attach_view_alter().
- *
- * @TODO move to a custom module!
- */
-function ucms_contrib_field_attach_view_alter(&$output, $context) {
-  $mapping = [
-    UCMS_VIEW_MODE_CONTENTADMIN => UCMS_STYLE_CONTENTADMIN,
-    UCMS_VIEW_MODE_FAVORITE     => UCMS_STYLE_FAVORITE,
-  ];
-
-  // Only work on nodes and some view modes.
-  if ($context['entity_type'] != 'node' || !isset($mapping[$context['view_mode']])) {
-    return;
-  }
-  $view_mode = $mapping[$context['view_mode']];
-
-  // Force image style on content viewed in admin mode
-  $image_found = FALSE;
-  if (in_array($context['view_mode'], array_keys($mapping))) {
-    foreach (element_children($output) as $field_name) {
-      $element = &$output[$field_name];
-      $image_found = _ucms_contrib_find_image_recursive($element, $view_mode);
-      if ($image_found) {
-        break;
-      }
-    }
-  }
-
-  if (!$image_found) {
-    // Add a default image for other medias/content.
-    $icon_mapping = [
-      // media
-      'document'  => 'file',
-      'video'     => 'film',
-      // Composite content
-      'list_type' => 'list',
-      'search'    => 'search',
-      'geosearch' => 'map-marker',
-      // other content
-      'form'      => 'list-alt',
-      'job_offer' => 'briefcase',
-    ];
-    $markup = '<div class="ucms-default-icon img-thumbnail"><div><div>';
-    if (!empty($icon_mapping[$output['#bundle']])) {
-      $markup .= '<span class="glyphicon glyphicon-' . $icon_mapping[$output['#bundle']] . '"></span>';
-    }
-    else {
-      $markup .= '<span>' . node_type_get_name($context['entity']) . '</span>';
-    }
-    $markup .= '</div></div></div>';
-    $output['default_icon'] = [
-      '#markup' => $markup,
-    ];
-  }
-
-  // Add icon relative to meta content type
-  $icon_mapping = [
-    'content' => 'file',
-    'media'   => 'picture',
-  ];
-  $meta_type = NULL;
-  $typeHandler = ucms_contrib_type_handler_get();
-  foreach ($typeHandler->getTabs() as $tab => $label) {
-    if (in_array($output['#bundle'], $typeHandler->getTabTypes($tab))) {
-      $meta_type = $tab;
-    }
-  }
-  $output['metadata']['#prefix'] = '<div class="ucms-metadata">';
-  $output['metadata']['#suffix'] = '</div>';
-  if (!$context['entity']->status) {
-    $output['metadata']['status_icon'] = [
-      '#markup' => '<span class="ucms-unpublished-icon glyphicon glyphicon-warning-sign"></span>',
-      '#weight' => 5,
-    ];
-  }
-  if ($meta_type && isset($icon_mapping[$meta_type])) {
-    $output['metadata']['type_icon'] = [
-      '#markup' => '<span class="ucms-type-icon glyphicon glyphicon-' . $icon_mapping[$meta_type] . '"></span>',
-      '#weight' => 10,
-    ];
-  }
-}
-
-/**
- * @param $element
- * @param $view_mode
- * @return bool
- */
-function _ucms_contrib_find_image_recursive(&$element, $view_mode) {
-  $image_found = FALSE;
-  if (isset($element['#field_type']) && $element['#field_type'] == 'image' && $element['#formatter'] == 'image') {
-    foreach (element_children($element) as $delta) {
-      if ($delta === 0) {
-        $image_found = TRUE;
-        // Force image style related to view mode.
-        $element[$delta]['#image_style'] = $view_mode;
-        $element[$delta]['#item']['attributes']['class'] = 'img-responsive img-rounded';
-      }
-      else {
-        // Hide other image for slideshows.
-        $element[$delta]['#access'] = FALSE;
-      }
-    }
-  }
-  elseif (count(element_children($element))) {
-    foreach (element_children($element) as $key) {
-      $image_found = _ucms_contrib_find_image_recursive($element[$key], $view_mode);
-      if ($image_found) {
-        $element = $element[$key];
-        return TRUE;
-      }
-    }
-  }
-  else {
-    $element['#access'] = FALSE;
-  }
-  return $image_found;
-}
-
-
-/**
- * Preprocess theme_ucms_contrib_content_result_grid().
- *
- * @param $vars
- */
-function template_preprocess_ucms_contrib_content_result_grid(&$vars) {
-  if (!empty($vars['nodes'])) {
-    $node_views = node_view_multiple($vars['nodes'], $vars['view_mode']);
-    $vars['nodes'] = [];
-    foreach(element_children($node_views['nodes']) as $child_key) {
-      $vars['nodes'][$child_key] = $node_views['nodes'][$child_key];
-    }
-  }
-}
-
-/**
  * Implements hook_admin_paths().
  */
 function ucms_contrib_admin_paths() {
@@ -776,96 +380,6 @@ function ucms_contrib_admin_paths() {
  */
 function ucms_contrib_element_info_alter(&$types) {
   $types['text_format']['#process'][] = 'ucms_contrib_process_text_format';
-}
-
-/**
- * Process callback for text_format form elements.
- * @staticvar boolean $done
- * @param [] $element
- * @param [] $form_state
- */
-function ucms_contrib_process_text_format($element, &$form_state) {
-  static $done = false;
-
-  if (module_exists('ckeditor') && !$done) {
-    module_load_include('inc', 'ckeditor', 'includes/ckeditor.lib');
-    $profiles = ckeditor_profile_input_formats();
-
-    foreach ($profiles as $profile_name => $inputs) {
-      $profile = ckeditor_profile_load($profile_name);
-
-      if (!isset($profile->settings['loadPlugins'])) {
-        continue;
-      }
-
-      $profile_plugins = array_keys((array) $profile->settings['loadPlugins']);
-
-      if (in_array('ucmsmediadnd', $profile_plugins)) {
-        $typeHandler = ucms_contrib_type_handler_get();
-        $settings = ['mediaBundles' => $typeHandler->getMediaTypes()];
-        drupal_add_js(['ucms_contrib' => $settings], 'setting');
-        break;
-      }
-    }
-
-    $done = true;
-  }
-
-  return $element;
-}
-
-/**
- * Implements hook_ckeditor_plugin().
- */
-function ucms_contrib_ckeditor_plugin() {
-  return [
-    'ucmsmediadnd' => [
-      'name' => 'ucmsmediadnd',
-      'desc' => t("UCMS medias drop & paste management"),
-      'path' => drupal_get_path('module', 'ucms_contrib') . '/js/ckeditor/',
-    ],
-    'ucmsembed' => [
-      'name' => 'ucmsembed',
-      'desc' => t("UCMS copy/paste IFRAME elements"),
-      'path' => drupal_get_path('module', 'ucms_contrib') . '/js/ckeditor-embed/',
-    ],
-  ];
-}
-
-/**
- * Implements hook_ckeditor_settings_alter().
- */
-function ucms_contrib_ckeditor_settings_alter(&$settings, $context) {
-  $settings['contentsCss'][] = url(drupal_get_path('module', 'ucms_contrib') . '/js/ckeditor/styles.css');
-}
-
-/**
- * Implements hook_filter_info().
- */
-function ucms_contrib_filter_info() {
-  return [
-    'ucmsmediadnd' => [
-      'title'             => t('UCMS Media DnD'),
-      'description'       => t('Will transform UCMS DnD markup into content'),
-      'prepare callback'  => 'ucms_contrib_filter_media_prepare',
-      'process callback'  => 'ucms_contrib_filter_media_process',
-      'default settings'  => [],
-    ],
-  ];
-}
-
-/**
- * Implements callback_filter_prepare().
- */
-function ucms_contrib_filter_media_prepare($text, $filter, $format, $langcode) {
-  return sf_dic_plugin_create(MediaFilter::class, (array)$filter)->prepare($text, $langcode);
-}
-
-/**
- * Implements callback_filter_process().
- */
-function ucms_contrib_filter_media_process($text, $filter, $format, $langcode) {
-  return sf_dic_plugin_create(MediaFilter::class, (array)$filter)->process($text, $langcode)->getProcessedText();
 }
 
 /**
