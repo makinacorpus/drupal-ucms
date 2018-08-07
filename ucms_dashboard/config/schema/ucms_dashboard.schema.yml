@@ -1,9 +1,0 @@
-# Schema for the configuration files of the node module.
-
-ucms_dashboard.settings:
-  type: config_object
-  label: µCMS dashboard settings
-  mapping:
-    admin_skin:
-      type: string
-      label: Skin for additional widgets, available are 'seven' and 'bootstrap'
