@@ -9,6 +9,7 @@
  - [x] FIXED - site: restore menu site status alteration
  - [x] FIXED - site: restore site access query alter
  - [x] HARDCODED - site: restore state transition matrix
+ - [x] PORTED - site: prevent accessing non-handled hostnames
  - [x] PORTED - site: restore node access query alter
  - [x] PORTED - ucms_dashboard
  - [x] PORTED - ucms_site
@@ -38,6 +39,7 @@
  - site: node published state per site
  - site: restore node reference/dereference actions with a better UI
  - site: restore SSO
+ - site: when accessing non-handled hostnames, do not use site theme
  - ucms_seo
 
 ## Additional

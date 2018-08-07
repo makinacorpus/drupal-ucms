@@ -113,6 +113,14 @@ class SiteManager
     }
 
     /**
+     * Get CDN hostname, can return an empty string
+     */
+    public function getCdnHostname(): string
+    {
+        return $this->cdnUrl ?? '';
+    }
+
+    /**
      * Set current site context
      *
      * @param Site $site
