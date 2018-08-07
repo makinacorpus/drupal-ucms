@@ -17,16 +17,12 @@
  - all: fixe destination parameter usage
  - all: handle caching gracefully
  - all: restore SQL constraints
- - dashboard: improve page controller trait
- - dashboard: improve seven fixes
- - dashboard: untangle display skin
  - PENDING - Modern front assets toolchain
  - sf-int: write a proxy to router access check system to symfony authorization checker
  - site: fix cross url route generator to use path matching
  - site: fix missing site frontpage (home node)
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
- - ucms_contrib
- - ucms_tree
+ - ucms_tree - Needed in order to port SEO module and to finish site module port
 
 ## Necessary
 
@@ -34,12 +30,16 @@
  - [x] DELETED - contrib: remove custom ckeditor customisations
  - [x] FIXED - all: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
  - all: rewrite all tests
+ - dashboard: improve page controller trait
+ - dashboard: improve seven fixes
  - dashboard: style filter display in calista pages
+ - dashboard: untangle display skin
  - site: handle redirects between sites and master
  - site: node published state per site
  - site: restore node reference/dereference actions with a better UI
  - site: restore SSO
  - site: when accessing non-handled hostnames, do not use site theme
+ - ucms_contrib
  - ucms_seo
 
 ## Additional
