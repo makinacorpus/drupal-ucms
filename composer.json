@@ -74,8 +74,8 @@
         "drupal/core": "^8",
         "makinacorpus/calista-core": "^1.0",
         "makinacorpus/drupal-nodesearch" : "dev-master as ^2",
-        "makinacorpus/drupal-sf-int" : "^3.4|^4",
-        "makinacorpus/drupal-umenu": "^3.0",
+        "makinacorpus/drupal-sf-int" : "dev-master as ^3.4|^4",
+        "makinacorpus/drupal-umenu": "dev-master as ^3.0",
         "php" : ">= 7"
     },
     "suggest" : {
