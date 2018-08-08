@@ -24,8 +24,6 @@ abstract class AbstractActionProvider implements ActionProviderInterface
 
     /**
      * Set authorization checker
-     *
-     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     final public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
     {
@@ -42,11 +40,6 @@ abstract class AbstractActionProvider implements ActionProviderInterface
 
     /**
      * Is current user granted.
-     *
-     * @param mixed $attributes
-     * @param mixed $object
-     *
-     * @return bool
      */
     final protected function isGranted($attributes, $object = null): bool
     {
