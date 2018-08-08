@@ -3,31 +3,33 @@
     "version": "3.0.x-dev",
     "repository": "http://github.com/makinacorpus/drupal-ucms",
     "author": "Pierre Rineau",
-    "license": "MIT",
+    "license": "GPL-2.0-or-later",
     "scripts": {
-        "start": "webpack --watch"
+        "start": "webpack --mode=development --watch",
+        "build": "webpack --mode=production --progress"
     },
     "devDependencies": {
         "@types/react": "^16.3.12",
         "@types/react-dom": "^16.0.5",
         "babel-core": "^6.26.0",
         "babel-loader": "^7.1.2",
-        "babel-minify-webpack-plugin": "^0.2.0",
+        "babel-minify-webpack-plugin": "^0.3.1",
         "babel-preset-env": "^1.6.1",
         "clean-webpack-plugin": "^0.1.16",
         "core.js": "^0.4.2",
         "css-loader": "^0.28.7",
-        "extract-text-webpack-plugin": "^3.0.0",
         "file-loader": "^0.11.2",
         "install": "^0.11.0",
         "less": "^2.7.2",
-        "less-loader": "^4.0.5",
+        "less-loader": "^4.1.0",
+        "mini-css-extract-plugin": "^0.4.1",
         "react": "^16.3.2",
         "react-dom": "^16.3.2",
         "react-dragula": "^1.1.17",
         "style-loader": "^0.18.2",
-        "ts-loader": "^2.3.4",
-        "typescript": "^2.4.2",
-        "webpack": "^3.8.1"
+        "ts-loader": "^4.4.2",
+        "typescript": "^3",
+        "webpack": "^4",
+        "webpack-cli": "^3.1.0"
     }
 }
