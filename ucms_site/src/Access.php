@@ -35,9 +35,19 @@ final class Access
     const OP_SITE_VIEW_IN_ADMIN = 'view_admin';
 
     /**
+     * Site change hostname
+     */
+    const OP_SITE_CHANGE_HOSTNAME = 'change_hostname';
+
+    /**
      * Manage site webmasters
      */
     const OP_SITE_MANAGE_WEBMASTERS = 'manage_members';
+
+    /**
+     * Manage site menus
+     */
+    const OP_SITE_MANAGE_MENUS = 'manage_menus';
 
     /**
      * Manage group sites
@@ -222,7 +232,7 @@ final class Access
     /**
      * Manage technical aspects of sites, such as hostnames
      */
-    const PERM_SITE_MANAGE_HOSTNAME = 'site manage hostname';
+    const PERM_SITE_IS_TECHNICIAN = 'site manage hostname';
 
     /**
      * Request a new site
@@ -339,8 +349,8 @@ final class Access
             self::PERM_CONTENT_VIEW_OTHER => [
                 'title' => new TranslatableMarkup("View other site content"),
             ],
-            self::PERM_SITE_MANAGE_HOSTNAME => [
-                'title' => new TranslatableMarkup("Site change hostnames"),
+            self::PERM_SITE_IS_TECHNICIAN => [
+                'title' => new TranslatableMarkup("Manage technical aspects of sites"),
                 'description' => new TranslatableMarkup("This permission bypasses everything that can be bypassed, for technical administrators only"),
             ],
             self::PERM_SITE_GOD => [

@@ -2,7 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
@@ -13,15 +12,12 @@ use MakinaCorpus\Ucms\Site\SiteManager;
 class SiteActionProvider extends AbstractActionProvider
 {
     use StringTranslationTrait;
-    use UrlGeneratorTrait;
 
     private $manager;
     private $currentUser;
 
     /**
      * Default constructor
-     *
-     * @param SiteManager $manager
      */
     public function __construct(SiteManager $manager)
     {
@@ -55,7 +51,7 @@ class SiteActionProvider extends AbstractActionProvider
             $ret[] = new Action($this->t("Edit"), 'ucms_site.admin.site.edit', ['site' => $siteId], 'pencil', -2, false, true);
         }
         // @todo convert this to ACL/Voter too
-        if ($account->hasPermission(Access::PERM_SITE_MANAGE_HOSTNAME)) {
+        if ($this->isGranted(Access::OP_SITE_CHANGE_HOSTNAME, $item)) {
             $ret[] = new Action($this->t("Change hostname"), 'ucms_site.admin.site.change_hostname', ['site' => $siteId], 'fire', 0, false, true);
         }
         //$ret[] = new Action($this->t("History"), 'ucms_site.admin.site.view', ['site' => $item->id], 'list-alt', -1, false);

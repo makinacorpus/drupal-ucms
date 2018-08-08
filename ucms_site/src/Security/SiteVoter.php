@@ -41,7 +41,7 @@ final class SiteVoter implements VoterInterface
         }
 
         $isSiteManager = $account->hasPermission(Access::PERM_SITE_MANAGE_ALL);
-        $isSiteTech = $account->hasPermission(Access::PERM_SITE_MANAGE_HOSTNAME);
+        $isSiteTech = $account->hasPermission(Access::PERM_SITE_IS_TECHNICIAN);
         $state = $subject->getState();
 
         foreach ($attributes as $attribute) {
@@ -92,7 +92,6 @@ final class SiteVoter implements VoterInterface
 
                 case Access::OP_SITE_VIEW_IN_ADMIN:
 
-                    // Public sites are public.
                     if ($isSiteManager || $isSiteTech) {
                         return self::ACCESS_GRANTED;
                     }
@@ -116,6 +115,31 @@ final class SiteVoter implements VoterInterface
                                 return self::ACCESS_GRANTED;
                             }
                             break;
+                    }
+                    break;
+
+                case Access::OP_SITE_MANAGE_MENUS:
+
+                    if ($isSiteManager || $isSiteTech) {
+                        return self::ACCESS_GRANTED;
+                    }
+
+                    // @todo this should be based upon a matrix, or ACL's.
+                    switch ($state) {
+
+                        case SiteState::INIT:
+                        case SiteState::ARCHIVE:
+                        case SiteState::OFF:
+                            if ($this->siteAccess->userIsWebmaster($account, $subject)) {
+                                return self::ACCESS_GRANTED;
+                            }
+                            break;
+                    }
+                    break;
+
+                case Access:OP_SITE_CHANGE_HOSTNAME:
+                    if ($isSiteTech) {
+                        return self::ACCESS_GRANTED;
                     }
                     break;
 

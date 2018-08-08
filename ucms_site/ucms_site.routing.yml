@@ -5,7 +5,7 @@ ucms_site.admin.user_autocomplete:
         _controller: \MakinaCorpus\Ucms\Site\Controller\AutocompleteController::userAutocomplete
         _title: Sites
     requirements:
-        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_DASHBOARD_ACCESS)
+        _permission: site dashboard access
 
 ucms_site.admin.site_list:
     path: /admin/structure/site
@@ -13,7 +13,7 @@ ucms_site.admin.site_list:
         _controller: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteList
         _title: Sites
     requirements:
-        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_DASHBOARD_ACCESS)
+        _permission: site dashboard access
 
 ucms_site.admin.site.request:
     path: /admin/structure/site/request
@@ -21,7 +21,7 @@ ucms_site.admin.site.request:
         _form: \MakinaCorpus\Ucms\Site\Form\SiteRequest
         _title: Request site
     requirements:
-        _permission: constant(\MakinaCorpus\Ucms\Site\Access::PERM_SITE_REQUEST)
+        _permission: site request
 
 ucms_site.admin.site.view:
     path: /admin/structure/site/{site}
@@ -30,8 +30,7 @@ ucms_site.admin.site.view:
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteViewTitle
     requirements:
         site: \d+
-        # @todo implement an access checker
-        _permission: NOPE PLEASE FIXME
+        _is_granted: site.view
     options: {parameters: {site: {type: ucms_site}}}
 
 ucms_site.admin.site.change_hostname:
@@ -41,8 +40,7 @@ ucms_site.admin.site.change_hostname:
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteEditTitle
     requirements:
         site: \d+
-        # @todo implement an access checker
-        _permission: NOPE PLEASE FIXME
+        _is_granted: site.change_hostname
     options: {parameters: {site: {type: ucms_site}}}
 
 ucms_site.admin.site.switch:
@@ -64,8 +62,7 @@ ucms_site.admin.site.edit:
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteEditTitle
     requirements:
         site: \d+
-        # @todo implement an access checker
-        _permission: NOPE PLEASE FIXME
+        _is_granted: site.update
     options: {parameters: {site: {type: ucms_site}}}
 
 ucms_site.admin.site.webmaster:
@@ -75,8 +72,7 @@ ucms_site.admin.site.webmaster:
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterListTitle
     requirements:
         site: \d+
-        # @todo implement an access checker
-        _permission: NOPE PLEASE FIXME
+        _is_granted: site.manage_members
     options: {parameters: {site: {type: ucms_site}}}
 
 ucms_site.admin.site.webmaster_add:
@@ -86,8 +82,7 @@ ucms_site.admin.site.webmaster_add:
         _title_callback: \MakinaCorpus\Ucms\Site\Controller\AdminController::siteWebmasterAddTitle
     requirements:
         site: \d+
-        # @todo implement an access checker
-        _permission: NOPE PLEASE FIXME
+        _is_granted: site.manage_members
     options: {parameters: {site: {type: ucms_site}}}
 
 ucms_site.admin.site.webmaster_change:
@@ -98,8 +93,7 @@ ucms_site.admin.site.webmaster_change:
     requirements:
         site: \d+
         user: \d+
-        # @todo implement an access checker
-        _permission: NOPE PLEASE FIXME
+        _is_granted: site.manage_members
     options: {parameters: {site: {type: ucms_site}, user: {type: "entity:user"}}}
 
 ucms_site.admin.site.webmaster_delete:
@@ -110,6 +104,5 @@ ucms_site.admin.site.webmaster_delete:
     requirements:
         site: \d+
         user: \d+
-        # @todo implement an access checker
-        _permission: NOPE PLEASE FIXME
+        _is_granted: site.manage_members
     options: {parameters: {site: {type: ucms_site}, user: {type: "entity:user"}}}
