@@ -7,6 +7,7 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\RequestContext;
+use Drupal\node\NodeInterface;
 
 /**
  * Deals with platform wide inter-sites URL generation.
@@ -253,7 +254,7 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             // @todo this is ugly, rewrite this
             if ('entity.node' === substr($name, 0, 11)) {
                 /** @var \Drupal\node\NodeInterface $node */
-                if ($node = $options['entity'] ?? null) {
+                if (($node = $options['entity'] ?? null) instanceof NodeInterface) {
                     if ($siteId = $this->siteManager->findMostRelevantSiteFor($node)) {
                         // @todo should we catch exception and be resilient to errors here.?
                         if ($site = $manager->getStorage()->findOne($siteId)) {
