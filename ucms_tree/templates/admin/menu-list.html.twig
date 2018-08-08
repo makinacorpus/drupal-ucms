@@ -1,0 +1,37 @@
+{% extends '@ucms_dashboard/page/page-table.html.twig' %}
+
+{% block item_list %}
+    <table>
+        <thead>
+            {% with {label: "Name"|t, field: 'm.name'} %}
+                {{ block('table_header') }}
+            {% endwith %}
+            {% with {label: "Title"|t, field: 'm.title'} %}
+                {{ block('table_header') }}
+            {% endwith %}
+            {% with {label: "Role"|t, field: 'm.role'} %}
+                {{ block('table_header') }}
+            {% endwith %}
+            <th>{{ "Main"|t }}</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                {{ block('item') }}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{%- block item -%}
+    <tr>
+        <td><em>{{ item.name }}</em></td>
+        <td>
+          {{ item.title }}<br/>
+          <small>{{ item.description }}</small>
+        </td>
+        <td>{{ item.role }}</td>
+        <td>{% if item.isSiteMain %}{{ "Yes"|t }}{% endif %}</td>
+        <td>{{ ucms_actions(item) }}</td>
+    </tr>
+{%- endblock -%}

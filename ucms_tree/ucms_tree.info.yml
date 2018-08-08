@@ -1,0 +1,7 @@
+name: µCMS - Tree
+type: module
+description: Handles menu trees
+core: 8.x
+package: µCMS
+php: 7
+dependencies: [ucms_dashboard, ucms_site, umenu]

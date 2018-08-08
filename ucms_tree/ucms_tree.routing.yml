@@ -1,0 +1,30 @@
+
+ucms_tree.admin.menu.list:
+    path: /admin/structure/site/{site}/menu
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Tree\Controller\AdminController::menuList
+        _title: Menus
+    requirements:
+        site: \d+
+        _is_granted: site.manage_menus
+    options: {parameters: {site: {type: ucms_site}}}
+
+ucms_tree.admin.menu.tree:
+    path: /admin/structure/tree/{menu}
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Tree\Controller\AdminController::menuTree
+        _title: Edit links
+    requirements:
+        menu: \d+
+        _is_granted: menu.update
+    options: {parameters: {menu: {type: umenu_menu}}}
+
+ucms_tree.admin.menu.edit:
+    path: /admin/structure/tree/{menu}/edit
+    defaults:
+        _form: \MakinaCorpus\Ucms\Tree\Form\MenuEditForm
+        _title: Edit menu
+    requirements:
+        menu: \d+
+        _is_granted: menu.update
+    options: {parameters: {menu: {type: umenu_menu}}}

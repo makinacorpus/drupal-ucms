@@ -1,0 +1,40 @@
+parameters:
+
+    ucms_tree_allowed_menus:
+        site-main: Main menu
+        site-footer: Footer menu
+
+services:
+
+#    ucms_tree.site_event_subscriber:
+#        public: true
+#        class: MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventSubscriber
+#        arguments: ["@database", "@ucms_site.manager", "@umenu.manager", "%ucms_tree_allowed_menus%"]
+#        tags: [{ name: event_subscriber }]
+#
+#    ucms_tree.node_event_subscriber:
+#        public: true
+#        class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
+#        arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
+#        tags: [{ name: event_subscriber }]
+
+    ucms_tree.admin.datasource:
+        public: true
+        class: MakinaCorpus\Ucms\Tree\Datasource\MenuDatasource
+        arguments: ["@umenu.menu_storage"]
+
+    ucms_tree.site_action_provider:
+        public: false
+        class: MakinaCorpus\Ucms\Tree\Action\SiteActionProvider
+        tags: [{name: ucms.action_provider}]
+
+    ucms_tree.menu_action_provider:
+        public: false
+        class: MakinaCorpus\Ucms\Tree\Action\MenuActionProvider
+        tags: [{name: ucms.action_provider}]
+
+    ucms_tree.security.menu_voter:
+        public: false
+        class: MakinaCorpus\Ucms\Tree\Security\MenuVoter
+        arguments: ["@ucms_site.manager"]
+        tags: [{name: security.voter}]

@@ -2,31 +2,43 @@
 
 namespace MakinaCorpus\Ucms\Tree\EventDispatcher;
 
+use Drupal\Core\Database\Connection;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeEvent;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class NodeEventSubscriber implements EventSubscriberInterface
+final class NodeEventSubscriber implements EventSubscriberInterface
 {
-    private $db;
+    private $database;
 
+    /**
+     * {@inheritdoc}
+     */
     static public function getSubscribedEvents()
     {
         return [
             NodeEvent::EVENT_INSERT => [
-                ['onInsert', 0],
+                ['onInsertCloneUpdateMenus', 0],
             ],
         ];
     }
 
-    public function __construct(\DatabaseConnection $db)
+    /**
+     * Default constructor.
+     */
+    public function __construct(Connection $database)
     {
-        $this->db = $db;
+        $this->database = $database;
     }
 
-    public function onInsert(NodeEvent $event)
+    /**
+     * On node duplicate update links in current site.
+     */
+    public function onInsertCloneUpdateMenus(NodeEvent $event)
     {
         $node = $event->getNode();
+
+        // @todo fixme
+        return;
 
         // When inserting a node, site_id is always the current site context.
         // Menu items that points to the original node within the site should
@@ -36,7 +48,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
         // cache (instead of deleting/saving new elements then clearing the
         // whole menu cache).
         if ($event->isClone() && $node->site_id) {
-            switch ($this->db->driver()) {
+            switch ($this->database->driver()) {
                 case 'mysql':
                     $sql = "
                         UPDATE {menu_links} ml
@@ -54,7 +66,7 @@ class NodeEventSubscriber implements EventSubscriberInterface
                     ";
                     break;
             }
-            $this->db->query($sql, [
+            $this->database->query($sql, [
                 ':route'  => 'node/' . $node->nid,
                 ':site'   => $node->site_id,
                 ':legacy' => 'node/' . $node->parent_nid,

@@ -2,21 +2,22 @@
 
 namespace MakinaCorpus\Ucms\Tree\Form;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;
 use MakinaCorpus\Umenu\TreeManager;
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class TreeEditForm extends FormBase
+class MenuEditForm extends FormBase
 {
-    private $treeManager;
-    private $siteManager;
-    private $db;
+    protected $database;
+    protected $isCreation = false;
+    protected $menu;
+    protected $siteManager;
+    protected $treeManager;
 
     /**
      * {@inheritdoc}
@@ -31,17 +32,13 @@ class TreeEditForm extends FormBase
     }
 
     /**
-     * TreeForm constructor.
-     *
-     * @param TreeManager $treeManager
-     * @param SiteManager $siteManager
-     * @param \DatabaseConnection $db
+     * TreeForm constructor
      */
-    public function __construct(TreeManager $treeManager, SiteManager $siteManager, \DatabaseConnection $db)
+    public function __construct(TreeManager $treeManager, SiteManager $siteManager, Connection $database)
     {
-        $this->treeManager = $treeManager;
+        $this->database = $database;
         $this->siteManager = $siteManager;
-        $this->db = $db;
+        $this->treeManager = $treeManager;
     }
 
     /**
@@ -49,7 +46,7 @@ class TreeEditForm extends FormBase
      */
     public function getFormId()
     {
-        return 'ucms_tree_tree_edit_form';
+        return 'ucms_tree_menu_edit_form';
     }
 
     /**
@@ -57,12 +54,11 @@ class TreeEditForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state, Menu $menu = null)
     {
-        $isCreation = false;
-
         if (!$menu) {
-            $isCreation = true;
+            $this->isCreation = true;
             $menu = new Menu();
         }
+        $this->menu = $menu;
 
         $form['name'] = [
             '#type'           => 'textfield',
@@ -70,11 +66,10 @@ class TreeEditForm extends FormBase
             '#description'    => $this->t("Leave this field empty for auto-generation"),
             '#default_value'  => $menu->getName(),
             '#maxlength'      => 255,
-            '#disabled'       => !$isCreation,
+            '#disabled'       => !$this->isCreation,
         ];
 
-        $form['is_creation'] = ['#type' => 'value', '#value' => $isCreation];
-
+        /*
         if ($roles = variable_get('umenu_allowed_roles', [])) {
             $form['role'] = [
                 '#type'           => 'select',
@@ -86,6 +81,7 @@ class TreeEditForm extends FormBase
                 '#maxlength'      => 255,
             ];
         }
+         */
 
         $form['title'] = [
             '#type'           => 'textfield',
@@ -104,6 +100,9 @@ class TreeEditForm extends FormBase
             '#maxlength'      => 1024,
         ];
 
+        /*
+         * @todo restore this
+         *
         $allowedRoles = ucms_tree_role_list();
         if ($allowedRoles) {
             $form['role'] = [
@@ -114,6 +113,7 @@ class TreeEditForm extends FormBase
                 '#default_value'  => $menu->getRole(),
             ];
         }
+         */
 
         $form['is_main'] = [
             '#type'           => 'checkbox',
@@ -137,7 +137,7 @@ class TreeEditForm extends FormBase
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
         try {
-            $tx = $this->db->startTransaction();
+            $tx = $this->database->startTransaction();
 
             $storage = $this->treeManager->getMenuStorage();
             $name = $form_state->getValue('name');
