@@ -9,6 +9,7 @@ use MakinaCorpus\Ucms\Dashboard\Action\Impl\ProcessAction;
 use MakinaCorpus\Ucms\Dashboard\Form\ProcessActionConfirmForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ActionController extends ControllerBase
 {
@@ -40,6 +41,9 @@ class ActionController extends ControllerBase
 
         if (!isset($actions[$action]) || !$actions[$action] instanceof ProcessAction) {
             throw new NotFoundHttpException();
+        }
+        if (!$actions[$action]->isGranted()) {
+            throw new AccessDeniedHttpException();
         }
 
         return $this->formBuilder()->getForm(ProcessActionConfirmForm::class, $actions[$action]);
