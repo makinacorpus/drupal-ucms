@@ -20,6 +20,7 @@ class MenuActionProvider extends AbstractActionProvider
 
             $ret[] = $this
                 ->create('site_menu.links', new TranslatableMarkup("Manage links"), 'th-list', -10)
+                ->redirectHere()
                 ->primary()
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_UPDATE, $item);
@@ -29,6 +30,7 @@ class MenuActionProvider extends AbstractActionProvider
 
             $ret[] = $this
                 ->create('site_menu.edit', new TranslatableMarkup("Edit"), 'pencil')
+                ->redirectHere()
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_UPDATE, $item);
                 })

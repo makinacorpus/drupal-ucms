@@ -30,10 +30,12 @@
  - [x] DELETED - contrib: remove custom ckeditor customisations
  - [x] FIXED - all: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
  - all: rewrite all tests
+ - dashboard: excessively test actions subsystem
  - dashboard: improve page controller trait
  - dashboard: improve seven fixes
  - dashboard: style filter display in calista pages
  - dashboard: untangle display skin
+ - site: excessively test site core features and node access
  - site: handle redirects between sites and master
  - site: node published state per site
  - site: restore node reference/dereference actions with a better UI

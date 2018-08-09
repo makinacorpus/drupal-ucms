@@ -125,6 +125,10 @@ class AdminController extends ControllerBase
      */
     public function menuTree(Request $request, Menu $menu)
     {
-        throw new \Exception("not implemented yet");
+        return [
+            // Drupal 8 will filter for XSS if you provide a raw string here
+            // hence the need of encapsulating it into Markup::create().
+            '#markup' => Markup::create('<div id="ucms-menu-tree" data-menu="'.$menu->getId().'"></div>'),
+        ];
     }
 }

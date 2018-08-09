@@ -17,7 +17,10 @@ final class NodeEventSubscriber implements EventSubscriberInterface
     {
         return [
             NodeEvent::EVENT_INSERT => [
-                ['onInsertCloneUpdateMenus', 0],
+                ['onInsert', 0],
+            ],
+            NodeEvent::EVENT_DELETE => [
+                ['onDelete', 0],
             ],
         ];
     }
@@ -28,6 +31,15 @@ final class NodeEventSubscriber implements EventSubscriberInterface
     public function __construct(Connection $database)
     {
         $this->database = $database;
+    }
+
+    public function onDelete(NodeEvent $event)
+    {
+        // @todo remove once foreign keys are restored
+        $this
+            ->database
+            ->query("DELETE FROM {umenu_item} WHERE node_id = ?", [$event->getNode()->id()])
+        ;
     }
 
     /**

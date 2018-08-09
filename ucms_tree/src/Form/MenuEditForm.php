@@ -2,9 +2,11 @@
 
 namespace MakinaCorpus\Ucms\Tree\Form;
 
+use Drupal\Core\Url;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use MakinaCorpus\Ucms\Dashboard\Form\FormHelper;
 use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Umenu\Menu;
@@ -127,6 +129,11 @@ class MenuEditForm extends FormBase
             '#type'  => 'submit',
             '#value' => $this->t('Save'),
         ];
+        if ($siteId = $this->menu->getSiteId()) {
+            $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_tree.admin.menu.list', ['site' => $siteId]));
+        } else {
+            $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_tree.admin.menu.tree', ['menu' => $this->menu->getId()]));
+        }
 
         return $form;
     }
