@@ -45,4 +45,12 @@ abstract class AbstractActionProvider implements ActionProviderInterface
     {
         return (bool)$this->authorizationChecker->isGranted($attributes, $object);
     }
+
+    /**
+     * Add action
+     */
+    final protected function create(string $id, string $title, string $icon = null, int $priority = 0, $group = Action::GROUP_DEFAULT, bool $primary = false): ActionBuilder
+    {
+        return new ActionBuilder($id, $title, $icon, $priority, $group, $primary);
+    }
 }

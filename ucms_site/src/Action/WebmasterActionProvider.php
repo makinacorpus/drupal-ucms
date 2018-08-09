@@ -2,74 +2,53 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\SiteAccessRecord;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class WebmasterActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
     private $siteManager;
-    private $currentUser;
 
     /**
      * Default constructor
      */
-    public function __construct(SiteManager $manager, AccountInterface $currentUser)
+    public function __construct(SiteManager $siteManager)
     {
-        $this->siteManager = $manager;
-        $this->currentUser = $currentUser;
+        $this->siteManager = $siteManager;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getActions($item, bool $primaryOnly = false, array $groups = []): array
+    public function getActions($item): array
     {
-        /** @var \MakinaCorpus\Ucms\Site\SiteAccessRecord $item */
         $ret = [];
-        $isCurrentUser = $item->getUserId() == $this->currentUser->id();
 
-        /*
-        if ($item->getRole() === Access::ROLE_WEBMASTER) {
-            $path = $this->buildWebmasterUri($item, 'demote');
-            $ret[] = new Action($this->t("Demote as contributor"), $path, 'dialog', 'circle-arrow-down', 50, true, true);
-        } else if ($item->getRole() === Access::ROLE_CONTRIB) {
-            $path = $this->buildWebmasterUri($item, 'promote');
-            $ret[] = new Action($this->t("Promote as webmaster"), $path, 'dialog', 'circle-arrow-up', 50, true, true);
-        }
-         */
+        if ($item instanceof SiteAccessRecord) {
+            $site = $this->siteManager->getStorage()->findOne($item->getSiteId());
 
-        if (!$isCurrentUser || $this->currentUser->hasPermission(Access::PERM_SITE_GOD) || $this->currentUser->hasPermission(Access::PERM_SITE_MANAGE_ALL)) {
-            $ret[] = Action::create([
-                'title'     => $this->t("Remove"),
-                'route'     => 'ucms_site.admin.site.webmaster_delete',
-                'options'   => ['site' => $item->getSiteId(), 'user' => $item->getUserId()],
-                'icon'      => 'trash',
-                'primary'   => true,
-            ]);
-            $ret[] = Action::create([
-                'title'     => $this->t("Change role"),
-                'route'     => 'ucms_site.admin.site.webmaster_change',
-                'options'   => ['site' => $item->getSiteId(), 'user' => $item->getUserId()],
-                'icon'      => 'switch  ',
-                'primary'   => true,
-            ]);
+            $ret[] = $this
+                ->create('site_access.change', new TranslatableMarkup("Change role"), 'switch')
+                ->primary()
+                ->isGranted(function () use ($site) {
+                    return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $site);
+                })
+                ->asLink('ucms_site.admin.site.webmaster_change', ['site' => $item->getSiteId(), 'user' => $item->getUserId()])
+            ;
+
+            $ret[] = $this
+                ->create('site_access.remove', new TranslatableMarkup("Remove"), 'trash')
+                ->primary()
+                ->isGranted(function () use ($site) {
+                    return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $site);
+                })
+                ->asLink('ucms_site.admin.site.webmaster_delete', ['site' => $item->getSiteId(), 'user' => $item->getUserId()])
+            ;
         }
 
         return $ret;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($item): bool
-    {
-        return $item instanceof SiteAccessRecord;
     }
 }

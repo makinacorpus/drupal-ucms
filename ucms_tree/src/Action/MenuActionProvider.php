@@ -2,38 +2,40 @@
 
 namespace MakinaCorpus\Ucms\Tree\Action;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Umenu\Menu;
 
 class MenuActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
-    private $siteManager;
-
     /**
      * {inheritdoc}
      */
-    public function getActions($item, bool $primaryOnly = false, array $groups = []): array
+    public function getActions($item): array
     {
         $ret = [];
 
-        if ($this->isGranted(Access::OP_UPDATE, $item)) {
-            $ret[] = new Action($this->t("Manage links"), 'ucms_tree.admin.menu.tree', ['menu' => $item->getId()], 'th-list', -10, true, true);
-            $ret[] = new Action($this->t("Edit"), 'ucms_tree.admin.menu.edit', ['menu' => $item->getId()], 'pencil', 0, true, true);
+        if ($item instanceof Menu) {
+
+            $ret[] = $this
+                ->create('site_menu.links', new TranslatableMarkup("Manage links"), 'th-list', -10)
+                ->primary()
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_UPDATE, $item);
+                })
+                ->asLink('ucms_tree.admin.menu.tree', ['menu' => $item->getId()])
+            ;
+
+            $ret[] = $this
+                ->create('site_menu.edit', new TranslatableMarkup("Edit"), 'pencil')
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_UPDATE, $item);
+                })
+                ->asLink('ucms_tree.admin.menu.edit', ['menu' => $item->getId()])
+            ;
         }
 
         return $ret;
-    }
-
-    /**
-     * {inheritdoc}
-     */
-    public function supports($item): bool
-    {
-        return $item instanceof Menu;
     }
 }

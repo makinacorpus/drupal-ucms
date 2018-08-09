@@ -2,87 +2,120 @@
 
 namespace MakinaCorpus\Ucms\Site\Action;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
-use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SiteActionProvider extends AbstractActionProvider
 {
-    use StringTranslationTrait;
-
-    private $manager;
-    private $currentUser;
+    private $siteManager;
 
     /**
      * Default constructor
      */
-    public function __construct(SiteManager $manager)
+    public function __construct(SiteManager $siteManager)
     {
-        $this->manager = $manager;
-        // @todo FIXME
-        $this->currentUser = \Drupal::currentUser();
+        $this->siteManager = $siteManager;
     }
 
     /**
      * {inheritdoc}
      */
-    public function getActions($item, bool $primaryOnly = false, array $groups = []): array
+    public function getActions($item): array
     {
         $ret = [];
 
-        $account = $this->currentUser;
-        $access = $this->manager->getAccess();
-        $siteId = $item->getId();
+        if ($item instanceof Site) {
+            $siteId = $item->getId();
 
-        if ($this->isGranted(Access::OP_SITE_VIEW_IN_ADMIN, $item)) {
-            $ret[] = new Action($this->t("Informations"), 'ucms_site.admin.site.view', ['site' => $siteId], 'eye-open', -10);
-            // We do not check site state, because if user cannot view site, it
-            // should not end up being checked against here (since SQL query
-            // alteration will forbid it).
-        }
-        if ($this->isGranted(Access::OP_VIEW, $item)) {
-            // $uri = $this->url('<front>', [], ['ucms_site' => $item->id]); // @todo
-            $ret[] = new Action($this->t("Go to site"), 'ucms_site.admin.site.view', ['site' => $siteId], 'share-alt', -5, true);
-        }
-        if ($this->isGranted(Access::OP_UPDATE, $item)) {
-            $ret[] = new Action($this->t("Edit"), 'ucms_site.admin.site.edit', ['site' => $siteId], 'pencil', -2, false, true);
-        }
-        // @todo convert this to ACL/Voter too
-        if ($this->isGranted(Access::OP_SITE_CHANGE_HOSTNAME, $item)) {
-            $ret[] = new Action($this->t("Change hostname"), 'ucms_site.admin.site.change_hostname', ['site' => $siteId], 'fire', 0, false, true);
-        }
-        //$ret[] = new Action($this->t("History"), 'ucms_site.admin.site.view', ['site' => $item->id], 'list-alt', -1, false);
+            $ret[] = $this
+                ->create('site.view', new TranslatableMarkup("Informations"), 'eye-open', -10)
+                ->primary()
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_SITE_VIEW_IN_ADMIN, $item);
+                })
+                ->asLink('ucms_site.admin.site.view', ['site' => $siteId])
+            ;
 
-        // Append all possible state switch operations
-        $i = 10;
-        foreach ($access->getAllowedTransitions($account, $item) as $state => $name) {
-            $ret[] = new Action($this->t("Switch to @state", ['@state' => $this->t($name)]), 'ucms_site.admin.site.switch', ['site' => $siteId, 'state' => $state], 'refresh', ++$i, false, true, false, 'switch');
-        }
+            $ret[] = $this
+                ->create('site.goto', new TranslatableMarkup("Go to site"), 'share-alt', -5)
+                ->primary()
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_VIEW, $item);
+                })
+                ->asLink('ucms_site.admin.site.view', ['site' => $siteId])
+            ;
 
-        // @todo Consider delete as a state
+            $ret[] = $this
+                ->create('site.update', new TranslatableMarkup("Edit"), 'pencil', 0)
+                ->group('update')
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_UPDATE, $item);
+                })
+                // @todo addDestination
+                ->asLink('ucms_site.admin.site.edit', ['site' => $siteId])
+            ;
 
-        if ($this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $item)) {
-            // 100 as priority is enough to be number of states there is ($i)
-            $ret[] = new Action($this->t("Add existing user"), 'ucms_site.admin.site.webmaster_add', ['site' => $siteId], 'user', 100, false, true, false, 'user');
-            // $ret[] = new Action($this->t("Create new user"), 'admin/dashboard/site/' . $item->id . '/webmaster/add-new', ['site' => $siteId], 'user', 101, false, true, false, 'user');
-            $ret[] = new Action($this->t("Manage users"), 'ucms_site.admin.site.webmaster', ['site' => $siteId], 'user', 102, false, false, false, 'user');
-        }
+            $ret[] = $this
+                ->create('site.hostname', new TranslatableMarkup("Change hostname"), 'pencil', -2)
+                ->group('update')
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_SITE_CHANGE_HOSTNAME, $item);
+                })
+                // @todo addDestination
+                ->asLink('ucms_site.admin.site.change_hostname', ['site' => $siteId])
+            ;
 
-        if ($this->isGranted(Access::OP_DELETE, $item)) {
-            $ret[] = new Action($this->t("Delete"), 'ucms_site.admin.site.view', ['site' => $item->id, 'dialog' => true], 'trash', 1000, false, true, false, 'switch');
+            // Append all possible state switch operations
+            /*
+            $i = 10;
+            foreach ($access->getAllowedTransitions($account, $item) as $state => $name) {
+                $ret[] = $this
+                    ->create('site.hostname', $this->t("Change hostname"), 'pencil', -2)
+                    ->isGranted(function () use ($item) {
+                        return $this->isGranted(Access::OP_SITE_CHANGE_HOSTNAME, $item);
+                    })
+                    // @todo addDestination
+                    ->asLink('ucms_site.admin.site.change_hostname', ['site' => $siteId])
+                ;
+                $ret[] = new Action($this->t("Switch to @state", ['@state' => $this->t($name)]), 'ucms_site.admin.site.switch', ['site' => $siteId, 'state' => $state], 'refresh', ++$i, false, true, false, 'switch');
+            }
+             */
+
+            $ret[] = $this
+                ->create('site.useradd', new TranslatableMarkup("Add existing user"), 'user', 100)
+                ->group('user')
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $item);
+                })
+                // @todo addDestination
+                ->asLink('ucms_site.admin.site.webmaster_add', ['site' => $siteId])
+            ;
+
+            $ret[] = $this
+                ->create('site.users', new TranslatableMarkup("Manage users"), 'user', 102)
+                ->group('user')
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $item);
+                })
+                // @todo addDestination
+                ->asLink('ucms_site.admin.site.webmaster', ['site' => $siteId])
+            ;
+
+            $ret[] = $this
+                ->create('site.delete', new TranslatableMarkup("Delete"), 'trash', 1000)
+                ->group('switch')
+                ->isGranted(function () use ($item) {
+                    return $this->isGranted(Access::OP_DELETE, $item);
+                })
+                // @todo addDestination
+                // @todo delete form
+                ->asLink('ucms_site.admin.site.view', ['site' => $siteId])
+            ;
         }
 
         return $ret;
-    }
-
-    /**
-     * {inheritdoc}
-     */
-    public function supports($item): bool
-    {
-        return $item instanceof Site;
     }
 }

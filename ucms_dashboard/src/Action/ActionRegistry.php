@@ -30,14 +30,20 @@ final class ActionRegistry implements ActionProviderInterface
      *   If not empty, only given action groups are returned
      *
      * @return Action[]
+     *   Keys are actions identifiers, only the granted actions are returned
      */
     public function getActions($item, bool $primaryOnly = false, array $groups = []): array
     {
         $ret = [];
 
         foreach ($this->providers as $provider) {
-            if ($provider->supports($item)) {
-                $ret = array_merge($ret, $provider->getActions($item, $primaryOnly, $groups));
+            if ($actions = $provider->getActions($item)) {
+                /** @var \MakinaCorpus\Ucms\Dashboard\Action\Action $action */
+                foreach ($actions as $action) {
+                    if ($action->isGranted()) {
+                        $ret[$action->getId()] = $action;
+                    }
+                }
             }
         }
 
@@ -63,13 +69,5 @@ final class ActionRegistry implements ActionProviderInterface
         });
 
         return $ret;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($item): bool
-    {
-        return true;
     }
 }

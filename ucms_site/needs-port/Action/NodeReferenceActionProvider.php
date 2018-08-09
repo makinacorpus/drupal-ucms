@@ -57,12 +57,4 @@ class NodeReferenceActionProvider implements ActionProviderInterface
 
         return $ret;
     }
-
-    /**
-     * {inheritdoc}
-     */
-    public function supports($item)
-    {
-        return $item instanceof NodeReference;
-    }
 }

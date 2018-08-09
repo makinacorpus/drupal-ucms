@@ -28,7 +28,10 @@ final class MenuVoter implements VoterInterface
         if (!$user instanceof DrupalUser) {
             return self::ACCESS_ABSTAIN;
         }
+
         $account = $user->getDrupalAccount();
+        $isSiteManager = $account->hasPermission(Access::PERM_SITE_MANAGE_ALL);
+        $isSiteTech = $account->hasPermission(Access::PERM_SITE_IS_TECHNICIAN);
 
         if (!$siteId = $subject->getSiteId()) {
             return self::ACCESS_ABSTAIN;
@@ -40,11 +43,15 @@ final class MenuVoter implements VoterInterface
                 continue;
             }
 
+            if ($isSiteManager || $isSiteTech) {
+                return self::ACCESS_GRANTED;
+            }
+
             switch ($attribute) {
 
                 case Access::OP_VIEW:
                 case Access::OP_UPDATE:
-                    if ($this->siteManager->getAccess()->userCanEditTree($account, $site)) {
+                    if ($this->siteManager->getAccess()->userIsWebmaster($account, $site)) {
                         return self::ACCESS_GRANTED;
                     }
                     break;

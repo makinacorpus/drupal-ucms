@@ -137,7 +137,7 @@ final class SiteVoter implements VoterInterface
                     }
                     break;
 
-                case Access:OP_SITE_CHANGE_HOSTNAME:
+                case Access::OP_SITE_CHANGE_HOSTNAME:
                     if ($isSiteTech) {
                         return self::ACCESS_GRANTED;
                     }
