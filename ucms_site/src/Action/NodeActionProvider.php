@@ -38,9 +38,6 @@ class NodeActionProvider implements ActionProviderInterface
             $nodeSiteId = (int)$item->get('site_id')->value;
             $nodeIsClonable = (bool)$item->get('is_clonable')->value;
 
-            /** @var \Drupal\Core\Session\AccountInterface $account */
-            $account = $this->currentUser;
-
             // Check if current content is a reference within the current context
             /*
             if ($this->siteManager->hasContext()) {

@@ -4,6 +4,7 @@ namespace MakinaCorpus\Ucms\Dashboard\DependencyInjection;
 
 use MakinaCorpus\Ucms\Dashboard\Action\AbstractActionProvider;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface;
+use MakinaCorpus\Ucms\Dashboard\Action\ItemLoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -19,6 +20,9 @@ class ActionProviderRegisterPass implements CompilerPassInterface
             return;
         }
         $definition = $container->getDefinition('ucms_dashboard.action_provider_registry');
+
+        $loaders = [];
+        $providers = [];
 
         // Register custom action providers
         $taggedServices = $container->findTaggedServiceIds('ucms.action_provider');
@@ -36,7 +40,21 @@ class ActionProviderRegisterPass implements CompilerPassInterface
                 $def->addMethodCall('setAuthorizationChecker', [new Reference('security.authorization_checker')]);
             }
 
-            $definition->addMethodCall('register', [new Reference($id)]);
+            $providers[] = new Reference($id);
         }
+
+        // Register custom item loaders
+        $taggedServices = $container->findTaggedServiceIds('ucms.item_loader');
+        foreach ($taggedServices as $id => $attributes) {
+            $def = $container->getDefinition($id);
+            $class = $container->getParameterBag()->resolveValue($def->getClass());
+            $refClass = new \ReflectionClass($class);
+            if (!$refClass->implementsInterface(ItemLoaderInterface::class)) {
+                throw new \InvalidArgumentException(sprintf('Service "%s" must implement interface "%s".', $id, ItemLoaderInterface::class));
+            }
+            $loaders[] = new Reference($id);
+        }
+
+        $definition->setArguments([$providers, $loaders]);
     }
 }

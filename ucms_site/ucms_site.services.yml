@@ -173,6 +173,12 @@ services:
     #
     ###########################################################################
 
+    ucms_site.core_item_loader:
+        public: false
+        class: MakinaCorpus\Ucms\Site\Action\CoreItemLoader
+        arguments: ["@ucms_site.manager", "@entity_type.manager", "@umenu.menu_storage"]
+        tags: [{name: ucms.item_loader}]
+
     ucms_site.site_action_provider:
         public: false
         class: MakinaCorpus\Ucms\Site\Action\SiteActionProvider

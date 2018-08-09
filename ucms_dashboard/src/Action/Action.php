@@ -2,6 +2,8 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Action;
 
+use Drupal\Core\Url;
+
 /**
  * Represent a possible action over a certain item, this is just a value
  * object that will be used to build UI links or buttons
@@ -17,10 +19,13 @@ interface Action
 
     /**
      * Get action unique identifier cleaned-up and OK for CSS usage
-     *
-     * @todo change this name
      */
     public function getDrupalId(): string;
+
+    /**
+     * Get Drupal Url instance for rendering
+     */
+    public function getDrupalUrl(): Url;
 
     /**
      * Get action group

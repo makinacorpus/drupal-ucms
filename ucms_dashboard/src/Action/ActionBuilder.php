@@ -2,9 +2,13 @@
 
 namespace MakinaCorpus\Ucms\Dashboard\Action;
 
+use MakinaCorpus\Ucms\Dashboard\Action\Impl\ProcessAction;
+use MakinaCorpus\Ucms\Dashboard\Action\Impl\RouteAction;
+
 final class ActionBuilder
 {
     private $id;
+    private $identity;
     private $options = [];
 
     /**
@@ -12,7 +16,7 @@ final class ActionBuilder
      */
     public function __construct(string $id, string $title, string $icon = null, int $priority = 0, $group = Action::GROUP_DEFAULT, bool $primary = false)
     {
-        $this-> id = $id;
+        $this->id = $id;
         $this->options = [
             'title' => $title,
             'icon' => $icon,
@@ -74,6 +78,20 @@ final class ActionBuilder
         return $this;
     }
 
+    public function redirectHere(): self
+    {
+        $this->options['destination'] = true;
+
+        return $this;
+    }
+
+    public function identity(string $type, string $id): self
+    {
+        $this->identity = new ItemIdentity($type, $id);
+
+        return $this;
+    }
+
     /**
      * Build the action as a link
      */
@@ -85,8 +103,12 @@ final class ActionBuilder
     /**
      * Build the action as something that can be processed
      */
-    public function asAction(callable $process)
+    public function asAction(callable $process): ProcessAction
     {
-        return ProcessAction::create($this->id, $process, $this->options);
+        if (!$this->identity) {
+            throw new \InvalidArgumentException("You cannot create a process action without item identity set using the identity() method");
+        }
+
+        return ProcessAction::create($this->id, $this->identity, $process, $this->options);
     }
 }

@@ -14,29 +14,26 @@ use MakinaCorpus\Ucms\Site\Structure\PartialUserTrait;
  *   - reference the site object within
  *   - make the object extensible (global permissions within groups)
  */
-class SiteAccessRecord implements PartialUserInterface
+final class SiteAccessRecord implements PartialUserInterface
 {
     use PartialUserTrait;
 
-    /**
-     * @var int
-     */
     private $uid;
-
-    /**
-     * @var int
-     */
     private $site_id;
-
-    /**
-     * @var int
-     */
     private $site_state;
+    private $role;
 
     /**
-     * @var int
+     * Create partial instance, for internal use only
      */
-    private $role;
+    public static function createPartial($siteId, $userId)
+    {
+        $instance = new self();
+        $instance->uid = $userId;
+        $instance->site_id = $siteId;
+
+        return $instance;
+    }
 
     /**
      * {@inheritdoc}
@@ -71,5 +68,13 @@ class SiteAccessRecord implements PartialUserInterface
     public function getRole(): int
     {
         return (int)$this->role;
+    }
+
+    /**
+     * Generate unique identifier
+     */
+    public function generateUniqueId(): string
+    {
+        return $this->site_id.'-'.$this->uid;
     }
 }

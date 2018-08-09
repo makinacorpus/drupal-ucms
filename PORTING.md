@@ -3,7 +3,10 @@
 ## Minimal viable product
 
  - [x] DELETED - site: restore post init event
+ - [x] FIXED - all: fixe destination parameter usage
  - [x] FIXED - dashboard: bug in calista search (search parameter override itself)
+ - [x] FIXED - Modern front assets toolchain
+ - [x] FIXED - sf-int: write a proxy to router access check system to symfony authorization checker
  - [x] FIXED - site: finish site listing screen
  - [x] FIXED - site: get rid once for all of Drupal role to site role relationship
  - [x] FIXED - site: restore menu site status alteration
@@ -14,11 +17,8 @@
  - [x] PORTED - ucms_dashboard
  - [x] PORTED - ucms_site
  - [x] PORTED - umenu
- - [x] sf-int: write a proxy to router access check system to symfony authorization checker
- - all: fixe destination parameter usage
  - all: handle caching gracefully
  - all: restore SQL constraints
- - PENDING - Modern front assets toolchain
  - site: fix cross url route generator to use path matching
  - site: fix missing site frontpage (home node)
  - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition

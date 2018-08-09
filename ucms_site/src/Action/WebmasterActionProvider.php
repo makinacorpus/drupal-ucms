@@ -12,6 +12,16 @@ class WebmasterActionProvider extends AbstractActionProvider
 {
     private $siteManager;
 
+    private static function buildId(SiteAccessRecord $item): string
+    {
+        return $item->getSiteId().'-'.$item->getUserId();
+    }
+
+    private static function explodeId(string $id): array
+    {
+        return explode('-', $id, 2);
+    }
+
     /**
      * Default constructor
      */
@@ -33,6 +43,7 @@ class WebmasterActionProvider extends AbstractActionProvider
             $ret[] = $this
                 ->create('site_access.change', new TranslatableMarkup("Change role"), 'switch')
                 ->primary()
+                ->redirectHere()
                 ->isGranted(function () use ($site) {
                     return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $site);
                 })
@@ -42,10 +53,14 @@ class WebmasterActionProvider extends AbstractActionProvider
             $ret[] = $this
                 ->create('site_access.remove', new TranslatableMarkup("Remove"), 'trash')
                 ->primary()
+                ->redirectHere()
                 ->isGranted(function () use ($site) {
                     return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $site);
                 })
-                ->asLink('ucms_site.admin.site.webmaster_delete', ['site' => $item->getSiteId(), 'user' => $item->getUserId()])
+                ->identity('site_access', $item->generateUniqueId())
+                ->asAction(function () use ($item, $site) {
+                    $this->siteManager->getAccess()->removeUsers($site, [$item->getUserId()]);
+                });
             ;
         }
 

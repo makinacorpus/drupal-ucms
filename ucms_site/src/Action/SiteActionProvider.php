@@ -50,21 +50,21 @@ class SiteActionProvider extends AbstractActionProvider
 
             $ret[] = $this
                 ->create('site.update', new TranslatableMarkup("Edit"), 'pencil', 0)
+                ->redirectHere()
                 ->group('update')
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_UPDATE, $item);
                 })
-                // @todo addDestination
                 ->asLink('ucms_site.admin.site.edit', ['site' => $siteId])
             ;
 
             $ret[] = $this
                 ->create('site.hostname', new TranslatableMarkup("Change hostname"), 'pencil', -2)
+                ->redirectHere()
                 ->group('update')
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_SITE_CHANGE_HOSTNAME, $item);
                 })
-                // @todo addDestination
                 ->asLink('ucms_site.admin.site.change_hostname', ['site' => $siteId])
             ;
 
@@ -74,10 +74,10 @@ class SiteActionProvider extends AbstractActionProvider
             foreach ($access->getAllowedTransitions($account, $item) as $state => $name) {
                 $ret[] = $this
                     ->create('site.hostname', $this->t("Change hostname"), 'pencil', -2)
+                    ->redirectHere()
                     ->isGranted(function () use ($item) {
                         return $this->isGranted(Access::OP_SITE_CHANGE_HOSTNAME, $item);
                     })
-                    // @todo addDestination
                     ->asLink('ucms_site.admin.site.change_hostname', ['site' => $siteId])
                 ;
                 $ret[] = new Action($this->t("Switch to @state", ['@state' => $this->t($name)]), 'ucms_site.admin.site.switch', ['site' => $siteId, 'state' => $state], 'refresh', ++$i, false, true, false, 'switch');
@@ -86,31 +86,31 @@ class SiteActionProvider extends AbstractActionProvider
 
             $ret[] = $this
                 ->create('site.useradd', new TranslatableMarkup("Add existing user"), 'user', 100)
+                ->redirectHere()
                 ->group('user')
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $item);
                 })
-                // @todo addDestination
                 ->asLink('ucms_site.admin.site.webmaster_add', ['site' => $siteId])
             ;
 
             $ret[] = $this
                 ->create('site.users', new TranslatableMarkup("Manage users"), 'user', 102)
+                ->redirectHere()
                 ->group('user')
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_SITE_MANAGE_WEBMASTERS, $item);
                 })
-                // @todo addDestination
                 ->asLink('ucms_site.admin.site.webmaster', ['site' => $siteId])
             ;
 
             $ret[] = $this
                 ->create('site.delete', new TranslatableMarkup("Delete"), 'trash', 1000)
+                ->redirectHere()
                 ->group('switch')
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_DELETE, $item);
                 })
-                // @todo addDestination
                 // @todo delete form
                 ->asLink('ucms_site.admin.site.view', ['site' => $siteId])
             ;

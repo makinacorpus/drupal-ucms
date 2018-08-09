@@ -5,18 +5,48 @@ namespace MakinaCorpus\Ucms\Dashboard\Action;
 /**
  * Actions registry is what fetches actions from any object.
  */
-final class ActionRegistry implements ActionProviderInterface
+final class ActionRegistry implements ActionProviderInterface, ItemLoaderInterface
 {
+    private $loaders = [];
     private $providers = [];
 
     /**
-     * Register providers
-     *
-     * @param ActionProviderInterface $provider
+     * Default constructor
      */
-    public function register(ActionProviderInterface $provider)
+    public function __construct(array $providers, array $loaders)
     {
-        $this->providers[] = $provider;
+        $this->loaders = $loaders;
+        $this->providers = $providers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIdFrom($item)
+    {
+        /** @var \MakinaCorpus\Ucms\Dashboard\Action\ItemLoaderInterface $loader */
+        foreach ($this->loaders as $loader) {
+            if ($id = $loader->getIdFrom($item)) {
+                return $id;
+            }
+        }
+
+        throw new \InvalidArgumentException("There is no item loader able to get from item");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load(ItemIdentity $identity)
+    {
+        /** @var \MakinaCorpus\Ucms\Dashboard\Action\ItemLoaderInterface $loader */
+        foreach ($this->loaders as $loader) {
+            if ($item = $loader->load($identity)) {
+                return $item;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf("There is no item loader able to load '%s' with id '%s'", $identity->type, $identity->id));
     }
 
     /**
@@ -36,6 +66,7 @@ final class ActionRegistry implements ActionProviderInterface
     {
         $ret = [];
 
+        /** @var \MakinaCorpus\Ucms\Dashboard\Action\ActionProviderInterface $provider */
         foreach ($this->providers as $provider) {
             if ($actions = $provider->getActions($item)) {
                 /** @var \MakinaCorpus\Ucms\Dashboard\Action\Action $action */
@@ -48,18 +79,18 @@ final class ActionRegistry implements ActionProviderInterface
         }
 
         if ($primaryOnly) {
-            $ret = array_filter($ret, function (Action $action) {
+            $ret = \array_filter($ret, function (Action $action) {
                 return $action->isPrimary();
             });
         }
 
         if ($groups) {
-            $ret = array_filter($ret, function (Action $action) use ($groups) {
-                return in_array($action->getGroup(), $groups);
+            $ret = \array_filter($ret, function (Action $action) use ($groups) {
+                return \in_array($action->getGroup(), $groups);
             });
         }
 
-        usort($ret, function (Action $a, Action $b) {
+        \uasort($ret, function (Action $a, Action $b) {
             $ap = $a->getPriority();
             $bp = $b->getPriority();
             if ($ap == $bp) {

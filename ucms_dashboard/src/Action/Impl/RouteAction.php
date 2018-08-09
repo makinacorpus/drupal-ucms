@@ -1,8 +1,9 @@
 <?php
 
-namespace MakinaCorpus\Ucms\Dashboard\Action;
+namespace MakinaCorpus\Ucms\Dashboard\Action\Impl;
 
 use Drupal\Core\Url;
+use MakinaCorpus\Ucms\Dashboard\Action\AbstractAction;
 
 final class RouteAction extends AbstractAction
 {
@@ -24,6 +25,7 @@ final class RouteAction extends AbstractAction
 
         $instance->route = $route;
         $instance->target = (string)($routeParameters['target'] ?? '');
+        $instance->withDestination = (bool)($options['destination'] ?? false);
 
         if (\is_array($routeParameters)) {
             $instance->routeParameters = $routeParameters;
@@ -35,7 +37,7 @@ final class RouteAction extends AbstractAction
                   break;
 
               case 'ajax':
-                  $addCurrentDestination = true;
+                  $instance->withDestination = true;
                   break;
 
               case 'dialog':
@@ -43,11 +45,6 @@ final class RouteAction extends AbstractAction
                   $instance->withAjax = true;
                   break;
             }
-        }
-
-        if ($addCurrentDestination ?? false) {
-            $instance->withDestination = true;
-            $instance->routeParameters['_destination'] = 1;
         }
 
         return $instance;

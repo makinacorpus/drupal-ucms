@@ -86,7 +86,7 @@ class WebmasterAddExisting extends FormBase
             '#type' => 'submit',
             '#value' => new TranslatableMarkup("Add"),
         ];
-        $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_site.admin.site_list'));
+        $form['actions']['cancel'] = FormHelper::createCancelLink(new Url('ucms_site.admin.site.webmaster', ['site' => $this->site->getId()]));
 
         return $form;
     }

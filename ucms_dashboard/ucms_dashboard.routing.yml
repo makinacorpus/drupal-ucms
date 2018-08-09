@@ -1,0 +1,9 @@
+
+ucms_dashboard.action.process:
+    path: /admin/ucms/action/{action}/{type}/{id}
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Dashboard\Controller\ActionController::process
+        _title: Process
+    requirements:
+        # Real access check is done within the controller
+        _permission: access content

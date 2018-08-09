@@ -7,7 +7,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use MakinaCorpus\Ucms\Dashboard\Action\ProcessAction;
+use MakinaCorpus\Ucms\Dashboard\Action\Impl\ProcessAction;
 
 class ProcessActionConfirmForm extends ConfirmFormBase
 {
@@ -61,8 +61,8 @@ class ProcessActionConfirmForm extends ConfirmFormBase
      */
     public function getCancelUrl()
     {
-        // @todo fixme
-        return new Url('ucms_site.admin.site.webmaster', ['site' => $this->site->getId()]);
+        // @todo There always should be a destination parameter
+        return new Url('ucms_site.admin.site_list');
     }
 
     /**
@@ -78,6 +78,6 @@ class ProcessActionConfirmForm extends ConfirmFormBase
         }
 
         // @todo should be driven by action
-        $formState->setRedirect('ucms_site.admin.site.webmaster', ['site' => $this->site->getId()]);
+        $formState->setRedirect('ucms_site.admin.site_list');
     }
 }

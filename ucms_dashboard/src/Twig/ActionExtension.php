@@ -4,6 +4,8 @@ namespace MakinaCorpus\Ucms\Dashboard\Twig;
 
 use MakinaCorpus\Ucms\Dashboard\Action\Action;
 use MakinaCorpus\Ucms\Dashboard\Action\ActionRegistry;
+use MakinaCorpus\Ucms\Dashboard\Action\Impl\ProcessAction;
+use MakinaCorpus\Ucms\Dashboard\Action\Impl\RouteAction;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -19,10 +21,6 @@ class ActionExtension extends \Twig_Extension
 
     /**
      * Default constructor
-     *
-     * @param ActionRegistry $actionRegistry
-     * @param RequestStack $requestStack
-     * @param UrlGeneratorInterface $urlGenerator
      */
     public function __construct(ActionRegistry $actionRegistry, RequestStack $requestStack, UrlGeneratorInterface $urlGenerator)
     {
@@ -219,10 +217,13 @@ class ActionExtension extends \Twig_Extension
 
         /** @var \MakinaCorpus\Ucms\Dashboard\Action\Action $action */
         foreach ($actions as $action) {
-            $links[$action->getDrupalId()] = [
-                'title' => $action->getTitle(),
-                'url' => $action->getDrupalUrl(),
-            ];
+
+            $url = $action->getDrupalUrl();
+            if ($action instanceof ProcessAction || (($action instanceof RouteAction) && $action->hasDestination())) {
+                $url = $url->mergeOptions(['query' => ['destination' => \Drupal::destination()->get()]]);
+            }
+
+            $links[$action->getDrupalId()] = ['title' => $action->getTitle(), 'url' => $url];
         }
 
         return ['#type' => 'dropbutton', '#links' => $links];
