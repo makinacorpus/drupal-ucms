@@ -6,17 +6,18 @@ parameters:
 
 services:
 
-#    ucms_tree.site_event_subscriber:
-#        public: true
-#        class: MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventSubscriber
-#        arguments: ["@database", "@ucms_site.manager", "@umenu.manager", "%ucms_tree_allowed_menus%"]
-#        tags: [{ name: event_subscriber }]
-#
-#    ucms_tree.node_event_subscriber:
-#        public: true
-#        class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
-#        arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
-#        tags: [{ name: event_subscriber }]
+    ucms_tree.site_event_subscriber:
+        public: true
+        class: MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventSubscriber
+        arguments: ["@database", "@ucms_site.manager", "@umenu.manager", "@ucms_site.node_manager", "%ucms_tree_allowed_menus%"]
+        tags: [{ name: event_subscriber }]
+
+    ucms_tree.node_event_subscriber:
+        public: true
+        class: MakinaCorpus\Ucms\Tree\EventDispatcher\NodeEventSubscriber
+        # arguments: ["@database", "@ucms_seo.seo_service", "@ucms_site.manager", "@ucms_seo.store_locator_factory"]
+        arguments: ["@database"]
+        tags: [{ name: event_subscriber }]
 
     ucms_tree.admin.datasource:
         public: true

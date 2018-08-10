@@ -9,6 +9,7 @@
  - [x] FIXED - sf-int: write a proxy to router access check system to symfony authorization checker
  - [x] FIXED - site: finish site listing screen
  - [x] FIXED - site: get rid once for all of Drupal role to site role relationship
+ - [x] FIXED - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
  - [x] FIXED - site: restore menu site status alteration
  - [x] FIXED - site: restore site access query alter
  - [x] HARDCODED - site: restore state transition matrix
@@ -16,13 +17,13 @@
  - [x] PORTED - site: restore node access query alter
  - [x] PORTED - ucms_dashboard
  - [x] PORTED - ucms_site
+ - [x] PORTED - ucms_tree - Needed in order to port SEO module and to finish site module port
  - [x] PORTED - umenu
  - all: handle caching gracefully
  - all: restore SQL constraints
  - site: fix cross url route generator to use path matching
  - site: fix missing site frontpage (home node)
- - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
- - ucms_tree - Needed in order to port SEO module and to finish site module port
+ - tree: correct menu block cacheability
 
 ## Necessary
 

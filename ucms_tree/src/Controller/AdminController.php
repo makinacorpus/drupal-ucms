@@ -13,7 +13,10 @@ use MakinaCorpus\Calista\Query\QueryFactory;
 use MakinaCorpus\Calista\Twig\View\TwigView;
 use MakinaCorpus\Calista\View\ViewDefinition;
 use MakinaCorpus\Ucms\Site\Site;
+use MakinaCorpus\Ucms\Tree\EventDispatcher\SiteEventSubscriber;
+use MakinaCorpus\Ucms\Tree\EventDispatcher\TreeEvent;
 use MakinaCorpus\Umenu\Menu;
+use MakinaCorpus\Umenu\Tree;
 use MakinaCorpus\Umenu\TreeManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -46,19 +49,9 @@ class AdminController extends ControllerBase
     }
 
     /**
-     * Compute menu identifier
-     *
-     * @todo mutualize this with SiteEventListener
-     */
-    private function getMenuName(Site $site, string $prefix = 'main'): string
-    {
-        return $prefix.'-'.$site->getId();
-    }
-
-    /**
      * Create missing menus for site and return the created menu list
      *
-     * @todo mutualize this with SiteEventListener
+     * @todo mutualize this with SiteEventSubscriber
      */
     private function ensureSiteMenus(Site $site): array
     {
@@ -66,7 +59,7 @@ class AdminController extends ControllerBase
         if ($this->allowedMenus) {
             $storage = $this->treeManager->getMenuStorage();
             foreach ($this->allowedMenus as $prefix => $title) {
-                $name = $this->getMenuName($site, $prefix);
+                $name = SiteEventSubscriber::getMenuName($site, $prefix);
                 if (!$storage->exists($name)) {
                     $ret[$name] = $storage->create($name, ['title' => $this->t($title), 'site_id' => $site->getId()]);
                 }
@@ -185,6 +178,7 @@ class AdminController extends ControllerBase
             throw new BadRequestHttpException();
         }
 
+        $deleted = [];
         $flattenedTree = $this->validateIncommingTree($menu, $input['tree']);
         $itemStorage = $this->treeManager->getItemStorage();
 
@@ -206,8 +200,13 @@ class AdminController extends ControllerBase
 
             // @todo provide an helper for this in umenu
             if ($existing) {
-                $this->database->query("DELETE FROM {umenu_item} WHERE menu_id = :id AND id NOT IN (:list[])", [':id' => $menu->getId(), ':list[]' => $existing]);
+                $args = [':id' => $menu->getId(), ':list[]' => $existing];
+                $deleted = $this->database->query("SELECT id FROM {umenu_item} WHERE menu_id = :id AND id NOT IN (:list[])", $args)->fetchCol();
+                $this->database->query("DELETE FROM {umenu_item} WHERE menu_id = :id AND id NOT IN (:list[])", $args);
             }
+
+            // Raise proper events.
+            $this->eventDispatcher->dispatch(TreeEvent::EVENT_TREE, new TreeEvent($menu, $deleted));
 
             unset($tx); // Explicit commit.
             // \drupal_set_message($this->t("Tree saved"));
@@ -216,11 +215,16 @@ class AdminController extends ControllerBase
             if ($tx) {
                 try {
                     $tx->rollback();
-                } catch (\Exception $e2) {
-                    \watchdog_exception('ucms_tree', $e2);
+                } catch (\Throwable $e2) {
+                    if ($e instanceof \Exception) {
+                        \watchdog_exception('ucms_tree', $e2);
+                    }
                 }
-                \watchdog_exception('ucms_tree', $e);
+                if ($e instanceof \Exception) {
+                    \watchdog_exception('ucms_tree', $e);
+                }
                 // \drupal_set_message($this->t("Could not save tree"), 'error');
+                throw $e;
             }
         }
     }

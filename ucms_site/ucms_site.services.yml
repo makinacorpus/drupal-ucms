@@ -226,6 +226,12 @@ services:
 
     ucms_site.node_access.subscriber:
         public: true
+        class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventSubscriber
+        arguments: ["@ucms_site.manager", "@umenu.manager"]
+        tags: [{ name: event_subscriber }]
+
+    ucms_site.node_access.subscriber:
+        public: true
         class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessEventSubscriber
         arguments: ["@ucms_site.manager", "@ucms_group.manager", "@sf_dic.node_access.subscriber"]
         tags: [{ name: event_subscriber }]

@@ -36,10 +36,7 @@ final class NodeEventSubscriber implements EventSubscriberInterface
     public function onDelete(NodeEvent $event)
     {
         // @todo remove once foreign keys are restored
-        $this
-            ->database
-            ->query("DELETE FROM {umenu_item} WHERE node_id = ?", [$event->getNode()->id()])
-        ;
+        $this->database->query("DELETE FROM {umenu_item} WHERE node_id = ?", [$event->getNode()->id()]);
     }
 
     /**

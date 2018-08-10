@@ -10,13 +10,16 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteCloneEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Umenu\TreeManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use MakinaCorpus\Ucms\Site\NodeManager;
 
-class SiteEventListener
+class SiteEventSubscriber implements EventSubscriberInterface
 {
     use StringTranslationTrait;
 
     private $allowedMenus = [];
     private $database;
+    private $nodeManager;
     private $siteManager;
     private $treeManager;
 
@@ -32,16 +35,20 @@ class SiteEventListener
             SiteEvents::EVENT_CLONE => [
                 ['onInsertClone', 0],
             ],
+            TreeEvent::EVENT_TREE => [
+                ['onTreeUpdate', 0],
+            ]
         ];
     }
 
     /**
      * Default constructor
      */
-    public function __construct(Connection $database, SiteManager $siteManager, TreeManager $treeManager, array $allowedMenus)
+    public function __construct(Connection $database, SiteManager $siteManager, TreeManager $treeManager, NodeManager $nodeManager, array $allowedMenus)
     {
         $this->allowedMenus = $allowedMenus;
         $this->database = $database;
+        $this->nodeManager = $nodeManager;
         $this->siteManager = $siteManager;
         $this->treeManager = $treeManager;
     }
@@ -49,9 +56,9 @@ class SiteEventListener
     /**
      * Compute menu identifier
      */
-    private function getMenuName(Site $site, string $prefix = 'main'): string
+    public static function getMenuName(Site $site, string $prefix = 'main'): string
     {
-        return $prefix.'-'.$site->getId();
+        return 'site-'.$prefix.'-'.$site->getId();
     }
 
     /**
@@ -63,7 +70,7 @@ class SiteEventListener
         if ($this->allowedMenus) {
             $storage = $this->treeManager->getMenuStorage();
             foreach ($this->allowedMenus as $prefix => $title) {
-                $name = $this->getMenuName($site, $prefix);
+                $name = self::getMenuName($site, $prefix);
                 if (!$storage->exists($name)) {
                     $ret[$name] = $storage->create($name, ['title' => $this->t($title), 'site_id' => $site->getId()]);
                 }
@@ -93,9 +100,35 @@ class SiteEventListener
 
         if ($this->allowedMenus) {
             foreach (\array_keys($this->allowedMenus) as $prefix) {
-                $sourceName = $this->getMenuName($source, $prefix);
-                $targetName = $this->getMenuName($target, $prefix);
+                $sourceName = self::getMenuName($source, $prefix);
+                $targetName = self::getMenuName($target, $prefix);
                 $this->treeManager->cloneMenuIn($sourceName, $targetName);
+            }
+        }
+    }
+
+    /**
+     * On tree update set correct node references
+     *
+     * @todo this should live into the 'ucms_site' module, for this:
+     *   - umenu should provide the transactionnal wrapper for menu tree save
+     *   - umenu should raise itself the event (and not ucms_tree)
+     */
+    public function onTreeUpdate(TreeEvent $event)
+    {
+        // @todo should we remove site reference for nodes that have been removed from tree?
+        // FIXME: NOT SCALABLE
+        //   - should be implemented when items are added into tree, not moved
+        //   - keeping this as of now, but it must be done otherwise
+        $menu = $event->getMenu();
+        if ($siteId = $menu->getSiteId()) {
+            $nodeIdList = $this->database->query("SELECT node_id FROM {umenu_item} WHERE menu_id = ?", [$menu->getId()])->fetchCol();
+            if ($nodeIdList) {
+                // @todo references should drop node-related caches:
+                //   - tags of those node
+                //   - tags node_list
+                //   - page and site context?
+                $this->nodeManager->createReferenceBulkInSite($siteId, $nodeIdList);
             }
         }
     }
