@@ -52,6 +52,7 @@ module.exports = (env, argv) => {
       extensions: [".ts", ".tsx", ".js"]
     },
     externals: {
+      "drupal": "Drupal",
       "jquery": "jQuery",
       "react": "React",
       "react-dom": "ReactDOM"

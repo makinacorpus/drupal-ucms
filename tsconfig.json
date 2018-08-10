@@ -2,6 +2,7 @@
     "compilerOptions": {
         "allowJs": true,
         "alwaysStrict": true,
+        "baseUrl": "./src-front",
         "checkJs": false,
         "downlevelIteration": false,
         "inlineSources": true,
@@ -13,6 +14,7 @@
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
+        "paths": {"drupal": ["types/drupal"]},
         "removeComments": true,
         "sourceMap": true,
         "strict": true,

@@ -245,17 +245,16 @@ class AdminController extends ControllerBase
     /**
      * Recursively create a data structure suitable for the front side.
      */
-    private function recursiveTreeToJson(array $items): array
+    private function recursiveTreeToJson(array $items, $depth = 0): array
     {
         $ret = [];
-        $expansionThreshold = 4;
         /** @var \MakinaCorpus\Umenu\TreeItem $item */
         foreach ($items as $item) {
             $ret[] = [
                 'id' => $item->getId(),
                 'title' => $item->getTitle(),
-                'expanded' => $expansionThreshold < $item->getChildCount(),
-                'children' => $this->recursiveTreeToJson($item->getChildren())
+                'expanded' => $depth < 1 && $item->getChildCount() < 7,
+                'children' => $this->recursiveTreeToJson($item->getChildren(), $depth + 1)
             ];
         }
         return $ret;
