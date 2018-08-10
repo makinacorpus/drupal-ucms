@@ -1,19 +1,21 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import SortableTree, { TreeItem } from 'react-sortable-tree';
+import SortableTree, { changeNodeAtPath, ExtendedNodeData, TreeItem } from 'react-sortable-tree';
 
 interface MenuTreeItem extends TreeItem {
-    id: number;
+    readonly id: number;
+    title: any; // Else we cannot set React components
+    originalTitle?: string;
+    children?: MenuTreeItem[];
 }
+
+type TreeResultResolve = (result: TreeResult) => void;
+type ErrorReject = (reason?: any) => void;
 
 interface TreeResult {
     tree: MenuTreeItem[];
 }
-
-type TreeResultResolve = (result: TreeResult) => void;
-
-type ErrorReject = (reason?: any) => void;
 
 interface MenuWidgetProps {
     readonly menuId: number;
@@ -28,11 +30,8 @@ export class MenuWidget extends React.Component<MenuWidgetProps, MenuWidgetState
 
     constructor(props: MenuWidgetProps) {
         super(props);
-
-        this.state = {
-            treeData: this.props.items
-        };
-
+        this.state = {treeData: this.props.items};
+        this.nodeGenerateProps = this.nodeGenerateProps.bind(this);
         this.onResetClick = this.onResetClick.bind(this);
         this.onSaveClick = this.onSaveClick.bind(this);
     }
@@ -50,17 +49,34 @@ export class MenuWidget extends React.Component<MenuWidgetProps, MenuWidgetState
         ;
     }
 
-    // @todo
-    //   - make height computed on front dynamically
-    //   - translations
+    private nodeGenerateProps(data: ExtendedNodeData) {
+        return {
+            title: (<input value={data.node.title} onChange={event => {
+                // I am not proud of this code, seriously, we reach the limit
+                // of react-sortable-tree API comprensionability.
+                event.preventDefault();
+                const title = event.target.value;
+                this.setState({
+                    treeData: changeNodeAtPath({
+                        treeData: this.state.treeData,
+                        path: data.path,
+                        getNodeKey: data => data.treeIndex,
+                        newNode: { ...data.node, title },
+                    })
+                });
+            }}/>),
+        }
+    }
+
+    // @todo translations
     render() {
         return (
-            //<div style={{ height: 1000 }}>
             <div>
                 <SortableTree
                     isVirtualized={false}
                     onChange={treeData => this.setState({ treeData })}
                     treeData={this.state.treeData}
+                    generateNodeProps={this.nodeGenerateProps}
                 />
                 <div>
                     <button className="button btn btn-primary" onClick={this.onResetClick}>
@@ -73,13 +89,6 @@ export class MenuWidget extends React.Component<MenuWidgetProps, MenuWidgetState
             </div>
         );
     }
-}
-
-export function initMenuWidgetOn(element: Element, id: number) {
-    loadTree(id)
-        .then(result => ReactDOM.render(<MenuWidget menuId={id} items={result.tree}/>, element))
-        .catch(err => console.log(err))
-    ;
 }
 
 /**
@@ -144,4 +153,14 @@ function loadTree(id: number): Promise<TreeResult> {
         });
         req.send();
     });
+}
+
+/**
+ * Initialize widget.
+ */
+export function initMenuWidgetOn(element: Element, id: number) {
+    loadTree(id)
+        .then(result => ReactDOM.render(<MenuWidget menuId={id} items={result.tree}/>, element))
+        .catch(err => console.log(err))
+    ;
 }
