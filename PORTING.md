@@ -10,6 +10,7 @@
  - [x] FIXED - site: finish site listing screen
  - [x] FIXED - site: get rid once for all of Drupal role to site role relationship
  - [x] FIXED - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
+ - [x] FIXED - site: restore admin theme on admin paths when in site
  - [x] FIXED - site: restore menu site status alteration
  - [x] FIXED - site: restore site access query alter
  - [x] HARDCODED - site: restore state transition matrix
@@ -23,7 +24,10 @@
  - all: restore SQL constraints
  - site: fix cross url route generator to use path matching
  - site: fix missing site frontpage (home node)
+ - tree: allow item deletion in manage links page
+ - tree: allow title edit in manage links page
  - tree: correct menu block cacheability
+ - tree: force node attach to site on item form and multiple item form
 
 ## Necessary
 
@@ -33,7 +37,7 @@
  - all: rewrite all tests
  - dashboard: excessively test actions subsystem
  - dashboard: improve page controller trait
- - dashboard: improve seven fixes
+ - dashboard: restore/improve seven fixes
  - dashboard: style filter display in calista pages
  - dashboard: untangle display skin
  - site: excessively test site core features and node access
