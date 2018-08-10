@@ -6,11 +6,13 @@ const webpack = require('webpack');
 
 module.exports = (env, argv) => {
   const SRC_DASHBOARD = path.resolve(__dirname, 'ucms_dashboard/src-front');
+  const SRC_TREE = path.resolve(__dirname, 'ucms_tree/src-front');
 
   const plugins = [
     new CleanWebpackPlugin([
       path.resolve(__dirname, 'polyfill/dist'),
       path.resolve(__dirname, 'ucms_dashboard/dist'),
+      path.resolve(__dirname, 'ucms_tree/dist')
     ]),
     new MiniCssExtractPlugin({filename: "[name]/dist/style.css"})
   ];
@@ -60,6 +62,10 @@ module.exports = (env, argv) => {
       ], */
       'ucms_dashboard': [
         SRC_DASHBOARD + '/seven-fixes.less'
+      ],
+      'ucms_tree': [
+        SRC_TREE + '/index.ts',
+        SRC_TREE + '/tree.less'
       ]
     },
     output: {

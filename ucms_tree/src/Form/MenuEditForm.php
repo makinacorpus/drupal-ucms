@@ -48,7 +48,7 @@ class MenuEditForm extends FormBase
      */
     public function getFormId()
     {
-        return 'ucms_tree_menu_edit_form';
+        return 'ucms_tree_menu_add_item_form';
     }
 
     /**
@@ -175,22 +175,20 @@ class MenuEditForm extends FormBase
             }
             $storage->toggleMainStatus($name, (bool)$form_state->getValue('is_main'));
 
-            unset($tx);
+            unset($tx); // Explicit commit.
 
             drupal_set_message($this->t("Tree has been saved"));
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($tx) {
                 try {
                     $tx->rollback();
                 } catch (\Exception $e2) {
-                    watchdog_exception('ucms_tree', $e2);
+                    \watchdog_exception('ucms_tree', $e2);
                 }
-                watchdog_exception('ucms_tree', $e);
-
-                drupal_set_message($this->t("Could not save tree"), 'error');
+                \watchdog_exception('ucms_tree', $e);
+                \drupal_set_message($this->t("Could not save tree"), 'error');
             }
         }
-
     }
 }

@@ -1,0 +1,9 @@
+tree:
+  version: VERSION
+  css:
+    theme:
+      dist/style.css: {}
+  js:
+    dist/script.js: {}
+  dependencies:
+    - nodesearch/react-dev

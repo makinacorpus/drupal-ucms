@@ -1,4 +1,10 @@
 
+################################################################################
+#
+# Site and menu admin
+#
+################################################################################
+
 ucms_tree.admin.menu.list:
     path: /admin/structure/site/{site}/menu
     defaults:
@@ -8,6 +14,12 @@ ucms_tree.admin.menu.list:
         site: \d+
         _is_granted: site.manage_menus
     options: {parameters: {site: {type: ucms_site}}}
+
+################################################################################
+#
+# Menu edition
+#
+################################################################################
 
 ucms_tree.admin.menu.tree:
     path: /admin/structure/tree/{menu}
@@ -19,11 +31,46 @@ ucms_tree.admin.menu.tree:
         _is_granted: menu.update
     options: {parameters: {menu: {type: umenu_menu}}}
 
+ucms_tree.admin.menu.add_item:
+    path: /admin/structure/tree/{menu}/add
+    defaults:
+        _form: \MakinaCorpus\Ucms\Tree\Form\MenuAddItemForm
+        _title: Add link
+    requirements:
+        menu: \d+
+        _is_granted: menu.update
+    options: {parameters: {menu: {type: umenu_menu}}}
+
+ucms_tree.admin.menu.add_multiple_item:
+    path: /admin/structure/tree/{menu}/add-many
+    defaults:
+        _form: \MakinaCorpus\Ucms\Tree\Form\MenuAddMultipleItemForm
+        _title: Add multiple links
+    requirements:
+        menu: \d+
+        _is_granted: menu.update
+    options: {parameters: {menu: {type: umenu_menu}}}
+
 ucms_tree.admin.menu.edit:
     path: /admin/structure/tree/{menu}/edit
     defaults:
         _form: \MakinaCorpus\Ucms\Tree\Form\MenuEditForm
         _title: Edit menu
+    requirements:
+        menu: \d+
+        _is_granted: menu.update
+    options: {parameters: {menu: {type: umenu_menu}}}
+
+################################################################################
+#
+# AJAX and REST endpoints
+#
+################################################################################
+
+ucms_tree.ajax.menu.tree:
+    path: /admin/structure/ajax/tree/{menu}
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Tree\Controller\AdminController::ajaxMenuTree
     requirements:
         menu: \d+
         _is_granted: menu.update

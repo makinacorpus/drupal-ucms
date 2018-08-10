@@ -1,0 +1,11 @@
+ucms_tree.admin.menu.add_item:
+    route_name: ucms_tree.admin.menu.add_item
+    title: Add link
+    appears_on:
+        - ucms_tree.admin.menu.tree
+
+ucms_tree.admin.menu.add_multiple_item:
+    route_name: ucms_tree.admin.menu.add_multiple_item
+    title: Add multiple links
+    appears_on:
+        - ucms_tree.admin.menu.tree
