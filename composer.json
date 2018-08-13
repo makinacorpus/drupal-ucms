@@ -72,18 +72,17 @@
     },
     "require" : {
         "drupal/core": "^8",
+        "jbroadway/urlify": "^1.1",
         "makinacorpus/calista-core": "^1.0",
-        "makinacorpus/drupal-nodesearch" : "dev-master as ^2",
-        "makinacorpus/drupal-sf-int" : "dev-master as ^3.4|^4",
-        "makinacorpus/drupal-umenu": "dev-master as ^3.0",
+        "makinacorpus/drupal-nodesearch": "dev-master as 2.0",
+        "makinacorpus/drupal-sf-int": "dev-master as 3.4",
+        "makinacorpus/drupal-umenu": "dev-master as 3.0",
         "php" : ">= 7"
     },
     "suggest" : {
-        "drupal/redis" : "Activates a few Redis-based caches",
-        "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs",
         "makinacorpus/drupal-filechunk": "To be ported to Drupal 8",
-        "makinacorpus/drupal-plusql" : "To be ported to Drupal 8",
-        "makinacorpus/drupal-ulink" : "To be ported to Drupal 8"
+        "makinacorpus/drupal-plusql": "To be ported to Drupal 8",
+        "makinacorpus/drupal-ulink": "To be ported to Drupal 8"
     },
     "minimum-stability" : "dev"
 }
