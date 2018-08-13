@@ -2,12 +2,13 @@
 
 namespace MakinaCorpus\Ucms\Site\Environment;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\RequestContext;
-use Drupal\node\NodeInterface;
 
 /**
  * Deals with platform wide inter-sites URL generation.
@@ -18,6 +19,8 @@ use Drupal\node\NodeInterface;
  */
 class CrossSiteUrlGenerator implements UrlGeneratorInterface
 {
+    use DependencySerializationTrait;
+
     const ALLOWED_SITE_ADMIN_ROUTES = [
         // Node screens, all node screens.
         'node.multiple_delete_confirm' => true,
