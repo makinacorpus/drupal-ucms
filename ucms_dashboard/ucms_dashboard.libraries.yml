@@ -3,8 +3,8 @@ ucms_dashboard.seven_fixes:
   css:
     theme:
       dist/style.css: {}
-  js:
-    dist/seven-fixes.js: {}
-  dependencies:
-    - core/jquery
-    - core/jquery.once
+#  js:
+#    dist/seven-fixes.js: {}
+#  dependencies:
+#    - core/jquery
+#    - core/jquery.once
