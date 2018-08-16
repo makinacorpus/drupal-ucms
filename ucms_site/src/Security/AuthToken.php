@@ -8,11 +8,13 @@ class AuthToken
 {
     use DateHolderTrait;
 
+    const DEFAULT_TTL = 180; // 3 minutes, more than enough
+
     private $expired = null;
     private $site_id;
     private $token;
     private $ts_touched;
-    private $ttl;
+    private $ttl = self::DEFAULT_TTL;
     private $user_id;
 
     public static function createNullInstance(int $siteId, int $userId = null): self
