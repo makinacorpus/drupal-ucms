@@ -116,7 +116,7 @@ function ucms_sso_scheme_get() {
  * @return boolean
  */
 function ucms_sso_is_master() {
-  return !ucms_site_manager()->getContext() && !drupal_is_cli() && $_SERVER['HTTP_HOST'] === variable_get('ucms_site_master_hostname');
+  return !ucms_site_manager()->getContext() && !PHP_SAPI === 'cli' && $_SERVER['HTTP_HOST'] === variable_get('ucms_site_master_hostname');
 }
 
 /**

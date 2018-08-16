@@ -180,7 +180,7 @@ function ucms_seo_permission() {
  */
 function ucms_seo_init() {
 
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     return; // Make drush happy.
   }
 
@@ -421,7 +421,7 @@ function ucms_seo_page_delivery_callback_alter(&$callback) {
  */
 function ucms_seo_drupal_deliver_html_page($page_callback_result) {
 
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     return;
   }
 

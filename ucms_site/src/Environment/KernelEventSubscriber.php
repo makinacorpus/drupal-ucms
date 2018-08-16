@@ -45,17 +45,6 @@ class KernelEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /*
-        // Yes, this should also happen in Drush environment.
-        if (!function_exists('drupal_path_initialize')) {
-            $GLOBALS['conf']['path_inc'] = substr(__DIR__, strlen(realpath(DRUPAL_ROOT))) . '/../ucms_seo/includes/path.inc';
-        }
-
-        if (drupal_is_cli()) {
-            return; // Make drush happy.
-        }
-         */
-
         $request = $event->getRequest();
         $hostname = $request->server->get('HTTP_HOST');
 
@@ -63,7 +52,6 @@ class KernelEventSubscriber implements EventSubscriberInterface
             $manager = $this->siteManager;
 
             if ($site = $manager->getStorage()->findByHostname($hostname)) {
-
                 $manager->setContext($site, $request, true);
 
                 // This has to be done before drupal_path_initialize() which is run right

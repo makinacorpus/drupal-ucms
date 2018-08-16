@@ -205,7 +205,7 @@ function ucms_site_init_node_redirect() {
  * /
 function ucms_site_init() {
 
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     return; // Make drush happy.
   }
 
@@ -289,7 +289,7 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
   if (!$query instanceof SelectQueryInterface) {
     return;
   }
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     // In theory, we should not have to do this, but it happens that during
     // drush upgrade, which runs all update functions altogether one by one,
     // it may happen that this module gets enable during the same run, and
@@ -378,7 +378,7 @@ function ucms_site_query_ucms_user_access_alter(QueryAlterableInterface $query) 
   if (!$query instanceof SelectQueryInterface) {
     return;
   }
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     // In theory, we should not have to do this, but it happens that during
     // drush upgrade, which runs all update functions altogether one by one,
     // it may happen that this module gets enable during the same run, and

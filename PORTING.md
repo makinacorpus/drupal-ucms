@@ -13,6 +13,7 @@
  - [x] FIXED - site: restore admin theme on admin paths when in site
  - [x] FIXED - site: restore menu site status alteration
  - [x] FIXED - site: restore site access query alter
+ - [x] FIXED - tree: force node attach to site on item form and multiple item form
  - [x] HARDCODED - site: restore state transition matrix
  - [x] PORTED - site: prevent accessing non-handled hostnames
  - [x] PORTED - site: restore node access query alter
@@ -20,26 +21,27 @@
  - [x] PORTED - ucms_site
  - [x] PORTED - ucms_tree - Needed in order to port SEO module and to finish site module port
  - [x] PORTED - umenu
- - all: handle caching gracefully
  - all: restore SQL constraints
+ - cache: all: handle caching gracefully
+ - cache: site: clear node cache on reference operations
+ - cache: tree: correct menu block cacheability
+ - front: tree: allow item deletion in manage links page
+ - front: tree: allow title edit in manage links page
  - site: fix cross url route generator to use path matching
  - site: fix missing site frontpage (home node)
- - tree: allow item deletion in manage links page
- - tree: allow title edit in manage links page
- - tree: correct menu block cacheability
- - tree: force node attach to site on item form and multiple item form
 
 ## Necessary
 
  - [x] DELETED - contrib: cart must die
  - [x] DELETED - contrib: remove custom ckeditor customisations
  - [x] FIXED - all: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
+ - all: get rid of PHP_SAPI === 'cli' or drupal_is_cli()
  - all: rewrite all tests
  - dashboard: excessively test actions subsystem
  - dashboard: improve page controller trait
- - dashboard: restore/improve seven fixes
- - dashboard: style filter display in calista pages
- - dashboard: untangle display skin
+ - front: dashboard: restore/improve seven fixes
+ - front: dashboard: style filter display in calista pages
+ - front: dashboard: untangle display skin
  - site: excessively test site core features and node access
  - site: handle redirects between sites and master
  - site: node published state per site
@@ -53,10 +55,14 @@
 
  - all: replace voters by more flexible ACL system (to be determined)
  - all: Rework UI
+ - contrib: implement media access - disable delete when media in use
+ - contrib: make role dynamic (configuration per site)
+ - contrib: make role node ACL configurable per site
  - dashboard: icons in admin (provide theme and skin)
  - ONLY UI - ucms_group
  - site: make site state transition matrix configurable
  - site: restore favicon feature
+ - tree: research systray integration for displaying current site navigation
  - ucms_search
  - ucms_taxo
  - ucms_user

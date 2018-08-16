@@ -115,7 +115,7 @@ function ucms_extranet_access_registration_validation(Site $site, UserInterface 
  */
 function ucms_extranet_init() {
 
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     return; // Make drush happy.
   }
 
@@ -259,7 +259,7 @@ function ucms_extranet_form_user_login_validate($form, $form_state, $should_have
  * Implements hook_user_login().
  */
 function ucms_extranet_user_login(&$edit, $account) {
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     return; // Make drush happy.
   }
   if (ucms_site_manager()->hasContext()) {

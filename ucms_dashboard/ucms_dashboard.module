@@ -44,7 +44,7 @@ function ucms_dashboard_entity_operation(EntityInterface $entity) {
  *
 function ucms_dashboard_user_login(&$edit, $account) {
   // When a user logs in, he must be redirected to main dashboard.
-  if (drupal_is_cli()) {
+  if (PHP_SAPI === 'cli') {
     return; // Make drush happy.
   }
   if (ucms_site_manager()->hasContext()) {
