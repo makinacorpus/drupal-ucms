@@ -42,11 +42,12 @@
  - front: dashboard: restore/improve seven fixes
  - front: dashboard: style filter display in calista pages
  - front: dashboard: untangle display skin
+ - PENDING - site: restore SSO, moving features from ucms_sso in
+ - PENDING - ucms_sso
  - site: excessively test site core features and node access
  - site: handle redirects between sites and master
  - site: node published state per site
  - site: restore node reference/dereference actions with a better UI
- - site: restore SSO
  - site: when accessing non-handled hostnames, do not use site theme
  - ucms_contrib
  - ucms_seo
@@ -55,12 +56,15 @@
 
  - all: replace voters by more flexible ACL system (to be determined)
  - all: Rework UI
+ - all: use site in request attributes instead of manager for context
  - contrib: implement media access - disable delete when media in use
  - contrib: make role dynamic (configuration per site)
  - contrib: make role node ACL configurable per site
  - dashboard: icons in admin (provide theme and skin)
  - ONLY UI - ucms_group
+ - site: allow sso disabling
  - site: make site state transition matrix configurable
+ - site: place current site in request attributes
  - site: restore favicon feature
  - tree: research systray integration for displaying current site navigation
  - ucms_search

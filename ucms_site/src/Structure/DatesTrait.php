@@ -4,6 +4,8 @@ namespace MakinaCorpus\Ucms\Site\Structure;
 
 trait DatesTrait
 {
+    use DateHolderTrait;
+
     /**
      * @todo Change this to protected once Site class is converted
      *
@@ -27,39 +29,13 @@ trait DatesTrait
     }
 
     /**
-     * Initialize date from whatever value is given
-     *
-     * @param null|int|string|\DateTimeInterface $date
-     *
-     * @return \DateTimeInterface
-     */
-    protected function initDate($date)
-    {
-        if (!$date) {
-            return new \DateTime();
-        }
-        if ($date instanceof \DateTimeInterface) {
-            return $date;
-        }
-        if (is_int($date)) {
-            return new \DateTime('@' . $date);
-        }
-        return new \DateTime($date);
-    }
-
-    /**
      * Initialize dates, you must call this from the constructor even when the
      * object is loaded from PDO.
      */
     protected function initDates()
     {
-        $this->ts_created = $this->initDate($this->ts_created);
-        $this->ts_changed = $this->initDate($this->ts_changed);
-    }
-
-    public function createdAt()
-    {
-        return $this->ts_created;
+        $this->ts_created = $this->ensureDate($this->ts_created);
+        $this->ts_changed = $this->ensureDate($this->ts_changed);
     }
 
     /**
@@ -72,7 +48,12 @@ trait DatesTrait
         return $this->ts_changed = new \DateTime();
     }
 
-    public function changedAt()
+    public function createdAt(): \DateTimeInterface
+    {
+        return $this->ts_created;
+    }
+
+    public function changedAt(): \DateTimeInterface
     {
         return $this->ts_changed;
     }

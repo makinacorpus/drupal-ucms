@@ -376,6 +376,57 @@ function ucms_site_schema() {
     'primary key' => ['source_id', 'target_id', 'type'],
   ];
 
+  $schema['ucms_auth_token'] = [
+    'description' => 'Cross-site authentication SSO',
+    'fields' => [
+      'site_id' => [
+        'description' => "Site identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+        'default'     => 1,
+      ],
+      'user_id' => [
+        'description' => "Site identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'token' => [
+        'type'        => 'varchar',
+        'length'      => 128,
+        'not null'    => true,
+      ],
+      'ttl' => [
+        'description' => "Lifetime in seconds",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => true,
+      ],
+      'ts_touched' => [
+        'decription'  => "Latest modification date",
+        'mysql_type'  => 'datetime',
+        'pgsql_type'  => 'timestamp',
+        'type'        => 'varchar',
+        'length'      => 16,
+        'not null'    => true,
+      ],
+    ],
+    'foreign keys' => [
+      'site_id' => [
+        'table'   => 'site_id',
+        'columns' => ['site_id' => 'id'],
+        'delete'  => 'cascade',
+      ],
+      'user_id' => [
+        'table'   => 'users',
+        'columns' => ['user_id' => 'uid'],
+        'delete'  => 'cascade',
+      ],
+    ],
+    'primary key' => ['site_id', 'user_id'],
+  ];
+
   return $schema;
 }
 
@@ -544,5 +595,11 @@ function ucms_site_update_8003() {
   $definition_manager = \Drupal::entityDefinitionUpdateManager();
   foreach (NodeDefinition::getAdditionalBaseFields() as $name => $definition) {
     $definition_manager->installFieldStorageDefinition($name, 'node', 'node', $definition);
+  }
+}
+
+function ucms_site_update_8005() {
+  if (!db_table_exists('ucms_auth_token')) {
+    db_create_table('ucms_auth_token', drupal_get_module_schema('ucms_site', 'ucms_auth_token'));
   }
 }
