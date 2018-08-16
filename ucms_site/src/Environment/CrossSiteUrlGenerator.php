@@ -7,14 +7,13 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\Security\AuthTokenStorage;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\RequestContext;
 
 /**
  * Deals with platform wide inter-sites URL generation.
  *
- * @todo this class must die, and should be implemetned as a decorator
- *   arround the Drupal default URL generator instead
  * @todo rework destination parameter handling correctly
  */
 class CrossSiteUrlGenerator implements UrlGeneratorInterface
@@ -65,34 +64,31 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
         //
 
         'view.content.page_1' => true, // /admin/content
-       'system.admin_content' => true, // /admin/content (Yes, there are two of it!)
-       'view.files.page_1' => true, // /admin/content/files
-       'view.files.page_2' => true, // /admin/content/files/usage/{arg_0}
-       'entity.media.collection' => true, // /admin/content/media
-       'view.media.media_page_list' => true, // /admin/content/media (Two, once again)
-       'entity.media.multiple_delete_confirm' => true, // /admin/content/media/delete
-       'entity.node.delete_multiple_form' => true, // /admin/content/node/delete
-       'node.multiple_delete_confirm' => true, // /admin/content/node/delete
+        'system.admin_content' => true, // /admin/content (Yes, there are two of it!)
+        'view.files.page_1' => true, // /admin/content/files
+        'view.files.page_2' => true, // /admin/content/files/usage/{arg_0}
+        'entity.media.collection' => true, // /admin/content/media
+        'view.media.media_page_list' => true, // /admin/content/media (Two, once again)
+        'entity.media.multiple_delete_confirm' => true, // /admin/content/media/delete
+        'entity.node.delete_multiple_form' => true, // /admin/content/node/delete
+        'node.multiple_delete_confirm' => true, // /admin/content/node/delete
     ];
 
+    private $authTokenStorage;
     private $nested;
     private $routeProvider;
     private $siteManager;
-    private $ssoEnabled = false; // @todo fixme later
+    private $ssoEnabled = true; // @todo make this configurable
 
     /**
      * Default constructor
      */
-    public function __construct(SiteManager $siteManager, UrlGeneratorInterface $nested, RouteProviderInterface $routeProvider)
+    public function __construct(SiteManager $siteManager, AuthTokenStorage $authTokenStorage, UrlGeneratorInterface $nested, RouteProviderInterface $routeProvider)
     {
+        $this->authTokenStorage = $authTokenStorage;
         $this->nested = $nested;
         $this->routeProvider = $routeProvider;
         $this->siteManager = $siteManager;
-
-        // @todo sad hack, we cannot use module_exists() because this will be
-        //   instanciated during hook_boot() and modules are not yet been
-        //   activated
-        // $this->ssoEnabled = module_exists('ucms_sso');
     }
 
     /**
@@ -202,6 +198,44 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
     }
 
     /**
+     * Append site data to route
+     */
+    private function generateInSite(Site $site, $name, $parameters = [], $options = [], $collectBubbleableMetadata = false)
+    {
+        if (Site::ALLOWED_PROTOCOL_PASS !== $site->getAllowedProtocols()) {
+            if ($options['https'] = $site->isHttpsAllowed()) {
+                $options['base_url'] = 'https://'.$site->getHostname();
+            } else {
+                $options['base_url'] = 'http://'.$site->getHostname();
+            }
+        } else {
+            // @todo find http/https from request isSecure() instead.
+            //    This probably will need to inject the requeststack service.
+            $options['base_url'] = ($options['https'] ?? false ? 'https' : 'http').'://'.$site->getHostname();
+        }
+
+        $options = $this->appendSsoData($site->getId(), $options);
+
+        return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+    }
+
+    /**
+     * Append SSO parameters
+     */
+    private function appendSsoData(int $siteId, array $options): array
+    {
+        if ($this->ssoEnabled && ($options['ucms_sso'] ?? false)) {
+            // @todo fix me
+            if ($userId = \Drupal::currentUser()->id()) {
+                $authToken = $this->authTokenStorage->create($siteId, $userId);
+                $options[CrossSiteAuthProvider::TOKEN_PARAMETER] = $authToken->getToken();
+            }
+        }
+
+        return $options;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function generateFromRoute($name, $parameters = [], $options = [], $collectBubbleableMetadata = false)
@@ -225,16 +259,7 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
         }
 
         if ($site) {
-            // When a site is given, force it into the URL and pass.
-            if (Site::ALLOWED_PROTOCOL_PASS !== $site->getAllowedProtocols()) {
-                if ($options['https'] = $site->isHttpsAllowed()) {
-                    $options['base_url'] = 'https://'.$site->getHostname();
-                } else {
-                    $options['base_url'] = 'http://'.$site->getHostname();
-                }
-            }
-
-            return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+           return $this->generateInSite($site, $name, $parameters, $options, $collectBubbleableMetadata);
 
         } else if ($manager->hasContext()) {
 
@@ -256,25 +281,15 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             // Check for route node, and redirect to suitable site.
             // @todo this is ugly, rewrite this
             if ('entity.node' === substr($name, 0, 11)) {
-                /** @var \Drupal\node\NodeInterface $node */
+                // When in entity type configuration context, entity is not a
+                // node but an node entity bundle instead, we have to ensure
+                // that route element is a node.
                 if (($node = $options['entity'] ?? null) instanceof NodeInterface) {
+                    /** @var \Drupal\node\NodeInterface $node */
                     if ($siteId = $this->siteManager->findMostRelevantSiteFor($node)) {
                         // @todo should we catch exception and be resilient to errors here.?
                         if ($site = $manager->getStorage()->findOne($siteId)) {
-
-                            if (Site::ALLOWED_PROTOCOL_PASS !== $site->getAllowedProtocols()) {
-                                if ($options['https'] = $site->isHttpsAllowed()) {
-                                    $options['base_url'] = 'https://'.$site->getHostname();
-                                } else {
-                                    $options['base_url'] = 'http://'.$site->getHostname();
-                                }
-                            } else {
-                                // @todo find http/https from request isSecure() instead.
-                                //    This probably will need to inject the requeststack service.
-                                $options['base_url'] = ($options['https'] ?? false ? 'https' : 'http').'://'.$site->getHostname();
-                            }
-
-                            return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
+                            return $this->generateInSite($site, $name, $parameters, $options, $collectBubbleableMetadata);
                         }
                     }
                 }
@@ -283,69 +298,4 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
 
         return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
     }
-
-    /**
-     * Get URL in site
-     *
-     * @param int|Site $site
-     *   Site identifier, if site is null
-     * @param string $path
-     *   Drupal path to hit in site
-     * @param mixed[] $options
-     *   Link options, see url()
-     * @param boolean $dropDestination
-     *   If you're sure you are NOT in a form, just set this to true
-     *
-     * @return mixed
-     *   First value is the string path
-     *   Second value are updates $options
-     *
-    public function getRouteAndParams($site, $path = null, array $options = [], bool $ignoreSso = false, bool $dropDestination = false): array
-    {
-        if (!$site instanceof Site) {
-            $site = $this->storage->findOne($site);
-        }
-
-        // Avoid reentrancy in ucms_site_url_outbound_alter().
-        $options['ucms_processed'] = true;
-        $options['ucms_site'] = $site->getId();
-
-        if (!$path) {
-            $path = '<front>';
-        }
-
-        // Site is the same, URL should not be absolute; or if it asked that it
-        // might be, then let Drupal work his own base URL, since it's the right
-        // site already, ignore 'https' directive too because we cannot give the
-        // user pages with insecure mixed mode links within.
-        if ($this->manager->hasContext() && $this->manager->getContext()->getId() == $site->getId()) {
-            return [$path, $options];
-        }
-
-        // @todo Should bypass this if user is not logged in
-        // Reaching here means that we do asked for an absolute URL.
-        if ($ignoreSso || !$this->ssoEnabled) {
-            $this->forceSiteUrl($options, $site);
-
-            return [$path, $options];
-        }
-
-        if (!$dropDestination) {
-            if (isset($_GET['destination'])) {
-                $options['query']['form_redirect'] = $_GET['destination'];
-                unset($_GET['destination']);
-            } else if (isset($options['query']['destination'])) {
-                $options['query']['form_redirect'] = $options['query']['destination'];
-            }
-        }
-
-        // Strip path when front page, avoid a potentially useless destination
-        // parameter and normalize all different front possible paths.
-        if ($path && '<front>' !== $path && $path !== variable_get('site_frontpage', 'node')) {
-            $options['query']['destination'] = $path;
-        }
-
-        return ['sso/goto/' . $site->getId(), $options];
-    }
-     */
 }

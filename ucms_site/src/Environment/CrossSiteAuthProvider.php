@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 class CrossSiteAuthProvider implements AuthenticationProviderInterface
 {
     const TOKEN_PARAMETER = 'ucms-auth';
-    const TOKEN_SIZE = 32;
 
     private $authTokenStorage;
     private $entityTypeManager;
@@ -36,7 +35,7 @@ class CrossSiteAuthProvider implements AuthenticationProviderInterface
     public function applies(Request $request)
     {
         if ($this->siteManager->hasContext()) {
-            return self::TOKEN_SIZE === \strlen((string)$request->query->get(self::TOKEN_PARAMETER));
+            return AuthTokenStorage::TOKEN_SIZE === \strlen((string)$request->query->get(self::TOKEN_PARAMETER));
         }
 
         return false;

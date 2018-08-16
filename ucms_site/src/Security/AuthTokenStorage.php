@@ -2,6 +2,7 @@
 
 namespace MakinaCorpus\Ucms\Site\Security;
 
+use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Database\Connection;
 
 /**
@@ -9,6 +10,8 @@ use Drupal\Core\Database\Connection;
  */
 class AuthTokenStorage
 {
+    const TOKEN_SIZE = 32;
+
     private $database;
 
     /**
@@ -61,6 +64,11 @@ class AuthTokenStorage
         }
 
         return $authToken;
+    }
+
+    public function create(int $siteId, int $userId): AuthToken
+    {
+        return $this->merge($this->load($siteId, $userId), Crypt::randomBytesBase64(self::TOKEN_SIZE));
     }
 
     /**

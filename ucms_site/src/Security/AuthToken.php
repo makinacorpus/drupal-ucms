@@ -42,6 +42,11 @@ class AuthToken
         return (int)$this->tll;
     }
 
+    public function getToken(): string
+    {
+        return (string)$this->token;
+    }
+
     public function touchedAt(): \DateTimeInterface
     {
         return $this->ensureDate($this->ts_touched ?? 0);

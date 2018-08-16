@@ -107,7 +107,7 @@ services:
         public: false
         decorates: url_generator
         class: MakinaCorpus\Ucms\Site\Environment\CrossSiteUrlGenerator
-        arguments: ["@ucms_site.manager", "@ucms_site.url_generator.inner", "@router.route_provider"]
+        arguments: ["@ucms_site.manager", "@ucms_site.auth.token_storage", "@ucms_site.url_generator.inner", "@router.route_provider"]
 
     # Handles theme negociation (positionned between AdminNegociator and DefaultNegociator)
     ucms_site.theme.negotiator:

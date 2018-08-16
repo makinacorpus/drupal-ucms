@@ -7,6 +7,14 @@ ucms_site.admin.user_autocomplete:
     requirements:
         _permission: site dashboard access
 
+ucms_site.go_to_site:
+    path: /go-to-site/{siteId}
+    defaults:
+        _controller: \MakinaCorpus\Ucms\Site\Controller\UtilityController::goToSite
+    requirements:
+        siteId: \d+
+        _access: 'TRUE'
+
 ucms_site.admin.site_list:
     path: /admin/structure/site
     defaults:

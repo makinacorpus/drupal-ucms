@@ -45,7 +45,7 @@ class SiteActionProvider extends AbstractActionProvider
                 ->isGranted(function () use ($item) {
                     return $this->isGranted(Access::OP_VIEW, $item);
                 })
-                ->asLink('ucms_site.admin.site.view', ['site' => $siteId])
+                ->asLink('ucms_site.go_to_site', ['siteId' => $siteId])
             ;
 
             $ret[] = $this
