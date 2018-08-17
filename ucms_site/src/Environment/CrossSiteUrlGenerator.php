@@ -36,6 +36,10 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
         'node.revision_revert_translation_confirm' => true,
         'node.revision_delete_confirm' => true,
 
+        // A few custom admin screens
+        'ucms_site.admin.user_autocomplete' => true,
+        'ucms_dashboard.action.process' => true,
+
         //
         // Arbitrary ones below.
         //
@@ -212,6 +216,12 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             // @todo find http/https from request isSecure() instead.
             //    This probably will need to inject the requeststack service.
             $options['base_url'] = ($options['https'] ?? false ? 'https' : 'http').'://'.$site->getHostname();
+        }
+
+        // Dynamically set the right front page
+        if ($name === '<front>' && $site->hasHome()) {
+            $name = 'entity.node.canonical';
+            $parameters['node'] = $site->getHomeNodeId();
         }
 
         if ($this->ssoEnabled && ($options['ucms_sso'] ?? false)) {

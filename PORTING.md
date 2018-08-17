@@ -8,6 +8,7 @@
  - [x] FIXED - Modern front assets toolchain
  - [x] FIXED - sf-int: write a proxy to router access check system to symfony authorization checker
  - [x] FIXED - site: finish site listing screen
+ - [x] FIXED - site: fix missing site frontpage (home node)
  - [x] FIXED - site: get rid once for all of Drupal role to site role relationship
  - [x] FIXED - site: plug ucms_site on umenu using MenuEnvEvent to set site_id condition
  - [x] FIXED - site: restore admin theme on admin paths when in site
@@ -28,7 +29,7 @@
  - front: tree: allow item deletion in manage links page
  - front: tree: allow title edit in manage links page
  - site: fix cross url route generator to use path matching
- - site: fix missing site frontpage (home node)
+ - site: front page is not overriden in config
 
 ## Necessary
 
@@ -46,6 +47,7 @@
  - front: dashboard: untangle display skin
  - site: excessively test site core features and node access
  - site: handle redirects between sites and master
+ - site: implement routing route option to tell if route allowed in site or master
  - site: node published state per site
  - site: restore automatic AJAX SSO on site access
  - site: restore node reference/dereference actions with a better UI

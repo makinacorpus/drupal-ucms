@@ -2,8 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
+use Drupal\Core\Entity\EntityInterface;
 use MakinaCorpus\Ucms\Site\Structure\AttributesTrait;
 use MakinaCorpus\Ucms\Site\Structure\DatesTrait;
+use Drupal\node\NodeInterface;
 
 /**
  * Site data structure, carries the access logic
@@ -245,5 +247,20 @@ class Site
     public function getHttpRedirects(): string
     {
         return $this->http_redirects ?? '';
+    }
+
+    public function contains(NodeInterface $node): bool
+    {
+        if (!($items = $node->get('ucms_sites'))->isEmpty()) {
+            $current = $this->getId();
+
+            foreach (\array_unique(\array_column($items->getValue(), 'value')) as $siteId) {
+                if ($current === (int)$siteId) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
