@@ -39,7 +39,7 @@ class AuthToken
 
     public function getTtl(): int
     {
-        return (int)$this->tll;
+        return (int)$this->ttl;
     }
 
     public function getToken(): string

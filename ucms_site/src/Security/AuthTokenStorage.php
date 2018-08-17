@@ -88,6 +88,7 @@ class AuthTokenStorage
                 'ts_touched' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
                 'ttl' => $authToken->getTtl(),
             ])
+            ->execute()
         ;
 
         // RETURNING clause would have been perfect here

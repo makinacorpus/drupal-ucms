@@ -2,22 +2,33 @@
 
 namespace MakinaCorpus\Ucms\Site\Environment;
 
-use Drupal\Core\Authentication\AuthenticationProviderInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use MakinaCorpus\Ucms\Site\SiteManager;
 use MakinaCorpus\Ucms\Site\Security\AuthTokenStorage;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
-/**
- * Provide inter-site SSO.
- */
-class CrossSiteAuthProvider implements AuthenticationProviderInterface
+class CrossSiteAuthProvider implements EventSubscriberInterface
 {
     const TOKEN_PARAMETER = 'ucms-auth';
 
     private $authTokenStorage;
     private $entityTypeManager;
     private $siteManager;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST => [
+                ['onRequest', 310] // Authenticator is 300
+            ],
+        ];
+    }
 
     /**
      * Default constructor
@@ -30,22 +41,24 @@ class CrossSiteAuthProvider implements AuthenticationProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * After login redirect if necessary.
+     *
+     * The authenticate() method will be called by Drupal core on request
+     * and this, by priority magic, will happen after it, allow us to set
+     * a custom redirect response without the token parameter, which
+     * ensures 2 different matters:
+     *
+     *  - redirect response will not be cached, there will be no token
+     *    within the cache,
+     *
+     *  - url will be nicer for the user, auth token has nothing to do
+     *    within, this also will prevent wrong 'destination' parameters
+     *    from being generated.
      */
-    public function applies(Request $request)
+    public function onRequest(GetResponseEvent $event)
     {
-        if ($this->siteManager->hasContext()) {
-            return AuthTokenStorage::TOKEN_SIZE === \strlen((string)$request->query->get(self::TOKEN_PARAMETER));
-        }
+        $request = $event->getRequest();
 
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function authenticate(Request $request)
-    {
         if (!$token = $request->query->get(self::TOKEN_PARAMETER)) {
             return;
         }
@@ -66,8 +79,26 @@ class CrossSiteAuthProvider implements AuthenticationProviderInterface
             $this->authTokenStorage->delete($authToken->getSiteId(), $userId);
 
             if ($authToken->isValid($token)) {
-                return $this->entityTypeManager->getStorage('user')->load($authToken->getUserId());
+                if ($account = $this->entityTypeManager->getStorage('user')->load($userId)) {
+                    \user_login_finalize($account);
+                }
             }
         }
+
+        // Doing this "a la main" instead of using Url::fromRequest() in
+        // order to avoid exceptions because of a non existing path. Drupal
+        // routing is a mess, it does way to much calculations.
+        $url = $request->getRequestUri();
+        $url = \preg_replace('/(&|)'.self::TOKEN_PARAMETER.'=[^&]*/', '', $url);
+        $url = \trim($url, '?&');
+
+        // This must be done even if login failed, else responses with wrong
+        // tokens will be cached anyway.
+        $response = new RedirectResponse($url);
+        $response->setPrivate();
+        $response->setVary(['Cookie']);
+
+        $event->setResponse($response);
+        $event->stopPropagation();
     }
 }

@@ -214,25 +214,14 @@ class CrossSiteUrlGenerator implements UrlGeneratorInterface
             $options['base_url'] = ($options['https'] ?? false ? 'https' : 'http').'://'.$site->getHostname();
         }
 
-        $options = $this->appendSsoData($site->getId(), $options);
-
-        return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
-    }
-
-    /**
-     * Append SSO parameters
-     */
-    private function appendSsoData(int $siteId, array $options): array
-    {
         if ($this->ssoEnabled && ($options['ucms_sso'] ?? false)) {
-            // @todo fix me
             if ($userId = \Drupal::currentUser()->id()) {
-                $authToken = $this->authTokenStorage->create($siteId, $userId);
-                $options[CrossSiteAuthProvider::TOKEN_PARAMETER] = $authToken->getToken();
+                $authToken = $this->authTokenStorage->create($site->getId(), $userId);
+                $options['query'][CrossSiteAuthProvider::TOKEN_PARAMETER] = $authToken->getToken();
             }
         }
 
-        return $options;
+        return $this->nested->generateFromRoute($name, $parameters, $options, $collectBubbleableMetadata);
     }
 
     /**

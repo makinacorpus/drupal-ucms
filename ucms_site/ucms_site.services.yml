@@ -129,14 +129,14 @@ services:
         tags: [{name: paramconverter}]
 
     # Cross sites SSO, priority will take precedence over the Drupal own
-    # login provider, this means that already existing session will be
-    # crushed when the login token is present 
+    # login provider thanks to event prioritizing.
+    # Already existing session will be crushed when the login token is present. 
     # @todo is this a security issue?
     ucms_site.auth.provider:
-        public: false
+        public: true
         class: MakinaCorpus\Ucms\Site\Environment\CrossSiteAuthProvider
         arguments: ["@ucms_site.auth.token_storage", "@entity_type.manager", "@ucms_site.manager"]
-        tags: [{name: authentication_provider, provider_id: 'ucms_sso', priority: 100, global: true}]
+        tags: [{name: event_subscriber}]
 
     ###########################################################################
     #

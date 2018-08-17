@@ -35,6 +35,8 @@
  - [x] DELETED - contrib: cart must die
  - [x] DELETED - contrib: remove custom ckeditor customisations
  - [x] FIXED - all: userCanX() methods must die, then merge NodeAccessService into SiteAccessService
+ - [x] PORTED - site: restore SSO, moving features from ucms_sso in
+ - [x] PORTED - ucms_sso
  - all: get rid of PHP_SAPI === 'cli' or drupal_is_cli()
  - all: rewrite all tests
  - dashboard: excessively test actions subsystem
@@ -42,11 +44,10 @@
  - front: dashboard: restore/improve seven fixes
  - front: dashboard: style filter display in calista pages
  - front: dashboard: untangle display skin
- - PENDING - site: restore SSO, moving features from ucms_sso in
- - PENDING - ucms_sso
  - site: excessively test site core features and node access
  - site: handle redirects between sites and master
  - site: node published state per site
+ - site: restore automatic AJAX SSO on site access
  - site: restore node reference/dereference actions with a better UI
  - site: when accessing non-handled hostnames, do not use site theme
  - ucms_contrib
