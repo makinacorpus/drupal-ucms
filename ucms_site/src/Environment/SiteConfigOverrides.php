@@ -41,6 +41,10 @@ class SiteConfigOverrides implements ConfigFactoryOverrideInterface
             $site = $manager->getContext();
 
             $ret['system.site']['name'] = $site->getTitle();
+
+            if ($site->hasHome()) {
+                $ret['system.site']['page']['front'] = 'node/'.$site->getHomeNodeId();
+            }
         }
 
         return $ret;
@@ -70,6 +74,12 @@ class SiteConfigOverrides implements ConfigFactoryOverrideInterface
      */
     public function getCacheableMetadata($name)
     {
-        return new CacheableMetadata();
+        $cache = new CacheableMetadata();
+
+        if ('system.site' === $name) {
+            $cache->addCacheContexts(['site']);
+        }
+
+        return $cache;
     }
 }

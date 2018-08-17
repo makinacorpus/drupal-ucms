@@ -4,6 +4,7 @@
 
  - [x] DELETED - site: restore post init event
  - [x] FIXED - all: fixe destination parameter usage
+ - [x] FIXED - cache: site: create "site" cache context
  - [x] FIXED - dashboard: bug in calista search (search parameter override itself)
  - [x] FIXED - Modern front assets toolchain
  - [x] FIXED - sf-int: write a proxy to router access check system to symfony authorization checker
@@ -16,6 +17,7 @@
  - [x] FIXED - site: restore site access query alter
  - [x] FIXED - tree: force node attach to site on item form and multiple item form
  - [x] HARDCODED - site: restore state transition matrix
+ - [x] PORTED - site: front page is not overriden in config
  - [x] PORTED - site: prevent accessing non-handled hostnames
  - [x] PORTED - site: restore node access query alter
  - [x] PORTED - ucms_dashboard
@@ -28,8 +30,8 @@
  - cache: tree: correct menu block cacheability
  - front: tree: allow item deletion in manage links page
  - front: tree: allow title edit in manage links page
+ - site: core router doesn't match node/X when in front
  - site: fix cross url route generator to use path matching
- - site: front page is not overriden in config
 
 ## Necessary
 

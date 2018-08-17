@@ -138,6 +138,12 @@ services:
         arguments: ["@ucms_site.auth.token_storage", "@entity_type.manager", "@ucms_site.manager"]
         tags: [{name: event_subscriber}]
 
+    # Site cache context
+    cache_context.site:
+        class: MakinaCorpus\Ucms\Site\Environment\SiteCacheContext
+        arguments: ["@ucms_site.manager"]
+        tags: [{ name: cache.context }]
+
     ###########################################################################
     #
     # Security and voters
