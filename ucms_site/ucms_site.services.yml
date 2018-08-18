@@ -237,8 +237,8 @@ services:
         class: MakinaCorpus\Ucms\Site\EventDispatcher\SiteEventListener
         arguments: ["@ucms_site.manager", "@entity.manager"]
         tags:
-            - { name: event_listener, event: "site:create" }
-            - { name: event_listener, event: "site:switch" }
+            - {name: event_listener, event: "site:create"}
+            - {name: event_listener, event: "site:switch"}
 
     ucms_site.menu_event_listener:
         public: true
@@ -246,17 +246,17 @@ services:
         arguments: ["@ucms_site.node_manager"]
         tags: [{name: event_listener, event: "menu:tree"}]
 
-    ucms_site.node_access.subscriber:
+    ucms_site.menu.subscriber:
         public: true
         class: MakinaCorpus\Ucms\Site\EventDispatcher\MenuEventSubscriber
         arguments: ["@ucms_site.manager", "@umenu.manager"]
-        tags: [{ name: event_subscriber }]
+        tags: [{name: event_subscriber}]
 
     ucms_site.node_access.subscriber:
         public: true
         class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeAccessEventSubscriber
         arguments: ["@ucms_site.manager", "@ucms_group.manager", "@sf_dic.node_access.subscriber"]
-        tags: [{ name: event_subscriber }]
+        tags: [{name: event_subscriber}]
 
 #    ucms_site.admin_subscriber:
 #        public: true
@@ -268,7 +268,7 @@ services:
         public: true
         class: MakinaCorpus\Ucms\Site\EventDispatcher\NodeEventSubscriber
         arguments: ["@database", "@ucms_site.manager", "@ucms_site.node_manager", "@entity.manager", "@event_dispatcher", "%ucms_site_node_reference_all%", "%ucms_site_node_reference_whitelist%"]
-        tags: [{ name: event_subscriber }]
+        tags: [{name: event_subscriber}]
 
     ###########################################################################
     #

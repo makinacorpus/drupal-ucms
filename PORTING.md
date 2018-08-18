@@ -30,7 +30,7 @@
  - cache: tree: correct menu block cacheability
  - front: tree: allow item deletion in manage links page
  - front: tree: allow title edit in manage links page
- - site: core router doesn't match node/X when in front
+ - site: core issue: core router doesn't match node/X when in front
  - site: fix cross url route generator to use path matching
 
 ## Necessary
@@ -65,6 +65,8 @@
  - contrib: implement media access - disable delete when media in use
  - contrib: make role dynamic (configuration per site)
  - contrib: make role node ACL configurable per site
+ - contrib: reimplement custom content screen
+ - contrib: reimplement reference screen
  - dashboard: icons in admin (provide theme and skin)
  - ONLY UI - ucms_group
  - site: allow sso disabling
@@ -76,6 +78,10 @@
  - ucms_taxo
  - ucms_user
  - ucms_widget
+
+## Improvements, features split
+
+ - tree: move back tree edit and menu items add to the umenu module
 
 ## To be done differently
 

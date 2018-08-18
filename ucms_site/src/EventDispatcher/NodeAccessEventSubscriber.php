@@ -2,7 +2,6 @@
 
 namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 
-use Drupal\node\NodeInterface;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessGrantEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessRecordEvent;
 use MakinaCorpus\Drupal\Sf\EventDispatcher\NodeAccessSubscriber as NodeAccessCache;
@@ -203,7 +202,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
         // and this would not be tolerable.
         $items = $node->get('ucms_sites');
         if (!$items->isEmpty()) {
-            foreach (array_unique(array_column($items->getValue(), 'value')) as $siteId) {
+            foreach (\array_unique(\array_column($items->getValue(), 'value')) as $siteId) {
 
                 // Grant that reprensents the node in the site for anonymous
                 // as long as it exists, not may show up anytime when the site
@@ -224,7 +223,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 } else  {
                     $builder->add(Access::PROFILE_SITE_READONLY, $siteId, true, false, false /* $readOnly */);
                     if ($siteId === (int)$node->get('site_id')->value) { // Avoid data volume exploding
-                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, true, false, false /* $readOnly */);
+                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, true, true, true /* $readWrite */);
                         /*
                         $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, Permission::PUBLISH);
                          */

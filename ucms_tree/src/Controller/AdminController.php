@@ -216,6 +216,7 @@ class AdminController extends ControllerBase
                 try {
                     $tx->rollback();
                 } catch (\Throwable $e2) {
+                    // @todo open issue watchdog_exception() does not handle \Throwable and crashes
                     if ($e instanceof \Exception) {
                         \watchdog_exception('ucms_tree', $e2);
                     }
