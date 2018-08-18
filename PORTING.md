@@ -2,6 +2,7 @@
 
 ## Minimal viable product
 
+ - [x] all: restore SQL constraints
  - [x] DELETED - site: restore post init event
  - [x] FIXED - all: fixe destination parameter usage
  - [x] FIXED - cache: site: create "site" cache context
@@ -24,7 +25,6 @@
  - [x] PORTED - ucms_site
  - [x] PORTED - ucms_tree - Needed in order to port SEO module and to finish site module port
  - [x] PORTED - umenu
- - all: restore SQL constraints
  - cache: all: handle caching gracefully
  - cache: site: clear node cache on reference operations
  - cache: tree: correct menu block cacheability
@@ -41,6 +41,7 @@
  - [x] PORTED - site: restore SSO, moving features from ucms_sso in
  - [x] PORTED - ucms_sso
  - all: get rid of PHP_SAPI === 'cli' or drupal_is_cli()
+ - all: restore SQL constraints for other modules
  - all: rewrite all tests
  - dashboard: excessively test actions subsystem
  - dashboard: improve page controller trait

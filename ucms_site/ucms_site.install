@@ -125,6 +125,13 @@ function ucms_site_schema() {
         'not null'    => false,
         'default'     => 0,
       ],
+      'favicon_fid' => [
+        'description' => "Favicon file identifier",
+        'type'        => 'int',
+        'unsigned'    => true,
+        'not null'    => false,
+        'default'     => null,
+      ],
       'attributes' => [
         'description' => "Arbitrary site attributes, that other modules may use, this module will ignore it",
         'type'        => 'text',
@@ -147,6 +154,11 @@ function ucms_site_schema() {
       'home_nid' => [
         'table'   => 'node',
         'columns' => ['home_nid' => 'nid'],
+        'delete'  => 'set null',
+      ],
+      'favicon_fid' => [
+        'table'   => 'file_managed',
+        'columns' => ['favicon_fid' => 'fid'],
         'delete'  => 'set null',
       ],
       'template_id' => [
@@ -414,7 +426,7 @@ function ucms_site_schema() {
     ],
     'foreign keys' => [
       'site_id' => [
-        'table'   => 'site_id',
+        'table'   => 'ucms_site',
         'columns' => ['site_id' => 'id'],
         'delete'  => 'cascade',
       ],
@@ -476,6 +488,7 @@ function ucms_site_schema_alter(&$schema) {
  */
 function ucms_site_install_schema_fix() {
 
+  /*
   // Adds {taxonomy_term_data}.is_locked column.
   if (db_table_exists('taxonomy_term_data') && !db_field_exists('taxonomy_term_data', 'is_locked')) {
     db_add_field('taxonomy_term_data', 'is_locked', [
@@ -525,24 +538,16 @@ function ucms_site_install_schema_fix() {
       'default'     => null,
     ]);
   }
-  if (!db_field_exists('ucms_site', 'favicon')) {
-    db_add_field('ucms_site', 'favicon', [
-      'description' => "fid from file_manager table",
-      'type'        => 'int',
-      'unsigned'    => true,
-      'not null'    => false,
-      'default'     => 0,
-    ]);
-  }
+   */
 
   /*
   db_constraint_fix_processed('menu');
   db_constraint_fix_processed('node');
   db_constraint_fix_processed('system');
   db_constraint_fix_processed('taxonomy');
-  db_constraint_fix_processed('ucms_site');
   db_constraint_fix_processed('user');
    */
+  db_constraint_fix('ucms_site');
 }
 
 /**
@@ -602,4 +607,25 @@ function ucms_site_update_8005() {
   if (!db_table_exists('ucms_auth_token')) {
     db_create_table('ucms_auth_token', drupal_get_module_schema('ucms_site', 'ucms_auth_token'));
   }
+}
+
+function ucms_site_update_8006() {
+  if (db_table_exists('ucms_site') && !db_field_exists('ucms_site', 'favicon_fid')) {
+    db_add_field('ucms_site', 'favicon_fid', [
+      'description' => "Favicon file identifier",
+      'type'        => 'int',
+      'unsigned'    => true,
+      'not null'    => false,
+      'default'     => null,
+    ]);
+  }
+  db_query("DELETE FROM {ucms_auth_token} WHERE site_id NOT IN (SELECT id FROM {ucms_site})");
+  db_query("DELETE FROM {ucms_auth_token} WHERE user_id NOT IN (SELECT uid FROM {users})");
+  db_query("DELETE FROM {ucms_site_access} WHERE site_id NOT IN (SELECT id FROM {ucms_site})");
+  db_query("DELETE FROM {ucms_site_access} WHERE uid NOT IN (SELECT uid FROM {users})");
+  db_query("DELETE FROM {ucms_site_node} WHERE nid NOT IN (SELECT nid FROM {node})");
+  db_query("DELETE FROM {ucms_site_node} WHERE site_id NOT IN (SELECT id FROM {ucms_site})");
+  db_query("UPDATE {ucms_site} SET favicon_fid = NULL WHERE favicon_fid NOT IN (SELECT fid FROM {file_managed})");
+  db_query("UPDATE {ucms_site} SET home_nid = NULL WHERE home_nid NOT IN (SELECT nid FROM {node})");
+  ucms_site_install_schema_fix();
 }
