@@ -43,7 +43,7 @@ class SiteConfigOverrides implements ConfigFactoryOverrideInterface
             $ret['system.site']['name'] = $site->getTitle();
 
             if ($site->hasHome()) {
-                $ret['system.site']['page']['front'] = 'node/'.$site->getHomeNodeId();
+                $ret['system.site']['page']['front'] = '/node/'.$site->getHomeNodeId();
             }
         }
 

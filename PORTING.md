@@ -9,6 +9,7 @@
  - [x] FIXED - dashboard: bug in calista search (search parameter override itself)
  - [x] FIXED - Modern front assets toolchain
  - [x] FIXED - sf-int: write a proxy to router access check system to symfony authorization checker
+ - [x] FIXED - site: core issue: core router doesn't match node/X when in front: why does the fuck Drupal caches routes and stuff?
  - [x] FIXED - site: finish site listing screen
  - [x] FIXED - site: fix missing site frontpage (home node)
  - [x] FIXED - site: get rid once for all of Drupal role to site role relationship
@@ -30,7 +31,6 @@
  - cache: tree: correct menu block cacheability
  - front: tree: allow item deletion in manage links page
  - front: tree: allow title edit in manage links page
- - site: core issue: core router doesn't match node/X when in front
  - site: fix cross url route generator to use path matching
 
 ## Necessary
