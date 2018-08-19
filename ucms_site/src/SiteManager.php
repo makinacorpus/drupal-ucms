@@ -140,6 +140,8 @@ class SiteManager
             $doDispatch = true;
         }
 
+        $request->attributes->set(Site::REQUEST_ATTRIBUTE_SITE, $site);
+
         $this->isMaster = false;
         $this->cdnIsSecure = $request->isSecure();
         $this->context = $site;

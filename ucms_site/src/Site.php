@@ -2,10 +2,10 @@
 
 namespace MakinaCorpus\Ucms\Site;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Site\Structure\AttributesTrait;
 use MakinaCorpus\Ucms\Site\Structure\DatesTrait;
-use Drupal\node\NodeInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Site data structure, carries the access logic
@@ -14,12 +14,27 @@ use Drupal\node\NodeInterface;
  */
 class Site
 {
-    const ALLOWED_PROTOCOL_PASS = 0;
     const ALLOWED_PROTOCOL_HTTP = 1;
     const ALLOWED_PROTOCOL_HTTPS = 2;
+    const ALLOWED_PROTOCOL_PASS = 0;
+    const REQUEST_ATTRIBUTE_SITE = '_ucms_site';
 
     use AttributesTrait;
     use DatesTrait;
+
+    /**
+     * Get the site from request, if any (from attributes)
+     *
+     * @param Request $request
+     *
+     * @return null|self
+     */
+    public static function fromRequest(Request $request)
+    {
+        if ($site = $request->attributes->get(Site::REQUEST_ATTRIBUTE_SITE)) {
+            return $site;
+        }
+    }
 
     /**
      * @var int
