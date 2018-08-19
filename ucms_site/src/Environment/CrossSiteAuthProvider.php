@@ -3,7 +3,7 @@
 namespace MakinaCorpus\Ucms\Site\Environment;
 
 use Drupal\Core\Entity\EntityTypeManager;
-use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\Security\AuthTokenStorage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,7 +16,6 @@ class CrossSiteAuthProvider implements EventSubscriberInterface
 
     private $authTokenStorage;
     private $entityTypeManager;
-    private $siteManager;
 
     /**
      * {@inheritdoc}
@@ -33,11 +32,10 @@ class CrossSiteAuthProvider implements EventSubscriberInterface
     /**
      * Default constructor
      */
-    public function __construct(AuthTokenStorage $authTokenStorage, EntityTypeManager $entityTypeManager, SiteManager $siteManager)
+    public function __construct(AuthTokenStorage $authTokenStorage, EntityTypeManager $entityTypeManager)
     {
         $this->authTokenStorage = $authTokenStorage;
         $this->entityTypeManager = $entityTypeManager;
-        $this->siteManager = $siteManager;
     }
 
     /**
@@ -66,11 +64,11 @@ class CrossSiteAuthProvider implements EventSubscriberInterface
         // We should not have to do this since the applies() method
         // has in theory be called prior to us, but better be safe
         // than sorry, context could have changed in so many ways.
-        if (!$this->siteManager->hasContext()) {
+        if (!$site = Site::fromRequest($request)) {
             return;
         }
 
-        $siteId = $this->siteManager->getContext()->getId();
+        $siteId = $site->getId();
         $authToken = $this->authTokenStorage->find($siteId, $token);
 
         if ($userId = $authToken->getUserId()) {

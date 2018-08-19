@@ -132,7 +132,7 @@ services:
     ucms_site.auth.provider:
         public: true
         class: MakinaCorpus\Ucms\Site\Environment\CrossSiteAuthProvider
-        arguments: ["@ucms_site.auth.token_storage", "@entity_type.manager", "@ucms_site.manager"]
+        arguments: ["@ucms_site.auth.token_storage", "@entity_type.manager"]
         tags: [{name: event_subscriber}]
 
     # Site cache context

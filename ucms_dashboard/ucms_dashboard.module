@@ -38,32 +38,3 @@ function ucms_dashboard_entity_operation(EntityInterface $entity) {
 
   return $ret;
 }
-
-/**
- * Implements hook_user_login().
- *
-function ucms_dashboard_user_login(&$edit, $account) {
-  // When a user logs in, he must be redirected to main dashboard.
-  if (PHP_SAPI === 'cli') {
-    return; // Make drush happy.
-  }
-  if (ucms_site_manager()->hasContext()) {
-    return; // Let sites handle their own frontpage.
-  }
-  $GLOBALS['ucms_dashboard_login_redirect'] = true;
-}
- */
-
-/**
- * Implements hook_drupal_goto_alter().
- *
-function ucms_dashboard_drupal_goto_alter(&$path, &$options, &$http_response_code) {
-  // This is the most proper way to provide a user login redirect.
-  if (!empty($GLOBALS['ucms_dashboard_login_redirect'])) {
-    if (isset($_GET['destination'])) {
-      return; // Do not alter proper redirect.
-    }
-    $path = 'admin/dashboard';
-  }
-}
- */
