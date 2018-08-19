@@ -55,7 +55,6 @@ class SiteEdit extends FormBase
     public function buildForm(array $form, FormStateInterface $form_state, Site $site = null)
     {
         if (!$site) {
-            $this->logger('form')->critical("There is not site to edit!");
             return $form;
         }
 
@@ -144,22 +143,14 @@ class SiteEdit extends FormBase
         ];
 
         // Favicon
-        /*
-         * FIXME
-         *
-        $useFavicon = variable_get('ucms_site_use_custom_favicon', false);
-        if ($useFavicon) {
-            $form['favicon'] = [
-                '#title'              => $this->t("Favicon"),
-                '#type'               => 'file_chunked',
-                '#upload_validators'  => [''],
-                '#field types'        => ['image'],
-                '#multiple'           => false,
-                '#default_value'      => $site->getFavicon(),
-                '#required'           => false,
-            ];
-        }
-         */
+        $form['favicon'] = [
+            '#title'              => $this->t("Favicon"),
+            '#type'               => 'nodesearch',
+            '#entity_type'        => 'file',
+            '#multiple'           => false,
+            '#default_value'      => $site->hasFavicon() ? [$site->getFavicon()] : null,
+            '#required'           => false,
+        ];
 
         $form['attributes']['#tree'] = true;
 
@@ -189,6 +180,12 @@ class SiteEdit extends FormBase
         $site->http_host      = $values['http_host'];
         $site->allowed_protocols = $values['allowed_protocols'];
         $site->theme          = $values['theme'];
+        /** @var \Drupal\file\FileInterface[] $file */
+        if ($files = $values['favicon']) {
+            $site->favicon_fid = reset($files);
+        } else {
+            $site->favicon_fid = null;
+        }
         /*
          * FIXME
          *

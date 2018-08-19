@@ -1,0 +1,21 @@
+uuid: 46961a34-4d77-4be5-a9c5-cac4a55490f9
+langcode: fr
+status: true
+dependencies: {  }
+name: favicon_48
+label: 'Favicon 48x48'
+effects:
+  85aeaf27-f067-483b-bd6f-e3576ec6aacf:
+    uuid: 85aeaf27-f067-483b-bd6f-e3576ec6aacf
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 48
+      height: 48
+      anchor: center-center
+  f512c235-ac64-4fc4-9efa-2191f5c797ad:
+    uuid: f512c235-ac64-4fc4-9efa-2191f5c797ad
+    id: image_convert
+    weight: 2
+    data:
+      extension: png

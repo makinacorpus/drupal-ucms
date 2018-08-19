@@ -23,9 +23,6 @@ parameters:
     ucms_site_allowed_types:
         site: Site
 
-    # Allow sites to upload a custom favicon.
-    ucms_site_use_custom_favicon: false;
-
     # Dynamic CDN hostname, must point to the same Drupal instance.
     # It may, or may not contain the scheme (http:// or https://) if none
     # provided, it will use the current one being in use.

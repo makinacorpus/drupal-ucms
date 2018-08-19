@@ -60,6 +60,7 @@
 
 ## Additional
 
+ - [x] PORTED - site: restore favicon feature
  - all: replace voters by more flexible ACL system (to be determined)
  - all: Rework UI
  - all: use site in request attributes instead of manager for context
@@ -71,9 +72,9 @@
  - dashboard: icons in admin (provide theme and skin)
  - ONLY UI - ucms_group
  - site: allow sso disabling
+ - site: improve favicon feature, restore in request form, use media instead of file?
  - site: make site state transition matrix configurable
  - site: place current site in request attributes
- - site: restore favicon feature
  - tree: research systray integration for displaying current site navigation
  - ucms_search
  - ucms_taxo

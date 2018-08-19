@@ -314,24 +314,6 @@ class SiteRequest extends FormBase
             ];
         }
 
-        // Favicon
-        /*
-         * FIXME
-         *
-        $useFavicon = variable_get('ucms_site_use_custom_favicon', false);
-        if ($useFavicon) {
-            $form['favicon'] = [
-                '#title'              => $this->t("Favicon"),
-                '#type'               => 'file_chunked',
-                '#upload_validators'  => [''],
-                '#field types'        => ['image'],
-                '#multiple'           => false,
-                '#default_value'      => null,
-                '#required'           => false,
-            ];
-        }
-         */
-
         $form['attributes']['#tree'] = true;
 
         $form['actions']['#type'] = 'actions';

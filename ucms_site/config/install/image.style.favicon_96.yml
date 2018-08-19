@@ -1,0 +1,21 @@
+uuid: 10e4e83d-7cc5-4242-92fc-0bfb27882824
+langcode: fr
+status: true
+dependencies: {  }
+name: favicon_96
+label: 'Favicon 96x96'
+effects:
+  5dfd389b-5928-4840-904d-12ae15a8516e:
+    uuid: 5dfd389b-5928-4840-904d-12ae15a8516e
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 96
+      height: 96
+      anchor: center-center
+  6b973621-b561-4359-a7a5-40986bfa50f1:
+    uuid: 6b973621-b561-4359-a7a5-40986bfa50f1
+    id: image_convert
+    weight: 2
+    data:
+      extension: png

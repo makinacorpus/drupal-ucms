@@ -9,6 +9,7 @@ use Drupal\Core\Database\Query\Select;
 use Drupal\Core\Entity\EntityTypeInterface;
 use MakinaCorpus\Ucms\Site\Access;
 use MakinaCorpus\Ucms\Site\Environment\NodeDefinition;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_entity_base_field_info().
@@ -478,81 +479,32 @@ function theme_ucms_site_state_transition_form($variables) {
  */
 
 /**
- * Implements hook_image_default_styles()
- *
- * @todo https://www.drupal.org/docs/8/theming-drupal-8/including-default-image-styles-with-your-theme
- *
-function ucms_site_image_default_styles() {
-  $styles = [];
-  $styles['ucms_site_favicon_32x32'] = [
-    'label' => 'Favicon 32x32px',
-    'effects' => [
-      [
-        'name' => 'image_scale',
-        'data' => [
-          'width' => 32,
-          'height' => 32,
-        ],
-        'weight' => 0,
-      ],
-    ],
-    'name' => 'ucms_favicon_32x32',
-    'storage' => IMAGE_STORAGE_DEFAULT,
-  ];
-  $styles['ucms_site_favicon_16x16'] = [
-    'label' => 'Favicon 16x16px',
-    'effects' => [
-      [
-        'name' => 'image_scale',
-        'data' => [
-          'width' => 16,
-          'height' => 16,
-        ],
-        'weight' => 0,
-      ],
-    ],
-    'name' => 'ucms_favicon_16x16',
-    'storage' => IMAGE_STORAGE_DEFAULT,
-  ];
-
-  return $styles;
-}
+ * Implements hook_page_attachments().
  */
-
-/**
- * Implements hook_page_build()
- *
-function ucms_site_page_build(&$page) {
+function ucms_site_page_attachments(array &$page) {
   $manager = ucms_site_manager();
 
   if ($manager->hasContext()) {
     $site = $manager->getContext();
 
     // Handling custom favicon
-    if ($favicon = $site->getFavicon()) {
-      if ($file = file_load($favicon)) {
-        $element = [
-          '#tag' => 'link',
-          '#attributes' => [
-            'href'  => image_style_url('ucms_site_favicon_32x32', $file->uri),
-            'rel'   => 'icon',
-            'sizes' => "32x32"
-          ],
-        ];
-        drupal_add_html_head($element, 'ucms_site_favicon_32x32');
+    if ($site->hasFavicon()) {
+      /** @var \Drupal\file\FileInterface $file */
+      if ($file = \Drupal::entityTypeManager()->getStorage('file')->load($site->getFavicon())) {
 
-        $element = [
-          '#tag' => 'link',
-          '#attributes' => [
-            'href'  => image_style_url('ucms_site_favicon_16x16', $file->uri),
-            'rel'   => 'icon',
-            'sizes' => "16x16"
-          ],
-        ];
-        drupal_add_html_head($element, 'ucms_site_favicon_16x16');
+        // @todo remove core one
+        // @see https://stackoverflow.com/a/23734416
+        foreach (['favicon_16' => '16x16', 'favicon_32' => '32x32', 'favicon_48' => '48x48', 'favicon_96' => '96x96'] as $stylename => $sizes) {
+          if ($style = ImageStyle::load($stylename)) {
+            $page['#attached']['html_head_link'][][] = [
+              'rel' => 'icon',
+              'href' => file_url_transform_relative($style->buildUrl($file->getFileUri())),
+              'sizes' => $sizes,
+              'type' => $file->getMimeType(),
+            ];
+          }
+        }
       }
     }
   }
 }
- */
-

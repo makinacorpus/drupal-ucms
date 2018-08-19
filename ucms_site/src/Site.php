@@ -104,7 +104,7 @@ class Site
     /**
      * @var int
      */
-    public $favicon = null;
+    public $favicon_fid = null;
 
     /**
      * @var int
@@ -223,12 +223,17 @@ class Site
         return (int)$this->group_id;
     }
 
+    public function hasFavicon(): bool
+    {
+        return (bool)$this->favicon_fid;
+    }
+
     /**
      * Get favicon fid
      */
     public function getFavicon(): int
     {
-        return (int)$this->favicon;
+        return (int)$this->favicon_fid;
     }
 
     /**
@@ -236,7 +241,7 @@ class Site
      */
     public function setFavicon(int $fid)
     {
-        $this->favicon = $fid;
+        $this->favicon_fid = $fid;
     }
 
     public function getReplacementOf(): string

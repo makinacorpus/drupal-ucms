@@ -250,7 +250,7 @@ class SiteStorage
             'is_public',
             'type',
             'home_nid',
-            'favicon',
+            'favicon_fid',
             'attributes',
             'group_id',
         ];
