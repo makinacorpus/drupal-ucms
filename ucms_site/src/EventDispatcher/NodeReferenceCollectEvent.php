@@ -5,9 +5,6 @@ namespace MakinaCorpus\Ucms\Site\EventDispatcher;
 use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-/**
- * @todo this event should be moved into the 'ucms_site' instead
- */
 class NodeReferenceCollectEvent extends GenericEvent
 {
     const EVENT_NAME = 'ucms.node.collect';
