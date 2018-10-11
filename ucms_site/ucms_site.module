@@ -776,7 +776,7 @@ function ucms_site_module_implements_alter(&$implementations, $hook) {
       $group = $implementations['ucms_seo'];
       unset($implementations['ucms_seo']);
       $implementations['ucms_seo'] = $group;
-    
+
     case 'user_delete':
       // Never allow node module to delete nodes when a user is deleted
       // preventing accidental content losses when user_delete() is called
@@ -1178,6 +1178,7 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
 
   // Apply group conditions, but do not apply anything if the user is not
   // member of any groups: it means that the user is a global administrator.
+  $conditionsOr = db_or();
   if ($accessList) {
     if (!$siteAlias) {
       $siteAlias = $query->join(
@@ -1190,22 +1191,22 @@ function ucms_site_query_ucms_site_access_alter(QueryAlterableInterface $query) 
     foreach ($accessList as $access) {
       $groupList[] = $access->getGroupId();
     }
-    $query->condition($siteAlias . '.group_id', $groupList);
+    $conditionsOr->condition($siteAlias . '.group_id', $groupList);
   }
 
   // Apply normal user permissions if the current user cannot see all sites
   if (!$account->hasPermission(Access::PERM_SITE_MANAGE_ALL) && !$account->hasPermission(Access::PERM_SITE_VIEW_ALL)) {
     if (!$accessAlias) {
-      $query->join(
+      $accessAlias = $query->join(
         'ucms_site_access',
         'access_sa',
-        "access_sa.site_id = " . $siteAlias . ".id AND access_sa.uid = :access_sa_uid",
-        [':access_sa_uid' => $account->id()]
+        "access_sa.site_id = " . $siteAlias . ".id"
       );
-    } else {
-      $query->condition($accessAlias . '.uid', $account->id());
     }
+    $conditionsOr->condition($accessAlias . '.uid', $account->id());
   }
+
+  $query->condition($conditionsOr);
 }
 
 /**
