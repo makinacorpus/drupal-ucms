@@ -233,6 +233,12 @@ final class Access
     const PERM_SITE_VIEW_ALL = 'site view all';
 
     /**
+     * Import bulk media
+     * View all users
+     */
+    const PERM_CONTENT_MEDIA_BULK_IMPORT = 'content media bulk import';
+
+    /**
      * View all users
      */
     const PERM_USER_VIEW_ALL = 'users view all';
