@@ -446,7 +446,7 @@ function ucms_seo_drupal_deliver_html_page($page_callback_result) {
 
   // @todo altered callback name should be stored instead
   if (function_exists('sf_dic_page_delivery_html')) {
-    sf_dic_page_delivery_html($page_callback_result);
+    return sf_dic_page_delivery_html($page_callback_result);
   }
   drupal_deliver_html_page($page_callback_result);
 }

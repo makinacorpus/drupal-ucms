@@ -68,7 +68,7 @@ class SeoExtension extends \Twig_Extension
             $site = $this->siteManager->getContext();
             if ($site->hasAttribute('seo.google.gtm_id')) {
                 return $twig->render(
-                    'module:ucms_seo:views/gtm.html.twig',
+                    '@ucms_seo/views/gtm.html.twig',
                     ['googleTagManagerId' => $site->getAttribute('seo.google.gtm_id')]
                 );
             }

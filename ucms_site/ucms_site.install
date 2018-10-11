@@ -1125,5 +1125,5 @@ function ucms_site_update_7027() {
  */
 function ucms_site_update_7028() {
   drupal_set_message(t("Drupal role to site role mapping has been removed, you must restore the site transition matrix manually."));
-  variable_del('ucms_site_relative_roles');
+  //variable_del('ucms_site_relative_roles');
 }

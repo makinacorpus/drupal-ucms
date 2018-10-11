@@ -316,17 +316,17 @@ class SeoService
     public function getNodeSegment(NodeInterface $node) : string
     {
         if ($node->isNew()) {
-            return null;
+            return '';
         }
 
         if ($this->isNodeBlacklisted($node)) {
-            return null;
+            return '';
         }
 
         $map = $this->getNodeAliasMap([$node->id()]);
 
         if ($map) {
-            return reset($map);
+            return reset($map) ?? '';
         }
 
         return '';
