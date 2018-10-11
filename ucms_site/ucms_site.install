@@ -673,9 +673,6 @@ function ucms_site_install_schema_fix() {
     'node_access' => [
       'fk_node' => "ALTER TABLE {node_access} ADD CONSTRAINT {fk_node} FOREIGN KEY (nid) REFERENCES {node} (nid) ON DELETE CASCADE",
     ],
-    'file_managed' => [
-      'fk_favicon' => "ALTER TABLE {ucms_site} ADD CONSTRAINT {fk_favicon} FOREIGN KEY (favicon) REFERENCES {file_managed} (fid) ON DELETE CASCADE",
-    ]
   ];
   foreach ($constraints as $table => $statements) {
     if (db_table_exists($table)) {
@@ -700,7 +697,7 @@ function ucms_site_install_schema_fix() {
   db_constraint_fix_processed('node');
   db_constraint_fix_processed('system');
   db_constraint_fix_processed('taxonomy');
-  db_constraint_fix_processed('ucms_site');
+//  db_constraint_fix_processed('ucms_site');
   db_constraint_fix_processed('user');
 }
 
@@ -994,22 +991,6 @@ function ucms_site_update_7023() {
       'default'     => 0,
     ]);
   }
-
-  // Add constraint on file_manegd table
-  $constraint = "ALTER TABLE {ucms_site} ADD CONSTRAINT {fk_favicon} FOREIGN KEY (favicon) REFERENCES {file_managed} (fid) ON DELETE CASCADE";
-  try {
-    db_query($constraint);
-  } catch (\PDOException $e) {
-    switch ($e->getCode()) {
-      case 42710: // PostgreSQL constraint already exists
-        continue;
-      case 23000: // MySQL duplicate key in table
-        continue;
-      default:
-        throw $e;
-    }
-  }
-
   ucms_site_install_schema_fix();
 }
 
@@ -1093,6 +1074,13 @@ function ucms_site_update_7026() {
 
   ucms_site_install_default_group();
 
+  try {
+    db_constraint_drop_unsafe('ucms_site', 'fk', 'ucms_site_fk_site_group');
+  } catch (\Exception $e) {
+    // Oups.
+  }
+  db_constraint_fix('ucms_site');
+
   // Modify the {node}.is_ghost to be 1 per default
   db_change_field('node', 'is_ghost', 'is_ghost', [
     'description' => "Is this node visible by non-members of the group it is attached to",
@@ -1110,6 +1098,7 @@ function ucms_site_update_7026() {
   variable_set('node_access_needs_rebuild', 1);
 
   // Fixes the {ucms_site} schema.
+
   db_change_field('ucms_site', 'group_id', 'group_id', [
     'description' => "Group identifier",
     'type'        => 'int',

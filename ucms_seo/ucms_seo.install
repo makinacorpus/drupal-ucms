@@ -344,17 +344,28 @@ function ucms_seo_update_7021() {
   db_query("
     INSERT INTO {ucms_seo_route}
         (node_id, site_id, route, is_outdated)
-    SELECT
-        node_id, site_id, alias, 1
-    FROM {ucms_seo_alias}
-    WHERE pid IN (
-        SELECT MAX(pid)
-        FROM ucms_seo_alias
-        WHERE
-            site_id IS NOT NULL
-        GROUP BY
-            node_id, site_id
-    )
+    SELECT * FROM (
+        SELECT
+            node_id, site_id, alias, 1
+        FROM {ucms_seo_alias}
+        WHERE pid IN (
+            SELECT MAX(pid)
+            FROM ucms_seo_alias
+            WHERE
+                site_id IS NOT NULL
+            GROUP BY
+                node_id, site_id
+        )
+    ) AS a
+    WHERE
+        node_id IS NOT NULL
+        AND NOT EXISTS (
+            SELECT 1
+            FROM {ucms_seo_route} i
+            WHERE
+                i.node_id = a.node_id
+                AND i.site_id = a.site_id
+        )
   ");
 
   db_query("
@@ -366,11 +377,15 @@ function ucms_seo_update_7021() {
   db_query("
     INSERT INTO {ucms_seo_redirect}
         (nid, site_id, path, expires)
-    SELECT
-        node_id, site_id, CONCAT('/', alias), expires
-    FROM {ucms_seo_alias}
-    WHERE
-        site_id IS NOT NULL
+    SELECT * FROM (
+        SELECT
+            node_id, site_id, CONCAT('/', MIN(alias)), MAX(expires)
+        FROM {ucms_seo_alias}
+        WHERE
+            site_id IS NOT NULL
+        GROUP BY node_id, site_id
+    ) AS a
+    WHERE node_id IS NOT NULL
   ");
 
   // We'll see about that later; just keeping it in case
