@@ -113,6 +113,42 @@ final class Access
     const PERM_SITE_VIEW_ALL = 'site view all';
 
     /**
+     * Import bulk media
+     * View all users
+     */
+    const PERM_CONTENT_MEDIA_BULK_IMPORT = 'content media bulk import';
+
+    /**
+     * View all users
+     */
+    const PERM_USER_VIEW_ALL = 'users view all';
+
+    /**
+     * Manage all users
+     */
+    const PERM_USER_MANAGE_ALL = 'users manage all';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_CONTENT_PROMOTE_CORPORATE = 'promote to corporate';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_MANAGE_USERS = 'manage users';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_MANAGE_SITES = 'manage sites';
+
+    /**
+     * ACL permission for site: manage webmasters
+     */
+    const ACL_PERM_SITE_EDIT_TREE = 'edit tree';
+
+    /**
      * Site relative role: none
      */
     const ROLE_NONE = 0;

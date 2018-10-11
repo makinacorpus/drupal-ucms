@@ -1,0 +1,29 @@
+<?php
+/**
+ * @file
+ * UCMS - A few media helpers.
+ */
+
+use MakinaCorpus\Ucms\Site\Access;
+
+/**
+ * Implements hook_menu().
+ */
+function ucms_media_menu() {
+  $items = [];
+
+  foreach (ucms_contrib_type_handler_get()->getTabs() as $key => $label) {
+    if ('media' === $key) {
+      $items['admin/dashboard/'.$key.'/bulk-import'] = [
+        'title'             => "Mass import",
+        'page callback'     => 'ucms_media_image_upload_form_page',
+        'page arguments'    => [],
+        'access arguments'  => [Access::PERM_CONTENT_MEDIA_BULK_IMPORT],
+        'file'              => 'ucms_media.import.inc',
+        'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+      ];
+    }
+  }
+
+  return $items;
+}
