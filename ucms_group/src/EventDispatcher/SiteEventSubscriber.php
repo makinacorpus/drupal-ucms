@@ -86,7 +86,7 @@ class SiteEventSubscriber implements EventSubscriberInterface
             }
         }
 
-        return $event->deny();
+        // return $event->deny();
     }
 
     /**
