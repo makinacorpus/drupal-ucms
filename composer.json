@@ -77,7 +77,7 @@
         "makinacorpus/drupal-umenu" : "^1.1.4",
         "makinacorpus/drupal-ulink" : "^2.0",
         "makinacorpus/drupal-plusql" : "^1.0.4",
-        "makinacorpus/drupal-sf-dic" : "^3.0.32",
+        "makinacorpus/drupal-sf-dic" : "^3.4|^4",
         "makinacorpus/drush-progressbar" : "^1.0",
         "makinacorpus/php-bloom" : "^2.0.1"
     },

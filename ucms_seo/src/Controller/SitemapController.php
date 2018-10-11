@@ -41,7 +41,7 @@ class SitemapController extends Controller
             }
         }
 
-        $output = $this->renderView('module:ucms_seo:views/sitemap.xml.twig', ['menus_tree' => $treeList]);
+        $output = $this->renderView('@ucms_seo/views/sitemap.xml.twig', ['menus_tree' => $treeList]);
 
         return new Response($output, 200, ['content-type' => 'application/xml']);
     }

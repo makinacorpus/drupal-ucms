@@ -79,7 +79,7 @@ class DashboardController extends Controller
         return $this
             ->createTemplatePage(
                 $this->getGroupAdminDatasource(),
-                'module:ucms_group:views/Page/groupAdmin.html.twig'
+                '@ucms_group/views/Page/groupAdmin.html.twig'
             )
             ->render($request->query->all())
         ;
@@ -93,7 +93,7 @@ class DashboardController extends Controller
         return $this
             ->createTemplatePage(
                 $this->getGroupAdminDatasource(),
-                'module:ucms_group:views/Page/groupAdminMine.html.twig'
+                '@ucms_group/views/Page/groupAdminMine.html.twig'
             )
             ->setBaseQuery([
                 'uid' => $this->getCurrentUserId(),
@@ -144,7 +144,7 @@ class DashboardController extends Controller
         return $this
             ->createTemplatePage(
                 $this->getGroupMemberAdminDatasource(),
-                'module:ucms_group:views/Page/groupMemberAdmin.html.twig'
+                '@ucms_group/views/Page/groupMemberAdmin.html.twig'
             )
             ->setBaseQuery([
                 'group' => $group->getId(),
@@ -191,7 +191,7 @@ class DashboardController extends Controller
         return $this
             ->createTemplatePage(
                 $this->getGroupSiteAdminDatasource(),
-                'module:ucms_group:views/Page/groupSiteAdmin.html.twig'
+                '@ucms_group/views/Page/groupSiteAdmin.html.twig'
             )
             ->setBaseQuery([
                 'group' => $group->getId(),

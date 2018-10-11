@@ -29,7 +29,7 @@ class NodeInfoController extends Controller
             $sites = $manager->getStorage()->loadAll($node->ucms_sites);
         }
 
-        return $this->render('module:ucms_site:views/NodeInfo/siteList.html.twig', [
+        return $this->render('@ucms_site/views/NodeInfo/siteList.html.twig', [
             'origin'  => $origin,
             'allowed' => $node->ucms_allowed_sites,
             'sites'   => $sites,
