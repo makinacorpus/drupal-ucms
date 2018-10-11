@@ -18,7 +18,7 @@ services:
   ucms_seo.alias_manager:
     public: false
     class: MakinaCorpus\Ucms\Seo\Path\AliasManager
-    arguments: ['@database', '@umenu.tree_provider']
+    arguments: ['@database', '@umenu.tree_provider', '@event_dispatcher']
   ucms_seo.redirect_storage:
     public: true
     class: MakinaCorpus\Ucms\Seo\Path\RedirectStorage
@@ -51,11 +51,6 @@ services:
 
   # Action processors
   ucms_seo.action.redirect_delete:
-    public: false
-    class: MakinaCorpus\Ucms\Seo\Action\StoreLocatorAliasRebuildProcessor
-    arguments: ["@ucms_seo.store_locator_factory", "@entity.manager", "@current_user"]
-    tags: [{name: ucms_dashboard.action}]
-  ucms_seo.action.store_locator_aliases_rebuild:
     public: false
     class: MakinaCorpus\Ucms\Seo\Action\RedirectDeleteProcessor
     arguments: ["@ucms_seo.seo_service", "@current_user"]

@@ -1953,21 +1953,6 @@ msgid_plural "@count redirects have been deleted"
 msgstr[0] "La redirection a été supprimée"
 msgstr[1] "@count redirections on été supprimées"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/StoreLocatorAliasRebuildProcessor.php:42
-msgid "Rebuild SEO aliases"
-msgstr "Reconstruire les alias SEO"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/StoreLocatorAliasRebuildProcessor.php:58
-msgid "Rebuild all aliases for content linked to this store locator?"
-msgid_plural ""
-"Rebuild all aliases for content linked to these @count store locators?"
-msgstr[0] "Reconstruire tous les alias pour ce store locator ?"
-msgstr[1] "Reconstruire tous les alias pour ces @count store locator ?"
-
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Action/StoreLocatorAliasRebuildProcessor.php:85
-msgid "All aliases have been rebuilt"
-msgstr "Tous les alias ont été reconstruits"
-
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Controller/SeoController.php:49
 msgid "This content has no SEO alias."
 msgstr "Ce contenu n'a pas d’alias SEO."

@@ -65,37 +65,9 @@ class NodeEventSubscriber implements EventSubscriberInterface
         $this->service->setNodeSegment($node, $segment);
     }
 
-    protected function onSaveRebuildLocatorAliases(NodeEvent $event)
-    {
-        $node = $event->getNode();
-
-        $types = variable_get('ucms_seo_store_locator_content_types', []);
-
-        if (!$types) {
-            // System is not configured to have a store locator, which means
-            // the specific store locator implementation probably does not
-            // exist, just be silent about this
-            return;
-        }
-
-        // @todo inject the variable instead of using variable_get()
-        if (in_array($node->type, $types, true)) {
-            $storeLocator = $this->locatorFactory->create($node);
-            $storeLocator->rebuildAliases();
-        } else {
-            $storeLocator = $this->locatorFactory->create();
-            // © Singing don't worry about a thing,
-            // © Cause every little thing gonna be alright.
-            // store locator won't rebuild ALL aliases but only ones which are
-            // interesting for it ;-)
-            $storeLocator->rebuildAliases($node);
-        }
-    }
-
     public function onSave(NodeEvent $event)
     {
         $this->onSaveEnsureSegment($event);
-        $this->onSaveRebuildLocatorAliases($event);
         $this->onSaveStoreMeta($event);
     }
 

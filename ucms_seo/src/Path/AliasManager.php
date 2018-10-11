@@ -2,7 +2,9 @@
 
 namespace MakinaCorpus\Ucms\Seo\Path;
 
+use MakinaCorpus\Ucms\Seo\EventDispatcher\NodePathAliasComputeEvent;
 use MakinaCorpus\Umenu\TreeProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Node alias manager, aliases are always computed based upon menus.
@@ -23,15 +25,9 @@ class AliasManager
      */
     const DEFAULT_EXPIRE = 'now +6 month';
 
-    /**
-     * @var \DatabaseConnection
-     */
     private $database;
-
-    /**
-     * @var TreeProviderInterface
-     */
     private $treeProvider;
+    private $eventDispatcher;
 
     /**
      * Default constructor
@@ -39,10 +35,11 @@ class AliasManager
      * @param \DatabaseConnection $database
      * @param TreeProviderInterface $treeProvider
      */
-    public function __construct(\DatabaseConnection $database, TreeProviderInterface $treeProvider)
+    public function __construct(\DatabaseConnection $database, TreeProviderInterface $treeProvider, EventDispatcherInterface $eventDispatcher)
     {
         $this->database = $database;
         $this->treeProvider = $treeProvider;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -94,9 +91,9 @@ class AliasManager
         // This rather unperforming, but it will only act on very small
         // arrays, so I guess that for now, this is enough.
         $pieces = [];
-        foreach ($nodeIdList as $nodeId) {
-            if (isset($segments[$nodeId])) {
-                $pieces[] = $segments[$nodeId];
+        foreach ($nodeIdList as $parentId) {
+            if (isset($segments[$parentId])) {
+                $pieces[] = $segments[$parentId];
             }
         }
 
@@ -105,7 +102,14 @@ class AliasManager
             return null;
         }
 
-        return implode('/', $pieces);
+        $path = implode('/', $pieces);
+
+        // This is the right place to allow store locator or any other business
+        // stuff to interact, let's just run an event to catch'em all.
+        $event = new NodePathAliasComputeEvent($nodeId, $siteId, $segments[$nodeId] ?? '', $path);
+        $this->eventDispatcher->dispatch(NodePathAliasComputeEvent::EVENT_NAME, $event);
+
+        return $event->getComputedPathAlias();
     }
 
     /**
