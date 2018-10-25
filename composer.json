@@ -68,11 +68,10 @@
             "MakinaCorpus\\Ucms\\Tree\\" : "ucms_tree/src",
             "MakinaCorpus\\Ucms\\User\\" : "ucms_user/src",
             "MakinaCorpus\\Ucms\\Widget\\" : "ucms_widget/src"
-        },
-        "exclude-from-classmap": ["**/Tests/"]
+        }
     },
     "require" : {
-        "elasticsearch/elasticsearch" : "2.2.0",
+        "elasticsearch/elasticsearch" : "~2.2",
         "makinacorpus/drupal-apubsub" : "^4.0",
         "makinacorpus/drupal-filechunk": "^1.0 || ^2.0.2",
         "makinacorpus/drupal-minidialog": "*",
@@ -84,7 +83,7 @@
         "makinacorpus/php-bloom" : "^2.0.1",
         "php" : ">= 7"
     },
-    "suggests" : {
+    "suggest" : {
         "jbroadway/urlify" : "For the SEO module to be able to generate correct URLs",
         "drupal/redis" : "Activates a few Redis-based caches"
     },
