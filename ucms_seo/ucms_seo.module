@@ -195,7 +195,7 @@ function ucms_seo_init() {
       } else if (!drupal_is_front_page()) {
         // Verify that we are on the best alias
         $best_alias = ucms_seo_service()->getNodeLocalCanonical($node);
-        if ($best_alias && $best_alias !== request_path()) {
+        if ($best_alias && 'node/' !== substr($best_alias, 0, 5) && $best_alias !== request_path()) {
           drupal_goto($best_alias, ['query' => drupal_get_query_parameters()], 301);
         }
       }

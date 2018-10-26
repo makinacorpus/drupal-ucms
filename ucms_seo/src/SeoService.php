@@ -268,7 +268,7 @@ class SeoService
     public function getNodeCanonical(NodeInterface $node) : string
     {
         if ($this->isNodeBlacklisted($node)) {
-            return null;
+            return '';
         }
 
         $site = null;
