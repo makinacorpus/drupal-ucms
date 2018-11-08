@@ -38,9 +38,9 @@ final class TypeHandler
     private function rebuildCache()
     {
         $this->metaTypeMap = [
-            self::TYPE_COMPONENT => $this->filterVariable('ucms_contrib_tab_media_type'),
+            self::TYPE_COMPONENT => $this->filterVariable('ucms_contrib_component_types'),
             self::TYPE_EDITORIAL => $this->filterVariable('ucms_contrib_editorial_types'),
-            self::TYPE_MEDIA => $this->filterVariable('ucms_contrib_component_types'),
+            self::TYPE_MEDIA => $this->filterVariable('ucms_contrib_tab_media_type'),
         ];
     }
 
