@@ -469,8 +469,14 @@ class Search
         //
         $value = trim($value);
 
-        if (\preg_match('/^[^\+\(\)"]+$/ims', $value)) {
-            return '"'.$value.'"^10 or ('.$value.')^1';
+        // Use the OR variation only where there's spaces within the words (2nd preg_match call).
+        if (\preg_match('/^[^\+\(\)"]+$/ims', $value) && \preg_match('/\s+/ims', $value)) {
+            // Do a bit more than simply putting the phrase within parenthesis,
+            // do split it properly, in certain conditions, I have no idea why,
+            // it matches weird results without this preg_split().
+            // Also, and for a very unknown reason, "OR" in caps seems to be
+            // interpreted differently than "or" without caps.
+            return '"'.$value.'"^10 OR ('.\implode(' ', \preg_split('/[\s-]+/', $value)).')^1';
         }
 
         return $value;
