@@ -42,7 +42,7 @@ final class NodeReference
 
     public function getType() : string
     {
-        return null === $this->type ? 'unknown' : $this->type;
+        return $this->type ?? 'unknown';
     }
 
     public function getFieldName() : string
