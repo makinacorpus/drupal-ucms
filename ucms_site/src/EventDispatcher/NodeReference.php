@@ -44,7 +44,7 @@ final class NodeReference
 
     public function getSourceId() : int
     {
-        return $this->source_id;
+        return (int)$this->source_id;
     }
 
     public function getSourceTitle() : string
@@ -75,7 +75,7 @@ final class NodeReference
 
     public function getTargetId() : int
     {
-        return $this->target_id;
+        return (int)$this->target_id;
     }
 
     public function getTargetTitle() : string

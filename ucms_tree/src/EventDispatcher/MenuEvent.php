@@ -58,7 +58,7 @@ final class MenuEvent extends Event
     /**
      * @return TreeItem[]
      */
-    public function getDeletedItems() : TreeItem
+    public function getDeletedItems()
     {
         return $this->deletedItems;
     }

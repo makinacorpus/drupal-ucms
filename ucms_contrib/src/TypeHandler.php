@@ -91,7 +91,7 @@ final class TypeHandler
      */
     public function getMediaTypes() : array
     {
-        return $this->metaTypeMap[self::TYPE_MEDIA];
+        return $this->metaTypeMap[self::TYPE_MEDIA] ?? [];
     }
 
     /**
@@ -101,7 +101,7 @@ final class TypeHandler
      */
     public function getEditorialContentTypes() : array
     {
-        return $this->metaTypeMap[self::TYPE_EDITORIAL];
+        return $this->metaTypeMap[self::TYPE_EDITORIAL] ?? [];
     }
 
     /**
@@ -111,7 +111,7 @@ final class TypeHandler
      */
     public function getComponentTypes() : array
     {
-        return $this->metaTypeMap[self::TYPE_COMPONENT];
+        return $this->metaTypeMap[self::TYPE_COMPONENT] ?? [];
     }
 
     /**
@@ -121,7 +121,7 @@ final class TypeHandler
      */
     public function getLockedTypes()  : array
     {
-        return $this->filterVariable('ucms_contrib_locked_types');
+        return $this->filterVariable('ucms_contrib_locked_types', []) ?? [];
     }
 
     /**
