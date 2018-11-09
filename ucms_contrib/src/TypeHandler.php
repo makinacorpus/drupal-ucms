@@ -81,6 +81,7 @@ final class TypeHandler
      */
     public function getMetaType(string $contentType) : string
     {
+        return '';
     }
 
     /**

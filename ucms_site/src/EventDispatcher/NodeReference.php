@@ -90,7 +90,7 @@ final class NodeReference
 
     public function getFieldName() : string
     {
-        return $this->field_name;
+        return $this->field_name ?? '';
     }
 
     public function touchedAt() : \DateTimeInterface
