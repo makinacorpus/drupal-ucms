@@ -217,7 +217,7 @@ final class NodeAccessEventSubscriber implements EventSubscriberInterface
                 } else  {
                     $builder->add(Access::PROFILE_SITE_READONLY, $siteId, true, false, false /* $readOnly */);
                     if ($siteId === $node->site_id) { // Avoid data volume exploding
-                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, true, false, false /* $readOnly */);
+                        $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, true, true, true /* $readWrite */);
                         /*
                         $builder->add(Access::PROFILE_SITE_WEBMASTER, $siteId, Permission::PUBLISH);
                          */
