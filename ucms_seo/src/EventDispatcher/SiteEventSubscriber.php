@@ -6,6 +6,7 @@ use MakinaCorpus\Ucms\Seo\SeoService;
 use MakinaCorpus\Ucms\Site\EventDispatcher\MasterInitEvent;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteInitEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -15,13 +16,15 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class SiteEventSubscriber implements EventSubscriberInterface
 {
     private $service;
+    private $dispatcher;
 
     /**
      * Default constructor
      */
-    public function __construct(SeoService $service)
+    public function __construct(SeoService $service, EventDispatcherInterface $dispatcher)
     {
         $this->service = $service;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -50,14 +53,23 @@ class SiteEventSubscriber implements EventSubscriberInterface
     public function onInit(SiteInitEvent $event)
     {
         // Naive alias lookup for the current page
+        $path       = null;
         $site       = $event->getSite();
         $request    = $event->getRequest();
         $incomming  = $request->query->get('q');
 
         $nodeId = $this->service->getAliasManager()->matchPath($incomming, $site->getId());
         if ($nodeId) {
+            $path = $incomming = 'node/' . $nodeId;
+        } else {
+            $event = new PathMatchEvent($site, $incomming);
+            $this->dispatcher->dispatch(PathMatchEvent::EVENT_NAME, $event);
+            $path = $event->getMatchedPath(); // It still can be null.
+        }
+
+        if ($path) {
             // $_GET['q'] reference will be useless for Drupal 8
-            $_GET['q'] = $incomming = 'node/' . $nodeId;
+            $_GET['q'] = $path;
             $request->query->set('q', $incomming);
             $request->attributes->set('_route', $incomming);
         }

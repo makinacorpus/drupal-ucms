@@ -516,3 +516,9 @@ function ucms_seo_update_7023() {
     }
   }
 }
+
+/**
+ * Kept for numbering.
+ */
+function ucms_seo_update_7024() {
+}

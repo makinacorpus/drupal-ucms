@@ -79,7 +79,7 @@ services:
   # A few various event subscribers
   ucms_seo.site_event_subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\SiteEventSubscriber
-    arguments: ["@ucms_seo.seo_service"]
+    arguments: ["@ucms_seo.seo_service", "@event_dispatcher"]
     tags: [{name: event_subscriber }]
   ucms_seo.menu_event_subscriber:
     class: MakinaCorpus\Ucms\Seo\EventDispatcher\MenuEventSubscriber
