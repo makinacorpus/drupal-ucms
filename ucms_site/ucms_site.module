@@ -342,7 +342,7 @@ function ucms_site_admin_path_is_allowed($path) {
   $arg = explode('/', $path);
   if ($arg[0] === 'node') {
     // Whitelist our custom node URLs.
-    if (is_numeric($arg[1])) {
+    if (isset($arg[1]) && is_numeric($arg[1])) {
       if (isset($arg[2])) {
         switch ($arg[2]) {
           case 'duplicate':
