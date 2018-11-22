@@ -86,6 +86,11 @@ class NodeActionProvider implements ActionProviderInterface
             $ret[] = new Action($this->t("Revisions"), 'node/' . $item->id() . '/revisions', null, 'th-list', -10, false, false, false, 'view');
         }
 
+        // In site context, allow node clone
+        if ($this->siteManager->hasContext() && \node_access(Access::OP_CREATE, $item->bundle())) {
+            $ret[] = new Action($this->t("Create a copy"), 'node/' . $item->id() . '/create-copy', 'dialog', 'duplicate', -55, false, false, false, 'edit');
+        }
+
         if (
             $this->account->hasPermission(Access::PERM_CONTENT_TRANSFER_OWNERSHIP) &&
             $item->access(Access::OP_UPDATE, $this->account)

@@ -145,6 +145,14 @@ function ucms_contrib_menu() {
     'access arguments'  => [1],
     'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
   ];
+  $items['node/%node/create-copy'] = [
+    'title'             => "Create a copy",
+    'page callback'     => 'sf_dic_page_form',
+    'page arguments'    => ['MakinaCorpus\Ucms\Contrib\Form\NodeCreateCopy', 1],
+    'access callback'   => 'ucms_contrib_menu_node_access_create_copy',
+    'access arguments'  => [1],
+    'type'              => MENU_CALLBACK | MENU_VISIBLE_IN_BREADCRUMB,
+  ];
   $items['node/%node/report'] = [
     'title'             => "Flag as inappropriate",
     'page callback'     => 'sf_dic_page_form',
@@ -354,6 +362,13 @@ function ucms_contrib_menu_node_access_unflag(NodeInterface $node) {
 /**
  * Menu access helper.
  */
+function ucms_contrib_menu_node_access_create_copy(NodeInterface $node) {
+  return ucms_site_manager()->hasContext() && $node->access(Access::OP_VIEW) && node_access(Access::OP_CREATE, $node->bundle());
+}
+
+/**
+ * Menu access helper.
+ */
 function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
   return ucms_site_node_access_helper()->userCanLock(\Drupal::currentUser(), $node);
 }
@@ -363,7 +378,7 @@ function ucms_contrib_menu_node_access_lock(NodeInterface $node) {
  */
 function ucms_contrib_menu_node_access_copy_on_edit(NodeInterface $node) {
   $account = \Drupal::currentUser();
-  return ucms_site_node_access_helper()->userCanDuplicate($account, $node) || $node->access(Access::OP_UPDATE, $account);
+  return ucms_site_node_access_helper()->userCanDuplicate($account, $node, true) || $node->access(Access::OP_UPDATE, $account);
 }
 
 /**

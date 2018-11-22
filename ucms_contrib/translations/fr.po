@@ -45,6 +45,15 @@ msgstr "Normal"
 msgid "Position"
 msgstr "Position"
 
+msgid "Create a copy"
+msgstr "Créer une copie"
+
+msgid "Create a copy of %title ?"
+msgstr "Créer une copie de %title ?"
+
+msgid "%title has been copied, copy is unpublished."
+msgstr "%title a été copié, la copie est pour l'instant non publiée."
+
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
 msgid "Properties"
 msgstr "Propriétés"

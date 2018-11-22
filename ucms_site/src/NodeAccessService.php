@@ -286,10 +286,14 @@ final class NodeAccessService
      *
      * @return boolean
      */
-    public function userCanDuplicate(AccountInterface $account, NodeInterface $node)
+    public function userCanDuplicate(AccountInterface $account, NodeInterface $node, $onlyCopy = false)
     {
         if (!$node->access(Access::OP_VIEW, $account)) {
             return false; // Avoid breaking context (such as group)
+        }
+
+        if ($onlyCopy) {
+            return $this->manager->hasContext() && \node_access(Access::OP_CREATE, $node->bundle());
         }
 
         if (!$node->is_clonable) {
