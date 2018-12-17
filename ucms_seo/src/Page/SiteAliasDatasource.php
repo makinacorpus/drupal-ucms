@@ -3,9 +3,7 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
-use MakinaCorpus\Ucms\Dashboard\Page\LinksFilterDisplay;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
@@ -14,19 +12,14 @@ class SiteAliasDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
-    /**
-     * @var \DatabaseConnection
-     */
-    private $db;
+    private $database;
 
     /**
      * Default constructor
-     *
-     * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(\DatabaseConnection $database)
     {
-        $this->db = $db;
+        $this->database = $database;
     }
 
     /**
@@ -34,16 +27,7 @@ class SiteAliasDatasource extends AbstractDatasource
      */
     public function getFilters($query)
     {
-        return [
-            (new LinksFilterDisplay('canonical', $this->t("Is canonical")))->setChoicesMap([
-                1 => $this->t("Yes"),
-                0 => $this->t("No"),
-            ]),
-            (new LinksFilterDisplay('expires', $this->t("Do expire")))->setChoicesMap([
-                1 => $this->t("Yes"),
-                0 => $this->t("No"),
-            ]),
-        ];
+        return [];
     }
 
     /**
@@ -52,11 +36,7 @@ class SiteAliasDatasource extends AbstractDatasource
     public function getSortFields($query)
     {
         return [
-            'alias'         => $this->t("Alias"),
-            'is_canonical'  => $this->t("Canonical state"),
-            'language'      => $this->t("Language"),
-            'expires'       => $this->t("Expiry date"),
-            'priority'      => $this->t("Priority"),
+            'route' => $this->t("Alias"),
         ];
     }
 
@@ -69,32 +49,27 @@ class SiteAliasDatasource extends AbstractDatasource
             return [];
         }
 
-        $q = $this->db->select('ucms_seo_alias', 'u');
-        $q->fields('u');
-        $q->condition('u.site_id', $query['site']);
+        $select = $this->database->select('ucms_seo_route', 'u');
+        $select->fields('u');
+        $select->condition('u.site_id', $query['site']);
 
-        if (isset($query['canonical'])) {
-            $q->condition('u.is_canonical', (int)(bool)$query['canonical']);
-        }
-        if (isset($query['expires'])) {
-            if ($query['expires']) {
-                $q->isNotNull('u.expires');
-            } else {
-                $q->isNull('u.expires');
-            }
-        }
+        $select->leftJoin('node', 'n', "n.nid = u.node_id");
+        $select->addField('n', 'nid', 'node_exists');
+        $select->addField('n', 'title', 'node_title');
+        $select->addField('n', 'type', 'node_type');
 
+        $order = SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc';
         if ($pageState->hasSortField()) {
-            $q->orderBy('u.' . $pageState->getSortField(), SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+            $select->orderBy('u.' . $pageState->getSortField(), $order);
         }
-        $q->orderBy('u.alias', SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc');
+        $select->orderBy('u.route', $order);
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
         if (!empty($query[$sParam])) {
-            $q->condition('u.alias', '%' . db_like($query[$sParam]) . '%', 'LIKE');
+            $select->condition('u.route', '%' . \db_like($query[$sParam]) . '%', 'LIKE');
         }
 
-        return $q
+        return $select
             ->extend('PagerDefault')
             ->limit($pageState->getLimit())
             ->execute()

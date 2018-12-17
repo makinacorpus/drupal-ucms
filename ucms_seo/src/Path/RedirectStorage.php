@@ -53,8 +53,8 @@ class RedirectStorage implements RedirectStorageInterface
 
         $redirect = [
             'path'    => rtrim($path, '/'),
-            'nid'     => $node_id,
-            'site_id' => $site_id,
+            'nid'     => $nodeId,
+            'site_id' => $siteId,
         ];
 
         if ($id) {

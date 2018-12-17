@@ -5,36 +5,24 @@ namespace MakinaCorpus\Ucms\Seo\Page;
 use Drupal\Core\Entity\EntityManager;
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
+use MakinaCorpus\Ucms\Site\Site;
 
 class SiteRedirectDisplay extends AbstractDisplay
 {
-    /**
-     * @var string
-     */
     private $emptyMessage;
-
-    /**
-     * @var SiteManager
-     */
+    private $entityManager;
+    private $site;
     private $siteManager;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * Default constructor
-     *
-     * @param SiteManager $siteManager
-     * @param EntityManager $entityManager
-     * @param string $emptyMessage
      */
-    public function __construct(SiteManager $siteManager, EntityManager $entityManager, $emptyMessage = null)
+    public function __construct(SiteManager $siteManager, EntityManager $entityManager, Site $site, $emptyMessage = null)
     {
-        $this->siteManager = $siteManager;
-        $this->entityManager = $entityManager;
         $this->emptyMessage = $emptyMessage;
+        $this->entityManager = $entityManager;
+        $this->site = $site;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -44,6 +32,7 @@ class SiteRedirectDisplay extends AbstractDisplay
     {
         $rows = [];
         $nodes = [];
+        $types = \node_type_get_names();
 
         // Preload nodes
         foreach ($items as $item) {
@@ -54,16 +43,20 @@ class SiteRedirectDisplay extends AbstractDisplay
         }
 
         foreach ($items as $item) {
-            if (isset($nodes[$item->nid])) {
-                $nodeLabel = $nodes[$item->nid]->getTitle();
-            }
-            else {
-                $nodeLabel = $this->t("None");
+
+            $realPath = 'node/'.$item->nid;
+            $expires = t("Never");
+            if ($item->expires) {
+                if ($date = new \DateTimeImmutable()) {
+                    $expires = \format_date($date->getTimestamp());
+                }
             }
 
             $rows[] = [
                 check_plain($item->path),
-                isset($nodes[$item->nid]) ? l($nodeLabel, 'node/'.$item->nid) : $nodeLabel,
+                \l($item->node_title ?? $realPath, $realPath, ['ucms_site' => $this->site]),
+                $types[$item->node_type] ?? '',
+                $expires,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
@@ -73,8 +66,10 @@ class SiteRedirectDisplay extends AbstractDisplay
             '#suffix' => '</div>',                  // FIXME should be in theme
             '#theme'  => 'table',
             '#header' => [
-                $this->t("Path"),
-                $this->t("Content"),
+                $this->t("Old path"),
+                $this->t("Target"),
+                $this->t("Type"),
+                $this->t("Expires"),
                 '',
             ],
             '#empty'  => $this->emptyMessage,

@@ -50,6 +50,15 @@ class NodeRedirectDatasource extends AbstractDatasource
         $q->fields('u');
         $q->condition('u.nid', $query['node']);
 
+        $q->leftJoin('node', 'n', "n.nid = u.nid");
+        $q->addField('n', 'nid', 'node_exists');
+        $q->addField('n', 'title', 'node_title');
+        $q->addField('n', 'type', 'node_type');
+
+        if (isset($query['site'])) {
+            $q->condition('u.site_id', (int)$query['site']);
+        }
+
         if ($pageState->hasSortField()) {
             $q->orderBy(
                 'u.'.$pageState->getSortField(),
@@ -67,7 +76,7 @@ class NodeRedirectDatasource extends AbstractDatasource
             ->limit($pageState->getLimit())
             ->execute()
             ->fetchAll()
-            ;
+        ;
     }
 
     /**

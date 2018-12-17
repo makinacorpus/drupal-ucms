@@ -50,6 +50,10 @@ class SiteRedirectDatasource extends AbstractDatasource
         $q->fields('u');
         $q->condition('u.site_id', $query['site']);
 
+        $q->leftJoin('node', 'n', "n.nid = u.nid");
+        $q->addField('n', 'nid', 'node_exists');
+        $q->addField('n', 'title', 'node_title');
+        $q->addField('n', 'type', 'node_type');
 
         if ($pageState->hasSortField()) {
             $q->orderBy(

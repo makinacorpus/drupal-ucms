@@ -44,9 +44,9 @@ class SeoController extends Controller
     public function siteAliasListAction(Site $site)
     {
         $datasource = \Drupal::service('ucms_seo.admin.site_alias_datasource');
-        $display    = new SiteAliasDisplay($this->getSiteManager(), $this->getEntityManager(), t("This site has no SEO alias."));
+        $display = new SiteAliasDisplay($this->getSiteManager(), $this->getEntityManager(), t("This site has no SEO alias."));
 
-        $query  = ['site' => $site->getId()];
+        $query = ['site' => $site->getId()];
 
         return $this
             ->createPage($datasource, $display, ['dashboard', 'seo', 'aliases'])
@@ -58,9 +58,13 @@ class SeoController extends Controller
     public function nodeRedirectListAction(NodeInterface $node)
     {
         $datasource = \Drupal::service('ucms_seo.admin.node_redirect_datasource');
-        $display    = new NodeRedirectDisplay($this->getSiteManager(), $this->getEntityManager(), t("This content has no SEO redirect."));
+        $siteManager = $this->getSiteManager();
+        $display = new NodeRedirectDisplay($siteManager, $this->getEntityManager(), t("This content has no SEO redirect."));
 
-        $query  = ['node' => $node->id()];
+        $query = ['node' => $node->id()];
+        if ($siteManager->hasContext()) {
+            // $query['site'] = $siteManager->getContext()->getId();
+        }
 
         return $this
             ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])
@@ -71,10 +75,11 @@ class SeoController extends Controller
 
     public function siteRedirectListAction(Site $site)
     {
+        $siteManager = $this->getSiteManager();
         $datasource = \Drupal::service('ucms_seo.admin.site_redirect_datasource');
-        $display    = new SiteRedirectDisplay($this->getSiteManager(), $this->getEntityManager(), t("This site has no SEO redirect."));
+        $display = new SiteRedirectDisplay($siteManager, $this->getEntityManager(), $site, t("This site has no SEO redirect."));
 
-        $query  = ['site' => $site->getId()];
+        $query = ['site' => $site->getId()];
 
         return $this
             ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])

@@ -3,39 +3,23 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
 class SiteAliasDisplay extends AbstractDisplay
 {
-    /**
-     * @var string
-     */
     private $emptyMessage;
-
-    /**
-     * @var SiteManager
-     */
+    private $entityManager;
     private $siteManager;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * Default constructor
-     *
-     * @param SiteManager $siteManager
-     * @param EntityManager $entityManager
-     * @param string $emptyMessage
      */
     public function __construct(SiteManager $siteManager, EntityManager $entityManager, $emptyMessage = null)
     {
-        $this->siteManager = $siteManager;
-        $this->entityManager = $entityManager;
         $this->emptyMessage = $emptyMessage;
+        $this->entityManager = $entityManager;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -43,20 +27,33 @@ class SiteAliasDisplay extends AbstractDisplay
      */
     protected function displayAs($mode, $items)
     {
-        $rows   = [];
-        $nodes  = [];
+        $rows = [];
+        $nodes = [];
+        $sites = [];
+        $types = \node_type_get_names();
 
         // Preload nodes
         foreach ($items as $item) {
             if ($item->node_id) {
                 $nodes[$item->node_id] = $item->node_id;
+                $sites[$item->site_id] = $item->site_id;
             }
         }
         if ($nodes) {
             $nodes = $this->entityManager->getStorage('node')->loadMultiple($nodes);
         }
+        if ($sites) {
+            $sites = $this->siteManager->getStorage()->loadAll($sites);
+        }
 
         foreach ($items as $item) {
+
+            $site = null;
+            $siteLabel = '<em>' . $this->t("None") . '</em>';
+            if ($item->site_id && isset($sites[$item->site_id])) {
+                $site = $sites[$item->site_id];
+                $siteLabel = l($site->title, 'admin/dashboard/site/' . $site->getId());
+            }
 
             if ($item->node_id && isset($nodes[$item->node_id])) {
                 $nodeLabel = $nodes[$item->node_id]->getTitle();
@@ -64,19 +61,14 @@ class SiteAliasDisplay extends AbstractDisplay
                 $nodeLabel = '<em>' . $this->t("None") . '</em>';
             }
 
-            if (null === $item->language || 'und' === $item->language) {
-                $language = '<em>' . $this->t("default") . '</em>';;
-            } else {
-                $language = check_plain($item->language);
-            }
+            $realPath = 'node/'.$item->node_id;
+            $realUrl = \url($realPath, ['ucms_site' => $site]);
 
             $rows[] = [
-                check_plain($item->alias),
+                \l('/'.$item->route, $realUrl),
                 $nodeLabel,
-                $language,
-                $item->is_canonical ? '<strong>' . $this->t("Yes") . '</strong>' : $this->t("No"),
-                $item->priority,
-                $item->expires ? format_date((new \DateTime($item->expires))->getTimestamp()) : $this->t("No"),
+                $types[$item->node_type] ?? '',
+                $siteLabel,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
         }
@@ -84,18 +76,16 @@ class SiteAliasDisplay extends AbstractDisplay
         return [
             '#prefix' => '<div class="col-md-12">', // FIXME should be in theme
             '#suffix' => '</div>',                  // FIXME should be in theme
-            '#theme'  => 'table',
+            '#theme' => 'table',
             '#header' => [
                 $this->t("Alias"),
-                $this->t("Content"),
-                $this->t("Language"),
-                $this->t("Canonical"),
-                $this->t("Priority"),
-                $this->t("Expires"),
+                $this->t("Target"),
+                $this->t("Type"),
+                $this->t("Site"),
                 '',
             ],
-            '#empty'  => $this->emptyMessage,
-            '#rows'   => $rows,
+            '#empty' => $this->emptyMessage,
+            '#rows' => $rows,
         ];
     }
 }
