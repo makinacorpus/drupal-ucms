@@ -7,24 +7,23 @@ use MakinaCorpus\Ucms\Dashboard\Page\AbstractDatasource;
 use MakinaCorpus\Ucms\Dashboard\Page\PageState;
 use MakinaCorpus\Ucms\Dashboard\Page\SearchForm;
 use MakinaCorpus\Ucms\Dashboard\Page\SortManager;
+use MakinaCorpus\Ucms\Seo\Path\Redirect;
+use MakinaCorpus\Ucms\Seo\Path\RedirectStorageInterface;
 
-class SiteRedirectDatasource extends AbstractDatasource
+class RedirectDatasource extends AbstractDatasource
 {
     use StringTranslationTrait;
 
-    /**
-     * @var \DatabaseConnection
-     */
-    private $db;
+    private $database;
+    private $storage;
 
     /**
      * Default constructor
-     *
-     * @param \DatabaseConnection $db
      */
-    public function __construct(\DatabaseConnection $db)
+    public function __construct(\DatabaseConnection $database, RedirectStorageInterface $storage)
     {
-        $this->db = $db;
+        $this->database = $database;
+        $this->storage = $storage;
     }
 
     /**
@@ -32,9 +31,7 @@ class SiteRedirectDatasource extends AbstractDatasource
      */
     public function getSortFields($query)
     {
-        return [
-            'path' => $this->t("Path"),
-        ];
+        return ['path' => $this->t("Path")];
     }
 
     /**
@@ -42,21 +39,17 @@ class SiteRedirectDatasource extends AbstractDatasource
      */
     public function getItems($query, PageState $pageState)
     {
-        if (empty($query['site'])) {
-            return [];
+        $select = $this->storage->createSelectQuery();
+
+        if (isset($query['site'])) {
+            $select->condition('u.site_id', (int)$query['site']);
+        }
+        if (isset($query['node'])) {
+            $select->condition('u.nid', (int)$query['node']);
         }
 
-        $q = $this->db->select('ucms_seo_redirect', 'u');
-        $q->fields('u');
-        $q->condition('u.site_id', $query['site']);
-
-        $q->leftJoin('node', 'n', "n.nid = u.nid");
-        $q->addField('n', 'nid', 'node_exists');
-        $q->addField('n', 'title', 'node_title');
-        $q->addField('n', 'type', 'node_type');
-
         if ($pageState->hasSortField()) {
-            $q->orderBy(
+            $select->orderBy(
                 'u.'.$pageState->getSortField(),
                 SortManager::DESC === $pageState->getSortOrder() ? 'desc' : 'asc'
             );
@@ -64,15 +57,15 @@ class SiteRedirectDatasource extends AbstractDatasource
 
         $sParam = SearchForm::DEFAULT_PARAM_NAME;
         if (!empty($query[$sParam])) {
-            $q->condition('u.path', '%'.db_like($query[$sParam]).'%', 'LIKE');
+            $select->condition('u.path', '%'.\db_like($query[$sParam]).'%', 'LIKE');
         }
 
-        return $q
+        return $select
             ->extend('PagerDefault')
             ->limit($pageState->getLimit())
             ->execute()
-            ->fetchAll()
-            ;
+            ->fetchAll(\PDO::FETCH_CLASS, Redirect::class)
+        ;
     }
 
     /**

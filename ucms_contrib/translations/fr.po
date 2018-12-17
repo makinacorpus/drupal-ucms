@@ -538,7 +538,7 @@ msgstr "Propriétaire"
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/src/Portlet/ContentPortlet.php:67
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/ucms_contrib.module:242;248
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:90
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:77
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/RedirectDisplay.php:77
 msgid "Content"
 msgstr "Contenu"
 
@@ -1988,7 +1988,7 @@ msgid "There is no node to reference!"
 msgstr "Il n’y a aucun nœud à référencer !"
 
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Form/RedirectForm.php:83
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDisplay.php:79
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/RedirectDisplay.php:79
 msgid "Old path"
 msgstr "Ancien chemin"
 
@@ -2131,9 +2131,8 @@ msgstr "Oui"
 msgid "No"
 msgstr "Non"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDisplay.php:61
 #: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteAliasDisplay.php:64
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:61
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/RedirectDisplay.php:61
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/Admin/SiteManagementForm.php:92
 #: sites/all/modules/composer/drupal-ucms/ucms_site/src/SiteManager.php:308
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Form/TreeEditForm.php:85;113
@@ -2144,7 +2143,7 @@ msgstr "Aucun"
 msgid "default"
 msgstr "par défaut"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDisplay.php:80
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/RedirectDisplay.php:80
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDatasource.php:65
 #: sites/all/modules/composer/drupal-ucms/ucms_tree/src/Page/TreeAdminDisplay.php:76
 msgid "Site"
@@ -2158,9 +2157,8 @@ msgstr "Canonical"
 msgid "Expires"
 msgstr "Expire le"
 
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/NodeRedirectDatasource.php:36
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDatasource.php:36
-#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/SiteRedirectDisplay.php:76
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/RedirectDatasource.php:36
+#: sites/all/modules/composer/drupal-ucms/ucms_seo/src/Page/RedirectDisplay.php:76
 msgid "Path"
 msgstr "Chemin"
 

@@ -3,39 +3,23 @@
 namespace MakinaCorpus\Ucms\Seo\Page;
 
 use Drupal\Core\Entity\EntityManager;
-
 use MakinaCorpus\Ucms\Dashboard\Page\AbstractDisplay;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
-class NodeRedirectDisplay extends AbstractDisplay
+class RedirectDisplay extends AbstractDisplay
 {
-    /**
-     * @var string
-     */
     private $emptyMessage;
-
-    /**
-     * @var SiteManager
-     */
+    private $entityManager;
     private $siteManager;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * Default constructor
-     *
-     * @param SiteManager $siteManager
-     * @param EntityManager $entityManager
-     * @param string $emptyMessage
      */
     public function __construct(SiteManager $siteManager, EntityManager $entityManager, $emptyMessage = null)
     {
-        $this->siteManager = $siteManager;
-        $this->entityManager = $entityManager;
         $this->emptyMessage = $emptyMessage;
+        $this->entityManager = $entityManager;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -48,9 +32,10 @@ class NodeRedirectDisplay extends AbstractDisplay
         $types = \node_type_get_names();
 
         // Preload sites
+        /** @var \MakinaCorpus\Ucms\Seo\Path\Redirect $item */
         foreach ($items as $item) {
-            if ($item->site_id) {
-                $sites[$item->site_id] = $item->site_id;
+            if ($siteId = ($item->getSiteId() ?? null)) {
+                $sites[$siteId] = $siteId;
             }
         }
         if ($sites) {
@@ -58,26 +43,25 @@ class NodeRedirectDisplay extends AbstractDisplay
         }
 
         foreach ($items as $item) {
+            $siteId = $item->getSiteId();
+            $nodeId = $item->getNodeId();
 
             $site = null;
             $siteLabel = '<em>' . $this->t("None") . '</em>';
-            if ($item->site_id && isset($sites[$item->site_id])) {
-                $site = $sites[$item->site_id];
-                $siteLabel = l($site->title, 'admin/dashboard/site/' . $site->getId());
+            if ($site = ($sites[$siteId] ?? null)) {
+                $siteLabel = l($site->getAdminTitle(), 'admin/dashboard/site/'.$site->getId());
             }
 
-            $realPath = 'node/'.$item->nid;
+            $realPath = 'node/'.$nodeId;
             $expires = t("Never");
-            if ($item->expires) {
-                if ($date = new \DateTimeImmutable()) {
-                    $expires = \format_date($date->getTimestamp());
-                }
+            if ($item->hasExpiryDate()) {
+                $expires = \format_date($item->expiresAt()->getTimestamp());
             }
 
             $rows[] = [
-                \check_plain($item->path),
-                \l($item->node_title ?? $realPath, $realPath, ['ucms_site' => $site]),
-                $types[$item->node_type] ?? '',
+                \check_plain($item->getPath()),
+                \l($item->getNodeTitle() ?? $realPath, $realPath, ['ucms_site' => $site]),
+                $types[$item->getNodeType()] ?? '',
                 $siteLabel,
                 $expires,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),

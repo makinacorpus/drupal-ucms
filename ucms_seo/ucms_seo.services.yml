@@ -61,14 +61,10 @@ services:
     public: true
     class: MakinaCorpus\Ucms\Seo\Page\SiteAliasDatasource
     arguments: ["@database"]
-  ucms_seo.admin.node_redirect_datasource:
+  ucms_seo.admin.redirect_datasource:
     public: true
-    class: MakinaCorpus\Ucms\Seo\Page\NodeRedirectDatasource
-    arguments: ["@database"]
-  ucms_seo.admin.site_redirect_datasource:
-    public: true
-    class: MakinaCorpus\Ucms\Seo\Page\SiteRedirectDatasource
-    arguments: ["@database"]
+    class: MakinaCorpus\Ucms\Seo\Page\RedirectDatasource
+    arguments: ["@database", "@ucms_seo.redirect_storage"]
 
   twig.extension.ucms_seo:
     public: false

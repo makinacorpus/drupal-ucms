@@ -56,6 +56,7 @@ class SiteRedirectDisplay extends AbstractDisplay
                 check_plain($item->path),
                 \l($item->node_title ?? $realPath, $realPath, ['ucms_site' => $this->site]),
                 $types[$item->node_type] ?? '',
+                l($this->site->getAdminTitle(), 'admin/dashboard/site/'.$this->site->getId()),
                 $expires,
                 theme('ucms_dashboard_actions', ['actions' => $this->getActions($item), 'mode' => 'icon']),
             ];
@@ -69,6 +70,7 @@ class SiteRedirectDisplay extends AbstractDisplay
                 $this->t("Old path"),
                 $this->t("Target"),
                 $this->t("Type"),
+                $this->t("Site"),
                 $this->t("Expires"),
                 '',
             ],

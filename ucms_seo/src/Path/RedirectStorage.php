@@ -10,33 +10,18 @@ use MakinaCorpus\Ucms\Site\SiteManager;
  */
 class RedirectStorage implements RedirectStorageInterface
 {
-    /**
-     * @var \DatabaseConnection
-     */
     private $database;
-
-    /**
-     * @var SiteManager
-     */
+    private $moduleHandler;
     private $siteManager;
 
     /**
-     * @var ModuleHandler
-     */
-    private $moduleHandler;
-
-    /**
      * Default constructor.
-     *
-     * @param \DatabaseConnection $database
-     * @param ModuleHandler $moduleHandler
-     * @param SiteManager $siteManager
      */
     public function __construct(\DatabaseConnection $database, ModuleHandler $moduleHandler, SiteManager $siteManager)
     {
         $this->database = $database;
-        $this->siteManager = $siteManager;
         $this->moduleHandler = $moduleHandler;
+        $this->siteManager = $siteManager;
     }
 
     /**
@@ -52,8 +37,8 @@ class RedirectStorage implements RedirectStorageInterface
         }
 
         $redirect = [
-            'path'    => rtrim($path, '/'),
-            'nid'     => $nodeId,
+            'path' => \rtrim($path, '/'),
+            'nid' => $nodeId,
             'site_id' => $siteId,
         ];
 
@@ -94,10 +79,10 @@ class RedirectStorage implements RedirectStorageInterface
         // any with a trailing slash, but in doubt, query with both (any other
         // module or user could manually insert data).
         // Paths are supposed to be lower case too.
-        $path = drupal_strtolower(rtrim($path, '/'));
+        $path = \drupal_strtolower(\rtrim($path, '/'));
         $candidates = [$path, $path.'/'];
 
-        $predicates = db_or();
+        $predicates = \db_or();
         foreach ($candidates as $candidate) {
             // Use LIKE for case-insensitive matching in MySQL (stupid).
             $predicates->condition($field, $this->database->escapeLike($candidate), 'LIKE');
@@ -108,9 +93,28 @@ class RedirectStorage implements RedirectStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function load($conditions)
+    public function createSelectQuery(): \SelectQuery
     {
         $select = $this->database->select('ucms_seo_redirect', 'u');
+        $select->fields('u');
+
+        $select->leftJoin('node', 'n', "n.nid = u.nid");
+        $select->addField('n', 'nid', 'node_exists');
+        $select->addField('n', 'title', 'node_title');
+        $select->addField('n', 'type', 'node_type');
+
+        $select->leftJoin('ucms_site', 's', "s.id = u.site_id");
+        $select->addField('s', 'title_admin', 'site_title');
+
+        return $select;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function load($conditions)
+    {
+        $select = $this->createSelectQuery();
 
         foreach ($conditions as $field => $value) {
             if ($field == 'path') {
@@ -121,7 +125,6 @@ class RedirectStorage implements RedirectStorageInterface
         }
 
         return $select
-            ->fields('u')
             ->orderBy('u.id', 'DESC')
             ->range(0, 1)
             ->execute()

@@ -7,14 +7,16 @@ namespace MakinaCorpus\Ucms\Seo\Path;
  */
 class Redirect
 {
-    private $id;
-    private $nid;
-    private $site_id;
-    private $path;
     private $expires;
     private $expiresAt;
-    private $site_title;
+    private $id;
+    private $nid;
+    private $node_exists;
     private $node_title;
+    private $node_type;
+    private $path;
+    private $site_id;
+    private $site_title;
 
     /**
      * Get identifier
@@ -108,5 +110,27 @@ class Redirect
     public function getNodeTitle()
     {
         return $this->node_title;
+    }
+
+    /**
+     * Does not exists
+     *
+     * WARNING: This will return false if the SELECT query did not JOIN
+     * properly on the {node} table.
+     */
+    public function nodeExists(): bool
+    {
+        return (bool)$this->node_exists;
+    }
+
+    /**
+     * Get the node type
+     *
+     * WARNING: This will return null if the SELECT query did not JOIN
+     * properly on the {node} table.
+     */
+    public function getNodeType()
+    {
+        return $this->node_type;
     }
 }

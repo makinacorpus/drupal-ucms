@@ -52,7 +52,7 @@ class SiteAliasDisplay extends AbstractDisplay
             $siteLabel = '<em>' . $this->t("None") . '</em>';
             if ($item->site_id && isset($sites[$item->site_id])) {
                 $site = $sites[$item->site_id];
-                $siteLabel = l($site->title, 'admin/dashboard/site/' . $site->getId());
+                $siteLabel = l($site->getAdminTitle(), 'admin/dashboard/site/'.$site->getId());
             }
 
             if ($item->node_id && isset($nodes[$item->node_id])) {

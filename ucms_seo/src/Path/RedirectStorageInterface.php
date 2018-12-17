@@ -22,6 +22,11 @@ interface RedirectStorageInterface
     public function save(string $path, int $nodeId, int $siteId = null, int $id = null);
 
     /**
+     * Create select query will all necessary joins.
+     */
+    public function createSelectQuery(): \SelectQuery;
+
+    /**
      * Fetches a specific redirect from the database.
      *
      * @param array $conditions

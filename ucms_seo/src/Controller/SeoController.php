@@ -6,10 +6,9 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Drupal\Sf\Controller;
 use MakinaCorpus\Ucms\Dashboard\Controller\PageControllerTrait;
-use MakinaCorpus\Ucms\Seo\Page\NodeRedirectDisplay;
-use MakinaCorpus\Ucms\Seo\Page\SiteAliasDisplay;
-use MakinaCorpus\Ucms\Seo\Page\SiteRedirectDisplay;
 use MakinaCorpus\Ucms\Seo\SeoService;
+use MakinaCorpus\Ucms\Seo\Page\RedirectDisplay;
+use MakinaCorpus\Ucms\Seo\Page\SiteAliasDisplay;
 use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteManager;
 
@@ -17,26 +16,17 @@ class SeoController extends Controller
 {
     use PageControllerTrait;
 
-    /**
-     * @return SiteManager
-     */
-    private function getSiteManager()
+    private function getSiteManager(): SiteManager
     {
         return $this->get('ucms_site.manager');
     }
 
-    /**
-     * @return SeoService
-     */
-    private function getSeoService()
+    private function getSeoService(): SeoService
     {
         return $this->get('ucms_seo.service');
     }
 
-    /**
-     * @return EntityManager
-     */
-    private function getEntityManager()
+    private function getEntityManager(): EntityManager
     {
         return $this->get('entity.manager');
     }
@@ -51,15 +41,15 @@ class SeoController extends Controller
         return $this
             ->createPage($datasource, $display, ['dashboard', 'seo', 'aliases'])
             ->setBaseQuery($query)
-            ->render(drupal_get_query_parameters(), current_path())
+            ->render(\drupal_get_query_parameters(), \current_path())
         ;
     }
 
     public function nodeRedirectListAction(NodeInterface $node)
     {
-        $datasource = \Drupal::service('ucms_seo.admin.node_redirect_datasource');
+        $datasource = \Drupal::service('ucms_seo.admin.redirect_datasource');
         $siteManager = $this->getSiteManager();
-        $display = new NodeRedirectDisplay($siteManager, $this->getEntityManager(), t("This content has no SEO redirect."));
+        $display = new RedirectDisplay($siteManager, $this->getEntityManager(), t("This content has no SEO redirect."));
 
         $query = ['node' => $node->id()];
         if ($siteManager->hasContext()) {
@@ -69,22 +59,22 @@ class SeoController extends Controller
         return $this
             ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])
             ->setBaseQuery($query)
-            ->render(drupal_get_query_parameters(), current_path())
+            ->render(\drupal_get_query_parameters(), \current_path())
         ;
     }
 
     public function siteRedirectListAction(Site $site)
     {
         $siteManager = $this->getSiteManager();
-        $datasource = \Drupal::service('ucms_seo.admin.site_redirect_datasource');
-        $display = new SiteRedirectDisplay($siteManager, $this->getEntityManager(), $site, t("This site has no SEO redirect."));
+        $datasource = \Drupal::service('ucms_seo.admin.redirect_datasource');
+        $display = new RedirectDisplay($siteManager, $this->getEntityManager(), $site, t("This site has no SEO redirect."));
 
         $query = ['site' => $site->getId()];
 
         return $this
             ->createPage($datasource, $display, ['dashboard', 'seo', 'redirect'])
             ->setBaseQuery($query)
-            ->render(drupal_get_query_parameters(), current_path())
+            ->render(\drupal_get_query_parameters(), \current_path())
         ;
     }
 }
