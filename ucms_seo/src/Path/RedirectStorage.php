@@ -42,28 +42,16 @@ class RedirectStorage implements RedirectStorageInterface
             'site_id' => $siteId,
         ];
 
+        $this
+            ->database
+            ->merge('ucms_seo_redirect')
+            ->key($redirect)
+            ->execute()
+        ;
+
         if ($id) {
-            $redirect['id'] = $id;
-
-            $this
-                ->database
-                ->merge('ucms_seo_redirect')
-                ->key(['id' => $id])
-                ->fields($redirect)
-                ->execute()
-            ;
-
             $this->moduleHandler->invokeAll('redirect_insert', [$redirect]);
-
         } else {
-
-            $this
-                ->database
-                ->insert('ucms_seo_redirect')
-                ->fields($redirect)
-                ->execute()
-            ;
-
             $this->moduleHandler->invokeAll('redirect_update', [$redirect]);
         }
 
