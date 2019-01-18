@@ -522,3 +522,17 @@ function ucms_seo_update_7023() {
  */
 function ucms_seo_update_7024() {
 }
+
+/**
+ * Delete duplicate entries in ucms_seo_redirect_table.
+ */
+function ucms_seo_update_7025() {
+  db_query("
+    DELETE t1
+    FROM ucms_seo_redirect t1
+    INNER JOIN ucms_seo_redirect t2
+    WHERE t1.id > t2.id
+    AND t1.site_id = t2.site_id
+    AND t1.path = t2.path;
+  ");
+}
