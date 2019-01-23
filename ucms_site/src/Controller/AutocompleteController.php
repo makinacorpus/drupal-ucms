@@ -47,7 +47,7 @@ class AutocompleteController extends Controller
         $manager = $this->getSiteManager();
         $account = $this->getCurrentUser();
 
-        if (!$manager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(UserAccess::PERM_MANAGE_ALL) && !$this->account->hasPermission(UserAccess::PERM_USER_GOD)) {
+        if (!$manager->getAccess()->userIsWebmaster($account) && !$account->hasPermission(Access::PERM_USER_MANAGE_ALL) && !$this->account->hasPermission(Access::PERM_USER_GOD)) {
             throw $this->createAccessDeniedException();
         }
 
