@@ -1127,3 +1127,18 @@ function ucms_site_update_7028() {
   drupal_set_message(t("Drupal role to site role mapping has been removed, you must restore the site transition matrix manually."));
   //variable_del('ucms_site_relative_roles');
 }
+
+/**
+ * Adds the missing {ucms_site}.allowed_protocols column.
+ */
+function ucms_site_update_7029() {
+  if (!db_field_exists('ucms_site', 'allowed_protocols')) {
+    db_add_field('ucms_site', 'allowed_protocols', [
+      'description' => "1 = HTTP only, 2 = HTTPS only, 3 = both, 0 = let Drupal discover it",
+      'type'        => 'int',
+      'not null'    => true,
+      'default'     => 0,
+    ]);
+  }
+  ucms_site_install_schema_fix();
+}
