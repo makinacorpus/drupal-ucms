@@ -67,7 +67,7 @@ class SeoController extends Controller
     {
         $siteManager = $this->getSiteManager();
         $datasource = \Drupal::service('ucms_seo.admin.redirect_datasource');
-        $display = new RedirectDisplay($siteManager, $this->getEntityManager(), $site, t("This site has no SEO redirect."));
+        $display = new RedirectDisplay($siteManager, $this->getEntityManager(), $site->getTitle(), t("This site has no SEO redirect."));
 
         $query = ['site' => $site->getId()];
 
