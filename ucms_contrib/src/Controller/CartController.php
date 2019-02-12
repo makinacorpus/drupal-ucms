@@ -115,6 +115,7 @@ class CartController extends Controller
             case 'nojs':
                 return $this->redirectToRoute($request->query->get('destination', $request->getPathInfo()));
 
+            default:
             case 'ajax':
                 return (new AjaxResponse())
                     ->addCommand([
@@ -124,9 +125,6 @@ class CartController extends Controller
                         'arguments' => [$content],
                     ])
                 ;
-
-            default:
-                return new JsonResponse(['content' => $content, 'success' => true], 200);
         }
     }
 
