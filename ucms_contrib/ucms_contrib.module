@@ -12,7 +12,6 @@
 
 use Drupal\node\NodeInterface;
 use MakinaCorpus\Ucms\Contrib\Controller\CartController;
-use MakinaCorpus\Ucms\Contrib\Filter\EntityLinkFilter;
 use MakinaCorpus\Ucms\Contrib\Filter\MediaFilter;
 use MakinaCorpus\Ucms\Site\Access;
 
