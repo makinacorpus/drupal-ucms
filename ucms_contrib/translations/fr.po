@@ -13,6 +13,54 @@ msgstr ""
 "X-Generator: Poedit 1.8.6\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
+#: ucms_site.tokens.inc
+msgid "Current site"
+msgstr "Site actuel"
+
+#: ucms_site.tokens.inc
+msgid "Tokens related to current site"
+msgstr "Jetons de remplacement pour du site actuel"
+
+#: ucms_site.tokens.inc
+msgid "Current site attributes"
+msgstr "Attributs et variables du site actuel"
+
+#: ucms_site.tokens.inc
+msgid "Site title"
+msgstr "Nom du site"
+
+#: ucms_site.tokens.inc
+msgid "Current site title"
+msgstr "Nom du site actuel"
+
+#: ucms_site.tokens.inc
+msgid "Site administrative title"
+msgstr "Nom administratif du site"
+
+#: ucms_site.tokens.inc
+msgid "Current site administrative title"
+msgstr "Nom administratif du site actuel"
+
+#: ucms_site.tokens.inc
+msgid "Hostname"
+msgstr "Nom de domaine"
+
+#: ucms_site.tokens.inc
+msgid "Current site hostname, without 'http(s)://'"
+msgstr "Nom de domain du site actuel, sans 'http(s)://'"
+
+#: ucms_site.tokens.inc
+msgid "URL"
+msgstr "URL"
+
+#: ucms_site.tokens.inc
+msgid "Current site URL, with 'http(s)://'"
+msgstr "URL du site actuel, avec 'http(s)://'"
+
+#: ucms_site.tokens.inc
+msgid "Site variable: @title"
+msgstr "Variable du site: @title"
+
 #: sites/all/modules/composer/drupal-ucms/ucms_contrib/js/ckeditor/dialogs/media.js:0
 msgid "100% (default)"
 msgstr "100% (défaut)"

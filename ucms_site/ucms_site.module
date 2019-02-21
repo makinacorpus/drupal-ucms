@@ -19,6 +19,8 @@ use MakinaCorpus\Ucms\Site\Site;
 use MakinaCorpus\Ucms\Site\SiteState;
 use MakinaCorpus\Ucms\Site\Form\SiteHostnameChange;
 
+require_once __DIR__.'/ucms_site.tokens.inc';
+
 /**
  * Implements hook_menu().
  */
