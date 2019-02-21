@@ -20,6 +20,8 @@ use MakinaCorpus\Ucms\Site\EventDispatcher\SiteEvents;
 use MakinaCorpus\Ucms\Site\EventDispatcher\SiteStatusEvent;
 use MakinaCorpus\Ucms\Site\Form\SiteHostnameChange;
 
+require_once __DIR__.'/ucms_site.tokens.inc';
+
 /**
  * Implements hook_menu().
  */
