@@ -41,6 +41,7 @@ class SiteExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('ucms_site_url', [$this, 'renderSiteUrl']),
+            new \Twig_SimpleFunction('ucms_token_replace', [$this, 'renderTokenReplace'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -60,6 +61,14 @@ class SiteExtension extends \Twig_Extension
         }
 
         return $this->t("Unknown");
+    }
+
+    /**
+     * Token replace passthrough
+     */
+    public function renderTokenReplace($string, array $data = [], array $options = [])
+    {
+        return \token_replace($string, $data, $options);
     }
 
     /**
