@@ -97,7 +97,7 @@ function ucms_site_tokens($type, $tokens, array $data = array(), array $options 
     case 'current-site-attr':
       foreach ($tokens as $name => $original) {
         if ($site->hasAttribute($name)) {
-          $ret[$original] = $name;
+          $ret[$original] = (string)$site->getAttribute($name);
         }
       }
       break;
