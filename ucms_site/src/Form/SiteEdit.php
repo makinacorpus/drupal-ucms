@@ -222,6 +222,10 @@ class SiteEdit extends FormBase
         $hashmap = @json_decode($values['favicon']['fid'],true);
         if (count($hashmap)){
             $site->favicon = array_keys($hashmap)[0];
+            if ($file = file_load($site->favicon)) {
+                $file->status = FILE_STATUS_PERMANENT;
+                file_save($file);
+            }
         }
         $attributes = $form_state->getValue('attributes', []);
         foreach ($attributes as $name => $attribute) {
