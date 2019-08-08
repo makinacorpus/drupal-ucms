@@ -129,6 +129,6 @@ class MediaPortlet extends AbstractAdminPortlet
      */
     public function userIsAllowed(AccountInterface $account)
     {
-        return true;
+        return $account->hasPermission('access ucms content overview'); // @todo const
     }
 }

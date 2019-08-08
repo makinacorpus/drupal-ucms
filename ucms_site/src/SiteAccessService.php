@@ -161,7 +161,7 @@ class SiteAccessService
      *   - second dimension is to state
      *   - third dimension is a list of roles identifiers
      *
-     * @see MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
+     * @see \MakinaCorpus\Ucms\Site\Admin\SiteStateTransitionForm
      *
      * @return int[int[int[]]]
      */
