@@ -45,6 +45,11 @@ class DeadLinkPortlet extends AbstractAdminPortlet
 
     public function userIsAllowed(AccountInterface $account)
     {
-        return true;  // TODO - FIXME (don't know what to do)
+        // @todo
+        //  - const
+        //  - this is the same permissions as ucms_contrib for viewing content
+        //    pages but this hardwires seo module to contrib module, that's
+        //    somewhat wrong.
+        return $account->hasPermission('access ucms content overview');
     }
 }
