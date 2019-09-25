@@ -130,6 +130,10 @@ class NodeEventSubscriber implements EventSubscriberInterface
     {
         $node = $event->getNode();
 
+        if (!$this->nodeManager->getAccessService()->typeIsClonable($node->getType())) {
+            $node->is_clonable = 0;
+        }
+
         if ($node->isNew()) {
             // Adds all custom fields of the nodes table as properties of the node object
             $initial_schema = drupal_get_schema_unprocessed('node', 'node');

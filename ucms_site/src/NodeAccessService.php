@@ -10,6 +10,7 @@ use Drupal\node\NodeInterface;
  */
 final class NodeAccessService
 {
+    private $clonableTypes = null;
     private $manager;
 
     /**
@@ -19,7 +20,16 @@ final class NodeAccessService
      */
     public function __construct(SiteManager $manager)
     {
+        $this->clonableTypes = variable_get('ucms_contrib_clonable_types', null);
         $this->manager = $manager;
+    }
+
+    /**
+     * Type is clonale
+     */
+    public function typeIsClonable($type)
+    {
+        return null === $this->clonableTypes || \in_array($type, $this->clonableTypes);
     }
 
     /**
@@ -251,6 +261,10 @@ final class NodeAccessService
             return false; // Avoid breaking context (such as group)
         }
 
+        if (!$this->typeIsClonable($node->getType())) {
+            return false;
+        }
+
         if ($node->is_group) {
             return $account->hasPermission(Access::PERM_CONTENT_MANAGE_CORPORATE);
         }
@@ -291,15 +305,17 @@ final class NodeAccessService
         if (!$node->access(Access::OP_VIEW, $account)) {
             return false; // Avoid breaking context (such as group)
         }
-
         if ($onlyCopy) {
             return $this->manager->hasContext() && \node_access(Access::OP_CREATE, $node->bundle());
         }
-
         if (!$node->is_clonable) {
             return false;
         }
         if (empty($node->ucms_sites)) {
+            return false;
+        }
+
+        if (!$this->typeIsClonable($node->getType())) {
             return false;
         }
 
