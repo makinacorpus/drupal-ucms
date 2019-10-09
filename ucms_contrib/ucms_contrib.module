@@ -574,12 +574,14 @@ function ucms_contrib_form_node_form_alter(&$form, &$form_state) {
     }
   }
 
-  $form['locked'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Lock this content'),
-    '#default_value' => isset($node->is_clonable) ? !((bool) $node->is_clonable) : 0,
-    '#weight' => 100,
-  ];
+  if ($access->userCanLock($user, $node)) {
+    $form['locked'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Lock this content'),
+      '#default_value' => isset($node->is_clonable) ? !((bool) $node->is_clonable) : 0,
+      '#weight' => 100,
+    ];
+  }
 
   // Adds a cancel button
   if (isset($_GET['destination']) && !url_is_external($_GET['destination'])) {
