@@ -653,7 +653,7 @@ function ucms_contrib_form_node_form_submit_publish($form, &$form_state) {
  * Implements hook_node_submit().
  */
 function ucms_contrib_node_submit($node, $form, &$form_state) {
-  $node->is_clonable = ((bool) $form_state['values']['locked']) ? 0 : 1;
+  $node->is_clonable = (int)(bool)($form_state['values']['locked'] ?? false);
 }
 
 /**
