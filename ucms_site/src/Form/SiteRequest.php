@@ -315,11 +315,14 @@ class SiteRequest extends FormBase
         ];
 
         // Template site (which will be duplicated)
-        $templateList = $this->manager->getTemplateList();
+        $templateList = [];
 
         if ($canManage) {
-            array_unshift($templateList, $this->t('- None -'));
+            $templateList[0] = $this->t('- None -');
         }
+
+        $templateList = $templateList + $this->manager->getTemplateList();
+
 
         $defaultTemplate = null;
         if ($site->template_id) {
