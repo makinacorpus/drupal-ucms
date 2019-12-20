@@ -27,7 +27,7 @@
       try {
         var d = JSON.parse(this.responseText);
         if (d.status && d.uri) {
-          window.location.href = d.uri + "&destination=" + window.location.href;
+          window.location.href = d.uri + "&destination=" + encodeURIComponent(window.location.pathname.substring(1));
         }
         stop();
       } catch (e) {

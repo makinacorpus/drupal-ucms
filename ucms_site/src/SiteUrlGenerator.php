@@ -114,7 +114,11 @@ class SiteUrlGenerator
         // Strip path when front page, avoid a potentially useless destination
         // parameter and normalize all different front possible paths.
         if ($path && '<front>' !== $path && $path !== variable_get('site_frontpage', 'node')) {
-            $options['query']['destination'] = $path;
+            // Compute destination using all query parameters we may have to
+            // ensure the will be encoded right in the 'destination' parameter,
+            // thus propagating it until the drupal_goto() call in the ucms_sso
+            // module.
+            $options['query'] = ['destination' => $path.'?'.\http_build_query($options['query'] ?? [])];
         }
 
         return ['sso/goto/' . $site->getId(), $options];
