@@ -168,6 +168,13 @@ function ucms_sso_init() {
 }
 
 /**
+ * Get all query parameters except sso related ones.
+ */
+function ucms_sso_query_parameters() {
+  return drupal_get_query_parameters(null, ['form_redirect', 'destination', 'q', 's']);
+}
+
+/**
  * Write token.
  *
  * @param string $origin
@@ -190,7 +197,10 @@ function ucms_sso_write_token($origin, $destination = null) {
 
   cache_set($origin .':'. $token, $record, 'cache_sso', $record['validity']);
 
-  $query = ['s' => $token];
+  // Keep all parameters except for the technical ones.
+  $query = [];
+  $query['s'] = $token;
+
   if ($destination) {
     $query['destination'] = $destination;
   } else if(isset($_GET['destination'])) {
@@ -270,7 +280,7 @@ function ucms_sso_callback_login() {
   $cid    = $domain .':'. $token;
 
   $path = '';
-  $options = [];
+  $options = ['query' => ucms_sso_query_parameters()];
   // Ugly tricks to avoid destination parameter conflict.
   // @see MakinaCorpus\Ucms\Contrib\Form\NodeAddToSite::submitForm
   if (!empty($_GET['destination']) && !empty($_GET['form_redirect'])) {
@@ -309,6 +319,7 @@ function ucms_sso_callback_login() {
   $params = session_get_cookie_params();
   $expire = $params['lifetime'] ? REQUEST_TIME + $params['lifetime'] : 0;
   setcookie(session_name(), $sessionId, $expire, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+
   // Leave the user to the page he sould be.
   drupal_goto($path, $options);
 }
@@ -331,6 +342,6 @@ function ucms_sso_js() {
   // in which case, don't worry about the ${master}, it will be left untouched
   // by the packer.
   return <<<EOT
-(function(){"use strict";var d=document;function n(){return Math.floor(Date.now()/1000)}function stop(){d.cookie="usso="+(n()+240)}function may(){var a=d.cookie.match(/usso=([\d]+)(;|$)/);return!a||a[1]<n()}if(may()){var x=new XMLHttpRequest();x.open("GET","${master}");x.withCredentials=true;x.setRequestHeader("Accept","application/json");x.onerror=function(){stop()};x.onload=function(){try{var d=JSON.parse(this.responseText);if(d.status&&d.uri){window.location.href=d.uri+"&destination="+window.location.href}stop()}catch(e){stop()}};x.send()}}());
+(function(){"use strict";var d=document;function n(){return Math.floor(Date.now()/1000)}function stop(){d.cookie="usso="+(n()+240)}function may(){var a=d.cookie.match(/usso=([\d]+)(;|$)/);return!a||a[1]<n()}if(may()){var x=new XMLHttpRequest();x.open("GET","${master}");x.withCredentials=true;x.setRequestHeader("Accept","application/json");x.onerror=function(){stop()};x.onload=function(){try{var d=JSON.parse(this.responseText);if(d.status&&d.uri){window.location.href=d.uri+"&destination="+encodeURIComponent(window.location.pathname.substring(1))}stop()}catch(e){stop()}};x.send()}}());
 EOT;
 }
