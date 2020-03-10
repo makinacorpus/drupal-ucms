@@ -97,7 +97,15 @@ function ucms_site_tokens($type, $tokens, array $data = array(), array $options 
     case 'current-site-attr':
       foreach ($tokens as $name => $original) {
         if ($site->hasAttribute($name)) {
-          $ret[$original] = (string)$site->getAttribute($name);
+          if ($value = $site->getAttribute($name)) {
+            if (is_array($value) && isset($value['value'])) {
+              $ret[$original] = check_plain($value['value'], $value['format'] ?? 'plaintext');
+            } else if (is_string($value) || (is_object($value) && method_exists($value, '__toString'))) {
+              $ret[$original] = (string)$value;
+            } else {
+              $ret[$original] = $name;
+            }
+          }
         }
       }
       break;
